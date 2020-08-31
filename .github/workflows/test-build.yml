@@ -29,7 +29,7 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v1.2.0
     - run: echo "CI_COMMIT_BRANCH $GITHUB_REF_NAME_SLUG"
     - run: TAGS_JSON=$(curl -sb -H "Accept:application/json" "https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags")
-    - run: TAG_COUNT=$(echo $TAGS_JSON | jq --arg "CI_COMMIT_BRANCH" $GITHUB_REF_NAME_SLUG -c '.[] | select(.name==$GITHUB_REF_NAME_SLUG)' | jq -s '. | length')
+    - run: TAG_COUNT=$(echo $TAGS_JSON | jq --arg "GITHUB_REF_NAME_SLUG" $GITHUB_REF_NAME_SLUG -c '.[] | select(.name==$GITHUB_REF_NAME_SLUG)' | jq -s '. | length')
     - run: if [ "$TAG_COUNT" != 0 ]; then     export TAG=$GITHUB_REF_NAME_SLUG; else     export TAG=latest; fi
     - run: echo "TAG $TAG"
     - run: git clone https://gitlab.esss.lu.se/swap/duo-backend.git
