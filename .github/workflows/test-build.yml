@@ -19,7 +19,6 @@ jobs:
     - run: echo "::set-output name=TAGS_JSON::$(curl -sb -H https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags)"
     - run: echo "outputs.TAGS_JSON $outputs.TAGS_JSON"
     - run: echo "outputs.TAGS_JSON ${outputs.TAGS_JSON}"
-    - run: echo "outputs.TAGS_JSON ${{outputs.TAGS_JSON}}"
     - run: echo "outputs.TAGS_JSON ${outputs}.TAGS_JSON"
     - run: echo "outputs.TAGS_JSON ${{outputs}}.TAGS_JSON"
     - run: TAG_COUNT=$(echo $TAGS_JSON | jq --arg "GITHUB_REF_NAME_SLUG" $GITHUB_REF_NAME_SLUG -c '.[] | select(.name==$GITHUB_REF_NAME_SLUG)' | jq -s '. | length')
