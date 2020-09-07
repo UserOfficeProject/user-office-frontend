@@ -15,5 +15,5 @@ jobs:
     - run: echo ${{ github.head_ref }}
     - run: echo "::set-env name=TAGS_JSON::$(curl -sb -H https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags)"
     - run: echo "TAGS_JSON $TAGS_JSON"
-    - run: echo "::set-env name=TAG_COUNT::$(echo $TAGS_JSON | jq --arg GITHUB_REF_NAME_SLUG '${{ github.head_ref }}' -c '.[] | select(.name==\\"test-branch\\")' | jq -s '. | length')"
+    - run: echo "::set-env name=TAG_COUNT::$(echo $TAGS_JSON | jq --arg GITHUB_REF_NAME_SLUG '${{ github.head_ref }}' -c '.[] | select(.name=="test-branch")' | jq -s '. | length')"
     
