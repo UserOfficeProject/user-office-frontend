@@ -5,59 +5,41 @@ import Step from '@material-ui/core/Step';
 import Stepper from '@material-ui/core/Stepper';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
-import { createContext, default as React, useEffect, useState } from 'react';
+import { default as React, useEffect, useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import {
   Answer,
   DataType,
-  ProposalStatus,
   Questionary,
   SubtemplateConfig,
   TemplateCategoryId,
   UserRole,
 } from 'generated/sdk';
 import { ProposalSubsetSumbission } from 'models/ProposalModel';
-import { prepareAnswers } from 'models/ProposalModelFunctions';
 import {
   Event,
   EventType,
   ProposalSubmissionModel,
   ProposalSubmissionModelState,
 } from 'models/ProposalSubmissionModel';
+import { prepareAnswers } from 'models/QuestionaryFunctions';
 import { StyledPaper } from 'styles/StyledComponents';
 import { clamp } from 'utils/Math';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
+import { QuestionaryUIStep } from '../../hooks/questionary/QuestionaryUIStep';
+import { SubmissionContext } from '../../utils/SubmissionContext';
 import ProposalInformationView from './ProposalInformationView';
-import ProposalQuestionaryStep from './ProposalQuestionaryStep';
 import ProposalReview from './ProposalSummary';
 import { QuestionaryStepButton } from './QuestionaryStepButton';
+import QuestionaryStepView from './QuestionaryStepView';
 
 export interface Notification {
   variant: 'error' | 'success';
   message: string;
 }
-
-enum StepType {
-  GENERAL,
-  QUESTIONARY,
-  REVIEW,
-}
-
-class QuestionaryUIStep {
-  constructor(
-    public stepType: StepType,
-    public title: string,
-    public completed: boolean,
-    public element: JSX.Element
-  ) {}
-}
-
-export const ProposalSubmissionContext = createContext<{
-  dispatch: React.Dispatch<Event>;
-} | null>(null);
 
 export default function ProposalContainer(props: {
   data: ProposalSubsetSumbission;
@@ -172,7 +154,7 @@ export default function ProposalContainer(props: {
         case EventType.SAVE_GENERAL_INFO_CLICKED:
           const { callId } = state.proposal;
           let proposal = state.proposal;
-          if (state.proposal.status === ProposalStatus.BLANK) {
+          if (state.proposal.status.id === 0) {
             const response = await api('Saved').createProposal({ callId });
             proposal = { ...proposal, ...response.createProposal.proposal };
             dispatch({
@@ -253,7 +235,7 @@ export default function ProposalContainer(props: {
     reduceMiddleware,
   ]);
 
-  const isSubmitted = state.proposal.status === ProposalStatus.SUBMITTED;
+  const isSubmitted = state.proposal.submitted;
 
   useEffect(() => {
     const createProposalSteps = (
@@ -263,9 +245,8 @@ export default function ProposalContainer(props: {
 
       allProposalSteps.push(
         new QuestionaryUIStep(
-          StepType.GENERAL,
           'New Proposal',
-          state.proposal.status !== ProposalStatus.BLANK,
+          state.proposal.status.id !== 0,
           (
             <ProposalInformationView
               data={state.proposal}
@@ -277,19 +258,21 @@ export default function ProposalContainer(props: {
       allProposalSteps = allProposalSteps.concat(
         questionary.steps.map((step, index, steps) => {
           const editable =
-            (index === 0 && state.proposal.status !== ProposalStatus.BLANK) ||
+            (index === 0 && state.proposal.status.id !== 0) ||
             step.isCompleted ||
             (steps[index - 1] !== undefined &&
               steps[index - 1].isCompleted === true);
 
           return new QuestionaryUIStep(
-            StepType.QUESTIONARY,
             step.topic.title,
             step.isCompleted,
             (
-              <ProposalQuestionaryStep
+              <QuestionaryStepView
                 topicId={step.topic.id}
-                data={state}
+                state={{
+                  questionary: state.proposal.questionary,
+                  isDirty: state.isDirty,
+                }}
                 readonly={(!editable || isSubmitted) && isNonOfficer}
                 key={step.topic.id}
               />
@@ -299,9 +282,8 @@ export default function ProposalContainer(props: {
       );
       allProposalSteps.push(
         new QuestionaryUIStep(
-          StepType.REVIEW,
           'Review',
-          state.proposal.status === ProposalStatus.SUBMITTED,
+          state.proposal.submitted,
           (
             <ProposalReview
               data={state}
@@ -322,7 +304,7 @@ export default function ProposalContainer(props: {
   // right step once proposal loads
   useEffect(() => {
     const proposal = props.data;
-    if (proposal.status === ProposalStatus.DRAFT) {
+    if (proposal.status.name === 'DRAFT') {
       const questionarySteps = proposal.questionary.steps;
       const lastFinishedStep = questionarySteps
         .slice()
@@ -336,7 +318,7 @@ export default function ProposalContainer(props: {
         )
       );
     } else {
-      if (proposal.status === ProposalStatus.BLANK) {
+      if (proposal.status.id === 0) {
         setStepIndex(0);
       } else {
         setStepIndex(proposal.questionary.steps.length + 1);
@@ -363,7 +345,7 @@ export default function ProposalContainer(props: {
   return (
     <Container maxWidth="lg">
       <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
-      <ProposalSubmissionContext.Provider value={{ dispatch }}>
+      <SubmissionContext.Provider value={{ dispatch }}>
         <StyledPaper>
           <Typography
             component="h1"
@@ -378,9 +360,7 @@ export default function ProposalContainer(props: {
               ? `Proposal ID: ${state.proposal.shortCode}`
               : null}
           </div>
-          <div className={classes.infoline}>
-            {ProposalStatus[state.proposal.status]}
-          </div>
+          <div className={classes.infoline}>{state.proposal.status.name}</div>
           <Stepper nonLinear activeStep={stepIndex} className={classes.stepper}>
             {proposalSteps.map((step, index, steps) => (
               <Step key={step.title}>
@@ -405,7 +385,7 @@ export default function ProposalContainer(props: {
           {progressBar}
           {getStepContent(stepIndex)}
         </StyledPaper>
-      </ProposalSubmissionContext.Provider>
+      </SubmissionContext.Provider>
     </Container>
   );
 }

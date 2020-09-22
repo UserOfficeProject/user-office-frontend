@@ -15,8 +15,8 @@ import { Link } from 'react-router-dom';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
 
 import DialogConfirmation from 'components/common/DialogConfirmation';
-import ScienceIconAdd from 'components/common/ScienceIconAdd';
-import ScienceIconRemove from 'components/common/ScienceIconRemove';
+import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
+import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
 import { Instrument, Sep, ProposalsToInstrumentArgs } from 'generated/sdk';
@@ -203,8 +203,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       field: 'technicalStatus',
     },
     {
+      title: 'Submitted',
+      render: rowData => (rowData.submitted ? 'Yes' : 'No'),
+    },
+    {
       title: 'Status',
-      field: 'status',
+      field: 'statusName',
     },
     {
       title: 'Deviation',
@@ -381,16 +385,20 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const EmailIcon = (): JSX.Element => <Email />;
   const AddScienceIcon = (): JSX.Element => <ScienceIconAdd />;
 
-  const preselectedProposalsData = proposalsData.map(proposalData => {
-    return {
-      ...proposalData,
-      tableData: {
-        checked: urlQueryParams.selection?.some(
-          (selectedItem: number | null) => selectedItem === proposalData.id
-        ),
-      },
-    };
-  });
+  const preselectedProposalsData =
+    urlQueryParams.selection.length > 0
+      ? proposalsData.map(proposalData => {
+          return {
+            ...proposalData,
+            tableData: {
+              checked: urlQueryParams.selection?.some(
+                (selectedItem: number | null) =>
+                  selectedItem === proposalData.id
+              ),
+            },
+          };
+        })
+      : proposalsData;
 
   return (
     <>

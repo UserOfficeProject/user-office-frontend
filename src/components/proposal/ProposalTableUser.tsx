@@ -13,6 +13,7 @@ export type PartialProposalsDataType = {
   status: string;
   finalStatus?: string;
   notified?: boolean;
+  submitted: boolean;
   shortCode: string;
   created: string | null;
 };
@@ -34,7 +35,7 @@ const ProposalTableUser: React.FC = () => {
     if (proposal.notified) {
       return getTranslation(proposal.finalStatus as ResourceId);
     } else {
-      return proposal.status === ProposalStatus.DRAFT ? 'Open' : 'Submitted';
+      return proposal.status.name;
     }
   };
 
@@ -60,6 +61,7 @@ const ProposalTableUser: React.FC = () => {
                 id: proposal.id,
                 title: proposal.title,
                 status: getProposalStatus(proposal),
+                submitted: proposal.submitted,
                 shortCode: proposal.shortCode,
                 created: timeAgo(proposal.created),
                 notified: proposal.notified,

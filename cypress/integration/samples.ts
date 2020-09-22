@@ -16,9 +16,9 @@ context('Samples tests', () => {
   const sampleTemplateName = faker.lorem.words(2);
   const sampleTemplateDescription = faker.lorem.words(4);
   const sampleQuestion = faker.lorem.words(4);
-  // const proposalTitle = faker.lorem.words(2);
-  // const proposalAbstract = faker.lorem.words(5);
-  // const safetyComment = faker.lorem.words(5);
+  const proposalTitle = faker.lorem.words(2);
+  const proposalAbstract = faker.lorem.words(5);
+  const safetyComment = faker.lorem.words(5);
 
   it('Should be able to create proposal template with sample', () => {
     cy.login('officer');
@@ -33,7 +33,7 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=submit]').click();
 
-    cy.contains('2. New Topic');
+    cy.contains('New Topic');
 
     cy.visit('/');
 
@@ -73,77 +73,87 @@ context('Samples tests', () => {
     cy.contains(sampleQuestion); // checking if question in the topic column
   });
 
-  // it('Should be able to create proposal with sample', () => {
-  //   cy.login('user');
+  it('Should be able to create proposal with sample', () => {
+    cy.login('user');
 
-  //   cy.contains('New Proposal').click();
+    cy.contains('New Proposal').click();
 
-  //   cy.get('#title').type(proposalTitle);
+    cy.get('#title').type(proposalTitle);
 
-  //   cy.get('#abstract').type(proposalAbstract);
+    cy.get('#abstract').type(proposalAbstract);
 
-  //   cy.contains('Save and continue').click();
+    cy.contains('Save and continue').click();
 
-  //   cy.contains('Add').click();
+    cy.get('[data-cy=add-button]').click();
 
-  //   cy.wait(5000);
+    cy.get('[data-cy=title-input] input')
+      .clear()
+      .type(faker.lorem.words(2));
 
-  //   cy.contains('Update').click();
+    cy.get('[data-cy=save-and-continue-button]')
+      .eq(1)
+      .click({ force: true });
 
-  //   cy.contains('Save and continue').click();
+    cy.get('[data-cy=save-and-continue-button]')
+      .eq(1)
+      .click({ force: true });
 
-  //   cy.contains('Submit').click();
+    cy.contains('Save and continue').click();
 
-  //   cy.contains('OK').click();
-  // });
+    cy.contains('Submit').click();
 
-  // it('Should be able to evaluate sample', () => {
-  //   cy.login('officer');
+    cy.contains('OK').click();
+  });
 
-  //   cy.contains('Sample safety').click();
+  it('Should be able to evaluate sample', () => {
+    cy.login('officer');
 
-  //   cy.get('[title="Review sample"]').click();
+    cy.contains('Sample safety').click();
 
-  //   cy.get('[data-cy="safety-status"]').click();
+    cy.get('[title="Review sample"]').click();
 
-  //   cy.contains('Safe').click();
+    cy.get('[data-cy="safety-status"]').click();
 
-  //   cy.get('[data-cy="safety-comment"]').type(safetyComment);
+    cy.contains('Safe').click();
 
-  //   cy.get('[data-cy="submit"]').click();
+    cy.get('[data-cy="safety-comment"]').type(safetyComment);
 
-  //   cy.wait(500);
+    cy.get('[data-cy="submit"]').click();
 
-  //   cy.reload();
+    cy.wait(500);
 
-  //   cy.get('[title="Review sample"]').click();
+    cy.reload();
 
-  //   cy.contains(safetyComment); // test if comment entered is present after reload
+    cy.get('[title="Review sample"]').click();
 
-  //   cy.get('[data-cy="safety-status"]').click();
+    cy.contains(safetyComment); // test if comment entered is present after reload
 
-  //   cy.contains('Unsafe').click();
+    cy.get('[data-cy="safety-status"]').click();
 
-  //   cy.get('[data-cy="submit"]').click();
+    cy.contains('Unsafe').click();
 
-  //   cy.contains('Unsafe'); // test if status has changed
-  // });
+    cy.get('[data-cy="submit"]').click();
 
-  // it('Officer should able to delete proposal with sample', () => {
-  //   cy.login('officer');
+    cy.contains('Unsafe'); // test if status has changed
+  });
 
-  //   cy.contains('Proposals').click();
+  it('Officer should able to delete proposal with sample', () => {
+    cy.login('officer');
 
-  //   cy.get("input[type='checkbox']")
-  //     .first()
-  //     .click();
+    cy.contains('Proposals').click();
 
-  //   cy.get("[title='Delete proposals']")
-  //     .first()
-  //     .click();
+    cy.get("input[type='checkbox']")
+      .first()
+      .click();
 
-  //   cy.contains('Yes').click();
+    cy.get("[title='Delete proposals']")
+      .first()
+      .click();
 
-  //   cy.contains(proposalTitle).should('not.exist');
-  // });
+    cy.get('.MuiDialog-root')
+      .contains('Yes')
+      .click();
+
+    cy.contains(proposalTitle).should('not.exist');
+  });
 });

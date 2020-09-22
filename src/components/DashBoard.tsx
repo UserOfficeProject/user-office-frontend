@@ -36,6 +36,8 @@ import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
 import SEPsPage from './SEP/SEPsPage';
+import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
+import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
 import ProposalTemplates from './template/ProposalTemplates';
 import SampleTemplatesPage from './template/SampleTemplates';
 import TemplateEditor from './template/TemplateEditor';
@@ -69,7 +71,7 @@ BottomNavItem.propTypes = {
   linkText: PropTypes.string,
 };
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,6 +91,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerOpen: {
     width: drawerWidth,
+    overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -169,7 +172,7 @@ const Dashboard: React.FC = () => {
           </IconButton>
         </div>
         <Divider />
-        <List>
+        <List disablePadding>
           <MenuItems callsData={calls} currentRole={currentRole} />
         </List>
         <Divider />
@@ -213,6 +216,15 @@ const Dashboard: React.FC = () => {
             path="/ProposalReviewUserOfficer/:id"
             component={ProposalReviewUserOfficer}
           />
+          {isUserOfficer && (
+            <Route path="/ProposalStatuses" component={ProposalStatusesPage} />
+          )}
+          {isUserOfficer && (
+            <Route
+              path="/ProposalWorkflows"
+              component={ProposalWorkflowsPage}
+            />
+          )}
           {(isSampleSafetyReviewer || isUserOfficer) && (
             <Route path="/SampleSafety" component={SampleSafetyPage} />
           )}
