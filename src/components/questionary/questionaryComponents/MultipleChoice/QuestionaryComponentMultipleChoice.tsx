@@ -67,9 +67,9 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             value={config.isMultipleSelect ? stateValue : stateValue[0]}
             label={question}
             select
-            onChange={evt => {
-              handleOnChange(evt, (evt.target as HTMLInputElement).value);
-            }}
+            onChange={evt =>
+              handleOnChange(evt, (evt.target as HTMLInputElement).value)
+            }
             SelectProps={{
               multiple: config.isMultipleSelect,
             }}
@@ -102,9 +102,9 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             id={proposalQuestionId}
             name={proposalQuestionId}
             value={stateValue[0]}
-            onChange={evt => {
-              handleOnChange(evt, (evt.target as HTMLInputElement).value);
-            }}
+            onChange={evt =>
+              handleOnChange(evt, (evt.target as HTMLInputElement).value)
+            }
             className={
               config.options!.length < 3
                 ? classes.horizontalLayout
