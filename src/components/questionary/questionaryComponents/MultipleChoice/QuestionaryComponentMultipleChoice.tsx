@@ -51,7 +51,8 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
     setStateValue(answer.value);
   }, [answer]);
 
-  const handleOnChange = (evt: any, newValue: any) => {
+  const handleOnChange = (evt: any, value: string | string[]) => {
+    const newValue = toArray(value);
     setStateValue(newValue);
     onComplete(evt, newValue);
   };
@@ -67,8 +68,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             label={question}
             select
             onChange={evt => {
-              const newValue = (evt.target as HTMLInputElement).value;
-              handleOnChange(evt, toArray(newValue));
+              handleOnChange(evt, (evt.target as HTMLInputElement).value);
             }}
             SelectProps={{
               multiple: config.isMultipleSelect,
@@ -103,8 +103,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             name={proposalQuestionId}
             value={stateValue[0]}
             onChange={evt => {
-              const newValue = (evt.target as HTMLInputElement).value;
-              handleOnChange(evt, toArray(newValue));
+              handleOnChange(evt, (evt.target as HTMLInputElement).value);
             }}
             className={
               config.options!.length < 3
