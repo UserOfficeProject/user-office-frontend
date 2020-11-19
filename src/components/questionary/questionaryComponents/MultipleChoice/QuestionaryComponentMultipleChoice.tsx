@@ -6,10 +6,11 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import TextField from '@material-ui/core/TextField';
-import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { getIn } from 'formik';
-import { SelectionFromOptionsConfig } from 'generated/sdk';
 import React, { useEffect, useState } from 'react';
+
+import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
+import { SelectionFromOptionsConfig } from 'generated/sdk';
 
 const toArray = (input: string | string[]): string[] => {
   if (typeof input === 'string') {
