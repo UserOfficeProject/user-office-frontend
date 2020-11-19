@@ -6,11 +6,18 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import TextField from '@material-ui/core/TextField';
+import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { getIn } from 'formik';
+import { SelectionFromOptionsConfig } from 'generated/sdk';
 import React, { useEffect, useState } from 'react';
 
-import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import { SelectionFromOptionsConfig } from 'generated/sdk';
+const toArray = (input: string | string[]): string[] => {
+  if (typeof input === 'string') {
+    return [input];
+  }
+
+  return input;
+};
 
 export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
   const classes = makeStyles({
@@ -56,12 +63,13 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
           <TextField
             id={proposalQuestionId}
             name={proposalQuestionId}
-            value={stateValue}
+            value={config.isMultipleSelect ? stateValue : stateValue[0]}
             label={question}
             select
-            onChange={evt =>
-              handleOnChange(evt, (evt.target as HTMLInputElement).value)
-            }
+            onChange={evt => {
+              const newValue = (evt.target as HTMLInputElement).value;
+              handleOnChange(evt, toArray(newValue));
+            }}
             SelectProps={{
               multiple: config.isMultipleSelect,
             }}
@@ -93,10 +101,11 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
           <RadioGroup
             id={proposalQuestionId}
             name={proposalQuestionId}
-            value={stateValue}
-            onChange={evt =>
-              handleOnChange(evt, (evt.target as HTMLInputElement).value)
-            }
+            value={stateValue[0]}
+            onChange={evt => {
+              const newValue = (evt.target as HTMLInputElement).value;
+              handleOnChange(evt, toArray(newValue));
+            }}
             className={
               config.options!.length < 3
                 ? classes.horizontalLayout
