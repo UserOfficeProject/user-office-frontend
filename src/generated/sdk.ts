@@ -237,6 +237,7 @@ export enum Event {
   PROPOSAL_INSTRUMENT_SELECTED = 'PROPOSAL_INSTRUMENT_SELECTED',
   PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED = 'PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED',
   PROPOSAL_SAMPLE_REVIEW_SUBMITTED = 'PROPOSAL_SAMPLE_REVIEW_SUBMITTED',
+  PROPOSAL_SAMPLE_SAFE = 'PROPOSAL_SAMPLE_SAFE',
   PROPOSAL_ALL_SEP_REVIEWERS_SELECTED = 'PROPOSAL_ALL_SEP_REVIEWERS_SELECTED',
   PROPOSAL_SEP_REVIEW_SUBMITTED = 'PROPOSAL_SEP_REVIEW_SUBMITTED',
   PROPOSAL_SEP_MEETING_SUBMITTED = 'PROPOSAL_SEP_MEETING_SUBMITTED',
@@ -426,6 +427,7 @@ export type Mutation = {
   addTechnicalReview: TechnicalReviewResponseWrap;
   addUserForReview: ReviewResponseWrap;
   createSample: SampleResponseWrap;
+  updateSample: SampleResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
   assignMembers: SepResponseWrap;
   removeMember: SepResponseWrap;
@@ -477,7 +479,6 @@ export type Mutation = {
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
-  updateSample: SampleResponseWrap;
 };
 
 
@@ -675,6 +676,14 @@ export type MutationCreateSampleArgs = {
   templateId: Scalars['Int'];
   proposalId: Scalars['Int'];
   questionId: Scalars['String'];
+};
+
+
+export type MutationUpdateSampleArgs = {
+  sampleId: Scalars['Int'];
+  title?: Maybe<Scalars['String']>;
+  safetyComment?: Maybe<Scalars['String']>;
+  safetyStatus?: Maybe<SampleStatus>;
 };
 
 
@@ -1006,14 +1015,6 @@ export type MutationSelectRoleArgs = {
 export type MutationUpdatePasswordArgs = {
   id: Scalars['Int'];
   password: Scalars['String'];
-};
-
-
-export type MutationUpdateSampleArgs = {
-  sampleId: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  safetyComment?: Maybe<Scalars['String']>;
-  safetyStatus?: Maybe<SampleStatus>;
 };
 
 export type NextStatusEvent = {
