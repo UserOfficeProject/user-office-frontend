@@ -6,7 +6,7 @@ import { Options, MTableToolbar } from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-import SelectedCallFilter from 'components/common/SelectedCallFilter';
+import CallFilter from 'components/common/proposalFilters/CallFilter';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { useDownloadXLSXSEP } from 'hooks/SEP/useDownloadXLSXSEP';
 
@@ -31,29 +31,27 @@ const SEPMeetingComponentsView: React.FC<SEPMeetingComponentsViewProps> = ({
   // NOTE: Default call is with id=1
   const [selectedCallId, setSelectedCallId] = useState<number>(1);
 
-  const Toolbar = (data: Options): JSX.Element =>
-    loadingCalls ? (
-      <div>Loading...</div>
-    ) : (
-      <>
-        <MTableToolbar {...data} />
-        <SelectedCallFilter
-          callsData={calls}
-          onChange={setSelectedCallId}
-          callId={selectedCallId}
-        />
-        <Tooltip title="Export in Excel">
-          <IconButton
-            aria-label="export in excel"
-            className={classes.spacing}
-            data-cy="download-sep-xlsx"
-            onClick={() => downloadSEPXLSX(sepId, selectedCallId)}
-          >
-            <GridOnIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    );
+  const Toolbar = (data: Options): JSX.Element => (
+    <>
+      <MTableToolbar {...data} />
+      <CallFilter
+        calls={calls}
+        isLoading={loadingCalls}
+        onChange={setSelectedCallId}
+        callId={selectedCallId}
+      />
+      <Tooltip title="Export in Excel">
+        <IconButton
+          aria-label="export in excel"
+          className={classes.spacing}
+          data-cy="download-sep-xlsx"
+          onClick={() => downloadSEPXLSX(sepId, selectedCallId)}
+        >
+          <GridOnIcon />
+        </IconButton>
+      </Tooltip>
+    </>
+  );
 
   return (
     <SEPMeetingInstrumentsTable
