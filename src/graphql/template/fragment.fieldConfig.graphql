@@ -60,5 +60,6 @@ fragment fieldConfig on FieldConfig {
     tooltip
     htmlQuestion
     isHtmlQuestion
+    isCounterHidden
   }
 }

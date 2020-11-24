@@ -35,6 +35,8 @@ context('Template tests', () => {
   const sampleDeclarationName = faker.lorem.words(2);
   const sampleDeclarationDescription = faker.lorem.words(5);
 
+  const minimumCharacters = 1000;
+
   it('User officer can create sample declaration template', () => {
     cy.login('officer');
 
@@ -146,6 +148,8 @@ context('Template tests', () => {
       .type(textQuestion);
 
     cy.contains('Is required').click();
+
+    cy.get('[data-cy=max]').type(minimumCharacters.toString());
 
     cy.contains('Save').click();
 
@@ -366,6 +370,7 @@ context('Template tests', () => {
     cy.createProposal(title, abstract);
     cy.get(`#${boolId}`).click();
     cy.get(`#${textId}`).type(textAnswer);
+    cy.contains(`${textAnswer.length}/${minimumCharacters}`);
     cy.get(`[data-cy='${dateId}_field'] button`).click();
     cy.wait(300);
     cy.get(`[data-cy='${dateId}_field'] button`).click({ force: true }); // click twice because ui hangs sometimes
