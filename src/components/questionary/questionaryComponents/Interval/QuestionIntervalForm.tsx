@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
@@ -21,18 +21,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const propertyDropdownEntries = Array.from(allProperties).map(
+  ([id, property]) => ({
+    text: property.name,
+    value: id,
+  })
+);
+
 export const QuestionIntervalForm: FormComponent<Question> = props => {
   const field = props.field;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
-
-  const propertyDropdownEntries = useMemo(
-    () =>
-      Array.from(allProperties).map(([id, property]) => ({
-        text: property.name,
-        value: id,
-      })),
-    []
-  ); // memoizing values for property dropdown because they will not change
 
   const [showUnits, setShowUnits] = useState(
     (props.field.config as IntervalConfig).property !==
