@@ -155,23 +155,6 @@ context('Settings tests', () => {
 
       cy.notification({ variant: 'success', text: 'created successfully' });
 
-      let proposalWorkflowsTable = cy.get(
-        '[data-cy="proposal-workflows-table"]'
-      );
-
-      const proposalWorkflowsTableLastRow = proposalWorkflowsTable
-        .find('tr[level="0"]')
-        .last();
-
-      const lastRowText = proposalWorkflowsTableLastRow.invoke('text');
-
-      lastRowText.should('contain', name);
-      lastRowText.should('contain', description);
-
-      cy.get('[title="Edit"]')
-        .last()
-        .click();
-
       cy.get('[data-cy="connection_DRAFT_1"]').should('contain.text', 'DRAFT');
       cy.get('[data-cy="status_DRAFT_1"]').should('not.exist');
 
@@ -279,10 +262,6 @@ context('Settings tests', () => {
 
       cy.notification({ variant: 'success', text: 'created successfully' });
 
-      cy.get('[title="Edit"]')
-        .last()
-        .click();
-
       cy.get('[data-cy="status_FEASIBILITY_REVIEW_2"]')
         .focus()
         .trigger('keydown', { keyCode: spaceKeyCode })
@@ -366,6 +345,59 @@ context('Settings tests', () => {
       cy.get('.MuiTable-root tbody tr')
         .first()
         .then(element => expect(element.text()).to.contain('submitted'));
+
+      cy.logout();
+      cy.login('officer');
+
+      cy.finishedLoading();
+
+      cy.get('.MuiTable-root tbody tr')
+        .first()
+        .then(element =>
+          expect(element.text()).to.contain('FEASIBILITY_REVIEW')
+        );
+    });
+
+    it('User Officer should be able to filter proposals based on statuses', () => {
+      cy.login('user');
+
+      cy.createProposal();
+
+      cy.logout();
+
+      cy.login('officer');
+
+      cy.finishedLoading();
+
+      cy.get('.MuiTable-root tbody')
+        .first()
+        .then(element => expect(element.text()).to.contain('DRAFT'));
+
+      cy.get('.MuiTable-root tbody')
+        .first()
+        .then(element =>
+          expect(element.text()).to.contain('FEASIBILITY_REVIEW')
+        );
+
+      cy.get('[data-cy="status-filter"]').click();
+      cy.get('[role="listbox"] [data-value="2"]').click();
+
+      cy.finishedLoading();
+
+      cy.get('.MuiTable-root tbody tr')
+        .first()
+        .then(element =>
+          expect(element.text()).to.contain('FEASIBILITY_REVIEW')
+        );
+
+      cy.get('[data-cy="status-filter"]').click();
+      cy.get('[role="listbox"] [data-value="1"]').click();
+
+      cy.finishedLoading();
+
+      cy.get('.MuiTable-root tbody tr')
+        .first()
+        .then(element => expect(element.text()).to.contain('DRAFT'));
     });
 
     it('User Officer should be able to split workflow into two or more paths', () => {
