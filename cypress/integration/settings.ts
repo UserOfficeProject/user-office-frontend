@@ -22,8 +22,8 @@ context('Settings tests', () => {
     });
 
     it('User Officer should be able to create Proposal status', () => {
-      const name = faker.random.words(2);
-      const description = faker.random.words(5);
+      const name = faker.lorem.words(2);
+      const description = faker.lorem.words(5);
 
       // NOTE: Valid proposal status name is uppercase characters without spaces but underscores.
       const validName = name.toUpperCase().replace(/\s/g, '_');
@@ -59,8 +59,8 @@ context('Settings tests', () => {
     });
 
     it('User Officer should be able to update Proposal status', () => {
-      const newName = faker.random.words(2);
-      const newDescription = faker.random.words(5);
+      const newName = faker.lorem.words(2);
+      const newDescription = faker.lorem.words(5);
 
       // NOTE: Valid proposal status name is uppercase characters without spaces but underscores.
       const newValidName = newName.toUpperCase().replace(/\s/g, '_');
@@ -140,8 +140,8 @@ context('Settings tests', () => {
     });
 
     it('User Officer should be able to create proposal workflow and it should contain default DRAFT status', () => {
-      const name = faker.random.words(2);
-      const description = faker.random.words(5);
+      const name = faker.lorem.words(2);
+      const description = faker.lorem.words(5);
 
       cy.login('officer');
 
@@ -155,23 +155,6 @@ context('Settings tests', () => {
 
       cy.notification({ variant: 'success', text: 'created successfully' });
 
-      let proposalWorkflowsTable = cy.get(
-        '[data-cy="proposal-workflows-table"]'
-      );
-
-      const proposalWorkflowsTableLastRow = proposalWorkflowsTable
-        .find('tr[level="0"]')
-        .last();
-
-      const lastRowText = proposalWorkflowsTableLastRow.invoke('text');
-
-      lastRowText.should('contain', name);
-      lastRowText.should('contain', description);
-
-      cy.get('[title="Edit"]')
-        .last()
-        .click();
-
       cy.get('[data-cy="connection_DRAFT_1"]').should('contain.text', 'DRAFT');
       cy.get('[data-cy="status_DRAFT_1"]').should('not.exist');
 
@@ -179,8 +162,8 @@ context('Settings tests', () => {
     });
 
     it('User Officer should be able to update proposal workflow', () => {
-      const name = faker.random.words(2);
-      const description = faker.random.words(5);
+      const name = faker.lorem.words(2);
+      const description = faker.lorem.words(5);
 
       cy.login('officer');
 
@@ -278,10 +261,6 @@ context('Settings tests', () => {
       cy.get('[data-cy="submit"]').click();
 
       cy.notification({ variant: 'success', text: 'created successfully' });
-
-      cy.get('[title="Edit"]')
-        .last()
-        .click();
 
       cy.get('[data-cy="status_FEASIBILITY_REVIEW_2"]')
         .focus()
