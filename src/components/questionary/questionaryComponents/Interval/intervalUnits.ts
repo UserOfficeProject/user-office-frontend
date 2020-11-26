@@ -294,8 +294,8 @@ propertyList.set(IntervalPropertyId.ENERGY, {
     'btu',
     'calorie',
     'Calorie',
-    'electron volt',
-    'mega electron volt',
+    'electronvolt',
+    'megaelectronvolt',
   ],
 });
 propertyList.set(IntervalPropertyId.POWER, {
