@@ -653,9 +653,7 @@ context('Scientific evaluation panel tests', () => {
       observer.disconnect();
     });
 
-    cy.get('[data-cy="download-sep-xlsx"]')
-      .first()
-      .click();
+    cy.get('[data-cy="download-sep-xlsx"]').click();
   });
 
   it('Should be able to download SEP as Excel file', () => {
