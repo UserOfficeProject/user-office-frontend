@@ -632,8 +632,6 @@ context('Scientific evaluation panel tests', () => {
 
     cy.contains('Meeting Components').click();
 
-    cy.finishedLoading();
-
     cy.document().then(document => {
       const observer = new MutationObserver(function() {
         const [mutationList] = arguments;
@@ -654,6 +652,8 @@ context('Scientific evaluation panel tests', () => {
 
       observer.disconnect();
     });
+
+    cy.finishedLoading();
 
     cy.wait(500);
 
