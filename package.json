@@ -9,7 +9,7 @@
   "private": true,
   "dependencies": {
     "@esss-swap/duo-localisation": "^1.1.15",
-    "@esss-swap/duo-validation": "^1.1.39",
+    "@esss-swap/duo-validation": "^1.1.40",
     "@graphql-codegen/cli": "^1.17.10",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-graphql-request": "^1.17.7",
@@ -54,7 +54,7 @@
     "tinymce": "^5.4.2",
     "ts-keycode-enum": "^1.0.6",
     "typescript": "~3.9.6",
-    "use-query-params": "^1.1.8",
+    "use-query-params": "^1.1.9",
     "yup": "~0.29.3"
   },
   "proxy": "http://localhost:4000",
