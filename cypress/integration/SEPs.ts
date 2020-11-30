@@ -655,6 +655,8 @@ context('Scientific evaluation panel tests', () => {
       observer.disconnect();
     });
 
+    cy.wait(500);
+
     cy.get('[data-cy="download-sep-xlsx"]').click();
   });
 
