@@ -37,10 +37,28 @@ import orcid from 'images/orcid.png';
 
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
 
+const passwordValidationSchema = Yup.string()
+  .required(
+    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
+  )
+  .matches(
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/,
+    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
+  );
+
 const createUserValidationSchema = Yup.object().shape({
+  orcid: Yup.string().required(),
+  orcidHash: Yup.string().required(),
+  refreshToken: Yup.string().required(),
   firstname: Yup.string()
     .required()
     .min(2)
+    .max(50),
+  middlename: Yup.string()
+    .notRequired()
+    .max(50),
+  preferredname: Yup.string()
+    .notRequired()
     .max(50),
   lastname: Yup.string()
     .required()
@@ -52,6 +70,7 @@ const createUserValidationSchema = Yup.object().shape({
   email: Yup.string()
     .email()
     .required(),
+  password: passwordValidationSchema,
   birthdate: Yup.date()
     .min(new Date(1900, 1, 1), 'You are not that old')
     .test('DOB', 'You must be at least 18 years old', value => {
@@ -88,17 +107,7 @@ const createUserValidationSchema = Yup.object().shape({
     .max(30)
     .matches(phoneRegExp, 'telephone number is not valid')
     .required(),
-  telephone_alt: Yup.string().test(
-    'telephone_alt',
-    'telephone alt number is not valid',
-    value => {
-      if (!value) {
-        return true;
-      }
-
-      return phoneRegExp.test(value);
-    }
-  ),
+  telephone_alt: Yup.string().max(50),
 });
 
 const useStyles = makeStyles(theme => ({
