@@ -83,6 +83,7 @@ context('User tests', () => {
     //Contact details
     cy.get('[data-cy=telephone] input')
       .type(telephone)
+      .blur()
       .should('have.value', telephone);
 
     cy.get('[data-cy=privacy-agreement] input').click();
