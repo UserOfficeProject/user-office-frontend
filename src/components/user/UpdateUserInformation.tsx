@@ -142,9 +142,8 @@ export default function UpdateUserInformation(props: { id: number }) {
         }}
         validationSchema={updateUserValidationSchema}
       >
-        {({ isSubmitting, values, errors }) => (
+        {({ isSubmitting, values }) => (
           <Form>
-            <pre>{JSON.stringify(errors, null, 2)}</pre>
             <Typography variant="h6" gutterBottom>
               User Information
             </Typography>

@@ -262,7 +262,7 @@ const SignUp: React.FC<SignUpProps> = props => {
         }}
         validationSchema={createUserValidationSchema}
       >
-        {({ values, isSubmitting, errors }) => (
+        {({ values, isSubmitting }) => (
           <Form>
             <CssBaseline />
             <Avatar className={classes.avatar}>
@@ -643,7 +643,6 @@ const SignUp: React.FC<SignUpProps> = props => {
                   disabled={!orcData}
                 />
 
-                <pre>{JSON.stringify(errors, null, 2)}</pre>
                 <Button
                   type="submit"
                   fullWidth
