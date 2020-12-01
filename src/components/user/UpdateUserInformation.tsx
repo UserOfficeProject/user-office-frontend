@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
+import { updateUserValidationSchema } from '@esss-swap/duo-validation';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -10,7 +11,6 @@ import dateformat from 'dateformat';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { useEffect, useState, useContext } from 'react';
-import * as Yup from 'yup';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import FormikUICustomDatePicker from 'components/common/FormikUICustomDatePicker';
@@ -39,82 +39,6 @@ const useStyles = makeStyles({
     'margin-top': '16px',
     'margin-bottom': '19px',
   },
-});
-
-/**
- * TODO: remove after package is updated
- */
-const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
-const passwordValidationSchema = Yup.string()
-  .required(
-    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-  )
-  .matches(
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/,
-    'Password must contain at least 8 characters (including upper case, lower case and numbers)'
-  );
-
-const updateUserValidationSchema = Yup.object().shape({
-  orcid: Yup.string().notRequired(),
-  refreshToken: Yup.string().notRequired(),
-  firstname: Yup.string()
-    .notRequired()
-    .min(2)
-    .max(50),
-  middlename: Yup.string()
-    .notRequired()
-    .max(50),
-  preferredname: Yup.string()
-    .notRequired()
-    .max(50),
-  lastname: Yup.string()
-    .notRequired()
-    .min(2)
-    .max(50),
-  gender: Yup.string().notRequired(),
-  nationality: Yup.number().notRequired(),
-  user_title: Yup.string().notRequired(),
-  email: Yup.string()
-    .email()
-    .notRequired(),
-  password: passwordValidationSchema,
-  birthdate: Yup.date()
-    .min(new Date(1900, 1, 1), 'You are not that old')
-    .test('DOB', 'You must be at least 18 years old', value => {
-      // to keep the current behavior after @types/yup upgrade:
-      // if value is `null` or `undefined` return true explicitly
-      // because new Date(null | undefined) evaluates to `Invalid date`
-      // which return NaN for getFullYear()
-      // and Number - NaN < 18 evaluates to false
-      if (!value) {
-        return true;
-      }
-
-      const dateOfBirth = new Date(value);
-      const dateNow = new Date();
-
-      if (dateNow.getFullYear() - dateOfBirth.getFullYear() < 18) {
-        return false;
-      } else {
-        return true;
-      }
-    })
-    .required('Please specify your birth date'),
-  organisation: Yup.number().notRequired(),
-  department: Yup.string()
-    .min(2)
-    .max(50)
-    .notRequired(),
-  position: Yup.string()
-    .min(2)
-    .max(50)
-    .notRequired(),
-  telephone: Yup.string()
-    .min(2)
-    .max(30)
-    .matches(phoneRegExp, 'telephone number is not valid')
-    .notRequired(),
-  telephone_alt: Yup.string().max(50),
 });
 
 export default function UpdateUserInformation(props: { id: number }) {
@@ -167,14 +91,13 @@ export default function UpdateUserInformation(props: { id: number }) {
   }
 
   const sendUserUpdate = (variables: UpdateUserMutationVariables) => {
-    api('Updated Information').updateUser(variables);
+    return api('Updated Information').updateUser(variables);
   };
 
   return (
     <React.Fragment>
       <Formik
         validateOnChange={false}
-        validateOnBlur={false}
         initialValues={{
           username: userData.username,
           firstname: userData.firstname,
@@ -201,7 +124,7 @@ export default function UpdateUserInformation(props: { id: number }) {
           user_title: userData.user_title,
           orcid: userData.orcid,
         }}
-        onSubmit={(values, actions) => {
+        onSubmit={async (values, actions) => {
           const newValues = {
             id: props.id,
             ...values,
@@ -211,7 +134,7 @@ export default function UpdateUserInformation(props: { id: number }) {
               values.gender === 'other' ? values.othergender : values.gender,
           } as UpdateUserMutationVariables;
 
-          sendUserUpdate({
+          await sendUserUpdate({
             ...newValues,
           });
           actions.setFieldValue('oldEmail', values.email);
@@ -219,8 +142,9 @@ export default function UpdateUserInformation(props: { id: number }) {
         }}
         validationSchema={updateUserValidationSchema}
       >
-        {({ isSubmitting, values }) => (
+        {({ isSubmitting, values, errors }) => (
           <Form>
+            <pre>{JSON.stringify(errors, null, 2)}</pre>
             <Typography variant="h6" gutterBottom>
               User Information
             </Typography>
