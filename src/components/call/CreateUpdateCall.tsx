@@ -1,9 +1,8 @@
 import {
-  createCallValidationSchema,
-  updateCallValidationSchema,
+  createCallValidationSchemas,
+  updateCallValidationSchemas,
 } from '@esss-swap/duo-validation/lib/Call';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
@@ -11,13 +10,15 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
-import { Form, Formik, FormikErrors } from 'formik';
+import { Form, Formik, FormikProps } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import UOLoader from 'components/common/UOLoader';
 import { Call } from 'generated/sdk';
+import { useProposalWorkflowsData } from 'hooks/settings/useProposalWorkflowsData';
+import { useProposalsTemplates } from 'hooks/template/useProposalTemplates';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import CallGeneralInfo from './CallGeneralInfo';
@@ -58,6 +59,11 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const classes = useStyles();
+  const { templates, loadingTemplates } = useProposalsTemplates(false);
+  const {
+    proposalWorkflows,
+    loadingProposalWorkflows,
+  } = useProposalWorkflowsData();
   let isLastStep = false;
 
   const currentDayStart = new Date();
@@ -71,7 +77,14 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <CallGeneralInfo />;
+        return (
+          <CallGeneralInfo
+            templates={templates}
+            loadingTemplates={loadingTemplates}
+            proposalWorkflows={proposalWorkflows}
+            loadingProposalWorkflows={loadingProposalWorkflows}
+          />
+        );
       case 1:
         return <CallReviewsInfo />;
       case 2:
@@ -81,17 +94,25 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
     }
   };
 
-  const handleNext = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const handleNext = (formProps: FormikProps<Call>) => {
+    formProps.submitForm();
 
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
+    if (formProps.isValid) {
+      formProps.validateForm();
+      formProps.setTouched({});
+      setActiveStep(prevActiveStep => prevActiveStep + 1);
+    }
   };
 
-  const handleBack = () => {
+  const handleBack = (formProps: FormikProps<Call>) => {
+    formProps.setTouched({});
+
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-  const handleStep = (step: number) => () => {
+  const handleStep = (step: number, formProps: FormikProps<Call>) => () => {
+    formProps.setTouched({});
+
     setActiveStep(step);
   };
 
@@ -120,9 +141,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
       };
 
   const closeModal = (error: string | null | undefined, callToReturn: Call) => {
-    if (error) {
-      close(null);
-    } else {
+    if (!error) {
       close(callToReturn);
     }
   };
@@ -131,55 +150,19 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
     isLastStep = true;
   }
 
-  const showFormErrors = (errors: FormikErrors<Call>): JSX.Element | null => {
-    const errorsToShow: string[] = [];
-
-    for (const [key, value] of Object.entries(errors)) {
-      if (errors.hasOwnProperty(key)) {
-        if (value) {
-          errorsToShow.push(value.toString());
-        }
-      }
-    }
-
-    if (errorsToShow.length > 0) {
-      return (
-        <FormHelperText className={classes.formErrors}>
-          {errorsToShow.map((errorToShow, index) => (
-            <span key={index}>
-              {errorToShow}
-              <br />
-            </span>
-          ))}
-        </FormHelperText>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <>
       <Typography variant="h6">
         {call ? 'Update the call' : 'Create new call'}
       </Typography>
-      <Stepper nonLinear activeStep={activeStep} className={classes.stepper}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean; onClick: () => void } = {
-            onClick: handleStep(index),
-          };
-          const labelProps: { optional?: React.ReactNode } = {};
-
-          return (
-            <Step key={label} {...stepProps} className={classes.step}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
       <Formik
         initialValues={initialValues}
+        isInitialValid={!!call}
         onSubmit={async (values, actions): Promise<void> => {
+          if (!isLastStep) {
+            return;
+          }
+
           const { templateId, proposalWorkflowId } = values;
           if (call) {
             const data = await api('Call updated successfully!').updateCall({
@@ -206,29 +189,56 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
           actions.setSubmitting(false);
         }}
         validationSchema={
-          call ? updateCallValidationSchema : createCallValidationSchema
+          call
+            ? updateCallValidationSchemas[activeStep]
+            : createCallValidationSchemas[activeStep]
         }
       >
-        {({ errors }): JSX.Element => (
+        {(formProps): JSX.Element => (
           <Form>
+            <Stepper
+              nonLinear
+              activeStep={activeStep}
+              className={classes.stepper}
+            >
+              {steps.map((label, index) => {
+                const stepProps: {
+                  completed?: boolean;
+                  onClick: () => void;
+                } = {
+                  onClick: handleStep(index, formProps as FormikProps<Call>),
+                };
+                const labelProps: { optional?: React.ReactNode } = {};
+
+                return (
+                  <Step key={label} {...stepProps} className={classes.step}>
+                    <StepLabel {...labelProps}>{label}</StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
             {getStepContent(activeStep)}
-            {activeStep === 2 && showFormErrors(errors)}
             <ActionButtonContainer>
               <Button
                 disabled={activeStep === 0}
-                onClick={handleBack}
+                onClick={() => handleBack(formProps as FormikProps<Call>)}
                 fullWidth
                 className={classes.button}
               >
                 Back
               </Button>
               <Button
+                key={`step-button-${activeStep}`}
                 variant="contained"
                 color="primary"
                 data-cy={isLastStep ? 'submit' : 'next-step'}
                 type={isLastStep ? 'submit' : 'button'}
                 fullWidth
-                onClick={isLastStep ? () => null : handleNext}
+                onClick={() =>
+                  isLastStep
+                    ? () => null
+                    : handleNext(formProps as FormikProps<Call>)
+                }
                 className={classes.button}
                 disabled={isExecutingCall}
               >

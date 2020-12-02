@@ -9,7 +9,7 @@
   "private": true,
   "dependencies": {
     "@esss-swap/duo-localisation": "^1.1.15",
-    "@esss-swap/duo-validation": "^1.1.39",
+    "@esss-swap/duo-validation": "^1.1.41",
     "@graphql-codegen/cli": "^1.17.10",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-graphql-request": "^1.17.7",
@@ -19,7 +19,7 @@
     "@tinymce/tinymce-react": "^3.6.1",
     "@types/dateformat": "~3.0.1",
     "@types/jsonwebtoken": "~8.5.0",
-    "@types/react": "^16.9.53",
+    "@types/react": "^16.9.56",
     "@types/react-beautiful-dnd": "~11.0.5",
     "@types/react-dom": "~16.9.9",
     "@types/react-router": "~5.1.8",
@@ -54,8 +54,7 @@
     "tinymce": "^5.4.2",
     "ts-keycode-enum": "^1.0.6",
     "typescript": "~3.9.6",
-    "use-query-params": "^1.1.8",
-    "xlsx": "^0.16.8",
+    "use-query-params": "^1.1.9",
     "yup": "~0.29.3"
   },
   "proxy": "http://localhost:4000",
