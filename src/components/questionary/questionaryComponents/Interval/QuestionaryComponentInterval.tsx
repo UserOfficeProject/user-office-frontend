@@ -36,7 +36,11 @@ const useStyles = makeStyles(theme => ({
 type AcceptableUserInput = number | '';
 
 export function QuestionaryComponentInterval(props: BasicComponentProps) {
-  const { answer, errors, onComplete, touched } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched },
+  } = props;
   const {
     question: { proposalQuestionId, question },
   } = answer;
@@ -139,24 +143,14 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
         </Grid>
 
         <Grid item xs={3}>
-          {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].min}
-            </ProposalErrorLabel>
-          )}
+          {isError && <ProposalErrorLabel>{fieldError.min}</ProposalErrorLabel>}
         </Grid>
         <Grid item xs={3}>
-          {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].max}
-            </ProposalErrorLabel>
-          )}
+          {isError && <ProposalErrorLabel>{fieldError.max}</ProposalErrorLabel>}
         </Grid>
         <Grid item xs={6}>
           {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].unit}
-            </ProposalErrorLabel>
+            <ProposalErrorLabel>{fieldError.unit}</ProposalErrorLabel>
           )}
         </Grid>
       </Grid>
