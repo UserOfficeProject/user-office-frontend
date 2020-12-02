@@ -94,11 +94,11 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
     }
   };
 
-  const handleNext = (formProps: FormikProps<Call>) => {
-    formProps.submitForm();
+  const handleNext = async (formProps: FormikProps<Call>) => {
+    await formProps.submitForm();
 
     if (formProps.isValid) {
-      formProps.validateForm();
+      await formProps.validateForm();
       formProps.setTouched({});
       setActiveStep(prevActiveStep => prevActiveStep + 1);
     }

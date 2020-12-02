@@ -75,8 +75,11 @@ export default function QuestionaryStepView(props: {
         submitForm,
         validateForm,
         isSubmitting,
+        values,
+        setFieldValue,
       }) => (
         <form className={props.readonly ? classes.disabled : undefined}>
+          <pre>{JSON.stringify(values, null, 2)}</pre>
           {activeFields.map(field => {
             return (
               <div
@@ -87,7 +90,10 @@ export default function QuestionaryStepView(props: {
                   answer: field,
                   touched: touched, // for formik
                   errors: errors, // for formik
-                  onComplete: (evt: React.ChangeEvent<any>, newValue: any) => {
+                  onComplete: (
+                    evt: React.ChangeEvent<any> | string,
+                    newValue: any
+                  ) => {
                     if (field.value !== newValue) {
                       dispatch({
                         type: EventType.FIELD_CHANGED,
@@ -96,7 +102,11 @@ export default function QuestionaryStepView(props: {
                           newValue: newValue,
                         },
                       });
-                      handleChange(evt);
+                      if (typeof evt === 'string') {
+                        setFieldValue(evt, newValue, true);
+                      } else {
+                        handleChange(evt);
+                      }
                     }
                   },
                 })}

@@ -1,4 +1,5 @@
 import MenuItem from '@material-ui/core/MenuItem';
+import MuiTextField from '@material-ui/core/TextField';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
@@ -43,6 +44,27 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
       </MenuItem>
     );
 
+  if (loading) {
+    return (
+      <MuiTextField
+        label={label}
+        defaultValue="Loading..."
+        disabled
+        margin="normal"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        fullWidth
+        required={required}
+      />
+    );
+  }
+
+  const props: { value?: string } = {};
+  if (value !== undefined) {
+    props.value = value;
+  }
+
   return (
     <Field
       type="text"
@@ -57,17 +79,11 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
       fullWidth
       required={required}
       disabled={disabled}
-      value={value}
       InputProps={InputProps}
+      {...props}
     >
       {children}
-      {loading ? (
-        <MenuItem disabled key="loading">
-          Loading...
-        </MenuItem>
-      ) : (
-        menuItems
-      )}
+      {menuItems}
     </Field>
   );
 };
@@ -89,6 +105,8 @@ FormikDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  value: PropTypes.string,
+  InputProps: PropTypes.object,
 };
 
 export default FormikDropdown;
