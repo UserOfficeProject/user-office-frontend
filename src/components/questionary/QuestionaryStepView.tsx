@@ -68,95 +68,95 @@ export default function QuestionaryStepView(props: {
       onSubmit={() => {}}
       enableReinitialize={true}
     >
-      {({
-        errors,
-        touched,
-        handleChange,
-        submitForm,
-        validateForm,
-        isSubmitting,
-        values,
-        setFieldValue,
-      }) => (
-        <form className={props.readonly ? classes.disabled : undefined}>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
-          {activeFields.map(field => {
-            return (
-              <div
-                className={classes.componentWrapper}
-                key={field.question.proposalQuestionId}
-              >
-                {createQuestionaryComponent({
-                  answer: field,
-                  touched: touched, // for formik
-                  errors: errors, // for formik
-                  onComplete: (
-                    evt: React.ChangeEvent<any> | string,
-                    newValue: any
-                  ) => {
-                    if (field.value !== newValue) {
-                      dispatch({
-                        type: EventType.FIELD_CHANGED,
-                        payload: {
-                          id: field.question.proposalQuestionId,
-                          newValue: newValue,
-                        },
-                      });
-                      if (typeof evt === 'string') {
-                        setFieldValue(evt, newValue, true);
-                      } else {
-                        handleChange(evt);
+      {formikProps => {
+        const {
+          handleChange,
+          submitForm,
+          validateForm,
+          setFieldValue,
+          isSubmitting,
+        } = formikProps;
+
+        return (
+          <form className={props.readonly ? classes.disabled : undefined}>
+            {activeFields.map(field => {
+              return (
+                <div
+                  className={classes.componentWrapper}
+                  key={field.question.proposalQuestionId}
+                >
+                  {createQuestionaryComponent({
+                    answer: field,
+                    formikProps,
+                    onComplete: (
+                      evt: React.ChangeEvent<any> | string,
+                      newValue: any
+                    ) => {
+                      if (field.value !== newValue) {
+                        dispatch({
+                          type: EventType.FIELD_CHANGED,
+                          payload: {
+                            id: field.question.proposalQuestionId,
+                            newValue: newValue,
+                          },
+                        });
+
+                        if (typeof evt === 'string') {
+                          setFieldValue(evt, newValue, true);
+                        } else {
+                          handleChange(evt);
+                        }
+                      }
+                    },
+                  })}
+                </div>
+              );
+            })}
+            <NavigationFragment
+              disabled={props.readonly}
+              back={{
+                callback: () => {
+                  dispatch({ type: EventType.BACK_CLICKED });
+                },
+                disabled: state.stepIndex === 0,
+              }}
+              reset={{
+                callback: () => dispatch({ type: EventType.RESET_CLICKED }),
+                disabled: !state.isDirty,
+              }}
+              save={
+                questionaryStep.isCompleted
+                  ? undefined
+                  : {
+                      callback: () => {
+                        dispatch({
+                          type: EventType.SAVE_CLICKED,
+                          payload: { answers: activeFields, topicId: topicId },
+                        });
+                      },
+                      disabled: !props.state.isDirty,
+                    }
+              }
+              saveAndNext={{
+                callback: () => {
+                  submitFormAsync(submitForm, validateForm).then(
+                    (isValid: boolean) => {
+                      if (isValid) {
+                        dispatch({
+                          type: EventType.SAVE_AND_CONTINUE_CLICKED,
+                          payload: { answers: activeFields, topicId: topicId },
+                        });
                       }
                     }
-                  },
-                })}
-              </div>
-            );
-          })}
-          <NavigationFragment
-            disabled={props.readonly}
-            back={{
-              callback: () => {
-                dispatch({ type: EventType.BACK_CLICKED });
-              },
-              disabled: state.stepIndex === 0,
-            }}
-            reset={{
-              callback: () => dispatch({ type: EventType.RESET_CLICKED }),
-              disabled: !state.isDirty,
-            }}
-            save={
-              questionaryStep.isCompleted
-                ? undefined
-                : {
-                    callback: () => {
-                      dispatch({
-                        type: EventType.SAVE_CLICKED,
-                        payload: { answers: activeFields, topicId: topicId },
-                      });
-                    },
-                    disabled: !props.state.isDirty,
-                  }
-            }
-            saveAndNext={{
-              callback: () => {
-                submitFormAsync(submitForm, validateForm).then(
-                  (isValid: boolean) => {
-                    if (isValid) {
-                      dispatch({
-                        type: EventType.SAVE_AND_CONTINUE_CLICKED,
-                        payload: { answers: activeFields, topicId: topicId },
-                      });
-                    }
-                  }
-                );
-              },
-            }}
-            isLoading={isSubmitting}
-          />
-          <ErrorFocus />
-        </form>
-      )}
+                  );
+                },
+              }}
+              isLoading={isSubmitting}
+            />
+            <ErrorFocus />
+          </form>
+        );
+      }}
     </Formik>
   );
 }
