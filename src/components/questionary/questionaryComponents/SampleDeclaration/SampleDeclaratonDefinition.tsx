@@ -25,5 +25,5 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
 
     return schema;
   },
-  getYupInitialValue: answer => answer.value || [],
+  getYupInitialValue: ({ answer }) => answer.value || [],
 };

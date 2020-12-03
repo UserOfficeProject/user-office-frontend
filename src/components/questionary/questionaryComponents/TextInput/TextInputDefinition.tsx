@@ -20,5 +20,5 @@ export const textInputDefinition: QuestionaryComponentDefinition = {
   icon: <ShortTextIcon />,
   answerRenderer: ({ answer }) => <span>{answer.value}</span>,
   createYupValidationSchema: createTextInputValidationSchema,
-  getYupInitialValue: answer => answer.value || '',
+  getYupInitialValue: ({ answer }) => answer.value || '',
 };

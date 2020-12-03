@@ -20,5 +20,5 @@ export const dateDefinition: QuestionaryComponentDefinition = {
   icon: <CheckBoxOutlineBlankIcon />,
   answerRenderer: ({ answer }) => <span>{answer.value}</span>,
   createYupValidationSchema: createDateValidationSchema,
-  getYupInitialValue: answer => answer.value || '',
+  getYupInitialValue: ({ answer }) => answer.value || '',
 };

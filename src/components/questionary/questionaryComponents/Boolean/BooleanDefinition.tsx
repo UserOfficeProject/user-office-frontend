@@ -20,5 +20,5 @@ export const booleanDefinition: QuestionaryComponentDefinition = {
   icon: <CheckBoxOutlineBlankIcon />,
   answerRenderer: ({ answer }) => <span>{answer.value}</span>,
   createYupValidationSchema: createBooleanValidationSchema,
-  getYupInitialValue: answer => answer.value || false,
+  getYupInitialValue: ({ answer }) => answer.value || false,
 };

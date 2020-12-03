@@ -34,7 +34,8 @@ const useStyles = makeStyles({
 });
 
 export const createFormikConfigObjects = (
-  answers: Answer[]
+  answers: Answer[],
+  state: QuestionarySubmissionState
 ): { validationSchema: any; initialValues: any } => {
   const validationSchema: any = {};
   const initialValues: any = {};
@@ -49,7 +50,7 @@ export const createFormikConfigObjects = (
       ] = definition.createYupValidationSchema(answer);
       initialValues[
         answer.question.proposalQuestionId
-      ] = definition.getYupInitialValue(answer);
+      ] = definition.getYupInitialValue({ answer, state });
     }
   });
 
@@ -83,7 +84,8 @@ export default function QuestionaryStepView(props: {
   }
 
   const { initialValues, validationSchema } = createFormikConfigObjects(
-    activeFields
+    activeFields,
+    state
   );
 
   return (
@@ -114,7 +116,7 @@ export default function QuestionaryStepView(props: {
                     formikProps,
                     onComplete: (
                       evt: React.ChangeEvent<any>,
-                      newValue: any
+                      newValue: Answer['value']
                     ) => {
                       if (field.value !== newValue) {
                         dispatch({
