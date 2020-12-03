@@ -158,7 +158,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
       <Formik
         initialValues={initialValues}
         isInitialValid={!!call}
-        onSubmit={async (values, actions): Promise<void> => {
+        onSubmit={async (values): Promise<void> => {
           if (!isLastStep) {
             return;
           }
@@ -185,8 +185,6 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
 
             closeModal(data.createCall.error, data.createCall.call as Call);
           }
-
-          actions.setSubmitting(false);
         }}
         validationSchema={
           call

@@ -120,7 +120,7 @@ export default function SignInSide() {
     <PhotoInSide>
       <Formik
         initialValues={{ email: '', password: '' }}
-        onSubmit={async values => {
+        onSubmit={async (values): Promise<void> => {
           await requestToken(values);
         }}
         validationSchema={signInValidationSchema}
@@ -167,8 +167,7 @@ export default function SignInSide() {
                 data-cy="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting && <UOLoader size={14} />}
-                Sign In
+                {isSubmitting ? <UOLoader size={24} /> : 'Sign In'}
               </Button>
               <Grid container>
                 <Grid item xs>
