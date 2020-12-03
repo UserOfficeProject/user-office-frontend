@@ -92,32 +92,35 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
   const removeProposalFromInstrument = async () => {
     if (
-      proposalAndInstrumentId.instrumentId &&
-      proposalAndInstrumentId.proposalId
+      !proposalAndInstrumentId.instrumentId ||
+      !proposalAndInstrumentId.proposalId
     ) {
-      const result = await api(
-        'Proposal removed from the instrument successfully!'
-      ).removeProposalFromInstrument({
-        proposalId: proposalAndInstrumentId.proposalId,
-        instrumentId: proposalAndInstrumentId.instrumentId,
-      });
-
-      const isError = !!result.removeProposalFromInstrument.error;
-
-      if (!isError) {
-        setProposalsData(
-          proposalsData.map(prop => {
-            if (prop.id === proposalAndInstrumentId.proposalId) {
-              prop.instrumentName = null;
-            }
-
-            return prop;
-          })
-        );
-      }
-
-      setProposalAndInstrumentId({ proposalId: null, instrumentId: null });
+      return;
     }
+
+    const result = await api(
+      'Proposal removed from the instrument successfully!'
+    ).removeProposalFromInstrument({
+      proposalId: proposalAndInstrumentId.proposalId,
+      instrumentId: proposalAndInstrumentId.instrumentId,
+    });
+
+    const isError = !!result.removeProposalFromInstrument.error;
+
+    if (!isError) {
+      setProposalsData(
+        proposalsData.map(prop => {
+          if (prop.id === proposalAndInstrumentId.proposalId) {
+            prop.instrumentName = null;
+            prop.instrumentId = null;
+          }
+
+          return prop;
+        })
+      );
+    }
+
+    setProposalAndInstrumentId({ proposalId: null, instrumentId: null });
   };
 
   const RemoveScienceIcon = (): JSX.Element => <ScienceIconRemove />;
@@ -360,6 +363,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               )
             ) {
               prop.instrumentName = instrument.name;
+              prop.instrumentId = instrument.id;
             }
 
             return prop;
