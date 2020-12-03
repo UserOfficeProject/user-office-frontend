@@ -44,6 +44,12 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
       </MenuItem>
     );
 
+  /**
+   * Looks like if the items for a select are updated
+   * after the  select field was mounted
+   * you will get warning about out of range values.
+   * To fix that just avoid mounting the real select until it's loaded
+   */
   if (loading) {
     return (
       <MuiTextField
@@ -61,6 +67,9 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
   }
 
   const props: { value?: string } = {};
+  // Formik v2 uses undefined as a real value instead of ignoring it
+  // so if `value` wasn't provided don't even include it as a property
+  // otherwise it will generate warnings
   if (value !== undefined) {
     props.value = value;
   }
