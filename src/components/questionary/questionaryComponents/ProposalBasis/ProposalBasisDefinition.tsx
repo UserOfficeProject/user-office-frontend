@@ -1,8 +1,6 @@
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import React from 'react';
-
 import { DataType } from 'generated/sdk';
-
+import React from 'react';
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import { QuestionaryComponentProposalBasis } from './QuestionaryComponentProposalBasis';
 import { QuestionProposalBasisForm } from './QuestionProposalBasisForm';
@@ -17,6 +15,9 @@ export const proposalBasisDefinition: QuestionaryComponentDefinition = {
   readonly: true,
   creatable: false,
   icon: <QuestionAnswerIcon />,
-  answerRenderer: ({ answer }) => null,
+  answerRenderer: () => null,
   createYupValidationSchema: null,
+  getYupInitialValue: () => {
+    return { title: '', abstract: '' };
+  },
 };

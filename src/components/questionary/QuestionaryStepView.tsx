@@ -5,8 +5,7 @@ import * as Yup from 'yup';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
 import UOLoader from 'components/common/UOLoader';
-import { createFormikConfigObjects } from 'components/proposal/createFormikConfigObjects';
-import { QuestionaryStep } from 'generated/sdk';
+import { Answer, QuestionaryStep } from 'generated/sdk';
 import {
   areDependenciesSatisfied,
   getQuestionaryStepByTopicId as getStepByTopicId,
@@ -19,7 +18,10 @@ import {
 import submitFormAsync from 'utils/FormikAsyncFormHandler';
 
 import NavigationFragment from './NavigationFragment';
-import { createQuestionaryComponent } from './QuestionaryComponentRegistry';
+import {
+  createQuestionaryComponent,
+  getQuestionaryComponentDefinition,
+} from './QuestionaryComponentRegistry';
 
 const useStyles = makeStyles({
   componentWrapper: {
@@ -30,6 +32,29 @@ const useStyles = makeStyles({
     opacity: 0.7,
   },
 });
+
+export const createFormikConfigObjects = (
+  answers: Answer[]
+): { validationSchema: any; initialValues: any } => {
+  const validationSchema: any = {};
+  const initialValues: any = {};
+
+  answers.forEach(answer => {
+    const definition = getQuestionaryComponentDefinition(
+      answer.question.dataType
+    );
+    if (definition.createYupValidationSchema) {
+      validationSchema[
+        answer.question.proposalQuestionId
+      ] = definition.createYupValidationSchema(answer);
+      initialValues[
+        answer.question.proposalQuestionId
+      ] = definition.getYupInitialValue(answer);
+    }
+  });
+
+  return { initialValues, validationSchema };
+};
 
 export default function QuestionaryStepView(props: {
   state: QuestionarySubmissionState;

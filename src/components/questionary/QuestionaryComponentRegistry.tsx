@@ -44,6 +44,7 @@ export interface QuestionaryComponentDefinition {
   ) => JSX.Element | null;
   readonly answerRenderer: (props: { answer: Answer }) => JSX.Element | null;
   readonly createYupValidationSchema: ((field: Answer) => object) | null;
+  readonly getYupInitialValue: (answer: Answer) => any;
   readonly readonly: boolean; // if true then no answer will be produced
   readonly creatable: boolean; // if true then the question can be added to a questionary
   readonly icon: JSX.Element;

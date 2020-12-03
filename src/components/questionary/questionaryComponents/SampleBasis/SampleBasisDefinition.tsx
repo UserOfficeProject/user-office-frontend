@@ -20,4 +20,5 @@ export const sampleBasisDefinition: QuestionaryComponentDefinition = {
   icon: <QuestionAnswerIcon />,
   answerRenderer: ({ answer }) => null,
   createYupValidationSchema: createSampleBasisValidationSchema,
+  getYupInitialValue: () => '',
 };
