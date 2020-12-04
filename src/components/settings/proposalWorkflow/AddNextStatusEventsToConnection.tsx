@@ -72,9 +72,7 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
     <Container component="main" maxWidth="md">
       <Formik
         initialValues={initialValues}
-        onSubmit={async (values, actions): Promise<void> => {
-          actions.setSubmitting(false);
-
+        onSubmit={async (values): Promise<void> => {
           addNextStatusEventsToConnection(values.selectedNextStatusEvents);
           close();
         }}
