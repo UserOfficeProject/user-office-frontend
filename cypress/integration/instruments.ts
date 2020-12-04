@@ -144,7 +144,7 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy="assign-proposals-to-instrument"]')
       .first()
-      .trigger('click');
+      .click();
 
     cy.get("[id='mui-component-select-selectedInstrumentId']")
       .first()
@@ -174,7 +174,7 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy="assign-proposals-to-instrument"]')
       .first()
-      .trigger('click');
+      .click();
 
     cy.get("[id='mui-component-select-selectedInstrumentId']")
       .first()
