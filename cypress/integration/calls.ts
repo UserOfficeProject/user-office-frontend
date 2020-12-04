@@ -48,7 +48,8 @@ context('Calls tests', () => {
 
     cy.get('[data-cy="next-step"]').click();
 
-    cy.contains('Short Code is required');
+    cy.get('[data-cy="short-code"] input').should('be.focused');
+    cy.get('[data-cy="short-code"] input:invalid').should('have.length', 1);
 
     cy.get('[data-cy=short-code] input')
       .type(shortCode)
@@ -75,7 +76,8 @@ context('Calls tests', () => {
 
     cy.get('[data-cy="submit"]').should('not.exist');
 
-    cy.contains('Survey comment is required');
+    cy.get('[data-cy="survey-comment"] input').should('be.focused');
+    cy.get('[data-cy="survey-comment"] input:invalid').should('have.length', 1);
 
     cy.get('[data-cy=survey-comment] input').type(
       faker.random.word().split(' ')[0]
@@ -85,7 +87,8 @@ context('Calls tests', () => {
 
     cy.get('[data-cy="submit"]').click();
 
-    cy.get('[data-cy=cycle-comment] input').should('be.focused');
+    cy.get('[data-cy="cycle-comment"] input').should('be.focused');
+    cy.get('[data-cy="cycle-comment"] input:invalid').should('have.length', 1);
   });
 
   it('A user-officer should be able to create a call', () => {
