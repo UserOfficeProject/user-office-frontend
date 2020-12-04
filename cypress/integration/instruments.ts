@@ -123,6 +123,10 @@ context('Instrument tests', () => {
   it('User Officer should be able to assign and unassign instrument to proposal without page refresh', () => {
     cy.login('officer');
 
+    cy.contains('Proposals').click();
+
+    cy.finishedLoading();
+
     cy.get('tbody [type="checkbox"]')
       .first()
       .check();
@@ -138,9 +142,9 @@ context('Instrument tests', () => {
       text: 'Proposal removed from the instrument successfully!',
     });
 
-    cy.get("[title='Assign proposals to instrument']")
+    cy.get('[data-cy="assign-proposals-to-instrument"]')
       .first()
-      .click();
+      .trigger('click');
 
     cy.get("[id='mui-component-select-selectedInstrumentId']")
       .first()
@@ -157,8 +161,6 @@ context('Instrument tests', () => {
       text: 'Proposal/s assigned to the selected instrument',
     });
 
-    cy.get('[title="Remove assigned instrument"]').should('exist');
-
     cy.get('[title="Remove assigned instrument"]')
       .first()
       .click();
@@ -170,9 +172,9 @@ context('Instrument tests', () => {
       text: 'Proposal removed from the instrument successfully!',
     });
 
-    cy.get("[title='Assign proposals to instrument']")
+    cy.get('[data-cy="assign-proposals-to-instrument"]')
       .first()
-      .click();
+      .trigger('click');
 
     cy.get("[id='mui-component-select-selectedInstrumentId']")
       .first()

@@ -384,7 +384,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const DeleteIcon = (): JSX.Element => <Delete />;
   const GroupWorkIcon = (): JSX.Element => <GroupWork />;
   const EmailIcon = (): JSX.Element => <Email />;
-  const AddScienceIcon = (): JSX.Element => <ScienceIconAdd />;
+  const AddScienceIcon = (props?: any): JSX.Element => (
+    <ScienceIconAdd {...props} />
+  );
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
   const preselectedProposalsData =
@@ -542,7 +544,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
             position: 'toolbarOnSelect',
           },
           {
-            icon: AddScienceIcon,
+            icon: AddScienceIcon.bind(null, {
+              'data-cy': 'assign-proposals-to-instrument',
+            }),
             tooltip: 'Assign proposals to instrument',
             onClick: (event, rowData): void => {
               setOpenInstrumentAssignment(true);
