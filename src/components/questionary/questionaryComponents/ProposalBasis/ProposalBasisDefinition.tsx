@@ -5,7 +5,7 @@ import { DataType } from 'generated/sdk';
 import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
-import { createProposalBasisValidationSchema } from './proposalBasisValidationSchema';
+import { createProposalBasisValidationSchema } from './createProposalBasisValidationSchema';
 import { QuestionaryComponentProposalBasis } from './QuestionaryComponentProposalBasis';
 import { QuestionProposalBasisForm } from './QuestionProposalBasisForm';
 import { QuestionTemplateRelationProposalBasisForm } from './QuestionTemplateRelationProposalBasisForm';
