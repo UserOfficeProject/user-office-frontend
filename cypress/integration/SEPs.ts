@@ -759,4 +759,35 @@ context('Scientific evaluation panel tests', () => {
         expect(element.text()).to.be.equal('No records to display');
       });
   });
+
+  it('Officer should be able to remove assigned SEP Chair and SEP Secretary from existing SEP', () => {
+    cy.login('officer');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .eq(1)
+      .click();
+
+    cy.contains('Members').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Remove SEP Chair"]').click();
+
+    cy.get('[data-cy="confirm-yes"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'SEP member removed successfully',
+    });
+
+    cy.get('[title="Remove SEP Secretary"]').click();
+
+    cy.get('[data-cy="confirm-yes"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'SEP member removed successfully',
+    });
+  });
 });
