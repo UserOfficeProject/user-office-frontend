@@ -1,6 +1,6 @@
 import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { ErrorMessage, Field } from 'formik';
+import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
 
@@ -13,7 +13,7 @@ import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActi
 import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { EventType } from 'models/QuestionarySubmissionState';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   disabled: {
     pointerEvents: 'none',
     opacity: 0.7,
@@ -22,18 +22,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: '30px',
     marginBottom: '30px',
   },
-  error: {
-    color: theme.palette.error.main,
-    marginRight: '10px',
-  },
-}));
+});
 
 function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   const {
     answer: {
       question: { proposalQuestionId },
     },
-    formikProps,
   } = props;
 
   const classes = useStyles();
@@ -120,7 +115,6 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
       </Grid>
       <ProposalParticipant
         userChanged={(user: BasicUserDetails) => {
-          formikProps.setFieldValue(`${proposalQuestionId}.proposer`, user.id);
           dispatch({
             type: EventType.PROPOSAL_MODIFIED,
             payload: { proposal: { ...state.proposal, proposer: user } },
@@ -133,10 +127,6 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
       <ProposalParticipants
         error={false} // FIXME
         setUsers={(users: BasicUserDetails[]) => {
-          formikProps.setFieldValue(
-            `${proposalQuestionId}.users`,
-            users.map(user => user.id)
-          );
           dispatch({
             type: EventType.PROPOSAL_MODIFIED,
             payload: { proposal: { ...state.proposal, users: users } },
@@ -145,11 +135,6 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
         // quickfix for material table changing immutable state
         // https://github.com/mbrn/material-table/issues/666
         users={JSON.parse(JSON.stringify(users))}
-      />
-      <ErrorMessage
-        name={`${proposalQuestionId}.users`}
-        className={classes.error}
-        component="span"
       />
     </div>
   );
