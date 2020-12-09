@@ -12,7 +12,7 @@ function SampleTemplatesTable(props: SampleTemplatesTableProps) {
   const columns: Column<SampleTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# samples', field: 'proposalCount' },
+    { title: '# samples', field: 'questionaryCount' },
   ];
 
   return (
@@ -34,7 +34,7 @@ interface SampleTemplatesTableProps {
   dataProvider: () => Promise<
     Pick<
       ProposalTemplate,
-      'templateId' | 'name' | 'description' | 'isArchived'
+      'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
     >[]
   >;
   confirm: WithConfirmType;

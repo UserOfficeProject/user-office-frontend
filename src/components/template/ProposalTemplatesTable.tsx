@@ -79,7 +79,7 @@ function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
   const columns: Column<ProposalTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# proposals', render: rowData => rowData.proposalCount || 0 },
+    { title: '# proposals', field: 'questionaryCount' },
     {
       title: '# calls',
       field: 'callCount',
@@ -121,7 +121,7 @@ interface ProposalTemplatesTableProps {
       | 'description'
       | 'isArchived'
       | 'callCount'
-      | 'proposalCount'
+      | 'questionaryCount'
     >[]
   >;
   confirm: WithConfirmType;
