@@ -7,15 +7,13 @@ import List from '@material-ui/core/List';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
-import { Route, Switch } from 'react-router-dom';
-
 import { UserContext } from 'context/UserContextProvider';
 import { PageName, UserRole } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
 import { useCallsData } from 'hooks/call/useCallsData';
-
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import AppToolbar from './AppToolbar/AppToolbar';
 import CallPage from './call/CallPage';
 import Can, { useCheckAccess } from './common/Can';
@@ -39,8 +37,10 @@ import SEPsPage from './SEP/SEPsPage';
 import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
+import ShipmentsPage from './shipments/ShipmentsPage';
 import ProposalTemplates from './template/ProposalTemplates';
 import SampleTemplatesPage from './template/SampleTemplates';
+import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
@@ -213,6 +213,10 @@ const Dashboard: React.FC = () => {
             component={SampleTemplatesPage}
           />
           <Route
+            path="/ShipmentDeclarationTemplates"
+            component={ShipmentTemplatesPage}
+          />
+          <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
           />
@@ -237,6 +241,9 @@ const Dashboard: React.FC = () => {
           )}
           {(isSampleSafetyReviewer || isUserOfficer) && (
             <Route path="/SampleSafety" component={SampleSafetyPage} />
+          )}
+          {isUserOfficer && (
+            <Route path="/Shipments" component={ShipmentsPage} />
           )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}

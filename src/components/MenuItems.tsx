@@ -13,6 +13,7 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import Help from '@material-ui/icons/Help';
 import InboxIcon from '@material-ui/icons/Inbox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import NoteAdd from '@material-ui/icons/NoteAdd';
 import People from '@material-ui/icons/People';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
@@ -22,7 +23,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
-import { UserRole, Call } from 'generated/sdk';
+import { Call, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
@@ -118,6 +119,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
       </ListItem>
       <TemplateMenuListItem />
       <SamplesMenuListItem />
+      <ShipmentMenuListItem />
       <SettingsMenuListItem />
     </div>
   );
@@ -294,6 +296,15 @@ const TemplateMenuListItem = () => {
             title="Sample declaration templates"
           />
         </ListItem>
+        <ListItem component={NavLink} to="/ShipmentDeclarationTemplates" button>
+          <ListItemIcon>
+            <LocalShippingIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Shipment declaration"
+            title="Shipment declaration templates"
+          />
+        </ListItem>
       </Collapse>
     </>
   );
@@ -306,6 +317,17 @@ const SamplesMenuListItem = () => {
         <BoxIcon />
       </ListItemIcon>
       <ListItemText primary="Sample safety" />
+    </ListItem>
+  );
+};
+
+const ShipmentMenuListItem = () => {
+  return (
+    <ListItem component={NavLink} to="/Shipments" button>
+      <ListItemIcon>
+        <LocalShippingIcon />
+      </ListItemIcon>
+      <ListItemText primary="Sample shipments" />
     </ListItem>
   );
 };
