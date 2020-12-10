@@ -38,7 +38,7 @@ export const QuestionTemplateRelationFormShell = (props: {
   dispatch: React.Dispatch<Event>;
   closeMe: Function;
   template: Template;
-  children: (
+  children?: (
     formikProps: FormikProps<QuestionTemplateRelation>
   ) => React.ReactNode;
 }) => {
@@ -82,7 +82,7 @@ export const QuestionTemplateRelationFormShell = (props: {
       >
         {formikProps => (
           <Form style={{ flexGrow: 1 }}>
-            {props.children(formikProps)}
+            {props.children?.(formikProps)}
             <ActionButtonContainer>
               <Button
                 type="button"

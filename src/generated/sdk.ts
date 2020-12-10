@@ -189,7 +189,8 @@ export enum DataType {
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
   SAMPLE_BASIS = 'SAMPLE_BASIS',
   PROPOSAL_BASIS = 'PROPOSAL_BASIS',
-  INTERVAL = 'INTERVAL'
+  INTERVAL = 'INTERVAL',
+  SHIPMENT_BASIS = 'SHIPMENT_BASIS'
 }
 
 export type DateConfig = {
@@ -258,7 +259,6 @@ export enum Event {
   SEP_UPDATED = 'SEP_UPDATED',
   SEP_MEMBERS_ASSIGNED = 'SEP_MEMBERS_ASSIGNED',
   SEP_MEMBER_REMOVED = 'SEP_MEMBER_REMOVED',
-  SEP_PROPOSAL_ASSIGNED = 'SEP_PROPOSAL_ASSIGNED',
   SEP_PROPOSAL_REMOVED = 'SEP_PROPOSAL_REMOVED',
   SEP_MEMBER_ASSIGNED_TO_PROPOSAL = 'SEP_MEMBER_ASSIGNED_TO_PROPOSAL',
   SEP_MEMBER_REMOVED_FROM_PROPOSAL = 'SEP_MEMBER_REMOVED_FROM_PROPOSAL',
@@ -286,7 +286,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubtemplateConfig | ProposalBasisConfig | IntervalConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubtemplateConfig | ProposalBasisConfig | IntervalConfig | ShipmentBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -1131,7 +1131,6 @@ export type ProposalResponseWrap = {
 
 export type ProposalsFilter = {
   text?: Maybe<Scalars['String']>;
-  templateIds?: Maybe<Array<Scalars['Int']>>;
   questionaryIds?: Maybe<Array<Scalars['Int']>>;
   callId?: Maybe<Scalars['Int']>;
   instrumentId?: Maybe<Scalars['Int']>;
@@ -1173,7 +1172,7 @@ export type ProposalTemplate = {
   isArchived: Scalars['Boolean'];
   steps: Array<TemplateStep>;
   complementaryQuestions: Array<Question>;
-  proposalCount: Scalars['Int'];
+  questionaryCount: Scalars['Int'];
   callCount: Scalars['Int'];
 };
 
@@ -1710,6 +1709,13 @@ export type SePsQueryResult = {
   seps: Array<Sep>;
 };
 
+export type ShipmentBasisConfig = {
+  __typename?: 'ShipmentBasisConfig';
+  small_label: Scalars['String'];
+  required: Scalars['Boolean'];
+  tooltip: Scalars['String'];
+};
+
 export type SubtemplateConfig = {
   __typename?: 'SubtemplateConfig';
   maxEntries: Maybe<Scalars['Int']>;
@@ -1758,6 +1764,7 @@ export type Template = {
   isArchived: Scalars['Boolean'];
   steps: Array<TemplateStep>;
   complementaryQuestions: Array<Question>;
+  questionaryCount: Scalars['Int'];
 };
 
 export type TemplateCategory = {
@@ -1768,7 +1775,8 @@ export type TemplateCategory = {
 
 export enum TemplateCategoryId {
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
-  SAMPLE_DECLARATION = 'SAMPLE_DECLARATION'
+  SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
+  SHIPMENT_DECLARATION = 'SHIPMENT_DECLARATION'
 }
 
 export type TemplateResponseWrap = {
@@ -3029,6 +3037,9 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'IntervalConfig' }
     & FieldConfigIntervalConfigFragment
+  ) | (
+    { __typename?: 'ShipmentBasisConfig' }
+    & FieldConfigShipmentBasisConfigFragment
   ), dependency: Maybe<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -3836,7 +3847,12 @@ type FieldConfigIntervalConfigFragment = (
   & Pick<IntervalConfig, 'property' | 'units' | 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment;
+type FieldConfigShipmentBasisConfigFragment = (
+  { __typename?: 'ShipmentBasisConfig' }
+  & Pick<ShipmentBasisConfig, 'small_label' | 'required' | 'tooltip'>
+);
+
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigShipmentBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -3871,6 +3887,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'IntervalConfig' }
     & FieldConfigIntervalConfigFragment
+  ) | (
+    { __typename?: 'ShipmentBasisConfig' }
+    & FieldConfigShipmentBasisConfigFragment
   ) }
 );
 
@@ -3910,6 +3929,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'IntervalConfig' }
     & FieldConfigIntervalConfigFragment
+  ) | (
+    { __typename?: 'ShipmentBasisConfig' }
+    & FieldConfigShipmentBasisConfigFragment
   ), dependency: Maybe<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -3978,7 +4000,7 @@ export type GetProposalTemplatesQuery = (
   { __typename?: 'Query' }
   & { proposalTemplates: Maybe<Array<(
     { __typename?: 'ProposalTemplate' }
-    & Pick<ProposalTemplate, 'templateId' | 'name' | 'description' | 'isArchived' | 'proposalCount' | 'callCount'>
+    & Pick<ProposalTemplate, 'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount' | 'callCount'>
   )>> }
 );
 
@@ -4015,7 +4037,7 @@ export type GetTemplatesQuery = (
   { __typename?: 'Query' }
   & { templates: Maybe<Array<(
     { __typename?: 'Template' }
-    & Pick<Template, 'templateId' | 'name' | 'description' | 'isArchived'>
+    & Pick<Template, 'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'>
   )>> }
 );
 
@@ -4653,6 +4675,11 @@ export const FieldConfigFragmentDoc = gql`
     htmlQuestion
     isHtmlQuestion
     isCounterHidden
+  }
+  ... on ShipmentBasisConfig {
+    small_label
+    required
+    tooltip
   }
 }
     `;
@@ -6037,7 +6064,7 @@ export const GetProposalTemplatesDocument = gql`
     name
     description
     isArchived
-    proposalCount
+    questionaryCount
     callCount
   }
 }
@@ -6064,6 +6091,7 @@ export const GetTemplatesDocument = gql`
     name
     description
     isArchived
+    questionaryCount
   }
 }
     `;
