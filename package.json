@@ -54,7 +54,7 @@
     "tinymce": "^5.4.2",
     "typescript": "~3.9.6",
     "use-query-params": "^1.1.9",
-    "yup": "~0.29.3"
+    "yup": "~0.30.0"
   },
   "proxy": "http://localhost:4000",
   "scripts": {
