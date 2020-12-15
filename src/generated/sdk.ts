@@ -258,7 +258,6 @@ export enum Event {
   SEP_UPDATED = 'SEP_UPDATED',
   SEP_MEMBERS_ASSIGNED = 'SEP_MEMBERS_ASSIGNED',
   SEP_MEMBER_REMOVED = 'SEP_MEMBER_REMOVED',
-  SEP_PROPOSAL_ASSIGNED = 'SEP_PROPOSAL_ASSIGNED',
   SEP_PROPOSAL_REMOVED = 'SEP_PROPOSAL_REMOVED',
   SEP_MEMBER_ASSIGNED_TO_PROPOSAL = 'SEP_MEMBER_ASSIGNED_TO_PROPOSAL',
   SEP_MEMBER_REMOVED_FROM_PROPOSAL = 'SEP_MEMBER_REMOVED_FROM_PROPOSAL',
@@ -452,6 +451,8 @@ export type Mutation = {
   createUser: UserResponseWrap;
   updateUser: UserResponseWrap;
   updateUserRoles: UserResponseWrap;
+  setUserEmailVerified: UserResponseWrap;
+  setUserNotPlaceholder: UserResponseWrap;
   addClientLog: SuccessResponseWrap;
   applyPatches: PrepareDbResponseWrap;
   cloneSample: SampleResponseWrap;
@@ -881,6 +882,16 @@ export type MutationUpdateUserArgs = {
 export type MutationUpdateUserRolesArgs = {
   id: Scalars['Int'];
   roles?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type MutationSetUserEmailVerifiedArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationSetUserNotPlaceholderArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -4289,7 +4300,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { user: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid'>
+    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid' | 'emailVerified' | 'placeholder'>
   )> }
 );
 
@@ -4412,6 +4423,32 @@ export type SelectRoleMutation = (
   & { selectRole: (
     { __typename?: 'TokenResponseWrap' }
     & Pick<TokenResponseWrap, 'token' | 'error'>
+  ) }
+);
+
+export type SetUserEmailVerifiedMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type SetUserEmailVerifiedMutation = (
+  { __typename?: 'Mutation' }
+  & { setUserEmailVerified: (
+    { __typename?: 'UserResponseWrap' }
+    & Pick<UserResponseWrap, 'error'>
+  ) }
+);
+
+export type SetUserNotPlaceholderMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type SetUserNotPlaceholderMutation = (
+  { __typename?: 'Mutation' }
+  & { setUserNotPlaceholder: (
+    { __typename?: 'UserResponseWrap' }
+    & Pick<UserResponseWrap, 'error'>
   ) }
 );
 
@@ -6228,6 +6265,8 @@ export const GetUserDocument = gql`
     telephone
     telephone_alt
     orcid
+    emailVerified
+    placeholder
   }
 }
     `;
@@ -6323,6 +6362,20 @@ export const SelectRoleDocument = gql`
     mutation selectRole($token: String!, $selectedRoleId: Int!) {
   selectRole(token: $token, selectedRoleId: $selectedRoleId) {
     token
+    error
+  }
+}
+    `;
+export const SetUserEmailVerifiedDocument = gql`
+    mutation setUserEmailVerified($id: Int!) {
+  setUserEmailVerified(id: $id) {
+    error
+  }
+}
+    `;
+export const SetUserNotPlaceholderDocument = gql`
+    mutation setUserNotPlaceholder($id: Int!) {
+  setUserNotPlaceholder(id: $id) {
     error
   }
 }
@@ -6731,6 +6784,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     selectRole(variables: SelectRoleMutationVariables): Promise<SelectRoleMutation> {
       return withWrapper(() => client.request<SelectRoleMutation>(print(SelectRoleDocument), variables));
+    },
+    setUserEmailVerified(variables: SetUserEmailVerifiedMutationVariables): Promise<SetUserEmailVerifiedMutation> {
+      return withWrapper(() => client.request<SetUserEmailVerifiedMutation>(print(SetUserEmailVerifiedDocument), variables));
+    },
+    setUserNotPlaceholder(variables: SetUserNotPlaceholderMutationVariables): Promise<SetUserNotPlaceholderMutation> {
+      return withWrapper(() => client.request<SetUserNotPlaceholderMutation>(print(SetUserNotPlaceholderDocument), variables));
     },
     updatePassword(variables: UpdatePasswordMutationVariables): Promise<UpdatePasswordMutation> {
       return withWrapper(() => client.request<UpdatePasswordMutation>(print(UpdatePasswordDocument), variables));
