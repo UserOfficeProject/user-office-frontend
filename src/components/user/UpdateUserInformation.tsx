@@ -197,7 +197,7 @@ export default function UpdateUserInformation(props: { id: number }) {
                 {!userData.emailVerified && (
                   <Chip
                     color="primary"
-                    deleteIcon={<DoneIcon />}
+                    deleteIcon={<DoneIcon data-cy="btn-verify-email" />}
                     onDelete={
                       isUserOfficer ? handleSetUserEmailVerified : undefined
                     }
@@ -209,7 +209,9 @@ export default function UpdateUserInformation(props: { id: number }) {
                 {userData.placeholder && (
                   <Chip
                     color="primary"
-                    deleteIcon={<DoneIcon />}
+                    deleteIcon={
+                      <DoneIcon data-cy="btn-set-user-not-placeholder" />
+                    }
                     onDelete={
                       isUserOfficer ? handleSetUserNotPlaceholder : undefined
                     }
