@@ -50,7 +50,7 @@
     "react-dom": "~16.14.0",
     "react-router": "~5.2.0",
     "react-router-dom": "~5.2.0",
-    "react-scripts": "^3.4.4",
+    "react-scripts": "^4.0.0",
     "tinymce": "^5.4.2",
     "typescript": "~3.9.6",
     "use-query-params": "^1.1.9",
