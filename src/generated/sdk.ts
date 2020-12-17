@@ -703,6 +703,7 @@ export type MutationAssignMembersArgs = {
 export type MutationRemoveMemberArgs = {
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
+  roleId: UserRole;
 };
 
 
@@ -2185,6 +2186,7 @@ export type RemoveProposalAssignmentMutation = (
 export type RemoveMemberMutationVariables = Exact<{
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
+  roleId: UserRole;
 }>;
 
 
@@ -5048,8 +5050,8 @@ export const RemoveProposalAssignmentDocument = gql`
 }
     `;
 export const RemoveMemberDocument = gql`
-    mutation removeMember($memberId: Int!, $sepId: Int!) {
-  removeMember(memberId: $memberId, sepId: $sepId) {
+    mutation removeMember($memberId: Int!, $sepId: Int!, $roleId: UserRole!) {
+  removeMember(memberId: $memberId, sepId: $sepId, roleId: $roleId) {
     error
     sep {
       id
