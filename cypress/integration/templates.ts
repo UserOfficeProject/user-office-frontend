@@ -37,6 +37,10 @@ context('Template tests', () => {
   const sampleDeclarationDescription = faker.lorem.words(5);
 
   const minimumCharacters = 1000;
+  const spaceKeyCode = 32;
+  const arrowLeftKeyCode = 37;
+  const arrowRightKeyCode = 39;
+  const arrowDownKeyCode = 40;
 
   it('User officer can create sample declaration template', () => {
     cy.login('officer');
@@ -339,6 +343,122 @@ context('Template tests', () => {
     cy.contains(booleanQuestion);
     cy.contains(textQuestion);
     cy.contains(dateQuestion);
+  });
+
+  it('User officer can add multiple choice quesion as a dependency', () => {
+    cy.login('officer');
+
+    cy.navigateToTemplatesSubmenu('Proposal templates');
+
+    cy.get('[data-cy="create-new-button"]').click();
+
+    cy.get('[data-cy="name"]').type('Proposal template 1');
+
+    cy.get('[data-cy="description"]').type('Proposal template description 1');
+
+    cy.get('[data-cy="submit"]').click();
+
+    cy.get('[data-cy=show-more-button]').click();
+
+    cy.contains('Add question').click();
+
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+
+    cy.contains('Add Multiple choice').click();
+
+    cy.get('[data-cy="question"]')
+      .clear()
+      .type('Multichoice question');
+
+    cy.contains('Add answer').click();
+    cy.get('input[placeholder="Answer"]').type('Answer 1');
+    cy.get('[title="Save"]').click();
+
+    cy.contains('Add answer').click();
+    cy.get('input[placeholder="Answer"]').type('Answer 2');
+    cy.get('[title="Save"]').click();
+
+    cy.contains('Save').click();
+
+    cy.contains('Multichoice question')
+      .parent()
+      .focus()
+      .trigger('keydown', { keyCode: spaceKeyCode })
+      .trigger('keydown', { keyCode: arrowLeftKeyCode, force: true })
+      .trigger('keydown', { keyCode: arrowDownKeyCode, force: true })
+      .trigger('keydown', { keyCode: spaceKeyCode, force: true })
+      .wait(500);
+
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+
+    cy.contains('Add Boolean').click();
+
+    cy.get('[data-cy=question]')
+      .clear()
+      .type('Boolean question');
+
+    cy.contains('Save').click();
+
+    cy.contains('Boolean question')
+      .parent()
+      .focus()
+      .trigger('keydown', { keyCode: spaceKeyCode })
+      .trigger('keydown', { keyCode: arrowLeftKeyCode, force: true })
+      .trigger('keydown', { keyCode: arrowDownKeyCode, force: true })
+      .trigger('keydown', { keyCode: arrowDownKeyCode, force: true })
+      .trigger('keydown', { keyCode: spaceKeyCode, force: true })
+      .wait(500);
+
+    cy.finishedLoading();
+
+    cy.contains('Boolean question').click();
+
+    cy.get('[id="dependency-id"]').click();
+
+    cy.get('[role="presentation"]')
+      .contains('Multichoice question')
+      .click();
+
+    cy.get('[id="dependencyValue"]').click();
+
+    cy.contains('Answer 1').click();
+
+    cy.get('[data-cy="submit"]').click();
+
+    cy.contains('Calls').click();
+    cy.get('[title="Edit"]')
+      .first()
+      .click();
+
+    cy.finishedLoading();
+
+    cy.get('[data-cy="call-template"]').click();
+    cy.contains('Proposal template 1').click();
+
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="submit"]').click();
+
+    cy.logout();
+
+    cy.login('user');
+
+    cy.contains('New Proposal').click();
+
+    cy.contains('Multichoice question');
+
+    cy.get('main form .MuiCheckbox-root').should(
+      'not.contain.text',
+      'Boolean question'
+    );
+
+    cy.contains('Answer 1').click();
+    cy.contains('Boolean question').click();
+    cy.contains('Answer 2').click();
+    cy.get('main form .MuiCheckbox-root').should(
+      'not.contain.text',
+      'Boolean question'
+    );
   });
 
   it('User officer can clone template', () => {
