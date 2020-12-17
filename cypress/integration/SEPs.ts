@@ -84,7 +84,7 @@ context('Scientific evaluation panel tests', () => {
     cy.finishedLoading();
 
     cy.get('.MuiDialog-container [role="dialog"] table tbody tr')
-      .eq(1)
+      .first()
       .find('td.MuiTableCell-alignLeft')
       .first()
       .then(element => {
@@ -92,7 +92,7 @@ context('Scientific evaluation panel tests', () => {
       });
 
     cy.get('.MuiDialog-container [role="dialog"] table tbody tr')
-      .eq(1)
+      .first()
       .find('td.MuiTableCell-alignLeft')
       .eq(1)
       .then(element => {
@@ -100,7 +100,7 @@ context('Scientific evaluation panel tests', () => {
       });
 
     cy.get('[title="Select user"]')
-      .eq(1)
+      .first()
       .click();
 
     cy.notification({
