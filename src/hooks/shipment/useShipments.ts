@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { GetShipmentsQuery, ShipmentsFilter } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-export function useShipmentsData(filter?: ShipmentsFilter) {
+export function useShipments(filter?: ShipmentsFilter) {
   const [shipmentsFilter, setShipmentsFilter] = useState(filter);
   const [shipments, setShipments] = useState<GetShipmentsQuery['shipments']>();
   const [loadingShipments, setLoadingShipments] = useState(true);

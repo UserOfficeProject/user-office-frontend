@@ -7,7 +7,7 @@ import SuperMaterialTable, {
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
 import UOLoader from 'components/common/UOLoader';
-import { useShipmentsData } from 'hooks/shipment/useShipmentsData';
+import { useShipments } from 'hooks/shipment/useShipments';
 import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -16,7 +16,7 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import CreateUpdateShipment from './CreateUpdateShipment';
 
 const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
-  const { loadingShipments, shipments, setShipments } = useShipmentsData();
+  const { loadingShipments, shipments, setShipments } = useShipments();
   const [urlQueryParams, setUrlQueryParams] = useQueryParams<
     UrlQueryParamsType
   >(DefaultQueryParams);
