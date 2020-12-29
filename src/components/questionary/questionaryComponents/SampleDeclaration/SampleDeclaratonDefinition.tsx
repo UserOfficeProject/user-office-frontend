@@ -1,4 +1,4 @@
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import React from 'react';
 import * as Yup from 'yup';
 
@@ -19,9 +19,9 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
     QuestionTemplateRelationSampleDeclarationForm,
   readonly: false,
   creatable: true,
-  icon: <CheckBoxOutlineBlankIcon />,
+  icon: <AssignmentIcon />,
   answerRenderer: ({ answer }) => <SamplesAnswerRenderer answer={answer} />,
-  createYupValidationSchema: answer => {
+  createYupValidationSchema: () => {
     const schema = Yup.array().of(Yup.number());
 
     return schema;

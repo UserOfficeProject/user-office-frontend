@@ -14,7 +14,7 @@ export type SubmitActionDependencyContainer = {
 };
 export type SubmitAction = (
   dependencies: SubmitActionDependencyContainer
-) => Promise<any>;
+) => Promise<void>;
 
 export function usePreSubmitActions() {
   return (answers: Answer[]): SubmitAction[] => {

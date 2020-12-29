@@ -61,7 +61,6 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
 
   const handleOnChange = (evt: any, value: string | string[]) => {
     const newValue = toArray(value);
-    setStateValue(newValue);
     onComplete(evt, newValue);
   };
 
@@ -117,7 +116,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
           <RadioGroup
             id={proposalQuestionId}
             name={proposalQuestionId}
-            value={stateValue[0]}
+            value={stateValue[0] || ''}
             onChange={evt =>
               handleOnChange(evt, (evt.target as HTMLInputElement).value)
             }
