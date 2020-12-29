@@ -1,7 +1,7 @@
 import { Column } from 'material-table';
 import React from 'react';
 
-import { ProposalTemplate, TemplateCategoryId } from 'generated/sdk';
+import { Template, TemplateCategoryId } from 'generated/sdk';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
@@ -33,7 +33,7 @@ function SampleTemplatesTable(props: SampleTemplatesTableProps) {
 interface SampleTemplatesTableProps {
   dataProvider: () => Promise<
     Pick<
-      ProposalTemplate,
+      Template,
       'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
     >[]
   >;

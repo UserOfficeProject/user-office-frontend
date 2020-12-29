@@ -62,6 +62,12 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         </ListItemIcon>
         <ListItemText primary="New Proposal" />
       </ListItem>
+      <ListItem component={NavLink} to="/MyShipments" button>
+        <ListItemIcon>
+          <LocalShippingIcon />
+        </ListItemIcon>
+        <ListItemText primary="My shipments" />
+      </ListItem>
       <ListItem component={NavLink} to="/HelpPage" button>
         <ListItemIcon>
           <Help />

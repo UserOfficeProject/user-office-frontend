@@ -2,6 +2,7 @@ import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import React from 'react';
 
 import { DataType } from 'generated/sdk';
+import { ShipmentSubmissionState } from 'models/ShipmentSubmissionState';
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import { createShipmentBasisValidationSchema } from './createShipmentBasisValidationSchema';
@@ -21,8 +22,12 @@ export const shipmentBasisDefinition: QuestionaryComponentDefinition = {
   answerRenderer: () => null,
   createYupValidationSchema: createShipmentBasisValidationSchema,
   getYupInitialValue: ({ state }) => {
-    // TODO implement validation
-    // const sampleState = state as SampleSubmissionState;
-    // return sampleState.sample.title;
+    const shipmentState = state as ShipmentSubmissionState;
+
+    return {
+      title: shipmentState.shipment.title,
+      sampleIds: shipmentState.shipment.samples.map(sample => sample.id),
+      proposalId: shipmentState.shipment.proposalId || '',
+    };
   },
 };

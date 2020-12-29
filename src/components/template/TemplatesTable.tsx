@@ -21,7 +21,6 @@ import { tableIcons } from 'utils/materialIcons';
 import { WithConfirmType } from 'utils/withConfirm';
 
 import CreateTemplate from './CreateTemplate';
-import { ProposalTemplateRowDataType } from './ProposalTemplatesTable';
 
 export type TemplateRowDataType = Pick<
   Template,
@@ -29,7 +28,7 @@ export type TemplateRowDataType = Pick<
 >;
 
 interface TemplatesTableProps {
-  columns: Column<ProposalTemplateRowDataType>[];
+  columns: Column<TemplateRowDataType>[];
   templateCategory: TemplateCategoryId;
   dataProvider: () => Promise<Exclude<GetTemplatesQuery['templates'], null>>;
   isRowRemovable: (row: TemplateRowDataType) => boolean;
@@ -209,7 +208,7 @@ export function TemplatesTable(props: TemplatesTableProps) {
       </InputDialog>
       <MaterialTable
         icons={tableIcons}
-        title="Proposal templates"
+        title="Templates"
         columns={props.columns}
         isLoading={loadingTemplates}
         data={templates}

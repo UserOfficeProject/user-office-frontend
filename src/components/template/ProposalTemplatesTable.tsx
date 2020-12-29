@@ -59,7 +59,7 @@ function CallsModal(props: { templateId?: number; onClose: () => void }) {
 }
 export type ProposalTemplateRowDataType = TemplateRowDataType & {
   callCount?: number;
-  proposalCount?: number;
+  questionaryCount?: number;
 };
 
 function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
@@ -98,7 +98,7 @@ function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
 
           return (
             proposalTemplateRowData.callCount === 0 &&
-            proposalTemplateRowData.proposalCount === 0
+            proposalTemplateRowData.questionaryCount === 0
           );
         }}
         dataProvider={props.dataProvider}

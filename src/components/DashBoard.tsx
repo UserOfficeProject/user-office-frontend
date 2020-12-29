@@ -39,6 +39,8 @@ import SEPsPage from './SEP/SEPsPage';
 import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
+import ShipmentCreate from './shipments/CreateUpdateShipment';
+import MyShipments from './shipments/MyShipments';
 import ShipmentsPage from './shipments/ShipmentsPage';
 import ProposalTemplates from './template/ProposalTemplates';
 import SampleTemplatesPage from './template/SampleTemplates';
@@ -191,6 +193,8 @@ const Dashboard: React.FC = () => {
             path="/ProposalCreate/:callId/:templateId"
             component={ProposalCreate}
           />
+          <Route path="/ShipmentCreate" component={ShipmentCreate} />
+          <Route path="/MyShipments" component={MyShipments} />
           <Route path="/ProfilePage/:id" component={ProfilePage} />
           {isUserOfficer && (
             <Route path="/PeoplePage/:id" component={UserPage} />

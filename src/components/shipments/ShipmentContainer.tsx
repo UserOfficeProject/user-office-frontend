@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import Container from '@material-ui/core/Container';
+import { Button } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Step from '@material-ui/core/Step';
 import Stepper from '@material-ui/core/Stepper';
@@ -12,29 +12,26 @@ import { useCheckAccess } from 'components/common/Can';
 import { QuestionaryStepButton } from 'components/questionary/QuestionaryStepButton';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import {
-  Proposal,
   Questionary,
   QuestionaryStep,
+  ShipmentStatus,
   UserRole,
 } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
-import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
 import { usePersistQuestionaryModel } from 'hooks/questionary/usePersistQuestionaryModel';
-import {
-  ProposalSubmissionState,
-  ProposalSubsetSumbission,
-} from 'models/ProposalSubmissionState';
+import { usePersistShipmentModel } from 'hooks/shipment/usePersistShipmentModel';
 import {
   Event,
   EventType,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
 } from 'models/QuestionarySubmissionState';
-import { StyledPaper } from 'styles/StyledComponents';
+import {
+  ShipmentExtended,
+  ShipmentSubmissionState,
+} from 'models/ShipmentSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
-
-import ProposalSummary from './ProposalSummary';
 
 const useStyles = makeStyles(theme => ({
   stepper: {
@@ -55,42 +52,42 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type ProposalContextType = {
-  state: ProposalSubmissionState | null;
+type ShipmentContextType = {
+  state: ShipmentSubmissionState | null;
   dispatch: React.Dispatch<Event>;
 };
 
-export const ProposalContext = React.createContext<ProposalContextType>({
+export const ShipmentContext = React.createContext<ShipmentContextType>({
   state: null,
   dispatch: (e: Event) => {},
 });
 
-const getReviewStepIndex = (state: ProposalSubmissionState) =>
+const getReviewStepIndex = (state: ShipmentSubmissionState) =>
   state.steps.length;
 
 const getConfirmNavigMsg = (): string => {
   return 'Changes you recently made in this step will not be saved! Are you sure?';
 };
 
-const proposalReducer = (
-  state: ProposalSubmissionState,
-  draftState: ProposalSubmissionState,
+const shipmentReducer = (
+  state: ShipmentSubmissionState,
+  draftState: ShipmentSubmissionState,
   action: Event
 ) => {
   switch (action.type) {
-    case EventType.PROPOSAL_CREATED:
-    case EventType.PROPOSAL_LOADED:
-      const proposal: Proposal = action.payload.proposal;
+    case EventType.SHIPMENT_CREATED:
+    case EventType.SHIPMENT_LOADED:
+      const shipment: ShipmentExtended = action.payload.shipment;
       draftState.isDirty = false;
-      draftState.questionaryId = proposal.questionaryId;
-      draftState.proposal = proposal;
-      draftState.steps = proposal.questionary.steps;
-      draftState.templateId = proposal.questionary.templateId;
+      draftState.questionaryId = shipment.questionaryId;
+      draftState.shipment = shipment;
+      draftState.steps = shipment.questionary.steps;
+      draftState.templateId = shipment.questionary.templateId;
       break;
-    case EventType.PROPOSAL_MODIFIED:
-      draftState.proposal = {
-        ...draftState.proposal,
-        ...action.payload.proposal,
+    case EventType.SHIPMENT_MODIFIED:
+      draftState.shipment = {
+        ...draftState.shipment,
+        ...action.payload.shipment,
       };
       draftState.isDirty = true;
       break;
@@ -106,15 +103,15 @@ const proposalReducer = (
       break;
     }
     case EventType.QUESTIONARY_STEPS_LOADED: {
-      draftState.proposal.questionary.steps = action.payload.questionarySteps;
+      draftState.shipment.questionary.steps = action.payload.questionarySteps;
       break;
     }
-    case EventType.QUESTIONARY_STEP_ANSWERED:
+    case EventType.QUESTIONARY_STEP_ANSWERED: // THIS should be part of questionary reducer?
       const updatedStep = action.payload.questionaryStep as QuestionaryStep;
-      const stepIndex = draftState.proposal.questionary.steps.findIndex(
+      const stepIndex = draftState.shipment.questionary.steps.findIndex(
         step => step.topic.id === updatedStep.topic.id
       );
-      draftState.proposal.questionary.steps[stepIndex] = updatedStep;
+      draftState.shipment.questionary.steps[stepIndex] = updatedStep;
 
       break;
   }
@@ -122,10 +119,10 @@ const proposalReducer = (
   return draftState;
 };
 
-export default function ProposalContainer(props: {
-  proposal: ProposalSubsetSumbission;
-  proposalCreated?: (proposal: Proposal) => any;
-  proposalUpdated?: (proposal: Proposal) => any;
+export default function ShipmentContainer(props: {
+  shipment: ShipmentExtended;
+  shipmentCreated?: (shipment: ShipmentExtended) => any;
+  shipmentUpdated?: (shipment: ShipmentExtended) => any;
 }) {
   const isNonOfficer = !useCheckAccess([UserRole.USER_OFFICER]);
 
@@ -133,10 +130,10 @@ export default function ProposalContainer(props: {
   const { api, isExecutingCall: isApiInteracting } = useDataApiWithFeedback();
   const { persistModel, isSavingModel } = usePersistQuestionaryModel();
   const {
-    persistModel: persistProposalModel,
-    isSavingModel: isSavingProposalModel,
-  } = usePersistProposalModel();
-  const previousInitialProposal = usePrevious(props.proposal);
+    persistModel: persistShipmentModel,
+    isSavingModel: isSavingShipmentModel,
+  } = usePersistShipmentModel();
+  const previousInitialShipment = usePrevious(props.shipment);
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -144,27 +141,27 @@ export default function ProposalContainer(props: {
   const handleReset = async (): Promise<boolean> => {
     if (state.isDirty) {
       const confirmed = window.confirm(getConfirmNavigMsg());
-      const proposalState = state as ProposalSubmissionState;
+      const shipmentState = state as ShipmentSubmissionState;
       if (confirmed) {
-        if (proposalState.proposal.id === 0) {
-          // if proposal is not created yet
+        if (shipmentState.shipment.id === 0) {
+          // if shipment is not created yet
           dispatch({
-            type: EventType.PROPOSAL_LOADED,
-            payload: { proposal: initialState.proposal },
+            type: EventType.SHIPMENT_LOADED,
+            payload: { shipment: initialState.shipment },
           });
         } else {
           await api()
-            .getProposal({ id: proposalState.proposal.id }) // or load blankQuestionarySteps if sample is null
+            .getShipment({ shipmentId: shipmentState.shipment.id }) // or load blankQuestionarySteps if sample is null
             .then(data => {
-              if (data.proposal && data.proposal.questionary.steps) {
+              if (data.shipment && data.shipment.questionary.steps) {
                 dispatch({
-                  type: EventType.PROPOSAL_LOADED,
-                  payload: { proposal: data.proposal },
+                  type: EventType.SHIPMENT_LOADED,
+                  payload: { proposal: data.shipment },
                 });
                 dispatch({
                   type: EventType.QUESTIONARY_STEPS_LOADED,
                   payload: {
-                    questionarySteps: data.proposal.questionary.steps,
+                    questionarySteps: data.shipment.questionary.steps,
                     stepIndex: state.stepIndex,
                   },
                 });
@@ -190,13 +187,13 @@ export default function ProposalContainer(props: {
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: Function) => async (action: Event) => {
       next(action); // first update state/model
-      const state = getState() as ProposalSubmissionState;
+      const state = getState() as ShipmentSubmissionState;
       switch (action.type) {
-        case EventType.PROPOSAL_MODIFIED:
-          props.proposalUpdated?.(action.payload.proposal);
+        case EventType.SHIPMENT_UPDATED:
+          props.shipmentUpdated?.(action.payload.shipment);
           break;
-        case EventType.PROPOSAL_CREATED:
-          props.proposalCreated?.(action.payload.proposal);
+        case EventType.SHIPMENT_CREATED:
+          props.shipmentCreated?.(action.payload.shipment);
           break;
         case EventType.BACK_CLICKED:
           if (!state.isDirty || (await handleReset())) {
@@ -210,39 +207,39 @@ export default function ProposalContainer(props: {
       }
     };
   };
-  const initialState: ProposalSubmissionState = {
-    proposal: props.proposal,
-    templateId: props.proposal.questionary.templateId,
+  const initialState: ShipmentSubmissionState = {
+    shipment: props.shipment,
+    templateId: props.shipment.questionary.templateId,
     isDirty: false,
-    questionaryId: props.proposal.questionary.questionaryId,
+    questionaryId: props.shipment.questionary.questionaryId,
     stepIndex: 0,
-    steps: props.proposal.questionary.steps,
+    steps: props.shipment.questionary.steps,
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<
-    ProposalSubmissionState
+    ShipmentSubmissionState
   >(
     initialState,
-    [handleEvents, persistModel, persistProposalModel],
-    proposalReducer
+    [handleEvents, persistModel, persistShipmentModel],
+    shipmentReducer
   );
 
-  const isSubmitted = state.proposal.submitted;
+  const isSubmitted = state.shipment.status === ShipmentStatus.SUBMITTED;
 
   useEffect(() => {
     const isComponentMountedForTheFirstTime =
-      previousInitialProposal === undefined;
+      previousInitialShipment === undefined;
     if (isComponentMountedForTheFirstTime) {
       dispatch({
-        type: EventType.PROPOSAL_LOADED,
-        payload: { proposal: props.proposal },
+        type: EventType.SHIPMENT_LOADED,
+        payload: { shipment: props.shipment },
       });
       dispatch({
         type: EventType.QUESTIONARY_STEPS_LOADED,
-        payload: { questionarySteps: props.proposal.questionary.steps },
+        payload: { questionarySteps: props.shipment.questionary.steps },
       });
     }
-  }, [previousInitialProposal, props.proposal, dispatch]);
+  }, [previousInitialShipment, props.shipment, dispatch]);
 
   const getStepperNavig = () => {
     if (state.steps.length <= 1) {
@@ -285,8 +282,8 @@ export default function ProposalContainer(props: {
                 payload: { stepIndex: state.steps.length },
               });
             }}
-            completed={state.proposal.submitted}
-            editable={allStepsComplete(state.proposal.questionary)}
+            completed={isSubmitted}
+            editable={allStepsComplete(state.shipment.questionary)}
           >
             <span>Review</span>
           </QuestionaryStepButton>
@@ -297,7 +294,11 @@ export default function ProposalContainer(props: {
 
   const getStepContent = () => {
     if (state.stepIndex === getReviewStepIndex(state)) {
-      return <ProposalSummary data={state} readonly={false} />;
+      return (
+        <div>
+          <Button>Print</Button>
+        </div>
+      );
     }
     const currentStep = state.steps[state.stepIndex];
     const previousStep = state.steps[state.stepIndex - 1];
@@ -322,34 +323,26 @@ export default function ProposalContainer(props: {
   };
 
   const getProgressBar = () =>
-    isApiInteracting || isSavingModel || isSavingProposalModel ? (
+    isApiInteracting || isSavingModel || isSavingShipmentModel ? (
       <LinearProgress />
     ) : null;
 
   return (
-    <ProposalContext.Provider value={{ state, dispatch }}>
-      <Container maxWidth="lg">
-        <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
-        <StyledPaper>
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            className={classes.heading}
-          >
-            {state.proposal.title || 'New Proposal'}
-          </Typography>
-          <div className={classes.infoline}>
-            {state.proposal.shortCode
-              ? `Proposal ID: ${state.proposal.shortCode}`
-              : null}
-          </div>
-          <div className={classes.infoline}>{state.proposal.status.name}</div>
-          {getStepperNavig()}
-          {getProgressBar()}
-          {getStepContent()}
-        </StyledPaper>
-      </Container>
-    </ProposalContext.Provider>
+    <ShipmentContext.Provider value={{ state, dispatch }}>
+      <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
+
+      <Typography
+        component="h1"
+        variant="h4"
+        align="center"
+        className={classes.heading}
+      >
+        {state.shipment.title || 'New Proposal'}
+      </Typography>
+      <div className={classes.infoline}>{state.shipment.status}</div>
+      {getStepperNavig()}
+      {getProgressBar()}
+      {getStepContent()}
+    </ShipmentContext.Provider>
   );
 }
