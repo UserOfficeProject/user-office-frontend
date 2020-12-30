@@ -1,8 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import React, { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
-
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomSelect, {
   ValueType,
@@ -10,12 +6,15 @@ import FormikUICustomSelect, {
 import UOLoader from 'components/common/UOLoader';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
+import { Field } from 'formik';
+import { TextField } from 'formik-material-ui';
 import { Answer } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
 import { EventType } from 'models/QuestionarySubmissionState';
 import { ShipmentSubmissionState } from 'models/ShipmentSubmissionState';
+import React, { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
 
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
@@ -26,13 +25,16 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
 
   const shipmentContext = useContext(ShipmentContext);
 
-  const { proposals } = useUserProposals();
+  const { proposals, loading: loadingProposals } = useUserProposals();
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(
-    null
+    shipmentContext.state?.shipment.proposalId || null
   );
 
   const { samples } = useProposalSamples(selectedProposalId);
 
+  if (loadingProposals || !shipmentContext.state) {
+    return <UOLoader />;
+  }
   const proposalEntries = Array.from(proposals).map(({ id, title }) => ({
     text: title,
     value: id,
@@ -42,14 +44,6 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
     label: title,
     value: id,
   }));
-
-  if (!proposals) {
-    return <UOLoader />;
-  }
-
-  if (!shipmentContext.state) {
-    return null;
-  }
 
   const { dispatch, state } = shipmentContext;
 
