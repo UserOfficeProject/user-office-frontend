@@ -3,6 +3,9 @@ mutation addSamplesToShipment($shipmentId: Int!, $sampleIds: [Int!]!) {
     error
     shipment {
       ...shipment
+      samples {
+        ...sample
+      }
     }
   }
 }

@@ -5,6 +5,9 @@ mutation createShipment($title: String!, $proposalId: Int!) {
       questionary {
         ...questionary
       }
+      samples {
+        ...sample
+      }
     }
     error
   }

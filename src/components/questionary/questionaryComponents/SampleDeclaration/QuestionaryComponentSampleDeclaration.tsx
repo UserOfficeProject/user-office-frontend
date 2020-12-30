@@ -147,6 +147,11 @@ function QuestionaryComponentSampleDeclaration(props: BasicComponentProps) {
               );
             }
             const templateId = config.templateId;
+
+            if (!templateId) {
+              throw new Error('Sample Declaration is missing templateId');
+            }
+
             api()
               .getBlankQuestionarySteps({ templateId })
               .then(result => {
