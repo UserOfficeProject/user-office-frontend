@@ -43,6 +43,7 @@ const MenuProps = {
       width: 250,
     },
   },
+  getContentAnchorEl: null,
 };
 
 const FormikUICustomSelect = ({
