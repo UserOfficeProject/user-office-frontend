@@ -5,7 +5,9 @@ import { useDataApi } from 'hooks/common/useDataApi';
 
 export function useActiveTemplateId(templateCategoryId: TemplateCategoryId) {
   const api = useDataApi();
-  const [activeTemplateId, setActiveTemplateId] = useState<number | null>(null);
+  const [activeTemplateId, setActiveTemplateId] = useState<
+    number | null | undefined
+  >(undefined);
   useEffect(() => {
     api()
       .getActiveTemplateId({ templateCategoryId })
