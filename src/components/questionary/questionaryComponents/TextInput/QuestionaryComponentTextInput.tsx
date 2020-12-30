@@ -59,13 +59,13 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
           ) {
             event.preventDefault();
             setStateValue(event.currentTarget.value);
-            onComplete(event, event.currentTarget.value);
+            onComplete(event.currentTarget.value);
 
             return false;
           }
         }}
         onBlur={event => {
-          onComplete(event, event.currentTarget.value);
+          onComplete(event.currentTarget.value);
         }}
         placeholder={config.placeholder}
         error={isError}

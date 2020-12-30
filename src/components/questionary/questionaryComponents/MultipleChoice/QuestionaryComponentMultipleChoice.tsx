@@ -59,9 +59,9 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
     setStateValue(answer.value);
   }, [answer]);
 
-  const handleOnChange = (evt: any, value: string | string[]) => {
+  const handleOnChange = (_evt: any, value: string | string[]) => {
     const newValue = toArray(value);
-    onComplete(evt, newValue);
+    onComplete(newValue);
   };
 
   const getCheckbox = (option: string) => {

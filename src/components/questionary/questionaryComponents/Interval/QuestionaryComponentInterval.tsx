@@ -86,7 +86,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           onChange={e => {
             const newState = { ...stateValue, unit: e.target.value as string };
             setStateValue(newState);
-            onComplete(e, newState);
+            onComplete(newState);
           }}
           name={unitFieldId}
           data-cy={unitFieldId}
@@ -119,7 +119,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
                 min: getNumberOrDefault(e.target.value, stateValue.min),
               })
             }
-            onBlur={e => onComplete(e, stateValue)}
+            onBlur={() => onComplete(stateValue)}
             value={stateValue.min}
             data-cy={minFieldId}
             type="number"
@@ -136,7 +136,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
                 max: getNumberOrDefault(e.target.value, stateValue.max),
               })
             }
-            onBlur={e => onComplete(e, stateValue)}
+            onBlur={() => onComplete(stateValue)}
             value={stateValue.max}
             data-cy={maxFieldId}
             type="number"
