@@ -75,7 +75,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
 
   const getUnits = () => {
     if (config.units?.length === 0) {
-      return <Field type={TextField} value="" name={unitFieldId} />;
+      return <Field type="hidden" value="" name={unitFieldId} />;
     } else if (config.units?.length === 1) {
       return <span className={`${classes.singleUnit}`}>{stateValue.unit}</span>;
     } else {
