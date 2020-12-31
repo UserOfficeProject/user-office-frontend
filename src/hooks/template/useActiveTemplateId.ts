@@ -12,9 +12,7 @@ export function useActiveTemplateId(templateCategoryId: TemplateCategoryId) {
     api()
       .getActiveTemplateId({ templateCategoryId })
       .then(data => {
-        if (data.activeTemplateId) {
-          setActiveTemplateId(data.activeTemplateId);
-        }
+        setActiveTemplateId(data.activeTemplateId);
       });
   }, [api, templateCategoryId]);
 

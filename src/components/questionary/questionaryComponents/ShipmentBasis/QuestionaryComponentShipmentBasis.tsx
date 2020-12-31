@@ -1,26 +1,30 @@
 import { Typography } from '@material-ui/core';
-import FormikDropdown from 'components/common/FormikDropdown';
+import { Field } from 'formik';
+import { TextField } from 'formik-material-ui';
+import React, { ChangeEvent, useContext, useState } from 'react';
+
 import FormikUICustomSelect, {
   ValueType,
 } from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
+import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
-import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
 import { Answer } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
 import { EventType } from 'models/QuestionarySubmissionState';
 import { ShipmentSubmissionState } from 'models/ShipmentSubmissionState';
-import React, { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
+
+const TextFieldNoSubmit = withPreventSubmit(TextField);
 
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
     answer: {
       question: { proposalQuestionId, question },
     },
+    formikProps,
   } = props;
 
   const shipmentContext = useContext(ShipmentContext);
@@ -36,7 +40,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
     return <UOLoader />;
   }
   const proposalEntries = Array.from(proposals).map(({ id, title }) => ({
-    text: title,
+    label: title,
     value: id,
   }));
 
@@ -54,13 +58,6 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
         name={`${proposalQuestionId}.title`}
         label="Brief description"
         inputProps={{
-          onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-
-              return false;
-            }
-          },
           onBlur: (event: ChangeEvent<HTMLInputElement>) => {
             dispatch({
               type: EventType.SHIPMENT_MODIFIED,
@@ -75,17 +72,23 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
         }}
         required
         fullWidth
-        component={TextField}
+        component={TextFieldNoSubmit}
         data-cy="title-input"
       />
 
-      <FormikDropdown
+      <Field
         name={`${proposalQuestionId}.proposalId`}
         label={'Select proposal'}
-        items={proposalEntries}
+        availableOptions={proposalEntries}
+        component={FormikUICustomSelect}
+        fullWidth
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const newProposalId = parseInt(event.target.value);
           setSelectedProposalId(newProposalId);
+          formikProps.setFieldValue(
+            `${proposalQuestionId}.proposalId`,
+            newProposalId
+          );
           dispatch({
             type: EventType.SHIPMENT_MODIFIED,
             payload: {
