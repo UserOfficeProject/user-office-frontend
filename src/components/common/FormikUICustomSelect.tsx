@@ -15,11 +15,11 @@ interface Option {
   value: ValueType;
 }
 
+// converts string|Option to Option
 const normalizeOption = (option: Option | string): Option => {
   return typeof option === 'string' ? { label: option, value: option } : option;
 };
 
-// converts string|Option to Option
 const normalizeOptions = (options: Array<any>): Option[] => {
   return options.map(option => normalizeOption(option));
 };

@@ -1,11 +1,7 @@
-import { Typography } from '@material-ui/core';
-import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import React, { ChangeEvent, useContext, useState } from 'react';
+import { Select, TextField, Typography } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import React, { useContext, useState } from 'react';
 
-import FormikUICustomSelect, {
-  ValueType,
-} from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
@@ -15,7 +11,10 @@ import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
 import { EventType } from 'models/QuestionarySubmissionState';
-import { ShipmentSubmissionState } from 'models/ShipmentSubmissionState';
+import {
+  ShipmentBasisFormikData,
+  ShipmentSubmissionState,
+} from 'models/ShipmentSubmissionState';
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
 
@@ -33,92 +32,79 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(
     shipmentContext.state?.shipment.proposalId || null
   );
+  const [selectedSampleIds, setSelectedSampleIds] = useState<number[]>([]);
 
   const { samples } = useProposalSamples(selectedProposalId);
 
   if (loadingProposals || !shipmentContext.state) {
     return <UOLoader />;
   }
-  const proposalEntries = Array.from(proposals).map(({ id, title }) => ({
-    label: title,
-    value: id,
-  }));
 
-  const sampleEntries = Array.from(samples).map(({ id, title }) => ({
-    label: title,
-    value: id,
-  }));
+  const handleChange = (changes: Partial<ShipmentBasisFormikData>) => {
+    dispatch({
+      type: EventType.SHIPMENT_MODIFIED,
+      payload: {
+        shipment: {
+          ...state.shipment,
+          ...changes,
+        },
+      },
+    });
+  };
 
   const { dispatch, state } = shipmentContext;
 
   return (
     <>
       <Typography>{question}</Typography>
-      <Field
+      <TextFieldNoSubmit
         name={`${proposalQuestionId}.title`}
         label="Brief description"
-        inputProps={{
-          onBlur: (event: ChangeEvent<HTMLInputElement>) => {
-            dispatch({
-              type: EventType.SHIPMENT_MODIFIED,
-              payload: {
-                shipment: {
-                  ...state.shipment,
-                  title: event.currentTarget.value,
-                },
-              },
-            });
-          },
+        onBlur={event => {
+          handleChange({ title: event.target.value });
         }}
         required
         fullWidth
-        component={TextFieldNoSubmit}
         data-cy="title-input"
       />
 
-      <Field
+      <Select
         name={`${proposalQuestionId}.proposalId`}
         label={'Select proposal'}
-        availableOptions={proposalEntries}
-        component={FormikUICustomSelect}
         fullWidth
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const newProposalId = parseInt(event.target.value);
+        onChange={event => {
+          const newProposalId = event.target.value as number;
           setSelectedProposalId(newProposalId);
-          formikProps.setFieldValue(
-            `${proposalQuestionId}.proposalId`,
-            newProposalId
-          );
-          dispatch({
-            type: EventType.SHIPMENT_MODIFIED,
-            payload: {
-              shipment: { ...state.shipment, proposalId: newProposalId },
-            },
-          });
+          setSelectedSampleIds([]);
+          handleChange({ proposalId: newProposalId });
         }}
-      />
+      >
+        {proposals.map(proposal => (
+          <MenuItem value={proposal.id}>{proposal.title}</MenuItem>
+        ))}
+      </Select>
 
-      <Field
-        name={`${proposalQuestionId}.sampleIds`}
-        component={FormikUICustomSelect}
+      <Select
+        name={`${proposalQuestionId}.samples`}
         fullWidth
         multiple
         label={'Select samples'}
-        availableOptions={sampleEntries}
-        onChange={(event: React.ChangeEvent<{ value: ValueType[] }>) => {
-          dispatch({
-            type: EventType.SHIPMENT_MODIFIED,
-            payload: {
-              shipment: {
-                ...state.shipment,
-                samples: samples.filter(sample =>
-                  event.target.value.includes(sample.id)
-                ),
-              },
-            },
-          });
+        onChange={event => {
+          const newSampleIds = event.target.value as number[];
+          const newSamples = samples.filter(sample =>
+            newSampleIds.includes(sample.id)
+          );
+          setSelectedSampleIds(newSampleIds);
+          handleChange({ samples: newSamples });
         }}
-      />
+        value={selectedSampleIds}
+      >
+        {samples.map(sample => (
+          <MenuItem key={sample.id} value={sample.id}>
+            {sample.title}
+          </MenuItem>
+        ))}
+      </Select>
     </>
   );
 }
