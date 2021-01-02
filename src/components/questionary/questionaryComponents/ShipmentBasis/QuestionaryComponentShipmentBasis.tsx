@@ -1,12 +1,10 @@
 import { Select, TextField, Typography } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useContext, useState } from 'react';
-
 import UOLoader from 'components/common/UOLoader';
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
-import { Answer } from 'generated/sdk';
+import { Answer, Sample } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
@@ -15,30 +13,39 @@ import {
   ShipmentBasisFormikData,
   ShipmentSubmissionState,
 } from 'models/ShipmentSubmissionState';
+import React, { useContext, useState } from 'react';
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
+
+const samplesToSampleIds = (samples: Pick<Sample, 'id'>[]) =>
+  samples.map(sample => sample.id);
 
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
     answer: {
       question: { proposalQuestionId, question },
     },
-    formikProps,
+    formikProps: { touched, errors },
   } = props;
 
   const shipmentContext = useContext(ShipmentContext);
 
-  const { proposals, loading: loadingProposals } = useUserProposals();
-  const [selectedProposalId, setSelectedProposalId] = useState<number | null>(
+  const [title, setTitle] = useState(shipmentContext.state?.shipment.title);
+  const [proposalId, setProposalId] = useState<number | null>(
     shipmentContext.state?.shipment.proposalId || null
   );
-  const [selectedSampleIds, setSelectedSampleIds] = useState<number[]>([]);
+  const [sampleIds, setSampleIds] = useState<number[]>(
+    shipmentContext.state?.shipment.samples.map(sample => sample.id) || []
+  );
 
-  const { samples } = useProposalSamples(selectedProposalId);
+  const { proposals, loadingProposals } = useUserProposals();
+  const { samples, loadingSamples } = useProposalSamples(proposalId);
 
-  if (loadingProposals || !shipmentContext.state) {
+  if (!shipmentContext.state || loadingProposals || loadingSamples) {
     return <UOLoader />;
   }
+
+  const { dispatch, state } = shipmentContext;
 
   const handleChange = (changes: Partial<ShipmentBasisFormikData>) => {
     dispatch({
@@ -52,40 +59,40 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
     });
   };
 
-  const { dispatch, state } = shipmentContext;
-
   return (
     <>
       <Typography>{question}</Typography>
       <TextFieldNoSubmit
-        name={`${proposalQuestionId}.title`}
+        value={title}
         label="Brief description"
         onBlur={event => {
           handleChange({ title: event.target.value });
         }}
+        onChange={event => setTitle(event.target.value)}
         required
         fullWidth
         data-cy="title-input"
       />
 
       <Select
-        name={`${proposalQuestionId}.proposalId`}
         label={'Select proposal'}
         fullWidth
         onChange={event => {
           const newProposalId = event.target.value as number;
-          setSelectedProposalId(newProposalId);
-          setSelectedSampleIds([]);
+          setProposalId(newProposalId);
+          setSampleIds([]);
           handleChange({ proposalId: newProposalId });
         }}
+        value={proposalId || ''}
       >
         {proposals.map(proposal => (
-          <MenuItem value={proposal.id}>{proposal.title}</MenuItem>
+          <MenuItem key={proposal.id} value={proposal.id}>
+            {proposal.title}
+          </MenuItem>
         ))}
       </Select>
 
       <Select
-        name={`${proposalQuestionId}.samples`}
         fullWidth
         multiple
         label={'Select samples'}
@@ -94,10 +101,10 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
           const newSamples = samples.filter(sample =>
             newSampleIds.includes(sample.id)
           );
-          setSelectedSampleIds(newSampleIds);
+          setSampleIds(newSampleIds);
           handleChange({ samples: newSamples });
         }}
-        value={selectedSampleIds}
+        value={sampleIds}
       >
         {samples.map(sample => (
           <MenuItem key={sample.id} value={sample.id}>
@@ -151,7 +158,7 @@ const shipmentBasisPresubmit = (answer: Answer) => async ({
 
   api.addSamplesToShipment({
     shipmentId: shipmentId,
-    sampleIds: shipment.samples.map(sample => sample.id),
+    sampleIds: samplesToSampleIds(shipment.samples),
   });
 };
 

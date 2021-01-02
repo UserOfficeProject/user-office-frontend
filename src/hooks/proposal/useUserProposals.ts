@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-
 import { Proposal } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+import { useEffect, useState } from 'react';
 
 export function useUserProposals() {
   const [proposals, setProposals] = useState<
@@ -18,21 +17,21 @@ export function useUserProposals() {
       | 'submitted'
     >[]
   >([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProposals, setLoadingProposals] = useState(true);
 
   const api = useDataApi();
 
   useEffect(() => {
-    setLoading(true);
+    setLoadingProposals(true);
     api()
       .getUserProposals()
       .then(data => {
         if (data.me) {
           setProposals(data.me.proposals);
         }
-        setLoading(false);
+        setLoadingProposals(false);
       });
   }, [api]);
 
-  return { loading, proposals, setProposals };
+  return { loadingProposals, proposals, setProposals };
 }
