@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
+
 import { Proposal } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { useEffect, useState } from 'react';
 
 export function useUserProposals() {
   const [proposals, setProposals] = useState<

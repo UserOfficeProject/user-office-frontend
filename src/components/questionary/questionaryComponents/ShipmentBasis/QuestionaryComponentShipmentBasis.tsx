@@ -1,6 +1,14 @@
-import { Select, TextField, Typography } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  makeStyles,
+  Select,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import UOLoader from 'components/common/UOLoader';
+import React, { useContext, useState } from 'react';
+
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
@@ -13,7 +21,16 @@ import {
   ShipmentBasisFormikData,
   ShipmentSubmissionState,
 } from 'models/ShipmentSubmissionState';
-import React, { useContext, useState } from 'react';
+
+const useStyles = makeStyles(theme => ({
+  formControl: {
+    margin: theme.spacing(1),
+    width: '100%',
+  },
+  container: {
+    width: '550px',
+  },
+}));
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
 
@@ -23,11 +40,11 @@ const samplesToSampleIds = (samples: Pick<Sample, 'id'>[]) =>
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
     answer: {
-      question: { proposalQuestionId, question },
+      question: { question },
     },
-    formikProps: { touched, errors },
   } = props;
 
+  const classes = useStyles();
   const shipmentContext = useContext(ShipmentContext);
 
   const [title, setTitle] = useState(shipmentContext.state?.shipment.title);
@@ -41,8 +58,8 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const { proposals, loadingProposals } = useUserProposals();
   const { samples, loadingSamples } = useProposalSamples(proposalId);
 
-  if (!shipmentContext.state || loadingProposals || loadingSamples) {
-    return <UOLoader />;
+  if (!shipmentContext.state) {
+    return null;
   }
 
   const { dispatch, state } = shipmentContext;
@@ -60,59 +77,71 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   };
 
   return (
-    <>
-      <Typography>{question}</Typography>
-      <TextFieldNoSubmit
-        value={title}
-        label="Brief description"
-        onBlur={event => {
-          handleChange({ title: event.target.value });
-        }}
-        onChange={event => setTitle(event.target.value)}
-        required
-        fullWidth
-        data-cy="title-input"
-      />
+    <div className={classes.container}>
+      <Typography component="h2">{question}</Typography>
+      <FormControl className={classes.formControl}>
+        <TextFieldNoSubmit
+          value={title}
+          label="Brief description"
+          onBlur={event => {
+            handleChange({ title: event.target.value });
+          }}
+          onChange={event => setTitle(event.target.value)}
+          required
+          fullWidth
+          data-cy="title-input"
+        />
+      </FormControl>
 
-      <Select
-        label={'Select proposal'}
-        fullWidth
-        onChange={event => {
-          const newProposalId = event.target.value as number;
-          setProposalId(newProposalId);
-          setSampleIds([]);
-          handleChange({ proposalId: newProposalId });
-        }}
-        value={proposalId || ''}
-      >
-        {proposals.map(proposal => (
-          <MenuItem key={proposal.id} value={proposal.id}>
-            {proposal.title}
-          </MenuItem>
-        ))}
-      </Select>
+      {!loadingProposals && (
+        <FormControl className={classes.formControl} required>
+          <InputLabel id="proposal-id">Select proposal</InputLabel>
+          <Select
+            labelId="proposal-id"
+            onChange={event => {
+              const newProposalId = event.target.value as number;
+              setProposalId(newProposalId);
+              setSampleIds([]);
+              handleChange({ proposalId: newProposalId });
+            }}
+            value={proposalId || ''}
+            fullWidth
+          >
+            {proposals.map(proposal => (
+              <MenuItem key={proposal.id} value={proposal.id}>
+                {proposal.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
 
-      <Select
-        fullWidth
-        multiple
-        label={'Select samples'}
-        onChange={event => {
-          const newSampleIds = event.target.value as number[];
-          const newSamples = samples.filter(sample =>
-            newSampleIds.includes(sample.id)
-          );
-          setSampleIds(newSampleIds);
-          handleChange({ samples: newSamples });
-        }}
-        value={sampleIds}
-      >
-        {samples.map(sample => (
-          <MenuItem key={sample.id} value={sample.id}>
-            {sample.title}
-          </MenuItem>
-        ))}
-      </Select>
-    </>
+      {!loadingSamples && (
+        <FormControl className={classes.formControl} required>
+          <InputLabel id="sample-ids">Select samples</InputLabel>
+          <Select
+            labelId="sample-ids"
+            multiple
+            onChange={event => {
+              const newSampleIds = event.target.value as number[];
+              const newSamples = samples.filter(sample =>
+                newSampleIds.includes(sample.id)
+              );
+              setSampleIds(newSampleIds);
+              handleChange({ samples: newSamples });
+            }}
+            value={sampleIds}
+            fullWidth
+          >
+            {samples.map(sample => (
+              <MenuItem key={sample.id} value={sample.id}>
+                {sample.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+    </div>
   );
 }
 
