@@ -7,8 +7,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import React, { useContext, useState } from 'react';
-
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
@@ -21,6 +19,7 @@ import {
   ShipmentBasisFormikData,
   ShipmentSubmissionState,
 } from 'models/ShipmentSubmissionState';
+import React, { useContext, useState } from 'react';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -29,6 +28,9 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     width: '550px',
+  },
+  text: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -78,7 +80,9 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
 
   return (
     <div className={classes.container}>
-      <Typography component="h2">{question}</Typography>
+      <Typography component="h2" className={classes.text}>
+        {question}
+      </Typography>
       <FormControl className={classes.formControl}>
         <TextFieldNoSubmit
           value={title}
@@ -116,7 +120,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
         </FormControl>
       )}
 
-      {!loadingSamples && (
+      {!loadingSamples && samples.length > 0 && (
         <FormControl className={classes.formControl} required>
           <InputLabel id="sample-ids">Select samples</InputLabel>
           <Select
