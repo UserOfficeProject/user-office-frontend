@@ -11,6 +11,7 @@ export function useShipments(filter?: ShipmentsFilter) {
   const api = useDataApi();
 
   useEffect(() => {
+    setLoadingShipments(true);
     api()
       .getShipments({ filter: shipmentsFilter })
       .then(data => {
@@ -21,5 +22,10 @@ export function useShipments(filter?: ShipmentsFilter) {
       });
   }, [api, shipmentsFilter]);
 
-  return { loadingShipments, shipments, setShipments, setShipmentsFilter };
+  return {
+    loadingShipments,
+    shipments,
+    setShipments,
+    setShipmentsFilter,
+  };
 }

@@ -11,7 +11,11 @@ type CreateUpdateShipmentProps = {
 };
 
 function CreateUpdateShipment({ shipment, close }: CreateUpdateShipmentProps) {
-  return shipment ? <UpdateShipment shipment={shipment} /> : <CreateShipment />;
+  return shipment ? (
+    <UpdateShipment shipment={shipment} close={close} />
+  ) : (
+    <CreateShipment close={close} />
+  );
 }
 
 export default CreateUpdateShipment;

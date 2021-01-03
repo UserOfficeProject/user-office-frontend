@@ -8,7 +8,10 @@ import {
   ShipmentStatus,
   TemplateCategoryId,
 } from 'generated/sdk';
-import { ShipmentExtended } from 'models/ShipmentSubmissionState';
+import {
+  ShipmentBasic,
+  ShipmentExtended,
+} from 'models/ShipmentSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import ShipmentContainer from './ShipmentContainer';
@@ -37,7 +40,10 @@ function createShipmentStub(
   };
 }
 
-function CreateShipment() {
+interface CreateShipmentProps {
+  close: (shipment: ShipmentBasic | null) => void;
+}
+function CreateShipment({ close }: CreateShipmentProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
   const [blankShipment, setBlankShipment] = useState<ShipmentExtended>();
@@ -69,7 +75,12 @@ function CreateShipment() {
     return <UOLoader />;
   }
 
-  return <ShipmentContainer shipment={blankShipment} />;
+  return (
+    <ShipmentContainer
+      shipment={blankShipment}
+      done={shipment => close({ ...shipment })} // because of immer immutable object we clone it before sending out
+    />
+  );
 }
 
 export default CreateShipment;

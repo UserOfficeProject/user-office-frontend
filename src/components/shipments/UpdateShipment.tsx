@@ -6,14 +6,24 @@ import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 
 import ShipmentContainer from './ShipmentContainer';
 
-function UpdateShipment(props: { shipment: ShipmentBasic }) {
-  const { shipment } = useShipment(props.shipment.id);
+interface UpdateShipmentProps {
+  shipment: ShipmentBasic;
+  close: (shipment: ShipmentBasic | null) => void;
+}
+
+function UpdateShipment({ close, shipment: { id } }: UpdateShipmentProps) {
+  const { shipment } = useShipment(id);
 
   if (!shipment) {
     return <UOLoader />;
   }
 
-  return <ShipmentContainer shipment={shipment} />;
+  return (
+    <ShipmentContainer
+      shipment={shipment}
+      done={shipment => close({ ...shipment })}
+    />
+  );
 }
 
 export default UpdateShipment;

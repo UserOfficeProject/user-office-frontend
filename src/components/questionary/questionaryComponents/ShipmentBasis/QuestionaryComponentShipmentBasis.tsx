@@ -7,6 +7,8 @@ import {
   Typography,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
+import React, { useContext, useState } from 'react';
+
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ShipmentContext } from 'components/shipments/ShipmentContainer';
@@ -19,7 +21,6 @@ import {
   ShipmentBasisFormikData,
   ShipmentSubmissionState,
 } from 'models/ShipmentSubmissionState';
-import React, { useContext, useState } from 'react';
 
 const useStyles = makeStyles(theme => ({
   formControl: {

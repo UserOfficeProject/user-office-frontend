@@ -2,8 +2,9 @@ import { Delete } from '@material-ui/icons';
 import React from 'react';
 import { useQueryParams } from 'use-query-params';
 
-import SuperMaterialTable, {
+import {
   DefaultQueryParams,
+  SuperMaterialTable,
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
 import UOLoader from 'components/common/UOLoader';
@@ -48,13 +49,13 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   return (
     <div data-cy="shipments-table">
       <SuperMaterialTable
-        createModal={createModal}
         setData={setShipments}
+        createModal={createModal}
         icons={tableIcons}
         title="Shipments"
         columns={columns}
-        data={shipments}
         isLoading={loadingShipments}
+        data={shipments}
         urlQueryParams={urlQueryParams}
         setUrlQueryParams={setUrlQueryParams}
         actions={[

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Button } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Step from '@material-ui/core/Step';
 import Stepper from '@material-ui/core/Stepper';
@@ -9,6 +8,8 @@ import { default as React, useEffect } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
+import NavigationFragment from 'components/questionary/NavigationFragment';
+import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
 import { QuestionaryStepButton } from 'components/questionary/QuestionaryStepButton';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import {
@@ -121,8 +122,7 @@ const shipmentReducer = (
 
 export default function ShipmentContainer(props: {
   shipment: ShipmentExtended;
-  shipmentCreated?: (shipment: ShipmentExtended) => any;
-  shipmentUpdated?: (shipment: ShipmentExtended) => any;
+  done?: (shipment: ShipmentExtended) => any;
 }) {
   const isNonOfficer = !useCheckAccess([UserRole.USER_OFFICER]);
 
@@ -189,11 +189,8 @@ export default function ShipmentContainer(props: {
       next(action); // first update state/model
       const state = getState() as ShipmentSubmissionState;
       switch (action.type) {
-        case EventType.SHIPMENT_UPDATED:
-          props.shipmentUpdated?.(action.payload.shipment);
-          break;
-        case EventType.SHIPMENT_CREATED:
-          props.shipmentCreated?.(action.payload.shipment);
+        case EventType.SHIPMENT_DONE:
+          props.done?.(action.payload.shipment);
           break;
         case EventType.BACK_CLICKED:
           if (!state.isDirty || (await handleReset())) {
@@ -296,7 +293,22 @@ export default function ShipmentContainer(props: {
     if (state.stepIndex === getReviewStepIndex(state)) {
       return (
         <div>
-          <Button>Print</Button>
+          <QuestionaryDetails questionaryId={state.shipment.questionaryId} />
+          <div>
+            <NavigationFragment
+              back={undefined}
+              saveAndNext={{
+                callback: () =>
+                  dispatch({
+                    type: EventType.SHIPMENT_DONE,
+                    payload: { shipment: state.shipment },
+                  }),
+                label: 'Finish',
+              }}
+              reset={undefined}
+              isLoading={false}
+            />
+          </div>
         </div>
       );
     }
