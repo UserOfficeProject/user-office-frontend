@@ -207,6 +207,7 @@ export function SuperMaterialTable<Entry extends EntryID>({
             variant="contained"
             color="primary"
             onClick={() => setShow(true)}
+            data-cy="create-new-entry"
           >
             Create
           </Button>

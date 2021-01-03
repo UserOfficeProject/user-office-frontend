@@ -87,7 +87,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
       <FormControl className={classes.formControl}>
         <TextFieldNoSubmit
           value={title}
-          label="Brief description"
+          label="Description"
           onBlur={event => {
             handleChange({ title: event.target.value });
           }}
@@ -111,6 +111,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
             }}
             value={proposalId || ''}
             fullWidth
+            data-cy="select-proposal-dropdown"
           >
             {proposals.map(proposal => (
               <MenuItem key={proposal.id} value={proposal.id}>
@@ -137,6 +138,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
             }}
             value={sampleIds}
             fullWidth
+            data-cy="samples-dropdown"
           >
             {samples.map(sample => (
               <MenuItem key={sample.id} value={sample.id}>
