@@ -14,7 +14,7 @@ const withPreventSubmit = <P extends object>(
 }: WithPreventSubmitProps) => (
   <WrappedComponent
     {...(props as P)}
-    multiline
+    multiline={multiline}
     onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
       const response = onKeyDown?.(event);
       if (!multiline && event.key.toLowerCase() === 'enter') {

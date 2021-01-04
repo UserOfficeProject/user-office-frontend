@@ -95,9 +95,11 @@ context('Shipments tests', () => {
 
     cy.get('[data-cy=create-new-entry]').click();
 
-    cy.get('[data-cy=title-input]')
+    cy.get('[data-cy=title-input] input')
       .click()
-      .type(shipmentTitle);
+      .clear()
+      .type(shipmentTitle)
+      .should('have.value', shipmentTitle);
 
     cy.get('[data-cy=select-proposal-dropdown]').click();
 
