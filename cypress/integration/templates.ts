@@ -243,15 +243,21 @@ context('Template tests', () => {
 
     cy.contains('Is multiple select').click();
 
-    cy.get('[title=Add]').click({ force: true });
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[0]);
     cy.get('[title="Save"]').click();
 
-    cy.get('[title=Add]').click({ force: true });
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[1]);
     cy.get('[title="Save"]').click();
 
-    cy.get('[title=Add]').click({ force: true });
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[2]);
     cy.get('[title="Save"]').click();
 
