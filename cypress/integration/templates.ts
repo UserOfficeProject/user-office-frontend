@@ -538,11 +538,15 @@ context('Template tests', () => {
       .clear()
       .type('Multichoice question');
 
-    cy.get('[title=Add]').click({ force: true });
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('input[placeholder="Answer"]').type('Answer 1');
     cy.get('[title="Save"]').click();
 
-    cy.get('[title=Add]').click({ force: true });
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('input[placeholder="Answer"]').type('Answer 2');
     cy.get('[title="Save"]').click();
 
