@@ -15,7 +15,7 @@ export const createShipmentBasisValidationSchema: QuestionaryComponentDefinition
     samples: Yup.array()
       .of(Yup.object())
       .min(1, `Please add at least one sample`)
-      .required('Samples is required'),
+      .required('This field is required'),
   });
 
   return schema;
