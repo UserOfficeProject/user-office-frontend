@@ -73,45 +73,6 @@ export function usePersistQuestionaryModel() {
             });
           break;
         }
-        case EventType.SAVE_CLICKED: {
-          const answers = action.payload.answers;
-          const topicId = action.payload.topicId;
-          await Promise.all(
-            preSubmitActions(answers).map(
-              async f => await f({ state: getState(), dispatch, api: api() })
-            )
-          );
-
-          const questionaryId = getState().questionaryId;
-          if (!questionaryId) {
-            return;
-          }
-          api('Saved')
-            .answerTopic({
-              questionaryId: questionaryId,
-              answers: prepareAnswers(answers),
-              topicId: topicId,
-              isPartialSave: true,
-            })
-            .then(async result => {
-              if (result.answerTopic.questionaryStep) {
-                await Promise.all(
-                  postSubmitActions(
-                    result.answerTopic.questionaryStep.fields
-                  ).map(
-                    async f =>
-                      await f({ state: getState(), dispatch, api: api() })
-                  )
-                );
-                dispatch({
-                  type: EventType.QUESTIONARY_STEP_ANSWERED,
-                  payload: {
-                    questionaryStep: result.answerTopic.questionaryStep,
-                  },
-                });
-              }
-            });
-        }
       }
     };
   };

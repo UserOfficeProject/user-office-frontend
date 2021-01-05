@@ -217,6 +217,7 @@ export default function ProposalContainer(props: {
     questionaryId: props.proposal.questionary.questionaryId,
     stepIndex: 0,
     steps: props.proposal.questionary.steps,
+    stepMetadata: [],
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<

@@ -21,7 +21,6 @@ export enum EventType {
   QUESTIONARY_STEPS_LOADED = 'QUESTIONARY_STEPS_LOADED',
   QUESTIONARY_STEP_ANSWERED = 'QUESTIONARY_STEP_ANSWERED',
   SAVE_AND_CONTINUE_CLICKED = 'SAVE_AND_CONTINUE_CLICKED',
-  SAVE_CLICKED = 'SAVE_CLICKED',
   SAMPLE_CREATED = 'SAMPLE_CREATED',
   SAMPLE_UPDATED = 'SAMPLE_UPDATED',
   SAMPLE_LOADED = 'SAMPLE_LOADED',
@@ -43,24 +42,21 @@ export interface Event {
   payload?: any;
 }
 
+export interface FormStepMetadata {
+  title: string;
+  isEnabled: boolean;
+  isCompleted: boolean;
+  payload: any;
+}
+
 export interface QuestionarySubmissionState {
   questionaryId: number | null; // null if questionary not created yet
   steps: QuestionaryStep[]; // blank of filled out steps. If blank, then questionaryId will be null
   templateId: number;
   stepIndex: number;
   isDirty: boolean;
+  stepMetadata: FormStepMetadata[];
 }
-
-const setStepIndexIfValid = (
-  state: QuestionarySubmissionState,
-  stepIndex: number
-) => {
-  const firstStepIndex = 0;
-  const lastStepIndex = state.steps.length - 1;
-  if (firstStepIndex >= 0 && stepIndex <= lastStepIndex) {
-    state.stepIndex = stepIndex;
-  }
-};
 
 /** returns the index the form should start on, for new questionary it's 0,
  * but for unfinished it's the first unfinished step */
@@ -104,15 +100,15 @@ export function QuestionarySubmissionModel<
           break;
 
         case EventType.GO_STEP_BACK:
-          setStepIndexIfValid(draftState, draftState.stepIndex - 1);
+          draftState.stepIndex = draftState.stepIndex - 1;
           break;
 
         case EventType.GO_STEP_FORWARD:
-          setStepIndexIfValid(draftState, draftState.stepIndex + 1);
+          draftState.stepIndex = draftState.stepIndex + 1;
           break;
 
         case EventType.GO_TO_STEP:
-          setStepIndexIfValid(draftState, action.payload.stepIndex);
+          draftState.stepIndex = action.payload.stepIndex;
           break;
 
         case EventType.QUESTIONARY_STEPS_LOADED: {

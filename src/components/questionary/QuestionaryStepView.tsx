@@ -7,8 +7,13 @@ import { ErrorFocus } from 'components/common/ErrorFocus';
 import UOLoader from 'components/common/UOLoader';
 import { Answer, QuestionaryStep } from 'generated/sdk';
 import {
+  usePostSubmitActions,
+  usePreSubmitActions,
+} from 'hooks/questionary/useSubmitActions';
+import {
   areDependenciesSatisfied,
   getQuestionaryStepByTopicId as getStepByTopicId,
+  prepareAnswers,
 } from 'models/QuestionaryFunctions';
 import {
   Event,
@@ -16,6 +21,7 @@ import {
   QuestionarySubmissionState,
 } from 'models/QuestionarySubmissionState';
 import submitFormAsync from 'utils/FormikAsyncFormHandler';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import NavigationFragment from './NavigationFragment';
 import {
@@ -66,6 +72,10 @@ export default function QuestionaryStepView(props: {
   const { state, topicId, dispatch } = props;
   const classes = useStyles();
 
+  const preSubmitActions = usePreSubmitActions();
+  const postSubmitActions = usePostSubmitActions();
+  const { api } = useDataApiWithFeedback();
+
   const questionaryStep = getStepByTopicId(state.steps, topicId) as
     | QuestionaryStep
     | undefined;
@@ -78,6 +88,45 @@ export default function QuestionaryStepView(props: {
         );
       })
     : [];
+
+  const saveHandler = async () => {
+    await Promise.all(
+      preSubmitActions(activeFields).map(
+        async f => await f({ state, dispatch, api: api() })
+      )
+    );
+
+    const questionaryId = state.questionaryId;
+    if (!questionaryId) {
+      throw new Error('Missing questionaryId');
+    }
+
+    api('Saved')
+      .answerTopic({
+        questionaryId: questionaryId,
+        answers: prepareAnswers(activeFields),
+        topicId: topicId,
+        isPartialSave: true,
+      })
+      .then(async result => {
+        if (result.answerTopic.questionaryStep) {
+          await Promise.all(
+            postSubmitActions(result.answerTopic.questionaryStep.fields).map(
+              async f => await f({ state, dispatch, api: api() })
+            )
+          );
+          dispatch({
+            type: EventType.QUESTIONARY_STEP_ANSWERED,
+            payload: {
+              questionaryStep: result.answerTopic.questionaryStep,
+            },
+          });
+          dispatch({
+            type: EventType.GO_STEP_FORWARD,
+          });
+        }
+      });
+  };
 
   if (state === null || !questionaryStep) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
@@ -103,6 +152,7 @@ export default function QuestionaryStepView(props: {
           isSubmitting,
         } = formikProps;
 
+        // <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
         return (
           <form className={props.readonly ? classes.disabled : undefined}>
             {activeFields.map(field => {
@@ -150,12 +200,7 @@ export default function QuestionaryStepView(props: {
                 questionaryStep.isCompleted
                   ? undefined
                   : {
-                      callback: () => {
-                        dispatch({
-                          type: EventType.SAVE_CLICKED,
-                          payload: { answers: activeFields, topicId: topicId },
-                        });
-                      },
+                      callback: saveHandler,
                       disabled: !props.state.isDirty,
                     }
               }

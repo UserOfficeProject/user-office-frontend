@@ -48,6 +48,7 @@ function CreateShipment({ close }: CreateShipmentProps) {
   const { api } = useDataApiWithFeedback();
   const [blankShipment, setBlankShipment] = useState<ShipmentExtended>();
 
+  // TODO create a hook instead of useEffect
   useEffect(() => {
     api()
       .getActiveTemplateId({

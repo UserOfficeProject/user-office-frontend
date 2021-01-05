@@ -174,6 +174,7 @@ export function SampleDeclarationContainer(props: {
     questionaryId: props.sample.questionary.questionaryId,
     stepIndex: 0,
     steps: props.sample.questionary.steps,
+    stepMetadata: [],
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(
@@ -240,6 +241,10 @@ export function SampleDeclarationContainer(props: {
 
     if (!currentStep) {
       return null;
+    }
+
+    {
+      /* TODO this is suppose to be QuestionaryConext and then casted to sample where needed */
     }
 
     return (
