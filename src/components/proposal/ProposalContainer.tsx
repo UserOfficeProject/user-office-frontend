@@ -9,6 +9,10 @@ import { default as React, useEffect } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
+import {
+  QuestionaryContext,
+  QuestionaryContextType,
+} from 'components/questionary/QuestionaryContext';
 import { QuestionaryStepButton } from 'components/questionary/QuestionaryStepButton';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import {
@@ -55,15 +59,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type ProposalContextType = {
+export interface ProposalContextType extends QuestionaryContextType {
   state: ProposalSubmissionState | null;
-  dispatch: React.Dispatch<Event>;
-};
-
-export const ProposalContext = React.createContext<ProposalContextType>({
-  state: null,
-  dispatch: (e: Event) => {},
-});
+}
 
 const getReviewStepIndex = (state: ProposalSubmissionState) =>
   state.steps.length;
@@ -328,7 +326,7 @@ export default function ProposalContainer(props: {
     ) : null;
 
   return (
-    <ProposalContext.Provider value={{ state, dispatch }}>
+    <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Container maxWidth="lg">
         <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
         <StyledPaper>
@@ -351,6 +349,6 @@ export default function ProposalContainer(props: {
           {getStepContent()}
         </StyledPaper>
       </Container>
-    </ProposalContext.Provider>
+    </QuestionaryContext.Provider>
   );
 }

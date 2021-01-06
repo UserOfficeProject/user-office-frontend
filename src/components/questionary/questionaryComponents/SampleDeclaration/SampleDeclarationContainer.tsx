@@ -8,6 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import { default as React, useEffect } from 'react';
 import { Prompt } from 'react-router';
 
+import {
+  QuestionaryContext,
+  QuestionaryContextType,
+} from 'components/questionary/QuestionaryContext';
 import { QuestionaryStepButton } from 'components/questionary/QuestionaryStepButton';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import { Sample } from 'generated/sdk';
@@ -44,14 +48,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
 }));
-type SampleContextType = {
+export interface SampleContextType extends QuestionaryContextType {
   state: SampleSubmissionState | null;
-  dispatch: React.Dispatch<Event>;
-};
-export const SampleContext = React.createContext<SampleContextType>({
-  state: null,
-  dispatch: e => {},
-});
+}
 
 const getConfirmNavigMsg = (): string => {
   return 'Changes you recently made in this step will not be saved! Are you sure?';
@@ -243,12 +242,8 @@ export function SampleDeclarationContainer(props: {
       return null;
     }
 
-    {
-      /* TODO this is suppose to be QuestionaryConext and then casted to sample where needed */
-    }
-
     return (
-      <SampleContext.Provider value={{ state, dispatch }}>
+      <QuestionaryContext.Provider value={{ state, dispatch }}>
         <QuestionaryStepView
           topicId={currentStep.topic.id}
           state={state}
@@ -260,7 +255,7 @@ export function SampleDeclarationContainer(props: {
           dispatch={dispatch}
           key={currentStep.topic.id}
         />
-      </SampleContext.Provider>
+      </QuestionaryContext.Provider>
     );
   };
 

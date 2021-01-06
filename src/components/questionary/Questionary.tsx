@@ -1,15 +1,14 @@
 import { makeStyles, Step, Stepper, Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
-import {
-  Event,
-  EventType,
-  FormStepMetadata,
-  QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+import { EventType, FormStepMetadata } from 'models/QuestionarySubmissionState';
 
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from './QuestionaryContext';
 import { QuestionaryStepButton } from './QuestionaryStepButton';
 
 const useStyles = makeStyles(theme => ({
@@ -26,21 +25,22 @@ interface QuestionaryProps {
   title: string;
   info: string;
   displayElementFactory: (metadata: FormStepMetadata) => React.ReactNode;
-  state: QuestionarySubmissionState;
-  dispatch: React.Dispatch<Event>;
   handleReset: () => Promise<boolean>;
 }
 
 function Questionary({
   title,
   info,
-  state,
-  dispatch,
   handleReset,
   displayElementFactory,
 }: QuestionaryProps) {
   const isNonOfficer = !useCheckAccess([UserRole.USER_OFFICER]);
   const classes = useStyles();
+  const { state, dispatch } = useContext(QuestionaryContext);
+
+  if (!state || !dispatch) {
+    throw new Error(createMissingContextErrorMessage(Questionary));
+  }
 
   const allStepsComplete = (steps: FormStepMetadata[]) =>
     steps.every(step => step.isCompleted);

@@ -11,7 +11,11 @@ import React, { useContext, useState } from 'react';
 
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import { ShipmentContext } from 'components/shipments/ShipmentContainer';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from 'components/questionary/QuestionaryContext';
+import { ShipmentContextType } from 'components/shipments/ShipmentContainer';
 import { Answer, Sample } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
@@ -48,24 +52,26 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   } = props;
 
   const classes = useStyles();
-  const shipmentContext = useContext(ShipmentContext);
+  const { state, dispatch } = useContext(
+    QuestionaryContext
+  ) as ShipmentContextType;
 
-  const [title, setTitle] = useState(shipmentContext.state?.shipment.title);
+  const [title, setTitle] = useState(state?.shipment.title);
   const [proposalId, setProposalId] = useState<number | null>(
-    shipmentContext.state?.shipment.proposalId || null
+    state?.shipment.proposalId || null
   );
   const [sampleIds, setSampleIds] = useState<number[]>(
-    shipmentContext.state?.shipment.samples.map(sample => sample.id) || []
+    state?.shipment.samples.map(sample => sample.id) || []
   );
 
   const { proposals, loadingProposals } = useUserProposals();
   const { samples, loadingSamples } = useProposalSamples(proposalId);
 
-  if (!shipmentContext.state) {
-    return null;
+  if (!state || !dispatch) {
+    throw new Error(
+      createMissingContextErrorMessage(QuestionaryComponentShipmentBasis)
+    );
   }
-
-  const { dispatch, state } = shipmentContext;
 
   const handleChange = (changes: Partial<ShipmentBasisFormikData>) => {
     dispatch({

@@ -5,12 +5,16 @@ import React, { ChangeEvent, useContext, useState } from 'react';
 
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from 'components/questionary/QuestionaryContext';
 import { Answer, SampleBasisConfig } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { EventType } from 'models/QuestionarySubmissionState';
 import { SampleSubmissionState } from 'models/SampleSubmissionState';
 
-import { SampleContext } from '../SampleDeclaration/SampleDeclarationContainer';
+import { SampleContextType } from '../SampleDeclaration/SampleDeclarationContainer';
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
 
@@ -21,15 +25,17 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
     },
   } = props;
 
-  const sampleContext = useContext(SampleContext);
+  const { dispatch, state } = useContext(
+    QuestionaryContext
+  ) as SampleContextType;
 
-  const [title, setTitle] = useState(sampleContext.state?.sample.title);
+  const [title, setTitle] = useState(state?.sample.title);
 
-  if (!sampleContext.state) {
-    return null;
+  if (!state || !dispatch) {
+    throw new Error(
+      createMissingContextErrorMessage(QuestionaryComponentSampleBasis)
+    );
   }
-
-  const { dispatch, state } = sampleContext;
 
   return (
     <>

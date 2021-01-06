@@ -2,6 +2,10 @@
 import { default as React, useEffect } from 'react';
 
 import Questionary from 'components/questionary/Questionary';
+import {
+  QuestionaryContext,
+  QuestionaryContextType,
+} from 'components/questionary/QuestionaryContext';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import { QuestionaryStep, ShipmentStatus } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
@@ -20,15 +24,9 @@ import {
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 
-type ShipmentContextType = {
+export interface ShipmentContextType extends QuestionaryContextType {
   state: ShipmentSubmissionState | null;
-  dispatch: React.Dispatch<Event>;
-};
-
-export const ShipmentContext = React.createContext<ShipmentContextType>({
-  state: null,
-  dispatch: (e: Event) => {},
-});
+}
 
 const shipmentReducer = (
   state: ShipmentSubmissionState,
@@ -188,13 +186,11 @@ export default function ShipmentContainer(props: {
   }, [previousInitialShipment, props.shipment, dispatch]);
 
   return (
-    <ShipmentContext.Provider value={{ state, dispatch }}>
+    <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
         title={state.shipment.title || 'New Shipment'}
         info={state.shipment.status}
-        dispatch={dispatch}
         handleReset={handleReset}
-        state={state}
         displayElementFactory={metadata => (
           <QuestionaryStepView
             state={state}
@@ -204,7 +200,7 @@ export default function ShipmentContainer(props: {
           />
         )}
       />
-    </ShipmentContext.Provider>
+    </QuestionaryContext.Provider>
   );
 }
 
