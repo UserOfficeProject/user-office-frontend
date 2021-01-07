@@ -52,9 +52,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   const [localAbstract, setLocalAbstract] = useState(state?.proposal.abstract);
 
   if (!state || !dispatch) {
-    throw new Error(
-      createMissingContextErrorMessage(QuestionaryComponentProposalBasis)
-    );
+    throw new Error(createMissingContextErrorMessage());
   }
 
   const { proposer, users } = state.proposal;

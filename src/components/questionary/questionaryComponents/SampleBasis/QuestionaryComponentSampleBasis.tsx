@@ -32,9 +32,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
   const [title, setTitle] = useState(state?.sample.title);
 
   if (!state || !dispatch) {
-    throw new Error(
-      createMissingContextErrorMessage(QuestionaryComponentSampleBasis)
-    );
+    throw new Error(createMissingContextErrorMessage());
   }
 
   return (

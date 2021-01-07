@@ -308,13 +308,11 @@ export default function ProposalContainer(props: {
     return (
       <QuestionaryStepView
         topicId={currentStep.topic.id}
-        state={state}
         readonly={
           isApiInteracting ||
           (previousStep ? previousStep.isCompleted === false : false) ||
           (isSubmitted && isNonOfficer)
         }
-        dispatch={dispatch}
         key={currentStep.topic.id}
       />
     );

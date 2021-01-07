@@ -68,9 +68,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const { samples, loadingSamples } = useProposalSamples(proposalId);
 
   if (!state || !dispatch) {
-    throw new Error(
-      createMissingContextErrorMessage(QuestionaryComponentShipmentBasis)
-    );
+    throw new Error(createMissingContextErrorMessage());
   }
 
   const handleChange = (changes: Partial<ShipmentBasisFormikData>) => {

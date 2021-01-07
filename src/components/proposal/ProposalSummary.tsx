@@ -20,7 +20,7 @@ function ProposalReview({ data, readonly, confirm }: ProposalSummaryProps) {
   const { dispatch } = useContext(QuestionaryContext) as ProposalContextType;
 
   if (!dispatch) {
-    throw new Error(createMissingContextErrorMessage(ProposalReview));
+    throw new Error(createMissingContextErrorMessage());
   }
   const downloadPDFProposal = useDownloadPDFProposal();
   const proposal = data.proposal;

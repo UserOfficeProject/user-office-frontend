@@ -246,13 +246,11 @@ export function SampleDeclarationContainer(props: {
       <QuestionaryContext.Provider value={{ state, dispatch }}>
         <QuestionaryStepView
           topicId={currentStep.topic.id}
-          state={state}
           readonly={
             isSavingModel ||
             isApiInteracting ||
             (previousStep ? previousStep.isCompleted === false : false)
           }
-          dispatch={dispatch}
           key={currentStep.topic.id}
         />
       </QuestionaryContext.Provider>

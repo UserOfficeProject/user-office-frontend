@@ -93,9 +93,7 @@ function QuestionaryComponentSampleDeclaration(props: BasicComponentProps) {
   }, [answer.question.proposalQuestionId, state, api]);
 
   if (!state) {
-    throw new Error(
-      createMissingContextErrorMessage(QuestionaryComponentSampleDeclaration)
-    );
+    throw new Error(createMissingContextErrorMessage());
   }
 
   return (

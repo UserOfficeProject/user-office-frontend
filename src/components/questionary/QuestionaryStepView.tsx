@@ -1,6 +1,6 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useContext } from 'react';
 import * as Yup from 'yup';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
@@ -16,7 +16,6 @@ import {
   prepareAnswers,
 } from 'models/QuestionaryFunctions';
 import {
-  Event,
   EventType,
   QuestionarySubmissionState,
 } from 'models/QuestionarySubmissionState';
@@ -28,6 +27,10 @@ import {
   createQuestionaryComponent,
   getQuestionaryComponentDefinition,
 } from './QuestionaryComponentRegistry';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from './QuestionaryContext';
 
 const useStyles = makeStyles({
   componentWrapper: {
@@ -64,17 +67,21 @@ export const createFormikConfigObjects = (
 };
 
 export default function QuestionaryStepView(props: {
-  state: QuestionarySubmissionState;
   topicId: number;
-  dispatch: React.Dispatch<Event>;
   readonly: boolean;
 }) {
-  const { state, topicId, dispatch } = props;
+  const { topicId } = props;
   const classes = useStyles();
 
   const preSubmitActions = usePreSubmitActions();
   const postSubmitActions = usePostSubmitActions();
   const { api } = useDataApiWithFeedback();
+
+  const { state, dispatch } = useContext(QuestionaryContext);
+
+  if (!state || !dispatch) {
+    throw new Error(createMissingContextErrorMessage());
+  }
 
   const questionaryStep = getStepByTopicId(state.steps, topicId) as
     | QuestionaryStep
@@ -201,7 +208,7 @@ export default function QuestionaryStepView(props: {
                   ? undefined
                   : {
                       callback: saveHandler,
-                      disabled: !props.state.isDirty,
+                      disabled: !state.isDirty,
                     }
               }
               saveAndNext={{

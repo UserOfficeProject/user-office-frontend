@@ -39,7 +39,7 @@ function Questionary({
   const { state, dispatch } = useContext(QuestionaryContext);
 
   if (!state || !dispatch) {
-    throw new Error(createMissingContextErrorMessage(Questionary));
+    throw new Error(createMissingContextErrorMessage());
   }
 
   const allStepsComplete = (steps: FormStepMetadata[]) =>
