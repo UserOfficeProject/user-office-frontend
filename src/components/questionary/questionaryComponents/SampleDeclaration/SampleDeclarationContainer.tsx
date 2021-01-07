@@ -220,7 +220,7 @@ export function SampleDeclarationContainer(props: {
                 }
               }}
               completed={step.isCompleted}
-              editable={
+              readonly={
                 index === 0 ||
                 step.isCompleted ||
                 steps[index].isCompleted === true

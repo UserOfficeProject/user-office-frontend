@@ -3,7 +3,10 @@ import React, { useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
-import { EventType, FormStepMetadata } from 'models/QuestionarySubmissionState';
+import {
+  EventType,
+  WizardStepMetadata,
+} from 'models/QuestionarySubmissionState';
 
 import {
   createMissingContextErrorMessage,
@@ -24,7 +27,7 @@ const getConfirmNavigMsg = (): string => {
 interface QuestionaryProps {
   title: string;
   info: string;
-  displayElementFactory: (metadata: FormStepMetadata) => React.ReactNode;
+  displayElementFactory: (metadata: WizardStepMetadata) => React.ReactNode;
   handleReset: () => Promise<boolean>;
 }
 
@@ -42,9 +45,6 @@ function Questionary({
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const allStepsComplete = (steps: FormStepMetadata[]) =>
-    steps.every(step => step.isCompleted);
-
   const getStepperNavig = () => {
     // if there are less than 2 steps then there is no need to show the wizard navigation
     if (state.stepMetadata.length < 2) {
@@ -57,29 +57,26 @@ function Questionary({
         activeStep={state.stepIndex}
         className={classes.stepper}
       >
-        {state.stepMetadata.map((metadata, index, steps) => (
-          <Step key={index}>
-            <QuestionaryStepButton
-              onClick={async () => {
-                if (!state.isDirty || (await handleReset())) {
-                  dispatch({
-                    type: EventType.GO_TO_STEP,
-                    payload: { stepIndex: index },
-                  });
-                }
-              }}
-              completed={metadata.isCompleted}
-              editable={
-                true
-                // index === 0 ||
-                // step.isCompleted ||
-                // steps[index].isCompleted === true
-              }
-            >
-              <span>{metadata.title}</span>
-            </QuestionaryStepButton>
-          </Step>
-        ))}
+        {state.stepMetadata.map((metadata, index) => {
+          return (
+            <Step key={index}>
+              <QuestionaryStepButton
+                onClick={async () => {
+                  if (!state.isDirty || (await handleReset())) {
+                    dispatch({
+                      type: EventType.GO_TO_STEP,
+                      payload: { stepIndex: index },
+                    });
+                  }
+                }}
+                completed={metadata.isCompleted}
+                readonly={metadata.isReadonly}
+              >
+                <span>{metadata.title}</span>
+              </QuestionaryStepButton>
+            </Step>
+          );
+        })}
       </Stepper>
     );
   };

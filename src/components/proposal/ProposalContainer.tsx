@@ -266,7 +266,7 @@ export default function ProposalContainer(props: {
                 }
               }}
               completed={step.isCompleted}
-              editable={
+              readonly={
                 index === 0 ||
                 step.isCompleted ||
                 steps[index].isCompleted === true
@@ -285,7 +285,7 @@ export default function ProposalContainer(props: {
               });
             }}
             completed={state.proposal.submitted}
-            editable={allStepsComplete(state.proposal.questionary)}
+            readonly={allStepsComplete(state.proposal.questionary)}
           >
             <span>Review</span>
           </QuestionaryStepButton>

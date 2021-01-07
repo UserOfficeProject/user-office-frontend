@@ -16,6 +16,7 @@ import {
   EventType,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
+  WizardStepMetadata,
 } from 'models/QuestionarySubmissionState';
 import {
   ShipmentExtended,
@@ -23,6 +24,8 @@ import {
 } from 'models/ShipmentSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
+
+import ShipmentReview from './ShipmentReview';
 
 export interface ShipmentContextType extends QuestionaryContextType {
   state: ShipmentSubmissionState | null;
@@ -77,7 +80,53 @@ export default function ShipmentContainer(props: {
     persistModel: persistShipmentModel,
     isSavingModel: isSavingShipmentModel,
   } = usePersistShipmentModel();
+  const isShipmentSubmitted =
+    props.shipment.status === ShipmentStatus.SUBMITTED;
+
   const previousInitialShipment = usePrevious(props.shipment);
+
+  const createShipmentWizardSteps = (): WizardStepMetadata[] => {
+    const wizardSteps: WizardStepMetadata[] = [];
+    const questionarySteps = props.shipment.questionary.steps;
+    questionarySteps.forEach((step, index, steps) =>
+      wizardSteps.push({
+        type: 'QuestionaryStep',
+        title: step.topic.title,
+        isCompleted: step.isCompleted,
+        payload: { topicId: step.topic.id },
+        isReadonly:
+          isShipmentSubmitted ||
+          (index > 0 && steps[index - 1].isCompleted === false),
+      })
+    );
+
+    const lastShipmentStep = questionarySteps[questionarySteps.length - 1];
+    wizardSteps.push({
+      type: 'ShipmentReview',
+      title: 'Review',
+      isCompleted: isShipmentSubmitted,
+      isReadonly: isShipmentSubmitted || lastShipmentStep.isCompleted === false,
+    });
+
+    return wizardSteps;
+  };
+
+  const displayElementFactory = (metadata: WizardStepMetadata) => {
+    switch (metadata.type) {
+      case 'QuestionaryStep':
+        return (
+          <QuestionaryStepView
+            readonly={metadata.isReadonly}
+            topicId={metadata.payload.topicId}
+          />
+        );
+      case 'ShipmentReview':
+        return <ShipmentReview isReadonly={metadata.isReadonly} />;
+
+      default:
+        throw new Error(`Unknown step type ${metadata.type}`);
+    }
+  };
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -133,6 +182,7 @@ export default function ShipmentContainer(props: {
         case EventType.SHIPMENT_DONE:
           props.done?.(action.payload.shipment);
           break;
+
         case EventType.BACK_CLICKED: // move this
           if (!state.isDirty || (await handleReset())) {
             dispatch({ type: EventType.GO_STEP_BACK });
@@ -152,12 +202,7 @@ export default function ShipmentContainer(props: {
     questionaryId: props.shipment.questionary.questionaryId,
     stepIndex: 0,
     steps: props.shipment.questionary.steps,
-    stepMetadata: props.shipment.questionary.steps.map(step => ({
-      title: step.topic.title,
-      isCompleted: step.isCompleted,
-      isEnabled: true,
-      payload: { topicId: step.topic.id },
-    })),
+    stepMetadata: createShipmentWizardSteps(),
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<
@@ -167,8 +212,6 @@ export default function ShipmentContainer(props: {
     [handleEvents, persistModel, persistShipmentModel],
     shipmentReducer
   );
-
-  const isSubmitted = state.shipment.status === ShipmentStatus.SUBMITTED;
 
   useEffect(() => {
     const isComponentMountedForTheFirstTime =
@@ -191,21 +234,15 @@ export default function ShipmentContainer(props: {
         title={state.shipment.title || 'New Shipment'}
         info={state.shipment.status}
         handleReset={handleReset}
-        displayElementFactory={metadata => (
-          <QuestionaryStepView
-            state={state}
-            dispatch={dispatch}
-            readonly={metadata.isEnabled}
-            topicId={metadata.payload.topicId}
-          />
-        )}
+        displayElementFactory={displayElementFactory}
       />
     </QuestionaryContext.Provider>
   );
 }
 
 {
-  /* <Step key="review">
+  /* 
+<Step key="review">
 <QuestionaryStepButton
   onClick={async () => {
     dispatch({
@@ -219,29 +256,5 @@ export default function ShipmentContainer(props: {
   <span>Review</span>
 </QuestionaryStepButton>
 </Step> 
-
-
-
-if (state.stepIndex === getReviewStepIndex(state)) {
-      return (
-        <div>
-          <QuestionaryDetails questionaryId={state.shipment.questionaryId} />
-          <div>
-            <NavigationFragment
-              back={undefined}
-              saveAndNext={{
-                callback: () =>
-                  dispatch({
-                    type: EventType.SHIPMENT_DONE,
-                    payload: { shipment: state.shipment },
-                  }),
-                label: 'Finish',
-              }}
-              isLoading={false}
-            />
-          </div>
-        </div>
-      );
-    }
 */
 }

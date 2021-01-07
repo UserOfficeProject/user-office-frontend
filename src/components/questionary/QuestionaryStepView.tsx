@@ -87,8 +87,13 @@ export default function QuestionaryStepView(props: {
     | QuestionaryStep
     | undefined;
 
-  const activeFields = questionaryStep
-    ? questionaryStep.fields.filter(field => {
+  if (!questionaryStep) {
+    throw new Error(
+      `Could not find questionary step with topic id: ${topicId}`
+    );
+  }
+
+  const activeFields = questionaryStep.fields.filter(field => {
         return areDependenciesSatisfied(
           state.steps,
           field.question.proposalQuestionId
