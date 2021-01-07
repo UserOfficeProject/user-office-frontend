@@ -1,15 +1,13 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import React, { useContext } from 'react';
+import { Prompt } from 'react-router';
 import * as Yup from 'yup';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
 import UOLoader from 'components/common/UOLoader';
 import { Answer, QuestionaryStep } from 'generated/sdk';
-import {
-  usePostSubmitActions,
-  usePreSubmitActions,
-} from 'hooks/questionary/useSubmitActions';
+import { usePreSubmitActions } from 'hooks/questionary/useSubmitActions';
 import {
   areDependenciesSatisfied,
   getQuestionaryStepByTopicId as getStepByTopicId,
@@ -66,6 +64,17 @@ export const createFormikConfigObjects = (
   return { initialValues, validationSchema };
 };
 
+const PromptIfDirty = () => {
+  const formik = useFormikContext();
+
+  return (
+    <Prompt
+      when={formik.dirty && formik.submitCount === 0}
+      message="Changes you recently made in this step will not be saved! Are you sure?"
+    />
+  );
+};
+
 export default function QuestionaryStepView(props: {
   topicId: number;
   readonly: boolean;
@@ -74,7 +83,6 @@ export default function QuestionaryStepView(props: {
   const classes = useStyles();
 
   const preSubmitActions = usePreSubmitActions();
-  const postSubmitActions = usePostSubmitActions();
   const { api } = useDataApiWithFeedback();
 
   const { state, dispatch } = useContext(QuestionaryContext);
@@ -100,15 +108,17 @@ export default function QuestionaryStepView(props: {
     );
   });
 
-  const saveHandler = async () => {
-    const questionaryId = (
-      await Promise.all(
-        preSubmitActions(activeFields).map(
-          async f => await f({ state, dispatch, api: api() })
+  const saveHandler = async (isPartialSave: boolean) => {
+    const result =
+      (
+        await Promise.all(
+          preSubmitActions(activeFields).map(
+            async f => await f({ state, dispatch, api: api() })
+          )
         )
-      )
-    ).pop(); // TODO obtain newly created questionary ID some other way
+      ).pop() || state.questionaryId; // TODO obtain newly created questionary ID some other way
 
+    const questionaryId = state.questionaryId || result;
     if (!questionaryId) {
       throw new Error('Missing questionaryId');
     }
@@ -118,23 +128,15 @@ export default function QuestionaryStepView(props: {
         questionaryId: questionaryId,
         answers: prepareAnswers(activeFields),
         topicId: topicId,
-        isPartialSave: true,
+        isPartialSave: isPartialSave,
       })
       .then(async result => {
         if (result.answerTopic.questionaryStep) {
-          await Promise.all(
-            postSubmitActions(result.answerTopic.questionaryStep.fields).map(
-              async f => await f({ state, dispatch, api: api() })
-            )
-          );
           dispatch({
             type: EventType.QUESTIONARY_STEP_ANSWERED,
             payload: {
               questionaryStep: result.answerTopic.questionaryStep,
             },
-          });
-          dispatch({
-            type: EventType.GO_STEP_FORWARD,
           });
         }
       });
@@ -164,9 +166,9 @@ export default function QuestionaryStepView(props: {
           isSubmitting,
         } = formikProps;
 
-        // <Prompt when={state.isDirty} message={() => getConfirmNavigMsg()} />
         return (
           <form className={props.readonly ? classes.disabled : undefined}>
+            <PromptIfDirty />
             {activeFields.map(field => {
               return (
                 <div
@@ -212,7 +214,7 @@ export default function QuestionaryStepView(props: {
                 questionaryStep.isCompleted
                   ? undefined
                   : {
-                      callback: saveHandler,
+                      callback: () => saveHandler(true),
                       disabled: !state.isDirty,
                     }
               }
@@ -221,10 +223,8 @@ export default function QuestionaryStepView(props: {
                   submitFormAsync(submitForm, validateForm).then(
                     (isValid: boolean) => {
                       if (isValid) {
-                        dispatch({
-                          type: EventType.SAVE_AND_CONTINUE_CLICKED,
-                          payload: { answers: activeFields, topicId: topicId },
-                        });
+                        saveHandler(false);
+                        dispatch({ type: EventType.GO_STEP_FORWARD });
                       }
                     }
                   );

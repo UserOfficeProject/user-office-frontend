@@ -43,11 +43,18 @@ export interface Event {
 }
 
 export interface WizardStepMetadata {
-  type: 'QuestionaryStep' | 'ShipmentReview';
   title: string;
   isCompleted: boolean;
   isReadonly: boolean;
+}
+
+export interface WizardStep {
+  type: 'QuestionaryStep' | 'ShipmentReview';
   payload?: any;
+  getMetadata: (
+    state: QuestionarySubmissionState,
+    payload?: any
+  ) => WizardStepMetadata;
 }
 
 export interface QuestionarySubmissionState {
@@ -56,7 +63,7 @@ export interface QuestionarySubmissionState {
   templateId: number;
   stepIndex: number;
   isDirty: boolean;
-  stepMetadata: WizardStepMetadata[];
+  wizardSteps: WizardStep[];
 }
 
 /** returns the index the form should start on, for new questionary it's 0,

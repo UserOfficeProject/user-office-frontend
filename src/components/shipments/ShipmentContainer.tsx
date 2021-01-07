@@ -16,7 +16,7 @@ import {
   EventType,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-  WizardStepMetadata,
+  WizardStep,
 } from 'models/QuestionarySubmissionState';
 import {
   ShipmentExtended,
@@ -70,6 +70,9 @@ const shipmentReducer = (
   return draftState;
 };
 
+const isShipmentSubmitted = (shipment: { status: ShipmentStatus }) =>
+  shipment.status === ShipmentStatus.SUBMITTED;
+
 export default function ShipmentContainer(props: {
   shipment: ShipmentExtended;
   done?: (shipment: ShipmentExtended) => any;
@@ -80,48 +83,61 @@ export default function ShipmentContainer(props: {
     persistModel: persistShipmentModel,
     isSavingModel: isSavingShipmentModel,
   } = usePersistShipmentModel();
-  const isShipmentSubmitted =
-    props.shipment.status === ShipmentStatus.SUBMITTED;
 
   const previousInitialShipment = usePrevious(props.shipment);
 
-  const createShipmentWizardSteps = (): WizardStepMetadata[] => {
-    const wizardSteps: WizardStepMetadata[] = [];
+  const createShipmentWizardSteps = (): WizardStep[] => {
+    const wizardSteps: WizardStep[] = [];
     const questionarySteps = props.shipment.questionary.steps;
-    questionarySteps.forEach((step, index, steps) =>
+
+    questionarySteps.forEach((step, index) =>
       wizardSteps.push({
         type: 'QuestionaryStep',
-        title: step.topic.title,
-        isCompleted: step.isCompleted,
-        payload: { topicId: step.topic.id },
-        isReadonly:
-          isShipmentSubmitted ||
-          (index > 0 && steps[index - 1].isCompleted === false),
+        payload: { topicId: step.topic.id, questionaryStepIndex: index },
+        getMetadata: (state, payload) => {
+          const questionaryStep = state.steps[payload.questionaryStepIndex];
+
+          return {
+            title: questionaryStep.topic.title,
+            isCompleted: questionaryStep.isCompleted,
+            isReadonly:
+              isShipmentSubmitted(props.shipment) ||
+              (index > 0 && state.steps[index - 1].isCompleted === false),
+          };
+        },
       })
     );
 
-    const lastShipmentStep = questionarySteps[questionarySteps.length - 1];
     wizardSteps.push({
       type: 'ShipmentReview',
-      title: 'Review',
-      isCompleted: isShipmentSubmitted,
-      isReadonly: isShipmentSubmitted || lastShipmentStep.isCompleted === false,
+      getMetadata: state => {
+        const shipmentState = state as ShipmentSubmissionState;
+        const lastShipmentStep = shipmentState.steps[state.steps.length - 1];
+
+        return {
+          title: 'Review',
+          isCompleted: isShipmentSubmitted(shipmentState.shipment),
+          isReadonly:
+            isShipmentSubmitted(shipmentState.shipment) ||
+            lastShipmentStep.isCompleted === false,
+        };
+      },
     });
 
     return wizardSteps;
   };
 
-  const displayElementFactory = (metadata: WizardStepMetadata) => {
+  const displayElementFactory = (metadata: WizardStep, isReadonly: boolean) => {
     switch (metadata.type) {
       case 'QuestionaryStep':
         return (
           <QuestionaryStepView
-            readonly={metadata.isReadonly}
+            readonly={isReadonly}
             topicId={metadata.payload.topicId}
           />
         );
       case 'ShipmentReview':
-        return <ShipmentReview isReadonly={metadata.isReadonly} />;
+        return <ShipmentReview isReadonly={isReadonly} />;
 
       default:
         throw new Error(`Unknown step type ${metadata.type}`);
@@ -202,7 +218,7 @@ export default function ShipmentContainer(props: {
     questionaryId: props.shipment.questionary.questionaryId,
     stepIndex: 0,
     steps: props.shipment.questionary.steps,
-    stepMetadata: createShipmentWizardSteps(),
+    wizardSteps: createShipmentWizardSteps(),
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<
@@ -238,23 +254,4 @@ export default function ShipmentContainer(props: {
       />
     </QuestionaryContext.Provider>
   );
-}
-
-{
-  /* 
-<Step key="review">
-<QuestionaryStepButton
-  onClick={async () => {
-    dispatch({
-      type: EventType.GO_TO_STEP,
-      payload: { stepIndex: state.steps.length },
-    });
-  }}
-  completed={isSubmitted}
-  editable={allStepsComplete(state.shipment.questionary)}
->
-  <span>Review</span>
-</QuestionaryStepButton>
-</Step> 
-*/
 }

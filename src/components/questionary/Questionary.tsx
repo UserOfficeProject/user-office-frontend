@@ -3,10 +3,7 @@ import React, { useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
-import {
-  EventType,
-  WizardStepMetadata,
-} from 'models/QuestionarySubmissionState';
+import { EventType, WizardStep } from 'models/QuestionarySubmissionState';
 
 import {
   createMissingContextErrorMessage,
@@ -20,14 +17,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getConfirmNavigMsg = (): string => {
-  return 'Changes you recently made in this step will not be saved! Are you sure?';
-};
-
 interface QuestionaryProps {
   title: string;
   info: string;
-  displayElementFactory: (metadata: WizardStepMetadata) => React.ReactNode;
+  displayElementFactory: (
+    metadata: WizardStep,
+    isReadonly: boolean
+  ) => React.ReactNode;
   handleReset: () => Promise<boolean>;
 }
 
@@ -47,7 +43,7 @@ function Questionary({
 
   const getStepperNavig = () => {
     // if there are less than 2 steps then there is no need to show the wizard navigation
-    if (state.stepMetadata.length < 2) {
+    if (state.wizardSteps.length < 2) {
       return null;
     }
 
@@ -57,7 +53,12 @@ function Questionary({
         activeStep={state.stepIndex}
         className={classes.stepper}
       >
-        {state.stepMetadata.map((metadata, index) => {
+        {state.wizardSteps.map((wizardStep, index) => {
+          const stepMetadata = wizardStep.getMetadata(
+            state,
+            wizardStep.payload
+          );
+
           return (
             <Step key={index}>
               <QuestionaryStepButton
@@ -69,10 +70,10 @@ function Questionary({
                     });
                   }
                 }}
-                completed={metadata.isCompleted}
-                readonly={metadata.isReadonly}
+                completed={stepMetadata.isCompleted}
+                readonly={stepMetadata.isReadonly}
               >
-                <span>{metadata.title}</span>
+                <span>{stepMetadata.title}</span>
               </QuestionaryStepButton>
             </Step>
           );
@@ -82,13 +83,15 @@ function Questionary({
   };
 
   const getStepContent = () => {
-    const currentStep = state.stepMetadata[state.stepIndex];
+    const currentStep = state.wizardSteps[state.stepIndex];
+
+    const stepMetadata = currentStep.getMetadata(state, currentStep.payload);
 
     if (!currentStep) {
       return null;
     }
 
-    return displayElementFactory(currentStep);
+    return displayElementFactory(currentStep, stepMetadata.isReadonly);
   };
 
   return (
