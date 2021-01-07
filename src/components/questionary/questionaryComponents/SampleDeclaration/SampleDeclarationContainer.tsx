@@ -173,7 +173,7 @@ export function SampleDeclarationContainer(props: {
     questionaryId: props.sample.questionary.questionaryId,
     stepIndex: 0,
     steps: props.sample.questionary.steps,
-    stepMetadata: [],
+    wizardSteps: [],
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(

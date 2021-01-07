@@ -73,16 +73,48 @@ const shipmentReducer = (
 const isShipmentSubmitted = (shipment: { status: ShipmentStatus }) =>
   shipment.status === ShipmentStatus.SUBMITTED;
 
+const createQuestionaryWizardStep = (
+  step: QuestionaryStep,
+  index: number
+): WizardStep => ({
+  type: 'QuestionaryStep',
+  payload: { topicId: step.topic.id, questionaryStepIndex: index },
+  getMetadata: (state, payload) => {
+    const shipmentState = state as ShipmentSubmissionState;
+    const questionaryStep = state.steps[payload.questionaryStepIndex];
+
+    return {
+      title: questionaryStep.topic.title,
+      isCompleted: questionaryStep.isCompleted,
+      isReadonly:
+        isShipmentSubmitted(shipmentState.shipment) ||
+        (index > 0 && state.steps[index - 1].isCompleted === false),
+    };
+  },
+});
+
+const createReviewWizardStep = (): WizardStep => ({
+  type: 'ShipmentReview',
+  getMetadata: state => {
+    const shipmentState = state as ShipmentSubmissionState;
+    const lastShipmentStep = shipmentState.steps[state.steps.length - 1];
+
+    return {
+      title: 'Review',
+      isCompleted: isShipmentSubmitted(shipmentState.shipment),
+      isReadonly:
+        isShipmentSubmitted(shipmentState.shipment) ||
+        lastShipmentStep.isCompleted === false,
+    };
+  },
+});
 export default function ShipmentContainer(props: {
   shipment: ShipmentExtended;
   done?: (shipment: ShipmentExtended) => any;
 }) {
-  const { api, isExecutingCall: isApiInteracting } = useDataApiWithFeedback();
-  const { persistModel, isSavingModel } = usePersistQuestionaryModel();
-  const {
-    persistModel: persistShipmentModel,
-    isSavingModel: isSavingShipmentModel,
-  } = usePersistShipmentModel();
+  const { api } = useDataApiWithFeedback();
+  const { persistModel } = usePersistQuestionaryModel();
+  const { persistModel: persistShipmentModel } = usePersistShipmentModel();
 
   const previousInitialShipment = usePrevious(props.shipment);
 
@@ -91,38 +123,10 @@ export default function ShipmentContainer(props: {
     const questionarySteps = props.shipment.questionary.steps;
 
     questionarySteps.forEach((step, index) =>
-      wizardSteps.push({
-        type: 'QuestionaryStep',
-        payload: { topicId: step.topic.id, questionaryStepIndex: index },
-        getMetadata: (state, payload) => {
-          const questionaryStep = state.steps[payload.questionaryStepIndex];
-
-          return {
-            title: questionaryStep.topic.title,
-            isCompleted: questionaryStep.isCompleted,
-            isReadonly:
-              isShipmentSubmitted(props.shipment) ||
-              (index > 0 && state.steps[index - 1].isCompleted === false),
-          };
-        },
-      })
+      wizardSteps.push(createQuestionaryWizardStep(step, index))
     );
 
-    wizardSteps.push({
-      type: 'ShipmentReview',
-      getMetadata: state => {
-        const shipmentState = state as ShipmentSubmissionState;
-        const lastShipmentStep = shipmentState.steps[state.steps.length - 1];
-
-        return {
-          title: 'Review',
-          isCompleted: isShipmentSubmitted(shipmentState.shipment),
-          isReadonly:
-            isShipmentSubmitted(shipmentState.shipment) ||
-            lastShipmentStep.isCompleted === false,
-        };
-      },
-    });
+    wizardSteps.push(createReviewWizardStep());
 
     return wizardSteps;
   };
