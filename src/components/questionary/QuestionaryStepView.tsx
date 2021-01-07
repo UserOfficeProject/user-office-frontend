@@ -94,21 +94,21 @@ export default function QuestionaryStepView(props: {
   }
 
   const activeFields = questionaryStep.fields.filter(field => {
-        return areDependenciesSatisfied(
-          state.steps,
-          field.question.proposalQuestionId
-        );
-      })
-    : [];
+    return areDependenciesSatisfied(
+      state.steps,
+      field.question.proposalQuestionId
+    );
+  });
 
   const saveHandler = async () => {
-    await Promise.all(
-      preSubmitActions(activeFields).map(
-        async f => await f({ state, dispatch, api: api() })
+    const questionaryId = (
+      await Promise.all(
+        preSubmitActions(activeFields).map(
+          async f => await f({ state, dispatch, api: api() })
+        )
       )
-    );
+    ).pop(); // TODO obtain newly created questionary ID some other way
 
-    const questionaryId = state.questionaryId;
     if (!questionaryId) {
       throw new Error('Missing questionaryId');
     }

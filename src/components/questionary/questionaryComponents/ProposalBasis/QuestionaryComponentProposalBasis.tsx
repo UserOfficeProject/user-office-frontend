@@ -153,6 +153,8 @@ const proposalBasisPreSubmit = (answer: Answer) => async ({
   const proposal = (state as ProposalSubmissionState).proposal;
   const { id, title, abstract, users, proposer, callId } = proposal;
 
+  let returnValue = state.questionaryId;
+
   if (id > 0) {
     const result = await api.updateProposal({
       id: id,
@@ -193,8 +195,11 @@ const proposalBasisPreSubmit = (answer: Answer) => async ({
           },
         },
       });
+      returnValue = createResult.createProposal.proposal.questionaryId;
     }
   }
+
+  return returnValue;
 };
 
 export { QuestionaryComponentProposalBasis, proposalBasisPreSubmit };

@@ -164,6 +164,7 @@ const shipmentBasisPresubmit = (answer: Answer) => async ({
   const shipment = (state as ShipmentSubmissionState).shipment;
   const title = shipment.title;
   let shipmentId = shipment.id;
+  let questionaryId = state.questionaryId;
   if (shipmentId > 0) {
     const result = await api.updateShipment({
       title: title,
@@ -191,8 +192,9 @@ const shipmentBasisPresubmit = (answer: Answer) => async ({
         },
       });
       shipmentId = result.createShipment.shipment.id;
+      questionaryId = result.createShipment.shipment.questionaryId;
     } else {
-      return;
+      return null;
     }
   }
 
@@ -200,6 +202,8 @@ const shipmentBasisPresubmit = (answer: Answer) => async ({
     shipmentId: shipmentId,
     sampleIds: samplesToSampleIds(shipment.samples),
   });
+
+  return questionaryId;
 };
 
 export { QuestionaryComponentShipmentBasis, shipmentBasisPresubmit };

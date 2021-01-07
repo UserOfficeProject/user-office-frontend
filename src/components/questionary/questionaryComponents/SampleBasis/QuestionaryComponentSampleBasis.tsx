@@ -69,6 +69,8 @@ const sampleBasisPreSubmit = (answer: Answer) => async ({
   const sample = (state as SampleSubmissionState).sample;
   const title = sample.title;
 
+  let returnValue = state.questionaryId;
+
   if (sample.id > 0) {
     const result = await api.updateSample({
       title: title,
@@ -97,8 +99,11 @@ const sampleBasisPreSubmit = (answer: Answer) => async ({
           sample: result.createSample.sample,
         },
       });
+      returnValue = result.createSample.sample.questionaryId;
     }
   }
+
+  return returnValue;
 };
 
 export { QuestionaryComponentSampleBasis, sampleBasisPreSubmit };
