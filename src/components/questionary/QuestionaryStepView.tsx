@@ -78,6 +78,7 @@ const PromptIfDirty = () => {
 export default function QuestionaryStepView(props: {
   topicId: number;
   readonly: boolean;
+  onStepComplete?: (topicId: number) => any;
 }) {
   const { topicId } = props;
   const classes = useStyles();
@@ -221,10 +222,11 @@ export default function QuestionaryStepView(props: {
               saveAndNext={{
                 callback: () => {
                   submitFormAsync(submitForm, validateForm).then(
-                    (isValid: boolean) => {
+                    async (isValid: boolean) => {
                       if (isValid) {
-                        saveHandler(false);
+                        await saveHandler(false);
                         dispatch({ type: EventType.GO_STEP_FORWARD });
+                        props.onStepComplete?.(topicId);
                       }
                     }
                   );

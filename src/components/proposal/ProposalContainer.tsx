@@ -12,7 +12,6 @@ import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import { Proposal, QuestionaryStep, UserRole } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
-import { usePersistQuestionaryModel } from 'hooks/questionary/usePersistQuestionaryModel';
 import {
   ProposalSubmissionState,
   ProposalSubsetSumbission,
@@ -83,14 +82,14 @@ const createQuestionaryWizardStep = (
   type: 'QuestionaryStep',
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
-    const shipmentState = state as ProposalSubmissionState;
+    const proposalState = state as ProposalSubmissionState;
     const questionaryStep = state.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
-        isProposalSubmitted(shipmentState.proposal) ||
+        isProposalSubmitted(proposalState.proposal) ||
         (index > 0 && state.steps[index - 1].isCompleted === false),
     };
   },
@@ -100,14 +99,14 @@ const createReviewWizardStep = (): WizardStep => ({
   type: 'ProposalReview',
   getMetadata: state => {
     const proposalState = state as ProposalSubmissionState;
-    const lastShipmentStep = proposalState.steps[state.steps.length - 1];
+    const lastProposalStep = proposalState.steps[state.steps.length - 1];
 
     return {
       title: 'Review',
       isCompleted: isProposalSubmitted(proposalState.proposal),
       isReadonly:
         isProposalSubmitted(proposalState.proposal) ||
-        lastShipmentStep.isCompleted === false,
+        lastProposalStep.isCompleted === false,
     };
   },
 });
@@ -120,7 +119,6 @@ export default function ProposalContainer(props: {
   const isNonOfficer = !useCheckAccess([UserRole.USER_OFFICER]);
 
   const { api } = useDataApiWithFeedback();
-  const { persistModel } = usePersistQuestionaryModel();
   const { persistModel: persistProposalModel } = usePersistProposalModel();
   const previousInitialProposal = usePrevious(props.proposal);
 
@@ -226,11 +224,7 @@ export default function ProposalContainer(props: {
 
   const { state, dispatch } = QuestionarySubmissionModel<
     ProposalSubmissionState
-  >(
-    initialState,
-    [handleEvents, persistModel, persistProposalModel],
-    proposalReducer
-  );
+  >(initialState, [handleEvents, persistProposalModel], proposalReducer);
 
   useEffect(() => {
     const isComponentMountedForTheFirstTime =

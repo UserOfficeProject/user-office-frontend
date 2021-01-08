@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 
 interface QuestionaryProps {
   title: string;
-  info: string;
+  info?: string;
   displayElementFactory: (
     metadata: WizardStep,
     isReadonly: boolean

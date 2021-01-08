@@ -12,7 +12,7 @@ import { getFieldById } from './QuestionaryFunctions';
 
 export enum EventType {
   FIELD_CHANGED = 'FIELD_CHANGED',
-  QUESTIONARY_STEPS_COMPLETE = 'QUESTIONARY_STEPS_COMPLETE',
+  WIZARD_STEPS_COMPLETE = 'WIZARD_STEPS_COMPLETE',
   BACK_CLICKED = 'BACK_CLICKED',
   RESET_CLICKED = 'RESET_CLICKED',
   GO_STEP_BACK = 'GO_TO_STEP_REQUESTED',
@@ -66,6 +66,13 @@ export interface QuestionarySubmissionState {
   wizardSteps: WizardStep[];
 }
 
+const clamStepIndex = (stepIndex: number, stepCount: number) => {
+  const minStepIndex = 0;
+  const maxStepIndex = stepCount - 1;
+
+  return clamp(stepIndex, minStepIndex, maxStepIndex);
+};
+
 /** returns the index the form should start on, for new questionary it's 0,
  * but for unfinished it's the first unfinished step */
 function getInitialStepIndex(steps: QuestionaryStep[]): number {
@@ -80,10 +87,10 @@ function getInitialStepIndex(steps: QuestionaryStep[]): number {
 
   const lastFinishedStepIndex = steps.indexOf(lastFinishedStep);
   const nextUnfinishedStep = lastFinishedStepIndex + 1;
-  const maxStepIndex = steps.length - 1;
 
-  return clamp(nextUnfinishedStep, 0, maxStepIndex);
+  return clamStepIndex(nextUnfinishedStep, steps.length);
 }
+
 export function QuestionarySubmissionModel<
   T extends QuestionarySubmissionState
 >(
@@ -103,20 +110,27 @@ export function QuestionarySubmissionModel<
           draftState.isDirty = true;
           break;
 
-        case EventType.QUESTIONARY_STEPS_COMPLETE:
-          draftState.isDirty = false;
-          break;
-
         case EventType.GO_STEP_BACK:
-          draftState.stepIndex = draftState.stepIndex - 1;
+          draftState.stepIndex = clamStepIndex(
+            draftState.stepIndex - 1,
+            draftState.wizardSteps.length
+          );
+
           break;
 
         case EventType.GO_STEP_FORWARD:
-          draftState.stepIndex = draftState.stepIndex + 1;
+          draftState.stepIndex = clamStepIndex(
+            draftState.stepIndex + 1,
+            draftState.wizardSteps.length
+          );
           break;
 
         case EventType.GO_TO_STEP:
-          draftState.stepIndex = action.payload.stepIndex;
+          draftState.stepIndex = clamStepIndex(
+            action.payload.stepIndex,
+            draftState.wizardSteps.length
+          );
+
           break;
 
         case EventType.QUESTIONARY_STEPS_LOADED: {

@@ -9,7 +9,6 @@ import {
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import { QuestionaryStep, ShipmentStatus } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
-import { usePersistQuestionaryModel } from 'hooks/questionary/usePersistQuestionaryModel';
 import { usePersistShipmentModel } from 'hooks/shipment/usePersistShipmentModel';
 import {
   Event,
@@ -57,7 +56,7 @@ const shipmentReducer = (
       draftState.shipment.questionary.steps = action.payload.questionarySteps;
       break;
     }
-    case EventType.QUESTIONARY_STEP_ANSWERED: // THIS should be part of questionary reducer?
+    case EventType.QUESTIONARY_STEP_ANSWERED:
       const updatedStep = action.payload.questionaryStep as QuestionaryStep;
       const stepIndex = draftState.shipment.questionary.steps.findIndex(
         step => step.topic.id === updatedStep.topic.id
@@ -113,7 +112,6 @@ export default function ShipmentContainer(props: {
   done?: (shipment: ShipmentExtended) => any;
 }) {
   const { api } = useDataApiWithFeedback();
-  const { persistModel } = usePersistQuestionaryModel();
   const { persistModel: persistShipmentModel } = usePersistShipmentModel();
 
   const previousInitialShipment = usePrevious(props.shipment);
@@ -219,11 +217,7 @@ export default function ShipmentContainer(props: {
 
   const { state, dispatch } = QuestionarySubmissionModel<
     ShipmentSubmissionState
-  >(
-    initialState,
-    [handleEvents, persistModel, persistShipmentModel],
-    shipmentReducer
-  );
+  >(initialState, [handleEvents, persistShipmentModel], shipmentReducer);
 
   useEffect(() => {
     const isComponentMountedForTheFirstTime =
