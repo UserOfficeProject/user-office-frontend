@@ -152,43 +152,35 @@ export default function ShipmentContainer(props: {
    * Returns true if reset was performed, false otherwise
    */
   const handleReset = async (): Promise<boolean> => {
-    if (state.isDirty) {
-      const confirmed = true; // TODO add confirm back; window.confirm(getConfirmNavigMsg());
-      const shipmentState = state as ShipmentSubmissionState;
-      if (confirmed) {
-        if (shipmentState.shipment.id === 0) {
-          // if shipment is not created yet
-          dispatch({
-            type: EventType.SHIPMENT_LOADED,
-            payload: { shipment: initialState.shipment },
-          });
-        } else {
-          await api()
-            .getShipment({ shipmentId: shipmentState.shipment.id }) // or load blankQuestionarySteps if sample is null
-            .then(data => {
-              if (data.shipment && data.shipment.questionary.steps) {
-                dispatch({
-                  type: EventType.SHIPMENT_LOADED,
-                  payload: { proposal: data.shipment },
-                });
-                dispatch({
-                  type: EventType.QUESTIONARY_STEPS_LOADED,
-                  payload: {
-                    questionarySteps: data.shipment.questionary.steps,
-                    stepIndex: state.stepIndex,
-                  },
-                });
-              }
-            });
-        }
+    const shipmentState = state as ShipmentSubmissionState;
 
-        return true;
-      } else {
-        return false;
-      }
+    if (shipmentState.shipment.id === 0) {
+      // if shipment is not created yet
+      dispatch({
+        type: EventType.SHIPMENT_LOADED,
+        payload: { shipment: initialState.shipment },
+      });
+    } else {
+      await api()
+        .getShipment({ shipmentId: shipmentState.shipment.id }) // or load blankQuestionarySteps if sample is null
+        .then(data => {
+          if (data.shipment && data.shipment.questionary.steps) {
+            dispatch({
+              type: EventType.SHIPMENT_LOADED,
+              payload: { shipment: data.shipment },
+            });
+            dispatch({
+              type: EventType.QUESTIONARY_STEPS_LOADED,
+              payload: {
+                questionarySteps: data.shipment.questionary.steps,
+                stepIndex: state.stepIndex,
+              },
+            });
+          }
+        });
     }
 
-    return false;
+    return true;
   };
 
   const handleEvents = ({

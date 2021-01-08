@@ -49,7 +49,7 @@ export interface WizardStepMetadata {
 }
 
 export interface WizardStep {
-  type: 'QuestionaryStep' | 'ShipmentReview';
+  type: 'QuestionaryStep' | 'ProposalReview' | 'ShipmentReview';
   payload?: any;
   getMetadata: (
     state: QuestionarySubmissionState,
