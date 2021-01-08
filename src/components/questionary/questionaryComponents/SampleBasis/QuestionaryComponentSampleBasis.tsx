@@ -1,19 +1,16 @@
-import Typography from '@material-ui/core/Typography';
-import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import React, { ChangeEvent, useContext, useState } from 'react';
-
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
+import { Field } from 'formik';
+import { TextField } from 'formik-material-ui';
 import { Answer, SampleBasisConfig } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { EventType } from 'models/QuestionarySubmissionState';
 import { SampleSubmissionState } from 'models/SampleSubmissionState';
-
+import React, { ChangeEvent, useContext, useState } from 'react';
 import { SampleContextType } from '../SampleDeclaration/SampleDeclarationContainer';
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
@@ -37,7 +34,6 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
 
   return (
     <>
-      <Typography>{question}</Typography>
       <Field
         name={proposalQuestionId}
         label={(props.answer.config as SampleBasisConfig).titlePlaceholder}

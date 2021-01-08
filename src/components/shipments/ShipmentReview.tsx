@@ -1,5 +1,3 @@
-import React, { useContext } from 'react';
-
 import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
@@ -7,9 +5,9 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
 import { ShipmentStatus } from 'generated/sdk';
+import React, { useContext } from 'react';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
-
 import { ShipmentContextType } from './ShipmentContainer';
 
 interface ShipmentReviewProps {
@@ -53,7 +51,7 @@ function ShipmentReview({
                     'I am aware that no further edits can be done after proposal submission.',
                 }
               )(),
-            label: 'Finish',
+            label: 'Submit',
           }}
           isLoading={false}
         />

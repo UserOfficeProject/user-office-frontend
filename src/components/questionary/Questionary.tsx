@@ -1,10 +1,14 @@
-import { makeStyles, Step, Stepper, Typography } from '@material-ui/core';
-import React, { useContext } from 'react';
-
+import {
+  Container,
+  makeStyles,
+  Step,
+  Stepper,
+  Typography,
+} from '@material-ui/core';
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
 import { EventType, WizardStep } from 'models/QuestionarySubmissionState';
-
+import React, { useContext } from 'react';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -105,14 +109,14 @@ function Questionary({
   };
 
   return (
-    <div>
+    <Container>
       <Typography variant="h4" className={classes.header}>
         {title}
       </Typography>
       <Typography className={classes.subHeader}>{info}</Typography>
       {getStepperNavig()}
       {getStepContent()}
-    </div>
+    </Container>
   );
 }
 
