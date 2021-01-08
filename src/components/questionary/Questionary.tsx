@@ -40,9 +40,9 @@ function Questionary({
   handleReset,
   displayElementFactory,
 }: QuestionaryProps) {
-  const isNonOfficer = !useCheckAccess([UserRole.USER_OFFICER]);
   const classes = useStyles();
   const { state, dispatch } = useContext(QuestionaryContext);
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
 
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
@@ -78,7 +78,7 @@ function Questionary({
                   }
                 }}
                 completed={stepMetadata.isCompleted}
-                readonly={stepMetadata.isReadonly}
+                readonly={stepMetadata.isReadonly && !isUserOfficer}
               >
                 <span>{stepMetadata.title}</span>
               </QuestionaryStepButton>
@@ -98,7 +98,10 @@ function Questionary({
       return null;
     }
 
-    return displayElementFactory(currentStep, stepMetadata.isReadonly);
+    return displayElementFactory(
+      currentStep,
+      stepMetadata.isReadonly && !isUserOfficer
+    );
   };
 
   return (

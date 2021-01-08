@@ -176,9 +176,6 @@ export function SampleDeclarationContainer(props: {
         case EventType.RESET_CLICKED:
           handleReset();
           break;
-        case EventType.WIZARD_STEPS_COMPLETE:
-          props.sampleEditDone?.();
-          break;
       }
     };
   };

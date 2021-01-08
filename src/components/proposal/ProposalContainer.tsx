@@ -250,7 +250,7 @@ export default function ProposalContainer(props: {
             info={
               state.proposal.shortCode
                 ? `Proposal ID: ${state.proposal.shortCode}`
-                : ''
+                : 'DRAFT'
             }
             handleReset={handleReset}
             displayElementFactory={displayElementFactory}
