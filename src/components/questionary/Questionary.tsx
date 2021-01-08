@@ -15,6 +15,13 @@ const useStyles = makeStyles(theme => ({
   stepper: {
     padding: theme.spacing(3, 0, 5),
   },
+  header: {
+    textAlign: 'center',
+  },
+  subHeader: {
+    color: theme.palette.grey[700],
+    textAlign: 'right',
+  },
 }));
 
 interface QuestionaryProps {
@@ -96,10 +103,10 @@ function Questionary({
 
   return (
     <div>
-      <Typography component="h1" align="center">
+      <Typography variant="h4" className={classes.header}>
         {title}
       </Typography>
-      <div>{info}</div>
+      <Typography className={classes.subHeader}>{info}</Typography>
       {getStepperNavig()}
       {getStepContent()}
     </div>

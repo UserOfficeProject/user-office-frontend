@@ -6,13 +6,23 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
+import { ShipmentStatus } from 'generated/sdk';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { ShipmentContextType } from './ShipmentContainer';
 
 interface ShipmentReviewProps {
   isReadonly: boolean;
+  onComplete?: () => any;
+  confirm: WithConfirmType;
 }
-function ShipmentReview({ isReadonly }: ShipmentReviewProps) {
+function ShipmentReview({
+  isReadonly,
+  onComplete,
+  confirm,
+}: ShipmentReviewProps) {
+  const { api } = useDataApiWithFeedback();
   const { state, dispatch } = useContext(
     QuestionaryContext
   ) as ShipmentContextType;
@@ -28,7 +38,21 @@ function ShipmentReview({ isReadonly }: ShipmentReviewProps) {
           disabled={isReadonly}
           back={undefined}
           saveAndNext={{
-            callback: () => console.log('Submit shipment'), // TODO implement submitting the shipment
+            callback: () =>
+              confirm(
+                async () => {
+                  await api().updateShipment({
+                    shipmentId: state.shipment.id,
+                    status: ShipmentStatus.SUBMITTED,
+                  });
+                  onComplete?.();
+                },
+                {
+                  title: 'Confirmation',
+                  description:
+                    'I am aware that no further edits can be done after proposal submission.',
+                }
+              )(),
             label: 'Finish',
           }}
           isLoading={false}
@@ -38,4 +62,4 @@ function ShipmentReview({ isReadonly }: ShipmentReviewProps) {
   );
 }
 
-export default ShipmentReview;
+export default withConfirm(ShipmentReview);

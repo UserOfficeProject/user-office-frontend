@@ -139,7 +139,12 @@ export default function ShipmentContainer(props: {
           />
         );
       case 'ShipmentReview':
-        return <ShipmentReview isReadonly={isReadonly} />;
+        return (
+          <ShipmentReview
+            isReadonly={isReadonly}
+            onComplete={() => props.done?.(state.shipment)}
+          />
+        );
 
       default:
         throw new Error(`Unknown step type ${metadata.type}`);
