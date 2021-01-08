@@ -75,20 +75,21 @@ const clamStepIndex = (stepIndex: number, stepCount: number) => {
 
 /** returns the index the form should start on, for new questionary it's 0,
  * but for unfinished it's the first unfinished step */
-function getInitialStepIndex(steps: QuestionaryStep[]): number {
-  const lastFinishedStep = steps
+function getInitialStepIndex(state: QuestionarySubmissionState): number {
+  const wizardSteps = state.wizardSteps;
+  const lastFinishedStep = state.wizardSteps
     .slice()
     .reverse()
-    .find(step => step.isCompleted === true);
+    .find(step => step.getMetadata(state, step.payload).isCompleted === true);
 
   if (!lastFinishedStep) {
     return 0;
   }
 
-  const lastFinishedStepIndex = steps.indexOf(lastFinishedStep);
+  const lastFinishedStepIndex = wizardSteps.indexOf(lastFinishedStep);
   const nextUnfinishedStep = lastFinishedStepIndex + 1;
 
-  return clamStepIndex(nextUnfinishedStep, steps.length);
+  return clamStepIndex(nextUnfinishedStep, wizardSteps.length);
 }
 
 export function QuestionarySubmissionModel<
@@ -138,7 +139,7 @@ export function QuestionarySubmissionModel<
           const stepIndex =
             action.payload.stepIndex !== undefined
               ? action.payload.stepIndex
-              : getInitialStepIndex(action.payload.questionarySteps);
+              : getInitialStepIndex(draftState);
           draftState.stepIndex = stepIndex;
           draftState.isDirty = false;
           break;
