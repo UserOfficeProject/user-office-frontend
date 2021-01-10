@@ -1,14 +1,10 @@
-import {
-  Container,
-  makeStyles,
-  Step,
-  Stepper,
-  Typography,
-} from '@material-ui/core';
+import { Box, makeStyles, Step, Stepper, Typography } from '@material-ui/core';
+import React, { useContext } from 'react';
+
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
 import { EventType, WizardStep } from 'models/QuestionarySubmissionState';
-import React, { useContext } from 'react';
+
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -25,6 +21,10 @@ const useStyles = makeStyles(theme => ({
   subHeader: {
     color: theme.palette.grey[700],
     textAlign: 'right',
+  },
+  container: {
+    width: '100%',
+    minWidth: '500px',
   },
 }));
 
@@ -109,14 +109,14 @@ function Questionary({
   };
 
   return (
-    <Container>
+    <Box className={classes.container}>
       <Typography variant="h4" className={classes.header}>
         {title}
       </Typography>
       <Typography className={classes.subHeader}>{info}</Typography>
       {getStepperNavig()}
       {getStepContent()}
-    </Container>
+    </Box>
   );
 }
 

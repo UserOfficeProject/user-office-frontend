@@ -1,3 +1,5 @@
+import React, { useContext } from 'react';
+
 import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
@@ -5,9 +7,9 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
 import { ShipmentStatus } from 'generated/sdk';
-import React, { useContext } from 'react';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
+
 import { ShipmentContextType } from './ShipmentContainer';
 
 interface ShipmentReviewProps {
