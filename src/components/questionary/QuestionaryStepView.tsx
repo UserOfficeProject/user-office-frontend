@@ -124,23 +124,21 @@ export default function QuestionaryStepView(props: {
       throw new Error('Missing questionaryId');
     }
 
-    api('Saved')
-      .answerTopic({
-        questionaryId: questionaryId,
-        answers: prepareAnswers(activeFields),
-        topicId: topicId,
-        isPartialSave: isPartialSave,
-      })
-      .then(async result => {
-        if (result.answerTopic.questionaryStep) {
-          dispatch({
-            type: EventType.QUESTIONARY_STEP_ANSWERED,
-            payload: {
-              questionaryStep: result.answerTopic.questionaryStep,
-            },
-          });
-        }
+    const answerTopicResult = await api('Saved').answerTopic({
+      questionaryId: questionaryId,
+      answers: prepareAnswers(activeFields),
+      topicId: topicId,
+      isPartialSave: isPartialSave,
+    });
+
+    if (answerTopicResult.answerTopic.questionaryStep) {
+      dispatch({
+        type: EventType.QUESTIONARY_STEP_ANSWERED,
+        payload: {
+          questionaryStep: answerTopicResult.answerTopic.questionaryStep,
+        },
       });
+    }
   };
 
   if (state === null || !questionaryStep) {
