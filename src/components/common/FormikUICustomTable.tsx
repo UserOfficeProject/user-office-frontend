@@ -32,9 +32,7 @@ export const FormikUICustomTable = ({
 
   return (
     <MaterialTable
-      icons={{
-        ...tableIcons,
-      }}
+      icons={tableIcons}
       columns={columns}
       data={state}
       options={{ search: false, paging: false }}
