@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const QuestionTemplateRelationFormShell = (props: {
-  validationSchema: any;
+  validationSchema?: any;
   questionRel: QuestionTemplateRelation;
   dispatch: React.Dispatch<Event>;
   closeMe: Function;
