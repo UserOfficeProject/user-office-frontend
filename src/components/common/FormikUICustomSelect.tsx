@@ -100,8 +100,6 @@ const FormikUICustomSelect = ({
               .map(item => getOptionByValue(item)?.label)
               .join(', ');
           } else {
-            console.log(getOptionByValue(value as ValueType));
-
             return getOptionByValue(value as ValueType)?.label;
           }
         }}
