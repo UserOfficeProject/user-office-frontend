@@ -54,7 +54,10 @@ declare global {
        * @example
        *    cy.notification({ variant: 'error', text: 'failed'})
        */
-      notification: (options: { variant: string; text: string }) => void;
+      notification: (options: {
+        variant: 'success' | 'error' | 'info';
+        text: string;
+      }) => void;
 
       /**
        * Checks if the progressbar does not exist in the dom anymore.
@@ -78,6 +81,55 @@ declare global {
         proposalTitle?: string,
         proposalAbstract?: string
       ) => void;
+      /**
+       * Moves the element in the given direction with given length.
+       * For example direction "left" means that the element will go to the left and length "2" means that two times left arrow will be pressed.
+       *
+       * @returns {typeof dragElement}
+       * @memberof Chainable
+       * @example
+       *    cy.dragElement([{ direction: 'left', length: 1 }, { direction: 'down', length: 2 }])
+       */
+      dragElement: (
+        arguments: {
+          direction: 'left' | 'up' | 'right' | 'down';
+          length: number;
+        }[]
+      ) => Cypress.Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * Creates template
+       *
+       * @returns {typeof createTemplate}
+       * @memberof Chainable
+       * @example
+       *    cy.createTemplate('proposal')
+       */
+      createTemplate: (
+        type: string,
+        title?: string,
+        description?: string
+      ) => void;
+
+      /**
+       * Creates topic in template
+       *
+       * @returns {typeof createTopic}
+       * @memberof Chainable
+       * @example
+       *    cy.createTopic('New topic')
+       */
+      createTopic: (topic: string) => void;
+
+      /**
+       * Creates sample question
+       *
+       * @returns {typeof createSampleQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createSampleQuestion('Provide sample', 'default sample template')
+       */
+      createSampleQuestion: (question: string, template: string) => void;
     }
   }
 

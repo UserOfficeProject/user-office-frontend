@@ -22,17 +22,7 @@ context('Samples tests', () => {
   it('Should be able to create proposal template with sample', () => {
     cy.login('officer');
 
-    cy.navigateToTemplatesSubmenu('Sample declaration templates');
-
-    cy.get('[data-cy=create-new-button]').click();
-
-    cy.get('[data-cy=name] input')
-      .type(sampleTemplateName)
-      .should('have.value', sampleTemplateName);
-
-    cy.get('[data-cy=description]').type(sampleTemplateDescription);
-
-    cy.get('[data-cy=submit]').click();
+    cy.createTemplate('sample', sampleTemplateName, sampleTemplateDescription);
 
     cy.contains('New sample');
 
@@ -48,42 +38,14 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=submit]').click();
 
-    cy.get('[data-cy=show-more-button]')
-      .last()
-      .click();
+    cy.createTopic('New topic');
 
-    cy.get('[data-cy=add-topic-menu-item]')
-      .last()
-      .click();
+    cy.createSampleQuestion(sampleQuestion, sampleTemplateName);
 
-    cy.get('[data-cy=show-more-button]')
-      .last()
-      .click();
+    cy.contains(sampleQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.get('[data-cy=add-question-menu-item]')
-      .last()
-      .click();
-
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
-
-    cy.contains('Add Sample Declaration').click();
-
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(sampleQuestion)
-      .should('have.value', sampleQuestion);
-
-    cy.get('[data-cy=template-id]').click();
-
-    cy.contains(sampleTemplateName).click();
-
-    cy.contains('Save').click();
-
-    cy.get('body').type('{alt}', { release: false });
-
-    cy.contains(sampleQuestion).click();
-
-    // now check if the question that was ALT-clicked was moved away from question list
     cy.get('[data-cy=close-button]').click(); // closing question list
 
     cy.contains(sampleQuestion); // checking if question in the topic column
@@ -113,6 +75,14 @@ context('Samples tests', () => {
     cy.createProposal();
 
     cy.get('[data-cy=add-button]').click();
+
+    cy.get('[data-cy=title-input] input').clear();
+
+    cy.get(
+      '[data-cy=sample-declaration-modal] [data-cy=save-and-continue-button]'
+    ).click();
+
+    cy.contains('This is a required field');
 
     cy.get('[data-cy=title-input] input')
       .clear()
@@ -212,7 +182,7 @@ context('Samples tests', () => {
         for (const mutation of mutationList) {
           for (const child of mutation.addedNodes) {
             if (child.nodeName === 'A') {
-              expect(child.href).to.contain('/download/sample/1');
+              expect(child.href).to.contain('/download/pdf/sample/1');
               expect(child.download).to.contain('download');
             }
           }
@@ -237,7 +207,7 @@ context('Samples tests', () => {
 
     cy.contains('Sample safety').click();
 
-    cy.request('GET', '/download/sample/1').then(response => {
+    cy.request('GET', '/download/pdf/sample/1').then(response => {
       expect(response.headers['content-type']).to.be.equal('application/pdf');
       expect(response.status).to.be.equal(200);
     });

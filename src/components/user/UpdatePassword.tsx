@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 export default function UpdatePassword(props: { id: number }) {
   const { api } = useDataApiWithFeedback();
   const sendPasswordUpdate = (password: string) => {
-    api('Updated Password').updatePassword({ id: props.id, password });
+    return api('Updated Password').updatePassword({ id: props.id, password });
   };
 
   const classes = useStyles();
@@ -35,9 +35,8 @@ export default function UpdatePassword(props: { id: number }) {
           password: '',
           confirmPassword: '',
         }}
-        onSubmit={(values, actions) => {
-          sendPasswordUpdate(values.password);
-          actions.setSubmitting(false);
+        onSubmit={async (values): Promise<void> => {
+          await sendPasswordUpdate(values.password);
         }}
         validationSchema={userPasswordFieldValidationSchema}
       >
@@ -55,7 +54,7 @@ export default function UpdatePassword(props: { id: number }) {
                   component={TextField}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
+                  autoComplete="new-password"
                   data-cy="password"
                   helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
                 />
@@ -68,7 +67,7 @@ export default function UpdatePassword(props: { id: number }) {
                   component={TextField}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
+                  autoComplete="new-password"
                   data-cy="confirmPassword"
                 />
               </Grid>

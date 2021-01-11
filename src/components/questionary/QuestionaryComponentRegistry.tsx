@@ -9,6 +9,7 @@ import {
   Template,
 } from 'generated/sdk';
 import { Event } from 'models/QuestionaryEditorModel';
+import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
 
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
 import { dateDefinition } from './questionaryComponents/DatePicker/DatePickerDefinition';
@@ -19,6 +20,7 @@ import { multipleChoiceDefinition as multiChoiceDefinition } from './questionary
 import { proposalBasisDefinition } from './questionaryComponents/ProposalBasis/ProposalBasisDefinition';
 import { sampleBasisDefinition } from './questionaryComponents/SampleBasis/SampleBasisDefinition';
 import { sampleDeclarationDefinition } from './questionaryComponents/SampleDeclaration/SampleDeclaratonDefinition';
+import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 
 export interface FormProps<ValueObjectType> {
@@ -44,6 +46,10 @@ export interface QuestionaryComponentDefinition {
   ) => JSX.Element | null;
   readonly answerRenderer: (props: { answer: Answer }) => JSX.Element | null;
   readonly createYupValidationSchema: ((field: Answer) => object) | null;
+  readonly getYupInitialValue: (props: {
+    answer: Answer;
+    state: QuestionarySubmissionState;
+  }) => Answer['value'];
   readonly readonly: boolean; // if true then no answer will be produced
   readonly creatable: boolean; // if true then the question can be added to a questionary
   readonly icon: JSX.Element;
@@ -60,6 +66,7 @@ const registry = [
   proposalBasisDefinition,
   sampleBasisDefinition,
   intervalDefinition,
+  shipmentBasisDefinition,
 ];
 
 Object.freeze(registry);

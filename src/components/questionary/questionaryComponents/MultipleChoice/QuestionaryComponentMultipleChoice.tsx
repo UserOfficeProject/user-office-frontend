@@ -1,3 +1,4 @@
+import { Checkbox, Select } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -5,12 +6,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import TextField from '@material-ui/core/TextField';
 import { getIn } from 'formik';
 import React, { useEffect, useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { SelectionFromOptionsConfig } from 'generated/sdk';
+
+const toArray = (input: string | string[]): string[] => {
+  if (typeof input === 'string') {
+    return [input];
+  }
+
+  return input;
+};
 
 export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
   const classes = makeStyles({
@@ -28,9 +36,16 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
       marginTop: '10px',
       marginRight: '5px',
     },
+    dropdown: {
+      width: 350,
+    },
   })();
 
-  const { answer, touched, errors, onComplete } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched },
+  } = props;
   const {
     question: { proposalQuestionId, question },
     value,
@@ -44,40 +59,48 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
     setStateValue(answer.value);
   }, [answer]);
 
-  const handleOnChange = (evt: any, newValue: any) => {
-    setStateValue(newValue);
-    onComplete(evt, newValue);
+  const handleOnChange = (_evt: any, value: string | string[]) => {
+    const newValue = toArray(value);
+    onComplete(newValue);
+  };
+
+  const getCheckbox = (option: string) => {
+    if (config.isMultipleSelect) {
+      return <Checkbox checked={stateValue.includes(option)} />;
+    } else {
+      return null;
+    }
   };
 
   switch (config.variant) {
     case 'dropdown':
       return (
         <FormControl fullWidth>
-          <TextField
+          <Select
+            className={classes.dropdown}
             id={proposalQuestionId}
-            name={proposalQuestionId}
-            value={stateValue}
-            label={question}
-            select
+            value={config.isMultipleSelect ? stateValue : stateValue[0]}
             onChange={evt =>
               handleOnChange(evt, (evt.target as HTMLInputElement).value)
             }
-            SelectProps={{
-              multiple: config.isMultipleSelect,
-            }}
-            error={isError}
-            helperText={config.small_label}
-            margin="normal"
+            multiple={config.isMultipleSelect}
+            label={question}
             required={config.required ? true : false}
+            renderValue={item =>
+              config.isMultipleSelect
+                ? (item as string[]).join(', ')
+                : (item as string)
+            }
           >
             {config.options.map(option => {
               return (
                 <MenuItem value={option} key={option}>
+                  {getCheckbox(option)}
                   {option}
                 </MenuItem>
               );
             })}
-          </TextField>
+          </Select>
         </FormControl>
       );
 
@@ -93,7 +116,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
           <RadioGroup
             id={proposalQuestionId}
             name={proposalQuestionId}
-            value={stateValue}
+            value={stateValue[0] || ''}
             onChange={evt =>
               handleOnChange(evt, (evt.target as HTMLInputElement).value)
             }

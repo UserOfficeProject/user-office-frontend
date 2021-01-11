@@ -1,8 +1,12 @@
-import { Grid, MenuItem, Select, TextField } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { getIn } from 'formik';
-import React, { useEffect, useState } from 'react';
+import TextField from '@material-ui/core/TextField';
+import { Field, getIn } from 'formik';
+import React, { useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import ProposalErrorLabel from 'components/proposal/ProposalErrorLabel';
@@ -20,6 +24,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: '17px',
     padding: '0px 5px',
   },
+  label: {
+    marginTop: '10px',
+    marginRight: '5px',
+  },
   smallLabel: {
     fontSize: '12px',
     fontStyle: 'italic',
@@ -33,7 +41,11 @@ const useStyles = makeStyles(theme => ({
 type AcceptableUserInput = number | '';
 
 export function QuestionaryComponentInterval(props: BasicComponentProps) {
-  const { answer, errors, onComplete, touched } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched },
+  } = props;
   const {
     question: { proposalQuestionId, question },
   } = answer;
@@ -45,10 +57,6 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
     max: AcceptableUserInput;
     unit: string;
   }>(answer.value);
-
-  useEffect(() => {
-    setStateValue(answer.value || false);
-  }, [answer]);
 
   const classes = useStyles();
 
@@ -62,12 +70,12 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
   ) => {
     const maybeNumber = parseFloat(input);
 
-    return isNaN(maybeNumber) ? defaultValue : maybeNumber;
+    return isNaN(maybeNumber) && input !== '' ? defaultValue : maybeNumber;
   };
 
   const getUnits = () => {
     if (config.units?.length === 0) {
-      return null;
+      return <Field type="hidden" value="" name={unitFieldId} />;
     } else if (config.units?.length === 1) {
       return <span className={`${classes.singleUnit}`}>{stateValue.unit}</span>;
     } else {
@@ -76,8 +84,9 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           label="Unit"
           value={stateValue.unit}
           onChange={e => {
-            setStateValue({ ...stateValue, unit: e.target.value as string });
-            onComplete(e, stateValue);
+            const newState = { ...stateValue, unit: e.target.value as string };
+            setStateValue(newState);
+            onComplete(newState);
           }}
           name={unitFieldId}
           data-cy={unitFieldId}
@@ -93,10 +102,10 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
   };
 
   return (
-    <FormControl error={isError}>
+    <FormControl error={isError} required={config.required ? true : false}>
       <Grid container className={classes.container}>
         <Grid item xs={12}>
-          {question}
+          <FormLabel className={classes.label}>{question}</FormLabel>
           {config.small_label ? (
             <div className={classes.smallLabel}>{config.small_label}</div>
           ) : null}
@@ -110,7 +119,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
                 min: getNumberOrDefault(e.target.value, stateValue.min),
               })
             }
-            onBlur={e => onComplete(e, stateValue)}
+            onBlur={() => onComplete(stateValue)}
             value={stateValue.min}
             data-cy={minFieldId}
             type="number"
@@ -127,7 +136,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
                 max: getNumberOrDefault(e.target.value, stateValue.max),
               })
             }
-            onBlur={e => onComplete(e, stateValue)}
+            onBlur={() => onComplete(stateValue)}
             value={stateValue.max}
             data-cy={maxFieldId}
             type="number"
@@ -139,24 +148,14 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
         </Grid>
 
         <Grid item xs={3}>
-          {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].min}
-            </ProposalErrorLabel>
-          )}
+          {isError && <ProposalErrorLabel>{fieldError.min}</ProposalErrorLabel>}
         </Grid>
         <Grid item xs={3}>
-          {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].max}
-            </ProposalErrorLabel>
-          )}
+          {isError && <ProposalErrorLabel>{fieldError.max}</ProposalErrorLabel>}
         </Grid>
         <Grid item xs={6}>
           {isError && (
-            <ProposalErrorLabel>
-              {errors[proposalQuestionId].unit}
-            </ProposalErrorLabel>
+            <ProposalErrorLabel>{fieldError.unit}</ProposalErrorLabel>
           )}
         </Grid>
       </Grid>

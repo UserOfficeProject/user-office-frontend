@@ -1,4 +1,5 @@
-import { FormikActions } from 'formik';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import { FormikHelpers } from 'formik';
 import MaterialTable from 'material-table';
 import React, { forwardRef } from 'react';
 
@@ -25,7 +26,7 @@ export const FormikUICustomTable = ({
     onChange: Function;
     value: string | undefined;
   };
-  form: FormikActions<any>;
+  form: FormikHelpers<any>;
 }) => {
   const transformedValues = dataTransforms.toTable(field.value);
   const [state, setState] = React.useState(transformedValues);
@@ -34,7 +35,11 @@ export const FormikUICustomTable = ({
     <MaterialTable
       icons={{
         ...tableIcons,
-        Add: forwardRef((props, ref) => <>Add answer</>),
+        Add: forwardRef(() => (
+          <div data-cy="add-answer-button">
+            <AddCircleOutlineIcon />
+          </div>
+        )),
       }}
       columns={columns}
       data={state}
@@ -66,7 +71,6 @@ export const FormikUICustomTable = ({
           }),
       }}
       {...props}
-      data-cy="options"
     />
   );
 };

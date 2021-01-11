@@ -1,13 +1,9 @@
-import TextField from '@material-ui/core/TextField';
-import React, {
-  ChangeEvent,
-  KeyboardEvent,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { Key } from 'ts-keycode-enum';
+import Typography from '@material-ui/core/Typography';
+import { Field } from 'formik';
+import { TextField } from 'formik-material-ui';
+import React, { ChangeEvent, useContext, useState } from 'react';
 
+import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { Answer, SampleBasisConfig } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
@@ -16,37 +12,48 @@ import { SampleSubmissionState } from 'models/SampleSubmissionState';
 
 import { SampleContext } from '../SampleDeclaration/SampleDeclarationContainer';
 
-function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
-  const sampleContext = useContext(SampleContext);
-  const [title, setTitle] = useState(sampleContext.state?.sample.title || '');
+const TextFieldNoSubmit = withPreventSubmit(TextField);
 
-  useEffect(() => {
-    setTitle(sampleContext.state?.sample.title || '');
-  }, [sampleContext.state]);
+function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
+  const {
+    answer: {
+      question: { proposalQuestionId, question },
+    },
+  } = props;
+
+  const sampleContext = useContext(SampleContext);
+
+  const [title, setTitle] = useState(sampleContext.state?.sample.title);
+
+  if (!sampleContext.state) {
+    return null;
+  }
+
+  const { dispatch, state } = sampleContext;
 
   return (
-    <TextField
-      label={(props.answer.config as SampleBasisConfig).titlePlaceholder}
-      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-        setTitle(event.currentTarget.value);
-      }}
-      fullWidth
-      onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.keyCode === Key.Enter) {
-          event.preventDefault();
-
-          return false;
-        }
-      }}
-      onBlur={event => {
-        sampleContext.dispatch({
-          type: EventType.SAMPLE_MODIFIED,
-          payload: { sample: { title: title } },
-        });
-      }}
-      value={title}
-      data-cy="title-input"
-    />
+    <>
+      <Typography>{question}</Typography>
+      <Field
+        name={proposalQuestionId}
+        label={(props.answer.config as SampleBasisConfig).titlePlaceholder}
+        inputProps={{
+          onChange: (event: ChangeEvent<HTMLInputElement>) => {
+            setTitle(event.currentTarget.value);
+          },
+          onBlur: () => {
+            dispatch({
+              type: EventType.SAMPLE_MODIFIED,
+              payload: { ...state.sample, title: title },
+            });
+          },
+        }}
+        required
+        fullWidth
+        component={TextFieldNoSubmit}
+        data-cy="title-input"
+      />
+    </>
   );
 }
 

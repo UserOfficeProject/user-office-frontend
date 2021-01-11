@@ -84,7 +84,7 @@ context('Scientific evaluation panel tests', () => {
     cy.finishedLoading();
 
     cy.get('.MuiDialog-container [role="dialog"] table tbody tr')
-      .eq(1)
+      .first()
       .find('td.MuiTableCell-alignLeft')
       .first()
       .then(element => {
@@ -92,7 +92,7 @@ context('Scientific evaluation panel tests', () => {
       });
 
     cy.get('.MuiDialog-container [role="dialog"] table tbody tr')
-      .eq(1)
+      .first()
       .find('td.MuiTableCell-alignLeft')
       .eq(1)
       .then(element => {
@@ -100,7 +100,7 @@ context('Scientific evaluation panel tests', () => {
       });
 
     cy.get('[title="Select user"]')
-      .eq(1)
+      .first()
       .click();
 
     cy.notification({
@@ -216,49 +216,6 @@ context('Scientific evaluation panel tests', () => {
       .last()
       .then(element => {
         expect(element.text()).length.to.be.greaterThan(0);
-      });
-  });
-
-  it('Officer should be able to remove SEP Reviewers from existing SEP', () => {
-    cy.login('officer');
-
-    cy.contains('SEPs').click();
-    cy.get('button[title="Edit"]')
-      .first()
-      .click();
-
-    cy.contains('Members').click();
-
-    cy.get('[title="Delete"]').click();
-
-    cy.get('[title="Save"]').click();
-
-    cy.notification({
-      variant: 'success',
-      text: 'SEP member removed successfully',
-    });
-
-    cy.contains('Logs').click({ force: true });
-
-    cy.finishedLoading();
-
-    cy.get("[title='Last Page'] button")
-      .first()
-      .click({ force: true });
-
-    cy.contains('SEP_MEMBER_REMOVED');
-
-    cy.contains('Members').click();
-
-    cy.get('[data-cy="sep-reviewers-table"]')
-      .find('tbody td')
-      .should('have.length', 1);
-
-    cy.get('[data-cy="sep-reviewers-table"]')
-      .find('tbody td')
-      .first()
-      .then(element => {
-        expect(element.text()).to.be.equal('No records to display');
       });
   });
 
@@ -478,6 +435,49 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('External reviews');
   });
 
+  it('Officer should be able to remove SEP Reviewers from existing SEP', () => {
+    cy.login('officer');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Members').click();
+
+    cy.get('[title="Delete"]').click();
+
+    cy.get('[title="Save"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'SEP member removed successfully',
+    });
+
+    cy.contains('Logs').click({ force: true });
+
+    cy.finishedLoading();
+
+    cy.get("[title='Last Page'] button")
+      .first()
+      .click({ force: true });
+
+    cy.contains('SEP_MEMBER_REMOVED');
+
+    cy.contains('Members').click();
+
+    cy.get('[data-cy="sep-reviewers-table"]')
+      .find('tbody td')
+      .should('have.length', 1);
+
+    cy.get('[data-cy="sep-reviewers-table"]')
+      .find('tbody td')
+      .first()
+      .then(element => {
+        expect(element.text()).to.be.equal('No records to display');
+      });
+  });
+
   it('Officer should be able to see calculated availability time on instrument per SEP inside meeting components', () => {
     const code = faker.random.words(3);
     const description = faker.random.words(8);
@@ -611,7 +611,66 @@ context('Scientific evaluation panel tests', () => {
 
     cy.contains('Yes');
 
+    cy.contains('Proposals and Assignments').click();
+
+    cy.finishedLoading();
+
+    cy.contains('Meeting Components').click();
+
+    cy.finishedLoading();
+
     cy.get('[title="Submit instrument"] button').should('be.disabled');
+  });
+
+  it('Officer should be able to download SEP as Excel file', () => {
+    cy.login('officer');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .eq(1)
+      .click();
+
+    cy.contains('Meeting Components').click();
+
+    cy.document().then(document => {
+      const observer = new MutationObserver(function() {
+        const [mutationList] = arguments;
+        for (const mutation of mutationList) {
+          for (const child of mutation.addedNodes) {
+            if (child.nodeName === 'A') {
+              expect(child.href).to.contain('/download/xlsx/sep/2/call/1');
+              expect(child.download).to.contain('download');
+            }
+          }
+        }
+      });
+      observer.observe(document, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
+
+      observer.disconnect();
+    });
+
+    cy.finishedLoading();
+
+    cy.wait(500);
+
+    cy.get('[data-cy="download-sep-xlsx"]').click();
+  });
+
+  it('Should be able to download SEP as Excel file', () => {
+    cy.login('officer');
+
+    cy.contains('Sample safety').click();
+
+    cy.request('GET', '/download/xlsx/sep/2/call/1').then(response => {
+      expect(response.headers['content-type']).to.be.equal(
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      );
+      expect(response.status).to.be.equal(200);
+    });
   });
 
   it('Officer should be able to remove assigned SEP member from proposal in existing SEP', () => {
@@ -699,5 +758,36 @@ context('Scientific evaluation panel tests', () => {
       .then(element => {
         expect(element.text()).to.be.equal('No records to display');
       });
+  });
+
+  it('Officer should be able to remove assigned SEP Chair and SEP Secretary from existing SEP', () => {
+    cy.login('officer');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .eq(1)
+      .click();
+
+    cy.contains('Members').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Remove SEP Chair"]').click();
+
+    cy.get('[data-cy="confirm-yes"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'SEP member removed successfully',
+    });
+
+    cy.get('[title="Remove SEP Secretary"]').click();
+
+    cy.get('[data-cy="confirm-yes"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'SEP member removed successfully',
+    });
   });
 });

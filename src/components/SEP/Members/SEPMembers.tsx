@@ -1,17 +1,18 @@
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import withStyles from '@material-ui/core/styles/withStyles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import Clear from '@material-ui/icons/Clear';
 import Person from '@material-ui/icons/Person';
 import PersonAdd from '@material-ui/icons/PersonAdd';
-import { Formik, Form, Field } from 'formik';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
+import DialogConfirmation from 'components/common/DialogConfirmation';
 import UOLoader from 'components/common/UOLoader';
 import ParticipantModal from 'components/proposal/ParticipantModal';
 import { UserContext } from 'context/UserContextProvider';
@@ -20,6 +21,16 @@ import { useRenewToken } from 'hooks/common/useRenewToken';
 import { useSEPMembersData } from 'hooks/SEP/useSEPMembersData';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+
+const useStyles = makeStyles(() => ({
+  darkerDisabledTextField: {
+    '& .MuiInputBase-root.Mui-disabled': {
+      color: 'rgba(0, 0, 0, 0.7) !important',
+    },
+  },
+}));
+
+type BasicUserDetailsWithRole = BasicUserDetails & { roleId: UserRole };
 
 type SEPMembersProps = {
   /** Id of the SEP we are assigning members to */
@@ -32,21 +43,17 @@ type SEPMemberAssignments = {
   SEPReviewers: BasicUserDetails[];
 };
 
-const DarkerDisabledTextField = withStyles({
-  root: {
-    marginRight: 8,
-    '& .MuiInputBase-root.Mui-disabled': {
-      color: 'rgba(0, 0, 0, 0.7)', // (default alpha is 0.38)
-    },
-  },
-})(TextField);
-
 const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
   const [modalOpen, setOpen] = useState(false);
   const [sepChairModalOpen, setSepChairModalOpen] = useState(false);
   const [sepSecretaryModalOpen, setSepSecretaryModalOpen] = useState(false);
   const { user } = useContext(UserContext);
   const { setRenewTokenValue } = useRenewToken();
+  const [
+    memberToRemove,
+    setMemberToRemove,
+  ] = useState<BasicUserDetailsWithRole | null>(null);
+  const classes = useStyles();
   const {
     loadingMembers,
     SEPMembersData,
@@ -165,20 +172,23 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
     setOpen(false);
   };
 
-  const removeMember = async (user: BasicUserDetails): Promise<void> => {
-    await api('SEP member removed successfully!').removeMember({
+  const removeMember = async (
+    user: BasicUserDetailsWithRole
+  ): Promise<void> => {
+    const result = await api('SEP member removed successfully!').removeMember({
       memberId: user.id,
       sepId,
+      roleId: user.roleId,
     });
 
-    if (SEPMembersData) {
+    if (SEPMembersData && !result.removeMember.error) {
       setSEPMembersData(
         SEPMembersData.map(member => {
           if (member.userId === user.id) {
             return {
               ...member,
               roles: member.roles.filter(
-                role => role.shortCode.toUpperCase() !== UserRole.SEP_REVIEWER
+                role => role.shortCode.toUpperCase() !== user.roleId
               ),
             };
           }
@@ -210,13 +220,26 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
       ]
     : [];
 
+  const alreadySelectedMembers = [
+    ...initialValues.SEPReviewers.map(reviewer => reviewer.id),
+  ]
+    .concat(initialValues.SEPChair ? [initialValues.SEPChair?.id] : [])
+    .concat(initialValues.SEPSecretary ? [initialValues.SEPSecretary?.id] : []);
+
   return (
     <React.Fragment>
+      <DialogConfirmation
+        title="Remove SEP member"
+        text={`Are you sure you want to remove ${memberToRemove?.firstname} ${memberToRemove?.lastname} from this SEP?`}
+        open={!!memberToRemove}
+        action={() => removeMember(memberToRemove as BasicUserDetailsWithRole)}
+        handleOpen={() => setMemberToRemove(null)}
+      />
       <ParticipantModal
         show={modalOpen}
         close={(): void => setOpen(false)}
         addParticipants={addMember}
-        selectedUsers={initialValues.SEPReviewers.map(reviewer => reviewer.id)}
+        selectedUsers={alreadySelectedMembers}
         selection={true}
         title={'Reviewer'}
         userRole={UserRole.REVIEWER}
@@ -225,9 +248,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
         show={sepChairModalOpen}
         close={(): void => setSepChairModalOpen(false)}
         addParticipants={sendSEPChairUpdate}
-        selectedUsers={[
-          ...initialValues.SEPReviewers.map(reviewer => reviewer.id),
-        ].concat(initialValues.SEPChair ? [initialValues.SEPChair?.id] : [])}
+        selectedUsers={alreadySelectedMembers}
         title={'SEP Chair'}
         invitationUserRole={UserRole.SEP_CHAIR}
       />
@@ -235,128 +256,144 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
         show={sepSecretaryModalOpen}
         close={(): void => setSepSecretaryModalOpen(false)}
         addParticipants={sendSEPSecretaryUpdate}
-        selectedUsers={[
-          ...initialValues.SEPReviewers.map(reviewer => reviewer.id),
-        ].concat(
-          initialValues.SEPSecretary ? [initialValues.SEPSecretary?.id] : []
-        )}
+        selectedUsers={alreadySelectedMembers}
         title={'SEP Secretary'}
         invitationUserRole={UserRole.SEP_SECRETARY}
       />
-      <Formik
-        validateOnChange={false}
-        validateOnBlur={false}
-        initialValues={initialValues}
-        onSubmit={(values, actions): void => {
-          actions.setSubmitting(false);
-        }}
-      >
-        {({ errors }): JSX.Element => (
-          <Form>
-            <Typography variant="h6" gutterBottom>
-              SEP Members
-            </Typography>
-            <Grid container spacing={3} alignItems="center">
-              <Grid item xs={5}>
-                <Field
-                  name="SEPChair"
-                  id="SEPChair"
-                  label="SEP Chair"
-                  type="text"
-                  value={
-                    initialValues.SEPChair
-                      ? `${initialValues.SEPChair.firstname} ${initialValues.SEPChair.lastname}`
-                      : ''
-                  }
-                  component={
-                    initialValues.SEPChair ? DarkerDisabledTextField : TextField
-                  }
-                  margin="none"
-                  fullWidth
-                  data-cy="SEPChair"
-                  m={0}
-                  required
-                  disabled
-                  error={errors.SEPChair !== undefined}
-                  helperText={errors.SEPChair && errors.SEPChair}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                {hasAccessRights && (
-                  <Tooltip title="Set SEP Chair">
-                    <IconButton
-                      edge="start"
-                      onClick={() => setSepChairModalOpen(true)}
-                    >
-                      <Person />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Grid>
-              <Grid item xs={5}>
-                <Field
-                  name="SEPSecretary"
-                  id="SEPSecretary"
-                  label="SEP Secretary"
-                  type="text"
-                  value={
-                    initialValues.SEPSecretary
-                      ? `${initialValues.SEPSecretary.firstname} ${initialValues.SEPSecretary.lastname}`
-                      : ''
-                  }
-                  component={
-                    initialValues.SEPSecretary
-                      ? DarkerDisabledTextField
-                      : TextField
-                  }
-                  margin="none"
-                  fullWidth
-                  data-cy="SEPSecretary"
-                  required
-                  disabled
-                  error={errors.SEPSecretary !== undefined}
-                  helperText={errors.SEPSecretary && errors.SEPSecretary}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                {hasAccessRights && (
-                  <Tooltip title="Set SEP Secretary">
-                    <IconButton
-                      edge="start"
-                      onClick={() => setSepSecretaryModalOpen(true)}
-                    >
-                      <Person />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Grid>
-            </Grid>
-            <Grid container spacing={3}>
-              <Grid data-cy="sep-reviewers-table" item xs={12}>
-                <MaterialTable
-                  icons={tableIcons}
-                  title={'Reviewers'}
-                  columns={columns}
-                  data={initialValues.SEPReviewers}
-                  editable={
-                    hasAccessRights
-                      ? {
-                          onRowDelete: (
-                            rowData: BasicUserDetails
-                          ): Promise<void> => removeMember(rowData),
-                        }
-                      : {}
-                  }
-                  options={{
-                    search: false,
-                  }}
-                  actions={tableActions}
-                />
-              </Grid>
-            </Grid>
-          </Form>
-        )}
-      </Formik>
+      <>
+        <Typography variant="h6" gutterBottom>
+          SEP Members
+        </Typography>
+        <Grid container spacing={3} alignItems="center">
+          <Grid item xs={6}>
+            <TextField
+              name="SEPChair"
+              id="SEPChair"
+              label="SEP Chair"
+              type="text"
+              value={
+                initialValues.SEPChair
+                  ? `${initialValues.SEPChair.firstname} ${initialValues.SEPChair.lastname}`
+                  : ''
+              }
+              margin="none"
+              fullWidth
+              data-cy="SEPChair"
+              required
+              disabled
+              className={
+                initialValues.SEPChair ? classes.darkerDisabledTextField : ''
+              }
+              InputProps={{
+                endAdornment: hasAccessRights && (
+                  <>
+                    {!!initialValues.SEPChair && (
+                      <Tooltip title="Remove SEP Chair">
+                        <IconButton
+                          aria-label="Remove SEP chair"
+                          onClick={() =>
+                            setMemberToRemove({
+                              ...(initialValues.SEPChair as BasicUserDetails),
+                              roleId: UserRole.SEP_CHAIR,
+                            })
+                          }
+                        >
+                          <Clear />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <Tooltip title="Set SEP Chair">
+                      <IconButton
+                        edge="start"
+                        onClick={() => setSepChairModalOpen(true)}
+                      >
+                        <Person />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              name="SEPSecretary"
+              id="SEPSecretary"
+              label="SEP Secretary"
+              type="text"
+              value={
+                initialValues.SEPSecretary
+                  ? `${initialValues.SEPSecretary.firstname} ${initialValues.SEPSecretary.lastname}`
+                  : ''
+              }
+              margin="none"
+              fullWidth
+              data-cy="SEPSecretary"
+              required
+              disabled
+              className={
+                initialValues.SEPSecretary
+                  ? classes.darkerDisabledTextField
+                  : ''
+              }
+              InputProps={{
+                endAdornment: hasAccessRights && (
+                  <>
+                    {!!initialValues.SEPSecretary && (
+                      <Tooltip title="Remove SEP Secretary">
+                        <IconButton
+                          aria-label="Remove SEP secretary"
+                          onClick={() =>
+                            setMemberToRemove({
+                              ...(initialValues.SEPSecretary as BasicUserDetails),
+                              roleId: UserRole.SEP_SECRETARY,
+                            })
+                          }
+                        >
+                          <Clear />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <Tooltip title="Set SEP Secretary">
+                      <IconButton
+                        edge="start"
+                        onClick={() => setSepSecretaryModalOpen(true)}
+                      >
+                        <Person />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid data-cy="sep-reviewers-table" item xs={12}>
+            <MaterialTable
+              icons={tableIcons}
+              title={'Reviewers'}
+              columns={columns}
+              data={initialValues.SEPReviewers}
+              editable={
+                hasAccessRights
+                  ? {
+                      onRowDelete: (rowData: BasicUserDetails): Promise<void> =>
+                        removeMember({
+                          ...rowData,
+                          roleId: UserRole.SEP_REVIEWER,
+                        }),
+                    }
+                  : {}
+              }
+              options={{
+                search: false,
+              }}
+              actions={tableActions}
+            />
+          </Grid>
+        </Grid>
+      </>
     </React.Fragment>
   );
 };

@@ -1,34 +1,20 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import Qty from 'js-quantities';
 import React, { ChangeEvent, useState } from 'react';
 import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
-import FormikUICustomMultipleSelect from 'components/common/FormikUICustomMultipleSelect';
+import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionExcerpt } from 'components/questionary/questionaryComponents/QuestionExcerpt';
 import { IntervalConfig, QuestionTemplateRelation } from 'generated/sdk';
 
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
-
-const getAllProperties = () =>
-  Qty.getKinds()
-    .sort()
-    .map(kind => {
-      return {
-        text: kind.split('_').join(' '),
-        value: kind,
-      };
-    });
-
-const getAllUnitsForProperty = (property: string) => {
-  return Qty.getUnits(property || 'unitless');
-};
+import { allProperties, IntervalPropertyId } from './intervalUnits';
 
 const useStyles = makeStyles(theme => ({
   units: {
@@ -36,10 +22,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const propertyDropdownEntries = Array.from(allProperties).map(
+  ([id, property]) => ({
+    text: property.name,
+    value: id,
+  })
+);
+
 export const QuestionTemplateRelationIntervalForm: FormComponent<QuestionTemplateRelation> = props => {
-  const [allProperties] = useState(getAllProperties());
   const [showUnits, setShowUnits] = useState(
-    (props.field.config as IntervalConfig).property !== 'unitless'
+    (props.field.config as IntervalConfig).property !==
+      IntervalPropertyId.UNITLESS
   );
 
   const classes = useStyles();
@@ -85,25 +78,25 @@ export const QuestionTemplateRelationIntervalForm: FormComponent<QuestionTemplat
             <FormikDropdown
               name="config.property"
               label="Physical property"
-              items={allProperties}
+              items={propertyDropdownEntries}
               data-cy="property"
-              InputProps={{
-                onChange: (e: ChangeEvent<HTMLInputElement>) => {
-                  formikProps.setFieldValue('config.property', e.target.value);
-                  formikProps.setFieldValue('config.units', []); // reset units to empty array
-                  setShowUnits(e.target.value !== 'unitless');
-                },
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                formikProps.setFieldValue('config.units', []); // reset units to empty array
+                setShowUnits(e.target.value !== IntervalPropertyId.UNITLESS);
               }}
             />
 
             <Field
               name="config.units"
-              component={FormikUICustomMultipleSelect}
+              component={FormikUICustomSelect}
               label="Units"
               margin="normal"
-              availableOptions={getAllUnitsForProperty(
-                (formikProps.values.config as IntervalConfig).property
-              )}
+              availableOptions={
+                allProperties.get(
+                  (formikProps.values.config as IntervalConfig)
+                    .property as IntervalPropertyId
+                )?.units || []
+              }
               disabled={!showUnits}
               className={classes.units}
             />

@@ -33,12 +33,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const QuestionTemplateRelationFormShell = (props: {
-  validationSchema: any;
+  validationSchema?: any;
   questionRel: QuestionTemplateRelation;
   dispatch: React.Dispatch<Event>;
   closeMe: Function;
   template: Template;
-  children: (
+  children?: (
     formikProps: FormikProps<QuestionTemplateRelation>
   ) => React.ReactNode;
 }) => {
@@ -68,11 +68,11 @@ export const QuestionTemplateRelationFormShell = (props: {
       </Link>
       <Formik
         initialValues={props.questionRel}
-        onSubmit={async form => {
+        onSubmit={async (values): Promise<void> => {
           props.dispatch({
             type: EventType.UPDATE_QUESTION_REL_REQUESTED,
             payload: {
-              field: { ...props.questionRel, ...form },
+              field: { ...props.questionRel, ...values },
               templateId: props.template.templateId,
             },
           });
@@ -82,7 +82,7 @@ export const QuestionTemplateRelationFormShell = (props: {
       >
         {formikProps => (
           <Form style={{ flexGrow: 1 }}>
-            {props.children(formikProps)}
+            {props.children?.(formikProps)}
             <ActionButtonContainer>
               <Button
                 type="button"

@@ -1,5 +1,5 @@
-import faker from 'faker';
 import dateformat from 'dateformat';
+import faker from 'faker';
 
 context('Event log tests', () => {
   before(() => {
@@ -51,16 +51,11 @@ context('Event log tests', () => {
 
     cy.contains('People').click();
 
-    let peopleTable = cy.get('[data-cy="co-proposers"]');
+    cy.get('[aria-label="Search"]').type('Carlsson');
 
-    const lastPeoplePageButtonElement = peopleTable.find(
-      'span[title="Last Page"] > button'
-    );
-
-    lastPeoplePageButtonElement.click({ force: true });
-
-    cy.get('button[title="Edit user"]')
-      .eq(2)
+    cy.contains('Carlsson')
+      .parent()
+      .find('button[title="Edit user"]')
       .click();
 
     cy.get("[name='firstname']").should('have.value', newFirstName);

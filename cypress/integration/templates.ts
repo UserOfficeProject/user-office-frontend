@@ -95,18 +95,7 @@ context('Template tests', () => {
       .first()
       .click();
 
-    cy.get('[data-cy=show-more-button]').click();
-
-    cy.get('[data-cy=add-topic-menu-item]').click();
-
-    cy.get('[data-cy=topic-title]')
-      .last()
-      .click();
-
-    cy.get('[data-cy=topic-title-input]')
-      .last()
-      .clear()
-      .type(`${topic}{enter}`);
+    cy.createTopic(topic);
 
     cy.get('[data-cy=show-more-button]')
       .last()
@@ -134,8 +123,9 @@ context('Template tests', () => {
         boolId = fieldId;
       });
 
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(booleanQuestion).click();
+    cy.contains(booleanQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
 
     /* --- */
 
@@ -169,8 +159,9 @@ context('Template tests', () => {
         intervalId = fieldId;
       });
 
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(intervalQuestion).click();
+    cy.contains(intervalQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
     /* --- */
 
     /* Text input */
@@ -183,6 +174,8 @@ context('Template tests', () => {
       .type(textQuestion);
 
     cy.contains('Is required').click();
+
+    cy.contains('Multiple lines').click();
 
     cy.get('[data-cy=max]').type(minimumCharacters.toString());
 
@@ -215,12 +208,10 @@ context('Template tests', () => {
     cy.contains(newKey);
     /* --- */
 
-    // ALT clicking assigns question to topic
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(textQuestion).click();
-
-    // wait until ALT CLICK finishes
-    cy.wait(500);
+    cy.contains(textQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }])
+      .wait(500);
 
     cy.contains(textQuestion).click();
 
@@ -252,15 +243,21 @@ context('Template tests', () => {
 
     cy.contains('Is multiple select').click();
 
-    cy.contains('Add answer').click();
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[0]);
     cy.get('[title="Save"]').click();
 
-    cy.contains('Add answer').click();
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[1]);
     cy.get('[title="Save"]').click();
 
-    cy.contains('Add answer').click();
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
     cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[2]);
     cy.get('[title="Save"]').click();
 
@@ -273,8 +270,9 @@ context('Template tests', () => {
         multipleChoiceId = fieldId;
       });
 
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(multipleChoiceQuestion).click();
+    cy.contains(multipleChoiceQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
 
     /* --- */
 
@@ -298,8 +296,9 @@ context('Template tests', () => {
         dateId = fieldId;
       });
 
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(dateQuestion).click();
+    cy.contains(dateQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
     /* --- */
 
     /* File */
@@ -315,8 +314,9 @@ context('Template tests', () => {
 
     cy.contains(fileQuestion);
 
-    cy.get('body').type('{alt}', { release: false });
-    cy.contains(fileQuestion).click();
+    cy.contains(fileQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
     /* --- */
 
     /* --- Update templateQuestionRelation */
@@ -346,7 +346,7 @@ context('Template tests', () => {
 
     cy.contains('default template')
       .parent()
-      .get("[title='Clone']")
+      .find("[title='Clone']")
       .first()
       .click();
 
@@ -362,7 +362,7 @@ context('Template tests', () => {
 
     cy.contains('Copy of default template')
       .parent()
-      .get("[title='Delete']")
+      .find("[title='Delete']")
       .first()
       .click();
 
@@ -378,11 +378,13 @@ context('Template tests', () => {
 
     cy.contains('default template')
       .parent()
-      .get("[title='Archive']")
+      .find("[title='Archive']")
       .first()
       .click();
 
     cy.contains('Yes').click();
+
+    cy.notification({ variant: 'success', text: 'successfully' });
 
     cy.contains('default template').should('not.exist');
 
@@ -392,7 +394,7 @@ context('Template tests', () => {
 
     cy.contains('default template')
       .parent()
-      .get("[title='Unarchive']")
+      .find("[title='Unarchive']")
       .first()
       .click();
 
@@ -410,7 +412,13 @@ context('Template tests', () => {
       .click()
       .type('2');
     cy.get(`#${boolId}`).click();
-    cy.get(`#${textId}`).type(textAnswer);
+    cy.get(`#${textId}`)
+      .clear()
+      .type('this_word_{enter}should_be_multiline');
+    cy.contains('this_word_should_be_multiline').should('not.exist');
+    cy.get(`#${textId}`)
+      .clear()
+      .type(textAnswer);
     cy.contains(`${textAnswer.length}/${minimumCharacters}`);
     cy.get(`[data-cy='${dateId}_field'] button`).click();
     cy.wait(300);
@@ -503,12 +511,117 @@ context('Template tests', () => {
 
     cy.contains(fileQuestion).click();
     cy.get("[data-cy='delete']").click();
+  });
 
-    cy.get('[data-cy=show-more-button]')
-      .last()
+  it('User officer can add multiple choice quesion as a dependency', () => {
+    cy.login('officer');
+
+    cy.navigateToTemplatesSubmenu('Proposal templates');
+
+    cy.get('[data-cy="create-new-button"]').click();
+
+    cy.get('[data-cy="name"]').type('Proposal template 1');
+
+    cy.get('[data-cy="description"]').type('Proposal template description 1');
+
+    cy.get('[data-cy="submit"]').click();
+
+    cy.get('[data-cy=show-more-button]').click();
+
+    cy.contains('Add question').click();
+
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+
+    cy.contains('Add Multiple choice').click();
+
+    cy.get('[data-cy="question"]')
+      .clear()
+      .type('Multichoice question');
+
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
+    cy.get('input[placeholder="Answer"]').type('Answer 1');
+    cy.get('[title="Save"]').click();
+
+    cy.get('[data-cy=add-answer-button]')
+      .closest('button')
+      .click({ force: true });
+    cy.get('input[placeholder="Answer"]').type('Answer 2');
+    cy.get('[title="Save"]').click();
+
+    cy.contains('Save').click();
+
+    cy.finishedLoading();
+
+    cy.contains('Multichoice question')
+      .parent()
+      .dragElement([
+        { direction: 'left', length: 1 },
+        { direction: 'down', length: 1 },
+      ]);
+
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+
+    cy.contains('Add Boolean').click();
+
+    cy.get('[data-cy=question]')
+      .clear()
+      .type('Boolean question');
+
+    cy.contains('Save').click();
+
+    cy.contains('Boolean question')
+      .parent()
+      .dragElement([
+        { direction: 'left', length: 1 },
+        { direction: 'down', length: 2 },
+      ])
+      .wait(500);
+
+    cy.finishedLoading();
+
+    cy.contains('Boolean question').click();
+
+    cy.get('[id="dependency-id"]').click();
+
+    cy.get('[role="presentation"]')
+      .contains('Multichoice question')
       .click();
-    cy.get('[data-cy=add-topic-menu-item]')
-      .last()
+
+    cy.get('[id="dependencyValue"]').click();
+
+    cy.contains('Answer 1').click();
+
+    cy.get('[data-cy="submit"]').click();
+
+    cy.contains('Calls').click();
+    cy.get('[title="Edit"]')
+      .first()
       .click();
+
+    cy.finishedLoading();
+
+    cy.get('[data-cy="call-template"]').click();
+    cy.contains('Proposal template 1').click();
+
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="submit"]').click();
+
+    cy.logout();
+
+    cy.login('user');
+
+    cy.contains('New Proposal').click();
+
+    cy.contains('Multichoice question');
+
+    cy.get('main form').should('not.contain.text', 'Boolean question');
+
+    cy.contains('Answer 1').click();
+    cy.contains('Boolean question').click();
+    cy.contains('Answer 2').click();
+    cy.get('main form').should('not.contain.text', 'Boolean question');
   });
 });
