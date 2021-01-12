@@ -149,6 +149,6 @@ context('Shipments tests', () => {
 
     cy.contains('OK').click();
 
-    cy.contains(shipmentTitle).click();
+    cy.contains(shipmentTitle);
   });
 });
