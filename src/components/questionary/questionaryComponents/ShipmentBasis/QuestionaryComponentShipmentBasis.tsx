@@ -94,7 +94,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
       <FormControl className={classes.formControl}>
         <TextFieldNoSubmit
           value={title}
-          label="Description"
+          label="Title"
           onBlur={event => {
             handleChange({ title: event.target.value });
           }}
