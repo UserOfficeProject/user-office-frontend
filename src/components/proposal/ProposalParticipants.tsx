@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import PeopleTable from 'components/user/PeopleTable';
-import { UserRole, BasicUserDetails } from 'generated/sdk';
+import { BasicUserDetails, UserRole } from 'generated/sdk';
 
 import ParticipantModal from './ParticipantModal';
 
@@ -23,8 +23,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type ProposalParticipantsProps = {
-  /** Error flag */
-  error: boolean;
   /** Basic user details array to be shown in the modal. */
   users: BasicUserDetails[];
   /** Function for setting up the users. */
@@ -32,7 +30,6 @@ type ProposalParticipantsProps = {
 };
 
 const ProposalParticipants: React.FC<ProposalParticipantsProps> = ({
-  error,
   users,
   setUsers,
 }) => {
@@ -78,18 +75,11 @@ const ProposalParticipants: React.FC<ProposalParticipantsProps> = ({
         invitationUserRole={UserRole.USER}
         onRemove={removeUser}
       />
-      {error && (
-        <p className={classes.errorText}>
-          You must be part of the proposal. Either add yourself as Principal
-          Investigator or a Co-Proposer!
-        </p>
-      )}
     </React.Fragment>
   );
 };
 
 ProposalParticipants.propTypes = {
-  error: PropTypes.bool.isRequired,
   users: PropTypes.array.isRequired,
   setUsers: PropTypes.func.isRequired,
 };
