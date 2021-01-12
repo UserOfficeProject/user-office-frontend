@@ -1,4 +1,3 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
 import People from '@material-ui/icons/People';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -7,20 +6,6 @@ import PeopleTable from 'components/user/PeopleTable';
 import { BasicUserDetails, UserRole } from 'generated/sdk';
 
 import ParticipantModal from './ParticipantModal';
-
-const useStyles = makeStyles(theme => ({
-  errorText: {
-    color: theme.palette.error.main,
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: '25px',
-    marginLeft: '10px',
-  },
-}));
 
 type ProposalParticipantsProps = {
   /** Basic user details array to be shown in the modal. */
@@ -33,7 +18,6 @@ const ProposalParticipants: React.FC<ProposalParticipantsProps> = ({
   users,
   setUsers,
 }) => {
-  const classes = useStyles();
   const [modalOpen, setOpen] = useState(false);
 
   const addUsers = (addedUsers: BasicUserDetails[]) => {
