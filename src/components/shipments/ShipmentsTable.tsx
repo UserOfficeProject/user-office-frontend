@@ -40,24 +40,26 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
     },
   ];
 
-  const deleteHandler = (shpmentToDelete: ShipmentBasic) => {
+  const deleteHandler = (shipmentToDelete: ShipmentBasic) => {
     props.confirm(
       () => {
         api()
           .deleteShipment({
-            shipmentId: shpmentToDelete.id,
+            shipmentId: shipmentToDelete.id,
           })
           .then(data => {
             if (!data.deleteShipment.error) {
               setShipments(
-                shipments.filter(shipment => shipment.id !== shpmentToDelete.id)
+                shipments.filter(
+                  shipment => shipment.id !== shipmentToDelete.id
+                )
               );
             }
           });
       },
       {
         title: 'Are you sure?',
-        description: `Are you sure you want to delete "${shpmentToDelete.title}"`,
+        description: `Are you sure you want to delete "${shipmentToDelete.title}"`,
       }
     )();
   };

@@ -162,7 +162,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   );
 }
 
-const shipmentBasisPresubmit = (answer: Answer) => async ({
+const shipmentBasisPreSubmit = (answer: Answer) => async ({
   api,
   dispatch,
   state,
@@ -212,4 +212,4 @@ const shipmentBasisPresubmit = (answer: Answer) => async ({
   return returnValue;
 };
 
-export { QuestionaryComponentShipmentBasis, shipmentBasisPresubmit };
+export { QuestionaryComponentShipmentBasis, shipmentBasisPreSubmit };
