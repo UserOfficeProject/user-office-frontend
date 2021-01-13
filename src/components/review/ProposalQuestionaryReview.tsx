@@ -8,7 +8,7 @@ import React, { Fragment, HTMLAttributes } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
-import { ProposalSubsetSumbission } from 'models/ProposalSubmissionState';
+import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
 
 const useStyles = makeStyles(theme => ({
   heading: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ProposalQuestionaryReview(
   props: HTMLAttributes<any> & {
-    data: ProposalSubsetSumbission;
+    data: ProposalSubsetSubmission;
   }
 ) {
   const classes = useStyles();
@@ -38,7 +38,7 @@ export default function ProposalQuestionaryReview(
         <TableBody>
           <TableRow key="proposal-id">
             <TableCell>Proposal ID</TableCell>
-            <TableCell>{props.data.shortCode}</TableCell>
+            <TableCell width="25%">{props.data.shortCode}</TableCell>
           </TableRow>
           <TableRow key="title">
             <TableCell>Title</TableCell>

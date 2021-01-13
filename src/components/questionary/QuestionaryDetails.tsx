@@ -40,9 +40,13 @@ function QuestionaryDetails(props: { questionaryId: number }) {
       <Table>
         <TableBody>
           {completedFields.map(row => (
-            <TableRow key={`answer-${row.answerId}`}>
+            <TableRow
+              key={`answer-${row.answerId}-${row.question.proposalQuestionId}`}
+            >
               <TableCell>{row.question.question}</TableCell>
-              <TableCell>{formatQuestionaryComponentAnswer(row)}</TableCell>
+              <TableCell width="25%">
+                {formatQuestionaryComponentAnswer(row)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

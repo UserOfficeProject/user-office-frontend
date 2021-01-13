@@ -9,18 +9,19 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import FileCopy from '@material-ui/icons/FileCopy';
 import React from 'react';
 
-import { QuestionariesListRow } from './QuestionariesList';
-export function QuestionariesListItem(props: {
-  record: QuestionariesListRow;
-  onEditClick: (record: QuestionariesListRow) => void;
-  onDeleteClick: (record: QuestionariesListRow) => void;
-  onCloneClick: (record: QuestionariesListRow) => void;
+import { QuestionnairesListRow } from './QuestionnairesList';
+
+export function QuestionnairesListItem(props: {
+  record: QuestionnairesListRow;
+  onEditClick: (record: QuestionnairesListRow) => void;
+  onDeleteClick: (record: QuestionnairesListRow) => void;
+  onCloneClick: (record: QuestionnairesListRow) => void;
 }) {
   return (
     <ListItem
       button
       onClick={() => props.onEditClick(props.record)}
-      data-cy="questionaries-list-item"
+      data-cy="questionnaires-list-item"
     >
       <ListItemAvatar>
         <Avatar>

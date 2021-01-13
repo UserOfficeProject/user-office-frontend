@@ -1,5 +1,6 @@
 import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import Typography from '@material-ui/core/Typography';
 import { ErrorMessage, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { ChangeEvent, useContext, useState } from 'react';
@@ -61,6 +62,9 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
     <div>
       <Grid container spacing={3}>
         <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom>
+            General
+          </Typography>
           <Field
             name={`${proposalQuestionId}.title`}
             label="Title"
