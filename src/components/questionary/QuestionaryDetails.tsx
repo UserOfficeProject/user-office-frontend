@@ -12,7 +12,7 @@ import {
   getAllFields,
 } from 'models/QuestionaryFunctions';
 
-import { formatQuestionaryComponentAnswer } from './QuestionaryComponentRegistry';
+import { getQuestionaryComponentDefinition } from './QuestionaryComponentRegistry';
 
 function QuestionaryDetails(props: { questionaryId: number }) {
   const { questionary, loadingQuestionary } = useQuestionary(
@@ -27,24 +27,52 @@ function QuestionaryDetails(props: { questionaryId: number }) {
     return <span>Failed to load questionary details</span>;
   }
 
-  const allFields = getAllFields(questionary.steps) as Answer[];
-  const completedFields = allFields.filter(field => {
-    return areDependenciesSatisfied(
-      questionary.steps,
-      field.question.proposalQuestionId
+  const allQuestions = getAllFields(questionary.steps) as Answer[];
+  const displayableQuestions = allQuestions.filter(field => {
+    const definition = getQuestionaryComponentDefinition(
+      field.question.dataType
     );
+
+    const isDisplayable =
+      areDependenciesSatisfied(
+        questionary.steps,
+        field.question.proposalQuestionId
+      ) && definition.readonly;
   });
+
+  // if(isDisplayable) {
+  //   return {
+  //     id: field.question.proposalQuestionId,
+  //     question: definition.renderers?.questionRenderer({question:field.question}),
+  //     answer:definition.renderers?.answerRenderer({answer:field})
+  //   }
+  // }
+  // else{
+  //   return null
+  // }
 
   return (
     <>
       <Table>
         <TableBody>
-          {completedFields.map(row => (
-            <TableRow key={`answer-${row.answerId}`}>
-              <TableCell>{row.question.question}</TableCell>
-              <TableCell>{formatQuestionaryComponentAnswer(row)}</TableCell>
-            </TableRow>
-          ))}
+          {displayableQuestions.map(row => {
+            const definition = getQuestionaryComponentDefinition(
+              row.question.dataType
+            );
+            const question = definition.renderers?.questionRenderer({
+              question: row.question,
+            });
+            const answer = definition.renderers?.answerRenderer({
+              answer: row,
+            });
+
+            return (
+              <TableRow key={`answer-${row.answerId}`}>
+                <TableCell>{question}</TableCell>
+                <TableCell>{answer}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </>
