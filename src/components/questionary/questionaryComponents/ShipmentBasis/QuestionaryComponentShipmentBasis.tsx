@@ -4,7 +4,6 @@ import {
   makeStyles,
   Select,
   TextField,
-  Typography,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, { useContext, useState } from 'react';
@@ -88,9 +87,6 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
 
   return (
     <div className={classes.container}>
-      <Typography component="h2" className={classes.text}>
-        {question}
-      </Typography>
       <FormControl className={classes.formControl}>
         <TextFieldNoSubmit
           value={title}

@@ -121,7 +121,7 @@ function ShipmentReview({
                 {
                   title: 'Confirmation',
                   description:
-                    'I am aware that no further edits can be done after proposal submission.',
+                    'I am aware that no further edits can be done after shipment submission.',
                 }
               )(),
             label: 'Submit',
