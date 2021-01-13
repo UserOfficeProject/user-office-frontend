@@ -33,43 +33,34 @@ function QuestionaryDetails(props: { questionaryId: number }) {
       field.question.dataType
     );
 
-    const isDisplayable =
+    return (
+      !definition.readonly &&
       areDependenciesSatisfied(
         questionary.steps,
         field.question.proposalQuestionId
-      ) && definition.readonly;
+      )
+    );
   });
-
-  // if(isDisplayable) {
-  //   return {
-  //     id: field.question.proposalQuestionId,
-  //     question: definition.renderers?.questionRenderer({question:field.question}),
-  //     answer:definition.renderers?.answerRenderer({answer:field})
-  //   }
-  // }
-  // else{
-  //   return null
-  // }
 
   return (
     <>
       <Table>
         <TableBody>
-          {displayableQuestions.map(row => {
+          {displayableQuestions.map(question => {
             const definition = getQuestionaryComponentDefinition(
-              row.question.dataType
+              question.question.dataType
             );
-            const question = definition.renderers?.questionRenderer({
-              question: row.question,
+            const questionElem = definition.renderers?.questionRenderer({
+              question: question.question,
             });
-            const answer = definition.renderers?.answerRenderer({
-              answer: row,
+            const answerElem = definition.renderers?.answerRenderer({
+              answer: question,
             });
 
             return (
-              <TableRow key={`answer-${row.answerId}`}>
-                <TableCell>{question}</TableCell>
-                <TableCell>{answer}</TableCell>
+              <TableRow key={`answer-${question.answerId}`}>
+                <TableCell>{questionElem}</TableCell>
+                <TableCell>{answerElem}</TableCell>
               </TableRow>
             );
           })}
