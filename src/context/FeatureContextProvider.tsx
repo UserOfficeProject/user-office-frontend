@@ -1,5 +1,6 @@
 import React from 'react';
 
+import UOLoader from 'components/common/UOLoader';
 import { Feature, FeatureId } from 'generated/sdk';
 import { useFeatures } from 'hooks/admin/useFeatures';
 
@@ -19,7 +20,7 @@ export const FeatureContextProvider: React.FC = props => {
   const { features, loadingFeatures } = useFeatures();
 
   if (loadingFeatures) {
-    return null;
+    return <UOLoader />;
   }
 
   const featuresMap = features.reduce(function(featuresMap, feature) {
