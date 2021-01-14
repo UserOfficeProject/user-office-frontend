@@ -22,8 +22,7 @@ export interface QuestionnairesListProps {
 
 const useStyles = makeStyles(() => ({
   questionnairesList: {
-    maxWidth: '300px',
-    listStyle: 'none',
+    maxWidth: '440px',
     padding: 0,
     marginBottom: 0,
     '& li': {

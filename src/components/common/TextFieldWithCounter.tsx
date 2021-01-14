@@ -8,10 +8,18 @@ const useStyles = makeStyles(theme => ({
   error: {
     color: theme.palette.error.main,
   },
+  adornmentPosition: {
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+    marginBottom: -theme.spacing(0.5),
+  },
 }));
 
 const TextFieldWithCounter = (
-  props: TextFieldProps & { maxLen?: number; isCounterHidden?: boolean }
+  props: TextFieldProps & {
+    maxLen?: number;
+    isCounterHidden?: boolean;
+  }
 ) => {
   const classes = useStyles();
   const [textLen, setTextLen] = useState(
@@ -26,11 +34,11 @@ const TextFieldWithCounter = (
 
   const counter = isCounterHidden
     ? null
-    : textLen
+    : `${textLen}`
     ? maxLen
       ? `${textLen}/${maxLen}`
-      : textLen
-    : '';
+      : `${textLen}`
+    : '0';
 
   return (
     <div>
@@ -42,6 +50,7 @@ const TextFieldWithCounter = (
             <InputAdornment
               position="end"
               className={clsx({
+                [classes.adornmentPosition]: other.multiline,
                 [classes.error]: maxLen && textLen > maxLen,
               })}
             >
