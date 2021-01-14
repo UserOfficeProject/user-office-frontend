@@ -1,11 +1,9 @@
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import ClearIcon from '@material-ui/icons/Clear';
 import { FormikHelpers } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -76,8 +74,6 @@ const FormikUICustomDependencySelector = ({
         },
       };
       form.setFieldValue(field.name, dependency);
-    } else {
-      form.setFieldValue(field.name, null);
     }
   };
 
@@ -118,7 +114,7 @@ const FormikUICustomDependencySelector = ({
 
   return (
     <Grid container>
-      <Grid item xs={5}>
+      <Grid item xs={6}>
         <FormControl fullWidth>
           <InputLabel htmlFor="dependency-id" shrink>
             Field
@@ -130,6 +126,7 @@ const FormikUICustomDependencySelector = ({
               const depFieldId = event.target.value as string;
               setDependencyId(depFieldId);
             }}
+            required
           >
             {getAllFields(template.steps)
               .filter(option =>
@@ -186,6 +183,7 @@ const FormikUICustomDependencySelector = ({
             onChange={(event: React.ChangeEvent<{ value: any }>): void => {
               setDependencyValue(event.target.value);
             }}
+            required
           >
             {availableValues.map(option => {
               return (
@@ -196,16 +194,6 @@ const FormikUICustomDependencySelector = ({
             })}
           </Select>
         </FormControl>
-      </Grid>
-      <Grid item xs={1}>
-        <IconButton
-          onClick={(): void => {
-            setDependencyId(null);
-            setDependencyValue(null);
-          }}
-        >
-          <ClearIcon />
-        </IconButton>
       </Grid>
     </Grid>
   );
