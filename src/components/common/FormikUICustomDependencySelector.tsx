@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   DataType,
   EvaluatorOperator,
+  FieldDependency,
   QuestionTemplateRelation,
   SelectionFromOptionsConfig,
   Template,
@@ -22,12 +23,13 @@ const FormikUICustomDependencySelector = ({
   field,
   template,
   form,
-  templateField,
+  dependency,
 }: {
   field: { name: string; onBlur: Function; onChange: Function; value: string };
   form: FormikHelpers<any>;
   template: Template;
   templateField: QuestionTemplateRelation;
+  dependency: FieldDependency;
 }) => {
   const [dependencyId, setDependencyId] = useState<string | null>(null);
   const [operator, setOperator] = useState<EvaluatorOperator>(
@@ -50,16 +52,15 @@ const FormikUICustomDependencySelector = ({
   }))();
 
   useEffect(() => {
-    if (!templateField) {
+    if (!dependency) {
       return;
     }
-    if (templateField.dependency) {
-      const dependency = templateField.dependency;
+    if (dependency) {
       setDependencyId(dependency.dependencyId);
       setOperator(dependency.condition.condition);
       setDependencyValue(dependency.condition.params);
     }
-  }, [templateField]);
+  }, [dependency]);
 
   const updateFormik = (): void => {
     if (

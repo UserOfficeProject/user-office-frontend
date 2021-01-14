@@ -5,6 +5,7 @@ mutation updateQuestionTemplateRelation(
   $sortOrder: Int!
   $config: String
   $dependency: FieldDependencyInput
+  $dependencies: [FieldDependencyInput]
 ) {
   updateQuestionTemplateRelation(
     questionId: $questionId
@@ -13,6 +14,7 @@ mutation updateQuestionTemplateRelation(
     sortOrder: $sortOrder
     config: $config
     dependency: $dependency
+    dependencies: $dependencies
   ) {
     template {
       ...template

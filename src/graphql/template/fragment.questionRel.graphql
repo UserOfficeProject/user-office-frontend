@@ -15,4 +15,12 @@ fragment questionTemplateRelation on QuestionTemplateRelation {
       ...fieldCondition
     }
   }
+  dependencies {
+    questionId
+    dependencyId
+    dependencyNaturalKey
+    condition {
+      ...fieldCondition
+    }
+  }
 }

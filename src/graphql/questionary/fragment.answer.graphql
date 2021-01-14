@@ -16,5 +16,13 @@ fragment answer on Answer {
       ...fieldCondition
     }
   }
+  dependencies {
+    questionId
+    dependencyId
+    dependencyNaturalKey
+    condition {
+      ...fieldCondition
+    }
+  }
   value
 }

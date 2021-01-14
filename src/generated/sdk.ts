@@ -71,6 +71,7 @@ export type Answer = {
   topicId: Scalars['Int'];
   config: FieldConfig;
   dependency: Maybe<FieldDependency>;
+  dependencies: Maybe<Array<FieldDependency>>;
   answerId: Maybe<Scalars['Int']>;
   value: Maybe<Scalars['IntStringDateBoolArray']>;
 };
@@ -840,6 +841,7 @@ export type MutationUpdateQuestionTemplateRelationArgs = {
   sortOrder: Scalars['Int'];
   config?: Maybe<Scalars['String']>;
   dependency?: Maybe<FieldDependencyInput>;
+  dependencies?: Maybe<Array<Maybe<FieldDependencyInput>>>;
 };
 
 
@@ -1646,6 +1648,7 @@ export type QuestionTemplateRelation = {
   topicId: Scalars['Int'];
   config: FieldConfig;
   dependency: Maybe<FieldDependency>;
+  dependencies: Maybe<Array<FieldDependency>>;
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
@@ -3170,7 +3173,14 @@ export type AnswerFragment = (
       { __typename?: 'FieldCondition' }
       & FieldConditionFragment
     ) }
-  )> }
+  )>, dependencies: Maybe<Array<(
+    { __typename?: 'FieldDependency' }
+    & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
+    & { condition: (
+      { __typename?: 'FieldCondition' }
+      & FieldConditionFragment
+    ) }
+  )>> }
 );
 
 export type QuestionaryFragment = (
@@ -4198,7 +4208,14 @@ export type QuestionTemplateRelationFragment = (
       { __typename?: 'FieldCondition' }
       & FieldConditionFragment
     ) }
-  )> }
+  )>, dependencies: Maybe<Array<(
+    { __typename?: 'FieldDependency' }
+    & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
+    & { condition: (
+      { __typename?: 'FieldCondition' }
+      & FieldConditionFragment
+    ) }
+  )>> }
 );
 
 export type TemplateFragment = (
@@ -4337,6 +4354,7 @@ export type UpdateQuestionTemplateRelationMutationVariables = Exact<{
   sortOrder: Scalars['Int'];
   config?: Maybe<Scalars['String']>;
   dependency?: Maybe<FieldDependencyInput>;
+  dependencies?: Maybe<Array<Maybe<FieldDependencyInput>>>;
 }>;
 
 
@@ -5028,6 +5046,14 @@ export const AnswerFragmentDoc = gql`
       ...fieldCondition
     }
   }
+  dependencies {
+    questionId
+    dependencyId
+    dependencyNaturalKey
+    condition {
+      ...fieldCondition
+    }
+  }
   value
 }
     ${QuestionFragmentDoc}
@@ -5101,6 +5127,14 @@ export const QuestionTemplateRelationFragmentDoc = gql`
     ...fieldConfig
   }
   dependency {
+    questionId
+    dependencyId
+    dependencyNaturalKey
+    condition {
+      ...fieldCondition
+    }
+  }
+  dependencies {
     questionId
     dependencyId
     dependencyNaturalKey
@@ -6514,8 +6548,8 @@ export const UpdateQuestionDocument = gql`
 }
     ${QuestionFragmentDoc}`;
 export const UpdateQuestionTemplateRelationDocument = gql`
-    mutation updateQuestionTemplateRelation($questionId: String!, $templateId: Int!, $topicId: Int, $sortOrder: Int!, $config: String, $dependency: FieldDependencyInput) {
-  updateQuestionTemplateRelation(questionId: $questionId, templateId: $templateId, topicId: $topicId, sortOrder: $sortOrder, config: $config, dependency: $dependency) {
+    mutation updateQuestionTemplateRelation($questionId: String!, $templateId: Int!, $topicId: Int, $sortOrder: Int!, $config: String, $dependency: FieldDependencyInput, $dependencies: [FieldDependencyInput]) {
+  updateQuestionTemplateRelation(questionId: $questionId, templateId: $templateId, topicId: $topicId, sortOrder: $sortOrder, config: $config, dependency: $dependency, dependencies: $dependencies) {
     template {
       ...template
     }

@@ -70,9 +70,15 @@ export function usePersistQuestionaryEditorModel() {
         sortOrder: field.sortOrder,
         questionId: field.question.proposalQuestionId,
         config: field.config ? JSON.stringify(field.config) : undefined,
+        // TODO: Remove this dependency when fully switched to dependencies array!
         dependency: field.dependency
           ? prepareDependencies(field.dependency)
           : field.dependency,
+        dependencies: field.dependencies
+          ? field.dependencies.map(dependency =>
+              prepareDependencies(dependency)
+            )
+          : field.dependencies,
       })
       .then(data => data.updateQuestionTemplateRelation);
   };
@@ -279,6 +285,7 @@ export function usePersistQuestionaryEditorModel() {
             const questionRel = action.payload
               .field as QuestionTemplateRelation;
             const templateId = action.payload.templateId;
+            debugger;
             const result = await updateQuestionTopicRelation(
               templateId,
               questionRel
