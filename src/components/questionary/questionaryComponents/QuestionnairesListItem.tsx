@@ -65,7 +65,10 @@ export function QuestionnairesListItem(props: {
           edge="start"
           aria-label="clone"
           data-cy="clone"
-          onClick={() => props.onCloneClick(props.record)}
+          onClick={e => {
+            e.stopPropagation();
+            props.onCloneClick(props.record);
+          }}
         >
           <FileCopy />
         </IconButton>
@@ -75,7 +78,10 @@ export function QuestionnairesListItem(props: {
           edge="end"
           aria-label="delete"
           data-cy="delete"
-          onClick={() => props.onDeleteClick(props.record)}
+          onClick={e => {
+            e.stopPropagation();
+            props.onDeleteClick(props.record);
+          }}
         >
           <DeleteIcon />
         </IconButton>
