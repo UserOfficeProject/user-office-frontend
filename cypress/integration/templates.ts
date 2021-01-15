@@ -14,11 +14,13 @@ context('Template tests', () => {
   let dateId: string;
   let multipleChoiceId: string;
   let intervalId: string;
+  let numberId: string;
   const booleanQuestion = faker.random.words(2);
   const textQuestion = faker.random.words(2);
   const dateQuestion = faker.random.words(2);
   const fileQuestion = faker.random.words(2);
   const intervalQuestion = faker.random.words(2);
+  const numberQuestion = faker.random.words(2);
   const multipleChoiceQuestion = faker.lorem.words(2);
   const multipleChoiceAnswers = [
     faker.lorem.words(2),
@@ -28,7 +30,7 @@ context('Template tests', () => {
 
   const dateTooltip = faker.lorem.words(2);
 
-  const topic = faker.lorem.words(1);
+  const topic = faker.lorem.words(2);
   const title = faker.lorem.words(3);
   const abstract = faker.lorem.words(8);
   const textAnswer = faker.lorem.words(5);
@@ -64,7 +66,9 @@ context('Template tests', () => {
     cy.contains('Add question').click();
 
     /* Add Text Input */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Text Input').click();
 
@@ -106,7 +110,9 @@ context('Template tests', () => {
       .click();
 
     /* Boolean */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Boolean').click();
 
@@ -130,7 +136,9 @@ context('Template tests', () => {
     /* --- */
 
     /* Interval */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Interval').click();
 
@@ -164,8 +172,45 @@ context('Template tests', () => {
       .dragElement([{ direction: 'left', length: 1 }]);
     /* --- */
 
-    /* Text input */
+    /* Number */
     cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+
+    cy.contains('Add Number').click();
+
+    cy.get('[data-cy=question]')
+      .clear()
+      .type(numberQuestion);
+
+    cy.get('[data-cy=property]').click();
+
+    cy.contains('energy').click();
+
+    cy.get('[data-cy=units]>[role=button]').click({ force: true });
+
+    cy.contains('btu').click();
+
+    cy.contains('joule').click();
+
+    cy.get('body').type('{esc}');
+
+    cy.contains('Save').click();
+
+    cy.contains(numberQuestion)
+      .siblings("[data-cy='proposal-question-id']")
+      .invoke('html')
+      .then(fieldId => {
+        numberId = fieldId;
+      });
+
+    cy.contains(numberQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
+    /* --- */
+
+    /* Text input */
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Text Input').click();
 
@@ -228,8 +273,28 @@ context('Template tests', () => {
 
     cy.contains('Update').click();
 
+    // Check reordering
+    cy.contains(topic)
+      .closest('[data-rbd-draggable-context-id]') // new topic column
+      .find('[data-rbd-drag-handle-draggable-id]') // all questions
+      .first() // first question
+      .contains(textQuestion);
+
+    cy.contains(textQuestion)
+      .parent()
+      .dragElement([{ direction: 'down', length: 1 }])
+      .wait(500);
+
+    cy.contains(topic)
+      .closest('[data-rbd-draggable-context-id]') // new topic column
+      .find('[data-rbd-drag-handle-draggable-id]') // all questions
+      .first() // first question
+      .should('not.contain', textQuestion);
+
     /* Selection from options */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Multiple choice').click();
 
@@ -277,7 +342,9 @@ context('Template tests', () => {
     /* --- */
 
     /* Date */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Date').click();
 
@@ -302,7 +369,9 @@ context('Template tests', () => {
     /* --- */
 
     /* File */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add File Upload').click();
 
@@ -411,6 +480,9 @@ context('Template tests', () => {
     cy.get(`[data-cy="${intervalId}.max"]`)
       .click()
       .type('2');
+    cy.get(`[data-cy="${numberId}.value"]`)
+      .click()
+      .type('1');
     cy.get(`#${boolId}`).click();
     cy.get(`#${textId}`)
       .clear()
@@ -530,7 +602,9 @@ context('Template tests', () => {
 
     cy.contains('Add question').click();
 
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Multiple choice').click();
 
@@ -561,7 +635,9 @@ context('Template tests', () => {
         { direction: 'down', length: 1 },
       ]);
 
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
 
     cy.contains('Add Boolean').click();
 
