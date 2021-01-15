@@ -29,13 +29,13 @@ const FormikUICustomDependencySelector = ({
   templateField: QuestionTemplateRelation;
   dependency: FieldDependency;
 }) => {
-  const [dependencyId, setDependencyId] = useState<string | null>(null);
+  const [dependencyId, setDependencyId] = useState<string>('');
   const [operator, setOperator] = useState<EvaluatorOperator>(
     EvaluatorOperator.EQ
   );
   const [dependencyValue, setDependencyValue] = useState<
-    string | boolean | number | Date | null
-  >(null);
+    string | boolean | number | Date
+  >('');
 
   const [availableValues, setAvailableValues] = useState<Option[]>([]);
 
@@ -141,7 +141,6 @@ const FormikUICustomDependencySelector = ({
                     className={classes.menuItem}
                     key={option.question.proposalQuestionId}
                   >
-                    {/* {getTemplateFieldIcon(option.question.dataType)}  */}
                     {option.question.question}
                   </MenuItem>
                 );
