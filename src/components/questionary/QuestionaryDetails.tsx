@@ -44,7 +44,7 @@ function QuestionaryDetails(props: { questionaryId: number }) {
 
   return (
     <>
-      <Table>
+      <Table size="small">
         <TableBody>
           {displayableQuestions.map(question => {
             const definition = getQuestionaryComponentDefinition(
