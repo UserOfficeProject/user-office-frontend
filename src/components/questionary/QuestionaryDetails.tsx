@@ -46,11 +46,11 @@ function QuestionaryDetails(
   });
 
   return (
-    <Table size={'small'} {...restProps}>
+    <Table size="small" {...restProps}>
       <TableBody>
         {completedFields.map(row => (
           <TableRow key={`answer-${row.answerId}`}>
-            <TableCell>{row.question.question}</TableCell>
+            <TableCell width="65%">{row.question.question}</TableCell>
             <TableCell>{formatQuestionaryComponentAnswer(row)}</TableCell>
           </TableRow>
         ))}

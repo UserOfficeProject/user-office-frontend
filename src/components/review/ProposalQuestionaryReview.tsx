@@ -34,11 +34,11 @@ export default function ProposalQuestionaryReview(
       <Typography variant="h6" className={classes.heading} gutterBottom>
         Proposal information
       </Typography>
-      <Table>
+      <Table size="small">
         <TableBody>
           <TableRow key="proposal-id">
             <TableCell>Proposal ID</TableCell>
-            <TableCell>{props.data.shortCode}</TableCell>
+            <TableCell width="35%">{props.data.shortCode}</TableCell>
           </TableRow>
           <TableRow key="title">
             <TableCell>Title</TableCell>

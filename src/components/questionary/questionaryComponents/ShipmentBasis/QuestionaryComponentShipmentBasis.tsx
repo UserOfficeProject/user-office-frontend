@@ -47,7 +47,7 @@ const samplesToSampleIds = (samples: Pick<Sample, 'id'>[]) =>
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
     answer: {
-      question: { question, proposalQuestionId },
+      question: { proposalQuestionId },
     },
     formikProps: { errors },
   } = props;

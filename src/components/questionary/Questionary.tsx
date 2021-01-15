@@ -1,4 +1,4 @@
-import { Box, makeStyles, Step, Stepper, Typography } from '@material-ui/core';
+import { makeStyles, Step, Stepper, Typography } from '@material-ui/core';
 import React, { useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -22,9 +22,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[700],
     textAlign: 'right',
   },
-  container: {
-    width: '100%',
-    minWidth: '500px',
+  root: {
+    width: 'inherit',
   },
 }));
 
@@ -109,14 +108,14 @@ function Questionary({
   };
 
   return (
-    <Box className={classes.container}>
+    <div className={classes.root}>
       <Typography variant="h4" className={classes.header}>
         {title}
       </Typography>
       <Typography className={classes.subHeader}>{info}</Typography>
       {getStepperNavig()}
       {getStepContent()}
-    </Box>
+    </div>
   );
 }
 

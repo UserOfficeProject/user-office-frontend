@@ -54,6 +54,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
         fullWidth
         component={TextFieldNoSubmit}
         data-cy="title-input"
+        margin="dense"
       />
     </>
   );
