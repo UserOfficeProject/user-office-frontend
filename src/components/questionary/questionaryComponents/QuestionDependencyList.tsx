@@ -1,7 +1,8 @@
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Field, FieldArray } from 'formik';
 import React from 'react';
@@ -27,21 +28,26 @@ const QuestionDependencyList: React.FC<QuestionDependencyListProps> = ({
       <FieldArray name="dependencies">
         {({ remove, push }) => (
           <>
-            <Button
-              onClick={() =>
-                push({
-                  dependencyId: '',
-                  questionId: field.question.proposalQuestionId,
-                  dependencyNaturalKey: '',
-                  condition: {
-                    condition: EvaluatorOperator.EQ,
-                    params: '',
-                  },
-                })
-              }
-            >
-              Add Dependency
-            </Button>
+            <Box display="flex" flexDirection="row-reverse">
+              <Tooltip title="Add dependency">
+                <IconButton
+                  onClick={() =>
+                    push({
+                      dependencyId: '',
+                      questionId: field.question.proposalQuestionId,
+                      dependencyNaturalKey: '',
+                      condition: {
+                        condition: EvaluatorOperator.EQ,
+                        params: '',
+                      },
+                    })
+                  }
+                  data-cy="add-dependency-button"
+                >
+                  <AddCircleOutlineIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
             {field.dependencies?.map((dependency, i) => {
               return (
                 <Box key={`${dependency?.dependencyId}_${i}`} mb={1}>

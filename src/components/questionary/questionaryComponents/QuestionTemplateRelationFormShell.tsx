@@ -69,7 +69,6 @@ export const QuestionTemplateRelationFormShell = (props: {
       <Formik
         initialValues={props.questionRel}
         onSubmit={async (values): Promise<void> => {
-          console.log(values);
           props.dispatch({
             type: EventType.UPDATE_QUESTION_REL_REQUESTED,
             payload: {
@@ -77,7 +76,7 @@ export const QuestionTemplateRelationFormShell = (props: {
               templateId: props.template.templateId,
             },
           });
-          // props.closeMe();
+          props.closeMe();
         }}
         validationSchema={props.validationSchema}
       >

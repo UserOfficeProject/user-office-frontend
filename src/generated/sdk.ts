@@ -70,7 +70,7 @@ export type Answer = {
   sortOrder: Scalars['Int'];
   topicId: Scalars['Int'];
   config: FieldConfig;
-  dependencies: Maybe<Array<FieldDependency>>;
+  dependencies: Array<FieldDependency>;
   answerId: Maybe<Scalars['Int']>;
   value: Maybe<Scalars['IntStringDateBoolArray']>;
 };
@@ -1663,7 +1663,7 @@ export type QuestionTemplateRelation = {
   sortOrder: Scalars['Int'];
   topicId: Scalars['Int'];
   config: FieldConfig;
-  dependencies: Maybe<Array<FieldDependency>>;
+  dependencies: Array<FieldDependency>;
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
@@ -3191,14 +3191,14 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'ShipmentBasisConfig' }
     & FieldConfigShipmentBasisConfigFragment
-  ), dependencies: Maybe<Array<(
+  ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
     & { condition: (
       { __typename?: 'FieldCondition' }
       & FieldConditionFragment
     ) }
-  )>> }
+  )> }
 );
 
 export type QuestionaryFragment = (
@@ -4230,14 +4230,14 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'ShipmentBasisConfig' }
     & FieldConfigShipmentBasisConfigFragment
-  ), dependencies: Maybe<Array<(
+  ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
     & { condition: (
       { __typename?: 'FieldCondition' }
       & FieldConditionFragment
     ) }
-  )>> }
+  )> }
 );
 
 export type TemplateFragment = (

@@ -46,7 +46,7 @@ class QuestionItemAdapter implements TemplateTopicEditorData {
     return this.source.dataType;
   }
   get dependencies() {
-    return null;
+    return [];
   }
   get config() {
     return this.source.config;

@@ -50,22 +50,17 @@ const FormikUICustomDependencySelector = ({
   }))();
 
   useEffect(() => {
-    if (!dependency) {
-      return;
-    }
-    if (dependency) {
-      setDependencyId(dependency.dependencyId);
-      setOperator(dependency.condition.condition);
-      setDependencyValue(dependency.condition.params);
-    }
-  }, [dependency]);
+    setDependencyId(dependency.dependencyId);
+    setOperator(dependency.condition.condition);
+    setDependencyValue(dependency.condition.params);
+  }, [
+    dependency.dependencyId,
+    dependency.condition.condition,
+    dependency.condition.params,
+  ]);
 
   const updateFormik = (): void => {
-    if (
-      dependencyId !== null &&
-      dependencyValue !== null &&
-      operator !== null
-    ) {
+    if (dependencyId && dependencyValue && operator) {
       const dependency = {
         dependencyId,
         condition: {
