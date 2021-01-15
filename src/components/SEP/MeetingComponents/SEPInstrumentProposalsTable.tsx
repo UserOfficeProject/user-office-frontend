@@ -185,6 +185,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         setProposalViewModalOpen={() => setOpenProposalId(null)}
         proposalId={openProposalId || 0}
         meetingSubmitted={onMeetingSubmitted}
+        sepId={sepId}
       />
       <MaterialTable
         icons={tableIcons}

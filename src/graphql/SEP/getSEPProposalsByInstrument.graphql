@@ -8,6 +8,7 @@ query sepProposalsByInstrument(
     sepId: $sepId
     callId: $callId
   ) {
+    sepTimeAllocation
     proposal {
       id
       title

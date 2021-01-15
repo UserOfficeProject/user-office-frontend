@@ -55,9 +55,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   const getGradesFromAssignments = (assignments: SepAssignment[]) =>
     assignments
       ?.filter(
-        assignment => assignment.review.status === ReviewStatus.SUBMITTED
+        assignment => assignment.review?.status === ReviewStatus.SUBMITTED
       )
-      .map(assignment => assignment.review.grade) ?? [];
+      .map(assignment => assignment.review?.grade) ?? [];
 
   const SEPProposalColumns = [
     { title: 'ID', field: 'proposal.shortCode' },
@@ -119,9 +119,11 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
       memberId: assignedReviewer.sepMemberUserId as number,
     });
 
-    await api().removeUserForReview({
-      reviewID: assignedReviewer.review.id,
-    });
+    assignedReviewer.review &&
+      (await api().removeUserForReview({
+        reviewId: assignedReviewer.review.id,
+        sepId,
+      }));
 
     if (SEPProposalsData) {
       setSEPProposalsData(
@@ -219,7 +221,8 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
             assignments:
               editingProposalData.assignments?.map(proposalAssignment => {
                 if (
-                  proposalAssignment.review.id === currentAssignment?.review.id
+                  proposalAssignment?.review?.id ===
+                  currentAssignment?.review?.id
                 ) {
                   return currentAssignment;
                 } else {

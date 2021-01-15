@@ -503,6 +503,7 @@ export type Mutation = {
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
+  updateSEPTimeAllocation: SepProposalResponseWrap;
 };
 
 
@@ -1036,7 +1037,8 @@ export type MutationNotifyProposalArgs = {
 
 
 export type MutationRemoveUserForReviewArgs = {
-  reviewID: Scalars['Int'];
+  sepId: Scalars['Int'];
+  reviewId: Scalars['Int'];
 };
 
 
@@ -1086,6 +1088,13 @@ export type MutationSelectRoleArgs = {
 export type MutationUpdatePasswordArgs = {
   id: Scalars['Int'];
   password: Scalars['String'];
+};
+
+
+export type MutationUpdateSepTimeAllocationArgs = {
+  sepTimeAllocation?: Maybe<Scalars['Int']>;
+  proposalId: Scalars['Int'];
+  sepId: Scalars['Int'];
 };
 
 export type NextStatusEvent = {
@@ -1365,6 +1374,7 @@ export type Query = {
   sep: Maybe<Sep>;
   sepMembers: Maybe<Array<SepMember>>;
   sepProposals: Maybe<Array<SepProposal>>;
+  sepProposal: Maybe<SepProposal>;
   sepProposalsByInstrument: Maybe<Array<SepProposal>>;
   seps: Maybe<SePsQueryResult>;
   shipment: Maybe<Shipment>;
@@ -1554,6 +1564,12 @@ export type QuerySepMembersArgs = {
 
 export type QuerySepProposalsArgs = {
   callId: Scalars['Int'];
+  sepId: Scalars['Int'];
+};
+
+
+export type QuerySepProposalArgs = {
+  proposalId: Scalars['Int'];
   sepId: Scalars['Int'];
 };
 
@@ -1772,7 +1788,7 @@ export type SepAssignment = {
   proposal: Proposal;
   roles: Array<Role>;
   user: Maybe<BasicUserDetails>;
-  review: Review;
+  review: Maybe<Review>;
 };
 
 export type SepMember = {
@@ -1790,8 +1806,15 @@ export type SepProposal = {
   proposalId: Scalars['Int'];
   sepId: Scalars['Int'];
   dateAssigned: Scalars['DateTime'];
+  sepTimeAllocation: Maybe<Scalars['Int']>;
   proposal: Proposal;
   assignments: Maybe<Array<SepAssignment>>;
+};
+
+export type SepProposalResponseWrap = {
+  __typename?: 'SEPProposalResponseWrap';
+  error: Maybe<Scalars['String']>;
+  sepProposal: Maybe<SepProposal>;
 };
 
 export type SepResponseWrap = {
@@ -2212,6 +2235,50 @@ export type GetSepMembersQuery = (
   )>> }
 );
 
+export type GetSepProposalQueryVariables = Exact<{
+  sepId: Scalars['Int'];
+  proposalId: Scalars['Int'];
+}>;
+
+
+export type GetSepProposalQuery = (
+  { __typename?: 'Query' }
+  & { sepProposal: Maybe<(
+    { __typename?: 'SEPProposal' }
+    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation'>
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & { proposer: (
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      ), users: Array<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, questionary: (
+        { __typename?: 'Questionary' }
+        & QuestionaryFragment
+      ), technicalReview: Maybe<(
+        { __typename?: 'TechnicalReview' }
+        & CoreTechnicalReviewFragment
+      )>, reviews: Maybe<Array<(
+        { __typename?: 'Review' }
+        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
+        & { reviewer: Maybe<(
+          { __typename?: 'User' }
+          & Pick<User, 'firstname' | 'lastname' | 'username' | 'id'>
+        )> }
+      )>>, instrument: Maybe<(
+        { __typename?: 'Instrument' }
+        & Pick<Instrument, 'id' | 'name' | 'shortCode'>
+      )>, call: Maybe<(
+        { __typename?: 'Call' }
+        & Pick<Call, 'id' | 'shortCode'>
+      )> }
+      & ProposalFragment
+    ) }
+  )> }
+);
+
 export type GetSepProposalsQueryVariables = Exact<{
   sepId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -2239,10 +2306,10 @@ export type GetSepProposalsQuery = (
       )>, roles: Array<(
         { __typename?: 'Role' }
         & Pick<Role, 'id' | 'shortCode' | 'title'>
-      )>, review: (
+      )>, review: Maybe<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'status' | 'comment' | 'grade' | 'sepID'>
-      ) }
+      )> }
     )>> }
   )>> }
 );
@@ -2258,6 +2325,7 @@ export type SepProposalsByInstrumentQuery = (
   { __typename?: 'Query' }
   & { sepProposalsByInstrument: Maybe<Array<(
     { __typename?: 'SEPProposal' }
+    & Pick<SepProposal, 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'title' | 'shortCode' | 'rankOrder'>
@@ -2367,6 +2435,21 @@ export type UpdateSepMutation = (
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
+  ) }
+);
+
+export type UpdateSepTimeAllocationMutationVariables = Exact<{
+  sepId: Scalars['Int'];
+  proposalId: Scalars['Int'];
+  sepTimeAllocation?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type UpdateSepTimeAllocationMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSEPTimeAllocation: (
+    { __typename?: 'SEPProposalResponseWrap' }
+    & Pick<SepProposalResponseWrap, 'error'>
   ) }
 );
 
@@ -3320,7 +3403,8 @@ export type GetReviewQuery = (
 );
 
 export type RemoveUserForReviewMutationVariables = Exact<{
-  reviewID: Scalars['Int'];
+  reviewId: Scalars['Int'];
+  sepId: Scalars['Int'];
 }>;
 
 
@@ -5305,6 +5389,56 @@ export const GetSepMembersDocument = gql`
   }
 }
     `;
+export const GetSepProposalDocument = gql`
+    query getSEPProposal($sepId: Int!, $proposalId: Int!) {
+  sepProposal(sepId: $sepId, proposalId: $proposalId) {
+    proposalId
+    sepId
+    sepTimeAllocation
+    proposal {
+      ...proposal
+      proposer {
+        ...basicUserDetails
+      }
+      users {
+        ...basicUserDetails
+      }
+      questionary {
+        ...questionary
+      }
+      technicalReview {
+        ...coreTechnicalReview
+      }
+      reviews {
+        id
+        grade
+        comment
+        status
+        userID
+        sepID
+        reviewer {
+          firstname
+          lastname
+          username
+          id
+        }
+      }
+      instrument {
+        id
+        name
+        shortCode
+      }
+      call {
+        id
+        shortCode
+      }
+    }
+  }
+}
+    ${ProposalFragmentDoc}
+${BasicUserDetailsFragmentDoc}
+${QuestionaryFragmentDoc}
+${CoreTechnicalReviewFragmentDoc}`;
 export const GetSepProposalsDocument = gql`
     query getSEPProposals($sepId: Int!, $callId: Int!) {
   sepProposals(sepId: $sepId, callId: $callId) {
@@ -5348,6 +5482,7 @@ export const GetSepProposalsDocument = gql`
 export const SepProposalsByInstrumentDocument = gql`
     query sepProposalsByInstrument($instrumentId: Int!, $sepId: Int!, $callId: Int!) {
   sepProposalsByInstrument(instrumentId: $instrumentId, sepId: $sepId, callId: $callId) {
+    sepTimeAllocation
     proposal {
       id
       title
@@ -5421,6 +5556,13 @@ export const UpdateSepDocument = gql`
     sep {
       id
     }
+    error
+  }
+}
+    `;
+export const UpdateSepTimeAllocationDocument = gql`
+    mutation updateSEPTimeAllocation($sepId: Int!, $proposalId: Int!, $sepTimeAllocation: Int) {
+  updateSEPTimeAllocation(sepId: $sepId, proposalId: $proposalId, sepTimeAllocation: $sepTimeAllocation) {
     error
   }
 }
@@ -6018,8 +6160,8 @@ export const GetReviewDocument = gql`
 }
     ${CoreReviewFragmentDoc}`;
 export const RemoveUserForReviewDocument = gql`
-    mutation removeUserForReview($reviewID: Int!) {
-  removeUserForReview(reviewID: $reviewID) {
+    mutation removeUserForReview($reviewId: Int!, $sepId: Int!) {
+  removeUserForReview(reviewId: $reviewId, sepId: $sepId) {
     error
   }
 }
@@ -6902,6 +7044,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getSEPMembers(variables: GetSepMembersQueryVariables): Promise<GetSepMembersQuery> {
       return withWrapper(() => client.request<GetSepMembersQuery>(print(GetSepMembersDocument), variables));
     },
+    getSEPProposal(variables: GetSepProposalQueryVariables): Promise<GetSepProposalQuery> {
+      return withWrapper(() => client.request<GetSepProposalQuery>(print(GetSepProposalDocument), variables));
+    },
     getSEPProposals(variables: GetSepProposalsQueryVariables): Promise<GetSepProposalsQuery> {
       return withWrapper(() => client.request<GetSepProposalsQuery>(print(GetSepProposalsDocument), variables));
     },
@@ -6922,6 +7067,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     updateSEP(variables: UpdateSepMutationVariables): Promise<UpdateSepMutation> {
       return withWrapper(() => client.request<UpdateSepMutation>(print(UpdateSepDocument), variables));
+    },
+    updateSEPTimeAllocation(variables: UpdateSepTimeAllocationMutationVariables): Promise<UpdateSepTimeAllocationMutation> {
+      return withWrapper(() => client.request<UpdateSepTimeAllocationMutation>(print(UpdateSepTimeAllocationDocument), variables));
     },
     addClientLog(variables: AddClientLogMutationVariables): Promise<AddClientLogMutation> {
       return withWrapper(() => client.request<AddClientLogMutation>(print(AddClientLogDocument), variables));

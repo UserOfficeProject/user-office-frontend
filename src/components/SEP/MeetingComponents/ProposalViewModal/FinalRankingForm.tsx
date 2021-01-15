@@ -78,6 +78,10 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
           validateOnBlur={false}
           initialValues={initialData}
           onSubmit={async (values): Promise<void> => {
+            if (!hasAccessRights) {
+              return;
+            }
+
             await handleSubmit({
               id: proposalData.id,
               ...values,
@@ -122,6 +126,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       errors.commentForUser
                     }
                     required
+                    disabled={!hasAccessRights}
                   />
                   <FormikDropdown
                     name="finalStatus"
@@ -134,7 +139,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       { text: 'Rejected', value: ProposalEndStatus.REJECTED },
                     ]}
                     required
-                    disabled={false}
+                    disabled={!hasAccessRights}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -162,6 +167,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       errors.commentForManagement
                     }
                     required
+                    disabled={!hasAccessRights}
                   />
                   <Field
                     id="rankOrder"
@@ -179,6 +185,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       touched.rankOrder && errors.rankOrder && errors.rankOrder
                     }
                     required
+                    disabled={!hasAccessRights}
                   />
                 </Grid>
               </Grid>

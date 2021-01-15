@@ -75,7 +75,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     {
       title: 'Grade',
       render: (rowData: SepAssignment) =>
-        rowData.review.grade ? rowData.review.grade : '-',
+        rowData.review?.grade ? rowData.review.grade : '-',
     },
   ];
 
@@ -114,10 +114,14 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         actions={[
           rowData => ({
             icon:
-              rowData.review.status === ReviewStatus.DRAFT
+              rowData.review?.status === ReviewStatus.DRAFT
                 ? RateReviewIconComponent
                 : () => <Visibility />,
             onClick: () => {
+              if (!rowData.review) {
+                return;
+              }
+
               setEditReviewID(rowData.review.id);
               setCurrentAssignment({
                 ...rowData,
@@ -126,7 +130,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
               setReviewModalOpen(true);
             },
             tooltip:
-              rowData.review.status === ReviewStatus.DRAFT
+              rowData.review?.status === ReviewStatus.DRAFT
                 ? 'Review proposal'
                 : 'View review',
           }),
