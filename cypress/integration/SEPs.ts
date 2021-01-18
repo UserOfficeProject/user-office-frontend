@@ -623,7 +623,9 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[aria-label="close"]').click();
     cy.contains('987654321');
 
+    cy.reload();
     cy.contains('Meeting Components').click();
+    cy.get('[title="Show proposals"]').click();
 
     cy.get('[title="View proposal details"]').click();
 
