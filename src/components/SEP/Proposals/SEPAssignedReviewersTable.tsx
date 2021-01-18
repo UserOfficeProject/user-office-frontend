@@ -85,7 +85,8 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
       {editReviewID && (
         <ProposalReviewModal
-          editReviewID={editReviewID as number}
+          editReviewID={editReviewID}
+          sepId={sepProposal.sepId}
           reviewModalOpen={reviewModalOpen}
           setReviewModalOpen={() => {
             setReviewModalOpen(false);

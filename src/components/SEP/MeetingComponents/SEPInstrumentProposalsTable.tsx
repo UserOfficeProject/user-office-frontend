@@ -12,7 +12,6 @@ import { SepProposal, InstrumentWithAvailabilityTime } from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
 import { getGrades, average } from 'utils/mathFunctions';
-import { getSepTimeAllocation } from 'utils/sep';
 
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
 
@@ -120,7 +119,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         ? rowData.proposal.technicalReview.timeAllocation
         : '-';
 
-    const sepTimeAllocation = getSepTimeAllocation(rowData, timeAllocation);
+    const sepTimeAllocation = rowData.sepTimeAllocation;
 
     return (
       <>

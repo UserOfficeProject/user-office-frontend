@@ -1533,7 +1533,8 @@ export type QueryQuestionaryArgs = {
 
 
 export type QueryReviewArgs = {
-  id: Scalars['Int'];
+  sepId?: Maybe<Scalars['Int']>;
+  reviewId: Scalars['Int'];
 };
 
 
@@ -3382,7 +3383,8 @@ export type CoreReviewFragment = (
 );
 
 export type GetReviewQueryVariables = Exact<{
-  id: Scalars['Int'];
+  reviewId: Scalars['Int'];
+  sepId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -6145,8 +6147,8 @@ export const AddUserForReviewDocument = gql`
 }
     `;
 export const GetReviewDocument = gql`
-    query getReview($id: Int!) {
-  review(id: $id) {
+    query getReview($reviewId: Int!, $sepId: Int) {
+  review(reviewId: $reviewId, sepId: $sepId) {
     ...coreReview
     proposal {
       id

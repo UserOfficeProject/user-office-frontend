@@ -28,9 +28,10 @@ const useStyles = makeStyles(() => ({
 export default function ProposalGrade(props: {
   reviewID: number;
   onChange: Function;
+  sepId?: number | null;
 }) {
   const classes = useStyles();
-  const { reviewData } = useReviewData(props.reviewID);
+  const { reviewData } = useReviewData(props.reviewID, props.sepId);
   const { api } = useDataApiWithFeedback();
   const [review, setReview] = useState<CoreReviewFragment | null | undefined>(
     null

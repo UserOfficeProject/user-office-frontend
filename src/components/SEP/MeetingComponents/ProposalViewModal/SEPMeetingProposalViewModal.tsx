@@ -19,7 +19,6 @@ import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
 import { TechnicalReview, Review } from 'generated/sdk';
 import { useSEPProposalData } from 'hooks/SEP/useSEPProposalData';
 import { ContentContainer } from 'styles/StyledComponents';
-import { getSepTimeAllocation } from 'utils/sep';
 
 import ExternalReviews from './ExternalReviews';
 import FinalRankingForm from './FinalRankingForm';
@@ -72,10 +71,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
     setSEPProposalData(null);
   };
 
-  const sepTimeAllocation = getSepTimeAllocation(
-    SEPProposalData,
-    SEPProposalData?.proposal.technicalReview?.timeAllocation
-  );
+  const sepTimeAllocation = SEPProposalData?.sepTimeAllocation ?? null;
 
   return (
     <>
