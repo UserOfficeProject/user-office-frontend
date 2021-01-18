@@ -1,4 +1,4 @@
-import Table from '@material-ui/core/Table';
+import Table, { TableProps } from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -14,10 +14,11 @@ import {
 
 import { getQuestionaryComponentDefinition } from './QuestionaryComponentRegistry';
 
-function QuestionaryDetails(props: { questionaryId: number }) {
-  const { questionary, loadingQuestionary } = useQuestionary(
-    props.questionaryId
-  );
+function QuestionaryDetails(
+  props: { questionaryId: number } & TableProps<any>
+) {
+  const { questionaryId, ...restProps } = props;
+  const { questionary, loadingQuestionary } = useQuestionary(questionaryId);
 
   if (loadingQuestionary) {
     return <UOLoader />;
@@ -47,20 +48,25 @@ function QuestionaryDetails(props: { questionaryId: number }) {
       <Table size="small">
         <TableBody>
           {displayableQuestions.map(question => {
-            const definition = getQuestionaryComponentDefinition(
+            const renderers = getQuestionaryComponentDefinition(
               question.question.dataType
-            );
-            const questionElem = definition.renderers?.questionRenderer({
+            ).renderers;
+
+            if (!renderers) {
+              return null;
+            }
+
+            const questionElem = renderers.questionRenderer({
               question: question.question,
             });
-            const answerElem = definition.renderers?.answerRenderer({
+            const answerElem = renderers.answerRenderer({
               answer: question,
             });
 
             return (
               <TableRow key={`answer-${question.answerId}`}>
                 <TableCell>{questionElem}</TableCell>
-                <TableCell>{answerElem}</TableCell>
+                <TableCell width="35%">{answerElem}</TableCell>
               </TableRow>
             );
           })}

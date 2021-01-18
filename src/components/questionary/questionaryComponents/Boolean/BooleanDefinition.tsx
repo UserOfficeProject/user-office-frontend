@@ -19,7 +19,10 @@ export const booleanDefinition: QuestionaryComponentDefinition = {
   readonly: false,
   creatable: true,
   icon: <CheckBoxOutlineBlankIcon />,
-  renderers: defaultRenderer,
+  renderers: {
+    questionRenderer: defaultRenderer.questionRenderer,
+    answerRenderer: ({ answer }) => <span>{answer.value ? 'Yes' : 'No'}</span>,
+  },
   createYupValidationSchema: createBooleanValidationSchema,
   getYupInitialValue: ({ answer }) => answer.value || false,
 };
