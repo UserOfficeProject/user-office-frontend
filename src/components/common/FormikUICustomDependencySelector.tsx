@@ -22,12 +22,14 @@ const FormikUICustomDependencySelector = ({
   template,
   form,
   dependency,
+  currentQuestionId,
 }: {
   field: { name: string; onBlur: Function; onChange: Function; value: string };
   form: FormikHelpers<any>;
   template: Template;
   templateField: QuestionTemplateRelation;
   dependency: FieldDependency;
+  currentQuestionId: string;
 }) => {
   const [dependencyId, setDependencyId] = useState<string>('');
   const [operator, setOperator] = useState<EvaluatorOperator>(
@@ -124,10 +126,11 @@ const FormikUICustomDependencySelector = ({
             required
           >
             {getAllFields(template.steps)
-              .filter(option =>
-                [DataType.BOOLEAN, DataType.SELECTION_FROM_OPTIONS].includes(
-                  option.question.dataType
-                )
+              .filter(
+                option =>
+                  [DataType.BOOLEAN, DataType.SELECTION_FROM_OPTIONS].includes(
+                    option.question.dataType
+                  ) && currentQuestionId !== option.question.proposalQuestionId
               )
               .map(option => {
                 return (
