@@ -591,6 +591,92 @@ context('Scientific evaluation panel tests', () => {
     ).should('have.css', 'background-color', 'rgb(246, 104, 94)');
   });
 
+  it('Officer should be able to set SEP time allocation', () => {
+    cy.login('officer');
+    cy.contains('SEPs').click();
+
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Meeting Components').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Show proposals"]').click();
+
+    cy.get('[title="View proposal details"]').click();
+
+    cy.get('[data-cy="edit-sep-time-allocation"]').scrollIntoView();
+    cy.get('[data-cy="edit-sep-time-allocation"]').click();
+
+    cy.get('[data-cy="timeAllocation"] input').as('timeAllocation');
+
+    cy.get('@timeAllocation').should('be.empty');
+    cy.get('@timeAllocation').type('987654321');
+    cy.get('[data-cy="save-time-allocation"]').click();
+
+    cy.finishedLoading();
+
+    cy.contains('987654321 (Overwritten)');
+
+    cy.get('[aria-label="close"]').click();
+    cy.contains('987654321');
+
+    cy.contains('Meeting Components').click();
+
+    cy.get('[title="View proposal details"]').click();
+
+    cy.get('[data-cy="edit-sep-time-allocation"]').click();
+    cy.get('@timeAllocation').should('have.value', '987654321');
+    cy.get('@timeAllocation').clear();
+    cy.get('[data-cy="save-time-allocation"]').click();
+
+    cy.finishedLoading();
+
+    cy.get('body').should('not.contain', '987654321 (Overwritten)');
+  });
+
+  it('should use SEP time allocation (if set) when calculating if they fit in available time', () => {
+    cy.login('officer');
+    cy.contains('SEPs').click();
+
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Meeting Components').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Show proposals"]').click();
+
+    cy.get(
+      '[data-cy="sep-instrument-proposals-table"] tbody tr:last-child'
+    ).should('have.css', 'background-color', 'rgb(246, 104, 94)');
+
+    cy.get('[title="View proposal details"]').click();
+
+    cy.get('[data-cy="edit-sep-time-allocation"]').scrollIntoView();
+    cy.get('[data-cy="edit-sep-time-allocation"]').click();
+
+    cy.get('[data-cy="timeAllocation"] input').as('timeAllocation');
+
+    cy.get('@timeAllocation').should('be.empty');
+    cy.get('@timeAllocation').type('15');
+    cy.get('[data-cy="save-time-allocation"]').click();
+
+    cy.finishedLoading();
+
+    cy.contains('15 (Overwritten)');
+
+    cy.get('[aria-label="close"]').click();
+
+    cy.get(
+      '[data-cy="sep-instrument-proposals-table"] tbody tr:last-child'
+    ).should('not.have.css', 'background-color', 'rgb(246, 104, 94)');
+  });
+
   it('Officer should be able to submit an instrument in existing SEP', () => {
     cy.login('officer');
 

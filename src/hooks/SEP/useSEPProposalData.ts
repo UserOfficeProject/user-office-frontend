@@ -25,16 +25,25 @@ export function useSEPProposalData(
   ] = useState<SepProposalBasics | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    let canceled = false;
     setLoading(true);
 
     api()
       .getSEPProposal({ sepId, proposalId })
       .then(data => {
+        if (canceled) {
+          return;
+        }
+
         if (data.sepProposal) {
           setSEPProposalData(data.sepProposal as SepProposalBasics);
         }
         setLoading(false);
       });
+
+    return () => {
+      canceled = true;
+    };
   }, [sepId, api, proposalId]);
 
   return { loading, SEPProposalData, setSEPProposalData };

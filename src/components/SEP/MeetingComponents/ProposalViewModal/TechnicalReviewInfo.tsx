@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
+import UOLoader from 'components/common/UOLoader';
 import { TechnicalReview, UserRole } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -106,6 +107,7 @@ const OverwriteTimeAllocationDialog = ({
           }}
           disabled={isExecutingCall}
           fullWidth
+          data-cy="timeAllocation"
         />
       </DialogContent>
       <DialogActions>
@@ -121,8 +123,9 @@ const OverwriteTimeAllocationDialog = ({
           color="primary"
           variant="contained"
           disabled={isExecutingCall}
+          data-cy="save-time-allocation"
         >
-          Save
+          {isExecutingCall ? <UOLoader buttonSized /> : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -156,11 +159,7 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
       {open && (
         <OverwriteTimeAllocationDialog
           onClose={handleClose}
-          timeAllocation={
-            sepTimeAllocation !== null
-              ? sepTimeAllocation
-              : technicalReview?.timeAllocation ?? null
-          }
+          timeAllocation={sepTimeAllocation}
           {...sepProposalArgs}
         />
       )}
@@ -181,7 +180,11 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
                 Time allocation
                 {hasAccessRights && (
                   <Tooltip title="Edit" className={classes.spacingLeft}>
-                    <IconButton size="medium" onClick={() => setOpen(true)}>
+                    <IconButton
+                      size="medium"
+                      onClick={() => setOpen(true)}
+                      data-cy="edit-sep-time-allocation"
+                    >
                       <EditIcon fontSize="inherit" />
                     </IconButton>
                   </Tooltip>

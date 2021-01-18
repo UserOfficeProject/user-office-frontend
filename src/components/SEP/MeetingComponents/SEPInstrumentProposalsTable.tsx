@@ -2,6 +2,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import Visibility from '@material-ui/icons/Visibility';
+import clsx from 'clsx';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -11,11 +12,12 @@ import { SepProposal, InstrumentWithAvailabilityTime } from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
 import { getGrades, average } from 'utils/mathFunctions';
+import { getSepTimeAllocation } from 'utils/sep';
 
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
 
 // NOTE: Some custom styles for row expand table.
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     '& tr:last-child td': {
       border: 'none',
@@ -24,6 +26,9 @@ const useStyles = makeStyles(() => ({
       padding: '0 40px',
       backgroundColor: '#fafafa',
     },
+  },
+  disabled: {
+    color: theme.palette.text.disabled,
   },
 }));
 
@@ -42,6 +47,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     instrumentProposalsData,
     loadingInstrumentProposals,
     setInstrumentProposalsData,
+    refreshInstrumentProposalsData,
   } = useSEPProposalsByInstrument(sepInstrument.id, sepId, selectedCallId);
   const classes = useStyles();
   const theme = useTheme();
@@ -78,7 +84,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       .sort(sortByRankOrder)
       .map(proposalData => {
         const proposalAllocationTime =
-          proposalData.proposal.technicalReview?.timeAllocation || 0;
+          proposalData.sepTimeAllocation !== null
+            ? proposalData.sepTimeAllocation
+            : proposalData.proposal.technicalReview?.timeAllocation || 0;
 
         if (
           allocationTimeSum + proposalAllocationTime >
@@ -99,6 +107,38 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
           };
         }
       });
+  };
+
+  const proposalTimeAllocationColumn = (
+    rowData: SepProposal & {
+      proposalAverageScore: number;
+    }
+  ) => {
+    const timeAllocation =
+      rowData.proposal.technicalReview &&
+      rowData.proposal.technicalReview.timeAllocation
+        ? rowData.proposal.technicalReview.timeAllocation
+        : '-';
+
+    const sepTimeAllocation = getSepTimeAllocation(rowData, timeAllocation);
+
+    return (
+      <>
+        <span
+          className={clsx({
+            [classes.disabled]: sepTimeAllocation !== null,
+          })}
+        >
+          {timeAllocation}
+        </span>
+        {sepTimeAllocation && (
+          <>
+            <br />
+            {sepTimeAllocation}
+          </>
+        )}
+      </>
+    );
   };
 
   const assignmentColumns = [
@@ -130,11 +170,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         rowData: SepProposal & {
           proposalAverageScore: number;
         }
-      ) =>
-        rowData.proposal.technicalReview &&
-        rowData.proposal.technicalReview.timeAllocation
-          ? rowData.proposal.technicalReview.timeAllocation
-          : '-',
+      ) => proposalTimeAllocationColumn(rowData),
     },
     {
       title: 'Review meeting',
@@ -182,7 +218,10 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     <div className={classes.root} data-cy="sep-instrument-proposals-table">
       <SEPMeetingProposalViewModal
         proposalViewModalOpen={!!openProposalId}
-        setProposalViewModalOpen={() => setOpenProposalId(null)}
+        setProposalViewModalOpen={() => {
+          setOpenProposalId(null);
+          refreshInstrumentProposalsData();
+        }}
         proposalId={openProposalId || 0}
         meetingSubmitted={onMeetingSubmitted}
         sepId={sepId}
