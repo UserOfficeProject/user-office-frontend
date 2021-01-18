@@ -45,7 +45,7 @@ function QuestionaryDetails(
 
   return (
     <>
-      <Table size="small">
+      <Table size="small" {...restProps}>
         <TableBody>
           {displayableQuestions.map(question => {
             const renderers = getQuestionaryComponentDefinition(

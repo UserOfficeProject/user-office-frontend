@@ -124,6 +124,7 @@ export default function TemplateQuestionEditor(props: {
           onClick={() => {
             props.onClick(props.data);
           }}
+          data-cy="question-container"
         >
           <Grid
             item
