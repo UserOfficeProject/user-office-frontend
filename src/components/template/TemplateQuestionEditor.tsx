@@ -167,6 +167,6 @@ export interface TemplateTopicEditorData {
   naturalKey: string;
   dataType: DataType;
   dependencies: FieldDependency[];
-  config?: FieldConfig | null;
+  config: FieldConfig;
   categoryId: TemplateCategoryId;
 }
