@@ -8,7 +8,13 @@ import {
 import React from 'react';
 
 const styles = () => ({
-  container: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    outline: 'none',
+    padding: '5px',
+  },
 });
 
 class MultiMenuItem extends React.Component<
@@ -18,11 +24,9 @@ class MultiMenuItem extends React.Component<
     const { classes, ...rest } = this.props;
 
     return (
-      <MenuItem {...rest} button={false}>
-        <div className={classes.container}>
-          <Checkbox checked={this.props.selected} />
-          <div>{this.props.children}</div>
-        </div>
+      <MenuItem {...rest} button={false} className={classes.container}>
+        <Checkbox checked={this.props.selected} />
+        <div>{this.props.children}</div>
       </MenuItem>
     );
   }
