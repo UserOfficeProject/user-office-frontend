@@ -113,6 +113,10 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     assignedReviewer: SepAssignment,
     proposalId: number
   ): Promise<void> => {
+    /**
+     * TODO(asztalos): merge `removeMemberFromSEPProposal` and `removeUserForReview` (same goes for creation)
+     *                otherwise if one of them fails we may end up with an broken state
+     */
     await api('Reviewer removed').removeMemberFromSEPProposal({
       proposalId,
       sepId,
@@ -135,6 +139,14 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                   oldAssignment.sepMemberUserId !==
                   assignedReviewer.sepMemberUserId
               ) || [];
+
+            // console.log(
+            //   Date.now(),
+            //   'FILTERED',
+            //   JSON.parse(JSON.stringify(newAssignments)),
+            //   'SOURCE',
+            //   JSON.parse(JSON.stringify(SEPProposalsData))
+            // );
 
             return {
               ...proposalItem,

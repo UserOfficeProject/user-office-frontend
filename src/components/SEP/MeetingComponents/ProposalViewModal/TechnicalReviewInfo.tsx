@@ -19,9 +19,8 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-import { useCheckAccess } from 'components/common/Can';
 import UOLoader from 'components/common/UOLoader';
-import { TechnicalReview, UserRole } from 'generated/sdk';
+import { TechnicalReview } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -33,6 +32,7 @@ type SEPProposalProps = {
 type TechnicalReviewInfoProps = {
   technicalReview: TechnicalReview | null;
   sepTimeAllocation: number | null;
+  hasWriteAccess: boolean;
   onSepTimeAllocationEdit: (sepTimeAllocation: number | null) => void;
 } & SEPProposalProps;
 
@@ -135,6 +135,7 @@ const OverwriteTimeAllocationDialog = ({
 const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
   technicalReview,
   sepTimeAllocation,
+  hasWriteAccess,
   onSepTimeAllocationEdit,
   ...sepProposalArgs
 }) => {
@@ -147,12 +148,6 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
     }
     setOpen(false);
   };
-
-  const hasAccessRights = useCheckAccess([
-    UserRole.USER_OFFICER,
-    UserRole.SEP_CHAIR,
-    UserRole.SEP_SECRETARY,
-  ]);
 
   return (
     <div data-cy="SEP-meeting-components-technical-review">
@@ -178,7 +173,7 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
               </TableCell>
               <TableCell width="25%" className={classes.textBold}>
                 Time allocation
-                {hasAccessRights && (
+                {hasWriteAccess && (
                   <Tooltip title="Edit" className={classes.spacingLeft}>
                     <IconButton
                       size="medium"
@@ -228,6 +223,7 @@ TechnicalReviewInfo.propTypes = {
   onSepTimeAllocationEdit: PropTypes.func.isRequired,
   sepId: PropTypes.number.isRequired,
   proposalId: PropTypes.number.isRequired,
+  hasWriteAccess: PropTypes.bool.isRequired,
 };
 
 export default TechnicalReviewInfo;

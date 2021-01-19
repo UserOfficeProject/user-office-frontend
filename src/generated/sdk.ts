@@ -2340,7 +2340,10 @@ export type SepProposalsByInstrumentQuery = (
         { __typename?: 'TechnicalReview' }
         & Pick<TechnicalReview, 'publicComment' | 'status' | 'timeAllocation'>
       )> }
-    ) }
+    ), assignments: Maybe<Array<(
+      { __typename?: 'SEPAssignment' }
+      & Pick<SepAssignment, 'sepMemberUserId'>
+    )>> }
   )>> }
 );
 
@@ -5504,6 +5507,9 @@ export const SepProposalsByInstrumentDocument = gql`
         status
         timeAllocation
       }
+    }
+    assignments {
+      sepMemberUserId
     }
   }
 }

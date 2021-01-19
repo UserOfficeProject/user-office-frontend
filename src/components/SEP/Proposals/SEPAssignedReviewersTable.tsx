@@ -79,8 +79,6 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     },
   ];
 
-  const RateReviewIconComponent = (): JSX.Element => <RateReviewIcon />;
-
   return (
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
       {editReviewID && (
@@ -90,7 +88,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
           reviewModalOpen={reviewModalOpen}
           setReviewModalOpen={() => {
             setReviewModalOpen(false);
-            updateView(currentAssignment as SepAssignment);
+            currentAssignment && updateView(currentAssignment);
           }}
         />
       )}
@@ -116,7 +114,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
           rowData => ({
             icon:
               rowData.review?.status === ReviewStatus.DRAFT
-                ? RateReviewIconComponent
+                ? () => <RateReviewIcon />
                 : () => <Visibility />,
             onClick: () => {
               if (!rowData.review) {

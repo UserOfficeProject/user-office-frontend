@@ -14,9 +14,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import PropTypes from 'prop-types';
 import React, { Ref } from 'react';
 
+import { useCheckAccess } from 'components/common/Can';
 import UOLoader from 'components/common/UOLoader';
 import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
-import { TechnicalReview, Review } from 'generated/sdk';
+import { TechnicalReview, Review, UserRole } from 'generated/sdk';
 import { useSEPProposalData } from 'hooks/SEP/useSEPProposalData';
 import { ContentContainer } from 'styles/StyledComponents';
 
@@ -45,20 +46,31 @@ const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
 
 type SEPMeetingProposalViewModalProps = {
   proposalViewModalOpen: boolean;
-  setProposalViewModalOpen: (isOpen: boolean) => void;
   proposalId: number;
-  meetingSubmitted: (data: AdministrationFormData) => void;
   sepId: number;
+  submitted: boolean;
+  meetingSubmitted: (data: AdministrationFormData) => void;
+  setProposalViewModalOpen: (isOpen: boolean) => void;
 };
 
 const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = ({
-  setProposalViewModalOpen,
   proposalViewModalOpen,
   proposalId,
-  meetingSubmitted,
   sepId,
+  submitted,
+  meetingSubmitted,
+  setProposalViewModalOpen,
 }) => {
   const classes = useStyles();
+  const hasWriteAccess = useCheckAccess([
+    UserRole.USER_OFFICER,
+    UserRole.SEP_CHAIR,
+    UserRole.SEP_SECRETARY,
+  ]);
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+
+  const finalHasWriteAccess = submitted ? isUserOfficer : hasWriteAccess;
+
   const { SEPProposalData, loading, setSEPProposalData } = useSEPProposalData(
     sepId,
     proposalId
@@ -109,6 +121,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
                     <>
                       <FinalRankingForm
                         closeModal={handleClose}
+                        hasWriteAccess={finalHasWriteAccess}
                         proposalData={proposalData}
                         meetingSubmitted={data => {
                           setSEPProposalData({
@@ -124,6 +137,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
                       />
                       <ProposalDetails proposal={proposalData} />
                       <TechnicalReviewInfo
+                        hasWriteAccess={finalHasWriteAccess}
                         technicalReview={
                           proposalData.technicalReview as TechnicalReview
                         }
@@ -158,6 +172,7 @@ SEPMeetingProposalViewModal.propTypes = {
   setProposalViewModalOpen: PropTypes.func.isRequired,
   meetingSubmitted: PropTypes.func.isRequired,
   sepId: PropTypes.number.isRequired,
+  submitted: PropTypes.bool.isRequired,
 };
 
 export default SEPMeetingProposalViewModal;

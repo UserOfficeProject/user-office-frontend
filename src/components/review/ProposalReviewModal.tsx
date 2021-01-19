@@ -86,7 +86,7 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
 ProposalReviewModal.propTypes = {
   reviewModalOpen: PropTypes.bool.isRequired,
   editReviewID: PropTypes.number.isRequired,
-  sepId: PropTypes.number.isRequired,
+  sepId: PropTypes.number,
   setReviewModalOpen: PropTypes.func.isRequired,
 };
 

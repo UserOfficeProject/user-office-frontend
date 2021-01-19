@@ -5,10 +5,16 @@ import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
+import { useCheckAccess } from 'components/common/Can';
 import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
-import { SepProposal, InstrumentWithAvailabilityTime } from 'generated/sdk';
+import { UserContext } from 'context/UserContextProvider';
+import {
+  SepProposal,
+  InstrumentWithAvailabilityTime,
+  UserRole,
+} from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
 import { getGrades, average } from 'utils/mathFunctions';
@@ -51,6 +57,8 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const classes = useStyles();
   const theme = useTheme();
   const [openProposalId, setOpenProposalId] = useState<number | null>(null);
+  const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
+  const { user } = useContext(UserContext);
 
   const sortByRankOrder = (a: SepProposal, b: SepProposal) => {
     if (a.proposal.rankOrder === b.proposal.rankOrder) {
@@ -224,6 +232,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         proposalId={openProposalId || 0}
         meetingSubmitted={onMeetingSubmitted}
         sepId={sepId}
+        submitted={!!sepInstrument.submitted}
       />
       <MaterialTable
         icons={tableIcons}
@@ -232,14 +241,18 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         data={sortedProposalsWithAverageScore}
         isLoading={loadingInstrumentProposals}
         actions={[
-          {
+          rowData => ({
             icon: ViewIcon,
             onClick: (event, data) => {
               setOpenProposalId((data as SepProposal).proposal.id);
             },
             tooltip: 'View proposal details',
-            disabled: !!sepInstrument.submitted,
-          },
+            hidden:
+              isSEPReviewer &&
+              !rowData.assignments?.some(
+                ({ sepMemberUserId }) => sepMemberUserId === user.id
+              ),
+          }),
         ]}
         options={{
           search: false,
