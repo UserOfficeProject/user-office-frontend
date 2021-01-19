@@ -100,6 +100,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         editable={
           hasAccessRights
             ? {
+                deleteTooltip: () => 'Remove assignment',
                 onRowDelete: (
                   rowAssignmentsData: SepAssignment
                 ): Promise<void> =>

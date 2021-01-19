@@ -317,6 +317,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
             editable={
               hasAccessRights
                 ? {
+                    deleteTooltip: () => 'Remove assigned proposal',
                     onRowDelete: (rowData: SepProposal): Promise<void> =>
                       removeProposalFromSEP(rowData),
                   }
