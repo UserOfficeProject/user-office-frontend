@@ -12,6 +12,7 @@ import {
 import { getTemplateFieldIcon } from 'components/questionary/QuestionaryComponentRegistry';
 import {
   DataType,
+  DependenciesLogicOperator,
   EmbellishmentConfig,
   FieldConfig,
   FieldDependency,
@@ -157,5 +158,6 @@ export interface TemplateTopicEditorData {
   naturalKey: string;
   dataType: DataType;
   dependencies: FieldDependency[];
+  dependenciesOperator: DependenciesLogicOperator;
   config?: FieldConfig | null;
 }
