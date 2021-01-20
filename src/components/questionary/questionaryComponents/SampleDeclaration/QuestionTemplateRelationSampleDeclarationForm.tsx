@@ -67,7 +67,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<Questi
               component={TextField}
               margin="normal"
               fullWidth
-              data-cy="minEntries"
+              data-cy="min-entries"
             />
             <Field
               name="config.maxEntries"
@@ -76,7 +76,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<Questi
               component={TextField}
               margin="normal"
               fullWidth
-              data-cy="maxEntries"
+              data-cy="max-entries"
             />
           </TitledContainer>
 

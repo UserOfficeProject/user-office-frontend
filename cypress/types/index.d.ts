@@ -127,9 +127,14 @@ declare global {
        * @returns {typeof createSampleQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createSampleQuestion('Provide sample', 'default sample template')
+       *    cy.createSampleQuestion('Provide sample', 'default sample template', '1', '5')
        */
-      createSampleQuestion: (question: string, template: string) => void;
+      createSampleQuestion: (
+        question: string,
+        template: string,
+        minEntries?: string,
+        maxEntries?: string
+      ) => void;
     }
   }
 
