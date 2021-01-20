@@ -60,6 +60,16 @@ export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<Questi
 
           <TitledContainer label="Constraints">
             <Field
+              name="config.minEntries"
+              label="Min entries"
+              placeholder="(e.g. 1, leave blank for unlimited)"
+              type="text"
+              component={TextField}
+              margin="normal"
+              fullWidth
+              data-cy="minEntries"
+            />
+            <Field
               name="config.maxEntries"
               label="Max entries"
               type="text"
