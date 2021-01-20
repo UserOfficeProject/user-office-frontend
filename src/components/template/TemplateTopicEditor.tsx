@@ -55,6 +55,9 @@ class TemplateTopicEditor implements TemplateTopicEditorData {
   get config() {
     return this.source.config;
   }
+  get categoryId() {
+    return this.source.question.categoryId;
+  }
 }
 
 export default function QuestionaryEditorTopic(props: {
