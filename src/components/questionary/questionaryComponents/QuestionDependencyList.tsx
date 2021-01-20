@@ -49,7 +49,7 @@ const QuestionDependencyList: React.FC<QuestionDependencyListProps> = ({
 
   useEffect(() => {
     updateFormikMemoized();
-  }, [logicOperator]);
+  }, [logicOperator, updateFormikMemoized]);
 
   const currentQuestionId = field.question.proposalQuestionId;
 
@@ -108,6 +108,7 @@ const QuestionDependencyList: React.FC<QuestionDependencyListProps> = ({
                           event.target.value as DependenciesLogicOperator
                         );
                       }}
+                      data-cy="dependencies-operator"
                     >
                       <MenuItem
                         value={DependenciesLogicOperator.AND.toString()}
