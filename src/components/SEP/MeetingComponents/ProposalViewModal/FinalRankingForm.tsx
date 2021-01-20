@@ -1,3 +1,4 @@
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -8,15 +9,15 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import FormikDropdown from 'components/common/FormikDropdown';
+import UOLoader from 'components/common/UOLoader';
 import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
 import { Proposal, ProposalEndStatus } from 'generated/sdk';
 import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   button: {
-    marginTop: '25px',
-    marginLeft: '10px',
+    margin: theme.spacing(2, 0, 1, 1),
   },
 }));
 
@@ -188,6 +189,15 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
               <ButtonContainer>
                 {hasWriteAccess && (
                   <>
+                    {isSubmitting && (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        className={classes.button}
+                      >
+                        <UOLoader buttonSized />
+                      </Box>
+                    )}
                     <Button
                       type="submit"
                       variant="contained"

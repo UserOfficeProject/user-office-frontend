@@ -82,12 +82,15 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     },
     {
       title: 'Average grade',
-      render: (rowData: SepProposal): string =>
-        average(
+      render: (rowData: SepProposal): string => {
+        const avgGrade = average(
           getGradesFromAssignments(
             rowData.assignments as SepAssignment[]
           ) as number[]
-        ).toString(),
+        );
+
+        return isNaN(avgGrade) ? '-' : `${avgGrade}`;
+      },
     },
   ];
 

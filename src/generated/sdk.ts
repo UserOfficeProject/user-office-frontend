@@ -3421,7 +3421,7 @@ export type RemoveUserForReviewMutation = (
   ) }
 );
 
-export type UpdateReviewMutationVariables = Exact<{
+export type AddReviewMutationVariables = Exact<{
   reviewID: Scalars['Int'];
   grade: Scalars['Int'];
   comment: Scalars['String'];
@@ -3430,7 +3430,7 @@ export type UpdateReviewMutationVariables = Exact<{
 }>;
 
 
-export type UpdateReviewMutation = (
+export type AddReviewMutation = (
   { __typename?: 'Mutation' }
   & { addReview: (
     { __typename?: 'ReviewResponseWrap' }
@@ -6174,8 +6174,8 @@ export const RemoveUserForReviewDocument = gql`
   }
 }
     `;
-export const UpdateReviewDocument = gql`
-    mutation updateReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
+export const AddReviewDocument = gql`
+    mutation addReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
   addReview(reviewID: $reviewID, grade: $grade, comment: $comment, status: $status, sepID: $sepID) {
     error
     review {
@@ -7211,8 +7211,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     removeUserForReview(variables: RemoveUserForReviewMutationVariables): Promise<RemoveUserForReviewMutation> {
       return withWrapper(() => client.request<RemoveUserForReviewMutation>(print(RemoveUserForReviewDocument), variables));
     },
-    updateReview(variables: UpdateReviewMutationVariables): Promise<UpdateReviewMutation> {
-      return withWrapper(() => client.request<UpdateReviewMutation>(print(UpdateReviewDocument), variables));
+    addReview(variables: AddReviewMutationVariables): Promise<AddReviewMutation> {
+      return withWrapper(() => client.request<AddReviewMutation>(print(AddReviewDocument), variables));
     },
     userWithReviews(variables?: UserWithReviewsQueryVariables): Promise<UserWithReviewsQuery> {
       return withWrapper(() => client.request<UserWithReviewsQuery>(print(UserWithReviewsDocument), variables));
