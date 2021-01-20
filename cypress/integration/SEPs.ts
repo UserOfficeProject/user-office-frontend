@@ -91,7 +91,7 @@ context('Scientific evaluation panel tests', () => {
     cy.viewport(1100, 1000);
   });
 
-  it(/*.skip*/ 'User should not be able to see SEPs page', () => {
+  it('User should not be able to see SEPs page', () => {
     cy.login('user');
 
     cy.get('[data-cy="profile-page-btn"]').should('exist');
@@ -101,7 +101,7 @@ context('Scientific evaluation panel tests', () => {
     userMenuItems.should('not.contain', 'SEPs');
   });
 
-  it(/*.skip*/ 'Officer should be able to create SEP', () => {
+  it('Officer should be able to create SEP', () => {
     const code = faker.random.words(3);
     const description = faker.random.words(8);
 
@@ -123,7 +123,7 @@ context('Scientific evaluation panel tests', () => {
     cy.url().should('contain', 'SEPPage/2');
   });
 
-  it(/*.skip*/ 'Officer should be able to edit existing SEP', () => {
+  it('Officer should be able to edit existing SEP', () => {
     const code = faker.random.words(3);
     const description = faker.random.words(8);
 
@@ -147,7 +147,7 @@ context('Scientific evaluation panel tests', () => {
     SEPsTable.should('contain', description);
   });
 
-  it(/*.skip*/ 'Officer should be able to assign SEP Chair to existing SEP', () => {
+  it('Officer should be able to assign SEP Chair to existing SEP', () => {
     let selectedChairUserFirstName = '';
     let selectedChairUserLastName = '';
 
@@ -204,7 +204,7 @@ context('Scientific evaluation panel tests', () => {
     });
   });
 
-  it(/*.skip*/ 'Officer should be able to assign SEP Secretary to existing SEP', () => {
+  it('Officer should be able to assign SEP Secretary to existing SEP', () => {
     let selectedSecretaryUserFirstName = '';
     let selectedSecretaryUserLastName = '';
 
@@ -261,7 +261,7 @@ context('Scientific evaluation panel tests', () => {
     });
   });
 
-  it(/*.skip*/ 'SEP Chair should not be able to modify SEP Chair and SEP Secretary', () => {
+  it('SEP Chair should not be able to modify SEP Chair and SEP Secretary', () => {
     cy.login(sepMembers.chair);
 
     cy.changeActiveRole('SEP Chair');
@@ -283,7 +283,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[title="Remove SEP Secretary"]').should('not.exist');
   });
 
-  it(/*.skip*/ 'SEP Chair should be able to modify SEP Reviewers', () => {
+  it('SEP Chair should be able to modify SEP Reviewers', () => {
     cy.login(sepMembers.chair);
 
     cy.changeActiveRole('SEP Chair');
@@ -327,7 +327,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('No records to display');
   });
 
-  it(/*.skip*/ 'SEP Secretary should not be able to modify SEP Chair and SEP Secretary', () => {
+  it('SEP Secretary should not be able to modify SEP Chair and SEP Secretary', () => {
     cy.login(sepMembers.secretary);
 
     cy.changeActiveRole('SEP Secretary');
@@ -349,7 +349,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[title="Remove SEP Secretary"]').should('not.exist');
   });
 
-  it(/*.skip*/ 'SEP Secretary should be able to modify SEP Reviewers', () => {
+  it('SEP Secretary should be able to modify SEP Reviewers', () => {
     cy.login(sepMembers.secretary);
 
     cy.changeActiveRole('SEP Secretary');
@@ -393,7 +393,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('No records to display');
   });
 
-  it(/*.skip*/ 'Officer should be able to assign SEP Reviewers to existing SEP', () => {
+  it('Officer should be able to assign SEP Reviewers to existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -427,7 +427,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('SEP_MEMBERS_ASSIGNED');
   });
 
-  it(/*.skip*/ 'SEP Reviewer should not be able to modify SEP members', () => {
+  it('SEP Reviewer should not be able to modify SEP members', () => {
     cy.login(sepMembers.reviewer);
 
     cy.changeActiveRole('SEP Reviewer');
@@ -452,7 +452,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[title="Remove reviewer"]').should('not.exist');
   });
 
-  it(/*.skip*/ 'Officer should be able to assign proposal to existing SEP', () => {
+  it('Officer should be able to assign proposal to existing SEP', () => {
     cy.login('user');
     cy.createProposal();
     cy.contains('Submit').click();
@@ -514,7 +514,7 @@ context('Scientific evaluation panel tests', () => {
       });
   });
 
-  it(/*.skip*/ 'Officer should be able to assign SEP member to proposal in existing SEP', () => {
+  it('Officer should be able to assign SEP member to proposal in existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -560,7 +560,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('SEP_MEMBER_ASSIGNED_TO_PROPOSAL');
   });
 
-  it(/*.skip*/ 'SEP Chair should be able to assign SEP member to proposal in existing SEP', () => {
+  it('SEP Chair should be able to assign SEP member to proposal in existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -597,7 +597,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains(sepMembers.chair.surname);
   });
 
-  it(/*.skip*/ 'SEP Secretary should be able to assign SEP member to proposal in existing SEP', () => {
+  it('SEP Secretary should be able to assign SEP member to proposal in existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -634,7 +634,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains(sepMembers.secretary.surname);
   });
 
-  it(/*.skip*/ 'SEP Reviewer should not be able to assign SEP member to proposal', () => {
+  it('SEP Reviewer should not be able to assign SEP member to proposal', () => {
     cy.login(sepMembers.reviewer);
     cy.changeActiveRole('SEP Reviewer');
 
@@ -649,7 +649,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get("[title='Assign SEP Member']").should('not.exist');
   });
 
-  it(/*.skip*/ 'Officer should be able to read/write reviews', () => {
+  it('Officer should be able to read/write reviews', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -681,7 +681,7 @@ context('Scientific evaluation panel tests', () => {
     readWriteReview();
   });
 
-  it(/*.skip*/ 'SEP Chair should be able to read/write reviews', () => {
+  it('SEP Chair should be able to read/write reviews', () => {
     cy.login(sepMembers.chair);
     cy.changeActiveRole('SEP Chair');
 
@@ -714,7 +714,7 @@ context('Scientific evaluation panel tests', () => {
     readWriteReview();
   });
 
-  it(/*.skip*/ 'SEP Secretary should be able to read/write reviews', () => {
+  it('SEP Secretary should be able to read/write reviews', () => {
     cy.login(sepMembers.secretary);
     cy.changeActiveRole('SEP Secretary');
 
@@ -747,7 +747,7 @@ context('Scientific evaluation panel tests', () => {
     readWriteReview();
   });
 
-  it(/*.skip*/ 'SEP Reviewers should only be able to access their own reviews', () => {
+  it('SEP Reviewers should only be able to access their own reviews', () => {
     cy.login(sepMembers.reviewer);
     cy.changeActiveRole('SEP Reviewer');
 
@@ -771,7 +771,7 @@ context('Scientific evaluation panel tests', () => {
     readWriteReview();
   });
 
-  it(/*.skip*/ 'Officer should be able to assign proposal to instrument and instrument to call to see it in meeting components', () => {
+  it('Officer should be able to assign proposal to instrument and instrument to call to see it in meeting components', () => {
     const name = faker.random.words(2);
     const shortCode = faker.random.alphaNumeric(15);
     const description = faker.random.words(8);
@@ -856,7 +856,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('External reviews');
   });
 
-  it(/*.skip*/ 'Officer should not be able to submit an instrument if all proposals are not ranked in SEP', () => {
+  it('Officer should not be able to submit an instrument if all proposals are not ranked in SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -890,7 +890,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[title="Submit instrument"]').should('not.be.disabled');
   });
 
-  it(/*.skip*/ 'Officer should be able to see calculated availability time on instrument per SEP inside meeting components', () => {
+  it('Officer should be able to see calculated availability time on instrument per SEP inside meeting components', () => {
     const code = faker.random.words(3);
     const description = faker.random.words(8);
 
@@ -968,7 +968,7 @@ context('Scientific evaluation panel tests', () => {
       .should('have.text', '25');
   });
 
-  it(/*.skip*/ 'Officer should be able to see proposals that are marked red if they do not fit in availability time', () => {
+  it('Officer should be able to see proposals that are marked red if they do not fit in availability time', () => {
     cy.login('officer');
 
     cy.get('[data-cy="view-proposal"]')
@@ -1003,7 +1003,7 @@ context('Scientific evaluation panel tests', () => {
     ).should('have.css', 'background-color', 'rgb(246, 104, 94)');
   });
 
-  it(/*.skip*/ 'Officer should be able to edit SEP Meeting form', () => {
+  it('Officer should be able to edit SEP Meeting form', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1023,7 +1023,7 @@ context('Scientific evaluation panel tests', () => {
     editFinalRankingForm();
   });
 
-  it(/*.skip*/ 'SEP Chair should be able to edit SEP Meeting form', () => {
+  it('SEP Chair should be able to edit SEP Meeting form', () => {
     cy.login(sepMembers.chair);
     cy.changeActiveRole('SEP Chair');
 
@@ -1044,7 +1044,7 @@ context('Scientific evaluation panel tests', () => {
     editFinalRankingForm();
   });
 
-  it(/*.skip*/ 'SEP Secretary should be able to edit SEP Meeting form', () => {
+  it('SEP Secretary should be able to edit SEP Meeting form', () => {
     cy.login(sepMembers.secretary);
     cy.changeActiveRole('SEP Secretary');
 
@@ -1065,7 +1065,7 @@ context('Scientific evaluation panel tests', () => {
     editFinalRankingForm();
   });
 
-  it(/*.skip*/ 'SEP Reviewer should not be able to edit SEP Meeting form', () => {
+  it('SEP Reviewer should not be able to edit SEP Meeting form', () => {
     cy.login(sepMembers.reviewer);
     cy.changeActiveRole('SEP Reviewer');
 
@@ -1093,7 +1093,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[data-cy="saveAndContinue"]').should('not.exist');
   });
 
-  it(/*.skip*/ 'SEP Reviewer should not be able to access details proposal view if they are not assigned to the proposal', () => {
+  it('SEP Reviewer should not be able to access details proposal view if they are not assigned to the proposal', () => {
     // remove SEP Reviewer
     cy.login(sepMembers.chair);
     cy.changeActiveRole('SEP Chair');
@@ -1226,7 +1226,7 @@ context('Scientific evaluation panel tests', () => {
     ).should('not.have.css', 'background-color', 'rgb(246, 104, 94)');
   });
 
-  it(/*.skip*/ 'Officer should be able to submit an instrument if all proposals are ranked in existing SEP', () => {
+  it('Officer should be able to submit an instrument if all proposals are ranked in existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1272,7 +1272,83 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[title="Submit instrument"] button').should('be.disabled');
   });
 
-  it(/*.skip*/ 'Officer should be able to download SEP as Excel file', () => {
+  it('Officer should be able to edit SEP Meeting form after instrument is submitted', () => {
+    cy.login('officer');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .eq(1)
+      .click();
+
+    cy.contains('Meeting Components').click();
+    cy.finishedLoading();
+
+    cy.get('[title="Show proposals"]').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="View proposal details"]').click();
+
+    editFinalRankingForm();
+  });
+
+  it('SEP Chair should not be able to edit SEP Meeting form after instrument is submitted', () => {
+    cy.login(sepMembers.chair);
+    cy.changeActiveRole('SEP Chair');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Meeting Components').click();
+    cy.finishedLoading();
+
+    cy.get('[title="Show proposals"]').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="View proposal details"]').click();
+
+    cy.get('#commentForUser').should('be.disabled');
+
+    cy.get('#commentForManagement').should('be.disabled');
+
+    cy.get('#rankOrder').should('be.disabled');
+
+    cy.get('[data-cy="save"]').should('not.exist');
+    cy.get('[data-cy="saveAndContinue"]').should('not.exist');
+  });
+
+  it('SEP Secretary should be able to edit SEP Meeting form after instrument is submitted', () => {
+    cy.login(sepMembers.secretary);
+    cy.changeActiveRole('SEP Secretary');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Meeting Components').click();
+    cy.finishedLoading();
+
+    cy.get('[title="Show proposals"]').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="View proposal details"]').click();
+
+    cy.get('#commentForUser').should('be.disabled');
+
+    cy.get('#commentForManagement').should('be.disabled');
+
+    cy.get('#rankOrder').should('be.disabled');
+
+    cy.get('[data-cy="save"]').should('not.exist');
+    cy.get('[data-cy="saveAndContinue"]').should('not.exist');
+  });
+
+  it('Officer should be able to download SEP as Excel file', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1310,7 +1386,7 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[data-cy="download-sep-xlsx"]').click();
   });
 
-  it(/*.skip*/ 'Should be able to download SEP as Excel file', () => {
+  it('Should be able to download SEP as Excel file', () => {
     cy.login('officer');
 
     cy.contains('Sample safety').click();
@@ -1323,7 +1399,7 @@ context('Scientific evaluation panel tests', () => {
     });
   });
 
-  it(/*.skip*/ 'Officer should be able to remove assigned SEP member from proposal in existing SEP', () => {
+  it('Officer should be able to remove assigned SEP member from proposal in existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1360,7 +1436,7 @@ context('Scientific evaluation panel tests', () => {
     cy.contains('SEP_MEMBER_REMOVED_FROM_PROPOSAL');
   });
 
-  it(/*.skip*/ 'Officer should be able to remove assigned proposal from existing SEP', () => {
+  it('Officer should be able to remove assigned proposal from existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1398,7 +1474,7 @@ context('Scientific evaluation panel tests', () => {
       });
   });
 
-  it(/*.skip*/ 'Officer should be able to remove assigned SEP Chair and SEP Secretary from existing SEP', () => {
+  it('Officer should be able to remove assigned SEP Chair and SEP Secretary from existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
@@ -1429,7 +1505,7 @@ context('Scientific evaluation panel tests', () => {
     });
   });
 
-  it(/*.skip*/ 'Officer should be able to remove SEP Reviewers from existing SEP', () => {
+  it('Officer should be able to remove SEP Reviewers from existing SEP', () => {
     cy.login('officer');
 
     cy.contains('SEPs').click();
