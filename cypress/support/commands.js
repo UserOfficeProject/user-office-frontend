@@ -220,9 +220,13 @@ const createSampleQuestion = (question, templateName, minEntries, maxEntries) =>
 
   cy.contains(templateName).click();
 
-  cy.get('[data-cy=min-entries] input').clear().type(minEntries || '');
+  if(minEntries) {
+    cy.get('[data-cy=min-entries] input').clear().type(minEntries);
+  }
 
-  cy.get('[data-cy=max-entries] input').clear().type(maxEntries || '');
+  if(maxEntries) {
+    cy.get('[data-cy=max-entries] input').clear().type(maxEntries);
+  }
 
   cy.contains('Save').click();
 };
