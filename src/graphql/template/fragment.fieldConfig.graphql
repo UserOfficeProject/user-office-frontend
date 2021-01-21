@@ -8,6 +8,9 @@ fragment fieldConfig on FieldConfig {
     small_label
     required
     tooltip
+    minDate
+    maxDate
+    defaultDate
   }
   ... on EmbellishmentConfig {
     html
@@ -32,7 +35,7 @@ fragment fieldConfig on FieldConfig {
     tooltip
   }
 
-    ... on NumberInputConfig {
+  ... on NumberInputConfig {
     property
     units
 
@@ -40,7 +43,6 @@ fragment fieldConfig on FieldConfig {
     required
     tooltip
   }
-
 
   ... on ProposalBasisConfig {
     tooltip

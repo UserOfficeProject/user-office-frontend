@@ -64,7 +64,9 @@ function QuestionaryDetails(
             });
 
             return (
-              <TableRow key={`answer-${question.answerId}`}>
+              <TableRow
+                key={`answer-${question.answerId}-${question.question.proposalQuestionId}`}
+              >
                 <TableCell>{questionElem}</TableCell>
                 <TableCell width="35%">{answerElem}</TableCell>
               </TableRow>

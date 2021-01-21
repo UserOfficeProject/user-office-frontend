@@ -17,7 +17,6 @@ const FormikUICustomDatePicker = ({
       name={field.name}
       value={field.value}
       format="yyyy-MM-dd"
-      placeholder="2020-11-27"
       helperText={currentError}
       error={Boolean(currentError)}
       onError={error => {

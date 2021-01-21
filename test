@@ -1,0 +1,16 @@
+
+> user-office-frontend@1.1.0 generate:local C:\Users\pas\Projects\ESS\user-office-frontend
+> sed "s@<SCHEMA_URL>@http://localhost:4000/graphql@g" codegen_template.yml > codegen_tmp.yml && graphql-codegen -c codegen_tmp.yml && rm ./codegen_tmp.yml
+
+[11:20:22] Parse configuration [started]
+[11:20:22] Parse configuration [completed]
+[11:20:22] Generate outputs [started]
+[11:20:22] Generate src/generated/sdk.ts [started]
+[11:20:22] Load GraphQL schemas [started]
+[11:20:22] Load GraphQL schemas [completed]
+[11:20:22] Load GraphQL documents [started]
+[11:20:22] Load GraphQL documents [completed]
+[11:20:22] Generate [started]
+[11:20:24] Generate [completed]
+[11:20:24] Generate src/generated/sdk.ts [completed]
+[11:20:24] Generate outputs [completed]
