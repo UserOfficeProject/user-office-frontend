@@ -143,14 +143,6 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                   assignedReviewer.sepMemberUserId
               ) || [];
 
-            // console.log(
-            //   Date.now(),
-            //   'FILTERED',
-            //   JSON.parse(JSON.stringify(newAssignments)),
-            //   'SOURCE',
-            //   JSON.parse(JSON.stringify(SEPProposalsData))
-            // );
-
             return {
               ...proposalItem,
               assignments: newAssignments,
