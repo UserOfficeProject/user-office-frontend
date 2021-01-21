@@ -1,12 +1,4 @@
-import {
-  Link,
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Typography,
-} from '@material-ui/core';
+import { Link, makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router';
 
@@ -16,7 +8,9 @@ import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import QuestionaryDetails from 'components/questionary/QuestionaryDetails';
+import QuestionaryDetails, {
+  TableRowData,
+} from 'components/questionary/QuestionaryDetails';
 import { ShipmentStatus } from 'generated/sdk';
 import { useProposalData } from 'hooks/proposal/useProposalData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -31,9 +25,6 @@ interface ShipmentReviewProps {
 }
 
 const useStyles = makeStyles(theme => ({
-  table: {
-    margin: '5px 0 40px 0',
-  },
   sampleList: {
     listStyle: 'none',
     padding: 0,
@@ -45,7 +36,7 @@ function ShipmentReview({
   onComplete,
   confirm,
 }: ShipmentReviewProps) {
-  const { api } = useDataApiWithFeedback();
+  const { api, isExecutingCall } = useDataApiWithFeedback();
   const { state, dispatch } = useContext(
     QuestionaryContext
   ) as ShipmentContextType;
@@ -61,48 +52,38 @@ function ShipmentReview({
     return <UOLoader />;
   }
 
+  const additionalDetails: TableRowData[] = [
+    { label: 'Title', value: state.shipment.title },
+    { label: 'Status', value: state.shipment.status },
+    {
+      label: 'Proposal',
+      value: (
+        <Link
+          href="#"
+          onClick={() => history.push(`/ProposalEdit/${proposalData.id}`)}
+        >
+          {proposalData.title}
+        </Link>
+      ),
+    },
+    {
+      label: 'Samples',
+      value: (
+        <ul className={classes.sampleList}>
+          {state.shipment.samples.map(sample => (
+            <li key={sample.id}>{sample.title}</li>
+          ))}
+        </ul>
+      ),
+    },
+  ];
+
   return (
     <div>
-      <Typography variant={'h6'}>Shipment details</Typography>
-      <Table size={'small'} className={classes.table}>
-        <TableBody>
-          <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>{state.shipment.title}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Status</TableCell>
-            <TableCell>{state.shipment.status}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Proposal</TableCell>
-            <TableCell>
-              <Link
-                href="#"
-                onClick={() => history.push(`/ProposalEdit/${proposalData.id}`)}
-              >
-                {proposalData.title}
-              </Link>
-            </TableCell>
-          </TableRow>
-          {state.shipment.samples.length > 0 && (
-            <TableRow>
-              <TableCell>Samples</TableCell>
-              <TableCell>
-                <ul className={classes.sampleList}>
-                  {state.shipment.samples.map(sample => (
-                    <li key={sample.id}>{sample.title}</li>
-                  ))}
-                </ul>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <Typography variant={'h6'}>Questionary details</Typography>
       <QuestionaryDetails
         questionaryId={state.shipment.questionaryId}
-        className={classes.table}
+        additionalDetails={additionalDetails}
+        title="Shipment information"
       />
       <div>
         <NavigationFragment
@@ -126,7 +107,7 @@ function ShipmentReview({
               )(),
             label: 'Submit',
           }}
-          isLoading={false}
+          isLoading={isExecutingCall}
         />
       </div>
     </div>
