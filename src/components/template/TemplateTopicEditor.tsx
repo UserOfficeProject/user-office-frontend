@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import {
   Draggable,
@@ -25,6 +26,7 @@ import {
   QuestionTemplateRelation,
   TemplateStep,
 } from 'generated/sdk';
+import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 
 import TemplateQuestionEditor, {
@@ -67,6 +69,7 @@ export default function QuestionaryEditorTopic(props: {
   dragMode: boolean;
 }) {
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
   const classes = makeStyles(theme => ({
     container: {
@@ -257,6 +260,26 @@ export default function QuestionaryEditorTopic(props: {
                     className={classes.addQuestionMenuItem}
                     data-cy="delete-topic-menu-item"
                     onClick={() => {
+                      const isAllQuestionsInTopicDeletable = data.fields.every(
+                        item => {
+                          const definition = getQuestionaryComponentDefinition(
+                            item.question.dataType
+                          );
+
+                          return definition.creatable;
+                        }
+                      );
+                      if (isAllQuestionsInTopicDeletable === false) {
+                        enqueueSnackbar(
+                          'This topic can not be deleted because it contains protected question(s)',
+                          {
+                            variant: 'warning',
+                          }
+                        );
+
+                        return;
+                      }
+
                       dispatch({
                         type: EventType.DELETE_TOPIC_REQUESTED,
                         payload: data.topic.id,
