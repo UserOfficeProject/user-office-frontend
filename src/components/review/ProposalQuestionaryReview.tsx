@@ -31,8 +31,8 @@ export default function ProposalQuestionaryReview(
     {
       label: 'Co-Proposers',
       value: users
-        .map((user: any) => ` ${user.firstname} ${user.lastname}`)
-        .toString(),
+        .map((user: any) => `${user.firstname} ${user.lastname}`)
+        .join(', '),
     },
   ];
 
