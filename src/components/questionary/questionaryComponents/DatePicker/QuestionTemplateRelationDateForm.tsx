@@ -7,11 +7,11 @@ import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomDatePicker from 'components/common/FormikUICustomDatePicker';
-import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionTemplateRelation } from 'generated/sdk';
 
+import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
@@ -77,14 +77,9 @@ export const QuestionTemplateRelationDateForm: FormComponent<QuestionTemplateRel
             </MuiPickersUtilsProvider>
           </TitledContainer>
           <TitledContainer label="Dependencies">
-            <Field
-              name="dependency"
-              component={FormikUICustomDependencySelector}
-              templateField={props.field}
+            <QuestionDependencyList
+              field={formikProps.values}
               template={props.template}
-              margin="normal"
-              fullWidth
-              data-cy="dependencies"
             />
           </TitledContainer>
         </>
