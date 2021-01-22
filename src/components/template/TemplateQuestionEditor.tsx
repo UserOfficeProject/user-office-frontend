@@ -86,14 +86,20 @@ export default function TemplateQuestionEditor(props: {
     ...draggableStyle,
   });
 
-  const dependency = props.data.dependency;
-  const dependencyJsx = dependency ? (
+  const dependencies = props.data.dependencies;
+  const dependencyJsx = dependencies.length ? (
     <>
       <LockIcon className={classes.lockIcon} />
       <ul>
-        <li key={dependency.dependencyId + dependency.questionId}>
-          {dependency.dependencyNaturalKey}
-        </li>
+        {dependencies.map((dependency, i) => {
+          const dependencyOperator = i < dependencies.length - 1 ? '&' : '';
+
+          return (
+            <li key={dependency.dependencyId + dependency.questionId}>
+              {`${dependency.dependencyNaturalKey} ${dependencyOperator}`}
+            </li>
+          );
+        })}
       </ul>
     </>
   ) : null;
@@ -107,6 +113,7 @@ export default function TemplateQuestionEditor(props: {
       key={props.data.proposalQuestionId}
       draggableId={props.data.proposalQuestionId}
       index={props.index}
+      isDragDisabled={questionDefinition.creatable === false}
     >
       {(provided, snapshot) => (
         <Grid
@@ -160,7 +167,7 @@ export interface TemplateTopicEditorData {
   question: string;
   naturalKey: string;
   dataType: DataType;
-  dependency?: FieldDependency | null;
+  dependencies: FieldDependency[];
   config: FieldConfig;
   categoryId: TemplateCategoryId;
 }
