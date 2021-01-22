@@ -105,7 +105,7 @@ export default function TemplateQuestionEditor(props: {
           return (
             dependenciesAreVisible && (
               <li key={dependency.dependencyId + dependency.questionId}>
-                {`${dependency.dependencyNaturalKey}`}{' '}
+                {`${dependency.dependencyNaturalKey} `}
                 <strong>{`${dependencyComparator}`}</strong>
               </li>
             )
