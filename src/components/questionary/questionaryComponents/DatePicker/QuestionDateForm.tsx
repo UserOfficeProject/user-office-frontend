@@ -2,11 +2,11 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
+import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomDatePicker from 'components/common/FormikUICustomDatePicker';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { Question } from 'generated/sdk';
@@ -73,7 +73,7 @@ export const QuestionDateForm: FormComponent<Question> = props => {
                 name="config.minDate"
                 label="Min"
                 format="yyyy-MM-dd"
-                component={FormikUICustomDatePicker}
+                component={KeyboardDatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="minDate"
@@ -82,7 +82,7 @@ export const QuestionDateForm: FormComponent<Question> = props => {
                 name="config.maxDate"
                 label="Max"
                 format="yyyy-MM-dd"
-                component={FormikUICustomDatePicker}
+                component={KeyboardDatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="maxDate"
@@ -91,7 +91,7 @@ export const QuestionDateForm: FormComponent<Question> = props => {
                 name="config.defaultDate"
                 label="Default"
                 format="yyyy-MM-dd"
-                component={FormikUICustomDatePicker}
+                component={KeyboardDatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="defaultDate"

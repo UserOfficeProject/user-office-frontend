@@ -623,19 +623,19 @@ context('Template tests', () => {
         .clear()
         .type('2020-01-01');
       cy.contains('Save and continue').click();
-      cy.contains('Value must be a date after');
+      cy.contains('Value must be a date at or after');
 
       cy.get('@dateField')
         .clear()
         .type('2022-01-01');
       cy.contains('Save and continue').click();
-      cy.contains('Value must be a date before');
+      cy.contains('Value must be a date at or before');
 
       cy.get('@dateField')
         .clear()
         .type('2021-01-15');
       cy.contains('Save and continue').click();
-      cy.contains('Value must be a date').should('not.exist');
+      cy.contains('Value must be a date at or').should('not.exist');
     });
   });
 
