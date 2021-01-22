@@ -94,8 +94,6 @@ export function areDependenciesSatisfied(
     return true;
   }
 
-  console.log(field);
-
   if (field.dependenciesOperator === DependenciesLogicOperator.OR) {
     return field.dependencies.some(dependency =>
       isDependencySatisfied(questionary, dependency)
