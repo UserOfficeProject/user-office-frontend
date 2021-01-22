@@ -58,16 +58,6 @@ export const FormikUICustomTable = ({
   };
   form: FormikHelpers<any>;
 }) => {
-  const classes = makeStyles(() => ({
-    customToolbar: {
-      '& .MuiToolbar-root': {
-        minHeight: 'auto',
-        '& button': {
-          padding: 0,
-        },
-      },
-    },
-  }))();
   const transformedValues = dataTransforms.toTable(field.value);
   const [state, setState] = React.useState(transformedValues);
   const classes = useStyles();
@@ -76,18 +66,6 @@ export const FormikUICustomTable = ({
     setState(newState);
     form.setFieldValue(field.name, dataTransforms.fromTable(newState));
   };
-
-  const AddNewItemIcon = () => (
-    <div data-cy="add-answer-button">
-      <AddCircleOutlineIcon />
-    </div>
-  );
-
-  const StyledToolbar = (props: Options) => (
-    <div className={classes.customToolbar}>
-      <MTableToolbar {...props} />
-    </div>
-  );
 
   const AddNewItemIcon = () => (
     <div data-cy="add-answer-button">
