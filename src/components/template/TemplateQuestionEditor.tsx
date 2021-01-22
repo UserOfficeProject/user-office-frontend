@@ -90,7 +90,7 @@ export default function TemplateQuestionEditor(props: {
   const dependencies = props.data.dependencies;
   let dependencyComparator =
     props.data.dependenciesOperator === DependenciesLogicOperator.AND
-      ? '&'
+      ? '&&'
       : '||';
   const dependencyJsx = dependencies.length ? (
     <>
