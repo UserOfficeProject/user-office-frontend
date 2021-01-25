@@ -1,6 +1,5 @@
 import { Link, makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router';
 
 import UOLoader from 'components/common/UOLoader';
 import NavigationFragment from 'components/questionary/NavigationFragment';
@@ -45,7 +44,6 @@ function ShipmentReview({
   }
 
   const { proposalData } = useProposalData(state.shipment.proposalId);
-  const history = useHistory();
   const classes = useStyles();
 
   if (!proposalData) {
@@ -58,10 +56,7 @@ function ShipmentReview({
     {
       label: 'Proposal',
       value: (
-        <Link
-          href="#"
-          onClick={() => history.push(`/ProposalEdit/${proposalData.id}`)}
-        >
+        <Link href={`/ProposalEdit/${proposalData.id}`}>
           {proposalData.title}
         </Link>
       ),
