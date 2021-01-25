@@ -22,7 +22,11 @@ import {
 } from 'react-beautiful-dnd';
 
 import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
-import { QuestionTemplateRelation, TemplateStep } from 'generated/sdk';
+import {
+  DependenciesLogicOperator,
+  QuestionTemplateRelation,
+  TemplateStep,
+} from 'generated/sdk';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 
 import TemplateQuestionEditor, {
@@ -46,6 +50,9 @@ class TemplateTopicEditor implements TemplateTopicEditorData {
   }
   get dependencies() {
     return this.source.dependencies;
+  }
+  get dependenciesOperator() {
+    return this.source.dependenciesOperator as DependenciesLogicOperator;
   }
   get config() {
     return this.source.config;
