@@ -126,7 +126,6 @@ context('Settings tests', () => {
   describe('Proposal workflows tests', () => {
     before(() => {
       cy.resetDB();
-      cy.wait(250);
     });
 
     beforeEach(() => {
