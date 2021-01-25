@@ -49,6 +49,10 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
   const isError = getIn(touched, proposalQuestionId) && !!fieldError;
   const [defaultInitialized, setDefaultInitialized] = useState(false);
 
+  // set default value only when creating new proposal,
+  // the user will either change it or keep it in the next step
+  // which will explicitly set the value of the field
+  // and we won't need to use the default value any longer
   useEffect(() => {
     if (answerId === null && defaultDate && !defaultInitialized) {
       onComplete(defaultDate);
