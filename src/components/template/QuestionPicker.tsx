@@ -112,6 +112,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
       <TemplateQuestionEditor
         index={index}
         data={new QuestionItemAdapter(question)}
+        dispatch={dispatch}
         onClick={item => {
           const isAltDown = (window.event as MouseEvent)?.altKey;
 

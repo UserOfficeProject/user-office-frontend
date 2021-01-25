@@ -58,6 +58,7 @@ export default function QuestionaryEditorTopic(props: {
   dispatch: React.Dispatch<Event>;
   index: number;
   dragMode: boolean;
+  hoveredDependency: string;
 }) {
   const theme = useTheme();
 
@@ -175,10 +176,14 @@ export default function QuestionaryEditorTopic(props: {
         <TemplateQuestionEditor
           index={index}
           data={new TemplateTopicEditor(item)}
+          isHighlighted={
+            props.hoveredDependency === item.question.proposalQuestionId
+          }
+          dispatch={dispatch}
           onClick={item =>
             dispatch({
               type: EventType.OPEN_QUESTIONREL_EDITOR,
-              payload: (item as TemplateTopicEditor).source,
+              payload: { questionId: item.proposalQuestionId },
             })
           }
           key={item.question.proposalQuestionId.toString()}
