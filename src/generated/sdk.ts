@@ -1723,7 +1723,7 @@ export type Review = {
   grade: Maybe<Scalars['Int']>;
   status: ReviewStatus;
   sepID: Scalars['Int'];
-  reviewer: Maybe<User>;
+  reviewer: Maybe<BasicUserDetails>;
   proposal: Maybe<Proposal>;
 };
 
@@ -2127,7 +2127,7 @@ export type AssignProposalToSepMutation = (
 );
 
 export type AssignMembersMutationVariables = Exact<{
-  memberIds: Array<Scalars['Int']>;
+  memberIds: Array<Scalars['Int']> | Scalars['Int'];
   sepId: Scalars['Int'];
 }>;
 
@@ -2294,8 +2294,8 @@ export type GetSepProposalQuery = (
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
         & { reviewer: Maybe<(
-          { __typename?: 'User' }
-          & Pick<User, 'firstname' | 'lastname' | 'username' | 'id'>
+          { __typename?: 'BasicUserDetails' }
+          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
         )> }
       )>>, instrument: Maybe<(
         { __typename?: 'Instrument' }
@@ -2606,7 +2606,7 @@ export type UpdateInstitutionMutation = (
 );
 
 export type AssignInstrumentsToCallMutationVariables = Exact<{
-  instrumentIds: Array<Scalars['Int']>;
+  instrumentIds: Array<Scalars['Int']> | Scalars['Int'];
   callId: Scalars['Int'];
 }>;
 
@@ -2765,7 +2765,7 @@ export type GetEventLogsQuery = (
 );
 
 export type AssignProposalsToInstrumentMutationVariables = Exact<{
-  proposals: Array<ProposalsToInstrumentArgs>;
+  proposals: Array<ProposalsToInstrumentArgs> | ProposalsToInstrumentArgs;
   instrumentId: Scalars['Int'];
 }>;
 
@@ -2779,7 +2779,7 @@ export type AssignProposalsToInstrumentMutation = (
 );
 
 export type AssignScientistsToInstrumentMutationVariables = Exact<{
-  scientistIds: Array<Scalars['Int']>;
+  scientistIds: Array<Scalars['Int']> | Scalars['Int'];
   instrumentId: Scalars['Int'];
 }>;
 
@@ -2829,7 +2829,7 @@ export type DeleteInstrumentMutation = (
 );
 
 export type GetInstrumentsQueryVariables = Exact<{
-  callIds?: Maybe<Array<Scalars['Int']>>;
+  callIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
@@ -3050,8 +3050,8 @@ export type GetInstrumentScientistProposalsQuery = (
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
         & { reviewer: Maybe<(
-          { __typename?: 'User' }
-          & Pick<User, 'firstname' | 'lastname' | 'username' | 'id'>
+          { __typename?: 'BasicUserDetails' }
+          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
         )> }
       )>>, users: Array<(
         { __typename?: 'BasicUserDetails' }
@@ -3099,8 +3099,8 @@ export type GetProposalQuery = (
       { __typename?: 'Review' }
       & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
       & { reviewer: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'firstname' | 'lastname' | 'username' | 'id'>
+        { __typename?: 'BasicUserDetails' }
+        & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
       )> }
     )>>, instrument: Maybe<(
       { __typename?: 'Instrument' }
@@ -3132,8 +3132,8 @@ export type GetProposalsQuery = (
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
         & { reviewer: Maybe<(
-          { __typename?: 'User' }
-          & Pick<User, 'firstname' | 'lastname' | 'username' | 'id'>
+          { __typename?: 'BasicUserDetails' }
+          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
         )> }
       )>>, users: Array<(
         { __typename?: 'BasicUserDetails' }
@@ -3207,7 +3207,7 @@ export type UpdateProposalMutationVariables = Exact<{
   id: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   abstract?: Maybe<Scalars['String']>;
-  users?: Maybe<Array<Scalars['Int']>>;
+  users?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   proposerId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -3234,7 +3234,7 @@ export type UpdateProposalMutation = (
 export type AnswerTopicMutationVariables = Exact<{
   questionaryId: Scalars['Int'];
   topicId: Scalars['Int'];
-  answers: Array<AnswerInput>;
+  answers: Array<AnswerInput> | AnswerInput;
   isPartialSave?: Maybe<Scalars['Boolean']>;
 }>;
 
@@ -3355,7 +3355,7 @@ export type GetBlankQuestionaryStepsQuery = (
 );
 
 export type GetFileMetadataQueryVariables = Exact<{
-  fileIds: Array<Scalars['String']>;
+  fileIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
@@ -3633,7 +3633,7 @@ export type UpdateSampleMutation = (
 
 export type AddNextStatusEventsToConnectionMutationVariables = Exact<{
   proposalWorkflowConnectionId: Scalars['Int'];
-  nextStatusEvents: Array<Scalars['String']>;
+  nextStatusEvents: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
@@ -3909,7 +3909,7 @@ export type UpdateProposalWorkflowMutation = (
 
 export type AddSamplesToShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
-  sampleIds: Array<Scalars['Int']>;
+  sampleIds: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
@@ -4515,7 +4515,7 @@ export type UpdateQuestionTemplateRelationSettingsMutationVariables = Exact<{
   questionId: Scalars['String'];
   templateId: Scalars['Int'];
   config?: Maybe<Scalars['String']>;
-  dependencies: Array<FieldDependencyInput>;
+  dependencies: Array<FieldDependencyInput> | FieldDependencyInput;
   dependenciesOperator?: Maybe<DependenciesLogicOperator>;
 }>;
 
@@ -4828,7 +4828,7 @@ export type GetUsersQueryVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   userRole?: Maybe<UserRole>;
-  subtractUsers?: Maybe<Array<Scalars['Int']>>;
+  subtractUsers?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
@@ -4972,7 +4972,7 @@ export type UpdateUserMutation = (
 
 export type UpdateUserRolesMutationVariables = Exact<{
   id: Scalars['Int'];
-  roles?: Maybe<Array<Scalars['Int']>>;
+  roles?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
@@ -5486,7 +5486,6 @@ export const GetSepProposalDocument = gql`
         reviewer {
           firstname
           lastname
-          username
           id
         }
       }
@@ -5966,7 +5965,6 @@ export const GetInstrumentScientistProposalsDocument = gql`
         reviewer {
           firstname
           lastname
-          username
           id
         }
       }
@@ -6025,7 +6023,6 @@ export const GetProposalDocument = gql`
       reviewer {
         firstname
         lastname
-        username
         id
       }
     }
@@ -6062,7 +6059,6 @@ export const GetProposalsDocument = gql`
         reviewer {
           firstname
           lastname
-          username
           id
         }
       }
