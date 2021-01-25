@@ -577,10 +577,7 @@ context('Template tests', () => {
       .find("[data-cy='proposal-question-id']")
       .invoke('html')
       .then(fieldId => {
-        console.log('called dateQuestion', fieldId);
-
         dateFieldId = fieldId;
-        console.log('dateFieldId', dateFieldId);
       });
 
     cy.contains(dateQuestion)
