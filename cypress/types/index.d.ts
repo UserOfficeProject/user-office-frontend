@@ -24,7 +24,7 @@ declare global {
        * @example
        *    cy.login('user')
        */
-      login: (role: string) => void;
+      login: (role: string | { email: string; password: string }) => void;
 
       /**
        * Expands templates submenu
@@ -135,6 +135,17 @@ declare global {
         minEntries?: string,
         maxEntries?: string
       ) => void;
+
+
+      /**
+       * Lets you change the logged in user's active role
+       *
+       * @returns {typeof changeActiveRole}
+       * @memberof Chainable
+       * @example
+       *    cy.changeActiveRole('User Officer')
+       */
+      changeActiveRole: (role: string) => void;
     }
   }
 
