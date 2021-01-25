@@ -60,13 +60,23 @@ export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<Questi
 
           <TitledContainer label="Constraints">
             <Field
+              name="config.minEntries"
+              label="Min entries"
+              placeholder="(e.g. 1, leave blank for unlimited)"
+              type="text"
+              component={TextField}
+              margin="normal"
+              fullWidth
+              data-cy="min-entries"
+            />
+            <Field
               name="config.maxEntries"
               label="Max entries"
               type="text"
               component={TextField}
               margin="normal"
               fullWidth
-              data-cy="maxEntries"
+              data-cy="max-entries"
             />
           </TitledContainer>
 
@@ -100,7 +110,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<Questi
 
           <TitledContainer label="Dependencies">
             <QuestionDependencyList
-              field={formikProps.values}
+              form={formikProps}
               template={props.template}
             />
           </TitledContainer>
