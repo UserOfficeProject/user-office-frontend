@@ -71,6 +71,7 @@ export type Answer = {
   topicId: Scalars['Int'];
   config: FieldConfig;
   dependencies: Array<FieldDependency>;
+  dependenciesOperator: Maybe<DependenciesLogicOperator>;
   answerId: Maybe<Scalars['Int']>;
   value: Maybe<Scalars['IntStringDateBoolArray']>;
 };
@@ -223,6 +224,11 @@ export type DeleteProposalWorkflowStatusInput = {
   proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
 };
+
+export enum DependenciesLogicOperator {
+  AND = 'AND',
+  OR = 'OR'
+}
 
 export type EmailVerificationResponseWrap = {
   __typename?: 'EmailVerificationResponseWrap';
@@ -864,6 +870,7 @@ export type MutationUpdateQuestionTemplateRelationSettingsArgs = {
   templateId: Scalars['Int'];
   config?: Maybe<Scalars['String']>;
   dependencies: Array<FieldDependencyInput>;
+  dependenciesOperator?: Maybe<DependenciesLogicOperator>;
 };
 
 
@@ -1697,6 +1704,7 @@ export type QuestionTemplateRelation = {
   topicId: Scalars['Int'];
   config: FieldConfig;
   dependencies: Array<FieldDependency>;
+  dependenciesOperator: Maybe<DependenciesLogicOperator>;
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
@@ -3265,7 +3273,7 @@ export type CreateQuestionaryMutation = (
 
 export type AnswerFragment = (
   { __typename?: 'Answer' }
-  & Pick<Answer, 'answerId' | 'sortOrder' | 'topicId' | 'value'>
+  & Pick<Answer, 'answerId' | 'sortOrder' | 'topicId' | 'dependenciesOperator' | 'value'>
   & { question: (
     { __typename?: 'Question' }
     & QuestionFragment
@@ -4306,7 +4314,7 @@ export type QuestionFragment = (
 
 export type QuestionTemplateRelationFragment = (
   { __typename?: 'QuestionTemplateRelation' }
-  & Pick<QuestionTemplateRelation, 'sortOrder' | 'topicId'>
+  & Pick<QuestionTemplateRelation, 'sortOrder' | 'topicId' | 'dependenciesOperator'>
   & { question: (
     { __typename?: 'Question' }
     & QuestionFragment
@@ -4511,6 +4519,7 @@ export type UpdateQuestionTemplateRelationSettingsMutationVariables = Exact<{
   templateId: Scalars['Int'];
   config?: Maybe<Scalars['String']>;
   dependencies: Array<FieldDependencyInput>;
+  dependenciesOperator?: Maybe<DependenciesLogicOperator>;
 }>;
 
 
@@ -5212,6 +5221,7 @@ export const AnswerFragmentDoc = gql`
       ...fieldCondition
     }
   }
+  dependenciesOperator
   value
 }
     ${QuestionFragmentDoc}
@@ -5292,6 +5302,7 @@ export const QuestionTemplateRelationFragmentDoc = gql`
       ...fieldCondition
     }
   }
+  dependenciesOperator
 }
     ${QuestionFragmentDoc}
 ${FieldConfigFragmentDoc}
@@ -6786,8 +6797,8 @@ export const UpdateQuestionTemplateRelationDocument = gql`
 }
     ${TemplateFragmentDoc}`;
 export const UpdateQuestionTemplateRelationSettingsDocument = gql`
-    mutation updateQuestionTemplateRelationSettings($questionId: String!, $templateId: Int!, $config: String, $dependencies: [FieldDependencyInput!]!) {
-  updateQuestionTemplateRelationSettings(questionId: $questionId, templateId: $templateId, config: $config, dependencies: $dependencies) {
+    mutation updateQuestionTemplateRelationSettings($questionId: String!, $templateId: Int!, $config: String, $dependencies: [FieldDependencyInput!]!, $dependenciesOperator: DependenciesLogicOperator) {
+  updateQuestionTemplateRelationSettings(questionId: $questionId, templateId: $templateId, config: $config, dependencies: $dependencies, dependenciesOperator: $dependenciesOperator) {
     template {
       ...template
     }
