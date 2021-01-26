@@ -214,6 +214,9 @@ export type DateConfig = {
   small_label: Scalars['String'];
   required: Scalars['Boolean'];
   tooltip: Scalars['String'];
+  minDate: Maybe<Scalars['String']>;
+  maxDate: Maybe<Scalars['String']>;
+  defaultDate: Maybe<Scalars['String']>;
 };
 
 
@@ -1903,6 +1906,7 @@ export enum ShipmentStatus {
 
 export type SubtemplateConfig = {
   __typename?: 'SubtemplateConfig';
+  minEntries: Maybe<Scalars['Int']>;
   maxEntries: Maybe<Scalars['Int']>;
   templateId: Maybe<Scalars['Int']>;
   templateCategory: Scalars['String'];
@@ -3594,6 +3598,13 @@ export type GetSamplesQuery = (
   { __typename?: 'Query' }
   & { samples: Maybe<Array<(
     { __typename?: 'Sample' }
+    & { questionary: (
+      { __typename?: 'Questionary' }
+      & { steps: Array<(
+        { __typename?: 'QuestionaryStep' }
+        & Pick<QuestionaryStep, 'isCompleted'>
+      )> }
+    ) }
     & SampleFragment
   )>> }
 );
@@ -3607,6 +3618,13 @@ export type GetSamplesByCallIdQuery = (
   { __typename?: 'Query' }
   & { samplesByCallId: Maybe<Array<(
     { __typename?: 'Sample' }
+    & { questionary: (
+      { __typename?: 'Questionary' }
+      & { steps: Array<(
+        { __typename?: 'QuestionaryStep' }
+        & Pick<QuestionaryStep, 'isCompleted'>
+      )> }
+    ) }
     & SampleFragment
   )>> }
 );
@@ -3626,6 +3644,13 @@ export type UpdateSampleMutation = (
     & Pick<SampleResponseWrap, 'error'>
     & { sample: Maybe<(
       { __typename?: 'Sample' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & { steps: Array<(
+          { __typename?: 'QuestionaryStep' }
+          & Pick<QuestionaryStep, 'isCompleted'>
+        )> }
+      ) }
       & SampleFragment
     )> }
   ) }
@@ -4212,7 +4237,7 @@ type FieldConfigBooleanConfigFragment = (
 
 type FieldConfigDateConfigFragment = (
   { __typename?: 'DateConfig' }
-  & Pick<DateConfig, 'small_label' | 'required' | 'tooltip'>
+  & Pick<DateConfig, 'small_label' | 'required' | 'tooltip' | 'minDate' | 'maxDate' | 'defaultDate'>
 );
 
 type FieldConfigEmbellishmentConfigFragment = (
@@ -4242,7 +4267,7 @@ type FieldConfigSampleBasisConfigFragment = (
 
 type FieldConfigSubtemplateConfigFragment = (
   { __typename?: 'SubtemplateConfig' }
-  & Pick<SubtemplateConfig, 'addEntryButtonLabel' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
+  & Pick<SubtemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
 );
 
 type FieldConfigProposalBasisConfigFragment = (
@@ -5110,6 +5135,9 @@ export const FieldConfigFragmentDoc = gql`
     small_label
     required
     tooltip
+    minDate
+    maxDate
+    defaultDate
   }
   ... on EmbellishmentConfig {
     html
@@ -5145,6 +5173,7 @@ export const FieldConfigFragmentDoc = gql`
   }
   ... on SubtemplateConfig {
     addEntryButtonLabel
+    minEntries
     maxEntries
     templateId
     templateCategory
@@ -6326,6 +6355,11 @@ export const GetSamplesDocument = gql`
     query getSamples($filter: SamplesFilter) {
   samples(filter: $filter) {
     ...sample
+    questionary {
+      steps {
+        isCompleted
+      }
+    }
   }
 }
     ${SampleFragmentDoc}`;
@@ -6333,6 +6367,11 @@ export const GetSamplesByCallIdDocument = gql`
     query getSamplesByCallId($callId: Int!) {
   samplesByCallId(callId: $callId) {
     ...sample
+    questionary {
+      steps {
+        isCompleted
+      }
+    }
   }
 }
     ${SampleFragmentDoc}`;
@@ -6341,6 +6380,11 @@ export const UpdateSampleDocument = gql`
   updateSample(sampleId: $sampleId, title: $title, safetyComment: $safetyComment, safetyStatus: $safetyStatus) {
     sample {
       ...sample
+      questionary {
+        steps {
+          isCompleted
+        }
+      }
     }
     error
   }
