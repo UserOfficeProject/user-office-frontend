@@ -54,6 +54,7 @@ fragment fieldConfig on FieldConfig {
 
   ... on SubtemplateConfig {
     addEntryButtonLabel
+    minEntries
     maxEntries
     templateId
     templateCategory

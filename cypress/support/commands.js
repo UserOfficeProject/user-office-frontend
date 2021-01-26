@@ -200,7 +200,7 @@ const dragElement = (element, moveArgs) => {
   return element;
 };
 
-const createSampleQuestion = (question, templateName) => {
+const createSampleQuestion = (question, templateName, minEntries, maxEntries) => {
   cy.get('[data-cy=show-more-button]')
     .last()
     .click();
@@ -221,6 +221,14 @@ const createSampleQuestion = (question, templateName) => {
   cy.get('[data-cy=template-id]').click();
 
   cy.contains(templateName).click();
+
+  if(minEntries) {
+    cy.get('[data-cy=min-entries] input').clear().type(minEntries);
+  }
+
+  if(maxEntries) {
+    cy.get('[data-cy=max-entries] input').clear().type(maxEntries);
+  }
 
   cy.contains('Save').click();
 };
