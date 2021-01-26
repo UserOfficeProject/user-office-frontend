@@ -10,7 +10,7 @@ import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionFormShell } from 'components/questionary/questionaryComponents/QuestionFormShell';
-import { IntervalConfig, Question } from 'generated/sdk';
+import { IntervalConfig, Question, NumberValueConstraint } from 'generated/sdk';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { allProperties, IntervalPropertyId } from '../Interval/intervalUnits';
@@ -122,6 +122,23 @@ export const QuestionNumberForm: FormComponent<Question> = props => {
               disabled={!showUnits}
               className={classes.units}
               data-cy="units"
+            />
+
+            <FormikDropdown
+              name="config.numberValueConstraint"
+              label="Value constraint"
+              items={[
+                { text: 'None', value: NumberValueConstraint.NONE },
+                {
+                  text: 'Only positive numbers',
+                  value: NumberValueConstraint.ONLY_POSITIVE,
+                },
+                {
+                  text: 'Only negative numbers',
+                  value: NumberValueConstraint.ONLY_NEGATIVE,
+                },
+              ]}
+              data-cy="numberValueConstraint"
             />
           </TitledContainer>
         </>
