@@ -94,7 +94,6 @@ export const QuestionNumberForm: FormComponent<Question> = props => {
               fullWidth
               InputProps={{ 'data-cy': 'required' }}
             />
-
             <FormikDropdown
               name="config.property"
               label="Physical property"
@@ -107,7 +106,6 @@ export const QuestionNumberForm: FormComponent<Question> = props => {
                 'data-cy': 'property',
               }}
             />
-
             <Field
               name="config.units"
               component={FormikUICustomSelect}
