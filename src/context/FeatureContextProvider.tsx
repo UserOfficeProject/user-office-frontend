@@ -34,7 +34,7 @@ export const FeatureContextProvider: React.FC = props => {
   if (loadingFeatures) {
     return (
       <div className={classes.loader}>
-        <UOLoader />
+        <UOLoader size={40} />
       </div>
     );
   }
