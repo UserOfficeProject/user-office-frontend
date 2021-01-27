@@ -69,7 +69,7 @@ export default function TemplateQuestionEditor(props: {
           '&:hover': {
             transitionDuration: '300ms',
             textDecoration: 'underline',
-            color: theme.palette.primary.light,
+            color: theme.palette.primary.main,
           },
         },
       },
