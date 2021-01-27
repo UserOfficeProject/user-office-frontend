@@ -17,11 +17,11 @@ export const createNumberInputValidationSchema: QuestionaryComponentDefinition['
   }
 
   if (config.numberValueConstraint === NumberValueConstraint.ONLY_NEGATIVE) {
-    value = value.negative('Value must be a negative value');
+    value = value.negative('Value must be a negative number');
   }
 
   if (config.numberValueConstraint === NumberValueConstraint.ONLY_POSITIVE) {
-    value = value.positive('Value must be a positive value');
+    value = value.positive('Value must be a positive number');
   }
 
   return Yup.object().shape({

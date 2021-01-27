@@ -90,7 +90,9 @@ export const QuestionTemplateRelationNumberForm: FormComponent<QuestionTemplateR
                 name="config.property"
                 label="Physical property"
                 items={propertyDropdownEntries}
-                data-cy="property"
+                InputProps={{
+                  'data-cy': 'property',
+                }}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formikProps.setFieldValue('config.units', []); // reset units to empty array
                   setShowUnits(e.target.value !== IntervalPropertyId.UNITLESS);
@@ -110,11 +112,15 @@ export const QuestionTemplateRelationNumberForm: FormComponent<QuestionTemplateR
                 }
                 disabled={!showUnits}
                 className={classes.units}
+                data-cy="units"
               />
 
               <FormikDropdown
                 name="config.numberValueConstraint"
                 label="Value constraint"
+                InputProps={{
+                  'data-cy': 'numberValueConstraint',
+                }}
                 items={[
                   { text: 'None', value: NumberValueConstraint.NONE },
                   {
@@ -126,7 +132,6 @@ export const QuestionTemplateRelationNumberForm: FormComponent<QuestionTemplateR
                     value: NumberValueConstraint.ONLY_NEGATIVE,
                   },
                 ]}
-                data-cy="numberValueConstraint"
               />
             </TitledContainer>
 

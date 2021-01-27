@@ -125,6 +125,9 @@ export const QuestionNumberForm: FormComponent<Question> = props => {
             <FormikDropdown
               name="config.numberValueConstraint"
               label="Value constraint"
+              InputProps={{
+                'data-cy': 'numberValueConstraint',
+              }}
               items={[
                 { text: 'None', value: NumberValueConstraint.NONE },
                 {
@@ -136,7 +139,6 @@ export const QuestionNumberForm: FormComponent<Question> = props => {
                   value: NumberValueConstraint.ONLY_NEGATIVE,
                 },
               ]}
-              data-cy="numberValueConstraint"
             />
           </TitledContainer>
         </>
