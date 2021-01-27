@@ -17,7 +17,7 @@ function readWriteReview() {
   cy.get('@dialog').contains('Technical Review');
   cy.get('@dialog')
     .contains('Grade')
-    .click();
+    .click({ force: true });
 
   cy.get('@dialog')
     .get('textarea[name="comment"]')
@@ -46,6 +46,7 @@ function readWriteReview() {
 function editFinalRankingForm() {
   cy.get('[role="dialog"]').should('exist');
 
+  cy.get('#commentForUser').scrollIntoView();
   cy.get('#commentForUser')
     .clear()
     .type(faker.lorem.words(3));
@@ -57,6 +58,14 @@ function editFinalRankingForm() {
   cy.get('#rankOrder')
     .clear()
     .type('5');
+
+  cy.contains('External reviews')
+    .parent()
+    .find('table')
+    .as('reviewsTable');
+
+  cy.get('@reviewsTable').contains('Carl Carlsson');
+  cy.get('@reviewsTable').contains('Benjamin Beckley');
 
   cy.get('[data-cy="save"]').click();
 
@@ -1093,6 +1102,7 @@ context('Scientific evaluation panel tests', () => {
 
     cy.get('[data-cy="save"]').should('not.exist');
     cy.get('[data-cy="saveAndContinue"]').should('not.exist');
+    cy.get('[role="presentation"]').should('not.contain', 'External reviews');
   });
 
   it('SEP Reviewer should not be able to access details proposal view if they are not assigned to the proposal', () => {
@@ -1417,15 +1427,32 @@ context('Scientific evaluation panel tests', () => {
       .first()
       .click();
 
-    cy.get('[title="Remove assignment"]')
-      .first()
-      .click();
-    cy.get('[title="Save"]').click();
+    cy.get('[data-cy="sep-reviewer-assignments-table"] table tbody tr').as(
+      'rows'
+    );
 
-    cy.notification({
-      variant: 'success',
-      text: 'Reviewer removed',
-    });
+    // we testing a bug here, where the list didn't update
+    // properly after removing an assignment
+    function assertAndRemoveAssignment(length: number) {
+      cy.get('@rows').should('have.length', length);
+
+      cy.get('[title="Remove assignment"]')
+        .first()
+        .click();
+      cy.get('[title="Save"]').click();
+
+      cy.notification({
+        variant: 'success',
+        text: 'Reviewer removed',
+      });
+    }
+
+    assertAndRemoveAssignment(2);
+    assertAndRemoveAssignment(1);
+
+    cy.get('@rows')
+      .parent()
+      .contains('No records to display');
 
     cy.contains('Logs').click();
 
@@ -1436,6 +1463,38 @@ context('Scientific evaluation panel tests', () => {
       .click();
 
     cy.contains('SEP_MEMBER_REMOVED_FROM_PROPOSAL');
+  });
+
+  it('SEP Chair should not be able to remove assigned proposal from existing SEP', () => {
+    cy.login(sepMembers.chair);
+    cy.changeActiveRole('SEP Chair');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Proposals and Assignments').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Remove assigned proposal"]').should('not.exist');
+  });
+
+  it('SEP Secretary should not be able to remove assigned proposal from existing SEP', () => {
+    cy.login(sepMembers.secretary);
+    cy.changeActiveRole('SEP Secretary');
+
+    cy.contains('SEPs').click();
+    cy.get('button[title="Edit"]')
+      .first()
+      .click();
+
+    cy.contains('Proposals and Assignments').click();
+
+    cy.finishedLoading();
+
+    cy.get('[title="Remove assigned proposal"]').should('not.exist');
   });
 
   it('Officer should be able to remove assigned proposal from existing SEP', () => {
