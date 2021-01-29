@@ -60,7 +60,7 @@ const DownloadMonitorDialog = ({
 
   return (
     <Paper elevation={3} className={classes.root}>
-      <List component="nav" disablePadding>
+      <List component="nav" disablePadding data-cy="preparing-download-dialog">
         <ListItem button onClick={handleToggle} className={classes.header}>
           <ListItemIcon className={classes.headerIcon}>
             <InboxIcon />
@@ -77,6 +77,7 @@ const DownloadMonitorDialog = ({
                     <CircularProgress size={24} />
                   </ListItemIcon>
                   <ListItemText
+                    data-cy="preparing-download-dialog-item"
                     className={classes.listItemText}
                     primaryTypographyProps={{
                       noWrap: true,
