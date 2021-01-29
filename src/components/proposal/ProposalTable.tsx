@@ -82,7 +82,10 @@ const ProposalTable: React.FC<ProposalTableProps> = ({
           icon: GetAppIconCompopnent,
           tooltip: 'Download proposal',
           onClick: (event, rowData) =>
-            downloadPDFProposal((rowData as PartialProposalsDataType).id),
+            downloadPDFProposal(
+              [(rowData as PartialProposalsDataType).id],
+              (rowData as PartialProposalsDataType).title
+            ),
         },
       ]}
     />
