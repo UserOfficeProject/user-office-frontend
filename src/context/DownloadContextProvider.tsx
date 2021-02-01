@@ -151,6 +151,12 @@ function generateLink(
   }
 }
 
+async function delayInTest() {
+  if ('Cypress' in window) {
+    return new Promise(resolve => setTimeout(resolve, 250));
+  }
+}
+
 export const DownloadContextProvider: React.FC = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { token } = useContext(UserContext);
@@ -203,6 +209,7 @@ export const DownloadContextProvider: React.FC = ({ children }) => {
       signal: controller.signal,
     })
       .then(async response => {
+        await delayInTest();
         if (response.status !== 200) {
           return Promise.reject(await response.text());
         }
