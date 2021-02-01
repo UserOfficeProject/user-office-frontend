@@ -1,0 +1,13 @@
+mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
+  createApiAccessToken(
+    createApiAccessTokenInput: { name: $name, permissions: $accessPermissions }
+  ) {
+    error
+    apiAccessToken {
+      id
+      name
+      accessToken
+      accessPermissions
+    }
+  }
+}

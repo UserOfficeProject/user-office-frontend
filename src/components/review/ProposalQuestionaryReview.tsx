@@ -26,7 +26,7 @@ export default function ProposalQuestionaryReview(
     { label: 'Abstract', value: data.abstract },
     {
       label: 'Principal Investigator',
-      value: `${data.proposer.firstname} ${data.proposer.lastname}`,
+      value: `${data.proposer?.firstname} ${data.proposer?.lastname}`,
     },
     {
       label: 'Co-Proposers',
@@ -38,7 +38,7 @@ export default function ProposalQuestionaryReview(
 
   return (
     <QuestionaryDetails
-      questionaryId={questionary.questionaryId}
+      questionaryId={questionary?.questionaryId}
       additionalDetails={additionalDetails}
       title="Proposal information"
       {...restProps}

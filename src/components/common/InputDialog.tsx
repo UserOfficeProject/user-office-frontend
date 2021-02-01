@@ -14,7 +14,7 @@ function InputDialog(props: DialogProps) {
   const classes = useStyles();
 
   return (
-    <Dialog maxWidth="sm" {...props}>
+    <Dialog maxWidth={props.maxWidth || 'sm'} {...props}>
       <DialogContent className={classes.content}>
         {props.children}
       </DialogContent>
