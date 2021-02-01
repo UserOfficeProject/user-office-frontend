@@ -60,7 +60,7 @@ const DownloadMonitorDialog = ({
 
   return (
     <Paper elevation={3} className={classes.root}>
-      <List component="nav" disablePadding data-cy="preparing-download-dialog">
+      <List component="div" disablePadding data-cy="preparing-download-dialog">
         <ListItem button onClick={handleToggle} className={classes.header}>
           <ListItemIcon className={classes.headerIcon}>
             <InboxIcon />
@@ -229,7 +229,7 @@ export const DownloadContextProvider: React.FC = ({ children }) => {
   return (
     <DownloadContext.Provider value={{ prepareDownload }}>
       {children}
-      {isLoggedIn && inProgress.length && (
+      {isLoggedIn && inProgress.length > 0 && (
         <DownloadMonitorDialog items={inProgress} cancel={cancelDownload} />
       )}
     </DownloadContext.Provider>
