@@ -42,7 +42,7 @@ interface SuperProps<RowData extends object> {
   setData: Function;
   data: RowData[];
   createModalSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
-  delete?: (id: number) => Promise<boolean>;
+  delete?: (id: number | string) => Promise<boolean>;
   hasAccess?: { create?: boolean; update?: boolean; remove?: boolean };
   urlQueryParams?: DecodedValueMap<UrlQueryParamsType>;
   setUrlQueryParams?: SetQuery<UrlQueryParamsType>;

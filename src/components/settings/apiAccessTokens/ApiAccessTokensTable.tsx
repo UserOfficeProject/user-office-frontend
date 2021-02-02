@@ -41,24 +41,24 @@ const ApiAccessTokensTable: React.FC = () => {
     />
   );
 
-  const deleteApiAccessToken = async (id: string) => {
-    // return await api('Api access token deleted successfully')
-    //   .deleteApiAccessToken({
-    //     id: id,
-    //   })
-    //   .then(resp => {
-    //     if (resp.deleteApiAccessToken.error) {
-    //       return false;
-    //     } else {
-    //       return true;
-    //     }
-    //   });
+  const deleteApiAccessToken = async (id: string | number) => {
+    return await api('Api access token deleted successfully')
+      .deleteApiAccessToken({
+        accessTokenId: id as string,
+      })
+      .then(resp => {
+        if (resp.deleteApiAccessToken.error) {
+          return false;
+        } else {
+          return true;
+        }
+      });
   };
 
   return (
     <div data-cy="api-access-tokens-table">
       <SuperMaterialTable
-        // delete={deleteApiAccessToken}
+        delete={deleteApiAccessToken}
         createModal={createModal}
         createModalSize="lg"
         hasAccess={{

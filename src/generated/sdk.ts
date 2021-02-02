@@ -167,7 +167,7 @@ export type CheckExternalTokenWrap = {
 
 export type CreateApiAccessTokenInput = {
   name: Scalars['String'];
-  permissions: Scalars['String'];
+  accessPermissions: Scalars['String'];
 };
 
 export type CreateCallInput = {
@@ -230,6 +230,10 @@ export type DateConfig = {
   defaultDate: Maybe<Scalars['String']>;
 };
 
+
+export type DeleteApiAccessTokenInput = {
+  accessTokenId: Scalars['String'];
+};
 
 export type DeleteProposalWorkflowStatusInput = {
   proposalStatusId: Scalars['Int'];
@@ -445,6 +449,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   createApiAccessToken: ApiAccessTokenResponseWrap;
   createInstitution: InstitutionResponseWrap;
+  deleteApiAccessToken: SuccessResponseWrap;
+  updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateInstitution: InstitutionResponseWrap;
   createCall: CallResponseWrap;
   updateCall: CallResponseWrap;
@@ -548,6 +554,16 @@ export type MutationCreateApiAccessTokenArgs = {
 export type MutationCreateInstitutionArgs = {
   name: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+
+export type MutationDeleteApiAccessTokenArgs = {
+  deleteApiAccessTokenInput: DeleteApiAccessTokenInput;
+};
+
+
+export type MutationUpdateApiAccessTokenArgs = {
+  updateApiAccessTokenInput: UpdateApiAccessTokenInput;
 };
 
 
@@ -2065,6 +2081,12 @@ export type UpdateAnswerResponseWrap = {
   questionId: Maybe<Scalars['String']>;
 };
 
+export type UpdateApiAccessTokenInput = {
+  accessTokenId: Scalars['String'];
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+};
+
 export type UpdateCallInput = {
   id: Scalars['Int'];
   shortCode: Scalars['String'];
@@ -2578,6 +2600,19 @@ export type CreateInstitutionMutation = (
   ) }
 );
 
+export type DeleteApiAccessTokenMutationVariables = Exact<{
+  accessTokenId: Scalars['String'];
+}>;
+
+
+export type DeleteApiAccessTokenMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteApiAccessToken: (
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+  ) }
+);
+
 export type DeleteInstitutionMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -2665,6 +2700,25 @@ export type SetPageContentMutation = (
     & { page: Maybe<(
       { __typename?: 'Page' }
       & Pick<Page, 'id' | 'content'>
+    )> }
+  ) }
+);
+
+export type UpdateApiAccessTokenMutationVariables = Exact<{
+  accessTokenId: Scalars['String'];
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+}>;
+
+
+export type UpdateApiAccessTokenMutation = (
+  { __typename?: 'Mutation' }
+  & { updateApiAccessToken: (
+    { __typename?: 'ApiAccessTokenResponseWrap' }
+    & Pick<ApiAccessTokenResponseWrap, 'error'>
+    & { apiAccessToken: Maybe<(
+      { __typename?: 'PermissionsWithAccessToken' }
+      & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
     )> }
   ) }
 );
@@ -5754,7 +5808,7 @@ export const AddClientLogDocument = gql`
     `;
 export const CreateApiAccessTokenDocument = gql`
     mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
-  createApiAccessToken(createApiAccessTokenInput: {name: $name, permissions: $accessPermissions}) {
+  createApiAccessToken(createApiAccessTokenInput: {name: $name, accessPermissions: $accessPermissions}) {
     error
     apiAccessToken {
       id
@@ -5774,6 +5828,14 @@ export const CreateInstitutionDocument = gql`
       verified
     }
     error
+  }
+}
+    `;
+export const DeleteApiAccessTokenDocument = gql`
+    mutation deleteApiAccessToken($accessTokenId: String!) {
+  deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
+    error
+    isSuccess
   }
 }
     `;
@@ -5837,6 +5899,19 @@ export const SetPageContentDocument = gql`
       content
     }
     error
+  }
+}
+    `;
+export const UpdateApiAccessTokenDocument = gql`
+    mutation updateApiAccessToken($accessTokenId: String!, $name: String!, $accessPermissions: String!) {
+  updateApiAccessToken(updateApiAccessTokenInput: {accessTokenId: $accessTokenId, name: $name, accessPermissions: $accessPermissions}) {
+    error
+    apiAccessToken {
+      id
+      name
+      accessToken
+      accessPermissions
+    }
   }
 }
     `;
@@ -7319,6 +7394,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
       return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
     },
+    deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
+      return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
+    },
     deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
       return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
     },
@@ -7339,6 +7417,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
       return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
+    },
+    updateApiAccessToken(variables: UpdateApiAccessTokenMutationVariables): Promise<UpdateApiAccessTokenMutation> {
+      return withWrapper(() => client.request<UpdateApiAccessTokenMutation>(print(UpdateApiAccessTokenDocument), variables));
     },
     updateInstitution(variables: UpdateInstitutionMutationVariables): Promise<UpdateInstitutionMutation> {
       return withWrapper(() => client.request<UpdateInstitutionMutation>(print(UpdateInstitutionDocument), variables));

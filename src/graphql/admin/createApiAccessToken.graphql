@@ -1,6 +1,9 @@
 mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
   createApiAccessToken(
-    createApiAccessTokenInput: { name: $name, permissions: $accessPermissions }
+    createApiAccessTokenInput: {
+      name: $name
+      accessPermissions: $accessPermissions
+    }
   ) {
     error
     apiAccessToken {

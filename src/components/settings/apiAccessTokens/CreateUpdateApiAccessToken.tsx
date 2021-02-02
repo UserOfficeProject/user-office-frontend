@@ -1,7 +1,7 @@
-// import {
-//   createApiAccessTokenValidationSchema,
-//   updateApiAccessTokenValidationSchema,
-// } from '@esss-swap/duo-validation/lib/Instrument';
+import {
+  createApiAccessTokenValidationSchema,
+  updateApiAccessTokenValidationSchema,
+} from '@esss-swap/duo-validation/lib/Admin';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -11,12 +11,19 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
+import {
+  ErrorMessage,
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Form,
+  Formik,
+} from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TitledContainer from 'components/common/TitledContainer';
+import SimpleTabs from 'components/common/TabPanel';
 import UOLoader from 'components/common/UOLoader';
 import { PermissionsWithAccessToken } from 'generated/sdk';
 import { useQueriesAndMutationsData } from 'hooks/admin/useQueriesAndMutationsData';
@@ -26,8 +33,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     minHeight: '350px',
     marginTop: '10px',
-    maxHeight: '500px',
+    maxHeight: '550px',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -40,11 +48,43 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 0, 2),
   },
   darkerDisabledTextField: {
-    '& .MuiInputBase-root.Mui-disabled': {
-      color: 'rgba(0, 0, 0, 0.7) !important',
+    '& input': {
+      paddingRight: '2px',
+      color: 'rgba(0, 0, 0, 0.7)',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+  },
+  tabsContainer: {
+    '& > div': {
+      margin: 0,
+      padding: '10px 0',
+      boxShadow: 'none',
+
+      '& [role="tabpanel"] > div': {
+        padding: '0 5px',
+      },
+    },
+  },
+  checkBoxLabelText: {
+    '& label': {
+      width: '100%',
+
+      '& .MuiFormControlLabel-label': {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+      },
     },
   },
 }));
+
+type FormPermissionsWithAccessToken = {
+  name: string;
+  accessPermissions: string[];
+  accessToken: string;
+};
 
 type CreateUpdateApiAccessTokenProps = {
   close: (apiAccessTokenAdded: PermissionsWithAccessToken | null) => void;
@@ -63,17 +103,14 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
   } = useQueriesAndMutationsData();
 
   const normalizeAccessPermissions = (data: string | undefined) => {
-    const parsedPermissions = JSON.parse(data || '');
-    const permissionsArray = [];
+    const permissionsArray: string[] = [];
 
-    for (const key in parsedPermissions) {
-      if (Object.prototype.hasOwnProperty.call(parsedPermissions, key)) {
-        const element = parsedPermissions[key];
+    if (data) {
+      const parsedPermissions = JSON.parse(data);
 
-        for (const itemKey in element) {
-          if (Object.prototype.hasOwnProperty.call(element, itemKey)) {
-            permissionsArray.push(`${key}.${itemKey}`);
-          }
+      for (const key in parsedPermissions) {
+        if (Object.prototype.hasOwnProperty.call(parsedPermissions, key)) {
+          permissionsArray.push(key);
         }
       }
     }
@@ -81,7 +118,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
     return permissionsArray;
   };
 
-  const initialValues = apiAccessToken
+  const initialValues: FormPermissionsWithAccessToken = apiAccessToken
     ? {
         ...apiAccessToken,
         accessPermissions: normalizeAccessPermissions(
@@ -90,51 +127,104 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
       }
     : {
         name: '',
-        accessPermissions: [''],
+        accessPermissions: normalizeAccessPermissions(''),
         accessToken: '',
       };
+
+  const allAccessPermissions = (
+    items: string[],
+    title: string,
+    formValues: FormPermissionsWithAccessToken,
+    fieldArrayHelpers: FieldArrayRenderProps
+  ) => {
+    return (
+      <Grid className={classes.container} container spacing={1}>
+        {items.map((item, index) => (
+          <Grid
+            item
+            md={6}
+            xs={12}
+            key={index}
+            className={classes.checkBoxLabelText}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id={item}
+                  name="accessPermissions"
+                  value={item}
+                  checked={formValues.accessPermissions.includes(item)}
+                  color="primary"
+                  data-cy={`permission-${title.toLowerCase()}`}
+                  onChange={e => {
+                    if (e.target.checked) fieldArrayHelpers.push(item);
+                    else {
+                      const idx = formValues.accessPermissions.indexOf(item);
+                      fieldArrayHelpers.remove(idx);
+                    }
+                  }}
+                  inputProps={{
+                    'aria-label': 'primary checkbox',
+                  }}
+                />
+              }
+              label={item}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={async (values): Promise<void> => {
+      onSubmit={async (values, formikHelpers): Promise<void> => {
         const accessPermissions = {};
         values.accessPermissions.forEach(element => {
-          //@ts-expect-error
-          accessPermissions[element] = true;
+          if (element) {
+            //@ts-expect-error
+            accessPermissions[element] = true;
+          }
         });
 
         if (apiAccessToken) {
-          // const data = await api(
-          //   'Api access token updated successfully!'
-          // ).updateApiAccessToken({
-          //   id: apiAccessToken.id,
-          //   ...values,
-          // });
-          // if (data.updateApiAccessToken.error) {
-          //   close(null);
-          // } else if (data.updateApiAccessToken.apiAccessToken) {
-          //   close(data.updateApiAccessToken.apiAccessToken);
-          // }
+          const data = await api(
+            'Api access token updated successfully!'
+          ).updateApiAccessToken({
+            accessTokenId: apiAccessToken.id,
+            name: values.name,
+            accessPermissions: JSON.stringify(accessPermissions),
+          });
+          if (data.updateApiAccessToken.error) {
+            close(null);
+          } else if (data.updateApiAccessToken.apiAccessToken) {
+            close(data.updateApiAccessToken.apiAccessToken);
+          }
         } else {
           const data = await api(
             'Api access token created successfully!'
           ).createApiAccessToken({
             ...values,
-            accessPermissions: JSON.stringify(values.accessPermissions),
+            accessPermissions: JSON.stringify(accessPermissions),
           });
-          if (data.createApiAccessToken.error) {
-            close(null);
-          } else if (data.createApiAccessToken.apiAccessToken) {
-            close(data.createApiAccessToken.apiAccessToken);
+
+          if (
+            !data.createApiAccessToken.error &&
+            data.createApiAccessToken.apiAccessToken
+          ) {
+            formikHelpers.setFieldValue(
+              'accessToken',
+              data.createApiAccessToken.apiAccessToken.accessToken
+            );
           }
         }
       }}
-      // validationSchema={
-      //   apiAccessToken
-      //     ? updateApiAccessTokenValidationSchema
-      //     : createApiAccessTokenValidationSchema
-      // }
+      validationSchema={
+        apiAccessToken
+          ? updateApiAccessTokenValidationSchema
+          : createApiAccessTokenValidationSchema
+      }
     >
       {({ isSubmitting, values }) => (
         <Form>
@@ -154,93 +244,31 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
             required
           />
 
-          <Grid container spacing={1} className={classes.container}>
-            {loadingQueriesAndMutations ? (
-              <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
-            ) : (
-              <FieldArray
-                name="accessPermissions"
-                render={arrayHelpers => (
-                  <>
-                    <Grid item sm={5}>
-                      <TitledContainer label="Queries">
-                        {queriesAndMutations.queries.map((query, index) => (
-                          <Grid item sm={12} key={index}>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  id={query}
-                                  name="accessPermissions"
-                                  value={query}
-                                  checked={values.accessPermissions.includes(
-                                    query
-                                  )}
-                                  color="primary"
-                                  data-cy="permission-queries"
-                                  onChange={e => {
-                                    if (e.target.checked)
-                                      arrayHelpers.push(query);
-                                    else {
-                                      const idx = values.accessPermissions.indexOf(
-                                        query
-                                      );
-                                      arrayHelpers.remove(idx);
-                                    }
-                                  }}
-                                  inputProps={{
-                                    'aria-label': 'primary checkbox',
-                                  }}
-                                />
-                              }
-                              label={query}
-                            />
-                          </Grid>
-                        ))}
-                      </TitledContainer>
-                    </Grid>
-                    <Grid item sm={7}>
-                      <TitledContainer label="Mutations">
-                        {queriesAndMutations.mutations.map(
-                          (mutation, index) => (
-                            <Grid item sm={12} key={index}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    id={mutation}
-                                    name="accessPermissions"
-                                    value={mutation}
-                                    checked={values.accessPermissions.includes(
-                                      mutation
-                                    )}
-                                    color="primary"
-                                    data-cy="permission-queries"
-                                    onChange={e => {
-                                      if (e.target.checked)
-                                        arrayHelpers.push(mutation);
-                                      else {
-                                        const idx = values.accessPermissions.indexOf(
-                                          mutation
-                                        );
-                                        arrayHelpers.remove(idx);
-                                      }
-                                    }}
-                                    inputProps={{
-                                      'aria-label': 'primary checkbox',
-                                    }}
-                                  />
-                                }
-                                label={mutation}
-                              />
-                            </Grid>
-                          )
-                        )}
-                      </TitledContainer>
-                    </Grid>
-                  </>
-                )}
-              />
-            )}
-          </Grid>
+          {loadingQueriesAndMutations ? (
+            <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
+          ) : (
+            <FieldArray
+              name="accessPermissions"
+              render={arrayHelpers => (
+                <div className={classes.tabsContainer}>
+                  <SimpleTabs tabNames={['Queries', 'Mutations']}>
+                    {allAccessPermissions(
+                      queriesAndMutations.queries,
+                      'Queries',
+                      values,
+                      arrayHelpers
+                    )}
+                    {allAccessPermissions(
+                      queriesAndMutations.mutations,
+                      'Mutations',
+                      values,
+                      arrayHelpers
+                    )}
+                  </SimpleTabs>
+                </div>
+              )}
+            />
+          )}
           <Field
             name="accessToken"
             id="accessToken"
@@ -249,11 +277,9 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
             component={TextField}
             margin="normal"
             fullWidth
-            className={
-              !!initialValues.accessToken ? classes.darkerDisabledTextField : ''
-            }
+            className={classes.darkerDisabledTextField}
             InputProps={{
-              endAdornment: (
+              endAdornment: values.accessToken && (
                 <>
                   <Tooltip title="Copy">
                     <IconButton
@@ -269,7 +295,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
               ),
             }}
             data-cy="accessToken"
-            disabled={!!initialValues.accessToken || isExecutingCall}
+            disabled
           />
           <Grid
             container
@@ -280,7 +306,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
               <ErrorMessage
                 className={classes.error}
                 component="span"
-                name="selectedNextStatusEvents"
+                name="accessPermissions"
               />
 
               <Button
