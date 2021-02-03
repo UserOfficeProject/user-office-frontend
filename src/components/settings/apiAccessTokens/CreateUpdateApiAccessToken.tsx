@@ -121,6 +121,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
   const initialValues: FormPermissionsWithAccessToken = apiAccessToken
     ? {
         ...apiAccessToken,
+        accessToken: `Bearer ${apiAccessToken.accessToken}`,
         accessPermissions: normalizeAccessPermissions(
           apiAccessToken?.accessPermissions
         ),
@@ -215,7 +216,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
           ) {
             formikHelpers.setFieldValue(
               'accessToken',
-              data.createApiAccessToken.apiAccessToken.accessToken
+              `Bearer ${data.createApiAccessToken.apiAccessToken.accessToken}`
             );
           }
         }
