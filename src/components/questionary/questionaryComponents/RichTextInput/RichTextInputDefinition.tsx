@@ -1,7 +1,6 @@
 import TextFormatIcon from '@material-ui/icons/TextFormat';
 import React from 'react';
 
-import defaultRenderer from 'components/questionary/DefaultQuestionRenderer';
 import { QuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import { DataType } from 'generated/sdk';
 
@@ -9,6 +8,7 @@ import { createRichTextInputValidationSchema } from './createRichTextInputValida
 import { QuestionaryComponentRichTextInput } from './QuestionaryComponentRichTextInput';
 import { QuestionRichTextInputForm } from './QuestionRichTextInputForm';
 import { QuestionTemplateRelationRichTextInputForm } from './QuestionTemplateRelationRichTextInputForm';
+import richTextInputRenderer from './RichTextInputRenderer';
 
 export const richTextInputDefinition: QuestionaryComponentDefinition = {
   dataType: DataType.RICH_TEXT_INPUT,
@@ -19,7 +19,7 @@ export const richTextInputDefinition: QuestionaryComponentDefinition = {
   readonly: false,
   creatable: true,
   icon: <TextFormatIcon />,
-  renderers: defaultRenderer,
+  renderers: richTextInputRenderer,
   createYupValidationSchema: createRichTextInputValidationSchema,
   getYupInitialValue: ({ answer }) => answer.value || '',
 };

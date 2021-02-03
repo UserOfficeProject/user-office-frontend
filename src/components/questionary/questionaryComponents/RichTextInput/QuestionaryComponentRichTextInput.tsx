@@ -44,6 +44,10 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
         init={{
           skin: false,
           content_css: false,
+          /**
+           * Note:  if you add new styling options please make sure the HTML sanitizer rules
+           *        on the BE is in sync, otherwise the result will be filtered
+           */
           plugins: ['preview advlist lists charmap'],
           toolbar:
             'undo redo | bold italic underline strikethrough superscript subscript | ' +
