@@ -18,7 +18,10 @@ const RichTextInputAnswerRenderer = ({ answer }: { answer: Answer }) => {
 
   return (
     <span>
-      <IconButton onClick={handleClickOpen}>
+      <IconButton
+        onClick={handleClickOpen}
+        data-cy={`${answer.question.proposalQuestionId}_open`}
+      >
         <VisibilityIcon />
       </IconButton>
       <Dialog fullWidth maxWidth="lg" open={open} onClose={handleClose}>

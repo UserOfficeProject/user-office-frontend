@@ -40,6 +40,7 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
     >
       <FormLabel className={classes.label}>{question}</FormLabel>
       <Editor
+        id={proposalQuestionId}
         initialValue={initialValue}
         init={{
           skin: false,
@@ -63,7 +64,6 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
         onBlur={() => {
           onComplete(stateValue);
         }}
-        data-cy="richTextInput"
       />
       {isError && <FormHelperText>{fieldError}</FormHelperText>}
     </FormControl>
