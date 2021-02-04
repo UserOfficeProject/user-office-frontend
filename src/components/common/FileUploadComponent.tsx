@@ -133,7 +133,7 @@ export function FileEntry(props: {
   };
 
   return (
-    <ListItemWithWiderSecondaryAction button>
+    <ListItemWithWiderSecondaryAction button ContainerComponent="div">
       <ListItemAvatar>
         <Avatar className={classes.avatar}>
           <AttachFileIcon />
@@ -237,7 +237,7 @@ export function NewFileEntry(props: {
       return (
         <>
           <ListItemAvatar>
-            <UOLoader variant="static" value={progress} />
+            <UOLoader variant="determinate" value={progress} />
           </ListItemAvatar>
           <ListItemText
             primary="Uploading..."
