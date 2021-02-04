@@ -181,10 +181,10 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={async (values, formikHelpers): Promise<void> => {
-        const accessPermissions = {};
+        const accessPermissions: { [key: string]: boolean } = {};
+
         values.accessPermissions.forEach(element => {
           if (element) {
-            //@ts-expect-error
             accessPermissions[element] = true;
           }
         });
