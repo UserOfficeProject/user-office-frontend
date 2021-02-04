@@ -488,6 +488,7 @@ context('Settings tests', () => {
     });
 
     let removedAccessToken: string;
+    const isDevEnv = process.env.NODE_ENV === 'development';
 
     it('User Officer should be able to create api access token', () => {
       const name = faker.lorem.words(2);
@@ -526,7 +527,7 @@ context('Settings tests', () => {
         .then(accessToken => {
           cy.request({
             method: 'POST',
-            url: 'http://localhost:4000/graphql',
+            url: isDevEnv ? 'http://localhost:4000/graphql' : '/graphql',
             body: {
               query: 'query { proposalsView(filter: {}) { id title shortCode}}',
             },
@@ -572,7 +573,7 @@ context('Settings tests', () => {
           removedAccessToken = accessToken as string;
           cy.request({
             method: 'POST',
-            url: 'http://localhost:4000/graphql',
+            url: isDevEnv ? 'http://localhost:4000/graphql' : '/graphql',
             body: {
               query: 'query { proposalsView(filter: {}) { id title shortCode}}',
             },
@@ -605,7 +606,7 @@ context('Settings tests', () => {
 
       cy.request({
         method: 'POST',
-        url: 'http://localhost:4000/graphql',
+        url: isDevEnv ? 'http://localhost:4000/graphql' : '/graphql',
         body: {
           query:
             'query { proposals(filter: {}) { totalCount proposals { id title shortCode }}}',
