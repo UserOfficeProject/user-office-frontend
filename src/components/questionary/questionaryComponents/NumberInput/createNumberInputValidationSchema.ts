@@ -8,24 +8,24 @@ import { IntervalPropertyId } from '../Interval/intervalUnits';
 export const createNumberInputValidationSchema: QuestionaryComponentDefinition['createYupValidationSchema'] = answer => {
   const config = answer.config as NumberInputConfig;
 
-  let value = Yup.number().transform(value =>
+  let scheme = Yup.number().transform(value =>
     isNaN(value) ? undefined : value
   );
 
   if (config.required) {
-    value = value.required('Please fill in');
+    scheme = scheme.required('Please fill in');
   }
 
   if (config.numberValueConstraint === NumberValueConstraint.ONLY_NEGATIVE) {
-    value = value.negative('Value must be a negative number');
+    scheme = scheme.negative('Value must be a negative number');
   }
 
   if (config.numberValueConstraint === NumberValueConstraint.ONLY_POSITIVE) {
-    value = value.positive('Value must be a positive number');
+    scheme = scheme.positive('Value must be a positive number');
   }
 
   return Yup.object().shape({
-    value,
+    value: scheme,
     unit:
       config.property !== IntervalPropertyId.UNITLESS
         ? Yup.string().required('Please specify unit')
