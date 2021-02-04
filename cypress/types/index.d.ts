@@ -79,7 +79,8 @@ declare global {
        */
       createProposal: (
         proposalTitle?: string,
-        proposalAbstract?: string
+        proposalAbstract?: string,
+        call?: string
       ) => void;
       /**
        * Moves the element in the given direction with given length.
@@ -135,7 +136,6 @@ declare global {
         minEntries?: string,
         maxEntries?: string
       ) => void;
-
 
       /**
        * Lets you change the logged in user's active role
