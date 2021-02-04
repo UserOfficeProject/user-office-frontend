@@ -41,7 +41,9 @@ function DownloadableFileList(props: { fileIds: string[] }) {
 function FilesAnswerRenderer(props: { answer: Answer }) {
   return (
     <div>
-      <DownloadableFileList fileIds={props.answer.value} />
+      <DownloadableFileList
+        fileIds={props.answer.value.map((fileItem: any) => fileItem.id)}
+      />
     </div>
   );
 }

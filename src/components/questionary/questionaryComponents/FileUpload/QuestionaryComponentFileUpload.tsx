@@ -22,7 +22,9 @@ export function QuestionaryComponentFileUpload(
   } = answer;
   const isError = errors[proposalQuestionId] ? true : false;
   const config = answer.config as FileUploadConfig;
-  const [stateValue, setStateValue] = useState<string[]>(value);
+  const [stateValue, setStateValue] = useState<
+    { id: string; caption?: string | null }[]
+  >(value);
 
   useEffect(() => {
     setStateValue(answer.value);
@@ -43,8 +45,14 @@ export function QuestionaryComponentFileUpload(
         maxFiles={config.max_files}
         id={answer.question.proposalQuestionId}
         fileType={config.file_type ? config.file_type.join(',') : ''}
-        onChange={(fileMetaDataList: FileMetaData[]) => {
-          const newStateValue = fileMetaDataList.map(file => file.fileId);
+        onChange={(
+          fileMetaDataList: { id: string; caption?: string | null }[]
+        ) => {
+          const newStateValue = fileMetaDataList.map(file => ({
+            id: file.id,
+            caption: file.caption,
+          }));
+
           setStateValue(newStateValue);
           onComplete(newStateValue);
         }}
