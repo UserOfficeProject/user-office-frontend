@@ -17,13 +17,24 @@ export function useQueriesAndMutationsData(): {
   const api = useDataApi();
 
   useEffect(() => {
+    let unmounted = false;
+
     setLoadingQueriesAndMutations(true);
     api()
       .getAllQueriesAndMutations()
       .then(data => {
+        if (unmounted) {
+          return;
+        }
+
         setQueriesAndMutations(data.queriesAndMutations as QueriesAndMutations);
         setLoadingQueriesAndMutations(false);
       });
+
+    return () => {
+      // used to avoid unmounted component state update error
+      unmounted = true;
+    };
   }, [api]);
 
   return { loadingQueriesAndMutations, queriesAndMutations };

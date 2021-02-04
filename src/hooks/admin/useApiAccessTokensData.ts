@@ -26,10 +26,16 @@ export function useApiAccessTokensData(): {
   };
 
   useEffect(() => {
+    let unmounted = false;
+
     setLoadingApiAccessTokens(true);
     api()
       .getAllApiAccessTokensAndPermissions()
       .then(data => {
+        if (unmounted) {
+          return;
+        }
+
         if (data.allAccessTokensAndPermissions) {
           setApiAccessTokens(
             data.allAccessTokensAndPermissions as PermissionsWithAccessToken[]
@@ -37,6 +43,11 @@ export function useApiAccessTokensData(): {
         }
         setLoadingApiAccessTokens(false);
       });
+
+    return () => {
+      // used to avoid unmounted component state update error
+      unmounted = true;
+    };
   }, [api]);
 
   return {

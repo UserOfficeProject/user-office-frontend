@@ -30,15 +30,13 @@ export interface TableRowData {
 }
 function QuestionaryDetails(
   props: {
-    questionaryId: number | undefined;
+    questionaryId: number;
     additionalDetails?: Array<TableRowData>;
     title?: string;
   } & TableProps<any>
 ) {
   const { questionaryId, additionalDetails, title, ...restProps } = props;
-  const { questionary, loadingQuestionary } = useQuestionary(
-    questionaryId as number
-  );
+  const { questionary, loadingQuestionary } = useQuestionary(questionaryId);
   const classes = useStyles();
 
   if (loadingQuestionary) {

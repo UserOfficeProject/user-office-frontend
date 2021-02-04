@@ -32,7 +32,7 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 const useStyles = makeStyles(theme => ({
   container: {
     minHeight: '350px',
-    marginTop: '10px',
+    marginTop: theme.spacing(1),
     maxHeight: '550px',
     overflowY: 'auto',
     overflowX: 'hidden',
@@ -42,14 +42,14 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     color: theme.palette.error.main,
-    marginRight: '10px',
+    marginRight: theme.spacing(1),
   },
   submitContainer: {
     margin: theme.spacing(2, 0, 2),
   },
   darkerDisabledTextField: {
     '& input': {
-      paddingRight: '2px',
+      paddingRight: theme.spacing(0.5),
       color: 'rgba(0, 0, 0, 0.7)',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
@@ -59,11 +59,11 @@ const useStyles = makeStyles(theme => ({
   tabsContainer: {
     '& > div': {
       margin: 0,
-      padding: '10px 0',
+      padding: theme.spacing(1, 0),
       boxShadow: 'none',
 
       '& [role="tabpanel"] > div': {
-        padding: '0 5px',
+        padding: theme.spacing(0, 0.5),
       },
     },
   },
@@ -108,11 +108,9 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
     if (data) {
       const parsedPermissions = JSON.parse(data);
 
-      for (const key in parsedPermissions) {
-        if (Object.prototype.hasOwnProperty.call(parsedPermissions, key)) {
-          permissionsArray.push(key);
-        }
-      }
+      Object.keys(parsedPermissions).forEach(key => {
+        permissionsArray.push(key);
+      });
     }
 
     return permissionsArray;
