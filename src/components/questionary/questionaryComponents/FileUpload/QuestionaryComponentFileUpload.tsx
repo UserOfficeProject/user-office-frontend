@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { FileUploadComponent } from 'components/common/FileUploadComponent';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { FileUploadConfig } from 'generated/sdk';
-import { FileMetaData } from 'models/FileUpload';
 
 export function QuestionaryComponentFileUpload(
   props: BasicComponentProps & { files?: string[] }
