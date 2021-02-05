@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  TextField,
   DialogActions,
   Button,
 } from '@material-ui/core';
@@ -16,13 +15,25 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
 import clsx from 'clsx';
+import { Formik, Form, Field } from 'formik';
+import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import * as Yup from 'yup';
 
 import UOLoader from 'components/common/UOLoader';
 import { TechnicalReview } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+
+const updateTimeAllocationValidationSchema = Yup.object({
+  sepId: Yup.number().required(),
+  proposalId: Yup.number().required(),
+  sepTimeAllocation: Yup.number()
+    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
+    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
+    .nullable(),
+});
 
 type SEPProposalProps = {
   sepId: number;
@@ -62,21 +73,11 @@ const OverwriteTimeAllocationDialog = ({
   timeAllocation: number | null;
   onClose: (newValue?: number | null) => void;
 } & SEPProposalProps) => {
-  const [overwriteTimeAllocation, setOverwriteTimeAllocation] = useState<
-    number | null
-  >(timeAllocation);
   const { api, isExecutingCall } = useDataApiWithFeedback();
 
-  const handleSubmit = async () => {
-    const result = await api('Updated').updateSEPTimeAllocation({
-      ...sepProposalArgs,
-      sepTimeAllocation: overwriteTimeAllocation,
-    });
-    if (result.updateSEPTimeAllocation.error) {
-      return;
-    }
-
-    onClose(overwriteTimeAllocation);
+  const initialValues = {
+    ...sepProposalArgs,
+    sepTimeAllocation: timeAllocation,
   };
 
   return (
@@ -91,43 +92,63 @@ const OverwriteTimeAllocationDialog = ({
       }}
       fullWidth
     >
-      <DialogTitle>Overwrite allocated time</DialogTitle>
-      <DialogContent>
-        <TextField
-          margin="dense"
-          id="name"
-          type="number"
-          name="timeAllocation"
-          label="Time Allocation(Days)"
-          value={overwriteTimeAllocation ?? ''}
-          onChange={e => {
-            setOverwriteTimeAllocation(
-              e.target.value === '' ? null : +e.target.value
-            );
-          }}
-          disabled={isExecutingCall}
-          fullWidth
-          data-cy="timeAllocation"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => onClose()}
-          color="primary"
-          disabled={isExecutingCall}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          color="primary"
-          variant="contained"
-          disabled={isExecutingCall}
-          data-cy="save-time-allocation"
-        >
-          {isExecutingCall ? <UOLoader buttonSized /> : 'Save'}
-        </Button>
-      </DialogActions>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={async values => {
+          const result = await api('Updated').updateSEPTimeAllocation(values);
+
+          if (result.updateSEPTimeAllocation.error) {
+            return;
+          }
+
+          onClose(values.sepTimeAllocation);
+        }}
+        validationSchema={updateTimeAllocationValidationSchema}
+      >
+        {({ isSubmitting, values, setFieldValue }) => (
+          <Form>
+            <DialogTitle>Overwrite allocated time</DialogTitle>
+            <DialogContent>
+              <Field
+                component={TextField}
+                margin="dense"
+                id="sepTimeAllocation"
+                type="number"
+                name="sepTimeAllocation"
+                label="Time Allocation(Days)"
+                value={values.sepTimeAllocation ?? ''}
+                onChange={(e: any) => {
+                  setFieldValue(
+                    'sepTimeAllocation',
+                    e.target.value === '' ? null : +e.target.value
+                  );
+                }}
+                disabled={isSubmitting}
+                fullWidth
+                data-cy="sepTimeAllocation"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => onClose()}
+                color="primary"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                disabled={isSubmitting}
+                data-cy="save-time-allocation"
+              >
+                {isSubmitting ? <UOLoader buttonSized /> : 'Save'}
+              </Button>
+            </DialogActions>
+          </Form>
+        )}
+      </Formik>
     </Dialog>
   );
 };
