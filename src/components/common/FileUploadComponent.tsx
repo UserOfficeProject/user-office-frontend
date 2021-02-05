@@ -14,6 +14,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ClosedCaption from '@material-ui/icons/ClosedCaption';
+import ClosedCaptionOutlinedIcon from '@material-ui/icons/ClosedCaptionOutlined';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ErrorIcon from '@material-ui/icons/Error';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -30,7 +31,7 @@ export function FileUploadComponent(props: {
   id?: string;
   fileType?: string;
   value: { id: string; caption?: string | null }[];
-  onChange: (files: { id: string; caption?: string | null }[]) => any;
+  onChange: (files: { id: string; caption?: string | null }[]) => void;
 }) {
   const fileIds = props.value.map(fileItem => fileItem.id);
   const { files, setFiles } = useFileMetadata(fileIds);
@@ -52,6 +53,9 @@ export function FileUploadComponent(props: {
     props.onChange(
       newValue.map(item => ({
         id: item.fileId,
+        caption: props.value.find(
+          fileAnswerItem => fileAnswerItem.id === item.fileId
+        )?.caption,
       }))
     );
   };
@@ -64,20 +68,14 @@ export function FileUploadComponent(props: {
     props.onChange(
       newValue.map(item => ({
         id: item.fileId,
+        caption: props.value.find(
+          fileAnswerItem => fileAnswerItem.id === item.fileId
+        )?.caption,
       }))
     );
   };
 
   const onImageCaptionAdded = (fileId: string, caption: string) => {
-    // const newValue = files.map(file => {
-    //   if (file.fileId === fileId) {
-    //     return { ...file, caption };
-    //   } else {
-    //     return file;
-    //   }
-    // });
-
-    // setFiles(newValue);
     props.onChange(
       props.value.map(item => {
         if (item.id === fileId) {
@@ -146,7 +144,7 @@ export function FileEntry(props: {
   const classes = makeStyles(theme => ({
     fileListWrapper: {
       marginTop: theme.spacing(2),
-      marginBottim: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
     avatar: {
       backgroundColor: theme.palette.primary.main,
@@ -189,8 +187,15 @@ export function FileEntry(props: {
         <ListItemSecondaryAction>
           {props.metaData.mimeType.startsWith('image') && (
             <Tooltip title="Add image caption">
-              <IconButton edge="end" onClick={(): void => setShowCaption(true)}>
-                <ClosedCaption />
+              <IconButton
+                edge="end"
+                onClick={(): void => setShowCaption(!showCaption)}
+              >
+                {showCaption || props.caption ? (
+                  <ClosedCaption />
+                ) : (
+                  <ClosedCaptionOutlinedIcon />
+                )}
               </IconButton>
             </Tooltip>
           )}
@@ -228,12 +233,12 @@ export function FileEntry(props: {
 
 export function NewFileEntry(props: {
   filetype: string | undefined;
-  onUploadComplete: (data: FileMetaData) => any;
+  onUploadComplete: (data: FileMetaData) => void;
 }) {
   const classes = makeStyles(theme => ({
     fileListWrapper: {
       marginTop: theme.spacing(2),
-      marginBottim: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
     addIcon: {
       marginRight: theme.spacing(1),
