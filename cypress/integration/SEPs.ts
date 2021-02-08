@@ -546,12 +546,14 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[role="dialog"]')
       .contains(sepMembers.reviewer.surname)
       .parent()
-      .find('[title="Add reviewer"]')
+      .find('input[type="checkbox"]')
       .click();
+    cy.contains('1 user(s) selected');
+    cy.contains('Update').click();
 
     cy.notification({
       variant: 'success',
-      text: 'assigned',
+      text: 'Members assigned',
     });
 
     cy.get('[role="dialog"]').should('not.exist');
@@ -592,12 +594,14 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[role="dialog"]')
       .contains(sepMembers.chair.surname)
       .parent()
-      .find('[title="Add reviewer"]')
+      .find('input[type="checkbox"]')
       .click();
+    cy.contains('1 user(s) selected');
+    cy.contains('Update').click();
 
     cy.notification({
       variant: 'success',
-      text: 'assigned',
+      text: 'Members assigned',
     });
 
     cy.get('[role="dialog"]').should('not.exist');
@@ -629,12 +633,14 @@ context('Scientific evaluation panel tests', () => {
     cy.get('[role="dialog"]')
       .contains(sepMembers.secretary.surname)
       .parent()
-      .find('[title="Add reviewer"]')
+      .find('input[type="checkbox"]')
       .click();
+    cy.contains('1 user(s) selected');
+    cy.contains('Update').click();
 
     cy.notification({
       variant: 'success',
-      text: 'assigned',
+      text: 'Members assigned',
     });
 
     cy.get('[role="dialog"]').should('not.exist');
