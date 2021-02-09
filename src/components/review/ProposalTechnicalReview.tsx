@@ -2,9 +2,10 @@ import { proposalTechnicalReviewValidationSchema } from '@esss-swap/duo-validati
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
+import { Prompt } from 'react-router';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import {
@@ -18,6 +19,7 @@ export default function ProposalTechnicalReview(props: {
   data: CoreTechnicalReviewFragment | null | undefined;
   setReview: (data: CoreTechnicalReviewFragment) => void;
   id: number;
+  setFormDirty: (dirty: boolean) => void;
 }) {
   const { api } = useDataApiWithFeedback();
 
@@ -26,6 +28,39 @@ export default function ProposalTechnicalReview(props: {
     timeAllocation: props?.data?.timeAllocation || '',
     comment: props?.data?.comment || '',
     publicComment: props?.data?.publicComment || '',
+  };
+
+  const PromptIfDirty = () => {
+    const formik = useFormikContext();
+
+    return (
+      <Prompt
+        when={formik.dirty && formik.submitCount === 0}
+        message="Changes you recently made in this step will not be saved! Are you sure?"
+      />
+    );
+  };
+
+  const PreventTabChangeIfFormDirty = ({
+    setFormDirty,
+  }: {
+    setFormDirty: Function;
+  }) => {
+    const formik = useFormikContext();
+
+    useEffect(() => {
+      const isFormDirty =
+        formik.dirty &&
+        JSON.stringify(formik.values) !== JSON.stringify(initialValues);
+
+      if (isFormDirty) {
+        setFormDirty(true);
+      } else {
+        setFormDirty(false);
+      }
+    }, [formik.dirty, formik.values, setFormDirty]);
+
+    return null;
   };
 
   return (
@@ -59,6 +94,8 @@ export default function ProposalTechnicalReview(props: {
       >
         {({ isSubmitting }) => (
           <Form>
+            <PromptIfDirty />
+            <PreventTabChangeIfFormDirty setFormDirty={props.setFormDirty} />
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <FormikDropdown

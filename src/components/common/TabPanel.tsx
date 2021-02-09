@@ -42,12 +42,25 @@ function a11yProps(index: any) {
 export default function FullWidthTabs(props: {
   children: React.ReactNode[];
   tabNames: string[];
+  shouldPreventChange?: boolean;
+  setShouldPreventChange?: Function;
 }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    if (props.shouldPreventChange && value !== newValue) {
+      if (
+        window.confirm(
+          'Changes you recently made in this form will not be saved! Are you sure?'
+        )
+      ) {
+        setValue(newValue);
+        props.setShouldPreventChange?.(false);
+      }
+    } else {
+      setValue(newValue);
+    }
   };
 
   return (
