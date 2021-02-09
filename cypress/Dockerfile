@@ -6,7 +6,7 @@ COPY cypress.json .
 COPY package* ./
 COPY tsconfig.json .
 
-# force re-build 3
+# force re-build 4
 RUN npm ci --silent
 
 COPY . ./cypress
