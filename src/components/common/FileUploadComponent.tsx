@@ -7,7 +7,6 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import withStyles from '@material-ui/core/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -127,14 +126,6 @@ export function FileUploadComponent(props: {
   );
 }
 
-const ListItemWithWiderSecondaryAction = withStyles({
-  secondaryAction: {
-    paddingRight: 96,
-    width: 400,
-    maxWidth: 400,
-  },
-})(ListItem);
-
 export function FileEntry(props: {
   onDeleteClicked: Function;
   metaData: FileMetaData;
@@ -153,6 +144,12 @@ export function FileEntry(props: {
     downloadLink: {
       display: 'inline-flex',
       color: 'rgba(0, 0, 0, 0.54)',
+    },
+    fileText: {
+      maxWidth: '60%',
+    },
+    captionInput: {
+      marginLeft: theme.spacing(2),
     },
   }))();
 
@@ -174,54 +171,53 @@ export function FileEntry(props: {
 
   return (
     <>
-      <ListItemWithWiderSecondaryAction button ContainerComponent="div">
-        <ListItemAvatar>
-          <Avatar className={classes.avatar}>
-            <AttachFileIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText
-          primary={props.metaData.originalFileName}
-          secondary={formatBytes(props.metaData.sizeInBytes)}
-        />
-        <ListItemSecondaryAction>
-          {props.metaData.mimeType.startsWith('image') && (
-            <Tooltip title="Add image caption">
-              <IconButton
-                edge="end"
-                onClick={(): void => setShowCaption(!showCaption)}
-              >
-                {showCaption || props.caption ? (
-                  <ClosedCaption />
-                ) : (
-                  <ClosedCaptionOutlinedIcon />
-                )}
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Download file">
-            <IconButton edge="end">
-              <a href={downloadLink} className={classes.downloadLink} download>
-                <GetAppIcon />
-              </a>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Remove file">
-            <IconButton
-              edge="end"
-              onClick={(): void => {
-                props.onDeleteClicked(props.metaData);
-              }}
-            >
-              <DeleteOutlineIcon />
-            </IconButton>
-          </Tooltip>
-        </ListItemSecondaryAction>
-      </ListItemWithWiderSecondaryAction>
+      <ListItemAvatar>
+        <Avatar className={classes.avatar}>
+          <AttachFileIcon />
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={props.metaData.originalFileName}
+        secondary={formatBytes(props.metaData.sizeInBytes)}
+        className={classes.fileText}
+      />
+      {props.metaData.mimeType.startsWith('image') && (
+        <Tooltip title="Add image caption">
+          <IconButton
+            edge="end"
+            onClick={(): void => setShowCaption(!showCaption)}
+          >
+            {showCaption || props.caption ? (
+              <ClosedCaption />
+            ) : (
+              <ClosedCaptionOutlinedIcon />
+            )}
+          </IconButton>
+        </Tooltip>
+      )}
+      <Tooltip title="Download file">
+        <IconButton edge="end">
+          <a href={downloadLink} className={classes.downloadLink} download>
+            <GetAppIcon />
+          </a>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Remove file">
+        <IconButton
+          edge="end"
+          onClick={(): void => {
+            props.onDeleteClicked(props.metaData);
+          }}
+        >
+          <DeleteOutlineIcon />
+        </IconButton>
+      </Tooltip>
       {(showCaption || props.caption) && (
         <TextField
           label="Image caption"
+          data-cy="image-caption"
           defaultValue={props.caption || ''}
+          className={classes.captionInput}
           onBlur={e =>
             props.onImageCaptionAdded(props.metaData.fileId, e.target.value)
           }
