@@ -25,12 +25,14 @@ import { FileMetaData } from 'models/FileUpload';
 
 import UOLoader from './UOLoader';
 
+export type FileIdWithCaption = { id: string; caption?: string | null };
+
 export function FileUploadComponent(props: {
   maxFiles?: number;
   id?: string;
   fileType?: string;
-  value: { id: string; caption?: string | null }[];
-  onChange: (files: { id: string; caption?: string | null }[]) => void;
+  value: FileIdWithCaption[];
+  onChange: (files: FileIdWithCaption[]) => void;
 }) {
   const fileIds = props.value.map(fileItem => fileItem.id);
   const { files, setFiles } = useFileMetadata(fileIds);

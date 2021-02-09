@@ -2,6 +2,7 @@ import Link from '@material-ui/core/Link';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import React from 'react';
 
+import { FileIdWithCaption } from 'components/common/FileUploadComponent';
 import { Answer } from 'generated/sdk';
 import { useFileMetadata } from 'hooks/file/useFileMetadata';
 import { FileMetaData } from 'models/FileUpload';
@@ -42,7 +43,9 @@ function FilesAnswerRenderer(props: { answer: Answer }) {
   return (
     <div>
       <DownloadableFileList
-        fileIds={props.answer.value.map((fileItem: any) => fileItem.id)}
+        fileIds={props.answer.value.map(
+          (fileItem: FileIdWithCaption) => fileItem.id
+        )}
       />
     </div>
   );

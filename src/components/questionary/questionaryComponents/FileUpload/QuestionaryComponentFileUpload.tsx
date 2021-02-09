@@ -3,7 +3,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import React, { useEffect, useState } from 'react';
 
-import { FileUploadComponent } from 'components/common/FileUploadComponent';
+import {
+  FileIdWithCaption,
+  FileUploadComponent,
+} from 'components/common/FileUploadComponent';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { FileUploadConfig } from 'generated/sdk';
 
@@ -21,9 +24,7 @@ export function QuestionaryComponentFileUpload(
   } = answer;
   const isError = errors[proposalQuestionId] ? true : false;
   const config = answer.config as FileUploadConfig;
-  const [stateValue, setStateValue] = useState<
-    { id: string; caption?: string | null }[]
-  >(value);
+  const [stateValue, setStateValue] = useState<FileIdWithCaption[]>(value);
 
   useEffect(() => {
     setStateValue(answer.value);
@@ -44,9 +45,7 @@ export function QuestionaryComponentFileUpload(
         maxFiles={config.max_files}
         id={answer.question.proposalQuestionId}
         fileType={config.file_type ? config.file_type.join(',') : ''}
-        onChange={(
-          fileMetaDataList: { id: string; caption?: string | null }[]
-        ) => {
+        onChange={(fileMetaDataList: FileIdWithCaption[]) => {
           const newStateValue = fileMetaDataList.map(file => ({
             id: file.id,
             caption: file.caption,
