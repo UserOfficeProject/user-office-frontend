@@ -113,7 +113,11 @@ const notification = ({ variant, text }) => {
     .and('have.css', 'background-color', bgColor);
 
   if (text) {
-    notification.and('contains.text', text);
+    if (text instanceof RegExp) {
+      notification.and($el => expect($el.text()).to.match(text));
+    } else {
+      notification.and('contains.text', text);
+    }
   }
 };
 
@@ -145,6 +149,8 @@ const createProposal = (
     .should('have.value', abstract);
 
   cy.contains('Save and continue').click();
+
+  cy.notification({ variant: 'success', text: 'Saved' });
 };
 
 const createTopic = title => {
