@@ -66,8 +66,8 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
     <Container maxWidth="lg">
       <SimpleTabs
         tabNames={tabNames}
-        shouldPreventChange={formDirty}
-        setShouldPreventChange={setFormDirty}
+        shouldPreventTabChange={formDirty}
+        setShouldPreventTabChange={setFormDirty}
       >
         <GeneralInformation
           data={proposal}
@@ -85,6 +85,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
             setAdministration={(data: AdministrationFormData) =>
               setProposal({ ...proposal, ...data })
             }
+            setFormDirty={setFormDirty}
           />
         )}
         {isUserOfficer && (

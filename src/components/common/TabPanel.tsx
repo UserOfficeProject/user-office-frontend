@@ -42,21 +42,21 @@ function a11yProps(index: any) {
 export default function FullWidthTabs(props: {
   children: React.ReactNode[];
   tabNames: string[];
-  shouldPreventChange?: boolean;
-  setShouldPreventChange?: Function;
+  shouldPreventTabChange?: boolean;
+  setShouldPreventTabChange?: Function;
 }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    if (props.shouldPreventChange && value !== newValue) {
+    if (props.shouldPreventTabChange && value !== newValue) {
       if (
         window.confirm(
-          'Changes you recently made in this form will not be saved! Are you sure?'
+          'Changes you recently made in this tab will be lost! Are you sure?'
         )
       ) {
         setValue(newValue);
-        props.setShouldPreventChange?.(false);
+        props.setShouldPreventTabChange?.(false);
       }
     } else {
       setValue(newValue);
