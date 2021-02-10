@@ -1,61 +1,85 @@
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { getIn } from 'formik';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import ProposalErrorLabel from 'components/proposal/ProposalErrorLabel';
 import { BooleanConfig } from 'generated/sdk';
 
+const useStyles = makeStyles({
+  checkboxPadding: {
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+});
+
 export function QuestionaryComponentBoolean(props: BasicComponentProps) {
-  const { answer: templateField, errors, onComplete, touched } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched },
+  } = props;
   const {
     question: { proposalQuestionId, question },
-  } = templateField;
-  const config = templateField.config as BooleanConfig;
+  } = answer;
+  const config = answer.config as BooleanConfig;
   const fieldError = getIn(errors, proposalQuestionId);
   const isError = getIn(touched, proposalQuestionId) && !!fieldError;
-  const [stateValue, setStateValue] = useState<boolean>(
-    templateField.value || false
-  );
+  const [stateValue, setStateValue] = useState<boolean>(answer.value || false);
 
   useEffect(() => {
-    setStateValue(templateField.value || false);
-  }, [templateField]);
+    setStateValue(answer.value || false);
+  }, [answer]);
 
-  const classes = makeStyles({
-    label: {
-      marginRight: '5px',
-    },
-  })();
+  const classes = useStyles();
 
   return (
-    <FormControl error={isError}>
+    <FormControl
+      error={isError}
+      margin="dense"
+      fullWidth
+      required={config.required}
+    >
       <FormControlLabel
         control={
           <Checkbox
             id={proposalQuestionId}
             name={proposalQuestionId}
             onChange={(evt: ChangeEvent<HTMLInputElement>) => {
-              onComplete(evt, evt.target.checked);
+              onComplete(evt.target.checked);
             }}
             value={stateValue}
             checked={stateValue}
             inputProps={{
               'aria-label': 'primary checkbox',
             }}
-            required={config.required ? true : false}
+            className={classes.checkboxPadding}
           />
         }
-        label={question}
-        className={classes.label}
+        label={
+          <>
+            {question}
+            {config.small_label && (
+              <>
+                <br />
+                <small>{config.small_label}</small>
+              </>
+            )}
+            {config.required && (
+              <span
+                aria-hidden="true"
+                className="MuiFormLabel-asterisk MuiInputLabel-asterisk"
+              >
+                 *
+              </span>
+            )}
+          </>
+        }
       />
-      <span>{config.small_label}</span>
-      {isError && (
-        <ProposalErrorLabel>{errors[proposalQuestionId]}</ProposalErrorLabel>
-      )}
+      {isError && <FormHelperText>{fieldError}</FormHelperText>}
     </FormControl>
   );
 }

@@ -32,7 +32,7 @@ export function FileUploadComponent(props: {
   const { files, setFiles } = useFileMetadata(props.value);
 
   const classes = makeStyles(() => ({
-    questionariesList: {
+    questionnairesList: {
       listStyle: 'none',
       padding: 0,
       marginBottom: 0,
@@ -72,7 +72,7 @@ export function FileUploadComponent(props: {
   return (
     <>
       {amountFilesInfo}
-      <List component="ul" className={classes.questionariesList}>
+      <List component="ul" className={classes.questionnairesList}>
         {files.map &&
           files.map((metaData: FileMetaData) => {
             return (
@@ -164,7 +164,7 @@ export function FileEntry(props: {
 
 export function NewFileEntry(props: {
   filetype: string | undefined;
-  onUploadComplete: Function;
+  onUploadComplete: (data: FileMetaData) => any;
 }) {
   const classes = makeStyles(theme => ({
     fileListWrapper: {

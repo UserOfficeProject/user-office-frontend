@@ -6,6 +6,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Delete from '@material-ui/icons/Delete';
 import Email from '@material-ui/icons/Email';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import GridOnIcon from '@material-ui/icons/GridOn';
 import GroupWork from '@material-ui/icons/GroupWork';
 import Visibility from '@material-ui/icons/Visibility';
 import MaterialTable, { Column } from 'material-table';
@@ -19,15 +20,20 @@ import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
-import { Instrument, Sep, ProposalsToInstrumentArgs } from 'generated/sdk';
-import { ProposalsFilter } from 'generated/sdk';
+import {
+  Instrument,
+  ProposalsFilter,
+  ProposalsToInstrumentArgs,
+  Sep,
+} from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
+import { useDownloadXLSXProposal } from 'hooks/proposal/useDownloadXLSXProposal';
 import {
-  useProposalsCoreData,
   ProposalViewData,
+  useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
-import { excelDownload } from 'utils/excelDownload';
+import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -65,6 +71,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     initalSelectedProposals
   );
   const downloadPDFProposal = useDownloadPDFProposal();
+  const downloadXLSXProposal = useDownloadXLSXProposal();
   const { api } = useDataApiWithFeedback();
   const { enqueueSnackbar } = useSnackbar();
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
@@ -90,32 +97,35 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
   const removeProposalFromInstrument = async () => {
     if (
-      proposalAndInstrumentId.instrumentId &&
-      proposalAndInstrumentId.proposalId
+      !proposalAndInstrumentId.instrumentId ||
+      !proposalAndInstrumentId.proposalId
     ) {
-      const result = await api(
-        'Proposal removed from the instrument successfully!'
-      ).removeProposalFromInstrument({
-        proposalId: proposalAndInstrumentId.proposalId,
-        instrumentId: proposalAndInstrumentId.instrumentId,
-      });
-
-      const isError = !!result.removeProposalFromInstrument.error;
-
-      if (!isError) {
-        setProposalsData(
-          proposalsData.map(prop => {
-            if (prop.id === proposalAndInstrumentId.proposalId) {
-              prop.instrumentName = null;
-            }
-
-            return prop;
-          })
-        );
-      }
-
-      setProposalAndInstrumentId({ proposalId: null, instrumentId: null });
+      return;
     }
+
+    const result = await api(
+      'Proposal removed from the instrument successfully!'
+    ).removeProposalFromInstrument({
+      proposalId: proposalAndInstrumentId.proposalId,
+      instrumentId: proposalAndInstrumentId.instrumentId,
+    });
+
+    const isError = !!result.removeProposalFromInstrument.error;
+
+    if (!isError) {
+      setProposalsData(
+        proposalsData.map(prop => {
+          if (prop.id === proposalAndInstrumentId.proposalId) {
+            prop.instrumentName = null;
+            prop.instrumentId = null;
+          }
+
+          return prop;
+        })
+      );
+    }
+
+    setProposalAndInstrumentId({ proposalId: null, instrumentId: null });
   };
 
   const RemoveScienceIcon = (): JSX.Element => <ScienceIconRemove />;
@@ -130,19 +140,19 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     return (
       <>
         <Tooltip title="View proposal">
-          <IconButton data-cy="view-proposal" style={iconButtonStyle}>
-            <Link
-              to={`/ProposalReviewUserOfficer/${rowData.id}`}
-              style={{ color: 'inherit', textDecoration: 'inherit' }}
-            >
+          <Link
+            to={`/ProposalReviewUserOfficer/${rowData.id}`}
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
+            <IconButton data-cy="view-proposal" style={iconButtonStyle}>
               <Visibility />
-            </Link>
-          </IconButton>
+            </IconButton>
+          </Link>
         </Tooltip>
         <Tooltip title="Download proposal as pdf">
           <IconButton
             data-cy="download-proposal"
-            onClick={() => downloadPDFProposal(rowData.id)}
+            onClick={() => downloadPDFProposal([rowData.id], rowData.title)}
             style={iconButtonStyle}
           >
             <GetAppIcon />
@@ -235,7 +245,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     },
     {
       title: 'SEP',
-      field: 'sepShortCode',
+      field: 'sepCode',
     },
   ];
 
@@ -251,7 +261,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
   const emailProposals = (): void => {
     selectedProposals.forEach(proposal => {
-      new Promise(async resolve => {
+      new Promise<void>(async resolve => {
         await api()
           .notifyProposal({ id: proposal.id })
           .then(data => {
@@ -276,25 +286,25 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   };
 
   const deleteProposals = (): void => {
-    selectedProposals.forEach(proposal => {
-      new Promise(async resolve => {
-        await api().deleteProposal({ id: proposal.id });
-        proposalsData.splice(
-          proposalsData.findIndex(val => val.id === proposal.id),
-          1
-        );
-        setProposalsData([...proposalsData]);
-        resolve();
-      });
+    selectedProposals.forEach(async proposal => {
+      const {
+        deleteProposal: { error },
+      } = await api().deleteProposal({ id: proposal.id });
+
+      if (error) {
+        return;
+      }
+
+      setProposalsData(proposalsData =>
+        proposalsData.filter(({ id }) => id !== proposal.id)
+      );
     });
   };
 
   const assignProposalToSEP = async (sep: Sep): Promise<void> => {
     const assignmentsErrors = await Promise.all(
       selectedProposals.map(async selectedProposal => {
-        const result = await api(
-          'Proposal/s assigned to SEP'
-        ).assignProposalToSEP({
+        const result = await api().assignProposalToSEP({
           proposalId: selectedProposal.id,
           sepId: sep.id,
         });
@@ -305,6 +315,16 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
     const isError = !!assignmentsErrors.join('');
 
+    enqueueSnackbar(
+      isError
+        ? 'Proposal/s can not be assigned to SEP'
+        : 'Proposal/s assigned to SEP',
+      {
+        variant: isError ? 'error' : 'success',
+        className: isError ? 'snackbar-success' : 'snackbar-error',
+      }
+    );
+
     if (!isError) {
       setProposalsData(
         proposalsData.map(prop => {
@@ -313,7 +333,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               selectedProposal => selectedProposal.id === prop.id
             )
           ) {
-            prop.sepShortCode = sep.code;
+            prop.sepCode = sep.code;
           }
 
           return prop;
@@ -350,6 +370,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               )
             ) {
               prop.instrumentName = instrument.name;
+              prop.instrumentId = instrument.id;
             }
 
             return prop;
@@ -370,7 +391,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const DeleteIcon = (): JSX.Element => <Delete />;
   const GroupWorkIcon = (): JSX.Element => <GroupWork />;
   const EmailIcon = (): JSX.Element => <Email />;
-  const AddScienceIcon = (): JSX.Element => <ScienceIconAdd />;
+  const AddScienceIcon = (props?: any): JSX.Element => (
+    <ScienceIconAdd {...props} />
+  );
+  const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
   const preselectedProposalsData =
     urlQueryParams.selection.length > 0
@@ -386,6 +410,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           };
         })
       : proposalsData;
+
+  columns = setSortDirectionOnSortColumn(
+    columns,
+    urlQueryParams.sortColumn,
+    urlQueryParams.sortDirection
+  );
 
   return (
     <>
@@ -456,27 +486,32 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
                 : undefined,
           });
         }}
-        localization={{
-          toolbar: {
-            exportName: 'Export as Excel',
-          },
-        }}
         options={{
           search: true,
           searchText: urlQueryParams.search || undefined,
           selection: true,
           debounceInterval: 400,
           columnsButton: true,
-          exportButton: true,
-          exportCsv: excelDownload,
         }}
         actions={[
           {
             icon: GetAppIconComponent,
-            tooltip: 'Download proposals',
+            tooltip: 'Download proposals in PDF',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
-                (rowData as ProposalViewData[]).map(row => row.id).join(',')
+                (rowData as ProposalViewData[]).map(row => row.id),
+                (rowData as ProposalViewData[])[0].title
+              );
+            },
+            position: 'toolbarOnSelect',
+          },
+          {
+            icon: ExportIcon,
+            tooltip: 'Export proposals in Excel',
+            onClick: (event, rowData): void => {
+              downloadXLSXProposal(
+                (rowData as ProposalViewData[]).map(row => row.id),
+                (rowData as ProposalViewData[])[0].title
               );
             },
             position: 'toolbarOnSelect',
@@ -514,7 +549,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
             position: 'toolbarOnSelect',
           },
           {
-            icon: AddScienceIcon,
+            icon: AddScienceIcon.bind(null, {
+              'data-cy': 'assign-proposals-to-instrument',
+            }),
             tooltip: 'Assign proposals to instrument',
             onClick: (event, rowData): void => {
               setOpenInstrumentAssignment(true);
@@ -558,6 +595,13 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           );
 
           setLocalStorageValue(proposalColumns);
+        }}
+        onOrderChange={(orderedColumnId, orderDirection) => {
+          setUrlQueryParams &&
+            setUrlQueryParams({
+              sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+              sortDirection: orderDirection ? orderDirection : undefined,
+            });
         }}
       />
     </>

@@ -43,11 +43,11 @@ export const QuestionFormShell = (props: {
       </Typography>
       <Formik
         initialValues={props.question}
-        onSubmit={async form => {
+        onSubmit={async (values): Promise<void> => {
           props.dispatch({
             type: EventType.UPDATE_QUESTION_REQUESTED,
             payload: {
-              field: { ...props.question, ...form },
+              field: { ...props.question, ...values },
             },
           });
           props.closeMe();
@@ -71,6 +71,7 @@ export const QuestionFormShell = (props: {
                   });
                   props.closeMe();
                 }}
+                disabled={definition.creatable === false}
               >
                 Delete
               </Button>

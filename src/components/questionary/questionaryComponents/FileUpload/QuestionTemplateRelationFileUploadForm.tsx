@@ -3,12 +3,12 @@ import { TextField } from 'formik-material-ui';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
-import FormikUICustomMultipleSelect from 'components/common/FormikUICustomMultipleSelect';
+import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionTemplateRelation } from 'generated/sdk';
 
+import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
@@ -50,7 +50,7 @@ export const QuestionTemplateRelationFileUploadForm: FormComponent<QuestionTempl
               name="config.file_type"
               label="Accepted file types (leave empty for any)"
               id="fileType"
-              component={FormikUICustomMultipleSelect}
+              component={FormikUICustomSelect}
               availableOptions={[
                 '.pdf',
                 '.doc',
@@ -75,14 +75,9 @@ export const QuestionTemplateRelationFileUploadForm: FormComponent<QuestionTempl
           </TitledContainer>
 
           <TitledContainer label="Dependencies">
-            <Field
-              name="dependency"
-              component={FormikUICustomDependencySelector}
-              templateField={props.field}
+            <QuestionDependencyList
+              form={formikProps}
               template={props.template}
-              margin="normal"
-              fullWidth
-              data-cy="dependencies"
             />
           </TitledContainer>
         </>

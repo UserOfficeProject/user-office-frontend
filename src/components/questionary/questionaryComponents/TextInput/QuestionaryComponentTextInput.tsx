@@ -1,32 +1,32 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
 import { getIn } from 'formik';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
-import { Key } from 'ts-keycode-enum';
 
 import TextFieldWithCounter from 'components/common/TextFieldWithCounter';
+import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { TextInputConfig } from 'generated/sdk';
 
+const TextFieldNoSubmit = withPreventSubmit(TextFieldWithCounter);
+
 export function QuestionaryComponentTextInput(props: BasicComponentProps) {
-  const classes = makeStyles({
-    textField: {
-      margin: '15px 0 10px 0',
-    },
-  })();
-  const { answer: templateField, touched, errors, onComplete } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched },
+  } = props;
   const {
     question: { proposalQuestionId },
     question,
     value,
-  } = templateField;
+  } = answer;
   const [stateValue, setStateValue] = useState(value);
   const fieldError = getIn(errors, proposalQuestionId);
   const isError = getIn(touched, proposalQuestionId) && !!fieldError;
-  const config = templateField.config as TextInputConfig;
+  const config = answer.config as TextInputConfig;
 
   useEffect(() => {
-    setStateValue(templateField.value);
-  }, [templateField]);
+    setStateValue(answer.value);
+  }, [answer]);
 
   return (
     <div>
@@ -37,40 +37,40 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
           }}
         ></div>
       )}
-      <TextFieldWithCounter
+      <TextFieldNoSubmit
+        isCounterHidden={config.isCounterHidden}
         variant="standard"
         id={proposalQuestionId}
         name={proposalQuestionId}
         fullWidth
-        required={config.required ? true : false}
-        label={config.htmlQuestion ? '' : question.question}
+        required={config.required}
+        label={question.question}
         value={stateValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setStateValue(event.currentTarget.value);
         }}
         onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-          if (event.keyCode === Key.Enter) {
-            event.preventDefault();
+          if (
+            config.multiline === false &&
+            event.key.toLowerCase() === 'enter'
+          ) {
             setStateValue(event.currentTarget.value);
-            onComplete(event, event.currentTarget.value);
-
-            return false;
+            onComplete(event.currentTarget.value);
           }
+
+          return undefined;
         }}
         onBlur={event => {
-          onComplete(event, event.currentTarget.value);
+          onComplete(event.currentTarget.value);
         }}
         placeholder={config.placeholder}
         error={isError}
-        helperText={isError && errors[proposalQuestionId]}
+        helperText={isError && fieldError}
         multiline={config.multiline}
         rows={config.multiline ? 2 : 1}
         rowsMax={config.multiline ? 16 : undefined}
-        className={classes.textField}
-        InputLabelProps={{
-          shrink: true,
-        }}
         maxLen={config.max || undefined}
+        margin="dense"
       />
     </div>
   );

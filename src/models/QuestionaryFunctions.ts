@@ -3,6 +3,7 @@ import { getQuestionaryComponentDefinition } from 'components/questionary/Questi
 import {
   Answer,
   AnswerInput,
+  DependenciesLogicOperator,
   FieldDependency,
   QuestionaryStep,
   QuestionTemplateRelation,
@@ -10,7 +11,7 @@ import {
 } from 'generated/sdk';
 import { ConditionEvaluator } from 'models/ConditionEvaluator';
 
-type AbstractField = QuestionTemplateRelation | Answer;
+export type AbstractField = QuestionTemplateRelation | Answer;
 type AbstractCollection = TemplateStep[] | QuestionaryStep[];
 
 export function getTopicById(collection: AbstractCollection, topicId: number) {
@@ -89,11 +90,19 @@ export function areDependenciesSatisfied(
   fieldId: string
 ) {
   const field = getFieldById(questionary, fieldId);
-  if (!field) {
+  if (!field || !field.dependencies) {
     return true;
   }
 
-  return isDependencySatisfied(questionary, field.dependency);
+  if (field.dependenciesOperator === DependenciesLogicOperator.OR) {
+    return field.dependencies.some(dependency =>
+      isDependencySatisfied(questionary, dependency)
+    );
+  } else {
+    return field.dependencies.every(dependency =>
+      isDependencySatisfied(questionary, dependency)
+    );
+  }
 }
 
 export function prepareAnswers(answers?: Answer[]): AnswerInput[] {

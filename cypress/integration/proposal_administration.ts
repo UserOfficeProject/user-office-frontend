@@ -10,13 +10,14 @@ context('Proposal administration tests', () => {
     cy.visit('/');
   });
 
+  const proposalName = faker.random.words(3);
   const textUser = faker.random.words(5);
 
   const textManager = faker.random.words(5);
 
   it('Should be able to set comment for user/manager and final status', () => {
     cy.login('user');
-    cy.createProposal();
+    cy.createProposal(proposalName);
     cy.contains('Submit').click();
     cy.contains('OK').click();
     cy.logout();
@@ -66,33 +67,15 @@ context('Proposal administration tests', () => {
     cy.contains('DRAFT');
   });
 
-  it('Check if link for download proposal is created with the correct attributes', () => {
+  it('Download proposal is working with dialog window showing up', () => {
     cy.login('officer');
-
-    cy.document().then(document => {
-      const observer = new MutationObserver(function() {
-        const [mutationList] = arguments;
-        for (const mutation of mutationList) {
-          for (const child of mutation.addedNodes) {
-            if (child.nodeName === 'A') {
-              expect(child.href).to.contain('/download/proposal/1');
-              expect(child.download).to.contain('download');
-            }
-          }
-        }
-      });
-      observer.observe(document, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-      });
-
-      observer.disconnect();
-    });
 
     cy.get('[data-cy="download-proposal"]')
       .first()
       .click();
+
+    cy.get('[data-cy="preparing-download-dialog"]').should('exist');
+    cy.get('[data-cy="preparing-download-dialog-item"]').contains(proposalName);
   });
 
   it('Should be able to download proposal pdf', () => {
@@ -100,7 +83,7 @@ context('Proposal administration tests', () => {
 
     cy.contains('Proposals').click();
 
-    cy.request('GET', '/download/proposal/1').then(response => {
+    cy.request('GET', '/download/pdf/proposal/1').then(response => {
       expect(response.headers['content-type']).to.be.equal('application/pdf');
       expect(response.status).to.be.equal(200);
     });
@@ -136,5 +119,63 @@ context('Proposal administration tests', () => {
     cy.reload();
 
     cy.get('[placeholder="Search"]').should('have.value', 'test');
+  });
+
+  it('Should be able to save table sort state in url', () => {
+    let officerProposalsTableAsTextBeforeSort = '';
+    let officerProposalsTableAsTextAfterSort = '';
+
+    cy.login('user');
+    // Create a proposal with title that will be always last if sort order by title is 'desc'
+    cy.createProposal(
+      'Aaaaaaaaa test proposal title',
+      'Test proposal descrtiption'
+    );
+    cy.contains('Submit').click();
+    cy.contains('OK').click();
+    cy.logout();
+
+    cy.login('officer');
+
+    cy.contains('Proposals').click();
+
+    cy.finishedLoading();
+
+    cy.get('[data-cy="officer-proposals-table"] table').then(element => {
+      officerProposalsTableAsTextBeforeSort = element.text();
+    });
+
+    cy.contains('Title').dblclick();
+
+    cy.get('[data-cy="officer-proposals-table"] table').then(element => {
+      officerProposalsTableAsTextAfterSort = element.text();
+    });
+
+    cy.reload();
+
+    cy.finishedLoading();
+
+    cy.get('[data-cy="officer-proposals-table"] table').then(element => {
+      expect(element.text()).to.be.equal(officerProposalsTableAsTextAfterSort);
+      expect(element.text()).not.equal(officerProposalsTableAsTextBeforeSort);
+    });
+
+    cy.get(
+      '.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionDesc'
+    ).should('exist');
+
+    cy.contains('Calls').click();
+
+    cy.finishedLoading();
+
+    cy.contains('Short Code').click();
+
+    cy.reload();
+
+    cy.finishedLoading();
+
+    cy.get(
+      '.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionAsc'
+    ).should('exist');
   });
 });

@@ -1,8 +1,9 @@
+import { FormikProps } from 'formik';
+
 import { Answer } from 'generated/sdk';
 
 export interface BasicComponentProps {
   answer: Answer;
-  touched: any;
-  errors: any;
-  onComplete: (evt: React.SyntheticEvent, newValue: any) => void;
+  formikProps: FormikProps<any>;
+  onComplete: (newValue: Answer['value']) => void;
 }

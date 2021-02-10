@@ -22,17 +22,7 @@ context('Samples tests', () => {
   it('Should be able to create proposal template with sample', () => {
     cy.login('officer');
 
-    cy.navigateToTemplatesSubmenu('Sample declaration templates');
-
-    cy.get('[data-cy=create-new-button]').click();
-
-    cy.get('[data-cy=name] input')
-      .type(sampleTemplateName)
-      .should('have.value', sampleTemplateName);
-
-    cy.get('[data-cy=description]').type(sampleTemplateDescription);
-
-    cy.get('[data-cy=submit]').click();
+    cy.createTemplate('sample', sampleTemplateName, sampleTemplateDescription);
 
     cy.contains('New sample');
 
@@ -48,42 +38,14 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=submit]').click();
 
-    cy.get('[data-cy=show-more-button]')
-      .last()
-      .click();
+    cy.createTopic('New topic');
 
-    cy.get('[data-cy=add-topic-menu-item]')
-      .last()
-      .click();
+    cy.createSampleQuestion(sampleQuestion, sampleTemplateName, '1', '2');
 
-    cy.get('[data-cy=show-more-button]')
-      .last()
-      .click();
+    cy.contains(sampleQuestion)
+      .parent()
+      .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.get('[data-cy=add-question-menu-item]')
-      .last()
-      .click();
-
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').click();
-
-    cy.contains('Add Sample Declaration').click();
-
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(sampleQuestion)
-      .should('have.value', sampleQuestion);
-
-    cy.get('[data-cy=template-id]').click();
-
-    cy.contains(sampleTemplateName).click();
-
-    cy.contains('Save').click();
-
-    cy.get('body').type('{alt}', { release: false });
-
-    cy.contains(sampleQuestion).click();
-
-    // now check if the question that was ALT-clicked was moved away from question list
     cy.get('[data-cy=close-button]').click(); // closing question list
 
     cy.contains(sampleQuestion); // checking if question in the topic column
@@ -114,6 +76,14 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=add-button]').click();
 
+    cy.get('[data-cy=title-input] input').clear();
+
+    cy.get(
+      '[data-cy=sample-declaration-modal] [data-cy=save-and-continue-button]'
+    ).click();
+
+    cy.contains('This is a required field');
+
     cy.get('[data-cy=title-input] input')
       .clear()
       .type(sampleTitle)
@@ -123,17 +93,32 @@ context('Samples tests', () => {
       '[data-cy=sample-declaration-modal] [data-cy=save-and-continue-button]'
     ).click();
 
-    cy.get('[data-cy="questionaries-list-item"]').should('have.length', 1);
+    cy.finishedLoading();
+
+    cy.get('[data-cy="questionnaires-list-item"]').should('have.length', 1);
 
     cy.get('[data-cy="clone"]').click();
 
-    cy.get('[data-cy="questionaries-list-item"]').should('have.length', 2);
+    cy.contains('OK').click();
+
+    cy.get('[data-cy="questionnaires-list-item"]').should('have.length', 2);
+
+    cy.get('[data-cy="questionnaires-list-item-completed:true"]').should(
+      'have.length',
+      2
+    );
+
+    cy.get('[data-cy=add-button]').should('be.disabled'); // Add button should be disabled because of max entry limit
 
     cy.get('[data-cy="delete"]')
       .eq(1)
       .click();
 
-    cy.get('[data-cy="questionaries-list-item"]').should('have.length', 1);
+    cy.contains('OK').click();
+
+    cy.get('[data-cy="questionnaires-list-item"]').should('have.length', 1);
+
+    cy.get('[data-cy=add-button]').should('not.be.disabled');
 
     cy.contains('Save and continue').click();
 
@@ -201,35 +186,17 @@ context('Samples tests', () => {
     cy.contains('HIGH_RISK'); // test if status has changed
   });
 
-  it('Check if link for download samples is created with the correct attributes', () => {
+  it('Download samples is working with dialog window showing up', () => {
     cy.login('officer');
 
     cy.contains('Sample safety').click();
 
-    cy.document().then(document => {
-      const observer = new MutationObserver(function() {
-        const [mutationList] = arguments;
-        for (const mutation of mutationList) {
-          for (const child of mutation.addedNodes) {
-            if (child.nodeName === 'A') {
-              expect(child.href).to.contain('/download/sample/1');
-              expect(child.download).to.contain('download');
-            }
-          }
-        }
-      });
-      observer.observe(document, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-      });
-
-      observer.disconnect();
-    });
-
     cy.get('[data-cy="download-sample"]')
       .first()
       .click();
+
+    cy.get('[data-cy="preparing-download-dialog"]').should('exist');
+    cy.get('[data-cy="preparing-download-dialog-item"]').contains(sampleTitle);
   });
 
   it('Should be able to download sample pdf', () => {
@@ -237,7 +204,7 @@ context('Samples tests', () => {
 
     cy.contains('Sample safety').click();
 
-    cy.request('GET', '/download/sample/1').then(response => {
+    cy.request('GET', '/download/pdf/sample/1').then(response => {
       expect(response.headers['content-type']).to.be.equal('application/pdf');
       expect(response.status).to.be.equal(200);
     });

@@ -9,15 +9,20 @@ import {
   Template,
 } from 'generated/sdk';
 import { Event } from 'models/QuestionaryEditorModel';
+import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
 
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
 import { dateDefinition } from './questionaryComponents/DatePicker/DatePickerDefinition';
 import { embellishmentDefinition } from './questionaryComponents/Embellishment/EmbellishmentDefinition';
 import { fileUploadDefinition } from './questionaryComponents/FileUpload/FileUploadDefinition';
+import { intervalDefinition } from './questionaryComponents/Interval/IntervalDefinition';
 import { multipleChoiceDefinition as multiChoiceDefinition } from './questionaryComponents/MultipleChoice/MultipleChoiceDefinition';
+import { numberInputDefinition } from './questionaryComponents/NumberInput/NumberInputDefinition';
 import { proposalBasisDefinition } from './questionaryComponents/ProposalBasis/ProposalBasisDefinition';
+import { richTextInputDefinition } from './questionaryComponents/RichTextInput/RichTextInputDefinition';
 import { sampleBasisDefinition } from './questionaryComponents/SampleBasis/SampleBasisDefinition';
 import { sampleDeclarationDefinition } from './questionaryComponents/SampleDeclaration/SampleDeclaratonDefinition';
+import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 
 export interface FormProps<ValueObjectType> {
@@ -31,6 +36,13 @@ export type FormComponent<ValueObjectType> = FunctionComponent<
   FormProps<ValueObjectType>
 >;
 
+export interface Renderers {
+  readonly questionRenderer: (props: {
+    question: Question;
+  }) => JSX.Element | null;
+  readonly answerRenderer: (props: { answer: Answer }) => JSX.Element | null;
+}
+
 export interface QuestionaryComponentDefinition {
   readonly dataType: DataType;
   readonly name: string;
@@ -41,8 +53,12 @@ export interface QuestionaryComponentDefinition {
   readonly questionaryComponent: (
     props: BasicComponentProps
   ) => JSX.Element | null;
-  readonly answerRenderer: (props: { answer: Answer }) => JSX.Element | null;
+  readonly renderers?: Renderers;
   readonly createYupValidationSchema: ((field: Answer) => object) | null;
+  readonly getYupInitialValue: (props: {
+    answer: Answer;
+    state: QuestionarySubmissionState;
+  }) => Answer['value'];
   readonly readonly: boolean; // if true then no answer will be produced
   readonly creatable: boolean; // if true then the question can be added to a questionary
   readonly icon: JSX.Element;
@@ -58,6 +74,10 @@ const registry = [
   sampleDeclarationDefinition,
   proposalBasisDefinition,
   sampleBasisDefinition,
+  intervalDefinition,
+  numberInputDefinition,
+  shipmentBasisDefinition,
+  richTextInputDefinition,
 ];
 
 Object.freeze(registry);
@@ -104,13 +124,6 @@ export function createQuestionaryComponent(
   const definition = getQuestionaryComponentDefinition(dataType);
 
   return React.createElement(definition.questionaryComponent, props);
-}
-
-export function formatQuestionaryComponentAnswer(answer: Answer): JSX.Element {
-  const dataType = answer.question.dataType;
-  const definition = getQuestionaryComponentDefinition(dataType);
-
-  return React.createElement(definition.answerRenderer, { answer });
 }
 
 export const getTemplateFieldIcon = (dataType: DataType) => {

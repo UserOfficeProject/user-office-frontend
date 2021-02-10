@@ -4,22 +4,20 @@ import Edit from '@material-ui/icons/Edit';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Visibility from '@material-ui/icons/Visibility';
 import MaterialTable, { Column } from 'material-table';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  useQueryParams,
-  NumberParam,
-  StringParam,
-  withDefault,
-  DelimitedNumericArrayParam,
-} from 'use-query-params';
+import { useQueryParams, NumberParam } from 'use-query-params';
 
+import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
+import { UserContext } from 'context/UserContextProvider';
 import { Proposal, ProposalsFilter } from 'generated/sdk';
+import { useInstrumentScientistCallsData } from 'hooks/call/useInstrumentScientistCallsData';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { useProposalsData } from 'hooks/proposal/useProposalsData';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
+import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import {
   average,
@@ -32,14 +30,14 @@ import ProposalFilterBar from './ProposalFilterBar';
 import { ProposalUrlQueryParamsType } from './ProposalPage';
 
 const ProposalTableInstrumentScientist: React.FC = () => {
+  const { user } = useContext(UserContext);
   const [urlQueryParams, setUrlQueryParams] = useQueryParams<
     ProposalUrlQueryParamsType
   >({
     call: NumberParam,
     instrument: NumberParam,
     proposalStatus: NumberParam,
-    search: StringParam,
-    selection: withDefault(DelimitedNumericArrayParam, []),
+    ...DefaultQueryParams,
   });
 
   // NOTE: proposalStatusId has default value 2 because for IS default view should be all proposals in FEASIBILITY_REVIEW status
@@ -49,6 +47,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     proposalStatusId: urlQueryParams.proposalStatus || 2,
   });
   const { instruments, loadingInstruments } = useInstrumentsData();
+  const { calls, loadingCalls } = useInstrumentScientistCallsData(user.id);
   const {
     proposalStatuses,
     loadingProposalStatuses,
@@ -56,6 +55,8 @@ const ProposalTableInstrumentScientist: React.FC = () => {
 
   const { loading, proposalsData } = useProposalsData({
     proposalStatusId: proposalFilter.proposalStatusId,
+    instrumentId: proposalFilter.instrumentId,
+    callId: proposalFilter.callId,
   });
 
   const downloadPDFProposal = useDownloadPDFProposal();
@@ -85,7 +86,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           </Link>
         </IconButton>
         <IconButton
-          onClick={() => downloadPDFProposal(rowData.id)}
+          onClick={() => downloadPDFProposal([rowData.id], rowData.title)}
           style={iconButtonStyle}
         >
           <GetAppIcon />
@@ -186,15 +187,22 @@ const ProposalTableInstrumentScientist: React.FC = () => {
   if (localStorageValue) {
     columns = columns.map(column => ({
       ...column,
-      hidden: localStorageValue?.find(
+      hidden: localStorageValue.find(
         localStorageValueItem => localStorageValueItem.title === column.title
       )?.hidden,
     }));
   }
 
+  columns = setSortDirectionOnSortColumn(
+    columns,
+    urlQueryParams.sortColumn,
+    urlQueryParams.sortDirection
+  );
+
   return (
     <>
       <ProposalFilterBar
+        calls={{ data: calls, isLoading: loadingCalls }}
         instruments={{ data: instruments, isLoading: loadingInstruments }}
         proposalStatuses={{
           data: proposalStatuses,
@@ -211,6 +219,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         isLoading={loading}
         options={{
           search: true,
+          searchText: urlQueryParams.search || undefined,
           debounceInterval: 400,
           columnsButton: true,
         }}
@@ -229,6 +238,13 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           );
 
           setLocalStorageValue(proposalColumns);
+        }}
+        onOrderChange={(orderedColumnId, orderDirection) => {
+          setUrlQueryParams &&
+            setUrlQueryParams({
+              sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+              sortDirection: orderDirection ? orderDirection : undefined,
+            });
         }}
       />
     </>

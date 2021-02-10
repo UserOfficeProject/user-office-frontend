@@ -1,7 +1,7 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { UserContext } from 'context/UserContextProvider';
-import { ProposalsFilter, Proposal, UserRole } from 'generated/sdk';
+import { Proposal, ProposalsFilter, UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 export function useProposalsData(filter: ProposalsFilter) {
@@ -15,11 +15,14 @@ export function useProposalsData(filter: ProposalsFilter) {
     instrumentId,
     proposalStatusId,
     questionaryIds,
-    templateIds,
     text,
   } = filter;
 
   useEffect(() => {
+    let unmounted = false;
+
+    setLoading(true);
+
     if (currentRole === UserRole.INSTRUMENT_SCIENTIST) {
       api()
         .getInstrumentScientistProposals({
@@ -28,11 +31,14 @@ export function useProposalsData(filter: ProposalsFilter) {
             instrumentId,
             proposalStatusId,
             questionaryIds,
-            templateIds,
             text,
           },
         })
         .then(data => {
+          if (unmounted) {
+            return;
+          }
+
           if (data.instrumentScientistProposals) {
             setProposalsData(
               data.instrumentScientistProposals.proposals as Proposal[]
@@ -48,23 +54,29 @@ export function useProposalsData(filter: ProposalsFilter) {
             instrumentId,
             proposalStatusId,
             questionaryIds,
-            templateIds,
             text,
           },
         })
         .then(data => {
+          if (unmounted) {
+            return;
+          }
+
           if (data.proposals) {
             setProposalsData(data.proposals.proposals as Proposal[]);
           }
           setLoading(false);
         });
     }
+
+    return () => {
+      unmounted = true;
+    };
   }, [
     callId,
     instrumentId,
     proposalStatusId,
     questionaryIds,
-    templateIds,
     text,
     api,
     currentRole,

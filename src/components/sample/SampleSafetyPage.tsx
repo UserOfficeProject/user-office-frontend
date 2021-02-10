@@ -79,7 +79,7 @@ function SampleSafetyPage() {
         <Tooltip title="Download sample as pdf">
           <IconButton
             data-cy="download-sample"
-            onClick={() => downloadPDFSample(rowData.id)}
+            onClick={() => downloadPDFSample([rowData.id], rowData.title)}
             style={iconButtonStyle}
           >
             <GetAppIcon />
@@ -129,7 +129,8 @@ function SampleSafetyPage() {
                     tooltip: 'Download sample',
                     onClick: (event, rowData) =>
                       downloadPDFSample(
-                        (rowData as SampleBasic[]).map(({ id }) => id).join(',')
+                        (rowData as SampleBasic[]).map(({ id }) => id),
+                        (rowData as SampleBasic[])[0].title
                       ),
                   },
                 ]}
@@ -177,16 +178,18 @@ function SampleEvaluationDialog(props: {
       <SampleDetails sampleId={sample.id} />
       <Formik
         initialValues={initialValues}
-        onSubmit={async values => {
-          if (values) {
-            const { id, safetyComment, safetyStatus } = values;
-            api(`Review for '${sample?.title}' submitted`)
-              .updateSample({ sampleId: id, safetyComment, safetyStatus })
-              .then(result => {
-                const newSample = result.updateSample.sample;
-                onClose(newSample || null);
-              });
+        onSubmit={async (values): Promise<void> => {
+          if (!values) {
+            return;
           }
+
+          const { id, safetyComment, safetyStatus } = values;
+          const result = await api(
+            `Review for '${sample?.title}' submitted`
+          ).updateSample({ sampleId: id, safetyComment, safetyStatus });
+
+          const newSample = result.updateSample.sample;
+          onClose(newSample || null);
         }}
       >
         {({ isSubmitting }) => (

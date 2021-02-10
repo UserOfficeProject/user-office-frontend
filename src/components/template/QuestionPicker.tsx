@@ -15,10 +15,13 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 
-import { getQuestionaryComponentDefinitions } from 'components/questionary/QuestionaryComponentRegistry';
-import { getTemplateFieldIcon } from 'components/questionary/QuestionaryComponentRegistry';
+import {
+  getQuestionaryComponentDefinitions,
+  getTemplateFieldIcon,
+} from 'components/questionary/QuestionaryComponentRegistry';
 import {
   DataType,
+  DependenciesLogicOperator,
   Question,
   Template,
   TemplateCategoryId,
@@ -45,11 +48,17 @@ class QuestionItemAdapter implements TemplateTopicEditorData {
   get dataType() {
     return this.source.dataType;
   }
-  get dependency() {
-    return null;
+  get dependencies() {
+    return [];
   }
   get config() {
     return this.source.config;
+  }
+  get dependenciesOperator() {
+    return DependenciesLogicOperator.AND;
+  }
+  get categoryId() {
+    return this.source.categoryId;
   }
 }
 
@@ -107,6 +116,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
       <TemplateQuestionEditor
         index={index}
         data={new QuestionItemAdapter(question)}
+        dispatch={dispatch}
         onClick={item => {
           const isAltDown = (window.event as MouseEvent)?.altKey;
 

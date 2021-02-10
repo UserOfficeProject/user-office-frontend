@@ -1,47 +1,56 @@
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { FileUploadComponent } from 'components/common/FileUploadComponent';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import ProposalErrorLabel from 'components/proposal/ProposalErrorLabel';
 import { FileUploadConfig } from 'generated/sdk';
 import { FileMetaData } from 'models/FileUpload';
 
 export function QuestionaryComponentFileUpload(
   props: BasicComponentProps & { files?: string[] }
 ) {
-  const { answer: templateField, errors, onComplete } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors },
+  } = props;
   const {
     question: { proposalQuestionId },
     value,
-  } = templateField;
+  } = answer;
   const isError = errors[proposalQuestionId] ? true : false;
-  const config = templateField.config as FileUploadConfig;
+  const config = answer.config as FileUploadConfig;
   const [stateValue, setStateValue] = useState<string[]>(value);
 
   useEffect(() => {
-    setStateValue(templateField.value);
-  }, [templateField]);
+    setStateValue(answer.value);
+  }, [answer]);
 
   return (
-    <FormControl error={isError} required={config.required ? true : false}>
-      <FormLabel error={isError}>{templateField.question.question}</FormLabel>
-      <span>{config.small_label}</span>
+    <FormControl error={isError} required={config.required} margin="dense">
+      <FormLabel>
+        {answer.question.question}
+        {config.small_label && (
+          <>
+            <br />
+            <small>{config.small_label}</small>
+          </>
+        )}
+      </FormLabel>
       <FileUploadComponent
         maxFiles={config.max_files}
-        id={templateField.question.proposalQuestionId}
+        id={answer.question.proposalQuestionId}
         fileType={config.file_type ? config.file_type.join(',') : ''}
         onChange={(fileMetaDataList: FileMetaData[]) => {
           const newStateValue = fileMetaDataList.map(file => file.fileId);
           setStateValue(newStateValue);
-          onComplete(null as any, newStateValue); // letting Formik know that there was a change
+          onComplete(newStateValue);
         }}
         value={stateValue}
       />
-      {isError && (
-        <ProposalErrorLabel>{errors[proposalQuestionId]}</ProposalErrorLabel>
-      )}
+      {isError && <FormHelperText>{errors[proposalQuestionId]}</FormHelperText>}
     </FormControl>
   );
 }

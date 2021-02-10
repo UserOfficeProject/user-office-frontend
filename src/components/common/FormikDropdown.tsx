@@ -1,5 +1,6 @@
 import MenuItem from '@material-ui/core/MenuItem';
-import { Field } from 'formik';
+import MuiTextField from '@material-ui/core/TextField';
+import { connect, Field, FormikContextType } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { PropsWithChildren } from 'react';
@@ -13,9 +14,13 @@ type TProps = {
   required?: boolean;
   disabled?: boolean;
   InputProps?: object;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<any>) => void;
 };
 
-const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
+const FormikDropdown: React.FC<PropsWithChildren<TProps> & {
+  formik: FormikContextType<any>;
+}> = ({
   name,
   label,
   required,
@@ -24,7 +29,10 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
   loading = false,
   noOptionsText,
   items,
+  value,
   InputProps,
+  formik,
+  onChange,
 }) => {
   const menuItems =
     items.length > 0 ? (
@@ -41,6 +49,36 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
       </MenuItem>
     );
 
+  /**
+   * Looks like if the items for a select are updated
+   * after the  select field was mounted
+   * you will get warning about out of range values.
+   * To fix that just avoid mounting the real select until it's loaded
+   */
+  if (loading) {
+    return (
+      <MuiTextField
+        label={label}
+        defaultValue="Loading..."
+        disabled
+        margin="normal"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        fullWidth
+        required={required}
+      />
+    );
+  }
+
+  const props: { value?: string } = {};
+  // Formik v2 uses undefined as a real value instead of ignoring it
+  // so if `value` wasn't provided don't even include it as a property
+  // otherwise it will generate warnings
+  if (value !== undefined) {
+    props.value = value;
+  }
+
   return (
     <Field
       type="text"
@@ -52,19 +90,18 @@ const FormikDropdown: React.FC<PropsWithChildren<TProps>> = ({
       InputLabelProps={{
         shrink: true,
       }}
-      InputProps={InputProps}
+      onChange={(e: any) => {
+        onChange?.(e);
+        formik.handleChange(e);
+      }}
       fullWidth
       required={required}
       disabled={disabled}
+      InputProps={InputProps}
+      {...props}
     >
       {children}
-      {loading ? (
-        <MenuItem disabled key="loading">
-          Loading...
-        </MenuItem>
-      ) : (
-        menuItems
-      )}
+      {menuItems}
     </Field>
   );
 };
@@ -86,6 +123,8 @@ FormikDropdown.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  value: PropTypes.string,
+  InputProps: PropTypes.object,
 };
 
-export default FormikDropdown;
+export default connect<TProps>(FormikDropdown);

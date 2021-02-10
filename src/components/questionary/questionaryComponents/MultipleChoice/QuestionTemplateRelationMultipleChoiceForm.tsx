@@ -1,10 +1,10 @@
+import { FormControlLabel } from '@material-ui/core';
 import { Field } from 'formik';
-import React from 'react';
+import { Checkbox } from 'formik-material-ui';
+import React, { ChangeEvent, useState } from 'react';
 import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
 import FormikUICustomTable from 'components/common/FormikUICustomTable';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
@@ -13,11 +13,16 @@ import {
   SelectionFromOptionsConfig,
 } from 'generated/sdk';
 
+import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
 export const QuestionTemplateRelationMultipleChoiceForm: FormComponent<QuestionTemplateRelation> = props => {
   const config = props.field.config as SelectionFromOptionsConfig;
+  const [
+    showIsMultipleSelectCheckbox,
+    setShowIsMultipleSelectCheckbox,
+  ] = useState(config.variant === 'dropdown');
 
   return (
     <QuestionTemplateRelationFormShell
@@ -38,14 +43,17 @@ export const QuestionTemplateRelationMultipleChoiceForm: FormComponent<QuestionT
         <>
           <QuestionExcerpt question={props.field.question} />
           <TitledContainer label="Constraints">
-            <Field
-              name="config.required"
+            <FormControlLabel
+              control={
+                <Field
+                  name="config.required"
+                  component={Checkbox}
+                  margin="normal"
+                  type="checkbox"
+                  inputProps={{ 'data-cy': 'required' }}
+                />
+              }
               label="Is required"
-              checked={config.required}
-              component={FormikUICustomCheckbox}
-              margin="normal"
-              fullWidth
-              inputProps={{ 'data-cy': 'required' }}
             />
           </TitledContainer>
 
@@ -58,7 +66,24 @@ export const QuestionTemplateRelationMultipleChoiceForm: FormComponent<QuestionT
                 { text: 'Dropdown', value: 'dropdown' },
               ]}
               data-cy="variant"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setShowIsMultipleSelectCheckbox(e.target.value === 'dropdown');
+              }}
             />
+            {showIsMultipleSelectCheckbox && (
+              <FormControlLabel
+                control={
+                  <Field
+                    name="config.isMultipleSelect"
+                    component={Checkbox}
+                    margin="normal"
+                    type="checkbox"
+                    inputProps={{ 'data-cy': 'is-multiple-select' }}
+                  />
+                }
+                label="Is multiple select"
+              />
+            )}
           </TitledContainer>
 
           <TitledContainer label="Items">
@@ -83,14 +108,9 @@ export const QuestionTemplateRelationMultipleChoiceForm: FormComponent<QuestionT
             />
           </TitledContainer>
           <TitledContainer label="Dependencies">
-            <Field
-              name="dependency"
-              component={FormikUICustomDependencySelector}
-              templateField={props.field}
+            <QuestionDependencyList
               template={props.template}
-              margin="normal"
-              fullWidth
-              inputProps={{ 'data-cy': 'dependencies' }}
+              form={formikProps}
             />
           </TitledContainer>
         </>

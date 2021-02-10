@@ -13,16 +13,18 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import Help from '@material-ui/icons/Help';
 import InboxIcon from '@material-ui/icons/Inbox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import NoteAdd from '@material-ui/icons/NoteAdd';
 import People from '@material-ui/icons/People';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Settings from '@material-ui/icons/Settings';
 import SettingsApplications from '@material-ui/icons/SettingsApplications';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
-import { UserRole, Call } from 'generated/sdk';
+import { FeatureContext } from 'context/FeatureContextProvider';
+import { Call, FeatureId, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
@@ -37,6 +39,10 @@ type MenuItemsProps = {
 const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
   const proposalDisabled = callsData.length === 0;
   const multipleCalls = callsData.length > 1;
+  const context = useContext(FeatureContext);
+
+  const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
+    ?.isEnabled;
 
   const user = (
     <div data-cy="user-menu-items">
@@ -61,6 +67,14 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         </ListItemIcon>
         <ListItemText primary="New Proposal" />
       </ListItem>
+      {isShipmentFeatureEnabled && (
+        <ListItem component={NavLink} to="/MyShipments" button>
+          <ListItemIcon>
+            <LocalShippingIcon />
+          </ListItemIcon>
+          <ListItemText primary="My shipments" />
+        </ListItem>
+      )}
       <ListItem component={NavLink} to="/HelpPage" button>
         <ListItemIcon>
           <Help />
@@ -118,6 +132,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
       </ListItem>
       <TemplateMenuListItem />
       <SamplesMenuListItem />
+      {isShipmentFeatureEnabled && <ShipmentMenuListItem />}
       <SettingsMenuListItem />
     </div>
   );
@@ -256,6 +271,9 @@ const TemplateMenuListItem = () => {
     history.location.pathname === '/ProposalTemplates' ||
     history.location.pathname === '/SampleDeclarationTemplates';
   const [isExpanded, setIsExpanded] = useState(shouldExpand);
+  const context = useContext(FeatureContext);
+  const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
+    ?.isEnabled;
   function toggleExpand() {
     setIsExpanded(!isExpanded);
   }
@@ -294,6 +312,21 @@ const TemplateMenuListItem = () => {
             title="Sample declaration templates"
           />
         </ListItem>
+        {isShipmentFeatureEnabled && (
+          <ListItem
+            component={NavLink}
+            to="/ShipmentDeclarationTemplates"
+            button
+          >
+            <ListItemIcon>
+              <LocalShippingIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Shipment declaration"
+              title="Shipment declaration templates"
+            />
+          </ListItem>
+        )}
       </Collapse>
     </>
   );
@@ -306,6 +339,17 @@ const SamplesMenuListItem = () => {
         <BoxIcon />
       </ListItemIcon>
       <ListItemText primary="Sample safety" />
+    </ListItem>
+  );
+};
+
+const ShipmentMenuListItem = () => {
+  return (
+    <ListItem component={NavLink} to="/Shipments" button>
+      <ListItemIcon>
+        <LocalShippingIcon />
+      </ListItemIcon>
+      <ListItemText primary="Sample shipments" />
     </ListItem>
   );
 };

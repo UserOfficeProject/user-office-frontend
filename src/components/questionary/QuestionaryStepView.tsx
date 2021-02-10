@@ -1,152 +1,295 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Formik } from 'formik';
-import React, { SyntheticEvent } from 'react';
+import { Formik, useFormikContext } from 'formik';
+import React, { useContext, useEffect, useState } from 'react';
+import { Prompt } from 'react-router';
 import * as Yup from 'yup';
 
+import { useCheckAccess } from 'components/common/Can';
 import { ErrorFocus } from 'components/common/ErrorFocus';
 import UOLoader from 'components/common/UOLoader';
-import { createFormikConfigObjects } from 'components/proposal/createFormikConfigObjects';
-import { QuestionaryStep } from 'generated/sdk';
+import { Answer, QuestionaryStep, UserRole } from 'generated/sdk';
+import { usePreSubmitActions } from 'hooks/questionary/useSubmitActions';
 import {
   areDependenciesSatisfied,
   getQuestionaryStepByTopicId as getStepByTopicId,
+  prepareAnswers,
 } from 'models/QuestionaryFunctions';
 import {
-  Event,
   EventType,
   QuestionarySubmissionState,
 } from 'models/QuestionarySubmissionState';
 import submitFormAsync from 'utils/FormikAsyncFormHandler';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import NavigationFragment from './NavigationFragment';
-import { createQuestionaryComponent } from './QuestionaryComponentRegistry';
+import {
+  createQuestionaryComponent,
+  getQuestionaryComponentDefinition,
+} from './QuestionaryComponentRegistry';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from './QuestionaryContext';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   componentWrapper: {
-    margin: '10px 0',
+    margin: theme.spacing(1, 0),
   },
   disabled: {
     pointerEvents: 'none',
     opacity: 0.7,
   },
-});
+}));
+
+export const createFormikConfigObjects = (
+  answers: Answer[],
+  state: QuestionarySubmissionState
+): { validationSchema: any; initialValues: any } => {
+  const validationSchema: any = {};
+  const initialValues: any = {};
+
+  answers.forEach(answer => {
+    const definition = getQuestionaryComponentDefinition(
+      answer.question.dataType
+    );
+    if (definition.createYupValidationSchema) {
+      validationSchema[
+        answer.question.proposalQuestionId
+      ] = definition.createYupValidationSchema(answer);
+      initialValues[
+        answer.question.proposalQuestionId
+      ] = definition.getYupInitialValue({ answer, state });
+    }
+  });
+
+  return { initialValues, validationSchema };
+};
+
+const PromptIfDirty = ({ isDirty }: { isDirty: boolean }) => {
+  const formik = useFormikContext();
+
+  return (
+    <Prompt
+      when={isDirty && formik.submitCount === 0}
+      message="Changes you recently made in this step will not be saved! Are you sure?"
+    />
+  );
+};
 
 export default function QuestionaryStepView(props: {
-  state: QuestionarySubmissionState;
   topicId: number;
-  dispatch: React.Dispatch<Event>;
   readonly: boolean;
+  onStepComplete?: (topicId: number) => any;
 }) {
-  const { state, topicId, dispatch } = props;
+  const { topicId } = props;
   const classes = useStyles();
+
+  const preSubmitActions = usePreSubmitActions();
+  const { api } = useDataApiWithFeedback();
+
+  const { state, dispatch } = useContext(QuestionaryContext);
+
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+
+  if (!state || !dispatch) {
+    throw new Error(createMissingContextErrorMessage());
+  }
 
   const questionaryStep = getStepByTopicId(state.steps, topicId) as
     | QuestionaryStep
     | undefined;
 
-  const activeFields = questionaryStep
-    ? questionaryStep.fields.filter(field => {
-        return areDependenciesSatisfied(
-          state.steps,
-          field.question.proposalQuestionId
-        );
-      })
-    : [];
+  if (!questionaryStep) {
+    throw new Error(
+      `Could not find questionary step with topic id: ${topicId}`
+    );
+  }
+
+  const activeFields = questionaryStep.fields.filter(field => {
+    return areDependenciesSatisfied(
+      state.steps,
+      field.question.proposalQuestionId
+    );
+  });
+
+  const { initialValues, validationSchema } = createFormikConfigObjects(
+    activeFields,
+    state
+  );
+
+  const [lastSavedFormValues, setLastSavedFormValues] = useState(initialValues);
+
+  useEffect(() => {
+    setLastSavedFormValues(initialValues);
+    // NOTE: We need to update lastSavedFormValues when we change the topic so it has actual form initial values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topicId]);
+
+  useEffect(() => {
+    const alertUserOnRouteLeave = (e: Event) => {
+      e.preventDefault();
+      if (
+        JSON.stringify(lastSavedFormValues) !== JSON.stringify(initialValues)
+      ) {
+        e.returnValue = true;
+      }
+    };
+
+    const cleanDirtyState = () => {
+      if (
+        state.isDirty &&
+        JSON.stringify(initialValues) === JSON.stringify(lastSavedFormValues)
+      ) {
+        dispatch({
+          type: EventType.CLEAN_DIRTY_STATE,
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', alertUserOnRouteLeave);
+    cleanDirtyState();
+
+    return () => {
+      window.removeEventListener('beforeunload', alertUserOnRouteLeave);
+    };
+  }, [initialValues, lastSavedFormValues, state.isDirty, dispatch]);
+
+  const saveHandler = async (isPartialSave: boolean) => {
+    const result =
+      (
+        await Promise.all(
+          preSubmitActions(activeFields).map(
+            async f => await f({ state, dispatch, api: api() })
+          )
+        )
+      ).pop() || state.questionaryId; // TODO obtain newly created questionary ID some other way
+
+    const questionaryId = state.questionaryId || result;
+    if (!questionaryId) {
+      throw new Error('Missing questionaryId');
+    }
+
+    const answerTopicResult = await api('Saved').answerTopic({
+      questionaryId: questionaryId,
+      answers: prepareAnswers(activeFields),
+      topicId: topicId,
+      isPartialSave: isPartialSave,
+    });
+
+    if (answerTopicResult.answerTopic.questionaryStep) {
+      dispatch({
+        type: EventType.QUESTIONARY_STEP_ANSWERED,
+        payload: {
+          questionaryStep: answerTopicResult.answerTopic.questionaryStep,
+        },
+      });
+
+      setLastSavedFormValues(initialValues);
+    }
+  };
 
   if (state === null || !questionaryStep) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
-  const { initialValues, validationSchema } = createFormikConfigObjects(
-    activeFields
-  );
-
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={Yup.object().shape(validationSchema)}
+      validationSchema={
+        isUserOfficer ? null : Yup.object().shape(validationSchema)
+      }
       onSubmit={() => {}}
       enableReinitialize={true}
     >
-      {({
-        errors,
-        touched,
-        handleChange,
-        submitForm,
-        validateForm,
-        isSubmitting,
-      }) => (
-        <form className={props.readonly ? classes.disabled : undefined}>
-          {activeFields.map(field => {
-            return (
-              <div
-                className={classes.componentWrapper}
-                key={field.question.proposalQuestionId}
-              >
-                {createQuestionaryComponent({
-                  answer: field,
-                  touched: touched, // for formik
-                  errors: errors, // for formik
-                  onComplete: (evt: SyntheticEvent, newValue: any) => {
-                    if (field.value !== newValue) {
-                      dispatch({
-                        type: EventType.FIELD_CHANGED,
-                        payload: {
-                          id: field.question.proposalQuestionId,
-                          newValue: newValue,
-                        },
-                      });
-                      handleChange(evt);
-                    }
-                  },
-                })}
-              </div>
-            );
-          })}
-          <NavigationFragment
-            disabled={props.readonly}
-            back={{
-              callback: () => {
-                dispatch({ type: EventType.BACK_CLICKED });
-              },
-              disabled: state.stepIndex === 0,
-            }}
-            reset={{
-              callback: () => dispatch({ type: EventType.RESET_CLICKED }),
-              disabled: !state.isDirty,
-            }}
-            save={
-              questionaryStep.isCompleted
-                ? undefined
-                : {
-                    callback: () => {
-                      dispatch({
-                        type: EventType.SAVE_CLICKED,
-                        payload: { answers: activeFields, topicId: topicId },
-                      });
+      {formikProps => {
+        const {
+          submitForm,
+          validateForm,
+          setFieldValue,
+          isSubmitting,
+        } = formikProps;
+
+        return (
+          <form className={props.readonly ? classes.disabled : undefined}>
+            <PromptIfDirty isDirty={state.isDirty} />
+            {activeFields.map(field => {
+              return (
+                <div
+                  className={classes.componentWrapper}
+                  key={field.question.proposalQuestionId}
+                >
+                  {createQuestionaryComponent({
+                    answer: field,
+                    formikProps,
+                    onComplete: (newValue: Answer['value']) => {
+                      if (field.value !== newValue) {
+                        dispatch({
+                          type: EventType.FIELD_CHANGED,
+                          payload: {
+                            id: field.question.proposalQuestionId,
+                            newValue: newValue,
+                          },
+                        });
+                        setFieldValue(
+                          field.question.proposalQuestionId,
+                          newValue,
+                          true
+                        );
+                      }
                     },
-                    disabled: !props.state.isDirty,
-                  }
-            }
-            saveAndNext={{
-              callback: () => {
-                submitFormAsync(submitForm, validateForm).then(
-                  (isValid: boolean) => {
-                    if (isValid) {
-                      dispatch({
-                        type: EventType.SAVE_AND_CONTINUE_CLICKED,
-                        payload: { answers: activeFields, topicId: topicId },
-                      });
+                  })}
+                </div>
+              );
+            })}
+            <NavigationFragment
+              disabled={props.readonly}
+              back={{
+                callback: () => {
+                  if (state.isDirty) {
+                    if (
+                      window.confirm(
+                        'Changes you recently made in this step will not be saved! Are you sure?'
+                      )
+                    ) {
+                      dispatch({ type: EventType.BACK_CLICKED });
                     }
+                  } else {
+                    dispatch({ type: EventType.BACK_CLICKED });
                   }
-                );
-              },
-            }}
-            isLoading={isSubmitting}
-          />
-          <ErrorFocus />
-        </form>
-      )}
+                },
+                disabled: state.stepIndex === 0,
+              }}
+              reset={{
+                callback: () => dispatch({ type: EventType.RESET_CLICKED }),
+                disabled: !state.isDirty,
+              }}
+              save={
+                questionaryStep.isCompleted
+                  ? undefined
+                  : {
+                      callback: () => saveHandler(true),
+                      disabled: !state.isDirty,
+                    }
+              }
+              saveAndNext={{
+                callback: () => {
+                  submitFormAsync(submitForm, validateForm).then(
+                    async (isValid: boolean) => {
+                      if (isValid) {
+                        await saveHandler(false);
+                        dispatch({ type: EventType.GO_STEP_FORWARD });
+                        props.onStepComplete?.(topicId);
+                      }
+                    }
+                  );
+                },
+              }}
+              isLoading={isSubmitting}
+            />
+            <ErrorFocus />
+          </form>
+        );
+      }}
     </Formik>
   );
 }

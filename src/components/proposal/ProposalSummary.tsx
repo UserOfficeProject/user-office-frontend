@@ -3,25 +3,30 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import React, { useContext } from 'react';
 
 import NavigationFragment from 'components/questionary/NavigationFragment';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from 'components/questionary/QuestionaryContext';
 import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { EventType } from 'models/QuestionarySubmissionState';
 import withConfirm from 'utils/withConfirm';
 
-import { ProposalContext } from './ProposalContainer';
+import { ProposalContextType } from './ProposalContainer';
 
-function ProposalReview({ data, readonly, confirm }: ProposalSummaryProps) {
-  const context = useContext(ProposalContext);
+function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
+  const { state, dispatch } = useContext(
+    QuestionaryContext
+  ) as ProposalContextType;
 
-  if (!context) {
-    throw new Error(
-      'ProposalReview is missing ProposalContext. Wrap ProposalReview or one of its parrents with ProposalContext'
-    );
+  if (!dispatch || !state) {
+    throw new Error(createMissingContextErrorMessage());
   }
-  const { dispatch } = context;
+
+  const proposal = state.proposal;
+
   const downloadPDFProposal = useDownloadPDFProposal();
-  const proposal = data.proposal;
 
   const allStepsComplete =
     proposal.questionary &&
@@ -81,7 +86,7 @@ function ProposalReview({ data, readonly, confirm }: ProposalSummaryProps) {
         />
         <Button
           className={classes.button}
-          onClick={() => downloadPDFProposal(proposal.id)}
+          onClick={() => downloadPDFProposal([proposal.id], proposal.title)}
           variant="contained"
           disabled={!allStepsComplete}
         >

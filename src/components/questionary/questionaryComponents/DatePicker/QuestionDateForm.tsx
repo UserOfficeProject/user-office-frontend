@@ -1,19 +1,21 @@
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
+import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
-import { DateConfig, Question } from 'generated/sdk';
+import { Question } from 'generated/sdk';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionDateForm: FormComponent<Question> = props => {
   const field = props.field;
-  const config = field.config as DateConfig;
 
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
 
@@ -56,16 +58,45 @@ export const QuestionDateForm: FormComponent<Question> = props => {
             fullWidth
             inputProps={{ 'data-cy': 'tooltip' }}
           />
+
           <TitledContainer label="Constraints">
             <Field
               name="config.required"
               label="Is required"
-              checked={config.required}
               component={FormikUICustomCheckbox}
               margin="normal"
               fullWidth
               data-cy="required"
             />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Field
+                name="config.minDate"
+                label="Min"
+                format="yyyy-MM-dd"
+                component={KeyboardDatePicker}
+                margin="normal"
+                fullWidth
+                data-cy="minDate"
+              />
+              <Field
+                name="config.maxDate"
+                label="Max"
+                format="yyyy-MM-dd"
+                component={KeyboardDatePicker}
+                margin="normal"
+                fullWidth
+                data-cy="maxDate"
+              />
+              <Field
+                name="config.defaultDate"
+                label="Default"
+                format="yyyy-MM-dd"
+                component={KeyboardDatePicker}
+                margin="normal"
+                fullWidth
+                data-cy="defaultDate"
+              />
+            </MuiPickersUtilsProvider>
           </TitledContainer>
         </>
       )}

@@ -46,18 +46,21 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   } = useSEPProposalsData(sepId, selectedCallId);
   const { api } = useDataApiWithFeedback();
   const [proposalId, setProposalId] = useState<null | number>(null);
-  const hasAccessRights = useCheckAccess([
+  const hasRightToAssignReviewers = useCheckAccess([
     UserRole.USER_OFFICER,
     UserRole.SEP_CHAIR,
     UserRole.SEP_SECRETARY,
+  ]);
+  const hasRightToRemoveAssignedProposal = useCheckAccess([
+    UserRole.USER_OFFICER,
   ]);
 
   const getGradesFromAssignments = (assignments: SepAssignment[]) =>
     assignments
       ?.filter(
-        assignment => assignment.review.status === ReviewStatus.SUBMITTED
+        assignment => assignment.review?.status === ReviewStatus.SUBMITTED
       )
-      .map(assignment => assignment.review.grade) ?? [];
+      .map(assignment => assignment.review?.grade) ?? [];
 
   const SEPProposalColumns = [
     { title: 'ID', field: 'proposal.shortCode' },
@@ -82,12 +85,15 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     },
     {
       title: 'Average grade',
-      render: (rowData: SepProposal): string =>
-        average(
+      render: (rowData: SepProposal): string => {
+        const avgGrade = average(
           getGradesFromAssignments(
             rowData.assignments as SepAssignment[]
           ) as number[]
-        ).toString(),
+        );
+
+        return isNaN(avgGrade) ? '-' : `${avgGrade}`;
+      },
     },
   ];
 
@@ -99,51 +105,57 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
       sepId,
     });
 
-    if (SEPProposalsData) {
-      setSEPProposalsData(
-        SEPProposalsData.filter(
-          proposalItem =>
-            proposalItem.proposalId !== proposalToRemove.proposalId
-        )
-      );
-    }
+    setSEPProposalsData(sepProposalData =>
+      sepProposalData === null
+        ? null
+        : sepProposalData.filter(
+            proposalItem =>
+              proposalItem.proposalId !== proposalToRemove.proposalId
+          )
+    );
   };
 
   const removeAssignedReviewer = async (
     assignedReviewer: SepAssignment,
     proposalId: number
   ): Promise<void> => {
+    /**
+     * TODO(asztalos): merge `removeMemberFromSEPProposal` and `removeUserForReview` (same goes for creation)
+     *                otherwise if one of them fails we may end up with an broken state
+     */
     await api('Reviewer removed').removeMemberFromSEPProposal({
       proposalId,
       sepId,
       memberId: assignedReviewer.sepMemberUserId as number,
     });
 
-    await api().removeUserForReview({
-      reviewID: assignedReviewer.review.id,
-    });
+    assignedReviewer.review &&
+      (await api().removeUserForReview({
+        reviewId: assignedReviewer.review.id,
+        sepId,
+      }));
 
-    if (SEPProposalsData) {
-      setSEPProposalsData(
-        SEPProposalsData.map(proposalItem => {
-          if (proposalItem.proposalId === proposalId) {
-            const newAssignments =
-              proposalItem.assignments?.filter(
-                oldAssignment =>
-                  oldAssignment.sepMemberUserId !==
-                  assignedReviewer.sepMemberUserId
-              ) || [];
+    setSEPProposalsData(sepProposalData =>
+      sepProposalData === null
+        ? null
+        : sepProposalData.map(proposalItem => {
+            if (proposalItem.proposalId === proposalId) {
+              const newAssignments =
+                proposalItem.assignments?.filter(
+                  oldAssignment =>
+                    oldAssignment.sepMemberUserId !==
+                    assignedReviewer.sepMemberUserId
+                ) || [];
 
-            return {
-              ...proposalItem,
-              assignments: newAssignments,
-            };
-          } else {
-            return proposalItem;
-          }
-        })
-      );
-    }
+              return {
+                ...proposalItem,
+                assignments: newAssignments,
+              };
+            } else {
+              return proposalItem;
+            }
+          })
+    );
   };
 
   const assignMemberToSEPProposal = async (memberUser: SepMember) => {
@@ -165,35 +177,37 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
       ? (addUserForReviewResilt.addUserForReview.review as Review).id
       : 0;
 
-    if (!assignmentResult.assignMemberToSEPProposal.error && SEPProposalsData) {
-      setSEPProposalsData(
-        SEPProposalsData.map(proposalItem => {
-          if (proposalItem.proposalId === proposalId) {
-            const newAssignments: SepAssignment[] = [
-              ...(proposalItem.assignments || []),
-              {
-                user: memberUser.user,
-                roles: memberUser.roles,
-                review: {
-                  id: reviewId,
-                  status: ReviewStatus.DRAFT,
-                  comment: '',
-                  grade: 0,
-                  sepID: sepId,
-                },
-                dateAssigned: Date.now(),
-                sepMemberUserId: memberUser.userId,
-              } as SepAssignment,
-            ];
+    if (!assignmentResult.assignMemberToSEPProposal.error) {
+      setSEPProposalsData(sepProposalData =>
+        sepProposalData === null
+          ? null
+          : sepProposalData.map(proposalItem => {
+              if (proposalItem.proposalId === proposalId) {
+                const newAssignments: SepAssignment[] = [
+                  ...(proposalItem.assignments || []),
+                  {
+                    user: memberUser.user,
+                    roles: memberUser.roles,
+                    review: {
+                      id: reviewId,
+                      status: ReviewStatus.DRAFT,
+                      comment: '',
+                      grade: 0,
+                      sepID: sepId,
+                    },
+                    dateAssigned: Date.now(),
+                    sepMemberUserId: memberUser.userId,
+                  } as SepAssignment,
+                ];
 
-            return {
-              ...proposalItem,
-              assignments: newAssignments,
-            };
-          } else {
-            return proposalItem;
-          }
-        })
+                return {
+                  ...proposalItem,
+                  assignments: newAssignments,
+                };
+              } else {
+                return proposalItem;
+              }
+            })
       );
     }
 
@@ -208,18 +222,20 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   )?.assignments;
 
   const updateReviewStatusAndGrade = (
+    sepProposalData: SepProposal[] | null,
     editingProposalData: SepProposal,
     currentAssignment: SepAssignment
   ) => {
     const newProposalsData =
-      SEPProposalsData?.map(sepProposalsData => {
+      sepProposalData?.map(sepProposalsData => {
         if (sepProposalsData.proposalId === editingProposalData.proposalId) {
           return {
             ...editingProposalData,
             assignments:
               editingProposalData.assignments?.map(proposalAssignment => {
                 if (
-                  proposalAssignment.review.id === currentAssignment?.review.id
+                  proposalAssignment?.review?.id ===
+                  currentAssignment?.review?.id
                 ) {
                   return currentAssignment;
                 } else {
@@ -240,11 +256,13 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
       sepProposal={rowData}
       removeAssignedReviewer={removeAssignedReviewer}
       updateView={currentAssignment => {
-        const newProposalsData = updateReviewStatusAndGrade(
-          rowData,
-          currentAssignment
+        setSEPProposalsData(sepProposalData =>
+          updateReviewStatusAndGrade(
+            sepProposalData,
+            rowData,
+            currentAssignment
+          )
         );
-        setSEPProposalsData(newProposalsData);
       }}
     />
   );
@@ -289,7 +307,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
               },
             ]}
             actions={
-              hasAccessRights
+              hasRightToAssignReviewers
                 ? [
                     rowData => ({
                       icon: AssignmentIndIcon,
@@ -300,8 +318,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                 : []
             }
             editable={
-              hasAccessRights
+              hasRightToRemoveAssignedProposal
                 ? {
+                    deleteTooltip: () => 'Remove assigned proposal',
                     onRowDelete: (rowData: SepProposal): Promise<void> =>
                       removeProposalFromSEP(rowData),
                   }

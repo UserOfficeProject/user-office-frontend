@@ -31,17 +31,12 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
     { title: 'Organisation', field: 'user.organisation' },
   ];
 
-  const members = SEPMembersData?.filter(sepMember => {
-    if (
+  const members = SEPMembersData?.filter(
+    sepMember =>
       !assignedMembers?.find(
         assignedMember => assignedMember.id === sepMember.userId
       )
-    ) {
-      return sepMember.user;
-    }
-
-    return null;
-  }) as SepMember[];
+  ) as SepMember[];
 
   const AddIcon = (): JSX.Element => <Add />;
 

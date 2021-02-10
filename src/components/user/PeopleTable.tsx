@@ -1,12 +1,12 @@
 import Button from '@material-ui/core/Button';
 import Email from '@material-ui/icons/Email';
 import makeStyles from '@material-ui/styles/makeStyles';
-import MaterialTable, { Query } from 'material-table';
+import MaterialTable, { Query, Options } from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
-import { UserRole, GetUsersQuery, BasicUserDetails } from 'generated/sdk';
+import { BasicUserDetails, GetUsersQuery, UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { tableIcons } from 'utils/materialIcons';
 
@@ -17,7 +17,8 @@ function sendUserRequest(
   api: any,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   selectedUsers: number[] | undefined,
-  userRole: UserRole | undefined
+  userRole: UserRole | undefined,
+  selectedParticipants: number[]
 ) {
   const variables = {
     filter: searchQuery.search,
@@ -43,6 +44,7 @@ function sendUserRequest(
             lastname: user.lastname,
             organisation: user.organisation,
             id: user.id,
+            tableData: { checked: selectedParticipants.includes(user.id) },
           };
         }),
       };
@@ -50,12 +52,14 @@ function sendUserRequest(
 }
 
 type PeopleTableProps = {
-  title: string;
+  title?: string;
   userRole?: UserRole;
   invitationUserRole?: UserRole;
-  actionIcon: JSX.Element;
-  actionText: string;
-  action: (data: any) => void;
+  action?: {
+    fn: (data: any) => void;
+    actionIcon: JSX.Element;
+    actionText: string;
+  };
   selection: boolean;
   isFreeAction?: boolean;
   data?: BasicUserDetails[];
@@ -65,6 +69,40 @@ type PeopleTableProps = {
   emailInvite?: boolean;
   invitationButtons?: { title: string; action: Function }[];
   selectedUsers?: number[];
+  mtOptions?: Options;
+};
+
+const useStyles = makeStyles({
+  tableWrapper: {
+    '& .MuiToolbar-gutters': {
+      paddingLeft: '0',
+    },
+  },
+  verticalCentered: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+const columns = [
+  { title: 'Name', field: 'firstname' },
+  { title: 'Surname', field: 'lastname' },
+  { title: 'Organisation', field: 'organisation' },
+];
+
+const getTitle = (invitationUserRole?: UserRole): string => {
+  switch (invitationUserRole) {
+    case UserRole.USER_OFFICER:
+      return 'Invite User';
+    case UserRole.SEP_CHAIR:
+      return 'Invite SEP Chair';
+    case UserRole.SEP_SECRETARY:
+      return 'Invite SEP Secretary';
+    case UserRole.INSTRUMENT_SCIENTIST:
+      return 'Invite Instrument Scientist';
+    default:
+      return 'Invite User';
+  }
 };
 
 const PeopleTable: React.FC<PeopleTableProps> = props => {
@@ -75,40 +113,26 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
   const [selectedParticipants, setSelectedParticipants] = useState<
     BasicUserDetails[]
   >([]);
-  const columns = [
-    { title: 'Name', field: 'firstname' },
-    { title: 'Surname', field: 'lastname' },
-    { title: 'Organisation', field: 'organisation' },
-  ];
+  const [searchText, setSearchText] = useState('');
+  const [currentPageIds, setCurrentPageIds] = useState<number[]>([]);
 
-  const classes = makeStyles({
-    tableWrapper: {
-      '& .MuiToolbar-gutters': {
-        paddingLeft: '0',
-      },
-    },
-  })();
+  const classes = useStyles();
 
-  const getTitle = (): string => {
-    switch (props.invitationUserRole) {
-      case UserRole.USER_OFFICER:
-        return 'Invite User';
-      case UserRole.SEP_CHAIR:
-        return 'Invite SEP Chair';
-      case UserRole.SEP_SECRETARY:
-        return 'Invite SEP Secretary';
-      case UserRole.INSTRUMENT_SCIENTIST:
-        return 'Invite Instrument Scientist';
-      default:
-        return 'Invite User';
+  const { data, action } = props;
+
+  useEffect(() => {
+    if (!data) {
+      return;
     }
-  };
 
-  if (sendUserEmail && props.invitationUserRole) {
+    setCurrentPageIds(data.map(({ id }) => id));
+  }, [data]);
+
+  if (sendUserEmail && props.invitationUserRole && action) {
     return (
       <InviteUserForm
-        title={getTitle()}
-        action={props.action}
+        title={getTitle(props.invitationUserRole)}
+        action={action.fn}
         close={() => setSendUserEmail(false)}
         userRole={props.invitationUserRole}
       />
@@ -117,14 +141,14 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
   const EmailIcon = (): JSX.Element => <Email />;
 
   const actionArray = [];
-  props.action &&
+  action &&
     !props.selection &&
     actionArray.push({
-      icon: () => props.actionIcon,
+      icon: () => action.actionIcon,
       isFreeAction: props.isFreeAction,
-      tooltip: props.actionText,
+      tooltip: action.actionText,
       onClick: (event: React.MouseEvent<JSX.Element>, rowData: any) =>
-        props.action(rowData),
+        action.fn(rowData),
     });
   props.emailInvite &&
     actionArray.push({
@@ -140,20 +164,56 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
         icons={tableIcons}
         title={props.title}
         columns={columns}
-        onSelectionChange={selectedItems => {
-          const newData = selectedItems.map(selectedItem => ({
-            id: selectedItem.id,
-            firstname: selectedItem.firstname,
-            lastname: selectedItem.lastname,
-            organisation: selectedItem.organisation,
-          }));
+        onSelectionChange={(selectedItems, selectedItem) => {
+          // when the user wants to (un)select all items
+          // `selectedItem` will be undefined
+          if (!selectedItem) {
+            // first clear the current page because if any row was unselected
+            // the (un)select all option will select every rows
+            // which would result in duplicates
+            setSelectedParticipants(selectedParticipants =>
+              selectedParticipants.filter(
+                ({ id }) => !currentPageIds.includes(id)
+              )
+            );
 
-          setSelectedParticipants(newData as BasicUserDetails[]);
+            if (selectedItems.length > 0) {
+              setSelectedParticipants(selectedParticipants => [
+                ...selectedParticipants,
+                ...(selectedItems.map(selectedItem => ({
+                  id: selectedItem.id,
+                  firstname: selectedItem.firstname,
+                  lastname: selectedItem.lastname,
+                  organisation: selectedItem.organisation,
+                })) as BasicUserDetails[]),
+              ]);
+            }
+
+            return;
+          }
+
+          setSelectedParticipants(selectedParticipants =>
+            selectedItem.tableData.checked
+              ? ([
+                  ...selectedParticipants,
+                  {
+                    id: selectedItem.id,
+                    firstname: selectedItem.firstname,
+                    lastname: selectedItem.lastname,
+                    organisation: selectedItem.organisation,
+                  },
+                ] as BasicUserDetails[])
+              : selectedParticipants.filter(({ id }) => id !== selectedItem.id)
+          );
         }}
         data={
           props.data
             ? props.data
             : query => {
+                if (searchText !== query.search) {
+                  setSearchText(query.search);
+                }
+
                 setPageSize(query.pageSize);
 
                 return sendUserRequest(
@@ -161,8 +221,15 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
                   sendRequest,
                   setLoading,
                   props.selectedUsers,
-                  props.userRole
-                );
+                  props.userRole,
+                  selectedParticipants.map(({ id }) => id)
+                ).then((users: any) => {
+                  setCurrentPageIds(
+                    users.data.map(({ id }: { id: number }) => id)
+                  );
+
+                  return users;
+                });
               }
         }
         isLoading={loading}
@@ -171,13 +238,14 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
           debounceInterval: 400,
           pageSize,
           selection: props.selection,
+          ...props.mtOptions,
         }}
         actions={actionArray}
         editable={
           props.onRemove
             ? {
                 onRowDelete: oldData =>
-                  new Promise(resolve => {
+                  new Promise<void>(resolve => {
                     resolve();
                     (props.onRemove as any)(oldData);
                   }),
@@ -187,6 +255,9 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
       />
       {props.selection && (
         <ActionButtonContainer>
+          <div className={classes.verticalCentered}>
+            {selectedParticipants.length} user(s) selected
+          </div>
           <Button
             type="button"
             variant="contained"
@@ -198,7 +269,7 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
               }
             }}
             disabled={selectedParticipants.length === 0}
-            data-cy="assign-instrument-to-call"
+            data-cy="assign-selected-users"
           >
             Update
           </Button>
@@ -226,10 +297,12 @@ const PeopleTable: React.FC<PeopleTableProps> = props => {
 };
 
 PeopleTable.propTypes = {
-  title: PropTypes.string.isRequired,
-  actionIcon: PropTypes.element.isRequired,
-  actionText: PropTypes.string.isRequired,
-  action: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  action: PropTypes.shape({
+    fn: PropTypes.func.isRequired,
+    actionIcon: PropTypes.element.isRequired,
+    actionText: PropTypes.string.isRequired,
+  }),
   selection: PropTypes.bool.isRequired,
   isFreeAction: PropTypes.bool,
   userRole: PropTypes.any,
@@ -241,6 +314,7 @@ PeopleTable.propTypes = {
   emailInvite: PropTypes.bool,
   invitationButtons: PropTypes.array,
   selectedUsers: PropTypes.array,
+  mtOptions: PropTypes.object,
 };
 
 export default PeopleTable;

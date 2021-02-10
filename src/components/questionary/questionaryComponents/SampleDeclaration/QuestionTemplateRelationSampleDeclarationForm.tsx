@@ -7,20 +7,24 @@ import { Select, TextField } from 'formik-material-ui';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionTemplateRelation, TemplateCategoryId } from 'generated/sdk';
 import { useTemplates } from 'hooks/template/useTemplates';
 
+import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationSubtemplateForm: FormComponent<QuestionTemplateRelation> = props => {
+export const QuestionTemplateRelationSampleDeclarationForm: FormComponent<QuestionTemplateRelation> = props => {
   const { templates } = useTemplates(
     false,
     TemplateCategoryId.SAMPLE_DECLARATION
   );
+
+  if (!templates) {
+    return null;
+  }
 
   return (
     <QuestionTemplateRelationFormShell
@@ -56,37 +60,47 @@ export const QuestionTemplateRelationSubtemplateForm: FormComponent<QuestionTemp
 
           <TitledContainer label="Constraints">
             <Field
+              name="config.minEntries"
+              label="Min entries"
+              placeholder="(e.g. 1, leave blank for unlimited)"
+              type="text"
+              component={TextField}
+              margin="normal"
+              fullWidth
+              data-cy="min-entries"
+            />
+            <Field
               name="config.maxEntries"
               label="Max entries"
               type="text"
               component={TextField}
               margin="normal"
               fullWidth
-              data-cy="maxEntries"
+              data-cy="max-entries"
             />
           </TitledContainer>
 
           <TitledContainer label="Options">
             <FormControl fullWidth>
-              <InputLabel htmlFor="age-simple">Template name</InputLabel>
+              <InputLabel>Template name</InputLabel>
               <Field
                 name="config.templateId"
                 type="text"
                 component={Select}
                 margin="normal"
                 data-cy="templateId"
+                defaultValue={''}
               >
-                {templates &&
-                  templates.map(template => {
-                    return (
-                      <MenuItem
-                        value={template.templateId}
-                        key={template.templateId}
-                      >
-                        {template.name}
-                      </MenuItem>
-                    );
-                  })}
+                {templates.map(template => {
+                  return (
+                    <MenuItem
+                      value={template.templateId}
+                      key={template.templateId}
+                    >
+                      {template.name}
+                    </MenuItem>
+                  );
+                })}
               </Field>
               <Link href="/SampleDeclarationTemplates/" target="blank">
                 View all templates
@@ -95,14 +109,9 @@ export const QuestionTemplateRelationSubtemplateForm: FormComponent<QuestionTemp
           </TitledContainer>
 
           <TitledContainer label="Dependencies">
-            <Field
-              name="dependency"
-              component={FormikUICustomDependencySelector}
-              templateField={props.field}
+            <QuestionDependencyList
+              form={formikProps}
               template={props.template}
-              margin="normal"
-              fullWidth
-              data-cy="dependencies"
             />
           </TitledContainer>
         </>

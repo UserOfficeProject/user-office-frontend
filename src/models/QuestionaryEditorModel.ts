@@ -3,9 +3,9 @@ import { Reducer, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import {
-  Template,
   Question,
   QuestionTemplateRelation,
+  Template,
   TemplateCategoryId,
   TemplateStep,
 } from 'generated/sdk';
@@ -16,8 +16,8 @@ import {
   getTopicById,
 } from 'models/QuestionaryFunctions';
 import {
-  useReducerWithMiddleWares,
   ReducerMiddleware,
+  useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
 export enum EventType {
@@ -48,6 +48,7 @@ export enum EventType {
   OPEN_QUESTIONREL_EDITOR,
   UPDATE_TEMPLATE_METADATA_REQUESTED,
   TEMPLATE_METADATA_UPDATED,
+  DEPENDENCY_HOVER,
 }
 
 export interface Event {
@@ -67,6 +68,7 @@ export default function QuestionaryEditorModel(
     name: 'blank',
     complementaryQuestions: [],
     description: '',
+    questionaryCount: 0,
   };
 
   function reducer(state: Template, action: Event): Template {

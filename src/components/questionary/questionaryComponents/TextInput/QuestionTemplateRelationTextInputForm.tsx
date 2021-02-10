@@ -1,26 +1,21 @@
+import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { useState } from 'react';
+import React from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomDependencySelector from 'components/common/FormikUICustomDependencySelector';
 import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionTemplateRelation, TextInputConfig } from 'generated/sdk';
 
+import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
 export const QuestionTemplateRelationTextInputForm: FormComponent<QuestionTemplateRelation> = props => {
-  const config = props.field.config as TextInputConfig;
-
-  const [isRichQuestion, setIsRichQuestion] = useState<boolean>(
-    (props.field.config as TextInputConfig).isHtmlQuestion
-  );
-
   return (
     <QuestionTemplateRelationFormShell
       closeMe={props.closeMe}
@@ -47,7 +42,6 @@ export const QuestionTemplateRelationTextInputForm: FormComponent<QuestionTempla
           <TitledContainer label="Constraints">
             <Field
               name="config.required"
-              checked={config.required}
               component={FormikUICustomCheckbox}
               label="Is required"
               margin="normal"
@@ -77,17 +71,52 @@ export const QuestionTemplateRelationTextInputForm: FormComponent<QuestionTempla
           </TitledContainer>
           <TitledContainer label="Options">
             <Field
+              name="config.placeholder"
+              label="Placeholder text"
+              type="text"
+              component={TextField}
+              margin="normal"
+              fullWidth
+              data-cy="placeholder"
+            />
+            <Box component="div">
+              <Field
+                name="config.multiline"
+                checked={
+                  (formikProps.values.config as TextInputConfig).multiline
+                }
+                component={FormikUICustomCheckbox}
+                label="Multiple lines"
+                margin="normal"
+                data-cy="multiline"
+              />
+            </Box>
+
+            <Box component="div">
+              <Field
+                name="config.isCounterHidden"
+                checked={
+                  (formikProps.values.config as TextInputConfig).isCounterHidden
+                }
+                component={FormikUICustomCheckbox}
+                label="Hide counter"
+                margin="normal"
+                data-cy="multiline"
+              />
+            </Box>
+
+            <Field
               label="Enable rich text question"
               name="config.isHtmlQuestion"
               component={FormikUICustomCheckbox}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setIsRichQuestion(event.target.checked);
-              }}
-              checked={isRichQuestion}
             />
-            <Collapse in={isRichQuestion}>
+            <Collapse
+              in={(formikProps.values.config as TextInputConfig).isHtmlQuestion}
+            >
               <Field
-                visible={isRichQuestion}
+                visible={
+                  (formikProps.values.config as TextInputConfig).isHtmlQuestion
+                }
                 name="config.htmlQuestion"
                 type="text"
                 component={FormikUICustomEditor}
@@ -103,36 +132,12 @@ export const QuestionTemplateRelationTextInputForm: FormComponent<QuestionTempla
                 data-cy="htmlQuestion"
               />
             </Collapse>
-            <Field
-              name="config.placeholder"
-              label="Placeholder text"
-              type="text"
-              component={TextField}
-              margin="normal"
-              fullWidth
-              data-cy="placeholder"
-            />
-
-            <Field
-              name="config.multiline"
-              checked={(formikProps.values.config as TextInputConfig).multiline}
-              component={FormikUICustomCheckbox}
-              label="Multiple lines"
-              margin="normal"
-              fullWidth
-              data-cy="multiline"
-            />
           </TitledContainer>
 
           <TitledContainer label="Dependencies">
-            <Field
-              name="dependency"
-              component={FormikUICustomDependencySelector}
-              templateField={props.field}
+            <QuestionDependencyList
+              form={formikProps}
               template={props.template}
-              margin="normal"
-              fullWidth
-              data-cy="dependencies"
             />
           </TitledContainer>
         </>

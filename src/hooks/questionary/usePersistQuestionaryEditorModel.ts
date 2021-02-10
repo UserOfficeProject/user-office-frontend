@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import {
   DataType,
-  FieldDependency,
+  FieldDependencyInput,
   Question,
   QuestionTemplateRelation,
   Template,
@@ -38,12 +38,12 @@ export function usePersistQuestionaryEditorModel() {
 
   // Have this until GQL accepts Union types
   // https://github.com/graphql/graphql-spec/blob/master/rfcs/InputUnion.md
-  const prepareDependencies = (dependency: FieldDependency) => {
+  const prepareDependencies = (dependency: FieldDependencyInput) => {
     return {
       ...dependency,
       condition: {
-        ...dependency.condition,
-        params: JSON.stringify({ value: dependency.condition.params }),
+        ...dependency?.condition,
+        params: JSON.stringify({ value: dependency?.condition.params }),
       },
     };
   };
@@ -59,7 +59,7 @@ export function usePersistQuestionaryEditorModel() {
       .then(data => data.updateQuestion);
   };
 
-  const updateQuestionTopicRelation = async (
+  const updateQuestionTemplateRelation = async (
     templateId: number,
     field: QuestionTemplateRelation
   ) => {
@@ -70,11 +70,27 @@ export function usePersistQuestionaryEditorModel() {
         sortOrder: field.sortOrder,
         questionId: field.question.proposalQuestionId,
         config: field.config ? JSON.stringify(field.config) : undefined,
-        dependency: field.dependency
-          ? prepareDependencies(field.dependency)
-          : field.dependency,
       })
       .then(data => data.updateQuestionTemplateRelation);
+  };
+
+  const updateQuestionTemplateRelationSettings = async (
+    templateId: number,
+    field: QuestionTemplateRelation
+  ) => {
+    return api()
+      .updateQuestionTemplateRelationSettings({
+        templateId,
+        questionId: field.question.proposalQuestionId,
+        config: field.config ? JSON.stringify(field.config) : undefined,
+        dependencies: field.dependencies
+          ? field.dependencies.map(dependency =>
+              prepareDependencies(dependency)
+            )
+          : [],
+        dependenciesOperator: field.dependenciesOperator,
+      })
+      .then(data => data.updateQuestionTemplateRelationSettings);
   };
 
   const createQuestion = async (
@@ -225,7 +241,7 @@ export function usePersistQuestionaryEditorModel() {
           } as QuestionTemplateRelation;
 
           executeAndMonitorCall(() =>
-            updateQuestionTopicRelation(state.templateId, questionRel)
+            updateQuestionTemplateRelation(state.templateId, questionRel)
           );
           break;
         case EventType.REORDER_TOPIC_REQUESTED: {
@@ -279,7 +295,8 @@ export function usePersistQuestionaryEditorModel() {
             const questionRel = action.payload
               .field as QuestionTemplateRelation;
             const templateId = action.payload.templateId;
-            const result = await updateQuestionTopicRelation(
+
+            const result = await updateQuestionTemplateRelationSettings(
               templateId,
               questionRel
             );

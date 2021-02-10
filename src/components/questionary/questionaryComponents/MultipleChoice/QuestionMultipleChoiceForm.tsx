@@ -1,10 +1,10 @@
+import { FormControlLabel } from '@material-ui/core';
 import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
-import React from 'react';
+import { Checkbox, TextField } from 'formik-material-ui';
+import React, { ChangeEvent, useState } from 'react';
 import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomTable from 'components/common/FormikUICustomTable';
 import TitledContainer from 'components/common/TitledContainer';
 import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
@@ -18,6 +18,10 @@ export const QuestionMultipleChoiceForm: FormComponent<Question> = props => {
   const config = field.config as SelectionFromOptionsConfig;
 
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
+  const [
+    showIsMultipleSelectCheckbox,
+    setShowIsMultipleSelectCheckbox,
+  ] = useState(config.variant === 'dropdown');
 
   return (
     <QuestionFormShell
@@ -33,7 +37,7 @@ export const QuestionMultipleChoiceForm: FormComponent<Question> = props => {
         }),
       })}
     >
-      {formikProps => (
+      {() => (
         <>
           <Field
             name="naturalKey"
@@ -55,14 +59,17 @@ export const QuestionMultipleChoiceForm: FormComponent<Question> = props => {
           />
 
           <TitledContainer label="Constraints">
-            <Field
-              name="config.required"
+            <FormControlLabel
+              control={
+                <Field
+                  name="config.required"
+                  component={Checkbox}
+                  type="checkbox"
+                  margin="normal"
+                  inputProps={{ 'data-cy': 'required' }}
+                />
+              }
               label="Is required"
-              checked={config.required}
-              component={FormikUICustomCheckbox}
-              margin="normal"
-              fullWidth
-              inputProps={{ 'data-cy': 'required' }}
             />
           </TitledContainer>
 
@@ -75,7 +82,25 @@ export const QuestionMultipleChoiceForm: FormComponent<Question> = props => {
                 { text: 'Dropdown', value: 'dropdown' },
               ]}
               data-cy="variant"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setShowIsMultipleSelectCheckbox(e.target.value === 'dropdown');
+              }}
             />
+
+            {showIsMultipleSelectCheckbox && (
+              <FormControlLabel
+                control={
+                  <Field
+                    name="config.isMultipleSelect"
+                    component={Checkbox}
+                    margin="normal"
+                    type="checkbox"
+                    inputProps={{ 'data-cy': 'is-multiple-select' }}
+                  />
+                }
+                label="Is multiple select"
+              />
+            )}
           </TitledContainer>
 
           <TitledContainer label="Items">

@@ -72,9 +72,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
     <PhotoInSide>
       <Formik
         initialValues={{ password: '' }}
-        onSubmit={async (values, actions) => {
+        onSubmit={async (values): Promise<void> => {
           await requestResetPassword(values);
-          actions.setSubmitting(false);
         }}
         validationSchema={userPasswordFieldValidationSchema}
       >
@@ -94,6 +93,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               component={TextField}
               margin="normal"
               helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
+              autoComplete="new-password"
               fullWidth
             />
             <Field
@@ -101,6 +101,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               label="Confirm Password"
               type="password"
               component={TextField}
+              autoComplete="new-password"
               margin="normal"
               fullWidth
             />

@@ -1,74 +1,106 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { TextField, TextFieldProps } from '@material-ui/core';
+import { DateType } from '@date-io/type';
 import FormControl from '@material-ui/core/FormControl';
 import Tooltip from '@material-ui/core/Tooltip';
 import {
-  KeyboardDatePicker,
   MuiPickersUtilsProvider,
+  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { Field, getIn } from 'formik';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { DateConfig } from 'generated/sdk';
 
-import { BasicComponentProps } from '../../../proposal/IBasicComponentProps';
+const TooltipWrapper = ({
+  children,
+  title,
+}: {
+  title?: string;
+  children: React.ReactElement;
+}) => {
+  if (!title) {
+    return children;
+  }
 
-function TextFieldWithTooltip(props: TextFieldProps & { title: string }) {
-  return (
-    <Tooltip title={props.title}>
-      <TextField {...props} />
-    </Tooltip>
-  );
-}
+  return <Tooltip title={title}>{children}</Tooltip>;
+};
 
 export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
-  const { answer: templateField, touched, errors, onComplete } = props;
+  const {
+    answer,
+    onComplete,
+    formikProps: { errors, touched, setFieldValue, values },
+  } = props;
   const {
     question: { proposalQuestionId, question },
-    value,
-  } = templateField;
-  const config = templateField.config as DateConfig;
+    answerId,
+  } = answer;
+  const {
+    defaultDate,
+    tooltip,
+    minDate,
+    maxDate,
+    small_label: smallLabel,
+    required,
+  } = answer.config as DateConfig;
   const fieldError = getIn(errors, proposalQuestionId);
+  const fieldValue = getIn(values, proposalQuestionId);
   const isError = getIn(touched, proposalQuestionId) && !!fieldError;
-  const [stateValue, setStateValue] = useState(value || '');
+  const [defaultInitialized, setDefaultInitialized] = useState(false);
 
+  // set default value only when creating new proposal,
+  // the user will either change it or keep it in the next step
+  // which will explicitly set the value of the field
+  // and we won't need to use the default value any longer
   useEffect(() => {
-    setStateValue(templateField.value);
-  }, [templateField]);
+    if (answerId === null && defaultDate && !defaultInitialized) {
+      onComplete(defaultDate);
+      setFieldValue(proposalQuestionId, defaultDate, false);
+      setDefaultInitialized(true);
+    }
+  }, [
+    defaultInitialized,
+    proposalQuestionId,
+    answerId,
+    defaultDate,
+    onComplete,
+    setFieldValue,
+  ]);
 
   return (
-    <FormControl error={isError}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Field
-          data-cy={proposalQuestionId + '_field'}
-          name={proposalQuestionId}
-          label={question}
-          component={({ field, form, ...other }: { field: any; form: any }) => {
-            return (
-              <KeyboardDatePicker
-                required={config.required ? true : false}
-                clearable={true}
-                error={isError}
-                name={field.name}
-                helperText={isError && errors[proposalQuestionId]}
-                label={question}
-                value={stateValue}
-                format="yyyy-MM-dd"
-                title={config.tooltip} // title prop will be passed down to TextFieldWithTooltip by KeyboardDatePicker
-                onChange={date => {
-                  setStateValue(date);
-                  onComplete(null as any, date); // There is no event in the callback for DatePicker :( We, therefore, send null as event and inform Formik through setFieldValue
-                  form.setFieldValue(field.name, date, false);
-                }}
-                // @ts-ignore-line // https://material-ui-pickers.dev/api/KeyboardDatePicker Any prop not recognized by the pickers and their sub-components are passed down to material-ui TextField component.
-                TextFieldComponent={TextFieldWithTooltip}
-                {...other}
-              />
-            );
-          }}
-        />
-      </MuiPickersUtilsProvider>
-      <span>{config.small_label}</span>
-    </FormControl>
+    <TooltipWrapper title={tooltip}>
+      <FormControl error={isError} margin="dense">
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Field
+            required={required}
+            error={isError}
+            helperText={isError && fieldError}
+            data-cy={proposalQuestionId + '_field'}
+            name={proposalQuestionId}
+            label={
+              <>
+                {question}
+                {smallLabel && (
+                  <>
+                    <br />
+                    <small>{smallLabel}</small>
+                  </>
+                )}
+              </>
+            }
+            value={fieldValue || null} // date picker requires null for empty value
+            format="yyyy-MM-dd"
+            component={KeyboardDatePicker}
+            onChange={(date: DateType | null) => {
+              onComplete(date);
+              setFieldValue(proposalQuestionId, date, false);
+            }}
+            minDate={minDate}
+            maxDate={maxDate}
+          />
+        </MuiPickersUtilsProvider>
+      </FormControl>
+    </TooltipWrapper>
   );
 }
