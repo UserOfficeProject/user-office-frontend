@@ -217,7 +217,8 @@ export enum DataType {
   PROPOSAL_BASIS = 'PROPOSAL_BASIS',
   INTERVAL = 'INTERVAL',
   NUMBER_INPUT = 'NUMBER_INPUT',
-  SHIPMENT_BASIS = 'SHIPMENT_BASIS'
+  SHIPMENT_BASIS = 'SHIPMENT_BASIS',
+  RICH_TEXT_INPUT = 'RICH_TEXT_INPUT'
 }
 
 export type DateConfig = {
@@ -336,7 +337,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubtemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubtemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -1420,6 +1421,7 @@ export type Query = {
   _entities: Array<Maybe<Entity>>;
   _service: Service;
   calls: Maybe<Array<Call>>;
+  callsByInstrumentScientist: Maybe<Array<Call>>;
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
   templates: Maybe<Array<Template>>;
@@ -1485,6 +1487,11 @@ export type QueryEntitiesArgs = {
 
 export type QueryCallsArgs = {
   filter?: Maybe<CallsFilter>;
+};
+
+
+export type QueryCallsByInstrumentScientistArgs = {
+  scientistId: Scalars['Int'];
 };
 
 
@@ -1802,6 +1809,13 @@ export enum ReviewStatus {
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED'
 }
+
+export type RichTextInputConfig = {
+  __typename?: 'RichTextInputConfig';
+  small_label: Scalars['String'];
+  required: Scalars['Boolean'];
+  tooltip: Scalars['String'];
+};
 
 export type Role = {
   __typename?: 'Role';
@@ -2840,6 +2854,19 @@ export type GetCallsQuery = (
   )>> }
 );
 
+export type GetCallsByInstrumentScientistQueryVariables = Exact<{
+  scientistId: Scalars['Int'];
+}>;
+
+
+export type GetCallsByInstrumentScientistQuery = (
+  { __typename?: 'Query' }
+  & { callsByInstrumentScientist: Maybe<Array<(
+    { __typename?: 'Call' }
+    & CallFragment
+  )>> }
+);
+
 export type RemoveAssignedInstrumentFromCallMutationVariables = Exact<{
   instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -3455,6 +3482,9 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'ShipmentBasisConfig' }
     & FieldConfigShipmentBasisConfigFragment
+  ) | (
+    { __typename?: 'RichTextInputConfig' }
+    & FieldConfigRichTextInputConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -4431,7 +4461,12 @@ type FieldConfigShipmentBasisConfigFragment = (
   & Pick<ShipmentBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment;
+type FieldConfigRichTextInputConfigFragment = (
+  { __typename?: 'RichTextInputConfig' }
+  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip'>
+);
+
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -4472,6 +4507,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'ShipmentBasisConfig' }
     & FieldConfigShipmentBasisConfigFragment
+  ) | (
+    { __typename?: 'RichTextInputConfig' }
+    & FieldConfigRichTextInputConfigFragment
   ) }
 );
 
@@ -4517,6 +4555,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'ShipmentBasisConfig' }
     & FieldConfigShipmentBasisConfigFragment
+  ) | (
+    { __typename?: 'RichTextInputConfig' }
+    & FieldConfigRichTextInputConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -5350,6 +5391,11 @@ export const FieldConfigFragmentDoc = gql`
     required
     tooltip
   }
+  ... on RichTextInputConfig {
+    small_label
+    required
+    tooltip
+  }
 }
     `;
 export const QuestionFragmentDoc = gql`
@@ -5969,6 +6015,13 @@ export const GetCallDocument = gql`
 export const GetCallsDocument = gql`
     query getCalls($filter: CallsFilter) {
   calls(filter: $filter) {
+    ...call
+  }
+}
+    ${CallFragmentDoc}`;
+export const GetCallsByInstrumentScientistDocument = gql`
+    query getCallsByInstrumentScientist($scientistId: Int!) {
+  callsByInstrumentScientist(scientistId: $scientistId) {
     ...call
   }
 }
@@ -7452,6 +7505,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getCalls(variables?: GetCallsQueryVariables): Promise<GetCallsQuery> {
       return withWrapper(() => client.request<GetCallsQuery>(print(GetCallsDocument), variables));
+    },
+    getCallsByInstrumentScientist(variables: GetCallsByInstrumentScientistQueryVariables): Promise<GetCallsByInstrumentScientistQuery> {
+      return withWrapper(() => client.request<GetCallsByInstrumentScientistQuery>(print(GetCallsByInstrumentScientistDocument), variables));
     },
     removeAssignedInstrumentFromCall(variables: RemoveAssignedInstrumentFromCallMutationVariables): Promise<RemoveAssignedInstrumentFromCallMutation> {
       return withWrapper(() => client.request<RemoveAssignedInstrumentFromCallMutation>(print(RemoveAssignedInstrumentFromCallDocument), variables));
