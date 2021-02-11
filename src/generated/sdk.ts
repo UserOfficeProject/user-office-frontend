@@ -2741,6 +2741,19 @@ export type GetCallsQuery = (
   )>> }
 );
 
+export type GetCallsByInstrumentScientistQueryVariables = Exact<{
+  scientistId: Scalars['Int'];
+}>;
+
+
+export type GetCallsByInstrumentScientistQuery = (
+  { __typename?: 'Query' }
+  & { callsByInstrumentScientist: Maybe<Array<(
+    { __typename?: 'Call' }
+    & CallFragment
+  )>> }
+);
+
 export type RemoveAssignedInstrumentFromCallMutationVariables = Exact<{
   instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -5864,6 +5877,13 @@ export const GetCallsDocument = gql`
   }
 }
     ${CallFragmentDoc}`;
+export const GetCallsByInstrumentScientistDocument = gql`
+    query getCallsByInstrumentScientist($scientistId: Int!) {
+  callsByInstrumentScientist(scientistId: $scientistId) {
+    ...call
+  }
+}
+    ${CallFragmentDoc}`;
 export const RemoveAssignedInstrumentFromCallDocument = gql`
     mutation removeAssignedInstrumentFromCall($instrumentId: Int!, $callId: Int!) {
   removeAssignedInstrumentFromCall(removeAssignedInstrumentFromCallInput: {instrumentId: $instrumentId, callId: $callId}) {
@@ -7338,6 +7358,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getCalls(variables?: GetCallsQueryVariables): Promise<GetCallsQuery> {
       return withWrapper(() => client.request<GetCallsQuery>(print(GetCallsDocument), variables));
+    },
+    getCallsByInstrumentScientist(variables: GetCallsByInstrumentScientistQueryVariables): Promise<GetCallsByInstrumentScientistQuery> {
+      return withWrapper(() => client.request<GetCallsByInstrumentScientistQuery>(print(GetCallsByInstrumentScientistDocument), variables));
     },
     removeAssignedInstrumentFromCall(variables: RemoveAssignedInstrumentFromCallMutationVariables): Promise<RemoveAssignedInstrumentFromCallMutation> {
       return withWrapper(() => client.request<RemoveAssignedInstrumentFromCallMutation>(print(RemoveAssignedInstrumentFromCallDocument), variables));
