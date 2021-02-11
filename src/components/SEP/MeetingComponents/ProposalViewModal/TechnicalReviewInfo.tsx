@@ -1,3 +1,4 @@
+import { updateTimeAllocationValidationSchema } from '@esss-swap/duo-validation';
 import {
   Tooltip,
   IconButton,
@@ -19,21 +20,11 @@ import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import * as Yup from 'yup';
 
 import UOLoader from 'components/common/UOLoader';
 import { TechnicalReview } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-const updateTimeAllocationValidationSchema = Yup.object({
-  sepId: Yup.number().required(),
-  proposalId: Yup.number().required(),
-  sepTimeAllocation: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
-    .nullable(),
-});
 
 type SEPProposalProps = {
   sepId: number;

@@ -1,3 +1,4 @@
+import { administrationProposalValidationSchema } from '@esss-swap/duo-validation';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -7,7 +8,6 @@ import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
@@ -15,17 +15,6 @@ import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
 import { Proposal, ProposalEndStatus } from 'generated/sdk';
 import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-const administrationProposalValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
-  statusId: Yup.number(),
-  finalStatus: Yup.string(),
-  commentForUser: Yup.string(),
-  commentForManagement: Yup.string(),
-  rankOrder: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
-});
 
 const useStyles = makeStyles(theme => ({
   button: {

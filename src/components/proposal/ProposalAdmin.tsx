@@ -1,11 +1,10 @@
-// import { administrationProposalValidationSchema } from '@esss-swap/duo-validation/lib/Proposal';
+import { administrationProposalValidationSchema } from '@esss-swap/duo-validation/lib/Proposal';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { Fragment } from 'react';
-import * as Yup from 'yup';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
@@ -14,17 +13,6 @@ import { ProposalEndStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-const administrationProposalValidationSchema = Yup.object().shape({
-  id: Yup.number().required(),
-  statusId: Yup.number(),
-  finalStatus: Yup.string(),
-  commentForUser: Yup.string(),
-  commentForManagement: Yup.string(),
-  rankOrder: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`),
-});
 
 export type AdministrationFormData = {
   id: number;

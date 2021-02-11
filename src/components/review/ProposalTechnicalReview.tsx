@@ -1,11 +1,10 @@
-// import { proposalTechnicalReviewValidationSchema } from '@esss-swap/duo-validation/lib/Review';
+import { proposalTechnicalReviewValidationSchema } from '@esss-swap/duo-validation/lib/Review';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { Fragment } from 'react';
-import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import {
@@ -14,16 +13,6 @@ import {
 } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-const proposalTechnicalReviewValidationSchema = Yup.object().shape({
-  status: Yup.string().nullable(),
-  timeAllocation: Yup.number()
-    .min(0, ({ min }) => `Must be greater than or equal to ${min}`)
-    .max(1e5, ({ max }) => `Must be less than or equal to ${max}`)
-    .nullable(),
-  comment: Yup.string().nullable(),
-  publicComment: Yup.string().nullable(),
-});
 
 export default function ProposalTechnicalReview(props: {
   data: CoreTechnicalReviewFragment | null | undefined;
