@@ -1,8 +1,5 @@
-import { Link, makeStyles } from '@material-ui/core';
-import React, { useContext } from 'react';
-
+import { Box, Button, Link, makeStyles } from '@material-ui/core';
 import UOLoader from 'components/common/UOLoader';
-import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -12,9 +9,9 @@ import QuestionaryDetails, {
 } from 'components/questionary/QuestionaryDetails';
 import { ShipmentStatus } from 'generated/sdk';
 import { useProposalData } from 'hooks/proposal/useProposalData';
+import React, { useContext } from 'react';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
-
 import { ShipmentContextType } from './ShipmentContainer';
 
 interface ShipmentReviewProps {
@@ -80,31 +77,31 @@ function ShipmentReview({
         additionalDetails={additionalDetails}
         title="Shipment information"
       />
-      <div>
-        <NavigationFragment
+      <Box display="flex" justifyContent="flex-end" marginTop={2}>
+        {/* TODO handle is loading state isExecutingCall*/}
+        <Button
+          variant="contained"
           disabled={isReadonly}
-          back={undefined}
-          saveAndNext={{
-            callback: () =>
-              confirm(
-                async () => {
-                  await api().updateShipment({
-                    shipmentId: state.shipment.id,
-                    status: ShipmentStatus.SUBMITTED,
-                  });
-                  onComplete?.();
-                },
-                {
-                  title: 'Confirmation',
-                  description:
-                    'I am aware that no further edits can be done after shipment submission.',
-                }
-              )(),
-            label: 'Submit',
-          }}
-          isLoading={isExecutingCall}
-        />
-      </div>
+          onClick={() =>
+            confirm(
+              async () => {
+                await api().updateShipment({
+                  shipmentId: state.shipment.id,
+                  status: ShipmentStatus.SUBMITTED,
+                });
+                onComplete?.();
+              },
+              {
+                title: 'Confirmation',
+                description:
+                  'I am aware that no further edits can be done after shipment submission.',
+              }
+            )()
+          }
+        >
+          Submit
+        </Button>
+      </Box>
     </div>
   );
 }
