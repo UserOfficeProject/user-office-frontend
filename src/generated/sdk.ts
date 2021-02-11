@@ -492,6 +492,7 @@ export type Mutation = {
   removeProposalAssignment: SepResponseWrap;
   createSEP: SepResponseWrap;
   updateSEP: SepResponseWrap;
+  updateSEPTimeAllocation: SepProposalResponseWrap;
   createShipment: ShipmentResponseWrap;
   updateShipment: ShipmentResponseWrap;
   createQuestion: QuestionResponseWrap;
@@ -543,7 +544,6 @@ export type Mutation = {
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
-  updateSEPTimeAllocation: SepProposalResponseWrap;
 };
 
 
@@ -825,6 +825,13 @@ export type MutationUpdateSepArgs = {
   description: Scalars['String'];
   numberRatingsRequired?: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
+};
+
+
+export type MutationUpdateSepTimeAllocationArgs = {
+  sepId: Scalars['Int'];
+  proposalId: Scalars['Int'];
+  sepTimeAllocation?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1151,13 +1158,6 @@ export type MutationSelectRoleArgs = {
 export type MutationUpdatePasswordArgs = {
   id: Scalars['Int'];
   password: Scalars['String'];
-};
-
-
-export type MutationUpdateSepTimeAllocationArgs = {
-  sepTimeAllocation?: Maybe<Scalars['Int']>;
-  proposalId: Scalars['Int'];
-  sepId: Scalars['Int'];
 };
 
 export type NextStatusEvent = {
