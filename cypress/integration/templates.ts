@@ -1285,6 +1285,7 @@ context('Template tests', () => {
       cy.contains('file_upload_test');
       cy.get('[title="Add image caption"]').click();
 
+      cy.get('[data-cy="image-figure"] input').type('Fig_test');
       cy.get('[data-cy="image-caption"] input').type('Test caption');
 
       cy.contains('Save and continue').click();
@@ -1301,6 +1302,10 @@ context('Template tests', () => {
       cy.get('[data-cy="image-caption"] input').should(
         'have.value',
         'Test caption'
+      );
+      cy.get('[data-cy="image-figure"] input').should(
+        'have.value',
+        'Fig_test'
       );
     });
   });
