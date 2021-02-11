@@ -1013,6 +1013,8 @@ context('Scientific evaluation panel tests', () => {
 
     cy.contains('Technical').click();
     cy.get('[data-cy="timeAllocation"]').type('51');
+    cy.get('[data-cy="technical-review-status"]').click();
+    cy.contains('Feasible').click();
 
     cy.contains('Update').click();
 

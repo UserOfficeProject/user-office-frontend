@@ -133,6 +133,9 @@ export default function ProposalTechnicalReview(props: {
                     },
                   ]}
                   disabled={isSubmitting || props.data?.submitted}
+                  InputProps={{
+                    'data-cy': 'technical-review-status',
+                  }}
                   required
                 />
               </Grid>
@@ -190,6 +193,7 @@ export default function ProposalTechnicalReview(props: {
                 onClick={() => setShouldSubmit(false)}
                 variant="contained"
                 color="secondary"
+                data-cy="update-technical-review"
               >
                 Update
               </Button>
@@ -200,6 +204,7 @@ export default function ProposalTechnicalReview(props: {
                 onClick={() => setShouldSubmit(true)}
                 variant="contained"
                 color="primary"
+                data-cy="submit-technical-review"
               >
                 {props.data?.submitted ? 'Submitted' : 'Submit'}
               </Button>
