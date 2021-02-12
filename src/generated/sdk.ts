@@ -89,6 +89,12 @@ export type AnswerInput = {
   value?: Maybe<Scalars['String']>;
 };
 
+export type ApiAccessTokenResponseWrap = {
+  __typename?: 'ApiAccessTokenResponseWrap';
+  error: Maybe<Scalars['String']>;
+  apiAccessToken: Maybe<PermissionsWithAccessToken>;
+};
+
 export type AssignInstrumentsToCallInput = {
   instrumentIds: Array<Scalars['Int']>;
   callId: Scalars['Int'];
@@ -167,6 +173,11 @@ export type CheckExternalTokenWrap = {
   token: Maybe<Scalars['String']>;
 };
 
+export type CreateApiAccessTokenInput = {
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+};
+
 export type CreateCallInput = {
   shortCode: Scalars['String'];
   startCall: Scalars['DateTime'];
@@ -228,6 +239,10 @@ export type DateConfig = {
   defaultDate: Maybe<Scalars['String']>;
 };
 
+
+export type DeleteApiAccessTokenInput = {
+  accessTokenId: Scalars['String'];
+};
 
 export type DeleteProposalWorkflowStatusInput = {
   proposalStatusId: Scalars['Int'];
@@ -441,7 +456,10 @@ export type MoveProposalWorkflowStatusInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createApiAccessToken: ApiAccessTokenResponseWrap;
   createInstitution: InstitutionResponseWrap;
+  deleteApiAccessToken: SuccessResponseWrap;
+  updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateInstitution: InstitutionResponseWrap;
   createCall: CallResponseWrap;
   updateCall: CallResponseWrap;
@@ -538,9 +556,24 @@ export type Mutation = {
 };
 
 
+export type MutationCreateApiAccessTokenArgs = {
+  createApiAccessTokenInput: CreateApiAccessTokenInput;
+};
+
+
 export type MutationCreateInstitutionArgs = {
   name: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+
+export type MutationDeleteApiAccessTokenArgs = {
+  deleteApiAccessTokenInput: DeleteApiAccessTokenInput;
+};
+
+
+export type MutationUpdateApiAccessTokenArgs = {
+  updateApiAccessTokenInput: UpdateApiAccessTokenInput;
 };
 
 
@@ -1190,6 +1223,14 @@ export type PageResponseWrap = {
   page: Maybe<Page>;
 };
 
+export type PermissionsWithAccessToken = {
+  __typename?: 'PermissionsWithAccessToken';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  accessToken: Scalars['String'];
+  accessPermissions: Scalars['String'];
+};
+
 export type PrepareDbResponseWrap = {
   __typename?: 'PrepareDBResponseWrap';
   error: Maybe<Scalars['String']>;
@@ -1214,15 +1255,15 @@ export type Proposal = {
   notified: Scalars['Boolean'];
   submitted: Scalars['Boolean'];
   users: Array<BasicUserDetails>;
-  proposer: BasicUserDetails;
-  status: ProposalStatus;
+  proposer: Maybe<BasicUserDetails>;
+  status: Maybe<ProposalStatus>;
   publicStatus: ProposalPublicStatus;
   reviews: Maybe<Array<Review>>;
   technicalReview: Maybe<TechnicalReview>;
   instrument: Maybe<Instrument>;
   sep: Maybe<Sep>;
   call: Maybe<Call>;
-  questionary: Questionary;
+  questionary: Maybe<Questionary>;
 };
 
 export type ProposalBasisConfig = {
@@ -1379,6 +1420,12 @@ export type ProposalWorkflowResponseWrap = {
   proposalWorkflow: Maybe<ProposalWorkflow>;
 };
 
+export type QueriesAndMutations = {
+  __typename?: 'QueriesAndMutations';
+  queries: Array<Scalars['String']>;
+  mutations: Array<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<Entity>>;
@@ -1396,6 +1443,9 @@ export type Query = {
   eventLogs: Maybe<Array<EventLog>>;
   features: Array<Feature>;
   fileMetadata: Maybe<Array<FileMetadata>>;
+  allAccessTokensAndPermissions: Maybe<Array<PermissionsWithAccessToken>>;
+  queriesAndMutations: Maybe<QueriesAndMutations>;
+  accessTokenAndPermissions: Maybe<PermissionsWithAccessToken>;
   getFields: Maybe<Fields>;
   getOrcIDInformation: Maybe<OrcIdInformation>;
   getPageContent: Maybe<Scalars['String']>;
@@ -1507,6 +1557,11 @@ export type QueryEventLogsArgs = {
 
 export type QueryFileMetadataArgs = {
   fileIds: Array<Scalars['String']>;
+};
+
+
+export type QueryAccessTokenAndPermissionsArgs = {
+  accessTokenId: Scalars['String'];
 };
 
 
@@ -2067,6 +2122,12 @@ export type UpdateAnswerResponseWrap = {
   questionId: Maybe<Scalars['String']>;
 };
 
+export type UpdateApiAccessTokenInput = {
+  accessTokenId: Scalars['String'];
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+};
+
 export type UpdateCallInput = {
   id: Scalars['Int'];
   shortCode: Scalars['String'];
@@ -2323,16 +2384,16 @@ export type GetSepProposalQuery = (
     & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
-      & { proposer: (
+      & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), users: Array<(
+      )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      )>, questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & QuestionaryFragment
-      ), technicalReview: Maybe<(
+      )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
         & CoreTechnicalReviewFragment
       )>, reviews: Maybe<Array<(
@@ -2368,10 +2429,10 @@ export type GetSepProposalsQuery = (
     & { proposal: (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'title' | 'id' | 'shortCode'>
-      & { status: (
+      & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
-      ) }
+      )> }
     ), assignments: Maybe<Array<(
       { __typename?: 'SEPAssignment' }
       & Pick<SepAssignment, 'sepMemberUserId' | 'dateAssigned'>
@@ -2404,10 +2465,10 @@ export type SepProposalsByInstrumentQuery = (
     & { proposal: (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'title' | 'shortCode' | 'rankOrder'>
-      & { status: (
+      & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
-      ), reviews: Maybe<Array<(
+      )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'comment' | 'grade' | 'status'>
       )>>, technicalReview: Maybe<(
@@ -2544,6 +2605,24 @@ export type AddClientLogMutation = (
   ) }
 );
 
+export type CreateApiAccessTokenMutationVariables = Exact<{
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+}>;
+
+
+export type CreateApiAccessTokenMutation = (
+  { __typename?: 'Mutation' }
+  & { createApiAccessToken: (
+    { __typename?: 'ApiAccessTokenResponseWrap' }
+    & Pick<ApiAccessTokenResponseWrap, 'error'>
+    & { apiAccessToken: Maybe<(
+      { __typename?: 'PermissionsWithAccessToken' }
+      & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
+    )> }
+  ) }
+);
+
 export type CreateInstitutionMutationVariables = Exact<{
   name: Scalars['String'];
   verified: Scalars['Boolean'];
@@ -2562,6 +2641,19 @@ export type CreateInstitutionMutation = (
   ) }
 );
 
+export type DeleteApiAccessTokenMutationVariables = Exact<{
+  accessTokenId: Scalars['String'];
+}>;
+
+
+export type DeleteApiAccessTokenMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteApiAccessToken: (
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+  ) }
+);
+
 export type DeleteInstitutionMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -2577,6 +2669,28 @@ export type DeleteInstitutionMutation = (
       & Pick<Institution, 'id' | 'verified'>
     )> }
   ) }
+);
+
+export type GetAllApiAccessTokensAndPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllApiAccessTokensAndPermissionsQuery = (
+  { __typename?: 'Query' }
+  & { allAccessTokensAndPermissions: Maybe<Array<(
+    { __typename?: 'PermissionsWithAccessToken' }
+    & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
+  )>> }
+);
+
+export type GetAllQueriesAndMutationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllQueriesAndMutationsQuery = (
+  { __typename?: 'Query' }
+  & { queriesAndMutations: Maybe<(
+    { __typename?: 'QueriesAndMutations' }
+    & Pick<QueriesAndMutations, 'queries' | 'mutations'>
+  )> }
 );
 
 export type GetFeaturesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -2627,6 +2741,25 @@ export type SetPageContentMutation = (
     & { page: Maybe<(
       { __typename?: 'Page' }
       & Pick<Page, 'id' | 'content'>
+    )> }
+  ) }
+);
+
+export type UpdateApiAccessTokenMutationVariables = Exact<{
+  accessTokenId: Scalars['String'];
+  name: Scalars['String'];
+  accessPermissions: Scalars['String'];
+}>;
+
+
+export type UpdateApiAccessTokenMutation = (
+  { __typename?: 'Mutation' }
+  & { updateApiAccessToken: (
+    { __typename?: 'ApiAccessTokenResponseWrap' }
+    & Pick<ApiAccessTokenResponseWrap, 'error'>
+    & { apiAccessToken: Maybe<(
+      { __typename?: 'PermissionsWithAccessToken' }
+      & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
     )> }
   ) }
 );
@@ -3042,16 +3175,16 @@ export type CreateProposalMutation = (
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'shortCode' | 'questionaryId'>
-      & { status: (
+      & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
-      ), questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & QuestionaryFragment
-      ), proposer: (
+      )>, proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), users: Array<(
+      )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
@@ -3084,10 +3217,10 @@ export type CoreTechnicalReviewFragment = (
 export type ProposalFragment = (
   { __typename?: 'Proposal' }
   & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'rankOrder' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted'>
-  & { status: (
+  & { status: Maybe<(
     { __typename?: 'ProposalStatus' }
     & ProposalStatusFragment
-  ) }
+  )> }
 );
 
 export type GetInstrumentScientistProposalsQueryVariables = Exact<{
@@ -3102,10 +3235,10 @@ export type GetInstrumentScientistProposalsQuery = (
     & Pick<ProposalsQueryResult, 'totalCount'>
     & { proposals: Array<(
       { __typename?: 'Proposal' }
-      & { proposer: (
+      & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), reviews: Maybe<Array<(
+      )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
         & { reviewer: Maybe<(
@@ -3142,16 +3275,16 @@ export type GetProposalQuery = (
   { __typename?: 'Query' }
   & { proposal: Maybe<(
     { __typename?: 'Proposal' }
-    & { proposer: (
+    & { proposer: Maybe<(
       { __typename?: 'BasicUserDetails' }
       & BasicUserDetailsFragment
-    ), users: Array<(
+    )>, users: Array<(
       { __typename?: 'BasicUserDetails' }
       & BasicUserDetailsFragment
-    )>, questionary: (
+    )>, questionary: Maybe<(
       { __typename?: 'Questionary' }
       & QuestionaryFragment
-    ), technicalReview: Maybe<(
+    )>, technicalReview: Maybe<(
       { __typename?: 'TechnicalReview' }
       & CoreTechnicalReviewFragment
     )>, reviews: Maybe<Array<(
@@ -3184,10 +3317,10 @@ export type GetProposalsQuery = (
     & Pick<ProposalsQueryResult, 'totalCount'>
     & { proposals: Array<(
       { __typename?: 'Proposal' }
-      & { proposer: (
+      & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), reviews: Maybe<Array<(
+      )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
         & { reviewer: Maybe<(
@@ -3279,10 +3412,10 @@ export type UpdateProposalMutation = (
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'title' | 'abstract'>
-      & { proposer: (
+      & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), users: Array<(
+      )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
@@ -3500,10 +3633,10 @@ export type GetReviewQuery = (
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'title' | 'abstract'>
-      & { proposer: (
+      & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & Pick<BasicUserDetails, 'id'>
-      ) }
+      )> }
     )> }
     & CoreReviewFragment
   )> }
@@ -4914,13 +5047,13 @@ export type GetUserProposalsQuery = (
     & { proposals: Array<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'shortCode' | 'title' | 'publicStatus' | 'statusId' | 'created' | 'finalStatus' | 'notified' | 'submitted'>
-      & { status: (
+      & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
-      ), proposer: (
+      )>, proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & Pick<BasicUserDetails, 'id'>
-      ) }
+      )> }
     )> }
   )> }
 );
@@ -5774,6 +5907,19 @@ export const AddClientLogDocument = gql`
   }
 }
     `;
+export const CreateApiAccessTokenDocument = gql`
+    mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
+  createApiAccessToken(createApiAccessTokenInput: {name: $name, accessPermissions: $accessPermissions}) {
+    error
+    apiAccessToken {
+      id
+      name
+      accessToken
+      accessPermissions
+    }
+  }
+}
+    `;
 export const CreateInstitutionDocument = gql`
     mutation createInstitution($name: String!, $verified: Boolean!) {
   createInstitution(name: $name, verified: $verified) {
@@ -5786,6 +5932,14 @@ export const CreateInstitutionDocument = gql`
   }
 }
     `;
+export const DeleteApiAccessTokenDocument = gql`
+    mutation deleteApiAccessToken($accessTokenId: String!) {
+  deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
+    error
+    isSuccess
+  }
+}
+    `;
 export const DeleteInstitutionDocument = gql`
     mutation deleteInstitution($id: Int!) {
   deleteInstitution(id: $id) {
@@ -5794,6 +5948,24 @@ export const DeleteInstitutionDocument = gql`
       verified
     }
     error
+  }
+}
+    `;
+export const GetAllApiAccessTokensAndPermissionsDocument = gql`
+    query getAllApiAccessTokensAndPermissions {
+  allAccessTokensAndPermissions {
+    id
+    name
+    accessToken
+    accessPermissions
+  }
+}
+    `;
+export const GetAllQueriesAndMutationsDocument = gql`
+    query getAllQueriesAndMutations {
+  queriesAndMutations {
+    queries
+    mutations
   }
 }
     `;
@@ -5828,6 +6000,19 @@ export const SetPageContentDocument = gql`
       content
     }
     error
+  }
+}
+    `;
+export const UpdateApiAccessTokenDocument = gql`
+    mutation updateApiAccessToken($accessTokenId: String!, $name: String!, $accessPermissions: String!) {
+  updateApiAccessToken(updateApiAccessTokenInput: {accessTokenId: $accessTokenId, name: $name, accessPermissions: $accessPermissions}) {
+    error
+    apiAccessToken {
+      id
+      name
+      accessToken
+      accessPermissions
+    }
   }
 }
     `;
@@ -7326,11 +7511,23 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     addClientLog(variables: AddClientLogMutationVariables): Promise<AddClientLogMutation> {
       return withWrapper(() => client.request<AddClientLogMutation>(print(AddClientLogDocument), variables));
     },
+    createApiAccessToken(variables: CreateApiAccessTokenMutationVariables): Promise<CreateApiAccessTokenMutation> {
+      return withWrapper(() => client.request<CreateApiAccessTokenMutation>(print(CreateApiAccessTokenDocument), variables));
+    },
     createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
       return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
     },
+    deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
+      return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
+    },
     deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
       return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
+    },
+    getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
+      return withWrapper(() => client.request<GetAllApiAccessTokensAndPermissionsQuery>(print(GetAllApiAccessTokensAndPermissionsDocument), variables));
+    },
+    getAllQueriesAndMutations(variables?: GetAllQueriesAndMutationsQueryVariables): Promise<GetAllQueriesAndMutationsQuery> {
+      return withWrapper(() => client.request<GetAllQueriesAndMutationsQuery>(print(GetAllQueriesAndMutationsDocument), variables));
     },
     getFeatures(variables?: GetFeaturesQueryVariables): Promise<GetFeaturesQuery> {
       return withWrapper(() => client.request<GetFeaturesQuery>(print(GetFeaturesDocument), variables));
@@ -7343,6 +7540,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
       return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
+    },
+    updateApiAccessToken(variables: UpdateApiAccessTokenMutationVariables): Promise<UpdateApiAccessTokenMutation> {
+      return withWrapper(() => client.request<UpdateApiAccessTokenMutation>(print(UpdateApiAccessTokenDocument), variables));
     },
     updateInstitution(variables: UpdateInstitutionMutationVariables): Promise<UpdateInstitutionMutation> {
       return withWrapper(() => client.request<UpdateInstitutionMutation>(print(UpdateInstitutionDocument), variables));
