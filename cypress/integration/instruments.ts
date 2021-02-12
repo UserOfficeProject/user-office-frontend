@@ -533,7 +533,7 @@ context('Instrument tests', () => {
 
     cy.on('window:confirm', str => {
       expect(str).to.equal(
-        'I am aware that no future changes to the technical review is possible after submission.'
+        'I am aware that no further changes to the technical review are possible after submission.'
       );
 
       return true;

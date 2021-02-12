@@ -16,6 +16,7 @@ import {
 } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles(theme => ({
   submitButton: {
@@ -30,21 +31,30 @@ type TechnicalReviewFormType = {
   publicComment: string;
 };
 
-export default function ProposalTechnicalReview(props: {
+type ProposalTechnicalReviewProps = {
   data: CoreTechnicalReviewFragment | null | undefined;
   setReview: (data: CoreTechnicalReviewFragment) => void;
   id: number;
   setFormDirty: (dirty: boolean) => void;
-}) {
+  confirm: WithConfirmType;
+};
+
+const ProposalTechnicalReview = ({
+  id,
+  data,
+  setReview,
+  setFormDirty,
+  confirm,
+}: ProposalTechnicalReviewProps) => {
   const { api } = useDataApiWithFeedback();
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const classes = useStyles();
 
   const initialValues: TechnicalReviewFormType = {
-    status: props?.data?.status || '',
-    timeAllocation: props?.data?.timeAllocation || '',
-    comment: props?.data?.comment || '',
-    publicComment: props?.data?.publicComment || '',
+    status: data?.status || '',
+    timeAllocation: data?.timeAllocation || '',
+    comment: data?.comment || '',
+    publicComment: data?.publicComment || '',
   };
 
   const PromptIfDirty = () => {
@@ -68,7 +78,7 @@ export default function ProposalTechnicalReview(props: {
     } successfully!`;
 
     const result = await api(successMessage)[method]({
-      proposalID: props.id,
+      proposalID: id,
       timeAllocation: +values.timeAllocation,
       comment: values.comment,
       publicComment: values.publicComment,
@@ -77,8 +87,8 @@ export default function ProposalTechnicalReview(props: {
     });
 
     if (!(result as any)[method].error) {
-      props.setReview({
-        proposalID: props?.data?.proposalID,
+      setReview({
+        proposalID: data?.proposalID,
         timeAllocation: +values.timeAllocation,
         comment: values.comment,
         publicComment: values.publicComment,
@@ -98,12 +108,16 @@ export default function ProposalTechnicalReview(props: {
         validationSchema={proposalTechnicalReviewValidationSchema}
         onSubmit={async (values): Promise<void> => {
           if (shouldSubmit) {
-            const confirmed = window.confirm(
-              'I am aware that no future changes to the technical review is possible after submission.'
-            );
-            if (confirmed) {
-              await handleUpdateOrSubmit(values, 'submitTechnicalReview');
-            }
+            confirm(
+              async () => {
+                await handleUpdateOrSubmit(values, 'submitTechnicalReview');
+              },
+              {
+                title: 'Please confirm',
+                description:
+                  'I am aware that no further changes to the technical review are possible after submission.',
+              }
+            )();
           } else {
             await handleUpdateOrSubmit(values, 'addTechnicalReview');
           }
@@ -113,7 +127,7 @@ export default function ProposalTechnicalReview(props: {
           <Form>
             <PromptIfDirty />
             <PreventTabChangeIfFormDirty
-              setFormDirty={props.setFormDirty}
+              setFormDirty={setFormDirty}
               initialValues={initialValues}
             />
             <Grid container spacing={3}>
@@ -132,7 +146,7 @@ export default function ProposalTechnicalReview(props: {
                       value: TechnicalReviewStatus.UNFEASIBLE,
                     },
                   ]}
-                  disabled={isSubmitting || props.data?.submitted}
+                  disabled={isSubmitting || data?.submitted}
                   InputProps={{
                     'data-cy': 'technical-review-status',
                   }}
@@ -149,7 +163,7 @@ export default function ProposalTechnicalReview(props: {
                   fullWidth
                   autoComplete="off"
                   data-cy="timeAllocation"
-                  disabled={isSubmitting || props.data?.submitted}
+                  disabled={isSubmitting || data?.submitted}
                   required
                 />
               </Grid>
@@ -166,7 +180,7 @@ export default function ProposalTechnicalReview(props: {
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={isSubmitting || props.data?.submitted}
+                  disabled={isSubmitting || data?.submitted}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -182,13 +196,13 @@ export default function ProposalTechnicalReview(props: {
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={isSubmitting || props.data?.submitted}
+                  disabled={isSubmitting || data?.submitted}
                 />
               </Grid>
             </Grid>
             <ButtonContainer>
               <Button
-                disabled={isSubmitting || props.data?.submitted}
+                disabled={isSubmitting || data?.submitted}
                 type="submit"
                 onClick={() => setShouldSubmit(false)}
                 variant="contained"
@@ -198,7 +212,7 @@ export default function ProposalTechnicalReview(props: {
                 Update
               </Button>
               <Button
-                disabled={isSubmitting || props.data?.submitted}
+                disabled={isSubmitting || data?.submitted}
                 type="submit"
                 className={classes.submitButton}
                 onClick={() => setShouldSubmit(true)}
@@ -206,7 +220,7 @@ export default function ProposalTechnicalReview(props: {
                 color="primary"
                 data-cy="submit-technical-review"
               >
-                {props.data?.submitted ? 'Submitted' : 'Submit'}
+                {data?.submitted ? 'Submitted' : 'Submit'}
               </Button>
             </ButtonContainer>
           </Form>
@@ -214,4 +228,6 @@ export default function ProposalTechnicalReview(props: {
       </Formik>
     </>
   );
-}
+};
+
+export default withConfirm(ProposalTechnicalReview);
