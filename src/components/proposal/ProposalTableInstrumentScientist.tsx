@@ -199,6 +199,8 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     urlQueryParams.sortDirection
   );
 
+  const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
+
   return (
     <>
       <ProposalFilterBar
@@ -220,6 +222,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         options={{
           search: true,
           searchText: urlQueryParams.search || undefined,
+          selection: true,
           debounceInterval: 400,
           columnsButton: true,
         }}
@@ -246,6 +249,19 @@ const ProposalTableInstrumentScientist: React.FC = () => {
               sortDirection: orderDirection ? orderDirection : undefined,
             });
         }}
+        actions={[
+          {
+            icon: GetAppIconComponent,
+            tooltip: 'Download proposals in PDF',
+            onClick: (event, rowData): void => {
+              downloadPDFProposal(
+                (rowData as Proposal[]).map(row => row.id),
+                (rowData as Proposal[])[0].title
+              );
+            },
+            position: 'toolbarOnSelect',
+          },
+        ]}
       />
     </>
   );
