@@ -812,7 +812,7 @@ context('Scientific evaluation panel tests', () => {
       .check();
 
     cy.get('[title="Delete proposals"]').click();
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'error',
@@ -921,7 +921,7 @@ context('Scientific evaluation panel tests', () => {
       .first()
       .click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'error',
@@ -1325,7 +1325,7 @@ context('Scientific evaluation panel tests', () => {
       .first()
       .click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.contains('Proposals and Assignments').click();
 
@@ -1585,7 +1585,7 @@ context('Scientific evaluation panel tests', () => {
 
     cy.get('[title="Remove SEP Chair"]').click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'success',
@@ -1594,7 +1594,7 @@ context('Scientific evaluation panel tests', () => {
 
     cy.get('[title="Remove SEP Secretary"]').click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'success',

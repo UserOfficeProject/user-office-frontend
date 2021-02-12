@@ -269,7 +269,7 @@ context('Instrument tests', () => {
       .first()
       .click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'success',
@@ -299,7 +299,7 @@ context('Instrument tests', () => {
       .first()
       .click();
 
-    cy.get('[data-cy="confirm-yes"]').click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'success',
@@ -478,7 +478,7 @@ context('Instrument tests', () => {
     cy.get('[data-cy="timeAllocation"] input')
       .clear()
       .type('20');
-    
+
     cy.get('[data-cy="timeAllocation"]').type('20');
     cy.get('[data-cy="technical-review-status"]').click();
     cy.contains('Feasible').click();
@@ -531,15 +531,9 @@ context('Instrument tests', () => {
       .first()
       .type(publicComment);
 
-    cy.on('window:confirm', str => {
-      expect(str).to.equal(
-        'I am aware that no further changes to the technical review are possible after submission.'
-      );
-
-      return true;
-    });
-
     cy.contains('Submit').click();
+
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.get('[data-cy="update-technical-review"]').should('be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('be.disabled');
@@ -552,12 +546,9 @@ context('Instrument tests', () => {
     cy.contains(proposal1.title)
       .parent()
       .find('[title="Remove assigned instrument"]')
-
       .click();
 
-    cy.get('.MuiDialog-root')
-      .contains('Yes')
-      .click();
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({
       variant: 'success',
@@ -575,7 +566,6 @@ context('Instrument tests', () => {
     cy.contains(instrument1.name)
       .parent()
       .find('[title="Show Scientists"]')
-
       .click();
 
     cy.get(
@@ -608,7 +598,6 @@ context('Instrument tests', () => {
     cy.contains('call 1')
       .parent()
       .find('[title="Show Instruments"]')
-
       .click();
 
     cy.get('[title="Delete"]')
@@ -627,7 +616,6 @@ context('Instrument tests', () => {
     cy.contains(instrument1.name)
       .parent()
       .find('[title="Delete"]')
-
       .click();
 
     cy.get('[title="Save"]').click();
