@@ -372,10 +372,8 @@ context('Calls tests', () => {
     cy.get('[data-cy="calls-table"]')
       .find('tbody tr')
       .first()
-      .find('td')
-      .last()
       .then(element => {
-        expect(element.text()).to.be.equal(selectedProposalWorkflow);
+        expect(element.text()).to.include(selectedProposalWorkflow);
       });
   });
 
@@ -406,9 +404,7 @@ context('Calls tests', () => {
       .find('tbody tr')
       .first()
       .find('td')
-      .last()
-      .then(element => {
-        expect(element.text()).to.be.equal('-');
-      });
+      .eq(6)
+      .should('have.text', '-');
   });
 });
