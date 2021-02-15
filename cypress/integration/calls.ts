@@ -142,7 +142,11 @@ context('Calls tests', () => {
 
     cy.notification({ variant: 'success', text: 'successfully' });
 
-    cy.contains(shortCode);
+    cy.contains(shortCode)
+      .parent()
+      .children()
+      .last()
+      .should('include.text', '0');
   });
 
   it('A user-officer should be able to edit a call', () => {
