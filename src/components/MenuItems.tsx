@@ -196,8 +196,8 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
       return user;
     case UserRole.USER_OFFICER:
       return userOfficer;
-    case UserRole.REVIEWER:
-      return reviewer;
+    // case UserRole.REVIEWER:
+    //   return reviewer;
     case UserRole.INSTRUMENT_SCIENTIST:
       return instrumentScientist;
     case UserRole.SEP_CHAIR:

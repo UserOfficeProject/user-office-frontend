@@ -8,7 +8,6 @@ import Clear from '@material-ui/icons/Clear';
 import Person from '@material-ui/icons/Person';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import MaterialTable from 'material-table';
-import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -16,9 +15,9 @@ import DialogConfirmation from 'components/common/DialogConfirmation';
 import UOLoader from 'components/common/UOLoader';
 import ParticipantModal from 'components/proposal/ParticipantModal';
 import { UserContext } from 'context/UserContextProvider';
-import { SepMember, BasicUserDetails, UserRole } from 'generated/sdk';
+import { BasicUserDetails, UserRole, Sep } from 'generated/sdk';
 import { useRenewToken } from 'hooks/common/useRenewToken';
-import { useSEPMembersData } from 'hooks/SEP/useSEPMembersData';
+import { useSEPReviewersData } from 'hooks/SEP/useSEPReviewersData';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -33,17 +32,17 @@ const useStyles = makeStyles(() => ({
 type BasicUserDetailsWithRole = BasicUserDetails & { roleId: UserRole };
 
 type SEPMembersProps = {
+  data: Sep;
   /** Id of the SEP we are assigning members to */
   sepId: number;
+  onSEPUpdate: (sep: Sep) => void;
 };
 
-type SEPMemberAssignments = {
-  SEPChair: BasicUserDetails | null;
-  SEPSecretary: BasicUserDetails | null;
-  SEPReviewers: BasicUserDetails[];
-};
-
-const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
+const SEPMembers: React.FC<SEPMembersProps> = ({
+  data: sepData,
+  sepId,
+  onSEPUpdate,
+}) => {
   const [modalOpen, setOpen] = useState(false);
   const [sepChairModalOpen, setSepChairModalOpen] = useState(false);
   const [sepSecretaryModalOpen, setSepSecretaryModalOpen] = useState(false);
@@ -56,9 +55,9 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
   const classes = useStyles();
   const {
     loadingMembers,
-    SEPMembersData,
-    setSEPMembersData,
-  } = useSEPMembersData(
+    SEPReviewersData,
+    setSEPReviewersData,
+  } = useSEPReviewersData(
     sepId,
     modalOpen || sepChairModalOpen || sepSecretaryModalOpen
   );
@@ -70,65 +69,45 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
   ]);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
 
-  const initialValues: SEPMemberAssignments = {
-    SEPChair: null,
-    SEPSecretary: null,
-    SEPReviewers: [],
-  };
   const columns = [
-    { title: 'Name', field: 'firstname' },
+    { title: 'Name', field: 'user.firstname' },
     {
       title: 'Surname',
-      field: 'lastname',
+      field: 'user.lastname',
     },
     {
       title: 'Organisation',
-      field: 'organisation',
+      field: 'user.organisation',
     },
   ];
-
-  const initializeValues = (members: SepMember[]): void => {
-    members.forEach(member => {
-      member.roles.forEach(role => {
-        switch (role.shortCode.toUpperCase()) {
-          case UserRole.SEP_CHAIR:
-            initialValues.SEPChair = member.user;
-            break;
-          case UserRole.SEP_SECRETARY:
-            initialValues.SEPSecretary = member.user;
-            break;
-          case UserRole.SEP_REVIEWER:
-            initialValues.SEPReviewers.push(member.user);
-            break;
-          default:
-            break;
-        }
-      });
-    });
-  };
 
   const sendSEPChairUpdate = async (
     value: BasicUserDetails[]
   ): Promise<void> => {
     const [sepChair] = value;
 
-    const assignChairResult = await api(
-      'SEP chair assigned successfully!'
-    ).assignChairOrSecretary({
-      addSEPMembersRole: {
-        SEPID: sepId,
-        roleID: UserRole.SEP_CHAIR,
-        userIDs: [sepChair.id],
+    const {
+      assignChairOrSecretary: { error },
+    } = await api('SEP chair assigned successfully!').assignChairOrSecretary({
+      assignChairOrSecretaryToSEPInput: {
+        sepId: sepId,
+        roleId: UserRole.SEP_CHAIR,
+        userId: sepChair.id,
       },
     });
 
     setOpen(false);
 
-    if (!assignChairResult.assignChairOrSecretary.error) {
-      setSepChairModalOpen(false);
+    if (error) {
+      return;
     }
+    setSepChairModalOpen(false);
+    onSEPUpdate({
+      ...sepData,
+      sepChair,
+    });
 
-    if (sepChair.id === user.id || initialValues.SEPChair?.id === user.id) {
+    if (sepChair.id === user.id || sepData.sepChair?.id === user.id) {
       setRenewTokenValue();
     }
   };
@@ -138,74 +117,86 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
   ): Promise<void> => {
     const [sepSecretary] = value;
 
-    const assignSecretaryResult = await api(
+    const {
+      assignChairOrSecretary: { error },
+    } = await api(
       'SEP secretary assigned successfully!'
     ).assignChairOrSecretary({
-      addSEPMembersRole: {
-        SEPID: sepId,
-        roleID: UserRole.SEP_SECRETARY,
-        userIDs: [sepSecretary.id],
+      assignChairOrSecretaryToSEPInput: {
+        sepId: sepId,
+        roleId: UserRole.SEP_SECRETARY,
+        userId: sepSecretary.id,
       },
     });
 
     setOpen(false);
 
-    if (!assignSecretaryResult.assignChairOrSecretary.error) {
-      setSepSecretaryModalOpen(false);
+    if (error) {
+      return;
     }
 
-    if (
-      sepSecretary.id === user.id ||
-      initialValues.SEPSecretary?.id === user.id
-    ) {
+    setSepSecretaryModalOpen(false);
+    onSEPUpdate({
+      ...sepData,
+      sepSecretary,
+    });
+
+    if (sepSecretary.id === user.id || sepData.sepSecretary?.id === user.id) {
       setRenewTokenValue();
     }
   };
 
   const addMember = async (users: BasicUserDetails[]): Promise<void> => {
-    initialValues.SEPReviewers.push(...users);
-
-    await api('SEP member assigned successfully!').assignMembers({
+    const {
+      assignReviewersToSEP: { error },
+    } = await api('SEP member assigned successfully!').assignReviewersToSEP({
       memberIds: users.map(user => user.id),
       sepId,
     });
 
     setOpen(false);
+
+    if (error) {
+      return;
+    }
+
+    setSEPReviewersData(sepReviewers => [
+      ...sepReviewers,
+      ...users.map(user => ({ userId: user.id, sepId, user })),
+    ]);
   };
 
   const removeMember = async (
     user: BasicUserDetailsWithRole
   ): Promise<void> => {
-    const result = await api('SEP member removed successfully!').removeMember({
+    const {
+      removeMemberFromSep: { error },
+    } = await api('SEP member removed successfully!').removeMemberFromSep({
       memberId: user.id,
       sepId,
       roleId: user.roleId,
     });
 
-    if (SEPMembersData && !result.removeMember.error) {
-      setSEPMembersData(
-        SEPMembersData.map(member => {
-          if (member.userId === user.id) {
-            return {
-              ...member,
-              roles: member.roles.filter(
-                role => role.shortCode.toUpperCase() !== user.roleId
-              ),
-            };
-          }
+    if (error) {
+      return;
+    }
 
-          return member;
-        })
+    if (user.roleId === UserRole.SEP_REVIEWER) {
+      setSEPReviewersData(sepReviewers =>
+        sepReviewers.filter(({ userId }) => userId !== user.id)
       );
+    } else {
+      const key =
+        user.roleId === UserRole.SEP_CHAIR ? 'sepChair' : 'sepSecretary';
+      onSEPUpdate({
+        ...sepData,
+        [key]: null,
+      });
     }
   };
 
   if (loadingMembers) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '20px' }} />;
-  }
-
-  if (SEPMembersData && SEPMembersData.length > 0) {
-    initializeValues(SEPMembersData as SepMember[]);
   }
 
   const AddPersonIcon = (): JSX.Element => <PersonAdd data-cy="add-member" />;
@@ -221,11 +212,12 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
       ]
     : [];
 
-  const alreadySelectedMembers = [
-    ...initialValues.SEPReviewers.map(reviewer => reviewer.id),
-  ]
-    .concat(initialValues.SEPChair ? [initialValues.SEPChair?.id] : [])
-    .concat(initialValues.SEPSecretary ? [initialValues.SEPSecretary?.id] : []);
+  const alreadySelectedMembers = (SEPReviewersData ?? []).map(
+    ({ userId }) => userId
+  );
+
+  sepData.sepChair && alreadySelectedMembers.push(sepData.sepChair.id);
+  sepData.sepSecretary && alreadySelectedMembers.push(sepData.sepSecretary.id);
 
   return (
     <React.Fragment>
@@ -233,7 +225,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
         title="Remove SEP member"
         text={`Are you sure you want to remove ${memberToRemove?.firstname} ${memberToRemove?.lastname} from this SEP?`}
         open={!!memberToRemove}
-        action={() => removeMember(memberToRemove as BasicUserDetailsWithRole)}
+        action={() => memberToRemove && removeMember(memberToRemove)}
         handleOpen={() => setMemberToRemove(null)}
       />
       <ParticipantModal
@@ -243,7 +235,8 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
         selectedUsers={alreadySelectedMembers}
         selection={true}
         title={'Reviewer'}
-        userRole={UserRole.REVIEWER}
+        invitationUserRole={UserRole.SEP_REVIEWER}
+        userRole={UserRole.SEP_REVIEWER}
       />
       <ParticipantModal
         show={sepChairModalOpen}
@@ -273,8 +266,8 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
               label="SEP Chair"
               type="text"
               value={
-                initialValues.SEPChair
-                  ? `${initialValues.SEPChair.firstname} ${initialValues.SEPChair.lastname}`
+                sepData.sepChair
+                  ? `${sepData.sepChair.firstname} ${sepData.sepChair.lastname}`
                   : ''
               }
               margin="none"
@@ -283,18 +276,18 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
               required
               disabled
               className={
-                initialValues.SEPChair ? classes.darkerDisabledTextField : ''
+                sepData.sepChair ? classes.darkerDisabledTextField : ''
               }
               InputProps={{
                 endAdornment: isUserOfficer && (
                   <>
-                    {!!initialValues.SEPChair && (
+                    {sepData.sepChair && (
                       <Tooltip title="Remove SEP Chair">
                         <IconButton
                           aria-label="Remove SEP chair"
                           onClick={() =>
                             setMemberToRemove({
-                              ...(initialValues.SEPChair as BasicUserDetails),
+                              ...sepData.sepChair!,
                               roleId: UserRole.SEP_CHAIR,
                             })
                           }
@@ -323,8 +316,8 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
               label="SEP Secretary"
               type="text"
               value={
-                initialValues.SEPSecretary
-                  ? `${initialValues.SEPSecretary.firstname} ${initialValues.SEPSecretary.lastname}`
+                sepData.sepSecretary
+                  ? `${sepData.sepSecretary.firstname} ${sepData.sepSecretary.lastname}`
                   : ''
               }
               margin="none"
@@ -333,20 +326,18 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
               required
               disabled
               className={
-                initialValues.SEPSecretary
-                  ? classes.darkerDisabledTextField
-                  : ''
+                sepData.sepSecretary ? classes.darkerDisabledTextField : ''
               }
               InputProps={{
                 endAdornment: isUserOfficer && (
                   <>
-                    {!!initialValues.SEPSecretary && (
+                    {sepData.sepSecretary && (
                       <Tooltip title="Remove SEP Secretary">
                         <IconButton
                           aria-label="Remove SEP secretary"
                           onClick={() =>
                             setMemberToRemove({
-                              ...(initialValues.SEPSecretary as BasicUserDetails),
+                              ...sepData.sepSecretary!,
                               roleId: UserRole.SEP_SECRETARY,
                             })
                           }
@@ -375,14 +366,18 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
               icons={tableIcons}
               title={'Reviewers'}
               columns={columns}
-              data={initialValues.SEPReviewers}
+              data={SEPReviewersData ?? []}
               editable={
                 hasAccessRights
                   ? {
                       deleteTooltip: () => 'Remove reviewer',
-                      onRowDelete: (rowData: BasicUserDetails): Promise<void> =>
+                      onRowDelete: ({
+                        user,
+                      }: {
+                        user: BasicUserDetails;
+                      }): Promise<void> =>
                         removeMember({
-                          ...rowData,
+                          ...user,
                           roleId: UserRole.SEP_REVIEWER,
                         }),
                     }
@@ -398,10 +393,6 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId }) => {
       </>
     </React.Fragment>
   );
-};
-
-SEPMembers.propTypes = {
-  sepId: PropTypes.number.isRequired,
 };
 
 export default SEPMembers;
