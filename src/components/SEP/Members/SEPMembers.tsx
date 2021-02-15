@@ -285,9 +285,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId, confirm }) => {
                           onClick={() =>
                             confirm(
                               () => {
-                                removeMember(
-                                  initialValues.SEPChair as BasicUserDetailsWithRole
-                                );
+                                removeMember({
+                                  ...(initialValues.SEPChair as BasicUserDetails),
+                                  roleId: UserRole.SEP_CHAIR,
+                                });
                               },
                               {
                                 title: 'Remove SEP member',
@@ -344,9 +345,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({ sepId, confirm }) => {
                           onClick={() =>
                             confirm(
                               () => {
-                                removeMember(
-                                  initialValues.SEPSecretary as BasicUserDetailsWithRole
-                                );
+                                removeMember({
+                                  ...(initialValues.SEPSecretary as BasicUserDetails),
+                                  roleId: UserRole.SEP_SECRETARY,
+                                });
                               },
                               {
                                 title: 'Remove SEP member',
