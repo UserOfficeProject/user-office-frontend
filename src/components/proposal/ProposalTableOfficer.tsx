@@ -11,7 +11,7 @@ import GroupWork from '@material-ui/icons/GroupWork';
 import Visibility from '@material-ui/icons/Visibility';
 import MaterialTable, { Column } from 'material-table';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
 
@@ -57,11 +57,13 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
     false
   );
+  const [selectedProposals, setSelectedProposals] = useState<
+    ProposalsToInstrumentArgs[]
+  >([]);
+  const [preselectedProposalsData, setPreselectedProposalsData] = useState<
+    ProposalViewData[]
+  >([]);
 
-  const initialSelectedProposals: ProposalsToInstrumentArgs[] = [];
-  const [selectedProposals, setSelectedProposals] = useState(
-    initialSelectedProposals
-  );
   const downloadPDFProposal = useDownloadPDFProposal();
   const downloadXLSXProposal = useDownloadXLSXProposal();
   const { api } = useDataApiWithFeedback();
@@ -72,6 +74,33 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
     proposalFilter
   );
+
+  useEffect(() => {
+    if (urlQueryParams.selection.length > 0) {
+      const proposalsWithTableDataCheckedProperty = proposalsData.map(
+        proposal => {
+          return {
+            ...proposal,
+            tableData: {
+              checked: urlQueryParams.selection?.some(
+                (selectedItem: string | null) =>
+                  selectedItem === proposal.id.toString()
+              ),
+            },
+          };
+        }
+      );
+
+      const onlySelectedProposals = proposalsWithTableDataCheckedProperty.filter(
+        proposal => proposal.tableData.checked
+      );
+
+      setPreselectedProposalsData(proposalsWithTableDataCheckedProperty);
+      setSelectedProposals(onlySelectedProposals);
+    } else {
+      setPreselectedProposalsData(proposalsData);
+    }
+  }, [proposalsData, urlQueryParams.selection]);
 
   const setNewRanking = (proposalID: number, ranking: number) => {
     api().administrationProposal({
@@ -257,29 +286,23 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     }));
   }
 
+  // TODO: Maybe it will be good to make notifyProposal and deleteProposal bulk functions where we can sent array of proposal ids.
   const emailProposals = (): void => {
-    selectedProposals.forEach(proposal => {
-      new Promise<void>(async resolve => {
-        await api()
-          .notifyProposal({ id: proposal.id })
-          .then(data => {
-            if (data.notifyProposal.error) {
-              enqueueSnackbar(
-                `Could not send email to all selected proposals`,
-                {
-                  variant: 'error',
-                }
-              );
-            } else {
-              proposalsData[
-                proposalsData.findIndex(val => val.id === proposal.id)
-              ].notified = true;
-              setProposalsData([...proposalsData]);
-            }
-          });
-
-        resolve();
+    selectedProposals.forEach(async proposal => {
+      const {
+        notifyProposal: { error },
+      } = await api('Notification sent successfully').notifyProposal({
+        id: proposal.id,
       });
+
+      if (error) {
+        return;
+      }
+
+      proposalsData[
+        proposalsData.findIndex(val => val.id === proposal.id)
+      ].notified = true;
+      setProposalsData([...proposalsData]);
     });
   };
 
@@ -394,21 +417,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   );
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
-  const preselectedProposalsData =
-    urlQueryParams.selection.length > 0
-      ? proposalsData.map(proposalData => {
-          return {
-            ...proposalData,
-            tableData: {
-              checked: urlQueryParams.selection?.some(
-                (selectedItem: string | null) =>
-                  selectedItem === proposalData.id.toString()
-              ),
-            },
-          };
-        })
-      : proposalsData;
-
   columns = setSortDirectionOnSortColumn(
     columns,
     urlQueryParams.sortColumn,
@@ -462,6 +470,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
                 ? selectedItems.map(selectedItem => selectedItem.id.toString())
                 : undefined,
           });
+          setSelectedProposals(selectedItems);
         }}
         options={{
           search: true,
