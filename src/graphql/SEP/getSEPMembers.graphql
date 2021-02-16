@@ -2,7 +2,7 @@ query getSEPMembers($sepId: Int!) {
   sepMembers(sepId: $sepId) {
     userId
     sepId
-    roles {
+    role {
       id
       shortCode
       title

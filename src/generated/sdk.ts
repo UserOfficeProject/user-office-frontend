@@ -1919,7 +1919,7 @@ export type SepAssignment = {
   dateReassigned: Maybe<Scalars['DateTime']>;
   emailSent: Scalars['Boolean'];
   proposal: Proposal;
-  roles: Array<Role>;
+  role: Maybe<Role>;
   user: Maybe<BasicUserDetails>;
   review: Maybe<Review>;
 };
@@ -1950,7 +1950,7 @@ export type SepReviewer = {
   __typename?: 'SEPReviewer';
   userId: Scalars['Int'];
   sepId: Scalars['Int'];
-  roles: Array<Role>;
+  role: Maybe<Role>;
   user: BasicUserDetails;
 };
 
@@ -2393,7 +2393,7 @@ export type GetSepMembersQuery = (
   & { sepMembers: Maybe<Array<(
     { __typename?: 'SEPReviewer' }
     & Pick<SepReviewer, 'userId' | 'sepId'>
-    & { roles: Array<(
+    & { role: Maybe<(
       { __typename?: 'Role' }
       & Pick<Role, 'id' | 'shortCode' | 'title'>
     )>, user: (
@@ -2471,7 +2471,7 @@ export type GetSepProposalsQuery = (
       & { user: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position'>
-      )>, roles: Array<(
+      )>, role: Maybe<(
         { __typename?: 'Role' }
         & Pick<Role, 'id' | 'shortCode' | 'title'>
       )>, review: Maybe<(
@@ -2524,7 +2524,7 @@ export type GetSepReviewersQuery = (
   & { sepReviewers: Maybe<Array<(
     { __typename?: 'SEPReviewer' }
     & Pick<SepReviewer, 'userId' | 'sepId'>
-    & { roles: Array<(
+    & { role: Maybe<(
       { __typename?: 'Role' }
       & Pick<Role, 'id' | 'shortCode' | 'title'>
     )>, user: (
@@ -5793,7 +5793,7 @@ export const GetSepMembersDocument = gql`
   sepMembers(sepId: $sepId) {
     userId
     sepId
-    roles {
+    role {
       id
       shortCode
       title
@@ -5883,7 +5883,7 @@ export const GetSepProposalsDocument = gql`
         organisation
         position
       }
-      roles {
+      role {
         id
         shortCode
         title
@@ -5934,7 +5934,7 @@ export const GetSepReviewersDocument = gql`
   sepReviewers(sepId: $sepId) {
     userId
     sepId
-    roles {
+    role {
       id
       shortCode
       title

@@ -4,7 +4,7 @@ import PeopleTable from 'components/user/PeopleTable';
 import { SepReviewer, BasicUserDetails } from 'generated/sdk';
 import { useSEPMembersData } from 'hooks/SEP/useSEPMembersData';
 
-export type SepAssignedMember = BasicUserDetails & Pick<SepReviewer, 'roles'>;
+export type SepAssignedMember = BasicUserDetails & Pick<SepReviewer, 'role'>;
 
 type AssignSEPMemberToProposalProps = {
   sepId: number;
@@ -19,7 +19,7 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
 }) => {
   const { loadingMembers, SEPMembersData } = useSEPMembersData(sepId, false);
 
-  const memberRole = (member: SepAssignedMember) => `${member.roles[0]?.title}`;
+  const memberRole = (member: SepAssignedMember) => `${member.role?.title}`;
 
   const members: SepAssignedMember[] = SEPMembersData
     ? SEPMembersData.filter(
@@ -29,7 +29,7 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
           )
       ).map(sepMember => ({
         ...sepMember.user,
-        roles: sepMember.roles ?? [],
+        role: sepMember.role ?? null,
       }))
     : [];
 

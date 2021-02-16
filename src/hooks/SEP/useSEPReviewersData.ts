@@ -4,7 +4,7 @@ import { SepReviewer, Role, BasicUserDetails } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 export type SepMember = Pick<SepReviewer, 'userId' | 'sepId'> & {
-  roles?: Array<Pick<Role, 'id' | 'shortCode' | 'title'>>;
+  role?: Pick<Role, 'id' | 'shortCode' | 'title'> | null;
 } & { user: BasicUserDetails };
 
 export function useSEPReviewersData(
