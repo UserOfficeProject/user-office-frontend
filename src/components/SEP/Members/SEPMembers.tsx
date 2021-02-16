@@ -11,7 +11,6 @@ import MaterialTable from 'material-table';
 import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
-import DialogConfirmation from 'components/common/DialogConfirmation';
 import UOLoader from 'components/common/UOLoader';
 import ParticipantModal from 'components/proposal/ParticipantModal';
 import { UserContext } from 'context/UserContextProvider';
@@ -20,6 +19,7 @@ import { useRenewToken } from 'hooks/common/useRenewToken';
 import { useSEPReviewersData } from 'hooks/SEP/useSEPReviewersData';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles(() => ({
   darkerDisabledTextField: {
@@ -36,22 +36,20 @@ type SEPMembersProps = {
   /** Id of the SEP we are assigning members to */
   sepId: number;
   onSEPUpdate: (sep: Sep) => void;
+  confirm: WithConfirmType;
 };
 
 const SEPMembers: React.FC<SEPMembersProps> = ({
   data: sepData,
   sepId,
   onSEPUpdate,
+  confirm,
 }) => {
   const [modalOpen, setOpen] = useState(false);
   const [sepChairModalOpen, setSepChairModalOpen] = useState(false);
   const [sepSecretaryModalOpen, setSepSecretaryModalOpen] = useState(false);
   const { user } = useContext(UserContext);
   const { setRenewTokenValue } = useRenewToken();
-  const [
-    memberToRemove,
-    setMemberToRemove,
-  ] = useState<BasicUserDetailsWithRole | null>(null);
   const classes = useStyles();
   const {
     loadingMembers,
@@ -220,14 +218,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
   sepData.sepSecretary && alreadySelectedMembers.push(sepData.sepSecretary.id);
 
   return (
-    <React.Fragment>
-      <DialogConfirmation
-        title="Remove SEP member"
-        text={`Are you sure you want to remove ${memberToRemove?.firstname} ${memberToRemove?.lastname} from this SEP?`}
-        open={!!memberToRemove}
-        action={() => memberToRemove && removeMember(memberToRemove)}
-        handleOpen={() => setMemberToRemove(null)}
-      />
+    <>
       <ParticipantModal
         show={modalOpen}
         close={(): void => setOpen(false)}
@@ -286,10 +277,18 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                         <IconButton
                           aria-label="Remove SEP chair"
                           onClick={() =>
-                            setMemberToRemove({
-                              ...sepData.sepChair!,
-                              roleId: UserRole.SEP_CHAIR,
-                            })
+                            confirm(
+                              () => {
+                                removeMember({
+                                  ...sepData.sepChair!,
+                                  roleId: UserRole.SEP_CHAIR,
+                                });
+                              },
+                              {
+                                title: 'Remove SEP member',
+                                description: `Are you sure you want to remove ${sepData.sepChair?.firstname} ${sepData.sepChair?.lastname} from this SEP?`,
+                              }
+                            )()
                           }
                         >
                           <Clear />
@@ -336,10 +335,18 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                         <IconButton
                           aria-label="Remove SEP secretary"
                           onClick={() =>
-                            setMemberToRemove({
-                              ...sepData.sepSecretary!,
-                              roleId: UserRole.SEP_SECRETARY,
-                            })
+                            confirm(
+                              () => {
+                                removeMember({
+                                  ...sepData.sepSecretary!,
+                                  roleId: UserRole.SEP_SECRETARY,
+                                });
+                              },
+                              {
+                                title: 'Remove SEP member',
+                                description: `Are you sure you want to remove ${sepData.sepSecretary?.firstname} ${sepData.sepSecretary?.lastname} from this SEP?`,
+                              }
+                            )()
                           }
                         >
                           <Clear />
@@ -391,8 +398,8 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
           </Grid>
         </Grid>
       </>
-    </React.Fragment>
+    </>
   );
 };
 
-export default SEPMembers;
+export default withConfirm(SEPMembers);

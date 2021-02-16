@@ -52,6 +52,14 @@ export type AddProposalWorkflowStatusInput = {
   prevProposalStatusId?: Maybe<Scalars['Int']>;
 };
 
+export type AddTechnicalReviewInput = {
+  proposalID: Scalars['Int'];
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  timeAllocation?: Maybe<Scalars['Int']>;
+  status?: Maybe<TechnicalReviewStatus>;
+};
+
 export type AddUserRoleResponseWrap = {
   __typename?: 'AddUserRoleResponseWrap';
   error: Maybe<Scalars['String']>;
@@ -479,7 +487,6 @@ export type Mutation = {
   createQuestionary: QuestionaryResponseWrap;
   updateAnswer: UpdateAnswerResponseWrap;
   addReview: ReviewResponseWrap;
-  addTechnicalReview: TechnicalReviewResponseWrap;
   addUserForReview: ReviewResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
@@ -515,6 +522,7 @@ export type Mutation = {
   setUserNotPlaceholder: UserResponseWrap;
   addClientLog: SuccessResponseWrap;
   addSamplesToShipment: ShipmentResponseWrap;
+  addTechnicalReview: TechnicalReviewResponseWrap;
   applyPatches: PrepareDbResponseWrap;
   checkExternalToken: CheckExternalTokenWrap;
   cloneSample: SampleResponseWrap;
@@ -541,6 +549,7 @@ export type Mutation = {
   deleteProposalStatus: ProposalStatusResponseWrap;
   deleteProposalWorkflow: ProposalWorkflowResponseWrap;
   submitProposal: ProposalResponseWrap;
+  submitTechnicalReview: TechnicalReviewResponseWrap;
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
@@ -732,15 +741,6 @@ export type MutationAddReviewArgs = {
   grade: Scalars['Int'];
   status: ReviewStatus;
   sepID: Scalars['Int'];
-};
-
-
-export type MutationAddTechnicalReviewArgs = {
-  proposalID: Scalars['Int'];
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  timeAllocation?: Maybe<Scalars['Int']>;
-  status?: Maybe<TechnicalReviewStatus>;
 };
 
 
@@ -1020,6 +1020,11 @@ export type MutationAddSamplesToShipmentArgs = {
 };
 
 
+export type MutationAddTechnicalReviewArgs = {
+  addTechnicalReviewInput: AddTechnicalReviewInput;
+};
+
+
 export type MutationCheckExternalTokenArgs = {
   externalToken: Scalars['String'];
 };
@@ -1141,6 +1146,11 @@ export type MutationDeleteProposalWorkflowArgs = {
 
 export type MutationSubmitProposalArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationSubmitTechnicalReviewArgs = {
+  submitTechnicalReviewInput: SubmitTechnicalReviewInput;
 };
 
 
@@ -1992,6 +2002,15 @@ export enum ShipmentStatus {
   SUBMITTED = 'SUBMITTED'
 }
 
+export type SubmitTechnicalReviewInput = {
+  proposalID: Scalars['Int'];
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  timeAllocation?: Maybe<Scalars['Int']>;
+  status?: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
+};
+
 export type SubtemplateConfig = {
   __typename?: 'SubtemplateConfig';
   minEntries: Maybe<Scalars['Int']>;
@@ -2017,6 +2036,7 @@ export type TechnicalReview = {
   publicComment: Maybe<Scalars['String']>;
   timeAllocation: Maybe<Scalars['Int']>;
   status: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
   proposal: Maybe<Proposal>;
 };
 
@@ -3250,7 +3270,7 @@ export type DeleteProposalMutation = (
 
 export type CoreTechnicalReviewFragment = (
   { __typename?: 'TechnicalReview' }
-  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID'>
+  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID' | 'submitted'>
 );
 
 export type ProposalFragment = (
@@ -3705,6 +3725,28 @@ export type RemoveUserForReviewMutation = (
   & { removeUserForReview: (
     { __typename?: 'ReviewResponseWrap' }
     & Pick<ReviewResponseWrap, 'error'>
+  ) }
+);
+
+export type SubmitTechnicalReviewMutationVariables = Exact<{
+  proposalID: Scalars['Int'];
+  timeAllocation?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  status?: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
+}>;
+
+
+export type SubmitTechnicalReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { submitTechnicalReview: (
+    { __typename?: 'TechnicalReviewResponseWrap' }
+    & Pick<TechnicalReviewResponseWrap, 'error'>
+    & { technicalReview: Maybe<(
+      { __typename?: 'TechnicalReview' }
+      & Pick<TechnicalReview, 'id'>
+    )> }
   ) }
 );
 
@@ -5338,6 +5380,7 @@ export const CoreTechnicalReviewFragmentDoc = gql`
   timeAllocation
   status
   proposalID
+  submitted
 }
     `;
 export const ProposalStatusFragmentDoc = gql`
@@ -6601,7 +6644,7 @@ export const GetQuestionaryDocument = gql`
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
     mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus) {
-  addTechnicalReview(proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status) {
+  addTechnicalReview(addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status}) {
     error
     technicalReview {
       id
@@ -6650,6 +6693,16 @@ export const RemoveUserForReviewDocument = gql`
     mutation removeUserForReview($reviewId: Int!, $sepId: Int!) {
   removeUserForReview(reviewId: $reviewId, sepId: $sepId) {
     error
+  }
+}
+    `;
+export const SubmitTechnicalReviewDocument = gql`
+    mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
+  submitTechnicalReview(submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}) {
+    error
+    technicalReview {
+      id
+    }
   }
 }
     `;
@@ -7744,6 +7797,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     removeUserForReview(variables: RemoveUserForReviewMutationVariables): Promise<RemoveUserForReviewMutation> {
       return withWrapper(() => client.request<RemoveUserForReviewMutation>(print(RemoveUserForReviewDocument), variables));
+    },
+    submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables): Promise<SubmitTechnicalReviewMutation> {
+      return withWrapper(() => client.request<SubmitTechnicalReviewMutation>(print(SubmitTechnicalReviewDocument), variables));
     },
     addReview(variables: AddReviewMutationVariables): Promise<AddReviewMutation> {
       return withWrapper(() => client.request<AddReviewMutation>(print(AddReviewDocument), variables));
