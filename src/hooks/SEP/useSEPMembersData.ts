@@ -21,7 +21,6 @@ export function useSEPMembersData(
   useEffect(() => {
     let unmounted = false;
 
-    setLoadingMembers(true);
     api()
       .getSEPMembers({ sepId })
       .then(data => {

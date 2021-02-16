@@ -21,7 +21,6 @@ export function useSEPReviewersData(
   useEffect(() => {
     let unmounted = false;
 
-    setLoadingMembers(true);
     api()
       .getSEPReviewers({ sepId })
       .then(data => {
