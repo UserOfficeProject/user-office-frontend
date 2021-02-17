@@ -12,6 +12,11 @@ const useStyles = makeStyles(theme => ({
   label: {
     marginBottom: theme.spacing(2),
   },
+  charactersInfo: {
+    position: 'absolute',
+    right: 0,
+    color: theme.palette.grey[600],
+  },
 }));
 
 export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
@@ -30,6 +35,7 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
   const isError = getIn(touched, proposalQuestionId) && !!fieldError;
   const config = answer.config as RichTextInputConfig;
   const classes = useStyles();
+  const [numberOfChars, setNumberOfChars] = useState(0);
 
   return (
     <FormControl
@@ -49,7 +55,7 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
            * Note:  if you add new styling options please make sure the HTML sanitizer rules
            *        on the BE is in sync, otherwise the result will be filtered
            */
-          plugins: ['preview advlist lists charmap'],
+          plugins: ['preview advlist lists charmap wordcount'],
           toolbar:
             'undo redo | bold italic underline strikethrough superscript subscript | ' +
             'fontsizeselect formatselect forecolor | ' +
@@ -58,13 +64,18 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
           branding: false,
           menubar: false,
         }}
-        onEditorChange={content => {
+        onEditorChange={(content, editor) => {
+          const wordCount = editor.plugins.wordcount;
+          setNumberOfChars(wordCount.body.getCharacterCount());
           setStateValue(content);
         }}
         onBlur={() => {
           onComplete(stateValue);
         }}
       />
+      <div className={classes.charactersInfo}>
+        Characters: {numberOfChars} / {config.max}
+      </div>
       {isError && <FormHelperText>{fieldError}</FormHelperText>}
     </FormControl>
   );

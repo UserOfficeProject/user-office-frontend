@@ -151,7 +151,7 @@ export type Call = {
   templateId: Maybe<Scalars['Int']>;
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
-  proposalCount: Maybe<Scalars['Int']>;
+  proposalCount: Scalars['Int'];
 };
 
 export type CallResponseWrap = {
@@ -1832,6 +1832,7 @@ export type RichTextInputConfig = {
   small_label: Scalars['String'];
   required: Scalars['Boolean'];
   tooltip: Scalars['String'];
+  max: Maybe<Scalars['Int']>;
 };
 
 export type Role = {

@@ -11,5 +11,11 @@ export const createRichTextInputValidationSchema: QuestionaryComponentDefinition
     schema = schema.required(`This is a required field`);
   }
 
+  config.max &&
+    (schema = schema.max(
+      config.max,
+      `Value must be at most ${config.max} characters`
+    ));
+
   return schema;
 };
