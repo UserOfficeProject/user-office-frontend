@@ -151,6 +151,7 @@ export type Call = {
   templateId: Maybe<Scalars['Int']>;
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
+  proposalCount: Maybe<Scalars['Int']>;
 };
 
 export type CallResponseWrap = {
@@ -2857,7 +2858,7 @@ export type CreateCallMutation = (
 
 export type CallFragment = (
   { __typename?: 'Call' }
-  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'proposalWorkflowId' | 'templateId'>
+  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'proposalWorkflowId' | 'templateId' | 'proposalCount'>
   & { instruments: Array<(
     { __typename?: 'InstrumentWithAvailabilityTime' }
     & Pick<InstrumentWithAvailabilityTime, 'id' | 'name' | 'shortCode' | 'description' | 'availabilityTime' | 'submitted'>
@@ -5334,6 +5335,7 @@ export const CallFragmentDoc = gql`
     name
     description
   }
+  proposalCount
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const CoreTechnicalReviewFragmentDoc = gql`
