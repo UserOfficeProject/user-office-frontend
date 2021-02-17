@@ -459,6 +459,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createApiAccessToken: ApiAccessTokenResponseWrap;
   createInstitution: InstitutionResponseWrap;
+  createUnit: UnitResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateInstitution: InstitutionResponseWrap;
@@ -537,6 +538,7 @@ export type Mutation = {
   deleteShipment: ShipmentResponseWrap;
   deleteTemplate: TemplateResponseWrap;
   deleteTopic: TemplateResponseWrap;
+  deleteUnit: UnitResponseWrap;
   deleteUser: UserResponseWrap;
   emailVerification: EmailVerificationResponseWrap;
   getTokenForUser: TokenResponseWrap;
@@ -565,6 +567,11 @@ export type MutationCreateApiAccessTokenArgs = {
 export type MutationCreateInstitutionArgs = {
   name: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+
+export type MutationCreateUnitArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -1086,6 +1093,11 @@ export type MutationDeleteTopicArgs = {
 };
 
 
+export type MutationDeleteUnitArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationDeleteUserArgs = {
   id: Scalars['Int'];
 };
@@ -1313,6 +1325,7 @@ export type ProposalsFilter = {
   instrumentId?: Maybe<Scalars['Int']>;
   proposalStatusId?: Maybe<Scalars['Int']>;
   shortCodes?: Maybe<Array<Scalars['String']>>;
+  questionFilter?: Maybe<QuestionFilterInput>;
 };
 
 export type ProposalsQueryResult = {
@@ -1486,6 +1499,7 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   template: Maybe<Template>;
   checkToken: TokenResult;
+  units: Maybe<Array<Unit>>;
   user: Maybe<User>;
   me: Maybe<User>;
   users: Maybe<UserQueryResult>;
@@ -1775,6 +1789,20 @@ export type QuestionaryStepResponseWrap = {
   __typename?: 'QuestionaryStepResponseWrap';
   error: Maybe<Scalars['String']>;
   questionaryStep: Maybe<QuestionaryStep>;
+};
+
+export enum QuestionFilterCompareOperator {
+  GREATER_THAN = 'GREATER_THAN',
+  LESS_THAN = 'LESS_THAN',
+  EQUALS = 'EQUALS',
+  INCLUDES = 'INCLUDES'
+}
+
+export type QuestionFilterInput = {
+  questionId: Scalars['String'];
+  value: Scalars['String'];
+  compareOperator: QuestionFilterCompareOperator;
+  dataType: DataType;
 };
 
 export type QuestionResponseWrap = {
@@ -2122,6 +2150,18 @@ export type Topic = {
   templateId: Scalars['Int'];
   sortOrder: Scalars['Int'];
   isEnabled: Scalars['Boolean'];
+};
+
+export type Unit = {
+  __typename?: 'Unit';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type UnitResponseWrap = {
+  __typename?: 'UnitResponseWrap';
+  error: Maybe<Scalars['String']>;
+  unit: Maybe<Unit>;
 };
 
 export type UpdateAnswerResponseWrap = {
@@ -4526,7 +4566,7 @@ type FieldConfigShipmentBasisConfigFragment = (
 
 type FieldConfigRichTextInputConfigFragment = (
   { __typename?: 'RichTextInputConfig' }
-  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip'>
+  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip' | 'max'>
 );
 
 export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment;
@@ -5460,6 +5500,7 @@ export const FieldConfigFragmentDoc = gql`
     small_label
     required
     tooltip
+    max
   }
 }
     `;

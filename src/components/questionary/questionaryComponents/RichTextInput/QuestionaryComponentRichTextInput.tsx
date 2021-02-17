@@ -73,9 +73,11 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
           onComplete(stateValue);
         }}
       />
-      <div className={classes.charactersInfo}>
-        Characters: {numberOfChars} / {config.max}
-      </div>
+      {config.max && (
+        <div className={classes.charactersInfo}>
+          Characters: {numberOfChars} / {config.max}
+        </div>
+      )}
       {isError && <FormHelperText>{fieldError}</FormHelperText>}
     </FormControl>
   );
