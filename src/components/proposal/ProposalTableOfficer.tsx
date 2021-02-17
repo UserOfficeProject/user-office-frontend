@@ -346,7 +346,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         : 'Proposal/s assigned to SEP',
       {
         variant: isError ? 'error' : 'success',
-        className: isError ? 'snackbar-success' : 'snackbar-error',
+        className: isError ? 'snackbar-error' : 'snackbar-success',
       }
     );
 
