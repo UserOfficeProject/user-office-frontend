@@ -151,7 +151,7 @@ export type Call = {
   templateId: Maybe<Scalars['Int']>;
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
-  proposalCount: Maybe<Scalars['Int']>;
+  proposalCount: Scalars['Int'];
 };
 
 export type CallResponseWrap = {
@@ -459,6 +459,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createApiAccessToken: ApiAccessTokenResponseWrap;
   createInstitution: InstitutionResponseWrap;
+  createUnit: UnitResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateInstitution: InstitutionResponseWrap;
@@ -537,6 +538,7 @@ export type Mutation = {
   deleteShipment: ShipmentResponseWrap;
   deleteTemplate: TemplateResponseWrap;
   deleteTopic: TemplateResponseWrap;
+  deleteUnit: UnitResponseWrap;
   deleteUser: UserResponseWrap;
   emailVerification: EmailVerificationResponseWrap;
   getTokenForUser: TokenResponseWrap;
@@ -565,6 +567,11 @@ export type MutationCreateApiAccessTokenArgs = {
 export type MutationCreateInstitutionArgs = {
   name: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+
+export type MutationCreateUnitArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -1086,6 +1093,11 @@ export type MutationDeleteTopicArgs = {
 };
 
 
+export type MutationDeleteUnitArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationDeleteUserArgs = {
   id: Scalars['Int'];
 };
@@ -1326,6 +1338,7 @@ export type ProposalsFilter = {
   instrumentId?: Maybe<Scalars['Int']>;
   proposalStatusId?: Maybe<Scalars['Int']>;
   shortCodes?: Maybe<Array<Scalars['String']>>;
+  questionFilter?: Maybe<QuestionFilterInput>;
 };
 
 export type ProposalsQueryResult = {
@@ -1499,6 +1512,7 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   template: Maybe<Template>;
   checkToken: TokenResult;
+  units: Maybe<Array<Unit>>;
   user: Maybe<User>;
   me: Maybe<User>;
   users: Maybe<UserQueryResult>;
@@ -1788,6 +1802,20 @@ export type QuestionaryStepResponseWrap = {
   __typename?: 'QuestionaryStepResponseWrap';
   error: Maybe<Scalars['String']>;
   questionaryStep: Maybe<QuestionaryStep>;
+};
+
+export enum QuestionFilterCompareOperator {
+  GREATER_THAN = 'GREATER_THAN',
+  LESS_THAN = 'LESS_THAN',
+  EQUALS = 'EQUALS',
+  INCLUDES = 'INCLUDES'
+}
+
+export type QuestionFilterInput = {
+  questionId: Scalars['String'];
+  value: Scalars['String'];
+  compareOperator: QuestionFilterCompareOperator;
+  dataType: DataType;
 };
 
 export type QuestionResponseWrap = {
@@ -2134,6 +2162,18 @@ export type Topic = {
   templateId: Scalars['Int'];
   sortOrder: Scalars['Int'];
   isEnabled: Scalars['Boolean'];
+};
+
+export type Unit = {
+  __typename?: 'Unit';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type UnitResponseWrap = {
+  __typename?: 'UnitResponseWrap';
+  error: Maybe<Scalars['String']>;
+  unit: Maybe<Unit>;
 };
 
 export type UpdateAnswerResponseWrap = {
@@ -2665,6 +2705,23 @@ export type CreateInstitutionMutation = (
   ) }
 );
 
+export type CreateUnitMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { createUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id' | 'name'>
+    )> }
+  ) }
+);
+
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
@@ -2691,6 +2748,23 @@ export type DeleteInstitutionMutation = (
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'verified'>
+    )> }
+  ) }
+);
+
+export type DeleteUnitMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id'>
     )> }
   ) }
 );
@@ -2749,6 +2823,17 @@ export type GetPageContentQueryVariables = Exact<{
 export type GetPageContentQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'getPageContent'>
+);
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = (
+  { __typename?: 'Query' }
+  & { units: Maybe<Array<(
+    { __typename?: 'Unit' }
+    & Pick<Unit, 'id' | 'name'>
+  )>> }
 );
 
 export type SetPageContentMutationVariables = Exact<{
@@ -5977,6 +6062,17 @@ export const CreateInstitutionDocument = gql`
   }
 }
     `;
+export const CreateUnitDocument = gql`
+    mutation createUnit($name: String!) {
+  createUnit(name: $name) {
+    unit {
+      id
+      name
+    }
+    error
+  }
+}
+    `;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
@@ -5991,6 +6087,16 @@ export const DeleteInstitutionDocument = gql`
     institution {
       id
       verified
+    }
+    error
+  }
+}
+    `;
+export const DeleteUnitDocument = gql`
+    mutation deleteUnit($id: Int!) {
+  deleteUnit(id: $id) {
+    unit {
+      id
     }
     error
   }
@@ -6035,6 +6141,14 @@ export const GetInstitutionsDocument = gql`
 export const GetPageContentDocument = gql`
     query getPageContent($id: PageName!) {
   getPageContent(id: $id)
+}
+    `;
+export const GetUnitsDocument = gql`
+    query getUnits {
+  units {
+    id
+    name
+  }
 }
     `;
 export const SetPageContentDocument = gql`
@@ -7574,11 +7688,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
       return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
     },
+    createUnit(variables: CreateUnitMutationVariables): Promise<CreateUnitMutation> {
+      return withWrapper(() => client.request<CreateUnitMutation>(print(CreateUnitDocument), variables));
+    },
     deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
       return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
     },
     deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
       return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
+    },
+    deleteUnit(variables: DeleteUnitMutationVariables): Promise<DeleteUnitMutation> {
+      return withWrapper(() => client.request<DeleteUnitMutation>(print(DeleteUnitDocument), variables));
     },
     getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
       return withWrapper(() => client.request<GetAllApiAccessTokensAndPermissionsQuery>(print(GetAllApiAccessTokensAndPermissionsDocument), variables));
@@ -7594,6 +7714,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPageContent(variables: GetPageContentQueryVariables): Promise<GetPageContentQuery> {
       return withWrapper(() => client.request<GetPageContentQuery>(print(GetPageContentDocument), variables));
+    },
+    getUnits(variables?: GetUnitsQueryVariables): Promise<GetUnitsQuery> {
+      return withWrapper(() => client.request<GetUnitsQuery>(print(GetUnitsDocument), variables));
     },
     setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
       return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
