@@ -4,6 +4,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { Editor } from '@tinymce/tinymce-react';
 import { getIn } from 'formik';
 import React, { useState } from 'react';
+import { Editor as TinyMCEEditor } from 'tinymce';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { RichTextInputConfig } from 'generated/sdk';
@@ -37,6 +38,11 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
   const classes = useStyles();
   const [numberOfChars, setNumberOfChars] = useState(0);
 
+  const handleCharacterCount = (editor: TinyMCEEditor) => {
+    const wordCount = editor.plugins.wordcount;
+    setNumberOfChars(wordCount.body.getCharacterCount());
+  };
+
   return (
     <FormControl
       required={config.required}
@@ -63,10 +69,12 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
             'bullist numlist | outdent indent | charmap removeformat preview',
           branding: false,
           menubar: false,
+          init_instance_callback: editor => {
+            handleCharacterCount(editor);
+          },
         }}
         onEditorChange={(content, editor) => {
-          const wordCount = editor.plugins.wordcount;
-          setNumberOfChars(wordCount.body.getCharacterCount());
+          handleCharacterCount(editor);
           setStateValue(content);
         }}
         onBlur={() => {
