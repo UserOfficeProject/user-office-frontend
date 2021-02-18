@@ -2689,6 +2689,23 @@ export type CreateInstitutionMutation = (
   ) }
 );
 
+export type CreateUnitMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { createUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id' | 'name'>
+    )> }
+  ) }
+);
+
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
@@ -2715,6 +2732,23 @@ export type DeleteInstitutionMutation = (
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'verified'>
+    )> }
+  ) }
+);
+
+export type DeleteUnitMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id'>
     )> }
   ) }
 );
@@ -2773,6 +2807,17 @@ export type GetPageContentQueryVariables = Exact<{
 export type GetPageContentQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'getPageContent'>
+);
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = (
+  { __typename?: 'Query' }
+  & { units: Maybe<Array<(
+    { __typename?: 'Unit' }
+    & Pick<Unit, 'id' | 'name'>
+  )>> }
 );
 
 export type SetPageContentMutationVariables = Exact<{
@@ -5998,6 +6043,17 @@ export const CreateInstitutionDocument = gql`
   }
 }
     `;
+export const CreateUnitDocument = gql`
+    mutation createUnit($name: String!) {
+  createUnit(name: $name) {
+    unit {
+      id
+      name
+    }
+    error
+  }
+}
+    `;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
@@ -6012,6 +6068,16 @@ export const DeleteInstitutionDocument = gql`
     institution {
       id
       verified
+    }
+    error
+  }
+}
+    `;
+export const DeleteUnitDocument = gql`
+    mutation deleteUnit($id: Int!) {
+  deleteUnit(id: $id) {
+    unit {
+      id
     }
     error
   }
@@ -6056,6 +6122,14 @@ export const GetInstitutionsDocument = gql`
 export const GetPageContentDocument = gql`
     query getPageContent($id: PageName!) {
   getPageContent(id: $id)
+}
+    `;
+export const GetUnitsDocument = gql`
+    query getUnits {
+  units {
+    id
+    name
+  }
 }
     `;
 export const SetPageContentDocument = gql`
@@ -7595,11 +7669,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
       return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
     },
+    createUnit(variables: CreateUnitMutationVariables): Promise<CreateUnitMutation> {
+      return withWrapper(() => client.request<CreateUnitMutation>(print(CreateUnitDocument), variables));
+    },
     deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
       return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
     },
     deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
       return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
+    },
+    deleteUnit(variables: DeleteUnitMutationVariables): Promise<DeleteUnitMutation> {
+      return withWrapper(() => client.request<DeleteUnitMutation>(print(DeleteUnitDocument), variables));
     },
     getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
       return withWrapper(() => client.request<GetAllApiAccessTokensAndPermissionsQuery>(print(GetAllApiAccessTokensAndPermissionsDocument), variables));
@@ -7615,6 +7695,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPageContent(variables: GetPageContentQueryVariables): Promise<GetPageContentQuery> {
       return withWrapper(() => client.request<GetPageContentQuery>(print(GetPageContentDocument), variables));
+    },
+    getUnits(variables?: GetUnitsQueryVariables): Promise<GetUnitsQuery> {
+      return withWrapper(() => client.request<GetUnitsQuery>(print(GetUnitsDocument), variables));
     },
     setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
       return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
