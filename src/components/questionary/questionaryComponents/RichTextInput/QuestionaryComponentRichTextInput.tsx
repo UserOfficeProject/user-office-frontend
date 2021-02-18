@@ -82,7 +82,7 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
         }}
       />
       {config.max && (
-        <div className={classes.charactersInfo}>
+        <div className={classes.charactersInfo} data-cy="rich-text-char-count">
           Characters: {numberOfChars} / {config.max}
         </div>
       )}
