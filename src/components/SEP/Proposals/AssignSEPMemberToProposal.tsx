@@ -1,17 +1,15 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import PeopleTable from 'components/user/PeopleTable';
-import { SepMember, BasicUserDetails } from 'generated/sdk';
+import { SepReviewer, BasicUserDetails } from 'generated/sdk';
 import { useSEPMembersData } from 'hooks/SEP/useSEPMembersData';
 
-export type SepAssignedMember = BasicUserDetails &
-  Pick<SepMember, 'roles' | 'roleId'>;
+export type SepAssignedMember = BasicUserDetails & Pick<SepReviewer, 'role'>;
 
 type AssignSEPMemberToProposalProps = {
   sepId: number;
   assignMemberToSEPProposal: (assignedMembers: SepAssignedMember[]) => void;
-  assignedMembers?: BasicUserDetails[] | null;
+  assignedMembers?: Array<BasicUserDetails | null>;
 };
 
 const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
@@ -21,19 +19,17 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
 }) => {
   const { loadingMembers, SEPMembersData } = useSEPMembersData(sepId, false);
 
-  const memberRole = (member: SepAssignedMember) =>
-    `${member.roles.find(role => role.id === member.roleId)?.title}`;
+  const memberRole = (member: SepAssignedMember) => `${member.role?.title}`;
 
   const members: SepAssignedMember[] = SEPMembersData
     ? SEPMembersData.filter(
         sepMember =>
           !assignedMembers?.find(
-            assignedMember => assignedMember.id === sepMember.userId
+            assignedMember => assignedMember?.id === sepMember.userId
           )
       ).map(sepMember => ({
         ...sepMember.user,
-        roleId: sepMember.roleId,
-        roles: sepMember.roles,
+        role: sepMember.role ?? null,
       }))
     : [];
 
@@ -59,12 +55,6 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
       }
     />
   );
-};
-
-AssignSEPMemberToProposal.propTypes = {
-  assignMemberToSEPProposal: PropTypes.func.isRequired,
-  sepId: PropTypes.number.isRequired,
-  assignedMembers: PropTypes.array,
 };
 
 export default AssignSEPMemberToProposal;
