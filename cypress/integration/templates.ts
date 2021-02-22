@@ -1209,10 +1209,7 @@ context('Template tests', () => {
         'have.value',
         'Test caption'
       );
-      cy.get('[data-cy="image-figure"] input').should(
-        'have.value',
-        'Fig_test'
-      );
+      cy.get('[data-cy="image-figure"] input').should('have.value', 'Fig_test');
     });
   });
 
