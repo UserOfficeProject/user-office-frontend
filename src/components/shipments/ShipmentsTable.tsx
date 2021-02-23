@@ -65,8 +65,8 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   };
 
   const createModal = (
-    onUpdate: Function,
-    onCreate: Function,
+    onUpdate: (object: ShipmentBasic | null) => void,
+    onCreate: (object: ShipmentBasic | null) => void,
     editShipment: ShipmentBasic | null
   ) => (
     <CreateUpdateShipment

@@ -8,6 +8,7 @@ import React, { forwardRef } from 'react';
 
 import { tableIcons } from 'utils/materialIcons';
 import { clamp } from 'utils/Math';
+import { FunctionType } from 'utils/utilTypes';
 
 function move(array: Array<any>, element: any, direction: 'UP' | 'DOWN') {
   const currentIndex = array.indexOf(element);
@@ -52,8 +53,8 @@ export const FormikUICustomTable = ({
   };
   field: {
     name: string;
-    onBlur: Function;
-    onChange: Function;
+    onBlur: FunctionType;
+    onChange: FunctionType;
     value: string | undefined;
   };
   form: FormikHelpers<any>;

@@ -12,6 +12,7 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import {
+  Answer,
   QuestionaryStep,
   Sample,
   SampleStatus,
@@ -26,6 +27,7 @@ import {
   QuestionnairesListRow,
 } from '../QuestionnairesList';
 import { SampleDeclarationContainer } from './SampleDeclarationContainer';
+import { FormikProps } from 'formik';
 
 const sampleToListRow = (sample: SampleBasic): QuestionnairesListRow => {
   return {
@@ -59,6 +61,13 @@ function createSampleStub(
     proposalId: proposalId,
   };
 }
+
+type QuestionaryComponentSampleDeclarationProps = {
+  answer: Answer;
+  formikProps: FormikProps<any>;
+  onComplete: (newValue: Answer['value']) => void;
+  confirm: Function;
+};
 
 function QuestionaryComponentSampleDeclaration(
   props: QuestionaryComponentSampleDeclarationProps
@@ -269,11 +278,6 @@ function QuestionaryComponentSampleDeclaration(
       </StyledModal>
     </>
   );
-}
-
-interface QuestionaryComponentSampleDeclarationProps
-  extends BasicComponentProps {
-  confirm: Function;
 }
 
 export default withConfirm(QuestionaryComponentSampleDeclaration);

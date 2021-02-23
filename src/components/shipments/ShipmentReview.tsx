@@ -17,11 +17,11 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { ShipmentContextType } from './ShipmentContainer';
 
-interface ShipmentReviewProps {
+type ShipmentReviewProps = {
   isReadonly: boolean;
   onComplete?: () => any;
   confirm: WithConfirmType;
-}
+};
 
 const useStyles = makeStyles(theme => ({
   sampleList: {

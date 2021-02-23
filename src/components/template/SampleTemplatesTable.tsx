@@ -8,6 +8,16 @@ import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 
 type SampleTemplateRowDataType = TemplateRowDataType & {};
 
+type SampleTemplatesTableProps = {
+  dataProvider: () => Promise<
+    Pick<
+      Template,
+      'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
+    >[]
+  >;
+  confirm: WithConfirmType;
+};
+
 function SampleTemplatesTable(props: SampleTemplatesTableProps) {
   const columns: Column<SampleTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
@@ -28,16 +38,6 @@ function SampleTemplatesTable(props: SampleTemplatesTableProps) {
       />
     </>
   );
-}
-
-interface SampleTemplatesTableProps {
-  dataProvider: () => Promise<
-    Pick<
-      Template,
-      'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
-    >[]
-  >;
-  confirm: WithConfirmType;
 }
 
 export default withConfirm(SampleTemplatesTable);

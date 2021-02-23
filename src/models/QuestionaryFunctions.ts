@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import {
   Answer,
@@ -15,7 +14,7 @@ export type AbstractField = QuestionTemplateRelation | Answer;
 type AbstractCollection = TemplateStep[] | QuestionaryStep[];
 
 export function getTopicById(collection: AbstractCollection, topicId: number) {
-  // @ts-ignore-line
+  // @ts-expect-error
   const step = collection.find(step => step.topic.id === topicId);
 
   return step ? step : undefined;
@@ -25,7 +24,7 @@ export function getQuestionaryStepByTopicId(
   collection: AbstractCollection,
   topicId: number
 ) {
-  // @ts-ignore-line
+  // @ts-expect-error
   return collection.find(step => step.topic.id === topicId);
 }
 
@@ -34,10 +33,10 @@ export function getFieldById(
   questionId: string
 ) {
   let needle: AbstractField | undefined;
-  // @ts-ignore-line
+  // @ts-expect-error
   collection.every(step => {
     needle = step.fields.find(
-      // @ts-ignore-line
+      // @ts-expect-error
       field => field.question.proposalQuestionId === questionId
     );
 
@@ -49,7 +48,7 @@ export function getFieldById(
 
 export function getAllFields(collection: AbstractCollection) {
   let allFields = new Array<AbstractField>();
-  // @ts-ignore-line
+  // @ts-expect-error
   collection.forEach(step => {
     allFields = allFields.concat(step.fields);
   });

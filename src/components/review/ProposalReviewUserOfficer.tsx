@@ -45,7 +45,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
       });
   }, [api, match.params.id]);
 
-  const [formDirty, setFormDirty] = useState(false);
+  const [formDirty, setFormDirty] = useState<boolean | undefined>(false);
 
   useEffect(() => {
     loadProposal();

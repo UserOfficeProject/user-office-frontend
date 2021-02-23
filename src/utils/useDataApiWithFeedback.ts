@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import { useDataApi } from 'hooks/common/useDataApi';
 
-const isMutationResult = (result: object) => {
+const isMutationResult = (result: Record<string, unknown>) => {
   return result.hasOwnProperty('error');
 };
 
@@ -19,7 +19,7 @@ function useDataApiWithFeedback() {
           return async (args: any) => {
             setIsExecutingCall(true);
 
-            // @ts-ignore-line
+            // @ts-expect-error
             const serverResponse = await target[prop](args);
             const result = serverResponse[prop];
 

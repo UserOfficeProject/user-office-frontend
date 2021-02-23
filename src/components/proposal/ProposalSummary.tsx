@@ -15,6 +15,12 @@ import withConfirm from 'utils/withConfirm';
 
 import { ProposalContextType } from './ProposalContainer';
 
+type ProposalSummaryProps = {
+  data: ProposalSubmissionState;
+  readonly: boolean;
+  confirm: Function;
+};
+
 function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
   const { state, dispatch } = useContext(
     QuestionaryContext
@@ -97,9 +103,4 @@ function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
   );
 }
 
-interface ProposalSummaryProps {
-  data: ProposalSubmissionState;
-  readonly: boolean;
-  confirm: Function;
-}
 export default withConfirm(ProposalReview);

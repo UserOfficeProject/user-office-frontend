@@ -12,6 +12,7 @@ import SuperMaterialTable, {
 import { Call, InstrumentWithAvailabilityTime, UserRole } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { tableIcons } from 'utils/materialIcons';
+import { FunctionType } from 'utils/utilTypes';
 
 import AssignedInstrumentsTable from './AssignedInstrumentsTable';
 import AssignInstrumentsToCall from './AssignInstrumentsToCall';
@@ -136,8 +137,8 @@ const CallsTable: React.FC = () => {
   );
 
   const createModal = (
-    onUpdate: Function,
-    onCreate: Function,
+    onUpdate: FunctionType<void, Call | null>,
+    onCreate: FunctionType<void, Call | null>,
     editCall: Call | null
   ) => (
     <CreateUpdateCall

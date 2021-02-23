@@ -7,6 +7,7 @@ import {
 import { IndexWithGroupId, ProposalWorkflow } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
+import { FunctionType } from 'utils/utilTypes';
 
 export function usePersistProposalWorkflowEditorModel() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -102,7 +103,7 @@ export function usePersistProposalWorkflowEditorModel() {
         .then(data => data.addNextStatusEventsToConnection);
     };
 
-    return (next: Function) => (action: Event) => {
+    return (next: FunctionType) => (action: Event) => {
       next(action);
       const state = getState();
 

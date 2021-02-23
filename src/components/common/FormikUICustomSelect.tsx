@@ -91,7 +91,7 @@ const FormikUICustomSelect = ({
       <Select
         value={field.value}
         multiple={multiple}
-        // @ts-ignore-line seems to have wrong typedefinition for onChange signature
+        // @ts-expect-error seems to have wrong typedefinition for onChange signature
         onChange={handleChange}
         input={<Input />}
         renderValue={value => {

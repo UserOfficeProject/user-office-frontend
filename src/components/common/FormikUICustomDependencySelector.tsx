@@ -20,6 +20,7 @@ import {
   getFieldById,
   AbstractField,
 } from 'models/QuestionaryFunctions';
+import { FunctionType } from 'utils/utilTypes';
 
 const FormikUICustomDependencySelector = ({
   field,
@@ -28,7 +29,12 @@ const FormikUICustomDependencySelector = ({
   dependency,
   currentQuestionId,
 }: {
-  field: { name: string; onBlur: Function; onChange: Function; value: string };
+  field: {
+    name: string;
+    onBlur: FunctionType;
+    onChange: FunctionType;
+    value: string;
+  };
   form: FormikHelpers<any>;
   template: Template;
   templateField: QuestionTemplateRelation;

@@ -3,6 +3,8 @@ import { Editor } from '@tinymce/tinymce-react';
 import { FormikHelpers } from 'formik';
 import React from 'react';
 
+import { FunctionType } from 'utils/utilTypes';
+
 const useStyles = makeStyles(theme => ({
   label: {
     marginTop: '17px',
@@ -17,7 +19,12 @@ const FormikUICustomEditor = ({
   form,
   ...props
 }: {
-  field: { name: string; onBlur: Function; onChange: Function; value: string };
+  field: {
+    name: string;
+    onBlur: FunctionType;
+    onChange: FunctionType;
+    value: string;
+  };
   form: FormikHelpers<any>;
   label?: string;
 }) => {

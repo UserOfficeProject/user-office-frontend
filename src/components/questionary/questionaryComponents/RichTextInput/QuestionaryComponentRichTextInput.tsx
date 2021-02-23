@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { FormLabel, FormHelperText, makeStyles } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import { Editor } from '@tinymce/tinymce-react';

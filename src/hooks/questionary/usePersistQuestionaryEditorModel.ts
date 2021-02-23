@@ -11,6 +11,7 @@ import {
 import { useDataApi } from 'hooks/common/useDataApi';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
+import { FunctionType } from 'utils/utilTypes';
 
 export function usePersistQuestionaryEditorModel() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -206,7 +207,7 @@ export function usePersistQuestionaryEditorModel() {
       });
     };
 
-    return (next: Function) => (action: Event) => {
+    return (next: FunctionType) => (action: Event) => {
       next(action);
       const state = getState();
 

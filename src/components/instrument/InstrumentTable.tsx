@@ -9,6 +9,7 @@ import SuperMaterialTable, {
 } from 'components/common/SuperMaterialTable';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
 
 import { BasicUserDetails, Instrument, UserRole } from '../../generated/sdk';
 import ParticipantModal from '../proposal/ParticipantModal';
@@ -130,8 +131,8 @@ const InstrumentTable: React.FC = () => {
   );
 
   const createModal = (
-    onUpdate: Function,
-    onCreate: Function,
+    onUpdate: FunctionType<void, Instrument | null>,
+    onCreate: FunctionType<void, Instrument | null>,
     editInstrument: Instrument | null
   ) => (
     <CreateUpdateInstrument

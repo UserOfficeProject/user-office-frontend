@@ -161,7 +161,7 @@ export function QuestionarySubmissionModel<
           break;
       }
 
-      // @ts-ignore-line
+      // @ts-expect-error
       draftState = reducers?.(state, draftState, action) || draftState;
     });
   }

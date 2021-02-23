@@ -26,6 +26,7 @@ import React, { ChangeEvent, useState } from 'react';
 import { UPLOAD_STATE, useFileUpload } from 'hooks/common/useFileUpload';
 import { useFileMetadata } from 'hooks/file/useFileMetadata';
 import { FileMetaData } from 'models/FileUpload';
+import { FunctionType } from 'utils/utilTypes';
 
 import UOLoader from './UOLoader';
 
@@ -143,9 +144,11 @@ export function FileUploadComponent(props: {
 }
 
 export function FileEntry(props: {
-  onDeleteClicked: Function;
+  onDeleteClicked: (deleteFile: FileMetaData) => void;
   metaData: FileMetaData;
-  onImageCaptionOrFigureAdded: Function;
+  onImageCaptionOrFigureAdded: (
+    fileIdWithCaptionAndFigure: FileIdWithCaptionAndFigure
+  ) => void;
   caption: string | null | undefined;
   figure: string | null | undefined;
 }) {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import * as Yup from 'yup';
 
 import { useDataApi } from 'hooks/common/useDataApi';

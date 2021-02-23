@@ -19,6 +19,16 @@ const useStyles = makeStyles(thene => ({
   },
 }));
 
+type ShipmentTemplatesTableProps = {
+  dataProvider: () => Promise<
+    Pick<
+      ProposalTemplate,
+      'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
+    >[]
+  >;
+  confirm: WithConfirmType;
+};
+
 function ShipmentTemplatesTable(props: ShipmentTemplatesTableProps) {
   const { api } = useDataApiWithFeedback();
   const { activeTemplateId, setActiveTemplateId } = useActiveTemplateId(
@@ -69,16 +79,6 @@ function ShipmentTemplatesTable(props: ShipmentTemplatesTableProps) {
       />
     </>
   );
-}
-
-interface ShipmentTemplatesTableProps {
-  dataProvider: () => Promise<
-    Pick<
-      ProposalTemplate,
-      'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
-    >[]
-  >;
-  confirm: WithConfirmType;
 }
 
 export default withConfirm(ShipmentTemplatesTable);

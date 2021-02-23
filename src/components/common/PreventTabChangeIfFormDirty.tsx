@@ -1,11 +1,13 @@
 import { useFormikContext } from 'formik';
 import { useEffect } from 'react';
 
+import { FunctionType } from 'utils/utilTypes';
+
 const PreventTabChangeIfFormDirty = ({
   setFormDirty,
   initialValues,
 }: {
-  setFormDirty: Function;
+  setFormDirty: FunctionType<void, boolean>;
   initialValues: any;
 }) => {
   const formik = useFormikContext();

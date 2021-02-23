@@ -6,6 +6,8 @@ import {
   ReducerAction,
 } from 'react';
 
+import { FunctionType } from './utilTypes';
+
 function compose(...fns: any): any {
   if (fns.length === 0) return (arg: any): any => arg;
   if (fns.length === 1) return fns[0];
@@ -46,4 +48,4 @@ export interface MiddlewareInputParams<S, A> {
 }
 export type ReducerMiddleware<S, A> = (
   params: MiddlewareInputParams<S, A>
-) => (next: Function) => (action: A) => void;
+) => (next: FunctionType) => (action: A) => void;

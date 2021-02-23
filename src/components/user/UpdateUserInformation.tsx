@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import { updateUserValidationSchema } from '@esss-swap/duo-validation';
 import Box from '@material-ui/core/Box';

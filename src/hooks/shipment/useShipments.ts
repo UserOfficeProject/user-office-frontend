@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { GetShipmentsQuery, ShipmentsFilter } from 'generated/sdk';
+import { ShipmentsFilter } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 
 export function useShipments(filter?: ShipmentsFilter) {
   const [shipmentsFilter, setShipmentsFilter] = useState(filter);
-  const [shipments, setShipments] = useState<GetShipmentsQuery['shipments']>();
+  const [shipments, setShipments] = useState<ShipmentBasic[]>([]);
   const [loadingShipments, setLoadingShipments] = useState(true);
 
   const api = useDataApi();

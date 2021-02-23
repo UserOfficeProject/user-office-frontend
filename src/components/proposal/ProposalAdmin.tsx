@@ -15,6 +15,7 @@ import { ProposalEndStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
 
 export type AdministrationFormData = {
   id: number;
@@ -27,7 +28,7 @@ export type AdministrationFormData = {
 export default function ProposalAdmin(props: {
   data: Proposal;
   setAdministration: (data: AdministrationFormData) => void;
-  setFormDirty: (dirty: boolean) => void;
+  setFormDirty: FunctionType<void, boolean>;
 }) {
   const { api } = useDataApiWithFeedback();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
