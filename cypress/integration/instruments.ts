@@ -107,6 +107,7 @@ context('Instrument tests', () => {
       .future()
       .toISOString()
       .slice(0, 10),
+    template: 'default template',
   };
 
   before(() => {

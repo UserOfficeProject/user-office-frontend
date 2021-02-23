@@ -1319,7 +1319,7 @@ export enum ProposalEndStatus {
 export type ProposalEvent = {
   __typename?: 'ProposalEvent';
   name: Event;
-  description: Scalars['String'];
+  description: Maybe<Scalars['String']>;
 };
 
 export type ProposalNextStatusEventResponseWrap = {
