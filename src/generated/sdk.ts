@@ -1974,6 +1974,7 @@ export type SepProposal = {
   sepTimeAllocation: Maybe<Scalars['Int']>;
   proposal: Proposal;
   assignments: Maybe<Array<SepAssignment>>;
+  instrumentSubmitted: Scalars['Boolean'];
 };
 
 export type SepProposalResponseWrap = {
@@ -2471,7 +2472,7 @@ export type GetSepProposalQuery = (
   { __typename?: 'Query' }
   & { sepProposal: Maybe<(
     { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation'>
+    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation' | 'instrumentSubmitted'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & { proposer: Maybe<(
@@ -5924,6 +5925,7 @@ export const GetSepProposalDocument = gql`
     proposalId
     sepId
     sepTimeAllocation
+    instrumentSubmitted
     proposal {
       ...proposal
       proposer {
