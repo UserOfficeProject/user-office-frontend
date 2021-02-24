@@ -5,13 +5,13 @@ import { IntervalConfig } from 'generated/sdk';
 
 export const createIntervalValidationSchema: QuestionaryComponentDefinition['createYupValidationSchema'] = answer => {
   const config = answer.config as IntervalConfig;
-
   let schema = Yup.object().shape({
     min: Yup.number().transform(value => (isNaN(value) ? undefined : value)),
     max: Yup.number().transform(value => (isNaN(value) ? undefined : value)),
-    unit: Yup.string()
-      .required('Please specify unit')
-      .nullable(),
+    unit:
+      config.units?.length !== 0
+        ? Yup.string().required('Please specify unit')
+        : Yup.string().nullable(),
   });
   if (config.required) {
     schema = schema.shape({

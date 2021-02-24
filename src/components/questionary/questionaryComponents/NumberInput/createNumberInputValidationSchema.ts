@@ -24,8 +24,9 @@ export const createNumberInputValidationSchema: QuestionaryComponentDefinition['
 
   return Yup.object().shape({
     value: valueScheme,
-    unit: Yup.string()
-      .required('Please specify unit')
-      .nullable(),
+    unit:
+      config.units?.length !== 0
+        ? Yup.string().required('Please specify unit')
+        : Yup.string().nullable(),
   });
 };
