@@ -78,9 +78,6 @@ class App extends React.Component {
     localStorage.removeItem('expToken');
   }
 
-  
-
-
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     let errorMessage = '';
     try {
