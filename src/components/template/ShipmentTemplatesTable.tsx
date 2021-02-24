@@ -11,11 +11,11 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 
-type SampleTemplateRowDataType = TemplateRowDataType & {};
+type SampleTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
 
-const useStyles = makeStyles(thene => ({
+const useStyles = makeStyles((theme) => ({
   inactive: {
-    color: thene.palette.grey.A100,
+    color: theme.palette.grey.A100,
   },
 }));
 
@@ -57,7 +57,7 @@ function ShipmentTemplatesTable(props: ShipmentTemplatesTableProps) {
         dataProvider={props.dataProvider}
         confirm={props.confirm}
         actions={[
-          rowData => ({
+          (rowData) => ({
             icon: () =>
               rowData.templateId === activeTemplateId ? (
                 <DoneIcon />

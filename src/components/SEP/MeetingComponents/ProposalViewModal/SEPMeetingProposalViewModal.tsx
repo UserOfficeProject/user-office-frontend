@@ -123,7 +123,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
                         closeModal={handleClose}
                         hasWriteAccess={finalHasWriteAccess}
                         proposalData={proposalData}
-                        meetingSubmitted={data => {
+                        meetingSubmitted={(data) => {
                           setSEPProposalData({
                             ...SEPProposalData,
                             proposal: {
@@ -142,7 +142,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
                           proposalData.technicalReview as TechnicalReview
                         }
                         sepTimeAllocation={sepTimeAllocation}
-                        onSepTimeAllocationEdit={sepTimeAllocation =>
+                        onSepTimeAllocationEdit={(sepTimeAllocation) =>
                           setSEPProposalData({
                             ...SEPProposalData,
                             sepTimeAllocation,

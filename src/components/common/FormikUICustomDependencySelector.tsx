@@ -4,7 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { FormikHelpers } from 'formik';
+import { FormikHelpers, FormikValues } from 'formik';
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
 import {
@@ -35,7 +35,7 @@ const FormikUICustomDependencySelector = ({
     onChange: FunctionType;
     value: string;
   };
-  form: FormikHelpers<any>;
+  form: FormikHelpers<FormikValues>;
   template: Template;
   templateField: QuestionTemplateRelation;
   dependency: FieldDependency;
@@ -46,12 +46,12 @@ const FormikUICustomDependencySelector = ({
     EvaluatorOperator.EQ
   );
   const [dependencyValue, setDependencyValue] = useState<
-    string | boolean | number | Date
+    string | boolean | number | Date | unknown
   >('');
 
   const [availableValues, setAvailableValues] = useState<Option[]>([]);
 
-  const classes = makeStyles(theme => ({
+  const classes = makeStyles((theme) => ({
     menuItem: {
       display: 'flex',
       alignItems: 'center',
@@ -100,7 +100,7 @@ const FormikUICustomDependencySelector = ({
       ) {
         setAvailableValues(
           (depField.config as SelectionFromOptionsConfig).options.map(
-            option => {
+            (option) => {
               return { value: option, label: option };
             }
           )
@@ -133,12 +133,12 @@ const FormikUICustomDependencySelector = ({
       }
 
       return option.dependencies.some(
-        dependency =>
+        (dependency) =>
           dependency.dependencyId === currentQuestionId ||
           hasCircularDependency(
             currentQuestionId,
             allFields.find(
-              option =>
+              (option) =>
                 option.question.proposalQuestionId === dependency.dependencyId
             )
           )
@@ -147,12 +147,12 @@ const FormikUICustomDependencySelector = ({
 
     return allFields
       .filter(
-        option =>
+        (option) =>
           [DataType.BOOLEAN, DataType.SELECTION_FROM_OPTIONS].includes(
             option.question.dataType
           ) && currentQuestionId !== option.question.proposalQuestionId
       )
-      .filter(option => !hasCircularDependency(currentQuestionId, option));
+      .filter((option) => !hasCircularDependency(currentQuestionId, option));
   }, [steps, currentQuestionId]);
 
   return (
@@ -171,7 +171,7 @@ const FormikUICustomDependencySelector = ({
             }}
             required
           >
-            {allAvailableFields.map(option => {
+            {allAvailableFields.map((option) => {
               return (
                 <MenuItem
                   value={option.question.proposalQuestionId}
@@ -216,12 +216,14 @@ const FormikUICustomDependencySelector = ({
             fullWidth
             id="dependencyValue"
             value={dependencyValue}
-            onChange={(event: React.ChangeEvent<{ value: any }>): void => {
+            onChange={(
+              event: React.ChangeEvent<{ name?: string; value: unknown }>
+            ): void => {
               setDependencyValue(event.target.value);
             }}
             required
           >
-            {availableValues.map(option => {
+            {availableValues.map((option) => {
               return (
                 <MenuItem value={option.value as string} key={option.label}>
                   {option.label}

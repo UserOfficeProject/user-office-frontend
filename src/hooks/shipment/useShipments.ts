@@ -15,7 +15,7 @@ export function useShipments(filter?: ShipmentsFilter) {
     setLoadingShipments(true);
     api()
       .getShipments({ filter: shipmentsFilter })
-      .then(data => {
+      .then((data) => {
         if (data.shipments) {
           setShipments(data.shipments);
         }

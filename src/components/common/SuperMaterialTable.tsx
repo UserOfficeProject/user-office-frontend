@@ -36,11 +36,11 @@ export type SortDirectionType = 'asc' | 'desc' | undefined;
 
 interface SuperProps<RowData extends Record<keyof RowData, unknown>> {
   createModal: (
-    onUpdate: (object?: RowData | null) => void,
-    onCreate: (object?: RowData | null) => void,
+    onUpdate: (object: RowData | null) => void,
+    onCreate: (object: RowData | null) => void,
     object: RowData | null
   ) => React.ReactNode;
-  setData: (data: SetStateAction<RowData[]>) => void;
+  setData: FunctionType<void, [SetStateAction<RowData[]>]>;
   data: RowData[];
   createModalSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
   delete?: (id: number | string) => Promise<boolean>;
@@ -76,7 +76,7 @@ export function SuperMaterialTable<Entry extends EntryID>({
 
   // NOTE: If selection is on than read the selected items from the url.
   if (options?.selection && urlQueryParams) {
-    data = data.map(objectItem => {
+    data = data.map((objectItem) => {
       return {
         ...objectItem,
         tableData: {
@@ -99,16 +99,16 @@ export function SuperMaterialTable<Entry extends EntryID>({
     urlQueryParams?.sortDirection
   );
 
-  const onCreated = (objectAdded?: Entry | null) => {
+  const onCreated = (objectAdded: Entry | null) => {
     if (objectAdded) {
       setData([...data, objectAdded]);
     }
     setShow(false);
   };
 
-  const onUpdated = (objectUpdated?: Entry | null) => {
+  const onUpdated = (objectUpdated: Entry | null) => {
     if (objectUpdated) {
-      const newObjectsArray = data.map(objectItem =>
+      const newObjectsArray = data.map((objectItem) =>
         objectItem.id === objectUpdated.id ? objectUpdated : objectItem
       );
       setData(newObjectsArray);
@@ -124,7 +124,7 @@ export function SuperMaterialTable<Entry extends EntryID>({
 
     if (deleteResult) {
       const newObjectsArray = data.filter(
-        objectItem => objectItem.id !== deletedId
+        (objectItem) => objectItem.id !== deletedId
       );
       setData(newObjectsArray);
     }
@@ -186,18 +186,18 @@ export function SuperMaterialTable<Entry extends EntryID>({
               ]
             : [...localActions]
         }
-        onSearchChange={searchText => {
+        onSearchChange={(searchText) => {
           setUrlQueryParams &&
             setUrlQueryParams({
               search: searchText ? searchText : undefined,
             });
         }}
-        onSelectionChange={selectedItems => {
+        onSelectionChange={(selectedItems) => {
           setUrlQueryParams &&
             setUrlQueryParams({
               selection:
                 selectedItems.length > 0
-                  ? selectedItems.map(selectedItem =>
+                  ? selectedItems.map((selectedItem) =>
                       selectedItem.id.toString()
                     )
                   : undefined,

@@ -75,7 +75,7 @@ type ProposalTemplatesTableProps = {
     >[]
   >;
   confirm: WithConfirmType;
-}
+};
 
 function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
   const [selectedTemplateId, setSelectedTemplateId] = useState<number>();
@@ -108,7 +108,7 @@ function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
       <TemplatesTable
         columns={columns}
         templateCategory={TemplateCategoryId.PROPOSAL_QUESTIONARY}
-        isRowRemovable={rowData => {
+        isRowRemovable={(rowData) => {
           const proposalTemplateRowData = rowData as ProposalTemplateRowDataType;
 
           return (

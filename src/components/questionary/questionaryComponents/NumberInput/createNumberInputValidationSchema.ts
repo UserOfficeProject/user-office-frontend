@@ -3,10 +3,12 @@ import * as Yup from 'yup';
 import { QuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import { NumberInputConfig, NumberValueConstraint } from 'generated/sdk';
 
-export const createNumberInputValidationSchema: QuestionaryComponentDefinition['createYupValidationSchema'] = answer => {
+export const createNumberInputValidationSchema: QuestionaryComponentDefinition['createYupValidationSchema'] = (
+  answer
+) => {
   const config = answer.config as NumberInputConfig;
 
-  let valueScheme = Yup.number().transform(value =>
+  let valueScheme = Yup.number().transform((value) =>
     isNaN(value) ? undefined : value
   );
 
@@ -24,8 +26,6 @@ export const createNumberInputValidationSchema: QuestionaryComponentDefinition['
 
   return Yup.object().shape({
     value: valueScheme,
-    unit: Yup.string()
-      .required('Please specify unit')
-      .nullable(),
+    unit: Yup.string().required('Please specify unit').nullable(),
   });
 };

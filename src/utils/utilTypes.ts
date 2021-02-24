@@ -35,4 +35,6 @@ export type Unpacked<T> = T extends (infer U)[] ? U : T;
 /**
  * A bit more specific function type for making the eslint happy.
  */
-export type FunctionType<T = void, U = unknown> = (args?: U) => T;
+export type FunctionType<T = void, U = unknown[]> = (
+  ...args: U extends unknown[] ? U : [U]
+) => T;

@@ -32,7 +32,7 @@ export function usePersistQuestionaryEditorModel() {
         ...values,
         topicId,
       })
-      .then(data => {
+      .then((data) => {
         return data.updateTopic;
       });
   };
@@ -57,7 +57,7 @@ export function usePersistQuestionaryEditorModel() {
         question: question.question,
         config: question.config ? JSON.stringify(question.config) : undefined,
       })
-      .then(data => data.updateQuestion);
+      .then((data) => data.updateQuestion);
   };
 
   const updateQuestionTemplateRelation = async (
@@ -72,7 +72,7 @@ export function usePersistQuestionaryEditorModel() {
         questionId: field.question.proposalQuestionId,
         config: field.config ? JSON.stringify(field.config) : undefined,
       })
-      .then(data => data.updateQuestionTemplateRelation);
+      .then((data) => data.updateQuestionTemplateRelation);
   };
 
   const updateQuestionTemplateRelationSettings = async (
@@ -85,13 +85,13 @@ export function usePersistQuestionaryEditorModel() {
         questionId: field.question.proposalQuestionId,
         config: field.config ? JSON.stringify(field.config) : undefined,
         dependencies: field.dependencies
-          ? field.dependencies.map(dependency =>
+          ? field.dependencies.map((dependency) =>
               prepareDependencies(dependency)
             )
           : [],
         dependenciesOperator: field.dependenciesOperator,
       })
-      .then(data => data.updateQuestionTemplateRelationSettings);
+      .then((data) => data.updateQuestionTemplateRelationSettings);
   };
 
   const createQuestion = async (
@@ -105,7 +105,7 @@ export function usePersistQuestionaryEditorModel() {
         categoryId,
         dataType,
       })
-      .then(questionResponse => {
+      .then((questionResponse) => {
         setIsLoading(false);
 
         return questionResponse.createQuestion;
@@ -117,7 +117,7 @@ export function usePersistQuestionaryEditorModel() {
       .deleteQuestion({
         questionId,
       })
-      .then(data => data.deleteQuestion);
+      .then((data) => data.deleteQuestion);
   };
 
   const deleteQuestionTemplateRelation = async (
@@ -131,7 +131,7 @@ export function usePersistQuestionaryEditorModel() {
         templateId,
         questionId,
       })
-      .then(data => {
+      .then((data) => {
         setIsLoading(false);
 
         return data.deleteQuestionTemplateRelation;
@@ -143,13 +143,13 @@ export function usePersistQuestionaryEditorModel() {
       .deleteTopic({
         topicId,
       })
-      .then(data => data.deleteTopic);
+      .then((data) => data.deleteTopic);
   };
 
   const createTopic = async (templateId: number, sortOrder: number) => {
     return api()
       .createTopic({ templateId, sortOrder })
-      .then(data => {
+      .then((data) => {
         return data.createTopic;
       });
   };
@@ -167,7 +167,7 @@ export function usePersistQuestionaryEditorModel() {
         questionId,
         sortOrder,
       })
-      .then(data => {
+      .then((data) => {
         return data.createQuestionTemplateRelation;
       });
   };
@@ -183,7 +183,7 @@ export function usePersistQuestionaryEditorModel() {
         name,
         description,
       })
-      .then(data => data.updateTemplate);
+      .then((data) => data.updateTemplate);
   };
 
   type MonitorableServiceCall = () => Promise<{
@@ -196,7 +196,7 @@ export function usePersistQuestionaryEditorModel() {
   }: MiddlewareInputParams<Template, Event>) => {
     const executeAndMonitorCall = (call: MonitorableServiceCall) => {
       setIsLoading(true);
-      call().then(result => {
+      call().then((result) => {
         if (result.error) {
           dispatch({
             type: EventType.SERVICE_ERROR_OCCURRED,
@@ -218,10 +218,10 @@ export function usePersistQuestionaryEditorModel() {
             action.payload.destination.droppableId
           );
           const reducedTopic = state.steps.find(
-            step => step.topic.id === reducedTopicId
+            (step) => step.topic.id === reducedTopicId
           );
           const extendedTopic = state.steps.find(
-            step => step.topic.id === extendedTopicId
+            (step) => step.topic.id === extendedTopicId
           );
 
           let destinationTopic = reducedTopic;
@@ -366,7 +366,7 @@ export function usePersistQuestionaryEditorModel() {
 
           if (!isFirstStep) {
             const stepIndex = state.steps.findIndex(
-              stepItem => stepItem.topic.id === topicId
+              (stepItem) => stepItem.topic.id === topicId
             );
 
             const previousStep = state.steps[stepIndex];

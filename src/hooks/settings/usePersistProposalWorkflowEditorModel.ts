@@ -25,7 +25,7 @@ export function usePersistProposalWorkflowEditorModel() {
         name,
         description,
       })
-      .then(data => data.updateProposalWorkflow);
+      .then((data) => data.updateProposalWorkflow);
   };
 
   type MonitorableServiceCall = () => Promise<{
@@ -62,7 +62,7 @@ export function usePersistProposalWorkflowEditorModel() {
           nextProposalStatusId,
           prevProposalStatusId,
         })
-        .then(data => data.addProposalWorkflowStatus);
+        .then((data) => data.addProposalWorkflowStatus);
     };
 
     const reorderStatusesInProposalWorkflow = async (
@@ -76,7 +76,7 @@ export function usePersistProposalWorkflowEditorModel() {
           to,
           proposalWorkflowId,
         })
-        .then(data => data.moveProposalWorkflowStatus);
+        .then((data) => data.moveProposalWorkflowStatus);
     };
 
     const deleteProposalWorkflowStatus = async (
@@ -88,7 +88,7 @@ export function usePersistProposalWorkflowEditorModel() {
           proposalStatusId,
           proposalWorkflowId,
         })
-        .then(data => data.deleteProposalWorkflowStatus);
+        .then((data) => data.deleteProposalWorkflowStatus);
     };
 
     const addNextStatusEventsToConnection = async (
@@ -100,7 +100,7 @@ export function usePersistProposalWorkflowEditorModel() {
           proposalWorkflowConnectionId,
           nextStatusEvents,
         })
-        .then(data => data.addNextStatusEventsToConnection);
+        .then((data) => data.addNextStatusEventsToConnection);
     };
 
     return (next: FunctionType) => (action: Event) => {
@@ -157,7 +157,7 @@ export function usePersistProposalWorkflowEditorModel() {
           });
 
           const groupToRemoveFrom = state.proposalWorkflowConnectionGroups.find(
-            proposalWorkflowConnectionGroup =>
+            (proposalWorkflowConnectionGroup) =>
               proposalWorkflowConnectionGroup.groupId ===
               action.payload.source.droppableId
           );

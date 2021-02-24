@@ -24,9 +24,10 @@ const CallsTable: React.FC = () => {
     number | null
   >(null);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-  const [urlQueryParams, setUrlQueryParams] = useQueryParams<
-    UrlQueryParamsType
-  >(DefaultQueryParams);
+  const [
+    urlQueryParams,
+    setUrlQueryParams,
+  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
 
   const columns = [
     { title: 'Short Code', field: 'shortCode' },
@@ -66,7 +67,7 @@ const CallsTable: React.FC = () => {
     instruments: InstrumentWithAvailabilityTime[]
   ) => {
     if (calls) {
-      const callsWithInstruments = calls.map(callItem => {
+      const callsWithInstruments = calls.map((callItem) => {
         if (callItem.id === assigningInstrumentsCallId) {
           return {
             ...callItem,
@@ -87,7 +88,7 @@ const CallsTable: React.FC = () => {
     callToRemoveFromId: number
   ) => {
     if (calls) {
-      const callsWithRemovedInstrument = calls.map(callItem => {
+      const callsWithRemovedInstrument = calls.map((callItem) => {
         if (callItem.id === callToRemoveFromId) {
           return {
             ...callItem,
@@ -108,7 +109,7 @@ const CallsTable: React.FC = () => {
     updatingCallId: number
   ) => {
     if (calls) {
-      const callsWithInstrumentAvailabilityTime = calls.map(callItem => {
+      const callsWithInstrumentAvailabilityTime = calls.map((callItem) => {
         if (callItem.id === updatingCallId) {
           return {
             ...callItem,
@@ -133,12 +134,12 @@ const CallsTable: React.FC = () => {
   );
 
   const callAssignments = calls.find(
-    callItem => callItem.id === assigningInstrumentsCallId
+    (callItem) => callItem.id === assigningInstrumentsCallId
   );
 
   const createModal = (
-    onUpdate: FunctionType<void, Call | null>,
-    onCreate: FunctionType<void, Call | null>,
+    onUpdate: FunctionType<void, [Call | null]>,
+    onCreate: FunctionType<void, [Call | null]>,
     editCall: Call | null
   ) => (
     <CreateUpdateCall

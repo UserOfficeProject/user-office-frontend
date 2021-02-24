@@ -1,10 +1,10 @@
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import { FormikProps } from 'formik';
 import React, { useContext, useEffect, useState } from 'react';
 
 import StyledModal from 'components/common/StyledModal';
 import UOLoader from 'components/common/UOLoader';
-import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalContextType } from 'components/proposal/ProposalContainer';
 import ProposalErrorLabel from 'components/proposal/ProposalErrorLabel';
 import {
@@ -20,20 +20,19 @@ import {
 } from 'generated/sdk';
 import { SampleBasic } from 'models/Sample';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-import withConfirm from 'utils/withConfirm';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import {
   QuestionnairesList,
   QuestionnairesListRow,
 } from '../QuestionnairesList';
 import { SampleDeclarationContainer } from './SampleDeclarationContainer';
-import { FormikProps } from 'formik';
 
 const sampleToListRow = (sample: SampleBasic): QuestionnairesListRow => {
   return {
     id: sample.id,
     label: sample.title,
-    isCompleted: sample.questionary!.steps.every(step => step.isCompleted),
+    isCompleted: !!sample.questionary?.steps.every((step) => step.isCompleted),
   };
 };
 
@@ -66,7 +65,7 @@ type QuestionaryComponentSampleDeclarationProps = {
   answer: Answer;
   formikProps: FormikProps<any>;
   onComplete: (newValue: Answer['value']) => void;
-  confirm: Function;
+  confirm: WithConfirmType;
 };
 
 function QuestionaryComponentSampleDeclaration(
@@ -92,7 +91,7 @@ function QuestionaryComponentSampleDeclaration(
   const copySample = (id: number) =>
     api()
       .cloneSample({ sampleId: id })
-      .then(response => {
+      .then((response) => {
         const clonedSample = response.cloneSample.sample;
         if (clonedSample) {
           const newStateValue = [...stateValue, clonedSample.id];
@@ -104,11 +103,13 @@ function QuestionaryComponentSampleDeclaration(
   const deleteSample = (id: number) =>
     api()
       .deleteSample({ sampleId: id })
-      .then(response => {
+      .then((response) => {
         if (!response.deleteSample.error) {
-          const newStateValue = stateValue.filter(sampleId => sampleId !== id);
+          const newStateValue = stateValue.filter(
+            (sampleId) => sampleId !== id
+          );
           setStateValue(newStateValue);
-          setRows(rows.filter(row => row.id !== id));
+          setRows(rows.filter((row) => row.id !== id));
           onComplete(newStateValue);
         }
       });
@@ -119,7 +120,7 @@ function QuestionaryComponentSampleDeclaration(
     ): Promise<SampleBasic[]> => {
       return api()
         .getSamples({ filter: { questionId, proposalId } })
-        .then(response => {
+        .then((response) => {
           return response.samples || [];
         });
     };
@@ -128,7 +129,7 @@ function QuestionaryComponentSampleDeclaration(
     const questionId = answer.question.proposalQuestionId;
 
     if (proposalId && questionId) {
-      getSamples(proposalId, questionId).then(samples =>
+      getSamples(proposalId, questionId).then((samples) =>
         setRows(samples.map(sampleToListRow))
       );
     }
@@ -160,23 +161,23 @@ function QuestionaryComponentSampleDeclaration(
           addButtonLabel={config.addEntryButtonLabel}
           data={rows}
           maxEntries={config.maxEntries || undefined}
-          onEditClick={item =>
+          onEditClick={(item) =>
             api()
               .getSample({ sampleId: item.id })
-              .then(response => {
+              .then((response) => {
                 if (response.sample) {
                   setSelectedSample(response.sample);
                 }
               })
           }
-          onDeleteClick={item => {
+          onDeleteClick={(item) => {
             confirm(() => deleteSample(item.id), {
               title: 'Delete Sample',
               description:
                 'This action will delete the sample and all data associated with it',
             })();
           }}
-          onCloneClick={item => {
+          onCloneClick={(item) => {
             confirm(() => copySample(item.id), {
               title: 'Copy Sample',
               description:
@@ -203,7 +204,7 @@ function QuestionaryComponentSampleDeclaration(
 
             api()
               .getBlankQuestionarySteps({ templateId })
-              .then(result => {
+              .then((result) => {
                 const blankSteps = result.blankQuestionarySteps;
                 if (blankSteps) {
                   const sampleStub = createSampleStub(
@@ -230,9 +231,9 @@ function QuestionaryComponentSampleDeclaration(
         {selectedSample ? (
           <SampleDeclarationContainer
             sample={selectedSample}
-            sampleUpdated={updatedSample => {
+            sampleUpdated={(updatedSample) => {
               const index = rows.findIndex(
-                sample => sample.id === updatedSample.id
+                (sample) => sample.id === updatedSample.id
               );
               if (index === -1) {
                 // unexpected
@@ -246,7 +247,7 @@ function QuestionaryComponentSampleDeclaration(
               });
               setRows(newRows);
             }}
-            sampleCreated={newSample => {
+            sampleCreated={(newSample) => {
               const newStateValue = [...stateValue, newSample.id];
               setSelectedSample(newSample);
               setStateValue(newStateValue);
@@ -257,7 +258,7 @@ function QuestionaryComponentSampleDeclaration(
             }}
             sampleEditDone={() => {
               const index = rows.findIndex(
-                sample => sample.id === selectedSample.id
+                (sample) => sample.id === selectedSample.id
               );
 
               if (index === -1) {

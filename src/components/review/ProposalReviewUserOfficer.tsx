@@ -37,7 +37,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
   const loadProposal = useCallback(async () => {
     return api()
       .getProposal({ id: parseInt(match.params.id) })
-      .then(data => {
+      .then((data) => {
         setProposal(data.proposal as Proposal);
         if (data.proposal) {
           setTechReview(data.proposal.technicalReview);

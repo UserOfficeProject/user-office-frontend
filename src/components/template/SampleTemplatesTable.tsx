@@ -6,7 +6,7 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 
-type SampleTemplateRowDataType = TemplateRowDataType & {};
+type SampleTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
 
 type SampleTemplatesTableProps = {
   dataProvider: () => Promise<

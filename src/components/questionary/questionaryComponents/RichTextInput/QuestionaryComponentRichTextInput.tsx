@@ -8,7 +8,7 @@ import { Editor as TinyMCEEditor } from 'tinymce';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { RichTextInputConfig } from 'generated/sdk';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   label: {
     marginBottom: theme.spacing(2),
   },
@@ -68,7 +68,7 @@ export function QuestionaryComponentRichTextInput(props: BasicComponentProps) {
             'bullist numlist | outdent indent | charmap removeformat preview',
           branding: false,
           menubar: false,
-          init_instance_callback: editor => {
+          init_instance_callback: (editor) => {
             handleCharacterCount(editor);
           },
         }}

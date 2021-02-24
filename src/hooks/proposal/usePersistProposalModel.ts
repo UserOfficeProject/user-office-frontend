@@ -24,7 +24,7 @@ export function usePersistProposalModel() {
             .submitProposal({
               id: action.payload.proposalId,
             })
-            .then(result => {
+            .then((result) => {
               const state = getState() as ProposalSubmissionState;
               dispatch({
                 type: EventType.PROPOSAL_LOADED,

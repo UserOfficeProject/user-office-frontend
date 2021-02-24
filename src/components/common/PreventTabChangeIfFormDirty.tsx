@@ -8,7 +8,7 @@ const PreventTabChangeIfFormDirty = ({
   initialValues,
 }: {
   setFormDirty: FunctionType<void, boolean>;
-  initialValues: any;
+  initialValues: unknown;
 }) => {
   const formik = useFormikContext();
 

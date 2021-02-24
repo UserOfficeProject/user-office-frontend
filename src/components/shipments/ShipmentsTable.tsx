@@ -21,9 +21,10 @@ import CreateUpdateShipment from './CreateUpdateShipment';
 
 const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   const { loadingShipments, shipments, setShipments } = useShipments();
-  const [urlQueryParams, setUrlQueryParams] = useQueryParams<
-    UrlQueryParamsType
-  >(DefaultQueryParams);
+  const [
+    urlQueryParams,
+    setUrlQueryParams,
+  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
   const { api } = useDataApiWithFeedback();
 
   if (!shipments) {
@@ -47,11 +48,11 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
           .deleteShipment({
             shipmentId: shipmentToDelete.id,
           })
-          .then(data => {
+          .then((data) => {
             if (!data.deleteShipment.error) {
               setShipments(
                 shipments.filter(
-                  shipment => shipment.id !== shipmentToDelete.id
+                  (shipment) => shipment.id !== shipmentToDelete.id
                 )
               );
             }
@@ -91,7 +92,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
         urlQueryParams={urlQueryParams}
         setUrlQueryParams={setUrlQueryParams}
         actions={[
-          rowData =>
+          (rowData) =>
             rowData.status === ShipmentStatus.DRAFT
               ? {
                   icon: Delete,

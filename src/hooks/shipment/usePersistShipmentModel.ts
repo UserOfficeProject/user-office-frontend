@@ -26,7 +26,7 @@ export function usePersistShipmentModel() {
               shipmentId: (getState() as ShipmentSubmissionState).shipment.id,
               status: ShipmentStatus.SUBMITTED,
             })
-            .then(result => {
+            .then((result) => {
               const state = getState() as ShipmentSubmissionState;
               dispatch({
                 type: EventType.SHIPMENT_LOADED,

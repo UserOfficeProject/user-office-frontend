@@ -111,7 +111,7 @@ export default function ProposalAdmin(props: {
                   label="Proposal status"
                   data-cy="proposalStatus"
                   loading={loadingProposalStatuses}
-                  items={proposalStatuses.map(proposalStatus => ({
+                  items={proposalStatuses.map((proposalStatus) => ({
                     text: proposalStatus.name,
                     value: proposalStatus.id,
                   }))}
