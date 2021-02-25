@@ -1,5 +1,5 @@
 import dateformat from 'dateformat';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -39,7 +39,12 @@ const CallsTable: React.FC = () => {
     calls,
     setCallsWithLoading: setCalls,
     setCallsFilter,
-  } = useCallsData();
+  } = useCallsData({
+    isActive:
+      urlQueryParams.callStatus === CallStatus.ALL
+        ? undefined // if set to ALL we don't filter by status
+        : urlQueryParams.callStatus === CallStatus.ACTIVE,
+  });
 
   const handleStatusFilterChange = (callStatus: CallStatus) => {
     setUrlQueryParams(queries => ({ ...queries, callStatus }));

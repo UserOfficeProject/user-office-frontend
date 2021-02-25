@@ -4,12 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import React from 'react';
-import {
-  StringParam,
-  useQueryParam,
-  withDefault,
-  QueryParamConfig,
-} from 'use-query-params';
+import { StringParam, withDefault, QueryParamConfig } from 'use-query-params';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -27,7 +22,7 @@ export enum CallStatus {
 export type CallStatusQueryFilter = { callStatus: QueryParamConfig<string> };
 export const defaultCallStatusQueryFilter = withDefault(
   StringParam,
-  CallStatus.ALL
+  CallStatus.ACTIVE
 );
 
 type CallStatusFilterProps = {
