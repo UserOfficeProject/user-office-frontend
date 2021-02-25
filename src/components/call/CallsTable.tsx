@@ -1,5 +1,5 @@
 import dateformat from 'dateformat';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -15,17 +15,42 @@ import { tableIcons } from 'utils/materialIcons';
 
 import AssignedInstrumentsTable from './AssignedInstrumentsTable';
 import AssignInstrumentsToCall from './AssignInstrumentsToCall';
+import CallStatusFilter, {
+  CallStatusQueryFilter,
+  defaultCallStatusQueryFilter,
+  CallStatus,
+} from './CallStatusFilter';
 import CreateUpdateCall from './CreateUpdateCall';
 
 const CallsTable: React.FC = () => {
-  const { loadingCalls, calls, setCallsWithLoading: setCalls } = useCallsData();
   const [assigningInstrumentsCallId, setAssigningInstrumentsCallId] = useState<
     number | null
   >(null);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const [urlQueryParams, setUrlQueryParams] = useQueryParams<
-    UrlQueryParamsType
-  >(DefaultQueryParams);
+    UrlQueryParamsType & CallStatusQueryFilter
+  >({
+    ...DefaultQueryParams,
+    callStatus: defaultCallStatusQueryFilter,
+  });
+
+  const {
+    loadingCalls,
+    calls,
+    setCallsWithLoading: setCalls,
+    setCallsFilter,
+  } = useCallsData();
+
+  const { callStatus } = urlQueryParams;
+  useEffect(() => {
+    setCallsFilter(filter => ({
+      ...filter,
+      isActive:
+        callStatus === CallStatus.ALL
+          ? undefined // if set to ALL we don't filter by status
+          : callStatus === CallStatus.ACTIVE,
+    }));
+  }, [callStatus, setCallsFilter]);
 
   const columns = [
     { title: 'Short Code', field: 'shortCode' },
@@ -150,6 +175,7 @@ const CallsTable: React.FC = () => {
 
   return (
     <div data-cy="calls-table">
+      <CallStatusFilter />
       {assigningInstrumentsCallId && (
         <InputDialog
           aria-labelledby="simple-modal-title"
