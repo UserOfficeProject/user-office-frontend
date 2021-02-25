@@ -56,7 +56,7 @@ const ProposalTable = ({
   );
 
   useEffect(() => {
-    searchQuery().then(data => {
+    searchQuery().then((data) => {
       if (data) {
         setPartialProposalsData(data.data);
       }
@@ -140,7 +140,7 @@ const ProposalTable = ({
           debounceInterval: 400,
         }}
         actions={[
-          rowData => {
+          (rowData) => {
             return {
               icon: rowData.submitted ? () => <Visibility /> : () => <Edit />,
               tooltip: rowData.submitted ? 'View proposal' : 'Edit proposal',
@@ -165,7 +165,7 @@ const ProposalTable = ({
                 (rowData as PartialProposalsDataType).title
               ),
           },
-          rowData => {
+          (rowData) => {
             const isPI = rowData.proposerId === userContext.user.id;
             const isSubmitted = rowData.submitted;
             const canDelete = isPI && !isSubmitted;
@@ -189,7 +189,7 @@ const ProposalTable = ({
                     if (deletedProposal) {
                       setPartialProposalsData(
                         partialProposalsData?.filter(
-                          item => item.id !== deletedProposal?.id
+                          (item) => item.id !== deletedProposal?.id
                         )
                       );
                     }

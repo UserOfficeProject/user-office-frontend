@@ -36,7 +36,7 @@ const ProposalTableUser: React.FC = () => {
 
     return api()
       .getUserProposals()
-      .then(data => {
+      .then((data) => {
         setLoading(false);
 
         return {
@@ -48,7 +48,7 @@ const ProposalTableUser: React.FC = () => {
                 new Date(b.created).getTime() - new Date(a.created).getTime()
               );
             })
-            .map(proposal => {
+            .map((proposal) => {
               return {
                 id: proposal.id,
                 title: proposal.title,

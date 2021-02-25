@@ -16,7 +16,7 @@ const callSelectModalOnProposalCloneValidationSchema = yup.object().shape({
   selectedCallId: yup.string().required('You must select active call'),
 });
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   cardHeader: {
     fontSize: '18px',
     padding: '22px 0 0',
@@ -46,7 +46,7 @@ const CallSelectModalOnProposalClone: React.FC<CallSelectModalOnProposalClonePro
         }}
         onSubmit={async (values, actions): Promise<void> => {
           const selectedCall = calls.find(
-            call => call.id === +values.selectedCallId
+            (call) => call.id === +values.selectedCallId
           );
 
           if (!selectedCall) {
@@ -71,7 +71,7 @@ const CallSelectModalOnProposalClone: React.FC<CallSelectModalOnProposalClonePro
                 <FormikDropdown
                   name="selectedCallId"
                   label="Select call"
-                  items={calls.map(call => ({
+                  items={calls.map((call) => ({
                     value: call.id.toString(),
                     text: call.shortCode,
                   }))}
