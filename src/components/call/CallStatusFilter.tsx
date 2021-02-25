@@ -30,18 +30,22 @@ export const defaultCallStatusQueryFilter = withDefault(
   CallStatus.ALL
 );
 
-const CallStatusFilter: React.FC = () => {
+type CallStatusFilterProps = {
+  callStatus: string;
+  onStatusChange: (callStatus: CallStatus) => void;
+};
+
+const CallStatusFilter: React.FC<CallStatusFilterProps> = ({
+  callStatus,
+  onStatusChange,
+}) => {
   const classes = useStyles();
-  const [callStatus, setStatus] = useQueryParam(
-    'callStatus',
-    defaultCallStatusQueryFilter
-  );
 
   return (
     <FormControl className={classes.formControl}>
       <InputLabel shrink>Status</InputLabel>
       <Select
-        onChange={e => setStatus(e.target.value as CallStatus)}
+        onChange={e => onStatusChange(e.target.value as CallStatus)}
         value={callStatus}
         data-cy="call-status-filter"
       >

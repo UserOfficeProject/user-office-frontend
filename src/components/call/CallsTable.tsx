@@ -41,8 +41,8 @@ const CallsTable: React.FC = () => {
     setCallsFilter,
   } = useCallsData();
 
-  const { callStatus } = urlQueryParams;
-  useEffect(() => {
+  const handleStatusFilterChange = (callStatus: CallStatus) => {
+    setUrlQueryParams(queries => ({ ...queries, callStatus }));
     setCallsFilter(filter => ({
       ...filter,
       isActive:
@@ -50,7 +50,7 @@ const CallsTable: React.FC = () => {
           ? undefined // if set to ALL we don't filter by status
           : callStatus === CallStatus.ACTIVE,
     }));
-  }, [callStatus, setCallsFilter]);
+  };
 
   const columns = [
     { title: 'Short Code', field: 'shortCode' },
@@ -175,7 +175,10 @@ const CallsTable: React.FC = () => {
 
   return (
     <div data-cy="calls-table">
-      <CallStatusFilter />
+      <CallStatusFilter
+        callStatus={urlQueryParams.callStatus}
+        onStatusChange={handleStatusFilterChange}
+      />
       {assigningInstrumentsCallId && (
         <InputDialog
           aria-labelledby="simple-modal-title"
