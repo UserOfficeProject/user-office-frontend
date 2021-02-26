@@ -594,7 +594,7 @@ context('Instrument tests', () => {
       });
   });
 
-  it.skip('User Officer should be able to delete Instrument', () => {
+  it('User Officer should be able to delete Instrument', () => {
     cy.login('officer');
 
     cy.contains('Calls').click();
