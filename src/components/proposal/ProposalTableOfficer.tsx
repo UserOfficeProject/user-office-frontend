@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
@@ -428,7 +427,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const DeleteIcon = (): JSX.Element => <Delete />;
   const GroupWorkIcon = (): JSX.Element => <GroupWork />;
   const EmailIcon = (): JSX.Element => <Email />;
-  const AddScienceIcon = (props?: any): JSX.Element => (
+  const AddScienceIcon = (props?: Record<string, unknown>): JSX.Element => (
     <ScienceIconAdd {...props} />
   );
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
