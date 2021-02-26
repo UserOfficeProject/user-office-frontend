@@ -330,8 +330,10 @@ export type Feature = {
   description: Scalars['String'];
 };
 
+
 export enum FeatureId {
-  SHIPPING = 'SHIPPING'
+  SHIPPING = 'SHIPPING',
+  EXTERNAL_AUTH = "EXTERNAL_AUTH"
 }
 
 export type FieldCondition = {

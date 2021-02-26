@@ -3,7 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { ProviderContext, SnackbarProvider } from 'notistack';
-import React, { ErrorInfo } from 'react';
+import React, { ErrorInfo, useContext, useState } from 'react';
 import { CookiesProvider } from 'react-cookie';
 import {
   BrowserRouter as Router,
@@ -16,8 +16,10 @@ import { QueryParamProvider } from 'use-query-params';
 
 import { DownloadContextProvider } from 'context/DownloadContextProvider';
 import { FeatureContextProvider } from 'context/FeatureContextProvider';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import { ReviewAndAssignmentContextProvider } from 'context/ReviewAndAssignmentContextProvider';
 import { UserContext, UserContextProvider } from 'context/UserContextProvider';
+import { FeatureId } from 'generated/sdk';
 import { getUnauthorizedApi } from 'hooks/common/useDataApi';
 
 import { getTheme } from '../theme';
@@ -36,6 +38,9 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
   }
 
   const Component = component; // JSX Elements have to be uppercase.
+  const context = useContext(FeatureContext);
+  const external_auth = !!context.features.get(FeatureId.EXTERNAL_AUTH)
+    ?.isEnabled;
 
   return (
     <UserContext.Consumer>
@@ -45,7 +50,7 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
           render={(props): JSX.Element => {
             if (!token) {
               if (
-                process.env.REACT_APP_AUTH_TYPE === 'external' &&
+                external_auth === true &&
                 process.env.REACT_APP_EXTERNAL_AUTH_LOGIN_URL
               ) {
                 window.location.href =
