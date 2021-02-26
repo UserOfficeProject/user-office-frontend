@@ -139,6 +139,9 @@ context('Instrument tests', () => {
     endDate: faker.date.future().toISOString().slice(0, 10),
   };
 
+  const scientist1 = 'Carlsson';
+  const scientist2 = 'Beckley';
+
   before(() => {
     cy.resetDB();
   });
@@ -291,30 +294,36 @@ context('Instrument tests', () => {
   it('User Officer should be able to assign scientist to instrument and instrument scientist should be able to see instruments he is assigned to', () => {
     cy.login('officer');
 
+    function addScientistRoleToUser(name: string) {
+      cy.contains(name).parent().find('button[title="Edit user"]').click();
+
+      const mainContentElement = cy.get('main');
+      mainContentElement.contains('Settings').click();
+
+      cy.get('[data-cy="add-role-button"]').should('not.be.disabled').click();
+
+      cy.finishedLoading();
+
+      cy.get('[data-cy="role-modal"] [aria-label="Search"]').type(
+        'Instrument Scientist'
+      );
+
+      cy.get('[data-cy="role-modal"]')
+        .contains('Instrument Scientist')
+        .parent()
+        .find('input[type="checkbox"]')
+        .click();
+
+      cy.get('[data-cy="role-modal"]').contains('Update').click();
+
+      cy.notification({ variant: 'success', text: 'successfully' });
+    }
+
     cy.contains('People').click();
+    addScientistRoleToUser(scientist1);
 
-    cy.contains('Carlsson').parent().find('button[title="Edit user"]').click();
-
-    const mainContentElement = cy.get('main');
-    mainContentElement.contains('Settings').click();
-
-    cy.get('[data-cy="add-role-button"]').should('not.be.disabled').click();
-
-    cy.finishedLoading();
-
-    cy.get('[data-cy="role-modal"] [aria-label="Search"]').type(
-      'Instrument Scientist'
-    );
-
-    cy.get('[data-cy="role-modal"]')
-      .contains('Instrument Scientist')
-      .parent()
-      .find('input[type="checkbox"]')
-      .click();
-
-    cy.get('[data-cy="role-modal"]').contains('Update').click();
-
-    cy.notification({ variant: 'success', text: 'successfully' });
+    cy.contains('People').click();
+    addScientistRoleToUser(scientist2);
 
     cy.contains('Instruments').click();
 
@@ -324,9 +333,7 @@ context('Instrument tests', () => {
         .find('[title="Assign scientist"]')
         .click();
 
-      cy.get('[data-cy="co-proposers"] tbody input[type="checkbox"]')
-        .first()
-        .click();
+      cy.get('[data-cy="co-proposers"] input[type="checkbox"]').first().click();
 
       cy.get('.MuiDialog-root').contains('Update').click();
 
@@ -456,10 +463,7 @@ context('Instrument tests', () => {
     cy.get('[data-cy="timeAllocation"] input').type('-123').blur();
     cy.contains('Must be greater than or equal to');
 
-    cy.get('[data-cy="timeAllocation"] input')
-      .clear()
-      .type('987654321')
-      .blur();
+    cy.get('[data-cy="timeAllocation"] input').clear().type('987654321').blur();
     cy.contains('Must be less than or equal to');
 
     cy.get('[data-cy="timeAllocation"] input').clear().type('20');
@@ -546,11 +550,10 @@ context('Instrument tests', () => {
       .find('[title="Show Scientists"]')
       .click();
 
-    cy.get(
-      '[data-cy="instrument-scientist-assignments-table"] [title="Delete"]'
-    )
-      .first()
-      .click();
+    cy.contains(scientist1);
+    cy.contains(scientist2);
+
+    cy.contains(scientist1).parent().find('[title="Delete"]').click();
 
     cy.get('[title="Save"]').click();
 
@@ -558,6 +561,29 @@ context('Instrument tests', () => {
       variant: 'success',
       text: 'Scientist removed from instrument',
     });
+
+    cy.contains(scientist1).should('not.exist');
+    cy.contains(scientist2);
+
+    cy.contains(instrument1.name)
+      .parent()
+      .find('td')
+      .last()
+      .then((element) => {
+        expect(element.text()).to.be.equal('1');
+      });
+
+    cy.contains(scientist2).parent().find('[title="Delete"]').click();
+
+    cy.get('[title="Save"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'Scientist removed from instrument',
+    });
+
+    cy.contains(scientist1).should('not.exist');
+    cy.contains(scientist2).should('not.exist');
 
     cy.contains(instrument1.name)
       .parent()
@@ -568,7 +594,7 @@ context('Instrument tests', () => {
       });
   });
 
-  it('User Officer should be able to delete Instrument', () => {
+  it.skip('User Officer should be able to delete Instrument', () => {
     cy.login('officer');
 
     cy.contains('Calls').click();
