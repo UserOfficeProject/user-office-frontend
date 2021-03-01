@@ -9,14 +9,12 @@ import React, { useState } from 'react';
 import { Prompt } from 'react-router';
 
 import FormikDropdown from 'components/common/FormikDropdown';
-import PreventTabChangeIfFormDirty from 'components/common/PreventTabChangeIfFormDirty';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
 } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +34,6 @@ type ProposalTechnicalReviewProps = {
   data: CoreTechnicalReviewFragment | null | undefined;
   setReview: (data: CoreTechnicalReviewFragment) => void;
   id: number;
-  setFormDirty: FunctionType<void, boolean>;
   confirm: WithConfirmType;
 };
 
@@ -44,7 +41,6 @@ const ProposalTechnicalReview = ({
   id,
   data,
   setReview,
-  setFormDirty,
   confirm,
 }: ProposalTechnicalReviewProps) => {
   const { api } = useDataApiWithFeedback();
@@ -127,10 +123,6 @@ const ProposalTechnicalReview = ({
         {({ isSubmitting }) => (
           <Form>
             <PromptIfDirty />
-            <PreventTabChangeIfFormDirty
-              setFormDirty={setFormDirty}
-              initialValues={initialValues}
-            />
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <FormikDropdown
