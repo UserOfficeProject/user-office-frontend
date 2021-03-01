@@ -147,39 +147,11 @@ context('Calls tests', () => {
 
     cy.contains('Proposals');
 
-    cy.contains('Calls').click();
-
-    cy.contains('Create').click();
-
-    cy.get('[data-cy=short-code] input')
-      .type(shortCode)
-      .should('have.value', shortCode);
-
-    cy.get('[data-cy=start-date] input')
-      .clear()
-      .type(startDate)
-      .should('have.value', startDate);
-
-    cy.get('[data-cy=end-date] input')
-      .clear()
-      .type(endDate)
-      .should('have.value', endDate);
-
-    cy.get('[data-cy="next-step"]').click();
-
-    cy.get('[data-cy=survey-comment] input').type(
-      faker.random.word().split(' ')[0]
-    );
-
-    cy.get('[data-cy="next-step"]').click();
-
-    cy.get('[data-cy=cycle-comment] input').type(
-      faker.random.word().split(' ')[0]
-    );
-
-    cy.get('[data-cy="submit"]').click();
-
-    cy.notification({ variant: 'success', text: 'successfully' });
+    cy.createCall({
+      shortCode,
+      startDate,
+      endDate,
+    });
 
     cy.contains(shortCode)
       .parent()
