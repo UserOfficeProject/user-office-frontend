@@ -10,7 +10,12 @@ import GeneralInformation from 'components/proposal/GeneralInformation';
 import ProposalAdmin, {
   AdministrationFormData,
 } from 'components/proposal/ProposalAdmin';
-import { CoreTechnicalReviewFragment, Proposal, UserRole } from 'generated/sdk';
+import {
+  CoreTechnicalReviewFragment,
+  Proposal,
+  TechnicalReview,
+  UserRole,
+} from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 import ProposalTechnicalReview from './ProposalTechnicalReview';
@@ -69,8 +74,16 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
         />
         <ProposalTechnicalReview
           id={proposal.id}
-          data={techReview}
-          setReview={setTechReview}
+          data={proposal.technicalReview}
+          setReview={(data: CoreTechnicalReviewFragment | null | undefined) =>
+            setProposal({
+              ...proposal,
+              technicalReview: {
+                ...proposal.technicalReview,
+                ...data,
+              } as TechnicalReview,
+            })
+          }
         />
         {isUserOfficer && (
           <ProposalAdmin

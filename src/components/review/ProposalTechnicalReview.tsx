@@ -8,10 +8,13 @@ import { TextField } from 'formik-material-ui';
 import React, { useState } from 'react';
 import { Prompt } from 'react-router';
 
+import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
+  UserRole,
 } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -28,6 +31,7 @@ type TechnicalReviewFormType = {
   timeAllocation: string | number;
   comment: string;
   publicComment: string;
+  submitted: boolean;
 };
 
 type ProposalTechnicalReviewProps = {
@@ -46,12 +50,14 @@ const ProposalTechnicalReview = ({
   const { api } = useDataApiWithFeedback();
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const classes = useStyles();
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
 
   const initialValues: TechnicalReviewFormType = {
     status: data?.status || '',
     timeAllocation: data?.timeAllocation || '',
     comment: data?.comment || '',
     publicComment: data?.publicComment || '',
+    submitted: data?.submitted || false,
   };
 
   const PromptIfDirty = () => {
@@ -69,10 +75,13 @@ const ProposalTechnicalReview = ({
     values: TechnicalReviewFormType,
     method: 'submitTechnicalReview' | 'addTechnicalReview'
   ) => {
-    const shouldSubmit = method === 'submitTechnicalReview';
-    const successMessage = `Technical review ${
-      shouldSubmit ? 'submitted' : 'updated'
-    } successfully!`;
+    const shouldSubmit =
+      method === 'submitTechnicalReview' || (isUserOfficer && values.submitted);
+    const successMessage = isUserOfficer
+      ? `Technical review updated successfully!`
+      : `Technical review ${
+          shouldSubmit ? 'submitted' : 'updated'
+        } successfully!`;
 
     const result = await api(successMessage)[method]({
       proposalID: id,
@@ -95,6 +104,9 @@ const ProposalTechnicalReview = ({
     }
   };
 
+  const shouldDisableForm = (isSubmitting: boolean) =>
+    (isSubmitting || data?.submitted) && !isUserOfficer;
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -105,16 +117,20 @@ const ProposalTechnicalReview = ({
         validationSchema={proposalTechnicalReviewValidationSchema}
         onSubmit={async (values): Promise<void> => {
           if (shouldSubmit) {
-            confirm(
-              async () => {
-                await handleUpdateOrSubmit(values, 'submitTechnicalReview');
-              },
-              {
-                title: 'Please confirm',
-                description:
-                  'I am aware that no further changes to the technical review are possible after submission.',
-              }
-            )();
+            if (!isUserOfficer) {
+              confirm(
+                async () => {
+                  await handleUpdateOrSubmit(values, 'submitTechnicalReview');
+                },
+                {
+                  title: 'Please confirm',
+                  description:
+                    'I am aware that no further changes to the technical review are possible after submission.',
+                }
+              )();
+            } else {
+              await handleUpdateOrSubmit(values, 'submitTechnicalReview');
+            }
           } else {
             await handleUpdateOrSubmit(values, 'addTechnicalReview');
           }
@@ -139,7 +155,7 @@ const ProposalTechnicalReview = ({
                       value: TechnicalReviewStatus.UNFEASIBLE,
                     },
                   ]}
-                  disabled={isSubmitting || data?.submitted}
+                  disabled={shouldDisableForm(isSubmitting)}
                   InputProps={{
                     'data-cy': 'technical-review-status',
                   }}
@@ -156,7 +172,7 @@ const ProposalTechnicalReview = ({
                   fullWidth
                   autoComplete="off"
                   data-cy="timeAllocation"
-                  disabled={isSubmitting || data?.submitted}
+                  disabled={shouldDisableForm(isSubmitting)}
                   required
                 />
               </Grid>
@@ -173,7 +189,7 @@ const ProposalTechnicalReview = ({
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={isSubmitting || data?.submitted}
+                  disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -189,13 +205,23 @@ const ProposalTechnicalReview = ({
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={isSubmitting || data?.submitted}
+                  disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
             </Grid>
             <ButtonContainer>
+              {isUserOfficer && (
+                <Field
+                  id="submitted"
+                  name="submitted"
+                  component={FormikUICustomCheckbox}
+                  label="Submitted"
+                  color="primary"
+                  data-cy="is-review-submitted"
+                />
+              )}
               <Button
-                disabled={isSubmitting || data?.submitted}
+                disabled={shouldDisableForm(isSubmitting)}
                 type="submit"
                 onClick={() => setShouldSubmit(false)}
                 variant="contained"
@@ -204,17 +230,19 @@ const ProposalTechnicalReview = ({
               >
                 Update
               </Button>
-              <Button
-                disabled={isSubmitting || data?.submitted}
-                type="submit"
-                className={classes.submitButton}
-                onClick={() => setShouldSubmit(true)}
-                variant="contained"
-                color="primary"
-                data-cy="submit-technical-review"
-              >
-                {data?.submitted ? 'Submitted' : 'Submit'}
-              </Button>
+              {!isUserOfficer && (
+                <Button
+                  disabled={isSubmitting || data?.submitted}
+                  type="submit"
+                  className={classes.submitButton}
+                  onClick={() => setShouldSubmit(true)}
+                  variant="contained"
+                  color="primary"
+                  data-cy="submit-technical-review"
+                >
+                  {data?.submitted ? 'Submitted' : 'Submit'}
+                </Button>
+              )}
             </ButtonContainer>
           </Form>
         )}
