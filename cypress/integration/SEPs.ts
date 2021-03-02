@@ -12,7 +12,7 @@ function readWriteReview() {
 
   cy.finishedLoading();
 
-  cy.get('@dialog').contains('Proposal information');
+  cy.get('@dialog').contains('Proposal Information');
   cy.get('@dialog').contains('Technical Review');
   cy.get('@dialog').contains('Grade').click({ force: true });
 
