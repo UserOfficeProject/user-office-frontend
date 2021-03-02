@@ -3018,6 +3018,23 @@ export type CreateCallMutation = (
   ) }
 );
 
+export type DeleteCallMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteCallMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteCall: (
+    { __typename?: 'CallResponseWrap' }
+    & Pick<CallResponseWrap, 'error'>
+    & { call: Maybe<(
+      { __typename?: 'Call' }
+      & Pick<Call, 'id'>
+    )> }
+  ) }
+);
+
 export type CallFragment = (
   { __typename?: 'Call' }
   & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'proposalWorkflowId' | 'templateId' | 'proposalCount'>
@@ -6415,6 +6432,17 @@ export const CreateCallDocument = gql`
   }
 }
     ${CallFragmentDoc}`;
+export const DeleteCallDocument = gql`
+    mutation deleteCall($id: Int!) {
+  deleteCall(id: $id) {
+    error
+    call {
+      id
+    }
+    error
+  }
+}
+    `;
 export const GetCallDocument = gql`
     query getCall($id: Int!) {
   call(id: $id) {
@@ -8152,6 +8180,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createCall(variables: CreateCallMutationVariables): Promise<CreateCallMutation> {
       return withWrapper(() => client.request<CreateCallMutation>(print(CreateCallDocument), variables));
+    },
+    deleteCall(variables: DeleteCallMutationVariables): Promise<DeleteCallMutation> {
+      return withWrapper(() => client.request<DeleteCallMutation>(print(DeleteCallDocument), variables));
     },
     getCall(variables: GetCallQueryVariables): Promise<GetCallQuery> {
       return withWrapper(() => client.request<GetCallQuery>(print(GetCallDocument), variables));
