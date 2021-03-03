@@ -1,3 +1,7 @@
+import { Link, makeStyles } from '@material-ui/core';
+import React, { useContext } from 'react';
+
+import { NavigButton } from 'components/common/NavigButton';
 import { Box, Button, Link, makeStyles } from '@material-ui/core';
 import UOLoader from 'components/common/UOLoader';
 import {
@@ -63,7 +67,7 @@ function ShipmentReview({
       label: 'Samples',
       value: (
         <ul className={classes.sampleList}>
-          {state.shipment.samples.map((sample) => (
+          {state.shipment.samples.map(sample => (
             <li key={sample.id}>{sample.title}</li>
           ))}
         </ul>
