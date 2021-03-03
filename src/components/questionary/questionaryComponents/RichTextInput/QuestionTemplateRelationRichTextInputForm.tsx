@@ -1,4 +1,5 @@
 import { Field } from 'formik';
+import { TextField } from 'formik-material-ui';
 import React from 'react';
 import * as Yup from 'yup';
 
@@ -11,7 +12,9 @@ import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationRichTextInputForm: FormComponent<QuestionTemplateRelation> = props => {
+export const QuestionTemplateRelationRichTextInputForm: FormComponent<QuestionTemplateRelation> = (
+  props
+) => {
   return (
     <QuestionTemplateRelationFormShell
       closeMe={props.closeMe}
@@ -26,7 +29,7 @@ export const QuestionTemplateRelationRichTextInputForm: FormComponent<QuestionTe
         }),
       })}
     >
-      {formikProps => (
+      {(formikProps) => (
         <>
           <QuestionExcerpt question={props.field.question} />
 
@@ -38,6 +41,16 @@ export const QuestionTemplateRelationRichTextInputForm: FormComponent<QuestionTe
               margin="normal"
               fullWidth
               data-cy="required"
+            />
+
+            <Field
+              name="config.max"
+              label="Max"
+              type="text"
+              component={TextField}
+              margin="normal"
+              fullWidth
+              data-cy="max"
             />
           </TitledContainer>
 

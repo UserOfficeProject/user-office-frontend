@@ -11,7 +11,7 @@ import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
-export const QuestionFileUploadForm: FormComponent<Question> = props => {
+export const QuestionFileUploadForm: FormComponent<Question> = (props) => {
   const field = props.field;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
 
@@ -79,7 +79,6 @@ export const QuestionFileUploadForm: FormComponent<Question> = props => {
                 'video/*',
                 'image/*',
               ]}
-              margin="normal"
               fullWidth
               data-cy="file_type"
             />

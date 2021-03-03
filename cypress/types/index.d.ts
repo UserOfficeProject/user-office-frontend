@@ -70,7 +70,7 @@ declare global {
       finishedLoading: () => void;
 
       /**
-       * Creates new proposal witn title and abstract passed. If nothing is passed it generates title and abstract on its own. You need to be logged in as a user.
+       * Creates new proposal with title and abstract passed. If nothing is passed it generates title and abstract on its own. You need to be logged in as a user.
        *
        * @returns {typeof createProposal}
        * @memberof Chainable
@@ -80,8 +80,28 @@ declare global {
       createProposal: (
         proposalTitle?: string,
         proposalAbstract?: string,
-        call?: string
+        call?: string,
+        proposer?: string
       ) => void;
+
+      /**
+       * Creates new call with values passed. If nothing is passed it generates random values. You need to be logged in as a user-officer.
+       *
+       * @returns {typeof createProposal}
+       * @memberof Chainable
+       * @example
+       *    cy.createCall({shortCode: 'Test call 1', startDate: '22-02-2021', endDate: '28-02-2021', surveyComment: 'This is survey comment', cycleComment: 'This is cycle comment'})
+       */
+      createCall: (values: {
+        shortCode?: string;
+        startDate?: string;
+        endDate?: string;
+        surveyComment?: string;
+        cycleComment?: string;
+        template?: string;
+        workflow?: string;
+      }) => void;
+
       /**
        * Moves the element in the given direction with given length.
        * For example direction "left" means that the element will go to the left and length "2" means that two times left arrow will be pressed.
@@ -146,6 +166,67 @@ declare global {
        *    cy.changeActiveRole('User Officer')
        */
       changeActiveRole: (role: string) => void;
+
+      /**
+       * Call this method before your test to have delay between clicks
+       * Excellent for presentation purposes
+       *
+       * @returns {typeof presentationMode}
+       * @memberof Chainable
+       * @example
+       *    cy.presentationMode()
+       */
+      presentationMode: () => void;
+
+      /**
+       * Creates boolean question. You have to be in edit template view to call this method
+       *
+       * @returns {typeof createBooleanQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createBooleanQuestion('Is dangerous')
+       */
+      createBooleanQuestion: (title: string) => void;
+
+      /**
+       * Creates Text question. You have to be in edit template view to call this method
+       *
+       * @returns {typeof createTextQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createTextQuestion()
+       */
+      createTextQuestion: (
+        title: string,
+        isRequired: boolean,
+        isMultipleLines: boolean,
+        minimumCharacters?: number
+      ) => void;
+
+      /**
+       * Creates date question. You have to be in edit template view to call this method
+       *
+       * @returns {typeof createDateQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createDateQuestion('Is dangerous')
+       */
+      createDateQuestion: (title: string) => void;
+
+      /**
+       * Creates multiple choice question. You have to be in edit template view to call this method
+       *
+       * @returns {typeof createMultipleChoiceQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createMultipleChoiceQuestion('Is dangerous')
+       */
+      createMultipleChoiceQuestion: (
+        title: string,
+        option1: string,
+        option2: string,
+        option3: string
+      ) => void;
     }
   }
 

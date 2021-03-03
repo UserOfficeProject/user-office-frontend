@@ -12,30 +12,16 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _Any: any;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
   IntStringDateBoolArray: any;
+  _Any: any;
 };
 
 
 
 
 
-
-
-
-export type Entity = Call | Instrument | Proposal | User;
-
-export type Service = {
-  __typename?: '_Service';
-  /**
-   * The sdl representing the federated service capabilities. Includes federation
-   * directives, removes federation types, and includes rest of full schema after
-   * schema directives have been applied
-   */
-  sdl: Maybe<Scalars['String']>;
-};
 
 export type AddNextStatusEventsToConnectionInput = {
   proposalWorkflowConnectionId: Scalars['Int'];
@@ -52,10 +38,12 @@ export type AddProposalWorkflowStatusInput = {
   prevProposalStatusId?: Maybe<Scalars['Int']>;
 };
 
-export type AddSepMembersRole = {
-  userIDs: Array<Scalars['Int']>;
-  roleID: UserRole;
-  SEPID: Scalars['Int'];
+export type AddTechnicalReviewInput = {
+  proposalID: Scalars['Int'];
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  timeAllocation?: Maybe<Scalars['Int']>;
+  status?: Maybe<TechnicalReviewStatus>;
 };
 
 export type AddUserRoleResponseWrap = {
@@ -85,6 +73,12 @@ export type ApiAccessTokenResponseWrap = {
   __typename?: 'ApiAccessTokenResponseWrap';
   error: Maybe<Scalars['String']>;
   apiAccessToken: Maybe<PermissionsWithAccessToken>;
+};
+
+export type AssignChairOrSecretaryToSepInput = {
+  userId: Scalars['Int'];
+  roleId: UserRole;
+  sepId: Scalars['Int'];
 };
 
 export type AssignInstrumentsToCallInput = {
@@ -143,6 +137,7 @@ export type Call = {
   templateId: Maybe<Scalars['Int']>;
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
+  proposalCount: Scalars['Int'];
 };
 
 export type CallResponseWrap = {
@@ -163,6 +158,11 @@ export type CheckExternalTokenWrap = {
   __typename?: 'CheckExternalTokenWrap';
   error: Maybe<Scalars['String']>;
   token: Maybe<Scalars['String']>;
+};
+
+export type CloneProposalInput = {
+  callId: Scalars['Int'];
+  proposalToCloneId: Scalars['Int'];
 };
 
 export type CreateApiAccessTokenInput = {
@@ -281,8 +281,11 @@ export enum Event {
   PROPOSAL_SAMPLE_REVIEW_SUBMITTED = 'PROPOSAL_SAMPLE_REVIEW_SUBMITTED',
   PROPOSAL_SAMPLE_SAFE = 'PROPOSAL_SAMPLE_SAFE',
   PROPOSAL_ALL_SEP_REVIEWERS_SELECTED = 'PROPOSAL_ALL_SEP_REVIEWERS_SELECTED',
+  PROPOSAL_SEP_REVIEW_UPDATED = 'PROPOSAL_SEP_REVIEW_UPDATED',
   PROPOSAL_SEP_REVIEW_SUBMITTED = 'PROPOSAL_SEP_REVIEW_SUBMITTED',
+  PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED = 'PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED',
   PROPOSAL_SEP_MEETING_SUBMITTED = 'PROPOSAL_SEP_MEETING_SUBMITTED',
+  PROPOSAL_MANAGEMENT_DECISION_SUBMITTED = 'PROPOSAL_MANAGEMENT_DECISION_SUBMITTED',
   PROPOSAL_INSTRUMENT_SUBMITTED = 'PROPOSAL_INSTRUMENT_SUBMITTED',
   PROPOSAL_ACCEPTED = 'PROPOSAL_ACCEPTED',
   PROPOSAL_REJECTED = 'PROPOSAL_REJECTED',
@@ -302,7 +305,8 @@ export enum Event {
   SEP_PROPOSAL_REMOVED = 'SEP_PROPOSAL_REMOVED',
   SEP_MEMBER_ASSIGNED_TO_PROPOSAL = 'SEP_MEMBER_ASSIGNED_TO_PROPOSAL',
   SEP_MEMBER_REMOVED_FROM_PROPOSAL = 'SEP_MEMBER_REMOVED_FROM_PROPOSAL',
-  PROPOSAL_NOTIFIED = 'PROPOSAL_NOTIFIED'
+  PROPOSAL_NOTIFIED = 'PROPOSAL_NOTIFIED',
+  PROPOSAL_CLONED = 'PROPOSAL_CLONED'
 }
 
 export type EventLog = {
@@ -436,7 +440,6 @@ export type IntervalConfig = {
   required: Scalars['Boolean'];
   tooltip: Scalars['String'];
   units: Maybe<Array<Scalars['String']>>;
-  property: Scalars['String'];
 };
 
 
@@ -450,6 +453,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createApiAccessToken: ApiAccessTokenResponseWrap;
   createInstitution: InstitutionResponseWrap;
+  createUnit: UnitResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateInstitution: InstitutionResponseWrap;
@@ -466,6 +470,7 @@ export type Mutation = {
   setInstrumentAvailabilityTime: SuccessResponseWrap;
   submitInstrument: SuccessResponseWrap;
   administrationProposal: ProposalResponseWrap;
+  cloneProposal: ProposalResponseWrap;
   updateProposal: ProposalResponseWrap;
   addNextStatusEventsToConnection: ProposalNextStatusEventResponseWrap;
   addProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
@@ -479,16 +484,15 @@ export type Mutation = {
   createQuestionary: QuestionaryResponseWrap;
   updateAnswer: UpdateAnswerResponseWrap;
   addReview: ReviewResponseWrap;
-  addTechnicalReview: TechnicalReviewResponseWrap;
   addUserForReview: ReviewResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
-  assignMembers: SepResponseWrap;
-  removeMember: SepResponseWrap;
-  assignMemberToSEPProposal: SepResponseWrap;
+  assignReviewersToSEP: SepResponseWrap;
+  removeMemberFromSep: SepResponseWrap;
+  assignSepReviewersToProposal: SepResponseWrap;
   removeMemberFromSEPProposal: SepResponseWrap;
-  assignProposalToSEP: SuccessResponseWrap;
+  assignProposalToSEP: NextProposalStatusResponseWrap;
   removeProposalAssignment: SepResponseWrap;
   createSEP: SepResponseWrap;
   updateSEP: SepResponseWrap;
@@ -515,11 +519,13 @@ export type Mutation = {
   setUserNotPlaceholder: UserResponseWrap;
   addClientLog: SuccessResponseWrap;
   addSamplesToShipment: ShipmentResponseWrap;
+  addTechnicalReview: TechnicalReviewResponseWrap;
   applyPatches: PrepareDbResponseWrap;
   checkExternalToken: CheckExternalTokenWrap;
   cloneSample: SampleResponseWrap;
   cloneTemplate: TemplateResponseWrap;
   createProposal: ProposalResponseWrap;
+  deleteCall: CallResponseWrap;
   deleteInstitution: InstitutionResponseWrap;
   deleteInstrument: InstrumentResponseWrap;
   deleteProposal: ProposalResponseWrap;
@@ -528,6 +534,7 @@ export type Mutation = {
   deleteShipment: ShipmentResponseWrap;
   deleteTemplate: TemplateResponseWrap;
   deleteTopic: TemplateResponseWrap;
+  deleteUnit: UnitResponseWrap;
   deleteUser: UserResponseWrap;
   emailVerification: EmailVerificationResponseWrap;
   getTokenForUser: TokenResponseWrap;
@@ -541,6 +548,7 @@ export type Mutation = {
   deleteProposalStatus: ProposalStatusResponseWrap;
   deleteProposalWorkflow: ProposalWorkflowResponseWrap;
   submitProposal: ProposalResponseWrap;
+  submitTechnicalReview: TechnicalReviewResponseWrap;
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
@@ -555,6 +563,11 @@ export type MutationCreateApiAccessTokenArgs = {
 export type MutationCreateInstitutionArgs = {
   name: Scalars['String'];
   verified: Scalars['Boolean'];
+};
+
+
+export type MutationCreateUnitArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -658,6 +671,11 @@ export type MutationAdministrationProposalArgs = {
 };
 
 
+export type MutationCloneProposalArgs = {
+  cloneProposalInput: CloneProposalInput;
+};
+
+
 export type MutationUpdateProposalArgs = {
   id: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
@@ -735,15 +753,6 @@ export type MutationAddReviewArgs = {
 };
 
 
-export type MutationAddTechnicalReviewArgs = {
-  proposalID: Scalars['Int'];
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  timeAllocation?: Maybe<Scalars['Int']>;
-  status?: Maybe<TechnicalReviewStatus>;
-};
-
-
 export type MutationAddUserForReviewArgs = {
   userID: Scalars['Int'];
   proposalID: Scalars['Int'];
@@ -768,25 +777,25 @@ export type MutationUpdateSampleArgs = {
 
 
 export type MutationAssignChairOrSecretaryArgs = {
-  addSEPMembersRole?: Maybe<AddSepMembersRole>;
+  assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSepInput;
 };
 
 
-export type MutationAssignMembersArgs = {
+export type MutationAssignReviewersToSepArgs = {
   memberIds: Array<Scalars['Int']>;
   sepId: Scalars['Int'];
 };
 
 
-export type MutationRemoveMemberArgs = {
+export type MutationRemoveMemberFromSepArgs = {
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
   roleId: UserRole;
 };
 
 
-export type MutationAssignMemberToSepProposalArgs = {
-  memberId: Scalars['Int'];
+export type MutationAssignSepReviewersToProposalArgs = {
+  memberIds: Array<Scalars['Int']>;
   sepId: Scalars['Int'];
   proposalId: Scalars['Int'];
 };
@@ -1020,6 +1029,11 @@ export type MutationAddSamplesToShipmentArgs = {
 };
 
 
+export type MutationAddTechnicalReviewArgs = {
+  addTechnicalReviewInput: AddTechnicalReviewInput;
+};
+
+
 export type MutationCheckExternalTokenArgs = {
   externalToken: Scalars['String'];
 };
@@ -1037,6 +1051,11 @@ export type MutationCloneTemplateArgs = {
 
 export type MutationCreateProposalArgs = {
   callId: Scalars['Int'];
+};
+
+
+export type MutationDeleteCallArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1077,6 +1096,11 @@ export type MutationDeleteTemplateArgs = {
 
 export type MutationDeleteTopicArgs = {
   topicId: Scalars['Int'];
+};
+
+
+export type MutationDeleteUnitArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1144,6 +1168,11 @@ export type MutationSubmitProposalArgs = {
 };
 
 
+export type MutationSubmitTechnicalReviewArgs = {
+  submitTechnicalReviewInput: SubmitTechnicalReviewInput;
+};
+
+
 export type MutationTokenArgs = {
   token: Scalars['String'];
 };
@@ -1160,6 +1189,19 @@ export type MutationUpdatePasswordArgs = {
   password: Scalars['String'];
 };
 
+export type NextProposalStatus = {
+  __typename?: 'NextProposalStatus';
+  proposalNextStatusId: Maybe<Scalars['Int']>;
+  proposalNextStatusShortCode: Maybe<Scalars['String']>;
+  proposalNextStatusName: Maybe<Scalars['String']>;
+};
+
+export type NextProposalStatusResponseWrap = {
+  __typename?: 'NextProposalStatusResponseWrap';
+  error: Maybe<Scalars['String']>;
+  nextProposalStatus: Maybe<NextProposalStatus>;
+};
+
 export type NextStatusEvent = {
   __typename?: 'NextStatusEvent';
   nextStatusEventId: Scalars['Int'];
@@ -1173,7 +1215,6 @@ export type NumberInputConfig = {
   required: Scalars['Boolean'];
   tooltip: Scalars['String'];
   units: Maybe<Array<Scalars['String']>>;
-  property: Scalars['String'];
   numberValueConstraint: Maybe<NumberValueConstraint>;
 };
 
@@ -1271,7 +1312,7 @@ export enum ProposalEndStatus {
 export type ProposalEvent = {
   __typename?: 'ProposalEvent';
   name: Event;
-  description: Scalars['String'];
+  description: Maybe<Scalars['String']>;
 };
 
 export type ProposalNextStatusEventResponseWrap = {
@@ -1302,6 +1343,7 @@ export type ProposalsFilter = {
   instrumentId?: Maybe<Scalars['Int']>;
   proposalStatusId?: Maybe<Scalars['Int']>;
   shortCodes?: Maybe<Array<Scalars['String']>>;
+  questionFilter?: Maybe<QuestionFilterInput>;
 };
 
 export type ProposalsQueryResult = {
@@ -1457,12 +1499,14 @@ export type Query = {
   proposalEvents: Maybe<Array<ProposalEvent>>;
   questionary: Maybe<Questionary>;
   review: Maybe<Review>;
+  proposalReviews: Maybe<Array<Review>>;
   roles: Maybe<Array<Role>>;
   sample: Maybe<Sample>;
   samplesByCallId: Maybe<Array<Sample>>;
   samples: Maybe<Array<Sample>>;
   sep: Maybe<Sep>;
-  sepMembers: Maybe<Array<SepMember>>;
+  sepMembers: Maybe<Array<SepReviewer>>;
+  sepReviewers: Maybe<Array<SepReviewer>>;
   sepProposals: Maybe<Array<SepProposal>>;
   sepProposal: Maybe<SepProposal>;
   sepProposalsByInstrument: Maybe<Array<SepProposal>>;
@@ -1474,6 +1518,7 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   template: Maybe<Template>;
   checkToken: TokenResult;
+  units: Maybe<Array<Unit>>;
   user: Maybe<User>;
   me: Maybe<User>;
   users: Maybe<UserQueryResult>;
@@ -1638,6 +1683,11 @@ export type QueryReviewArgs = {
 };
 
 
+export type QueryProposalReviewsArgs = {
+  proposalId: Scalars['Int'];
+};
+
+
 export type QuerySampleArgs = {
   sampleId: Scalars['Int'];
 };
@@ -1659,6 +1709,11 @@ export type QuerySepArgs = {
 
 
 export type QuerySepMembersArgs = {
+  sepId: Scalars['Int'];
+};
+
+
+export type QuerySepReviewersArgs = {
   sepId: Scalars['Int'];
 };
 
@@ -1723,6 +1778,15 @@ export type QueryUsersArgs = {
   subtractUsers?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
+export type Entity = Call | Instrument | Proposal | User;
+
+
+export type Service = {
+  __typename?: '_Service';
+  /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
+  sdl: Maybe<Scalars['String']>;
+};
+
 export type Question = {
   __typename?: 'Question';
   proposalQuestionId: Scalars['String'];
@@ -1758,6 +1822,20 @@ export type QuestionaryStepResponseWrap = {
   __typename?: 'QuestionaryStepResponseWrap';
   error: Maybe<Scalars['String']>;
   questionaryStep: Maybe<QuestionaryStep>;
+};
+
+export enum QuestionFilterCompareOperator {
+  GREATER_THAN = 'GREATER_THAN',
+  LESS_THAN = 'LESS_THAN',
+  EQUALS = 'EQUALS',
+  INCLUDES = 'INCLUDES'
+}
+
+export type QuestionFilterInput = {
+  questionId: Scalars['String'];
+  value: Scalars['String'];
+  compareOperator: QuestionFilterCompareOperator;
+  dataType: DataType;
 };
 
 export type QuestionResponseWrap = {
@@ -1815,6 +1893,7 @@ export type RichTextInputConfig = {
   small_label: Scalars['String'];
   required: Scalars['Boolean'];
   tooltip: Scalars['String'];
+  max: Maybe<Scalars['Int']>;
 };
 
 export type Role = {
@@ -1883,6 +1962,8 @@ export type Sep = {
   description: Scalars['String'];
   numberRatingsRequired: Scalars['Float'];
   active: Scalars['Boolean'];
+  sepChair: Maybe<BasicUserDetails>;
+  sepSecretary: Maybe<BasicUserDetails>;
 };
 
 export type SepAssignment = {
@@ -1895,19 +1976,9 @@ export type SepAssignment = {
   dateReassigned: Maybe<Scalars['DateTime']>;
   emailSent: Scalars['Boolean'];
   proposal: Proposal;
-  roles: Array<Role>;
+  role: Maybe<Role>;
   user: Maybe<BasicUserDetails>;
   review: Maybe<Review>;
-};
-
-export type SepMember = {
-  __typename?: 'SEPMember';
-  roleUserId: Scalars['Int'];
-  roleId: Scalars['Int'];
-  userId: Scalars['Int'];
-  sepId: Scalars['Int'];
-  roles: Array<Role>;
-  user: BasicUserDetails;
 };
 
 export type SepProposal = {
@@ -1918,6 +1989,7 @@ export type SepProposal = {
   sepTimeAllocation: Maybe<Scalars['Int']>;
   proposal: Proposal;
   assignments: Maybe<Array<SepAssignment>>;
+  instrumentSubmitted: Scalars['Boolean'];
 };
 
 export type SepProposalResponseWrap = {
@@ -1930,6 +2002,14 @@ export type SepResponseWrap = {
   __typename?: 'SEPResponseWrap';
   error: Maybe<Scalars['String']>;
   sep: Maybe<Sep>;
+};
+
+export type SepReviewer = {
+  __typename?: 'SEPReviewer';
+  userId: Scalars['Int'];
+  sepId: Scalars['Int'];
+  role: Maybe<Role>;
+  user: BasicUserDetails;
 };
 
 export type SePsQueryResult = {
@@ -1980,6 +2060,15 @@ export enum ShipmentStatus {
   SUBMITTED = 'SUBMITTED'
 }
 
+export type SubmitTechnicalReviewInput = {
+  proposalID: Scalars['Int'];
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  timeAllocation?: Maybe<Scalars['Int']>;
+  status?: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
+};
+
 export type SubtemplateConfig = {
   __typename?: 'SubtemplateConfig';
   minEntries: Maybe<Scalars['Int']>;
@@ -2005,6 +2094,7 @@ export type TechnicalReview = {
   publicComment: Maybe<Scalars['String']>;
   timeAllocation: Maybe<Scalars['Int']>;
   status: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
   proposal: Maybe<Proposal>;
 };
 
@@ -2096,6 +2186,18 @@ export type Topic = {
   isEnabled: Scalars['Boolean'];
 };
 
+export type Unit = {
+  __typename?: 'Unit';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type UnitResponseWrap = {
+  __typename?: 'UnitResponseWrap';
+  error: Maybe<Scalars['String']>;
+  unit: Maybe<Unit>;
+};
+
 export type UpdateAnswerResponseWrap = {
   __typename?: 'UpdateAnswerResponseWrap';
   error: Maybe<Scalars['String']>;
@@ -2175,6 +2277,13 @@ export type User = {
   instruments: Array<Instrument>;
 };
 
+
+export type UserReviewsArgs = {
+  status?: Maybe<ReviewStatus>;
+  instrumentId?: Maybe<Scalars['Int']>;
+  callId?: Maybe<Scalars['Int']>;
+};
+
 export type UserQueryResult = {
   __typename?: 'UserQueryResult';
   users: Array<BasicUserDetails>;
@@ -2190,7 +2299,6 @@ export type UserResponseWrap = {
 export enum UserRole {
   USER = 'USER',
   USER_OFFICER = 'USER_OFFICER',
-  REVIEWER = 'REVIEWER',
   SEP_CHAIR = 'SEP_CHAIR',
   SEP_SECRETARY = 'SEP_SECRETARY',
   SEP_REVIEWER = 'SEP_REVIEWER',
@@ -2207,20 +2315,24 @@ export type AssignProposalToSepMutationVariables = Exact<{
 export type AssignProposalToSepMutation = (
   { __typename?: 'Mutation' }
   & { assignProposalToSEP: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    { __typename?: 'NextProposalStatusResponseWrap' }
+    & Pick<NextProposalStatusResponseWrap, 'error'>
+    & { nextProposalStatus: Maybe<(
+      { __typename?: 'NextProposalStatus' }
+      & Pick<NextProposalStatus, 'proposalNextStatusId' | 'proposalNextStatusShortCode' | 'proposalNextStatusName'>
+    )> }
   ) }
 );
 
-export type AssignMembersMutationVariables = Exact<{
+export type AssignReviewersToSepMutationVariables = Exact<{
   memberIds: Array<Scalars['Int']> | Scalars['Int'];
   sepId: Scalars['Int'];
 }>;
 
 
-export type AssignMembersMutation = (
+export type AssignReviewersToSepMutation = (
   { __typename?: 'Mutation' }
-  & { assignMembers: (
+  & { assignReviewersToSEP: (
     { __typename?: 'SEPResponseWrap' }
     & Pick<SepResponseWrap, 'error'>
     & { sep: Maybe<(
@@ -2231,7 +2343,7 @@ export type AssignMembersMutation = (
 );
 
 export type AssignChairOrSecretaryMutationVariables = Exact<{
-  addSEPMembersRole: AddSepMembersRole;
+  assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSepInput;
 }>;
 
 
@@ -2247,16 +2359,16 @@ export type AssignChairOrSecretaryMutation = (
   ) }
 );
 
-export type AssignMemberToSepProposalMutationVariables = Exact<{
-  memberId: Scalars['Int'];
+export type AssignSepReviewersToProposalMutationVariables = Exact<{
+  memberIds: Array<Scalars['Int']> | Scalars['Int'];
   sepId: Scalars['Int'];
   proposalId: Scalars['Int'];
 }>;
 
 
-export type AssignMemberToSepProposalMutation = (
+export type AssignSepReviewersToProposalMutation = (
   { __typename?: 'Mutation' }
-  & { assignMemberToSEPProposal: (
+  & { assignSepReviewersToProposal: (
     { __typename?: 'SEPResponseWrap' }
     & Pick<SepResponseWrap, 'error'>
     & { sep: Maybe<(
@@ -2282,6 +2394,13 @@ export type CreateSepMutation = (
     & { sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
+      & { sepChair: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, sepSecretary: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )> }
     )> }
   ) }
 );
@@ -2314,6 +2433,13 @@ export type GetUserSepsQuery = (
     & { seps: Array<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
+      & { sepChair: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, sepSecretary: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )> }
     )> }
   )> }
 );
@@ -2328,6 +2454,13 @@ export type GetSepQuery = (
   & { sep: Maybe<(
     { __typename?: 'SEP' }
     & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
+    & { sepChair: Maybe<(
+      { __typename?: 'BasicUserDetails' }
+      & BasicUserDetailsFragment
+    )>, sepSecretary: Maybe<(
+      { __typename?: 'BasicUserDetails' }
+      & BasicUserDetailsFragment
+    )> }
   )> }
 );
 
@@ -2339,14 +2472,14 @@ export type GetSepMembersQueryVariables = Exact<{
 export type GetSepMembersQuery = (
   { __typename?: 'Query' }
   & { sepMembers: Maybe<Array<(
-    { __typename?: 'SEPMember' }
-    & Pick<SepMember, 'roleUserId' | 'roleId' | 'userId' | 'sepId'>
-    & { roles: Array<(
+    { __typename?: 'SEPReviewer' }
+    & Pick<SepReviewer, 'userId' | 'sepId'>
+    & { role: Maybe<(
       { __typename?: 'Role' }
       & Pick<Role, 'id' | 'shortCode' | 'title'>
     )>, user: (
       { __typename?: 'BasicUserDetails' }
-      & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation'>
+      & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position' | 'placeholder' | 'created'>
     ) }
   )>> }
 );
@@ -2361,7 +2494,7 @@ export type GetSepProposalQuery = (
   { __typename?: 'Query' }
   & { sepProposal: Maybe<(
     { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation'>
+    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation' | 'instrumentSubmitted'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & { proposer: Maybe<(
@@ -2405,7 +2538,7 @@ export type GetSepProposalsQuery = (
   { __typename?: 'Query' }
   & { sepProposals: Maybe<Array<(
     { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalId' | 'dateAssigned' | 'sepId'>
+    & Pick<SepProposal, 'proposalId' | 'dateAssigned' | 'sepId' | 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'title' | 'id' | 'shortCode'>
@@ -2418,8 +2551,8 @@ export type GetSepProposalsQuery = (
       & Pick<SepAssignment, 'sepMemberUserId' | 'dateAssigned'>
       & { user: Maybe<(
         { __typename?: 'BasicUserDetails' }
-        & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position'>
-      )>, roles: Array<(
+        & BasicUserDetailsFragment
+      )>, role: Maybe<(
         { __typename?: 'Role' }
         & Pick<Role, 'id' | 'shortCode' | 'title'>
       )>, review: Maybe<(
@@ -2462,6 +2595,26 @@ export type SepProposalsByInstrumentQuery = (
   )>> }
 );
 
+export type GetSepReviewersQueryVariables = Exact<{
+  sepId: Scalars['Int'];
+}>;
+
+
+export type GetSepReviewersQuery = (
+  { __typename?: 'Query' }
+  & { sepReviewers: Maybe<Array<(
+    { __typename?: 'SEPReviewer' }
+    & Pick<SepReviewer, 'userId' | 'sepId'>
+    & { role: Maybe<(
+      { __typename?: 'Role' }
+      & Pick<Role, 'id' | 'shortCode' | 'title'>
+    )>, user: (
+      { __typename?: 'BasicUserDetails' }
+      & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position' | 'placeholder' | 'created'>
+    ) }
+  )>> }
+);
+
 export type GetSePsQueryVariables = Exact<{
   filter: Scalars['String'];
   active: Scalars['Boolean'];
@@ -2476,6 +2629,13 @@ export type GetSePsQuery = (
     & { seps: Array<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
+      & { sepChair: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, sepSecretary: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )> }
     )> }
   )> }
 );
@@ -2498,16 +2658,16 @@ export type RemoveProposalAssignmentMutation = (
   ) }
 );
 
-export type RemoveMemberMutationVariables = Exact<{
+export type RemoveMemberFromSepMutationVariables = Exact<{
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
   roleId: UserRole;
 }>;
 
 
-export type RemoveMemberMutation = (
+export type RemoveMemberFromSepMutation = (
   { __typename?: 'Mutation' }
-  & { removeMember: (
+  & { removeMemberFromSep: (
     { __typename?: 'SEPResponseWrap' }
     & Pick<SepResponseWrap, 'error'>
     & { sep: Maybe<(
@@ -2621,6 +2781,23 @@ export type CreateInstitutionMutation = (
   ) }
 );
 
+export type CreateUnitMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { createUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id' | 'name'>
+    )> }
+  ) }
+);
+
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
@@ -2647,6 +2824,23 @@ export type DeleteInstitutionMutation = (
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'verified'>
+    )> }
+  ) }
+);
+
+export type DeleteUnitMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteUnitMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteUnit: (
+    { __typename?: 'UnitResponseWrap' }
+    & Pick<UnitResponseWrap, 'error'>
+    & { unit: Maybe<(
+      { __typename?: 'Unit' }
+      & Pick<Unit, 'id'>
     )> }
   ) }
 );
@@ -2705,6 +2899,17 @@ export type GetPageContentQueryVariables = Exact<{
 export type GetPageContentQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'getPageContent'>
+);
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = (
+  { __typename?: 'Query' }
+  & { units: Maybe<Array<(
+    { __typename?: 'Unit' }
+    & Pick<Unit, 'id' | 'name'>
+  )>> }
 );
 
 export type SetPageContentMutationVariables = Exact<{
@@ -2812,9 +3017,26 @@ export type CreateCallMutation = (
   ) }
 );
 
+export type DeleteCallMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteCallMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteCall: (
+    { __typename?: 'CallResponseWrap' }
+    & Pick<CallResponseWrap, 'error'>
+    & { call: Maybe<(
+      { __typename?: 'Call' }
+      & Pick<Call, 'id'>
+    )> }
+  ) }
+);
+
 export type CallFragment = (
   { __typename?: 'Call' }
-  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'proposalWorkflowId' | 'templateId'>
+  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'proposalWorkflowId' | 'templateId' | 'proposalCount'>
   & { instruments: Array<(
     { __typename?: 'InstrumentWithAvailabilityTime' }
     & Pick<InstrumentWithAvailabilityTime, 'id' | 'name' | 'shortCode' | 'description' | 'availabilityTime' | 'submitted'>
@@ -3142,6 +3364,50 @@ export type AdministrationProposalMutation = (
   ) }
 );
 
+export type CloneProposalMutationVariables = Exact<{
+  proposalToCloneId: Scalars['Int'];
+  callId: Scalars['Int'];
+}>;
+
+
+export type CloneProposalMutation = (
+  { __typename?: 'Mutation' }
+  & { cloneProposal: (
+    { __typename?: 'ProposalResponseWrap' }
+    & Pick<ProposalResponseWrap, 'error'>
+    & { proposal: Maybe<(
+      { __typename?: 'Proposal' }
+      & { proposer: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, users: Array<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )>, questionary: Maybe<(
+        { __typename?: 'Questionary' }
+        & QuestionaryFragment
+      )>, technicalReview: Maybe<(
+        { __typename?: 'TechnicalReview' }
+        & CoreTechnicalReviewFragment
+      )>, reviews: Maybe<Array<(
+        { __typename?: 'Review' }
+        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
+        & { reviewer: Maybe<(
+          { __typename?: 'BasicUserDetails' }
+          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
+        )> }
+      )>>, instrument: Maybe<(
+        { __typename?: 'Instrument' }
+        & Pick<Instrument, 'id' | 'name' | 'shortCode'>
+      )>, call: Maybe<(
+        { __typename?: 'Call' }
+        & Pick<Call, 'id' | 'shortCode'>
+      )> }
+      & ProposalFragment
+    )> }
+  ) }
+);
+
 export type CreateProposalMutationVariables = Exact<{
   callId: Scalars['Int'];
 }>;
@@ -3191,7 +3457,7 @@ export type DeleteProposalMutation = (
 
 export type CoreTechnicalReviewFragment = (
   { __typename?: 'TechnicalReview' }
-  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID'>
+  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID' | 'submitted'>
 );
 
 export type ProposalFragment = (
@@ -3600,6 +3866,19 @@ export type CoreReviewFragment = (
   & Pick<Review, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
 );
 
+export type GetProposalReviewsQueryVariables = Exact<{
+  proposalId: Scalars['Int'];
+}>;
+
+
+export type GetProposalReviewsQuery = (
+  { __typename?: 'Query' }
+  & { proposalReviews: Maybe<Array<(
+    { __typename?: 'Review' }
+    & Pick<Review, 'id' | 'userID' | 'comment' | 'grade' | 'status' | 'sepID'>
+  )>> }
+);
+
 export type GetReviewQueryVariables = Exact<{
   reviewId: Scalars['Int'];
   sepId?: Maybe<Scalars['Int']>;
@@ -3636,6 +3915,28 @@ export type RemoveUserForReviewMutation = (
   ) }
 );
 
+export type SubmitTechnicalReviewMutationVariables = Exact<{
+  proposalID: Scalars['Int'];
+  timeAllocation?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
+  publicComment?: Maybe<Scalars['String']>;
+  status?: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
+}>;
+
+
+export type SubmitTechnicalReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { submitTechnicalReview: (
+    { __typename?: 'TechnicalReviewResponseWrap' }
+    & Pick<TechnicalReviewResponseWrap, 'error'>
+    & { technicalReview: Maybe<(
+      { __typename?: 'TechnicalReview' }
+      & Pick<TechnicalReview, 'id'>
+    )> }
+  ) }
+);
+
 export type AddReviewMutationVariables = Exact<{
   reviewID: Scalars['Int'];
   grade: Scalars['Int'];
@@ -3657,7 +3958,11 @@ export type AddReviewMutation = (
   ) }
 );
 
-export type UserWithReviewsQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserWithReviewsQueryVariables = Exact<{
+  callId?: Maybe<Scalars['Int']>;
+  instrumentId?: Maybe<Scalars['Int']>;
+  status?: Maybe<ReviewStatus>;
+}>;
 
 
 export type UserWithReviewsQuery = (
@@ -4448,12 +4753,12 @@ type FieldConfigProposalBasisConfigFragment = (
 
 type FieldConfigIntervalConfigFragment = (
   { __typename?: 'IntervalConfig' }
-  & Pick<IntervalConfig, 'property' | 'units' | 'small_label' | 'required' | 'tooltip'>
+  & Pick<IntervalConfig, 'units' | 'small_label' | 'required' | 'tooltip'>
 );
 
 type FieldConfigNumberInputConfigFragment = (
   { __typename?: 'NumberInputConfig' }
-  & Pick<NumberInputConfig, 'property' | 'units' | 'numberValueConstraint' | 'small_label' | 'required' | 'tooltip'>
+  & Pick<NumberInputConfig, 'units' | 'numberValueConstraint' | 'small_label' | 'required' | 'tooltip'>
 );
 
 type FieldConfigShipmentBasisConfigFragment = (
@@ -4463,7 +4768,7 @@ type FieldConfigShipmentBasisConfigFragment = (
 
 type FieldConfigRichTextInputConfigFragment = (
   { __typename?: 'RichTextInputConfig' }
-  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip'>
+  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip' | 'max'>
 );
 
 export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment;
@@ -5011,6 +5316,9 @@ export type GetUserProposalsQuery = (
       )>, proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & Pick<BasicUserDetails, 'id'>
+      )>, call: Maybe<(
+        { __typename?: 'Call' }
+        & Pick<Call, 'id' | 'shortCode'>
       )> }
     )> }
   )> }
@@ -5256,6 +5564,7 @@ export const CallFragmentDoc = gql`
     name
     description
   }
+  proposalCount
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const CoreTechnicalReviewFragmentDoc = gql`
@@ -5266,6 +5575,7 @@ export const CoreTechnicalReviewFragmentDoc = gql`
   timeAllocation
   status
   proposalID
+  submitted
 }
     `;
 export const ProposalStatusFragmentDoc = gql`
@@ -5337,14 +5647,12 @@ export const FieldConfigFragmentDoc = gql`
     tooltip
   }
   ... on IntervalConfig {
-    property
     units
     small_label
     required
     tooltip
   }
   ... on NumberInputConfig {
-    property
     units
     numberValueConstraint
     small_label
@@ -5395,6 +5703,7 @@ export const FieldConfigFragmentDoc = gql`
     small_label
     required
     tooltip
+    max
   }
 }
     `;
@@ -5568,13 +5877,17 @@ export const AssignProposalToSepDocument = gql`
     mutation assignProposalToSEP($proposalId: Int!, $sepId: Int!) {
   assignProposalToSEP(proposalId: $proposalId, sepId: $sepId) {
     error
-    isSuccess
+    nextProposalStatus {
+      proposalNextStatusId
+      proposalNextStatusShortCode
+      proposalNextStatusName
+    }
   }
 }
     `;
-export const AssignMembersDocument = gql`
-    mutation assignMembers($memberIds: [Int!]!, $sepId: Int!) {
-  assignMembers(memberIds: $memberIds, sepId: $sepId) {
+export const AssignReviewersToSepDocument = gql`
+    mutation assignReviewersToSEP($memberIds: [Int!]!, $sepId: Int!) {
+  assignReviewersToSEP(memberIds: $memberIds, sepId: $sepId) {
     error
     sep {
       id
@@ -5583,8 +5896,10 @@ export const AssignMembersDocument = gql`
 }
     `;
 export const AssignChairOrSecretaryDocument = gql`
-    mutation assignChairOrSecretary($addSEPMembersRole: AddSEPMembersRole!) {
-  assignChairOrSecretary(addSEPMembersRole: $addSEPMembersRole) {
+    mutation assignChairOrSecretary($assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSEPInput!) {
+  assignChairOrSecretary(
+    assignChairOrSecretaryToSEPInput: $assignChairOrSecretaryToSEPInput
+  ) {
     error
     sep {
       id
@@ -5592,9 +5907,13 @@ export const AssignChairOrSecretaryDocument = gql`
   }
 }
     `;
-export const AssignMemberToSepProposalDocument = gql`
-    mutation assignMemberToSEPProposal($memberId: Int!, $sepId: Int!, $proposalId: Int!) {
-  assignMemberToSEPProposal(memberId: $memberId, sepId: $sepId, proposalId: $proposalId) {
+export const AssignSepReviewersToProposalDocument = gql`
+    mutation assignSepReviewersToProposal($memberIds: [Int!]!, $sepId: Int!, $proposalId: Int!) {
+  assignSepReviewersToProposal(
+    memberIds: $memberIds
+    sepId: $sepId
+    proposalId: $proposalId
+  ) {
     error
     sep {
       id
@@ -5604,18 +5923,29 @@ export const AssignMemberToSepProposalDocument = gql`
     `;
 export const CreateSepDocument = gql`
     mutation createSEP($code: String!, $description: String!, $numberRatingsRequired: Int!, $active: Boolean!) {
-  createSEP(code: $code, description: $description, numberRatingsRequired: $numberRatingsRequired, active: $active) {
+  createSEP(
+    code: $code
+    description: $description
+    numberRatingsRequired: $numberRatingsRequired
+    active: $active
+  ) {
     sep {
       id
       code
       description
       numberRatingsRequired
       active
+      sepChair {
+        ...basicUserDetails
+      }
+      sepSecretary {
+        ...basicUserDetails
+      }
     }
     error
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const GetInstrumentsBySepDocument = gql`
     query getInstrumentsBySEP($sepId: Int!, $callId: Int!) {
   instrumentsBySep(sepId: $sepId, callId: $callId) {
@@ -5640,10 +5970,16 @@ export const GetUserSepsDocument = gql`
       description
       numberRatingsRequired
       active
+      sepChair {
+        ...basicUserDetails
+      }
+      sepSecretary {
+        ...basicUserDetails
+      }
     }
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const GetSepDocument = gql`
     query getSEP($id: Int!) {
   sep(id: $id) {
@@ -5652,17 +5988,21 @@ export const GetSepDocument = gql`
     description
     numberRatingsRequired
     active
+    sepChair {
+      ...basicUserDetails
+    }
+    sepSecretary {
+      ...basicUserDetails
+    }
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const GetSepMembersDocument = gql`
     query getSEPMembers($sepId: Int!) {
   sepMembers(sepId: $sepId) {
-    roleUserId
-    roleId
     userId
     sepId
-    roles {
+    role {
       id
       shortCode
       title
@@ -5672,6 +6012,9 @@ export const GetSepMembersDocument = gql`
       firstname
       lastname
       organisation
+      position
+      placeholder
+      created
     }
   }
 }
@@ -5682,6 +6025,7 @@ export const GetSepProposalDocument = gql`
     proposalId
     sepId
     sepTimeAllocation
+    instrumentSubmitted
     proposal {
       ...proposal
       proposer {
@@ -5731,6 +6075,7 @@ export const GetSepProposalsDocument = gql`
     proposalId
     dateAssigned
     sepId
+    sepTimeAllocation
     proposal {
       title
       id
@@ -5743,13 +6088,9 @@ export const GetSepProposalsDocument = gql`
       sepMemberUserId
       dateAssigned
       user {
-        id
-        firstname
-        lastname
-        organisation
-        position
+        ...basicUserDetails
       }
-      roles {
+      role {
         id
         shortCode
         title
@@ -5764,10 +6105,15 @@ export const GetSepProposalsDocument = gql`
     }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${BasicUserDetailsFragmentDoc}`;
 export const SepProposalsByInstrumentDocument = gql`
     query sepProposalsByInstrument($instrumentId: Int!, $sepId: Int!, $callId: Int!) {
-  sepProposalsByInstrument(instrumentId: $instrumentId, sepId: $sepId, callId: $callId) {
+  sepProposalsByInstrument(
+    instrumentId: $instrumentId
+    sepId: $sepId
+    callId: $callId
+  ) {
     sepTimeAllocation
     proposal {
       id
@@ -5795,6 +6141,28 @@ export const SepProposalsByInstrumentDocument = gql`
   }
 }
     ${ProposalStatusFragmentDoc}`;
+export const GetSepReviewersDocument = gql`
+    query getSEPReviewers($sepId: Int!) {
+  sepReviewers(sepId: $sepId) {
+    userId
+    sepId
+    role {
+      id
+      shortCode
+      title
+    }
+    user {
+      id
+      firstname
+      lastname
+      organisation
+      position
+      placeholder
+      created
+    }
+  }
+}
+    `;
 export const GetSePsDocument = gql`
     query getSEPs($filter: String!, $active: Boolean!) {
   seps(filter: $filter, active: $active) {
@@ -5804,11 +6172,17 @@ export const GetSePsDocument = gql`
       description
       numberRatingsRequired
       active
+      sepChair {
+        ...basicUserDetails
+      }
+      sepSecretary {
+        ...basicUserDetails
+      }
     }
     totalCount
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const RemoveProposalAssignmentDocument = gql`
     mutation removeProposalAssignment($proposalId: Int!, $sepId: Int!) {
   removeProposalAssignment(proposalId: $proposalId, sepId: $sepId) {
@@ -5819,9 +6193,9 @@ export const RemoveProposalAssignmentDocument = gql`
   }
 }
     `;
-export const RemoveMemberDocument = gql`
-    mutation removeMember($memberId: Int!, $sepId: Int!, $roleId: UserRole!) {
-  removeMember(memberId: $memberId, sepId: $sepId, roleId: $roleId) {
+export const RemoveMemberFromSepDocument = gql`
+    mutation removeMemberFromSep($memberId: Int!, $sepId: Int!, $roleId: UserRole!) {
+  removeMemberFromSep(memberId: $memberId, sepId: $sepId, roleId: $roleId) {
     error
     sep {
       id
@@ -5831,7 +6205,11 @@ export const RemoveMemberDocument = gql`
     `;
 export const RemoveMemberFromSepProposalDocument = gql`
     mutation removeMemberFromSEPProposal($memberId: Int!, $sepId: Int!, $proposalId: Int!) {
-  removeMemberFromSEPProposal(memberId: $memberId, sepId: $sepId, proposalId: $proposalId) {
+  removeMemberFromSEPProposal(
+    memberId: $memberId
+    sepId: $sepId
+    proposalId: $proposalId
+  ) {
     error
     sep {
       id
@@ -5841,7 +6219,13 @@ export const RemoveMemberFromSepProposalDocument = gql`
     `;
 export const UpdateSepDocument = gql`
     mutation updateSEP($id: Int!, $code: String!, $description: String!, $numberRatingsRequired: Int!, $active: Boolean!) {
-  updateSEP(id: $id, code: $code, description: $description, numberRatingsRequired: $numberRatingsRequired, active: $active) {
+  updateSEP(
+    id: $id
+    code: $code
+    description: $description
+    numberRatingsRequired: $numberRatingsRequired
+    active: $active
+  ) {
     sep {
       id
     }
@@ -5851,7 +6235,11 @@ export const UpdateSepDocument = gql`
     `;
 export const UpdateSepTimeAllocationDocument = gql`
     mutation updateSEPTimeAllocation($sepId: Int!, $proposalId: Int!, $sepTimeAllocation: Int) {
-  updateSEPTimeAllocation(sepId: $sepId, proposalId: $proposalId, sepTimeAllocation: $sepTimeAllocation) {
+  updateSEPTimeAllocation(
+    sepId: $sepId
+    proposalId: $proposalId
+    sepTimeAllocation: $sepTimeAllocation
+  ) {
     error
   }
 }
@@ -5866,7 +6254,9 @@ export const AddClientLogDocument = gql`
     `;
 export const CreateApiAccessTokenDocument = gql`
     mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
-  createApiAccessToken(createApiAccessTokenInput: {name: $name, accessPermissions: $accessPermissions}) {
+  createApiAccessToken(
+    createApiAccessTokenInput: {name: $name, accessPermissions: $accessPermissions}
+  ) {
     error
     apiAccessToken {
       id
@@ -5889,6 +6279,17 @@ export const CreateInstitutionDocument = gql`
   }
 }
     `;
+export const CreateUnitDocument = gql`
+    mutation createUnit($name: String!) {
+  createUnit(name: $name) {
+    unit {
+      id
+      name
+    }
+    error
+  }
+}
+    `;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
@@ -5903,6 +6304,16 @@ export const DeleteInstitutionDocument = gql`
     institution {
       id
       verified
+    }
+    error
+  }
+}
+    `;
+export const DeleteUnitDocument = gql`
+    mutation deleteUnit($id: Int!) {
+  deleteUnit(id: $id) {
+    unit {
+      id
     }
     error
   }
@@ -5949,6 +6360,14 @@ export const GetPageContentDocument = gql`
   getPageContent(id: $id)
 }
     `;
+export const GetUnitsDocument = gql`
+    query getUnits {
+  units {
+    id
+    name
+  }
+}
+    `;
 export const SetPageContentDocument = gql`
     mutation setPageContent($id: PageName!, $text: String!) {
   setPageContent(id: $id, text: $text) {
@@ -5962,7 +6381,9 @@ export const SetPageContentDocument = gql`
     `;
 export const UpdateApiAccessTokenDocument = gql`
     mutation updateApiAccessToken($accessTokenId: String!, $name: String!, $accessPermissions: String!) {
-  updateApiAccessToken(updateApiAccessTokenInput: {accessTokenId: $accessTokenId, name: $name, accessPermissions: $accessPermissions}) {
+  updateApiAccessToken(
+    updateApiAccessTokenInput: {accessTokenId: $accessTokenId, name: $name, accessPermissions: $accessPermissions}
+  ) {
     error
     apiAccessToken {
       id
@@ -5987,7 +6408,9 @@ export const UpdateInstitutionDocument = gql`
     `;
 export const AssignInstrumentsToCallDocument = gql`
     mutation assignInstrumentsToCall($instrumentIds: [Int!]!, $callId: Int!) {
-  assignInstrumentsToCall(assignInstrumentsToCallInput: {instrumentIds: $instrumentIds, callId: $callId}) {
+  assignInstrumentsToCall(
+    assignInstrumentsToCallInput: {instrumentIds: $instrumentIds, callId: $callId}
+  ) {
     error
     call {
       id
@@ -5997,7 +6420,9 @@ export const AssignInstrumentsToCallDocument = gql`
     `;
 export const CreateCallDocument = gql`
     mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $proposalWorkflowId: Int, $templateId: Int) {
-  createCall(createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}) {
+  createCall(
+    createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}
+  ) {
     error
     call {
       ...call
@@ -6005,6 +6430,17 @@ export const CreateCallDocument = gql`
   }
 }
     ${CallFragmentDoc}`;
+export const DeleteCallDocument = gql`
+    mutation deleteCall($id: Int!) {
+  deleteCall(id: $id) {
+    error
+    call {
+      id
+    }
+    error
+  }
+}
+    `;
 export const GetCallDocument = gql`
     query getCall($id: Int!) {
   call(id: $id) {
@@ -6028,7 +6464,9 @@ export const GetCallsByInstrumentScientistDocument = gql`
     ${CallFragmentDoc}`;
 export const RemoveAssignedInstrumentFromCallDocument = gql`
     mutation removeAssignedInstrumentFromCall($instrumentId: Int!, $callId: Int!) {
-  removeAssignedInstrumentFromCall(removeAssignedInstrumentFromCallInput: {instrumentId: $instrumentId, callId: $callId}) {
+  removeAssignedInstrumentFromCall(
+    removeAssignedInstrumentFromCallInput: {instrumentId: $instrumentId, callId: $callId}
+  ) {
     error
     call {
       id
@@ -6038,7 +6476,9 @@ export const RemoveAssignedInstrumentFromCallDocument = gql`
     `;
 export const UpdateCallDocument = gql`
     mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $proposalWorkflowId: Int, $templateId: Int) {
-  updateCall(updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}) {
+  updateCall(
+    updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}
+  ) {
     error
     call {
       ...call
@@ -6073,7 +6513,10 @@ export const AssignProposalsToInstrumentDocument = gql`
     `;
 export const AssignScientistsToInstrumentDocument = gql`
     mutation assignScientistsToInstrument($scientistIds: [Int!]!, $instrumentId: Int!) {
-  assignScientistsToInstrument(scientistIds: $scientistIds, instrumentId: $instrumentId) {
+  assignScientistsToInstrument(
+    scientistIds: $scientistIds
+    instrumentId: $instrumentId
+  ) {
     error
     isSuccess
   }
@@ -6135,7 +6578,10 @@ export const GetUserInstrumentsDocument = gql`
     ${BasicUserDetailsFragmentDoc}`;
 export const RemoveProposalFromInstrumentDocument = gql`
     mutation removeProposalFromInstrument($proposalId: Int!, $instrumentId: Int!) {
-  removeProposalFromInstrument(proposalId: $proposalId, instrumentId: $instrumentId) {
+  removeProposalFromInstrument(
+    proposalId: $proposalId
+    instrumentId: $instrumentId
+  ) {
     error
     isSuccess
   }
@@ -6143,7 +6589,10 @@ export const RemoveProposalFromInstrumentDocument = gql`
     `;
 export const RemoveScientistFromInstrumentDocument = gql`
     mutation removeScientistFromInstrument($scientistId: Int!, $instrumentId: Int!) {
-  removeScientistFromInstrument(scientistId: $scientistId, instrumentId: $instrumentId) {
+  removeScientistFromInstrument(
+    scientistId: $scientistId
+    instrumentId: $instrumentId
+  ) {
     error
     isSuccess
   }
@@ -6151,7 +6600,11 @@ export const RemoveScientistFromInstrumentDocument = gql`
     `;
 export const SetInstrumentAvailabilityTimeDocument = gql`
     mutation setInstrumentAvailabilityTime($callId: Int!, $instrumentId: Int!, $availabilityTime: Int!) {
-  setInstrumentAvailabilityTime(callId: $callId, instrumentId: $instrumentId, availabilityTime: $availabilityTime) {
+  setInstrumentAvailabilityTime(
+    callId: $callId
+    instrumentId: $instrumentId
+    availabilityTime: $availabilityTime
+  ) {
     error
     isSuccess
   }
@@ -6167,7 +6620,12 @@ export const SubmitInstrumentDocument = gql`
     `;
 export const UpdateInstrumentDocument = gql`
     mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!) {
-  updateInstrument(id: $id, name: $name, shortCode: $shortCode, description: $description) {
+  updateInstrument(
+    id: $id
+    name: $name
+    shortCode: $shortCode
+    description: $description
+  ) {
     instrument {
       id
       name
@@ -6183,7 +6641,14 @@ export const UpdateInstrumentDocument = gql`
     ${BasicUserDetailsFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
     mutation administrationProposal($id: Int!, $rankOrder: Int, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String) {
-  administrationProposal(id: $id, rankOrder: $rankOrder, finalStatus: $finalStatus, statusId: $statusId, commentForUser: $commentForUser, commentForManagement: $commentForManagement) {
+  administrationProposal(
+    id: $id
+    rankOrder: $rankOrder
+    finalStatus: $finalStatus
+    statusId: $statusId
+    commentForUser: $commentForUser
+    commentForManagement: $commentForManagement
+  ) {
     proposal {
       id
     }
@@ -6191,6 +6656,55 @@ export const AdministrationProposalDocument = gql`
   }
 }
     `;
+export const CloneProposalDocument = gql`
+    mutation cloneProposal($proposalToCloneId: Int!, $callId: Int!) {
+  cloneProposal(
+    cloneProposalInput: {proposalToCloneId: $proposalToCloneId, callId: $callId}
+  ) {
+    proposal {
+      ...proposal
+      proposer {
+        ...basicUserDetails
+      }
+      users {
+        ...basicUserDetails
+      }
+      questionary {
+        ...questionary
+      }
+      technicalReview {
+        ...coreTechnicalReview
+      }
+      reviews {
+        id
+        grade
+        comment
+        status
+        userID
+        sepID
+        reviewer {
+          firstname
+          lastname
+          id
+        }
+      }
+      instrument {
+        id
+        name
+        shortCode
+      }
+      call {
+        id
+        shortCode
+      }
+    }
+    error
+  }
+}
+    ${ProposalFragmentDoc}
+${BasicUserDetailsFragmentDoc}
+${QuestionaryFragmentDoc}
+${CoreTechnicalReviewFragmentDoc}`;
 export const CreateProposalDocument = gql`
     mutation createProposal($callId: Int!) {
   createProposal(callId: $callId) {
@@ -6419,7 +6933,13 @@ export const SubmitProposalDocument = gql`
     ${ProposalFragmentDoc}`;
 export const UpdateProposalDocument = gql`
     mutation updateProposal($id: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
-  updateProposal(id: $id, title: $title, abstract: $abstract, users: $users, proposerId: $proposerId) {
+  updateProposal(
+    id: $id
+    title: $title
+    abstract: $abstract
+    users: $users
+    proposerId: $proposerId
+  ) {
     proposal {
       id
       title
@@ -6437,7 +6957,12 @@ export const UpdateProposalDocument = gql`
     ${BasicUserDetailsFragmentDoc}`;
 export const AnswerTopicDocument = gql`
     mutation answerTopic($questionaryId: Int!, $topicId: Int!, $answers: [AnswerInput!]!, $isPartialSave: Boolean) {
-  answerTopic(questionaryId: $questionaryId, topicId: $topicId, answers: $answers, isPartialSave: $isPartialSave) {
+  answerTopic(
+    questionaryId: $questionaryId
+    topicId: $topicId
+    answers: $answers
+    isPartialSave: $isPartialSave
+  ) {
     questionaryStep {
       ...questionaryStep
     }
@@ -6482,7 +7007,9 @@ export const GetQuestionaryDocument = gql`
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
     mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus) {
-  addTechnicalReview(proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status) {
+  addTechnicalReview(
+    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status}
+  ) {
     error
     technicalReview {
       id
@@ -6497,6 +7024,18 @@ export const AddUserForReviewDocument = gql`
     review {
       id
     }
+  }
+}
+    `;
+export const GetProposalReviewsDocument = gql`
+    query getProposalReviews($proposalId: Int!) {
+  proposalReviews(proposalId: $proposalId) {
+    id
+    userID
+    comment
+    grade
+    status
+    sepID
   }
 }
     `;
@@ -6522,9 +7061,27 @@ export const RemoveUserForReviewDocument = gql`
   }
 }
     `;
+export const SubmitTechnicalReviewDocument = gql`
+    mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
+  submitTechnicalReview(
+    submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
+  ) {
+    error
+    technicalReview {
+      id
+    }
+  }
+}
+    `;
 export const AddReviewDocument = gql`
     mutation addReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
-  addReview(reviewID: $reviewID, grade: $grade, comment: $comment, status: $status, sepID: $sepID) {
+  addReview(
+    reviewID: $reviewID
+    grade: $grade
+    comment: $comment
+    status: $status
+    sepID: $sepID
+  ) {
     error
     review {
       ...coreReview
@@ -6533,13 +7090,13 @@ export const AddReviewDocument = gql`
 }
     ${CoreReviewFragmentDoc}`;
 export const UserWithReviewsDocument = gql`
-    query userWithReviews {
+    query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus) {
   me {
     id
     firstname
     lastname
     organisation
-    reviews {
+    reviews(callId: $callId, instrumentId: $instrumentId, status: $status) {
       id
       grade
       comment
@@ -6570,7 +7127,12 @@ export const CloneSampleDocument = gql`
 ${QuestionaryFragmentDoc}`;
 export const CreateSampleDocument = gql`
     mutation createSample($title: String!, $templateId: Int!, $proposalId: Int!, $questionId: String!) {
-  createSample(title: $title, templateId: $templateId, proposalId: $proposalId, questionId: $questionId) {
+  createSample(
+    title: $title
+    templateId: $templateId
+    proposalId: $proposalId
+    questionId: $questionId
+  ) {
     sample {
       ...sample
       questionary {
@@ -6629,7 +7191,12 @@ export const GetSamplesByCallIdDocument = gql`
     ${SampleFragmentDoc}`;
 export const UpdateSampleDocument = gql`
     mutation updateSample($sampleId: Int!, $title: String, $safetyComment: String, $safetyStatus: SampleStatus) {
-  updateSample(sampleId: $sampleId, title: $title, safetyComment: $safetyComment, safetyStatus: $safetyStatus) {
+  updateSample(
+    sampleId: $sampleId
+    title: $title
+    safetyComment: $safetyComment
+    safetyStatus: $safetyStatus
+  ) {
     sample {
       ...sample
       questionary {
@@ -6644,7 +7211,9 @@ export const UpdateSampleDocument = gql`
     ${SampleFragmentDoc}`;
 export const AddNextStatusEventsToConnectionDocument = gql`
     mutation addNextStatusEventsToConnection($proposalWorkflowConnectionId: Int!, $nextStatusEvents: [String!]!) {
-  addNextStatusEventsToConnection(addNextStatusEventsToConnectionInput: {proposalWorkflowConnectionId: $proposalWorkflowConnectionId, nextStatusEvents: $nextStatusEvents}) {
+  addNextStatusEventsToConnection(
+    addNextStatusEventsToConnectionInput: {proposalWorkflowConnectionId: $proposalWorkflowConnectionId, nextStatusEvents: $nextStatusEvents}
+  ) {
     nextStatusEvents {
       nextStatusEventId
       proposalWorkflowConnectionId
@@ -6656,7 +7225,9 @@ export const AddNextStatusEventsToConnectionDocument = gql`
     `;
 export const AddProposalWorkflowStatusDocument = gql`
     mutation addProposalWorkflowStatus($proposalWorkflowId: Int!, $sortOrder: Int!, $droppableGroupId: String!, $parentDroppableGroupId: String, $proposalStatusId: Int!, $nextProposalStatusId: Int, $prevProposalStatusId: Int) {
-  addProposalWorkflowStatus(newProposalWorkflowStatusInput: {proposalWorkflowId: $proposalWorkflowId, sortOrder: $sortOrder, droppableGroupId: $droppableGroupId, parentDroppableGroupId: $parentDroppableGroupId, proposalStatusId: $proposalStatusId, nextProposalStatusId: $nextProposalStatusId, prevProposalStatusId: $prevProposalStatusId}) {
+  addProposalWorkflowStatus(
+    newProposalWorkflowStatusInput: {proposalWorkflowId: $proposalWorkflowId, sortOrder: $sortOrder, droppableGroupId: $droppableGroupId, parentDroppableGroupId: $parentDroppableGroupId, proposalStatusId: $proposalStatusId, nextProposalStatusId: $nextProposalStatusId, prevProposalStatusId: $prevProposalStatusId}
+  ) {
     proposalWorkflowConnection {
       id
     }
@@ -6666,7 +7237,9 @@ export const AddProposalWorkflowStatusDocument = gql`
     `;
 export const CreateProposalStatusDocument = gql`
     mutation createProposalStatus($shortCode: String!, $name: String!, $description: String!) {
-  createProposalStatus(newProposalStatusInput: {shortCode: $shortCode, name: $name, description: $description}) {
+  createProposalStatus(
+    newProposalStatusInput: {shortCode: $shortCode, name: $name, description: $description}
+  ) {
     proposalStatus {
       ...proposalStatus
     }
@@ -6676,7 +7249,9 @@ export const CreateProposalStatusDocument = gql`
     ${ProposalStatusFragmentDoc}`;
 export const CreateProposalWorkflowDocument = gql`
     mutation createProposalWorkflow($name: String!, $description: String!) {
-  createProposalWorkflow(newProposalWorkflowInput: {name: $name, description: $description}) {
+  createProposalWorkflow(
+    newProposalWorkflowInput: {name: $name, description: $description}
+  ) {
     proposalWorkflow {
       id
       name
@@ -6731,7 +7306,9 @@ export const DeleteProposalWorkflowDocument = gql`
     `;
 export const DeleteProposalWorkflowStatusDocument = gql`
     mutation deleteProposalWorkflowStatus($proposalStatusId: Int!, $proposalWorkflowId: Int!) {
-  deleteProposalWorkflowStatus(deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId}) {
+  deleteProposalWorkflowStatus(
+    deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId}
+  ) {
     isSuccess
     error
   }
@@ -6793,14 +7370,18 @@ export const GetProposalWorkflowsDocument = gql`
     `;
 export const MoveProposalWorkflowStatusDocument = gql`
     mutation moveProposalWorkflowStatus($from: IndexWithGroupId!, $to: IndexWithGroupId!, $proposalWorkflowId: Int!) {
-  moveProposalWorkflowStatus(moveProposalWorkflowStatusInput: {from: $from, to: $to, proposalWorkflowId: $proposalWorkflowId}) {
+  moveProposalWorkflowStatus(
+    moveProposalWorkflowStatusInput: {from: $from, to: $to, proposalWorkflowId: $proposalWorkflowId}
+  ) {
     error
   }
 }
     `;
 export const UpdateProposalStatusDocument = gql`
     mutation updateProposalStatus($id: Int!, $shortCode: String!, $name: String!, $description: String!) {
-  updateProposalStatus(updatedProposalStatusInput: {id: $id, shortCode: $shortCode, name: $name, description: $description}) {
+  updateProposalStatus(
+    updatedProposalStatusInput: {id: $id, shortCode: $shortCode, name: $name, description: $description}
+  ) {
     proposalStatus {
       ...proposalStatus
     }
@@ -6810,7 +7391,9 @@ export const UpdateProposalStatusDocument = gql`
     ${ProposalStatusFragmentDoc}`;
 export const UpdateProposalWorkflowDocument = gql`
     mutation updateProposalWorkflow($id: Int!, $name: String!, $description: String!) {
-  updateProposalWorkflow(updatedProposalWorkflowInput: {id: $id, name: $name, description: $description}) {
+  updateProposalWorkflow(
+    updatedProposalWorkflowInput: {id: $id, name: $name, description: $description}
+  ) {
     proposalWorkflow {
       id
       name
@@ -6906,7 +7489,10 @@ export const GetShipmentsDocument = gql`
     ${ShipmentFragmentDoc}`;
 export const SetActiveTemplateDocument = gql`
     mutation setActiveTemplate($templateCategoryId: TemplateCategoryId!, $templateId: Int!) {
-  setActiveTemplate(templateId: $templateId, templateCategoryId: $templateCategoryId) {
+  setActiveTemplate(
+    templateId: $templateId
+    templateCategoryId: $templateCategoryId
+  ) {
     isSuccess
     error
   }
@@ -6914,7 +7500,12 @@ export const SetActiveTemplateDocument = gql`
     `;
 export const UpdateShipmentDocument = gql`
     mutation updateShipment($shipmentId: Int!, $title: String, $proposalId: Int, $status: ShipmentStatus) {
-  updateShipment(shipmentId: $shipmentId, title: $title, status: $status, proposalId: $proposalId) {
+  updateShipment(
+    shipmentId: $shipmentId
+    title: $title
+    status: $status
+    proposalId: $proposalId
+  ) {
     error
     shipment {
       ...shipment
@@ -6958,7 +7549,12 @@ export const CreateQuestionDocument = gql`
     ${QuestionFragmentDoc}`;
 export const CreateQuestionTemplateRelationDocument = gql`
     mutation createQuestionTemplateRelation($templateId: Int!, $questionId: String!, $topicId: Int!, $sortOrder: Int!) {
-  createQuestionTemplateRelation(templateId: $templateId, questionId: $questionId, topicId: $topicId, sortOrder: $sortOrder) {
+  createQuestionTemplateRelation(
+    templateId: $templateId
+    questionId: $questionId
+    topicId: $topicId
+    sortOrder: $sortOrder
+  ) {
     template {
       ...template
     }
@@ -7064,7 +7660,12 @@ export const GetTemplatesDocument = gql`
     `;
 export const UpdateQuestionDocument = gql`
     mutation updateQuestion($id: String!, $naturalKey: String, $question: String, $config: String) {
-  updateQuestion(id: $id, naturalKey: $naturalKey, question: $question, config: $config) {
+  updateQuestion(
+    id: $id
+    naturalKey: $naturalKey
+    question: $question
+    config: $config
+  ) {
     question {
       ...question
     }
@@ -7074,7 +7675,13 @@ export const UpdateQuestionDocument = gql`
     ${QuestionFragmentDoc}`;
 export const UpdateQuestionTemplateRelationDocument = gql`
     mutation updateQuestionTemplateRelation($questionId: String!, $templateId: Int!, $topicId: Int, $sortOrder: Int!, $config: String) {
-  updateQuestionTemplateRelation(questionId: $questionId, templateId: $templateId, topicId: $topicId, sortOrder: $sortOrder, config: $config) {
+  updateQuestionTemplateRelation(
+    questionId: $questionId
+    templateId: $templateId
+    topicId: $topicId
+    sortOrder: $sortOrder
+    config: $config
+  ) {
     template {
       ...template
     }
@@ -7084,7 +7691,13 @@ export const UpdateQuestionTemplateRelationDocument = gql`
     ${TemplateFragmentDoc}`;
 export const UpdateQuestionTemplateRelationSettingsDocument = gql`
     mutation updateQuestionTemplateRelationSettings($questionId: String!, $templateId: Int!, $config: String, $dependencies: [FieldDependencyInput!]!, $dependenciesOperator: DependenciesLogicOperator) {
-  updateQuestionTemplateRelationSettings(questionId: $questionId, templateId: $templateId, config: $config, dependencies: $dependencies, dependenciesOperator: $dependenciesOperator) {
+  updateQuestionTemplateRelationSettings(
+    questionId: $questionId
+    templateId: $templateId
+    config: $config
+    dependencies: $dependencies
+    dependenciesOperator: $dependenciesOperator
+  ) {
     template {
       ...template
     }
@@ -7094,7 +7707,12 @@ export const UpdateQuestionTemplateRelationSettingsDocument = gql`
     ${TemplateFragmentDoc}`;
 export const UpdateTemplateDocument = gql`
     mutation updateTemplate($templateId: Int!, $name: String, $description: String, $isArchived: Boolean) {
-  updateTemplate(templateId: $templateId, name: $name, description: $description, isArchived: $isArchived) {
+  updateTemplate(
+    templateId: $templateId
+    name: $name
+    description: $description
+    isArchived: $isArchived
+  ) {
     template {
       ...templateMetadata
     }
@@ -7104,7 +7722,13 @@ export const UpdateTemplateDocument = gql`
     ${TemplateMetadataFragmentDoc}`;
 export const UpdateTopicDocument = gql`
     mutation updateTopic($topicId: Int!, $templateId: Int, $title: String, $sortOrder: Int, $isEnabled: Boolean) {
-  updateTopic(id: $topicId, templateId: $templateId, title: $title, sortOrder: $sortOrder, isEnabled: $isEnabled) {
+  updateTopic(
+    id: $topicId
+    templateId: $templateId
+    title: $title
+    sortOrder: $sortOrder
+    isEnabled: $isEnabled
+  ) {
     template {
       ...template
     }
@@ -7129,7 +7753,27 @@ export const CheckTokenDocument = gql`
     `;
 export const CreateUserDocument = gql`
     mutation createUser($user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $password: String!, $preferredname: String, $orcid: String!, $orcidHash: String!, $refreshToken: String!, $gender: String!, $nationality: Int!, $birthdate: String!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String) {
-  createUser(user_title: $user_title, firstname: $firstname, middlename: $middlename, lastname: $lastname, password: $password, preferredname: $preferredname, orcid: $orcid, orcidHash: $orcidHash, refreshToken: $refreshToken, gender: $gender, nationality: $nationality, birthdate: $birthdate, organisation: $organisation, department: $department, position: $position, email: $email, telephone: $telephone, telephone_alt: $telephone_alt, otherOrganisation: $otherOrganisation) {
+  createUser(
+    user_title: $user_title
+    firstname: $firstname
+    middlename: $middlename
+    lastname: $lastname
+    password: $password
+    preferredname: $preferredname
+    orcid: $orcid
+    orcidHash: $orcidHash
+    refreshToken: $refreshToken
+    gender: $gender
+    nationality: $nationality
+    birthdate: $birthdate
+    organisation: $organisation
+    department: $department
+    position: $position
+    email: $email
+    telephone: $telephone
+    telephone_alt: $telephone_alt
+    otherOrganisation: $otherOrganisation
+  ) {
     user {
       id
     }
@@ -7139,7 +7783,12 @@ export const CreateUserDocument = gql`
     `;
 export const CreateUserByEmailInviteDocument = gql`
     mutation createUserByEmailInvite($firstname: String!, $lastname: String!, $email: String!, $userRole: UserRole!) {
-  createUserByEmailInvite(firstname: $firstname, lastname: $lastname, email: $email, userRole: $userRole) {
+  createUserByEmailInvite(
+    firstname: $firstname
+    lastname: $lastname
+    email: $email
+    userRole: $userRole
+  ) {
     error
     id
   }
@@ -7287,6 +7936,10 @@ export const GetUserProposalsDocument = gql`
       proposer {
         id
       }
+      call {
+        id
+        shortCode
+      }
     }
   }
 }
@@ -7306,7 +7959,13 @@ export const GetUserWithRolesDocument = gql`
     `;
 export const GetUsersDocument = gql`
     query getUsers($filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!]) {
-  users(filter: $filter, first: $first, offset: $offset, userRole: $userRole, subtractUsers: $subtractUsers) {
+  users(
+    filter: $filter
+    first: $first
+    offset: $offset
+    userRole: $userRole
+    subtractUsers: $subtractUsers
+  ) {
     users {
       ...basicUserDetails
     }
@@ -7368,7 +8027,23 @@ export const UpdatePasswordDocument = gql`
     `;
 export const UpdateUserDocument = gql`
     mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: String!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String) {
-  updateUser(id: $id, user_title: $user_title, firstname: $firstname, middlename: $middlename, lastname: $lastname, preferredname: $preferredname, gender: $gender, nationality: $nationality, birthdate: $birthdate, organisation: $organisation, department: $department, position: $position, email: $email, telephone: $telephone, telephone_alt: $telephone_alt) {
+  updateUser(
+    id: $id
+    user_title: $user_title
+    firstname: $firstname
+    middlename: $middlename
+    lastname: $lastname
+    preferredname: $preferredname
+    gender: $gender
+    nationality: $nationality
+    birthdate: $birthdate
+    organisation: $organisation
+    department: $department
+    position: $position
+    email: $email
+    telephone: $telephone
+    telephone_alt: $telephone_alt
+  ) {
     user {
       id
     }
@@ -7404,14 +8079,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     assignProposalToSEP(variables: AssignProposalToSepMutationVariables): Promise<AssignProposalToSepMutation> {
       return withWrapper(() => client.request<AssignProposalToSepMutation>(print(AssignProposalToSepDocument), variables));
     },
-    assignMembers(variables: AssignMembersMutationVariables): Promise<AssignMembersMutation> {
-      return withWrapper(() => client.request<AssignMembersMutation>(print(AssignMembersDocument), variables));
+    assignReviewersToSEP(variables: AssignReviewersToSepMutationVariables): Promise<AssignReviewersToSepMutation> {
+      return withWrapper(() => client.request<AssignReviewersToSepMutation>(print(AssignReviewersToSepDocument), variables));
     },
     assignChairOrSecretary(variables: AssignChairOrSecretaryMutationVariables): Promise<AssignChairOrSecretaryMutation> {
       return withWrapper(() => client.request<AssignChairOrSecretaryMutation>(print(AssignChairOrSecretaryDocument), variables));
     },
-    assignMemberToSEPProposal(variables: AssignMemberToSepProposalMutationVariables): Promise<AssignMemberToSepProposalMutation> {
-      return withWrapper(() => client.request<AssignMemberToSepProposalMutation>(print(AssignMemberToSepProposalDocument), variables));
+    assignSepReviewersToProposal(variables: AssignSepReviewersToProposalMutationVariables): Promise<AssignSepReviewersToProposalMutation> {
+      return withWrapper(() => client.request<AssignSepReviewersToProposalMutation>(print(AssignSepReviewersToProposalDocument), variables));
     },
     createSEP(variables: CreateSepMutationVariables): Promise<CreateSepMutation> {
       return withWrapper(() => client.request<CreateSepMutation>(print(CreateSepDocument), variables));
@@ -7437,14 +8112,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     sepProposalsByInstrument(variables: SepProposalsByInstrumentQueryVariables): Promise<SepProposalsByInstrumentQuery> {
       return withWrapper(() => client.request<SepProposalsByInstrumentQuery>(print(SepProposalsByInstrumentDocument), variables));
     },
+    getSEPReviewers(variables: GetSepReviewersQueryVariables): Promise<GetSepReviewersQuery> {
+      return withWrapper(() => client.request<GetSepReviewersQuery>(print(GetSepReviewersDocument), variables));
+    },
     getSEPs(variables: GetSePsQueryVariables): Promise<GetSePsQuery> {
       return withWrapper(() => client.request<GetSePsQuery>(print(GetSePsDocument), variables));
     },
     removeProposalAssignment(variables: RemoveProposalAssignmentMutationVariables): Promise<RemoveProposalAssignmentMutation> {
       return withWrapper(() => client.request<RemoveProposalAssignmentMutation>(print(RemoveProposalAssignmentDocument), variables));
     },
-    removeMember(variables: RemoveMemberMutationVariables): Promise<RemoveMemberMutation> {
-      return withWrapper(() => client.request<RemoveMemberMutation>(print(RemoveMemberDocument), variables));
+    removeMemberFromSep(variables: RemoveMemberFromSepMutationVariables): Promise<RemoveMemberFromSepMutation> {
+      return withWrapper(() => client.request<RemoveMemberFromSepMutation>(print(RemoveMemberFromSepDocument), variables));
     },
     removeMemberFromSEPProposal(variables: RemoveMemberFromSepProposalMutationVariables): Promise<RemoveMemberFromSepProposalMutation> {
       return withWrapper(() => client.request<RemoveMemberFromSepProposalMutation>(print(RemoveMemberFromSepProposalDocument), variables));
@@ -7464,11 +8142,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
       return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
     },
+    createUnit(variables: CreateUnitMutationVariables): Promise<CreateUnitMutation> {
+      return withWrapper(() => client.request<CreateUnitMutation>(print(CreateUnitDocument), variables));
+    },
     deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
       return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
     },
     deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
       return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
+    },
+    deleteUnit(variables: DeleteUnitMutationVariables): Promise<DeleteUnitMutation> {
+      return withWrapper(() => client.request<DeleteUnitMutation>(print(DeleteUnitDocument), variables));
     },
     getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
       return withWrapper(() => client.request<GetAllApiAccessTokensAndPermissionsQuery>(print(GetAllApiAccessTokensAndPermissionsDocument), variables));
@@ -7485,6 +8169,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getPageContent(variables: GetPageContentQueryVariables): Promise<GetPageContentQuery> {
       return withWrapper(() => client.request<GetPageContentQuery>(print(GetPageContentDocument), variables));
     },
+    getUnits(variables?: GetUnitsQueryVariables): Promise<GetUnitsQuery> {
+      return withWrapper(() => client.request<GetUnitsQuery>(print(GetUnitsDocument), variables));
+    },
     setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
       return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
     },
@@ -7499,6 +8186,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createCall(variables: CreateCallMutationVariables): Promise<CreateCallMutation> {
       return withWrapper(() => client.request<CreateCallMutation>(print(CreateCallDocument), variables));
+    },
+    deleteCall(variables: DeleteCallMutationVariables): Promise<DeleteCallMutation> {
+      return withWrapper(() => client.request<DeleteCallMutation>(print(DeleteCallDocument), variables));
     },
     getCall(variables: GetCallQueryVariables): Promise<GetCallQuery> {
       return withWrapper(() => client.request<GetCallQuery>(print(GetCallDocument), variables));
@@ -7554,6 +8244,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     administrationProposal(variables: AdministrationProposalMutationVariables): Promise<AdministrationProposalMutation> {
       return withWrapper(() => client.request<AdministrationProposalMutation>(print(AdministrationProposalDocument), variables));
     },
+    cloneProposal(variables: CloneProposalMutationVariables): Promise<CloneProposalMutation> {
+      return withWrapper(() => client.request<CloneProposalMutation>(print(CloneProposalDocument), variables));
+    },
     createProposal(variables: CreateProposalMutationVariables): Promise<CreateProposalMutation> {
       return withWrapper(() => client.request<CreateProposalMutation>(print(CreateProposalDocument), variables));
     },
@@ -7602,11 +8295,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     addUserForReview(variables: AddUserForReviewMutationVariables): Promise<AddUserForReviewMutation> {
       return withWrapper(() => client.request<AddUserForReviewMutation>(print(AddUserForReviewDocument), variables));
     },
+    getProposalReviews(variables: GetProposalReviewsQueryVariables): Promise<GetProposalReviewsQuery> {
+      return withWrapper(() => client.request<GetProposalReviewsQuery>(print(GetProposalReviewsDocument), variables));
+    },
     getReview(variables: GetReviewQueryVariables): Promise<GetReviewQuery> {
       return withWrapper(() => client.request<GetReviewQuery>(print(GetReviewDocument), variables));
     },
     removeUserForReview(variables: RemoveUserForReviewMutationVariables): Promise<RemoveUserForReviewMutation> {
       return withWrapper(() => client.request<RemoveUserForReviewMutation>(print(RemoveUserForReviewDocument), variables));
+    },
+    submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables): Promise<SubmitTechnicalReviewMutation> {
+      return withWrapper(() => client.request<SubmitTechnicalReviewMutation>(print(SubmitTechnicalReviewDocument), variables));
     },
     addReview(variables: AddReviewMutationVariables): Promise<AddReviewMutation> {
       return withWrapper(() => client.request<AddReviewMutation>(print(AddReviewDocument), variables));

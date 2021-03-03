@@ -9,6 +9,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import FolderOpen from '@material-ui/icons/FolderOpen';
+import FunctionsIcon from '@material-ui/icons/Functions';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import Help from '@material-ui/icons/Help';
 import InboxIcon from '@material-ui/icons/Inbox';
@@ -138,17 +139,6 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
     </div>
   );
 
-  const reviewer = (
-    <div data-cy="reviewer-menu-items">
-      <ListItem component={NavLink} to="/" exact button>
-        <ListItemIcon>
-          <FolderOpen />
-        </ListItemIcon>
-        <ListItemText primary="Review Proposals" />
-      </ListItem>
-    </div>
-  );
-
   const SEPRoles = (
     <div data-cy="SEPRoles-menu-items">
       <ListItem component={NavLink} to="/" exact button>
@@ -164,6 +154,17 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         <Tooltip title="Scientific evaluation panels">
           <ListItemText primary="SEPs" />
         </Tooltip>
+      </ListItem>
+    </div>
+  );
+
+  const SEPReviewer = (
+    <div data-cy="SEPReviewer-menu-items">
+      <ListItem component={NavLink} to="/" exact button>
+        <ListItemIcon>
+          <FolderOpen />
+        </ListItemIcon>
+        <ListItemText primary="Review Proposals" />
       </ListItem>
     </div>
   );
@@ -196,14 +197,13 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
       return user;
     case UserRole.USER_OFFICER:
       return userOfficer;
-    case UserRole.REVIEWER:
-      return reviewer;
     case UserRole.INSTRUMENT_SCIENTIST:
       return instrumentScientist;
     case UserRole.SEP_CHAIR:
     case UserRole.SEP_SECRETARY:
-    case UserRole.SEP_REVIEWER:
       return SEPRoles;
+    case UserRole.SEP_REVIEWER:
+      return SEPReviewer;
     case UserRole.SAMPLE_SAFETY_REVIEWER:
       return sampleSafetyReviewer;
     default:
@@ -241,6 +241,12 @@ const SettingsMenuListItem = () => {
         <ListItemText primary="Settings" />
       </ListItem>
       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+        <ListItem component={NavLink} to="/Units" button>
+          <ListItemIcon>
+            <FunctionsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Units" />
+        </ListItem>
         <ListItem component={NavLink} to="/ProposalStatuses" button>
           <ListItemIcon>
             <ProposalSettingsIcon />

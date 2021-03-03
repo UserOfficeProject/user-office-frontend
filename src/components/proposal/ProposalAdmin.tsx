@@ -2,17 +2,20 @@ import { administrationProposalValidationSchema } from '@esss-swap/duo-validatio
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { Fragment } from 'react';
+import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
+import PreventTabChangeIfFormDirty from 'components/common/PreventTabChangeIfFormDirty';
 import { Proposal, UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
 
 export type AdministrationFormData = {
   id: number;
@@ -25,6 +28,7 @@ export type AdministrationFormData = {
 export default function ProposalAdmin(props: {
   data: Proposal;
   setAdministration: (data: AdministrationFormData) => void;
+  setFormDirty: FunctionType<void, boolean>;
 }) {
   const { api } = useDataApiWithFeedback();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
@@ -39,6 +43,17 @@ export default function ProposalAdmin(props: {
     proposalStatus: props.data.statusId,
     commentForUser: props.data.commentForUser || '',
     commentForManagement: props.data.commentForManagement || '',
+  };
+
+  const PromptIfDirty = () => {
+    const formik = useFormikContext();
+
+    return (
+      <Prompt
+        when={formik.dirty && formik.submitCount === 0}
+        message="Changes you recently made in this tab will be lost! Are you sure?"
+      />
+    );
   };
 
   return (
@@ -69,6 +84,11 @@ export default function ProposalAdmin(props: {
       >
         {({ isSubmitting }) => (
           <Form>
+            <PromptIfDirty />
+            <PreventTabChangeIfFormDirty
+              setFormDirty={props.setFormDirty}
+              initialValues={initialValues}
+            />
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <FormikDropdown
@@ -91,7 +111,7 @@ export default function ProposalAdmin(props: {
                   label="Proposal status"
                   data-cy="proposalStatus"
                   loading={loadingProposalStatuses}
-                  items={proposalStatuses.map(proposalStatus => ({
+                  items={proposalStatuses.map((proposalStatus) => ({
                     text: proposalStatus.name,
                     value: proposalStatus.id,
                   }))}

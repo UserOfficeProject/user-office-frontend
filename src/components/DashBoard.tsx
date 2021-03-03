@@ -41,6 +41,7 @@ import ApiAccessTokensPage from './settings/apiAccessTokens/ApiAccessTokensPage'
 import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
+import UnitTablePage from './settings/unitList/UnitTablePage';
 import ShipmentCreate from './shipments/CreateUpdateShipment';
 import MyShipments from './shipments/MyShipments';
 import ShipmentsPage from './shipments/ShipmentsPage';
@@ -80,7 +81,7 @@ BottomNavItem.propTypes = {
 
 const drawerWidth = 250;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
@@ -136,7 +137,9 @@ const useStyles = makeStyles(theme => ({
 
 const Dashboard: React.FC = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(
+    localStorage.drawerOpen ? localStorage.drawerOpen === '1' : true
+  );
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const isSampleSafetyReviewer = useCheckAccess([
     UserRole.SAMPLE_SAFETY_REVIEWER,
@@ -150,11 +153,14 @@ const Dashboard: React.FC = () => {
   const { calls } = useCallsData({ isActive: true });
 
   const handleDrawerOpen = () => {
+    localStorage.setItem('drawerOpen', '1');
     setOpen(true);
   };
   const handleDrawerClose = () => {
+    localStorage.setItem('drawerOpen', '0');
     setOpen(false);
   };
+
   const [, privacyPageContent] = useGetPageContent(PageName.PRIVACYPAGE);
   const [, faqPageContent] = useGetPageContent(PageName.HELPPAGE);
 
@@ -240,6 +246,7 @@ const Dashboard: React.FC = () => {
             path="/ProposalReviewUserOfficer/:id"
             component={ProposalReviewUserOfficer}
           />
+          {isUserOfficer && <Route path="/Units" component={UnitTablePage} />}
           {isUserOfficer && (
             <Route path="/ProposalStatuses" component={ProposalStatusesPage} />
           )}
@@ -272,7 +279,7 @@ const Dashboard: React.FC = () => {
                 allowedRoles={[UserRole.USER]}
                 yes={() => (
                   <Route
-                    render={props => (
+                    render={(props) => (
                       <OverviewPage {...props} userRole={UserRole.USER} />
                     )}
                   />
@@ -280,7 +287,6 @@ const Dashboard: React.FC = () => {
                 no={() => (
                   <Can
                     allowedRoles={[
-                      UserRole.REVIEWER,
                       UserRole.SEP_REVIEWER,
                       UserRole.SEP_CHAIR,
                       UserRole.SEP_SECRETARY,
@@ -288,7 +294,7 @@ const Dashboard: React.FC = () => {
                     ]}
                     yes={() => (
                       <Route
-                        render={props => (
+                        render={(props) => (
                           <OverviewPage
                             {...props}
                             userRole={currentRole as UserRole}

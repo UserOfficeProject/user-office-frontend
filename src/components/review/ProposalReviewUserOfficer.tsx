@@ -37,13 +37,15 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
   const loadProposal = useCallback(async () => {
     return api()
       .getProposal({ id: parseInt(match.params.id) })
-      .then(data => {
+      .then((data) => {
         setProposal(data.proposal as Proposal);
         if (data.proposal) {
           setTechReview(data.proposal.technicalReview);
         }
       });
   }, [api, match.params.id]);
+
+  const [formDirty, setFormDirty] = useState<boolean | undefined>(false);
 
   useEffect(() => {
     loadProposal();
@@ -62,7 +64,11 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
 
   return (
     <Container maxWidth="lg">
-      <SimpleTabs tabNames={tabNames}>
+      <SimpleTabs
+        tabNames={tabNames}
+        shouldPreventTabChange={formDirty}
+        setShouldPreventTabChange={setFormDirty}
+      >
         <GeneralInformation
           data={proposal}
           onProposalChanged={(newProposal): void => setProposal(newProposal)}
@@ -71,6 +77,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
           id={proposal.id}
           data={techReview}
           setReview={setTechReview}
+          setFormDirty={setFormDirty}
         />
         {isUserOfficer && (
           <ProposalAdmin
@@ -78,6 +85,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
             setAdministration={(data: AdministrationFormData) =>
               setProposal({ ...proposal, ...data })
             }
+            setFormDirty={setFormDirty}
           />
         )}
         {isUserOfficer && (

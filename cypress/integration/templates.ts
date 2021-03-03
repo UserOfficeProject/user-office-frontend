@@ -44,6 +44,7 @@ context('Template tests', () => {
   const sampleDeclarationDescription = faker.lorem.words(5);
 
   const minimumCharacters = 1000;
+  const richTextEditorMaxChars = 200;
 
   it('User officer should be able to create sample declaration template', () => {
     cy.login('officer');
@@ -116,17 +117,8 @@ context('Template tests', () => {
       .click();
 
     /* Boolean */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
 
-    cy.contains('Add Boolean').click();
-
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(booleanQuestion);
-
-    cy.contains('Save').click();
+    cy.createBooleanQuestion(booleanQuestion);
 
     cy.contains(booleanQuestion)
       .closest('[data-cy=question-container]')
@@ -135,10 +127,6 @@ context('Template tests', () => {
       .then(fieldId => {
         boolId = fieldId;
       });
-
-    cy.contains(booleanQuestion)
-      .parent()
-      .dragElement([{ direction: 'left', length: 1 }]);
 
     /* --- */
 
@@ -153,15 +141,11 @@ context('Template tests', () => {
       .clear()
       .type(intervalQuestion);
 
-    cy.get('[data-cy=property]').click();
-
-    cy.contains('energy').click();
-
     cy.get('[data-cy=units]>[role=button]').click({ force: true });
 
-    cy.contains('btu').click();
+    cy.contains('celsius').click();
 
-    cy.contains('terajoule').click();
+    cy.contains('kelvin').click();
 
     cy.get('body').type('{esc}');
 
@@ -189,15 +173,11 @@ context('Template tests', () => {
       .clear()
       .type(numberQuestion);
 
-    cy.get('[data-cy=property]').click();
-
-    cy.contains('energy').click();
-
     cy.get('[data-cy=units]>[role=button]').click({ force: true });
 
-    cy.contains('btu').click();
+    cy.contains('celsius').click();
 
-    cy.contains('terajoule').click();
+    cy.contains('kelvin').click();
 
     cy.get('body').type('{esc}');
 
@@ -217,23 +197,7 @@ context('Template tests', () => {
     /* --- */
 
     /* Text input */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
-
-    cy.contains('Add Text Input').click();
-
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(textQuestion);
-
-    cy.contains('Is required').click();
-
-    cy.contains('Multiple lines').click();
-
-    cy.get('[data-cy=max]').type(minimumCharacters.toString());
-
-    cy.contains('Save').click();
+    cy.createTextQuestion(textQuestion, true, true, minimumCharacters);
 
     cy.contains(textQuestion)
       .closest('[data-cy=question-container]')
@@ -252,6 +216,8 @@ context('Template tests', () => {
 
     cy.contains(textQuestion).click();
 
+    cy.get('[data-cy="natural-key"]').click();
+
     cy.get("[data-cy='natural_key']")
       .clear()
       .type(newKey);
@@ -262,11 +228,6 @@ context('Template tests', () => {
 
     cy.contains(newKey);
     /* --- */
-
-    cy.contains(textQuestion)
-      .parent()
-      .dragElement([{ direction: 'left', length: 1 }])
-      .wait(500);
 
     cy.contains(textQuestion).click();
 
@@ -308,41 +269,26 @@ context('Template tests', () => {
       .should('not.contain', textQuestion);
 
     /* Selection from options */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
+    cy.createMultipleChoiceQuestion(
+      multipleChoiceQuestion,
+      multipleChoiceAnswers[0],
+      multipleChoiceAnswers[1],
+      multipleChoiceAnswers[2]
+    );
 
-    cy.contains('Add Multiple choice').click();
+    cy.contains(multipleChoiceQuestion)
+      .closest('[data-cy=question-container]')
+      .find("[data-cy='proposal-question-id']")
+      .invoke('html')
+      .then(fieldId => {
+        multipleChoiceId = fieldId;
+      });
 
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(multipleChoiceQuestion);
+    cy.finishedLoading();
 
-    cy.contains('Radio').click();
+    cy.contains(multipleChoiceQuestion).click();
 
-    cy.contains('Dropdown').click();
-
-    cy.contains('Is multiple select').click();
-
-    cy.contains('Items').click();
-
-    cy.get('[data-cy=add-answer-button]')
-      .closest('button')
-      .click();
-    cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[0]);
-    cy.get('[title="Save"]').click();
-
-    cy.get('[data-cy=add-answer-button]')
-      .closest('button')
-      .click();
-    cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[1]);
-    cy.get('[title="Save"]').click();
-
-    cy.get('[data-cy=add-answer-button]')
-      .closest('button')
-      .click();
-    cy.get('[placeholder=Answer]').type(multipleChoiceAnswers[2]);
-    cy.get('[title="Save"]').click();
+    cy.get('[data-cy=natural-key]').click();
 
     cy.get('[index=0]').should('not.contain', multipleChoiceAnswers[1]);
 
@@ -360,34 +306,10 @@ context('Template tests', () => {
 
     cy.contains('Save').click();
 
-    cy.contains(multipleChoiceQuestion)
-      .closest('[data-cy=question-container]')
-      .find("[data-cy='proposal-question-id']")
-      .invoke('html')
-      .then(fieldId => {
-        multipleChoiceId = fieldId;
-      });
-
-    cy.contains(multipleChoiceQuestion)
-      .parent()
-      .dragElement([{ direction: 'left', length: 1 }]);
-
     /* --- */
 
     /* Date */
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
-
-    cy.contains('Add Date').click();
-
-    cy.get('[data-cy=question]')
-      .clear()
-      .type(dateQuestion);
-
-    cy.contains('Is required').click();
-
-    cy.contains('Save').click();
+    cy.createDateQuestion(dateQuestion);
 
     cy.contains(dateQuestion)
       .closest('[data-cy=question-container]')
@@ -397,9 +319,6 @@ context('Template tests', () => {
         dateId = fieldId;
       });
 
-    cy.contains(dateQuestion)
-      .parent()
-      .dragElement([{ direction: 'left', length: 1 }]);
     /* --- */
 
     /* File */
@@ -449,6 +368,14 @@ context('Template tests', () => {
       .parent()
       .dragElement([{ direction: 'left', length: 1 }]);
 
+    cy.finishedLoading();
+    cy.contains(richTextInputQuestion).click();
+
+    cy.get('[data-cy="max"] input')
+      .clear()
+      .type(`${richTextEditorMaxChars}`);
+
+    cy.contains('Update').click();
     /* --- */
 
     /* --- Update templateQuestionRelation */
@@ -559,7 +486,6 @@ context('Template tests', () => {
     cy.wait(300);
     cy.get(`[data-cy='${dateId}_field'] button`).click({ force: true }); // click twice because ui hangs sometimes
     cy.contains('15').click({ force: true });
-    cy.contains('OK').click();
 
     cy.get(`#${multipleChoiceId}`).click();
     cy.contains(multipleChoiceAnswers[0]).click();
@@ -583,6 +509,12 @@ context('Template tests', () => {
       .its('0.contentDocument.body')
       .should('not.be.empty')
       .contains(richTextInputValue);
+
+    cy.get('[data-cy="rich-text-char-count"]').then(element => {
+      expect(element.text()).to.be.equal(
+        `Characters: ${richTextInputValue.length} / ${richTextEditorMaxChars}`
+      );
+    });
 
     cy.contains('Save and continue').click();
 
@@ -657,7 +589,7 @@ context('Template tests', () => {
       .parent()
       .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.wait(200);
+    cy.finishedLoading();
 
     cy.contains(dateQuestion).click();
 
@@ -741,15 +673,11 @@ context('Template tests', () => {
       .clear()
       .type(numberQuestion1);
 
-    cy.get('[data-cy=property]').click();
-
-    cy.contains('energy').click();
-
     cy.get('[data-cy=units]>[role=button]').click();
 
-    cy.contains('btu').click();
+    cy.contains('celsius').click();
 
-    cy.contains('terajoule').click();
+    cy.contains('kelvin').click();
 
     cy.get('body').type('{esc}');
 
@@ -781,15 +709,11 @@ context('Template tests', () => {
       .clear()
       .type(numberQuestion2);
 
-    cy.get('[data-cy=property]').click();
-
-    cy.contains('energy').click();
-
     cy.get('[data-cy=units]>[role=button]').click();
 
-    cy.contains('btu').click();
+    cy.contains('celsius').click();
 
-    cy.contains('terajoule').click();
+    cy.contains('kelvin').click();
 
     cy.get('body').type('{esc}');
 
@@ -811,12 +735,11 @@ context('Template tests', () => {
       .parent()
       .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.wait(200);
+    cy.finishedLoading();
 
     cy.contains(numberQuestion2).click();
 
-    cy.get('[data-cy="property"] input').should('have.value', 'ENERGY');
-    cy.get('[data-cy=units] input').should('have.value', 'btu,terajoule');
+    cy.get('[data-cy=units] input').should('have.value', 'celsius,kelvin');
     cy.get('[data-cy="numberValueConstraint"] input').should(
       'have.value',
       'ONLY_POSITIVE'
@@ -899,9 +822,7 @@ context('Template tests', () => {
     cy.get("[title='Delete proposals']")
       .first()
       .click();
-    cy.get('.MuiDialog-root')
-      .contains('Yes')
-      .click();
+    cy.get('[data-cy="confirm-ok"]').click();
   });
 
   it('Officer can delete proposal questions', () => {
@@ -995,8 +916,7 @@ context('Template tests', () => {
       .dragElement([
         { direction: 'left', length: 1 },
         { direction: 'down', length: 2 },
-      ])
-      .wait(500);
+      ]);
 
     cy.finishedLoading();
 
@@ -1161,7 +1081,7 @@ context('Template tests', () => {
     );
   });
 
-  it('User officer can can change dependency logic operator', () => {
+  it('User officer can change dependency logic operator', () => {
     cy.login('officer');
 
     cy.navigateToTemplatesSubmenu('Proposal templates');
@@ -1222,6 +1142,90 @@ context('Template tests', () => {
     );
   });
 
+  it('User can add captions after uploading image/* file', () => {
+    cy.login('officer');
+
+    cy.navigateToTemplatesSubmenu('Proposal templates');
+
+    cy.get('[title="Edit"]')
+      .last()
+      .click();
+
+    cy.get('[data-cy=show-more-button]').click();
+
+    cy.contains('Add question').click();
+
+    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
+      .last()
+      .click();
+
+    cy.contains('Add File Upload').click();
+
+    cy.get('[data-cy="question"]')
+      .clear()
+      .type('File upload question');
+
+    cy.get('[data-cy="max_files"] input')
+      .clear()
+      .type('5');
+
+    cy.get('[data-cy="submit"]').click();
+
+    cy.contains('File upload question')
+      .parent()
+      .dragElement([
+        { direction: 'left', length: 1 },
+        { direction: 'down', length: 3 },
+      ]);
+
+    cy.finishedLoading();
+
+    cy.logout();
+
+    cy.login('user');
+
+    cy.contains('New Proposal').click();
+
+    cy.contains('File upload question');
+
+    cy.get('[data-cy="title"] input').type('Test title');
+    cy.get('[data-cy="abstract"] textarea')
+      .first()
+      .type('Test abstract');
+
+    cy.fixture('file_upload_test.png').then(fileContent => {
+      // NOTE: Using "cypress-file-upload" version "^3.5.3" because this(https://github.com/abramenal/cypress-file-upload/issues/179) should be fixed before upgrading to the latest
+      cy.get('input[type="file"]').upload({
+        fileContent: fileContent.toString(),
+        fileName: 'file_upload_test.png',
+        mimeType: 'image/png',
+      });
+
+      cy.contains('file_upload_test');
+      cy.get('[title="Add image caption"]').click();
+
+      cy.get('[data-cy="image-figure"] input').type('Fig_test');
+      cy.get('[data-cy="image-caption"] input').type('Test caption');
+
+      cy.contains('Save and continue').click();
+
+      cy.finishedLoading();
+
+      cy.contains('Proposal information');
+
+      cy.contains('file_upload_test');
+
+      cy.contains('New proposal').click();
+
+      cy.contains('file_upload_test');
+      cy.get('[data-cy="image-caption"] input').should(
+        'have.value',
+        'Test caption'
+      );
+      cy.get('[data-cy="image-figure"] input').should('have.value', 'Fig_test');
+    });
+  });
+
   it('should not let you create circular dependency chain', () => {
     cy.login('officer');
 
@@ -1270,7 +1274,7 @@ context('Template tests', () => {
     addBooleanField(field2);
     addBooleanField(field3);
 
-    cy.wait(200);
+    cy.finishedLoading();
 
     function addDependency(
       fieldName: string,
