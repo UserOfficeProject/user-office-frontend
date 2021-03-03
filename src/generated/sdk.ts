@@ -483,7 +483,7 @@ export type Mutation = {
   answerTopic: QuestionaryStepResponseWrap;
   createQuestionary: QuestionaryResponseWrap;
   updateAnswer: UpdateAnswerResponseWrap;
-  addReview: ReviewResponseWrap;
+  addReview: ReviewWithNextStatusResponseWrap;
   addUserForReview: ReviewResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
@@ -1189,17 +1189,10 @@ export type MutationUpdatePasswordArgs = {
   password: Scalars['String'];
 };
 
-export type NextProposalStatus = {
-  __typename?: 'NextProposalStatus';
-  proposalNextStatusId: Maybe<Scalars['Int']>;
-  proposalNextStatusShortCode: Maybe<Scalars['String']>;
-  proposalNextStatusName: Maybe<Scalars['String']>;
-};
-
 export type NextProposalStatusResponseWrap = {
   __typename?: 'NextProposalStatusResponseWrap';
   error: Maybe<Scalars['String']>;
-  nextProposalStatus: Maybe<NextProposalStatus>;
+  nextProposalStatus: Maybe<ProposalStatus>;
 };
 
 export type NextStatusEvent = {
@@ -1888,6 +1881,25 @@ export enum ReviewStatus {
   SUBMITTED = 'SUBMITTED'
 }
 
+export type ReviewWithNextProposalStatus = {
+  __typename?: 'ReviewWithNextProposalStatus';
+  id: Scalars['Int'];
+  userID: Scalars['Int'];
+  comment: Maybe<Scalars['String']>;
+  grade: Maybe<Scalars['Int']>;
+  status: ReviewStatus;
+  sepID: Scalars['Int'];
+  reviewer: Maybe<BasicUserDetails>;
+  proposal: Maybe<Proposal>;
+  nextProposalStatus: Maybe<ProposalStatus>;
+};
+
+export type ReviewWithNextStatusResponseWrap = {
+  __typename?: 'ReviewWithNextStatusResponseWrap';
+  error: Maybe<Scalars['String']>;
+  review: Maybe<ReviewWithNextProposalStatus>;
+};
+
 export type RichTextInputConfig = {
   __typename?: 'RichTextInputConfig';
   small_label: Scalars['String'];
@@ -2318,8 +2330,8 @@ export type AssignProposalToSepMutation = (
     { __typename?: 'NextProposalStatusResponseWrap' }
     & Pick<NextProposalStatusResponseWrap, 'error'>
     & { nextProposalStatus: Maybe<(
-      { __typename?: 'NextProposalStatus' }
-      & Pick<NextProposalStatus, 'proposalNextStatusId' | 'proposalNextStatusShortCode' | 'proposalNextStatusName'>
+      { __typename?: 'ProposalStatus' }
+      & Pick<ProposalStatus, 'id' | 'shortCode' | 'name'>
     )> }
   ) }
 );
@@ -3949,11 +3961,15 @@ export type AddReviewMutationVariables = Exact<{
 export type AddReviewMutation = (
   { __typename?: 'Mutation' }
   & { addReview: (
-    { __typename?: 'ReviewResponseWrap' }
-    & Pick<ReviewResponseWrap, 'error'>
+    { __typename?: 'ReviewWithNextStatusResponseWrap' }
+    & Pick<ReviewWithNextStatusResponseWrap, 'error'>
     & { review: Maybe<(
-      { __typename?: 'Review' }
-      & CoreReviewFragment
+      { __typename?: 'ReviewWithNextProposalStatus' }
+      & Pick<ReviewWithNextProposalStatus, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
+      & { nextProposalStatus: Maybe<(
+        { __typename?: 'ProposalStatus' }
+        & Pick<ProposalStatus, 'id' | 'shortCode' | 'name'>
+      )> }
     )> }
   ) }
 );
@@ -5878,9 +5894,9 @@ export const AssignProposalToSepDocument = gql`
   assignProposalToSEP(proposalId: $proposalId, sepId: $sepId) {
     error
     nextProposalStatus {
-      proposalNextStatusId
-      proposalNextStatusShortCode
-      proposalNextStatusName
+      id
+      shortCode
+      name
     }
   }
 }
@@ -7084,11 +7100,21 @@ export const AddReviewDocument = gql`
   ) {
     error
     review {
-      ...coreReview
+      id
+      userID
+      status
+      comment
+      grade
+      sepID
+      nextProposalStatus {
+        id
+        shortCode
+        name
+      }
     }
   }
 }
-    ${CoreReviewFragmentDoc}`;
+    `;
 export const UserWithReviewsDocument = gql`
     query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus) {
   me {
