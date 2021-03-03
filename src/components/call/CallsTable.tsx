@@ -12,6 +12,7 @@ import SuperMaterialTable, {
 import { Call, InstrumentWithAvailabilityTime, UserRole } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 
 import AssignedInstrumentsTable from './AssignedInstrumentsTable';
@@ -23,7 +24,13 @@ import CallStatusFilter, {
 } from './CallStatusFilter';
 import CreateUpdateCall from './CreateUpdateCall';
 
+const getFilterStatus = (callStatus: string | CallStatus) =>
+  callStatus === CallStatus.ALL
+    ? undefined // if set to ALL we don't filter by status
+    : callStatus === CallStatus.ACTIVE;
+
 const CallsTable: React.FC = () => {
+  const { api } = useDataApiWithFeedback();
   const [assigningInstrumentsCallId, setAssigningInstrumentsCallId] = useState<
     number | null
   >(null);
@@ -41,20 +48,14 @@ const CallsTable: React.FC = () => {
     setCallsWithLoading: setCalls,
     setCallsFilter,
   } = useCallsData({
-    isActive:
-      urlQueryParams.callStatus === CallStatus.ALL
-        ? undefined // if set to ALL we don't filter by status
-        : urlQueryParams.callStatus === CallStatus.ACTIVE,
+    isActive: getFilterStatus(urlQueryParams.callStatus),
   });
 
   const handleStatusFilterChange = (callStatus: CallStatus) => {
     setUrlQueryParams((queries) => ({ ...queries, callStatus }));
     setCallsFilter((filter) => ({
       ...filter,
-      isActive:
-        callStatus === CallStatus.ALL
-          ? undefined // if set to ALL we don't filter by status
-          : callStatus === CallStatus.ACTIVE,
+      isActive: getFilterStatus(callStatus),
     }));
   };
 
@@ -133,6 +134,25 @@ const CallsTable: React.FC = () => {
     }
   };
 
+  const deleteCall = async (id: number | string) => {
+    return await api('Call deleted successfully')
+      .deleteCall({
+        id: id as number,
+      })
+      .then((resp) => {
+        if (!resp.deleteCall.error) {
+          const newObjectsArray = calls.filter(
+            (objectItem) => objectItem.id !== id
+          );
+          setCalls(newObjectsArray);
+
+          return true;
+        } else {
+          return false;
+        }
+      });
+  };
+
   const setInstrumentAvailabilityTime = (
     updatedInstruments: InstrumentWithAvailabilityTime[],
     updatingCallId: number
@@ -183,7 +203,7 @@ const CallsTable: React.FC = () => {
     <div data-cy="calls-table">
       <CallStatusFilter
         callStatus={urlQueryParams.callStatus}
-        onStatusChange={handleStatusFilterChange}
+        onChange={handleStatusFilterChange}
       />
       {assigningInstrumentsCallId && (
         <InputDialog
@@ -206,6 +226,7 @@ const CallsTable: React.FC = () => {
       <SuperMaterialTable
         createModal={createModal}
         setData={setCalls}
+        delete={deleteCall}
         hasAccess={{
           create: isUserOfficer,
           update: isUserOfficer,

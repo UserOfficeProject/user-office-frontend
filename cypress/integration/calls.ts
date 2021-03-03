@@ -291,7 +291,9 @@ context('Calls tests', () => {
 
     cy.get('[title="Show Instruments"]').first().click();
 
-    cy.get('[title="Delete"]').first().click();
+    cy.get('[data-cy="call-instrument-assignments-table"] [title="Delete"]')
+      .first()
+      .click();
 
     cy.get('[title="Save"]').click();
 
@@ -384,6 +386,21 @@ context('Calls tests', () => {
       .find('td')
       .eq(6)
       .should('have.text', '-');
+  });
+
+  it('A user-officer should be able to remove a call', () => {
+    cy.login('officer');
+
+    cy.contains('Calls').click();
+
+    cy.get('[data-cy="call-status-filter"]').click();
+    cy.get('[role="listbox"]').contains('Active').click();
+
+    cy.get('[title="Delete"]').last().click();
+
+    cy.get('[title="Save"]').click();
+
+    cy.notification({ variant: 'success', text: 'Call deleted successfully' });
   });
 
   it('User officer can filter calls by their status', () => {
