@@ -1,9 +1,10 @@
 import { Link, makeStyles } from '@material-ui/core';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';
-import { Box, Button, Link, makeStyles } from '@material-ui/core';
 import UOLoader from 'components/common/UOLoader';
+import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -12,15 +13,16 @@ import QuestionaryDetails, {
   TableRowData,
 } from 'components/questionary/QuestionaryDetails';
 import { ShipmentStatus } from 'generated/sdk';
+import { useDownloadPDFShipmentLabel } from 'hooks/proposal/useDownloadPDFShipmentLabel';
 import { useProposalData } from 'hooks/proposal/useProposalData';
-import React, { useContext } from 'react';
+import { EventType } from 'models/QuestionarySubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
+
 import { ShipmentContextType } from './ShipmentContainer';
 
 type ShipmentReviewProps = {
-  isReadonly: boolean;
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
@@ -32,11 +34,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function ShipmentReview({
-  isReadonly,
-  onComplete,
-  confirm,
-}: ShipmentReviewProps) {
+function ShipmentReview({ confirm }: ShipmentReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { state, dispatch } = useContext(
     QuestionaryContext
@@ -46,6 +44,7 @@ function ShipmentReview({
   }
 
   const { proposalData } = useProposalData(state.shipment.proposalId);
+  const downloadShipmentLabel = useDownloadPDFShipmentLabel();
   const classes = useStyles();
 
   if (!proposalData) {
@@ -67,13 +66,15 @@ function ShipmentReview({
       label: 'Samples',
       value: (
         <ul className={classes.sampleList}>
-          {state.shipment.samples.map(sample => (
+          {state.shipment.samples.map((sample) => (
             <li key={sample.id}>{sample.title}</li>
           ))}
         </ul>
       ),
     },
   ];
+
+  const isSubmitted = state.shipment.status === ShipmentStatus.SUBMITTED;
 
   return (
     <div>
@@ -82,19 +83,18 @@ function ShipmentReview({
         additionalDetails={additionalDetails}
         title="Shipment information"
       />
-      <Box display="flex" justifyContent="flex-end" marginTop={2}>
-        {/* TODO handle is loading state isExecutingCall*/}
-        <Button
-          variant="contained"
-          disabled={isReadonly}
+      <NavigationFragment isLoading={isExecutingCall}>
+        <NavigButton
           onClick={() =>
             confirm(
               async () => {
-                await api().updateShipment({
+                const result = await api().submitShipment({
                   shipmentId: state.shipment.id,
-                  status: ShipmentStatus.SUBMITTED,
                 });
-                onComplete?.();
+                dispatch({
+                  type: EventType.SHIPMENT_MODIFIED,
+                  payload: { shipment: result.submitShipment.shipment },
+                });
               },
               {
                 title: 'Confirmation',
@@ -103,10 +103,29 @@ function ShipmentReview({
               }
             )()
           }
+          disabled={isSubmitted}
+          variant="contained"
+          color="primary"
         >
-          Submit
-        </Button>
-      </Box>
+          {isSubmitted ? '✔ Submitted' : 'Submit'}
+        </NavigButton>
+        {state.shipment.status === ShipmentStatus.SUBMITTED && (
+          <NavigButton
+            onClick={() =>
+              downloadShipmentLabel(
+                [state.shipment.id],
+                `${state.shipment.title}.pdf`
+              )
+            }
+            startIcon={<GetAppIcon />}
+            variant="contained"
+            color="secondary"
+            data-cy="download-shipment-label"
+          >
+            Download shipment label
+          </NavigButton>
+        )}
+      </NavigationFragment>
     </div>
   );
 }
