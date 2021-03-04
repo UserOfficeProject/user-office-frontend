@@ -44,6 +44,7 @@ export type AddTechnicalReviewInput = {
   publicComment?: Maybe<Scalars['String']>;
   timeAllocation?: Maybe<Scalars['Int']>;
   status?: Maybe<TechnicalReviewStatus>;
+  submitted?: Maybe<Scalars['Boolean']>;
 };
 
 export type AddUserRoleResponseWrap = {
@@ -3508,7 +3509,7 @@ export type GetInstrumentScientistProposalsQuery = (
         & BasicUserDetailsFragment
       )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
-        & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID'>
+        & CoreTechnicalReviewFragment
       )>, instrument: Maybe<(
         { __typename?: 'Instrument' }
         & Pick<Instrument, 'id' | 'name'>
@@ -3590,7 +3591,7 @@ export type GetProposalsQuery = (
         & BasicUserDetailsFragment
       )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
-        & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID'>
+        & CoreTechnicalReviewFragment
       )>, instrument: Maybe<(
         { __typename?: 'Instrument' }
         & Pick<Instrument, 'id' | 'name'>
@@ -3839,6 +3840,7 @@ export type AddTechnicalReviewMutationVariables = Exact<{
   comment?: Maybe<Scalars['String']>;
   publicComment?: Maybe<Scalars['String']>;
   status?: Maybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
 }>;
 
 
@@ -6783,12 +6785,7 @@ export const GetInstrumentScientistProposalsDocument = gql`
         ...basicUserDetails
       }
       technicalReview {
-        id
-        comment
-        publicComment
-        timeAllocation
-        status
-        proposalID
+        ...coreTechnicalReview
       }
       instrument {
         id
@@ -6807,7 +6804,8 @@ export const GetInstrumentScientistProposalsDocument = gql`
   }
 }
     ${ProposalFragmentDoc}
-${BasicUserDetailsFragmentDoc}`;
+${BasicUserDetailsFragmentDoc}
+${CoreTechnicalReviewFragmentDoc}`;
 export const GetProposalDocument = gql`
     query getProposal($id: Int!) {
   proposal(id: $id) {
@@ -6877,12 +6875,7 @@ export const GetProposalsDocument = gql`
         ...basicUserDetails
       }
       technicalReview {
-        id
-        comment
-        publicComment
-        timeAllocation
-        status
-        proposalID
+        ...coreTechnicalReview
       }
       instrument {
         id
@@ -6901,7 +6894,8 @@ export const GetProposalsDocument = gql`
   }
 }
     ${ProposalFragmentDoc}
-${BasicUserDetailsFragmentDoc}`;
+${BasicUserDetailsFragmentDoc}
+${CoreTechnicalReviewFragmentDoc}`;
 export const GetProposalsCoreDocument = gql`
     query getProposalsCore($filter: ProposalsFilter) {
   proposalsView(filter: $filter) {
@@ -7022,9 +7016,9 @@ export const GetQuestionaryDocument = gql`
 }
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
-    mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus) {
+    mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
   addTechnicalReview(
-    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status}
+    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
   ) {
     error
     technicalReview {
