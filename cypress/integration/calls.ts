@@ -388,21 +388,6 @@ context('Calls tests', () => {
       .should('have.text', '-');
   });
 
-  it('A user-officer should be able to remove a call', () => {
-    cy.login('officer');
-
-    cy.contains('Calls').click();
-
-    cy.get('[data-cy="call-status-filter"]').click();
-    cy.get('[role="listbox"]').contains('Active').click();
-
-    cy.get('[title="Delete"]').last().click();
-
-    cy.get('[title="Save"]').click();
-
-    cy.notification({ variant: 'success', text: 'Call deleted successfully' });
-  });
-
   it('User officer can filter calls by their status', () => {
     cy.login('officer');
     cy.contains('Calls').click();
@@ -431,5 +416,20 @@ context('Calls tests', () => {
 
     cy.contains(call1.shortCode);
     cy.contains(call2.shortCode);
+  });
+
+  it('A user-officer should be able to remove a call', () => {
+    cy.login('officer');
+
+    cy.contains('Calls').click();
+
+    cy.get('[data-cy="call-status-filter"]').click();
+    cy.get('[role="listbox"]').contains('Active').click();
+
+    cy.get('[title="Delete"]').last().click();
+
+    cy.get('[title="Save"]').click();
+
+    cy.notification({ variant: 'success', text: 'Call deleted successfully' });
   });
 });
