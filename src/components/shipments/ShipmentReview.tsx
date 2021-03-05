@@ -67,7 +67,7 @@ function ShipmentReview({
       label: 'Samples',
       value: (
         <ul className={classes.sampleList}>
-          {state.shipment.samples.map(sample => (
+          {state.shipment.samples.map((sample) => (
             <li key={sample.id}>{sample.title}</li>
           ))}
         </ul>

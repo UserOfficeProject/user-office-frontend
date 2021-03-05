@@ -32,7 +32,7 @@ import {
   QuestionaryContext,
 } from './QuestionaryContext';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   componentWrapper: {
     margin: theme.spacing(1, 0),
   },
@@ -53,7 +53,7 @@ export const createFormikConfigObjects = (
   const validationSchema: Record<string, unknown> = {};
   const initialValues: Record<string, unknown> = {};
 
-  answers.forEach(answer => {
+  answers.forEach((answer) => {
     const definition = getQuestionaryComponentDefinition(
       answer.question.dataType
     );
@@ -110,7 +110,7 @@ export default function QuestionaryStepView(props: {
     );
   }
 
-  const activeFields = questionaryStep.fields.filter(field => {
+  const activeFields = questionaryStep.fields.filter((field) => {
     return areDependenciesSatisfied(
       state.steps,
       field.question.proposalQuestionId
@@ -164,7 +164,7 @@ export default function QuestionaryStepView(props: {
       (
         await Promise.all(
           preSubmitActions(activeFields).map(
-            async f => await f({ state, dispatch, api: api() })
+            async (f) => await f({ state, dispatch, api: api() })
           )
         )
       ).pop() || state.questionaryId; // TODO obtain newly created questionary ID some other way
@@ -224,7 +224,7 @@ export default function QuestionaryStepView(props: {
       onSubmit={() => {}}
       enableReinitialize={true}
     >
-      {formikProps => {
+      {(formikProps) => {
         const {
           submitForm,
           validateForm,
@@ -235,7 +235,7 @@ export default function QuestionaryStepView(props: {
         return (
           <form className={props.readonly ? classes.disabled : undefined}>
             <PromptIfDirty isDirty={state.isDirty} />
-            {activeFields.map(field => {
+            {activeFields.map((field) => {
               return (
                 <div
                   className={classes.componentWrapper}

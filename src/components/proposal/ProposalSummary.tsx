@@ -37,9 +37,9 @@ function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
 
   const allStepsComplete =
     proposal.questionary &&
-    proposal.questionary.steps.every(step => step.isCompleted);
+    proposal.questionary.steps.every((step) => step.isCompleted);
 
-  const classes = makeStyles(theme => ({
+  const classes = makeStyles((theme) => ({
     buttons: {
       display: 'flex',
       justifyContent: 'flex-end',
