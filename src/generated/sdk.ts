@@ -278,6 +278,7 @@ export enum Event {
   PROPOSAL_FEASIBLE = 'PROPOSAL_FEASIBLE',
   PROPOSAL_SEP_SELECTED = 'PROPOSAL_SEP_SELECTED',
   PROPOSAL_INSTRUMENT_SELECTED = 'PROPOSAL_INSTRUMENT_SELECTED',
+  PROPOSAL_FEASIBILITY_REVIEW_UPDATED = 'PROPOSAL_FEASIBILITY_REVIEW_UPDATED',
   PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED = 'PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED',
   PROPOSAL_SAMPLE_REVIEW_SUBMITTED = 'PROPOSAL_SAMPLE_REVIEW_SUBMITTED',
   PROPOSAL_SAMPLE_SAFE = 'PROPOSAL_SAMPLE_SAFE',
@@ -1197,10 +1198,19 @@ export type MutationUpdatePasswordArgs = {
   password: Scalars['String'];
 };
 
+export type NextProposalStatus = {
+  __typename?: 'NextProposalStatus';
+  id: Maybe<Scalars['Int']>;
+  shortCode: Maybe<Scalars['String']>;
+  name: Maybe<Scalars['String']>;
+  description: Maybe<Scalars['String']>;
+  isDefault: Maybe<Scalars['Boolean']>;
+};
+
 export type NextProposalStatusResponseWrap = {
   __typename?: 'NextProposalStatusResponseWrap';
   error: Maybe<Scalars['String']>;
-  nextProposalStatus: Maybe<ProposalStatus>;
+  nextProposalStatus: Maybe<NextProposalStatus>;
 };
 
 export type NextStatusEvent = {
@@ -1899,7 +1909,7 @@ export type ReviewWithNextProposalStatus = {
   sepID: Scalars['Int'];
   reviewer: Maybe<BasicUserDetails>;
   proposal: Maybe<Proposal>;
-  nextProposalStatus: Maybe<ProposalStatus>;
+  nextProposalStatus: Maybe<NextProposalStatus>;
 };
 
 export type ReviewWithNextStatusResponseWrap = {
@@ -2338,8 +2348,8 @@ export type AssignProposalToSepMutation = (
     { __typename?: 'NextProposalStatusResponseWrap' }
     & Pick<NextProposalStatusResponseWrap, 'error'>
     & { nextProposalStatus: Maybe<(
-      { __typename?: 'ProposalStatus' }
-      & Pick<ProposalStatus, 'id' | 'shortCode' | 'name'>
+      { __typename?: 'NextProposalStatus' }
+      & Pick<NextProposalStatus, 'id' | 'shortCode' | 'name'>
     )> }
   ) }
 );
@@ -3976,8 +3986,8 @@ export type AddReviewMutation = (
       { __typename?: 'ReviewWithNextProposalStatus' }
       & Pick<ReviewWithNextProposalStatus, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
       & { nextProposalStatus: Maybe<(
-        { __typename?: 'ProposalStatus' }
-        & Pick<ProposalStatus, 'id' | 'shortCode' | 'name'>
+        { __typename?: 'NextProposalStatus' }
+        & Pick<NextProposalStatus, 'id' | 'shortCode' | 'name'>
       )> }
     )> }
   ) }
