@@ -371,6 +371,8 @@ context(
 
       cy.contains(sepMembers.reviewer.surname);
 
+      cy.closeNotification();
+
       cy.get('[title="Remove reviewer"]').click();
       cy.get('[title="Save"]').click();
 
@@ -434,6 +436,8 @@ context(
       });
 
       cy.contains(sepMembers.reviewer.surname);
+
+      cy.closeNotification();
 
       cy.get('[title="Remove reviewer"]').click();
       cy.get('[title="Save"]').click();
@@ -1358,11 +1362,16 @@ context(
           variant: 'success',
           text: 'Reviewer removed',
         });
+
+        cy.closeNotification();
       }
 
       assertAndRemoveAssignment(3);
+      cy.finishedLoading();
       assertAndRemoveAssignment(2);
+      cy.finishedLoading();
       assertAndRemoveAssignment(1);
+      cy.finishedLoading();
 
       cy.get('@rows').parent().contains('No records to display');
 
@@ -1424,6 +1433,8 @@ context(
         variant: 'success',
         text: 'Assignment removed',
       });
+
+      cy.closeNotification();
 
       cy.contains('Logs').click({ force: true });
 
@@ -1489,11 +1500,13 @@ context(
         text: 'SEP member removed successfully',
       });
 
+      cy.closeNotification();
+
       cy.contains('Logs').click({ force: true });
 
       cy.finishedLoading();
 
-      cy.get("[title='Last Page'] button").first().click({ force: true });
+      cy.get("[title='Last Page'] button").first().click();
 
       cy.contains('SEP_MEMBER_REMOVED');
 

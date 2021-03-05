@@ -120,6 +120,14 @@ const notification = ({ variant, text }) => {
   }
 };
 
+const closeNotification = () => {
+  cy.get('body').then((body) => {
+    if (body.has('[aria-describedby="client-snackbar"]')) {
+      cy.get('.MuiSnackbarContent-action button').click();
+    }
+  });
+};
+
 const finishedLoading = () => {
   cy.get('[role="progressbar"]').should('not.exist');
 };
@@ -454,6 +462,7 @@ Cypress.Commands.add('login', login);
 Cypress.Commands.add('logout', logout);
 
 Cypress.Commands.add('notification', notification);
+Cypress.Commands.add('closeNotification', closeNotification);
 
 Cypress.Commands.add('finishedLoading', finishedLoading);
 
