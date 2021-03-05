@@ -43,6 +43,11 @@ context('Instrument tests', () => {
 
     cy.get("[title='Assign proposals to instrument']").click();
 
+    cy.get("[id='mui-component-select-selectedInstrumentId']").should(
+      'not.have.class',
+      'Mui-disabled'
+    );
+
     cy.get("[id='mui-component-select-selectedInstrumentId']").first().click();
 
     cy.get("[id='menu-selectedInstrumentId'] li").contains(instrument).click();
@@ -207,6 +212,11 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy="assign-proposals-to-instrument"]').first().click();
 
+    cy.get("[id='mui-component-select-selectedInstrumentId']").should(
+      'not.have.class',
+      'Mui-disabled'
+    );
+
     cy.get("[id='mui-component-select-selectedInstrumentId']").first().click();
 
     cy.get("[id='menu-selectedInstrumentId'] li").first().click();
@@ -228,6 +238,11 @@ context('Instrument tests', () => {
     });
 
     cy.get('[data-cy="assign-proposals-to-instrument"]').first().click();
+
+    cy.get("[id='mui-component-select-selectedInstrumentId']").should(
+      'not.have.class',
+      'Mui-disabled'
+    );
 
     cy.get("[id='mui-component-select-selectedInstrumentId']").first().click();
 
@@ -474,6 +489,44 @@ context('Instrument tests', () => {
     cy.get('[data-cy="timeAllocation"] input').should('be.disabled');
   });
 
+  it('User Officer should be able to re-open submitted technical review', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals');
+
+    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains('Technical').click();
+
+    cy.get('[data-cy="is-review-submitted"] input')
+      .should('have.value', 'true')
+      .click()
+      .should('have.value', 'false');
+
+    cy.get('[data-cy="update-technical-review"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'Technical review updated successfully',
+    });
+
+    cy.logout();
+
+    cy.login('user');
+    cy.changeActiveRole('Instrument Scientist');
+
+    cy.contains('Proposals');
+
+    cy.get('[data-cy="status-filter"]').click();
+    cy.get('[role="listbox"] [data-value="0"]').click();
+
+    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains('Technical').click();
+
+    cy.get('[data-cy="update-technical-review"]').should('not.be.disabled');
+    cy.get('[data-cy="submit-technical-review"]').should('not.be.disabled');
+    cy.get('[data-cy="timeAllocation"] input').should('not.be.disabled');
+  });
+
   it('User Officer should be able to remove assigned proposal from instrument', () => {
     cy.login('officer');
 
@@ -533,6 +586,8 @@ context('Instrument tests', () => {
       variant: 'success',
       text: 'Scientist removed from instrument',
     });
+
+    cy.finishedLoading();
 
     cy.contains(scientist1).should('not.exist');
     cy.contains(scientist2).should('not.exist');
