@@ -9,17 +9,29 @@ export function useProposalData(id: number | null | undefined) {
 
   const api = useDataApi();
 
+  const getProposalData = () => proposalData;
+
   useEffect(() => {
+    let unmounted = false;
+
     if (id) {
       setLoading(true);
       api()
         .getProposal({ id })
         .then((data) => {
+          if (unmounted) {
+            return;
+          }
+
           setProposalData(data.proposal as Proposal);
           setLoading(false);
         });
     }
+
+    return () => {
+      unmounted = true;
+    };
   }, [id, api]);
 
-  return { loading, proposalData, setProposalData };
+  return { loading, proposalData, setProposalData, getProposalData };
 }

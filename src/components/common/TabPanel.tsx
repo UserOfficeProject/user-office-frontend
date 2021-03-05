@@ -4,7 +4,7 @@ import useTheme from '@material-ui/core/styles/useTheme';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NumberParam, useQueryParams, withDefault } from 'use-query-params';
 
 import { StyledPaper } from 'styles/StyledComponents';
@@ -63,6 +63,12 @@ const FullWidthTabs: React.FC<FullWidthTabsProps> = ({
   ) => {
     setQuery({ tab: newValue > 0 ? newValue : undefined });
   };
+
+  useEffect(() => {
+    return () => {
+      setQuery({ tab: undefined });
+    };
+  }, [setQuery]);
 
   return (
     <StyledPaper>

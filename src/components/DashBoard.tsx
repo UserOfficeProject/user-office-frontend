@@ -242,10 +242,10 @@ const Dashboard: React.FC = () => {
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
           />
-          <Route
+          {/* <Route
             path="/ProposalReviewUserOfficer/:id"
             component={ProposalReviewUserOfficer}
-          />
+          /> */}
           {isUserOfficer && <Route path="/Units" component={UnitTablePage} />}
           {isUserOfficer && (
             <Route path="/ProposalStatuses" component={ProposalStatusesPage} />

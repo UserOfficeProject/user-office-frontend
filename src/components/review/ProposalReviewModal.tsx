@@ -10,10 +10,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import PropTypes from 'prop-types';
-import React, { Ref } from 'react';
+import React, { Ref, useCallback } from 'react';
 
-import ProposalReview from './ProposalReviewReviewer';
+import { Proposal } from 'generated/sdk';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,30 +34,46 @@ const SlideComponent = (props: TransitionProps, ref: Ref<unknown>) => (
 const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
 
 type ProposalReviewModalProps = {
-  reviewModalOpen: boolean;
-  editReviewID: number;
-  sepId?: number | null;
-  setReviewModalOpen: (isOpen: boolean) => void;
+  proposalReviewModalOpen: boolean;
+  setProposalReviewModalOpen: (updatedProposal?: Proposal) => void;
+  title: string;
+  proposalId?: number | null;
 };
 
 const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
-  reviewModalOpen,
-  editReviewID,
-  sepId,
-  setReviewModalOpen,
+  title,
+  proposalReviewModalOpen,
+  setProposalReviewModalOpen,
+  proposalId,
+  children,
 }) => {
   const classes = useStyles();
+  const { api } = useDataApiWithFeedback();
 
-  const handleClose = () => {
-    setReviewModalOpen(false);
+  const loadProposal = async () => {
+    if (!proposalId) {
+      return;
+    }
+
+    return api()
+      .getProposal({ id: proposalId })
+      .then((data) => {
+        return data.proposal as Proposal;
+      });
+  };
+
+  const handleClose = async () => {
+    const freshProposal = await loadProposal();
+    console.log(freshProposal);
+    setProposalReviewModalOpen(freshProposal);
   };
 
   return (
     <>
       <Dialog
-        open={reviewModalOpen}
+        open={proposalReviewModalOpen}
         fullScreen
-        onClose={(): void => handleClose()}
+        onClose={(): Promise<void> => handleClose()}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -71,23 +87,14 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Review
+              {title}
             </Typography>
           </Toolbar>
         </AppBar>
-        <DialogContent>
-          <ProposalReview reviewId={editReviewID} sepId={sepId} />
-        </DialogContent>
+        <DialogContent>{children}</DialogContent>
       </Dialog>
     </>
   );
-};
-
-ProposalReviewModal.propTypes = {
-  reviewModalOpen: PropTypes.bool.isRequired,
-  editReviewID: PropTypes.number.isRequired,
-  sepId: PropTypes.number,
-  setReviewModalOpen: PropTypes.func.isRequired,
 };
 
 export default ProposalReviewModal;

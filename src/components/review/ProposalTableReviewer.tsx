@@ -22,6 +22,7 @@ import { useUserWithReviewsData } from 'hooks/user/useUserData';
 import { tableIcons } from 'utils/materialIcons';
 
 import ProposalReviewModal from './ProposalReviewModal';
+import ProposalReview from './ProposalReviewReviewer';
 import ReviewStatusFilter, {
   defaultReviewStatusQueryFilter,
 } from './ReviewStatusFilter';
@@ -188,13 +189,15 @@ const ProposalTableReviewer: React.FC = () => {
         }}
       />
       <ProposalReviewModal
-        editReviewID={editReviewID}
-        reviewModalOpen={reviewModalOpen}
-        setReviewModalOpen={() => {
+        title="Review"
+        proposalReviewModalOpen={reviewModalOpen}
+        setProposalReviewModalOpen={() => {
           setReviewModalOpen(false);
           updateView();
         }}
-      />
+      >
+        <ProposalReview reviewId={editReviewID} />
+      </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
         title={'Proposals to review'}

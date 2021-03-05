@@ -13,16 +13,18 @@ import MaterialTable, { Column } from 'material-table';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import { Link } from 'react-router-dom';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
 
 import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
+import ProposalReviewModal from 'components/review/ProposalReviewModal';
+import ProposalReview from 'components/review/ProposalReviewUserOfficer';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
 import {
   Call,
   Instrument,
+  Proposal,
   ProposalsFilter,
   ProposalsToInstrumentArgs,
   Review,
@@ -72,6 +74,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [proposalToCloneId, setProposalToCloneId] = useState<number | null>(
     null
   );
+  const [proposalToReviewId, setProposalToReviewId] = useState<number | null>(
+    null
+  );
 
   const downloadPDFProposal = useDownloadPDFProposal();
   const downloadXLSXProposal = useDownloadXLSXProposal();
@@ -83,6 +88,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
     proposalFilter
   );
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
@@ -179,14 +185,16 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     return (
       <>
         <Tooltip title="View proposal">
-          <Link
-            to={`/ProposalReviewUserOfficer/${rowData.id}`}
-            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          <IconButton
+            data-cy="view-proposal"
+            onClick={() => {
+              setProposalToReviewId(rowData.id);
+              setReviewModalOpen(true);
+            }}
+            style={iconButtonStyle}
           >
-            <IconButton data-cy="view-proposal" style={iconButtonStyle}>
-              <Visibility />
-            </IconButton>
-          </Link>
+            <Visibility />
+          </IconButton>
         </Tooltip>
         <Tooltip title="Clone proposal">
           <IconButton
@@ -565,6 +573,50 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           />
         </DialogContent>
       </Dialog>
+      <ProposalReviewModal
+        title="Review"
+        proposalReviewModalOpen={reviewModalOpen}
+        setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
+          console.log(updatedProposal);
+          setReviewModalOpen(false);
+          // TODO: Normalize this data in a helper function so we can reuse it across tables.
+          setProposalsData(
+            proposalsData.map((proposal) => {
+              if (proposal.id === updatedProposal?.id) {
+                return {
+                  callId: updatedProposal.callId,
+                  callShortCode: updatedProposal.call?.shortCode,
+                  finalStatus: updatedProposal.finalStatus,
+                  id: updatedProposal.id,
+                  instrumentId: updatedProposal.instrument?.id,
+                  instrumentName: updatedProposal.instrument?.name,
+                  notified: updatedProposal.notified,
+                  rankOrder: updatedProposal.rankOrder,
+                  reviewAverage: updatedProposal.reviews,
+                  reviewDeviation: updatedProposal.reviews,
+                  sepCode: updatedProposal.sep?.code,
+                  shortCode: updatedProposal.shortCode,
+                  status: updatedProposal.status?.name,
+                  statusDescription: updatedProposal.status?.description,
+                  statusId: updatedProposal.statusId,
+                  statusName: updatedProposal.status?.name,
+                  submitted: updatedProposal.submitted,
+                  technicalStatus: updatedProposal.technicalReview?.status,
+                  timeAllocation:
+                    updatedProposal.technicalReview?.timeAllocation,
+                  title: updatedProposal.title,
+                } as ProposalViewData;
+              } else {
+                return proposal;
+              }
+            })
+          );
+          // updateView();
+        }}
+        proposalId={proposalToReviewId}
+      >
+        <ProposalReview proposalId={proposalToReviewId as number} />
+      </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
         title={'Proposals'}
