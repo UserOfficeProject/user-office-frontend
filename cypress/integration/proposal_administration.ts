@@ -81,6 +81,26 @@ context('Proposal administration tests', () => {
     cy.contains('DRAFT');
   });
 
+  it('If you select a tab in tabular view and reload the page it should stay on specific selected tab', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals').click();
+
+    cy.get('[data-cy=view-proposal]').click();
+
+    cy.contains('Admin').click();
+
+    cy.reload();
+
+    cy.get('[data-cy="commentForUser"]').should('exist');
+
+    cy.contains('Technical').click();
+
+    cy.reload();
+
+    cy.get('[data-cy="timeAllocation"]').should('exist');
+  });
+
   it('Download proposal is working with dialog window showing up', () => {
     cy.login('officer');
 

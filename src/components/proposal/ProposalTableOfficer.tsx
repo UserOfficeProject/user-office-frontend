@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
@@ -400,12 +399,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               (item) => item.proposalId === prop.id
             );
 
-            if (
-              proposalNextStatusResponse?.result?.nextProposalStatus
-                ?.proposalNextStatusShortCode
-            ) {
+            if (proposalNextStatusResponse?.result.nextProposalStatus?.name) {
               prop.statusName =
-                proposalNextStatusResponse.result.nextProposalStatus.proposalNextStatusShortCode;
+                proposalNextStatusResponse.result.nextProposalStatus.name;
             }
           }
 
