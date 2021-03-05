@@ -9,8 +9,6 @@ export function useProposalData(id: number | null | undefined) {
 
   const api = useDataApi();
 
-  const getProposalData = () => proposalData;
-
   useEffect(() => {
     let unmounted = false;
 
@@ -33,5 +31,5 @@ export function useProposalData(id: number | null | undefined) {
     };
   }, [id, api]);
 
-  return { loading, proposalData, setProposalData, getProposalData };
+  return { loading, proposalData, setProposalData };
 }
