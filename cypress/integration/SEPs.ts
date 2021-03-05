@@ -1362,8 +1362,6 @@ context(
           variant: 'success',
           text: 'Reviewer removed',
         });
-
-        cy.closeNotification();
       }
 
       assertAndRemoveAssignment(3);
