@@ -1365,11 +1365,11 @@ export type ProposalsQueryResult = {
 
 export type ProposalStatus = {
   __typename?: 'ProposalStatus';
-  id: Maybe<Scalars['Int']>;
-  shortCode: Maybe<Scalars['String']>;
-  name: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  isDefault: Maybe<Scalars['Boolean']>;
+  id: Scalars['Int'];
+  shortCode: Scalars['String'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  isDefault: Scalars['Boolean'];
 };
 
 export type ProposalStatusResponseWrap = {
