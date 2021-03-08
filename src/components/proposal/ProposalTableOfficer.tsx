@@ -14,12 +14,7 @@ import MaterialTable, { Column } from 'material-table';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import {
-  DecodedValueMap,
-  NumberParam,
-  SetQuery,
-  useQueryParams,
-} from 'use-query-params';
+import { DecodedValueMap, SetQuery } from 'use-query-params';
 
 import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
@@ -67,9 +62,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   setUrlQueryParams,
   confirm,
 }) => {
-  const [query] = useQueryParams({
-    reviewModal: NumberParam,
-  });
   const [openAssignment, setOpenAssignment] = useState(false);
   const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
     false
@@ -84,9 +76,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [proposalToCloneId, setProposalToCloneId] = useState<number | null>(
     null
   );
-  const [proposalToReviewId, setProposalToReviewId] = useState<number | null>(
-    query.reviewModal || null
-  );
 
   const downloadPDFProposal = useDownloadPDFProposal();
   const downloadXLSXProposal = useDownloadXLSXProposal();
@@ -98,8 +87,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
     proposalFilter
   );
-
-  const [reviewModalOpen, setReviewModalOpen] = useState(!!query.reviewModal);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
@@ -199,8 +186,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           <IconButton
             data-cy="view-proposal"
             onClick={() => {
-              setProposalToReviewId(rowData.id);
-              setReviewModalOpen(true);
+              setUrlQueryParams({ reviewModal: rowData.id });
             }}
             style={iconButtonStyle}
           >
@@ -519,7 +505,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   );
 
   const proposalToReview = proposalsData.find(
-    (proposal) => proposal.id === proposalToReviewId
+    (proposal) => proposal.id === urlQueryParams.reviewModal
   );
 
   return (
@@ -568,7 +554,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       </Dialog>
       <ProposalReviewModal
         title={`View proposal: ${proposalToReview?.title} (${proposalToReview?.shortCode})`}
-        proposalReviewModalOpen={reviewModalOpen}
+        proposalReviewModalOpen={!!urlQueryParams.reviewModal}
         setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
           setProposalsData(
             proposalsData.map((proposal) => {
@@ -579,11 +565,11 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               }
             })
           );
-          setReviewModalOpen(false);
+          setUrlQueryParams({ reviewModal: undefined });
         }}
-        reviewItemId={proposalToReviewId}
+        reviewItemId={proposalToReview?.id}
       >
-        <ProposalReview proposalId={proposalToReviewId as number} />
+        <ProposalReview proposalId={proposalToReview?.id as number} />
       </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}

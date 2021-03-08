@@ -425,7 +425,9 @@ context('Instrument tests', () => {
     cy.get('[role="listbox"] [data-value="0"]').click();
 
     cy.get('[data-cy="view-proposal"]').first().click();
-    cy.contains('Technical').click();
+    cy.get('[role="dialog"]').as('dialog');
+    cy.finishedLoading();
+    cy.get('@dialog').contains('Technical').click();
 
     cy.get('[data-cy="timeAllocation"] input').type('-123').blur();
     cy.contains('Must be greater than or equal to');
@@ -455,6 +457,10 @@ context('Instrument tests', () => {
       text: 'Technical review updated successfully',
     });
 
+    cy.get('[data-cy="close-modal"]').click();
+    // NOTE: Need to wait for modal to close with animation.
+    cy.wait(100);
+
     cy.contains('Proposals').click();
 
     cy.get('[data-cy="status-filter"]').click();
@@ -475,12 +481,14 @@ context('Instrument tests', () => {
     cy.get('[role="listbox"] [data-value="0"]').click();
 
     cy.get('[data-cy="view-proposal"]').first().click();
-    cy.contains('Technical').click();
+    cy.get('[role="dialog"]').as('dialog');
+    cy.finishedLoading();
+    cy.get('@dialog').contains('Technical').click();
 
     cy.get('[data-cy="comment"] textarea').first().type(internalComment);
     cy.get('[data-cy="publicComment"] textarea').first().type(publicComment);
 
-    cy.contains('Submit').click();
+    cy.get('[data-cy="submit-technical-review"]').click();
 
     cy.get('[data-cy="confirm-ok"]').click();
 
@@ -495,7 +503,9 @@ context('Instrument tests', () => {
     cy.contains('Proposals');
 
     cy.get('[data-cy="view-proposal"]').first().click();
-    cy.contains('Technical').click();
+    cy.get('[role="dialog"]').as('dialog');
+    cy.finishedLoading();
+    cy.get('@dialog').contains('Technical').click();
 
     cy.get('[data-cy="is-review-submitted"] input')
       .should('have.value', 'true')
@@ -508,6 +518,9 @@ context('Instrument tests', () => {
       variant: 'success',
       text: 'Technical review updated successfully',
     });
+
+    cy.get('[data-cy="close-modal"]');
+    cy.wait(100);
 
     cy.logout();
 

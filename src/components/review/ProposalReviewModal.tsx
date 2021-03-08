@@ -10,8 +10,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import React, { Ref, useEffect } from 'react';
-import { NumberParam, useQueryParams } from 'use-query-params';
+import React, { Ref } from 'react';
 
 import { Proposal } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -51,15 +50,6 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
 }) => {
   const classes = useStyles();
   const { api } = useDataApiWithFeedback();
-  const [, setQuery] = useQueryParams({
-    reviewModal: NumberParam,
-  });
-
-  useEffect(() => {
-    setQuery({
-      reviewModal: proposalReviewModalOpen ? reviewItemId : undefined,
-    });
-  }, [proposalReviewModalOpen, setQuery, reviewItemId]);
 
   const loadProposal = async () => {
     if (!reviewItemId) {

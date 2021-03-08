@@ -45,12 +45,7 @@ const getFilterStatus = (selected: string | ReviewStatus) =>
     : undefined; // if the selected status is not a valid status assume we want to see everything
 
 const ProposalTableReviewer: React.FC = () => {
-  const [query] = useQueryParams({
-    reviewModal: NumberParam,
-  });
   const downloadPDFProposal = useDownloadPDFProposal();
-  const [editReviewID, setEditReviewID] = useState(query.reviewModal || null);
-  const [reviewModalOpen, setReviewModalOpen] = useState(!!query.reviewModal);
   const { currentAssignment } = useContext(ReviewAndAssignmentContext);
   const { calls, loadingCalls } = useCallsData();
   const { instruments, loadingInstruments } = useInstrumentsData();
@@ -58,6 +53,7 @@ const ProposalTableReviewer: React.FC = () => {
     call: NumberParam,
     instrument: NumberParam,
     reviewStatus: defaultReviewStatusQueryFilter,
+    reviewModal: NumberParam,
   });
 
   const [selectedCallId, setSelectedCallId] = useState<number>(
@@ -95,8 +91,7 @@ const ProposalTableReviewer: React.FC = () => {
       <Tooltip title="Review proposal">
         <IconButton
           onClick={() => {
-            setEditReviewID(rowData.reviewId);
-            setReviewModalOpen(true);
+            setUrlQueryParams({ reviewModal: rowData.reviewId });
           }}
         >
           {rowData.status === 'SUBMITTED' ? <Visibility /> : <RateReviewIcon />}
@@ -193,14 +188,13 @@ const ProposalTableReviewer: React.FC = () => {
       />
       <ProposalReviewModal
         title="Review"
-        proposalReviewModalOpen={reviewModalOpen}
+        proposalReviewModalOpen={!!urlQueryParams.reviewModal}
         setProposalReviewModalOpen={() => {
-          setReviewModalOpen(false);
+          setUrlQueryParams({ reviewModal: undefined });
           updateView();
         }}
-        reviewItemId={editReviewID}
       >
-        <ProposalReview reviewId={editReviewID} />
+        <ProposalReview reviewId={urlQueryParams.reviewModal} />
       </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
