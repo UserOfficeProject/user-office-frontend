@@ -31,6 +31,7 @@ import ProposalChooseCall from './proposal/ProposalChooseCall';
 import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
+import MyBeamTimes from './proposalBooking/MyBeamTimes';
 import ProposalReviewReviewer from './review/ProposalReviewReviewer';
 import ProposalReviewUserOfficer from './review/ProposalReviewUserOfficer';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
@@ -147,6 +148,8 @@ const Dashboard: React.FC = () => {
 
   const featureContext = useContext(FeatureContext);
   const isShipmentEnabled = !!featureContext.features.get(FeatureId.SHIPPING)
+    ?.isEnabled;
+  const isSchedulerEnabled = featureContext.features.get(FeatureId.SCHEDULER)
     ?.isEnabled;
 
   const { currentRole } = useContext(UserContext);
@@ -270,6 +273,9 @@ const Dashboard: React.FC = () => {
           )}
           {isUserOfficer && (
             <Route path="/ApiAccessTokens" component={ApiAccessTokensPage} />
+          )}
+          {isSchedulerEnabled && (
+            <Route path="/MyBeamTimes" component={MyBeamTimes} />
           )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}

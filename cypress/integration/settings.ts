@@ -807,9 +807,10 @@ context('Settings tests', () => {
         },
         failOnStatusCode: false,
       }).then((response) => {
-        expect(response.status).to.be.equal(500);
-        expect(response.body.errors[0].message).to.contain(
-          'Could not find permission rules for access token key'
+        console.log(response.body);
+
+        expect(response.body.errors[0].extensions.code).to.equal(
+          'INTERNAL_SERVER_ERROR'
         );
       });
     });

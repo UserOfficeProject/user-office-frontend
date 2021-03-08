@@ -50,6 +50,18 @@ const resetDB = () => {
   cy.wrap(request);
 };
 
+const resetSchedulerDB = () => {
+  const query = `mutation {
+    resetSchedulerDb
+  }`;
+  const authHeader = `Bearer ${Cypress.env('SVC_ACC_TOKEN')}`;
+  const request = new GraphQLClient('/graphql', {
+    headers: { authorization: authHeader },
+  }).rawRequest(query, null);
+
+  cy.wrap(request);
+};
+
 const navigateToTemplatesSubmenu = (submenuName) => {
   cy.contains('Templates').click();
   cy.get(`[title='${submenuName}']`).first().click();
@@ -446,6 +458,8 @@ function presentationMode() {
 }
 
 Cypress.Commands.add('resetDB', resetDB);
+
+Cypress.Commands.add('resetSchedulerDB', resetSchedulerDB);
 
 Cypress.Commands.add('navigateToTemplatesSubmenu', navigateToTemplatesSubmenu);
 
