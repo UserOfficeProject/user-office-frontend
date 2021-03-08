@@ -1,6 +1,6 @@
 import { Button } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import SimpleTabs from 'components/common/TabPanel';
@@ -21,9 +21,13 @@ import ProposalTechnicalReview from './ProposalTechnicalReview';
 
 type ProposalReviewProps = {
   proposalId: number;
+  isInsideModal?: boolean;
 };
 
-const ProposalReview: React.FC<ProposalReviewProps> = ({ proposalId }) => {
+const ProposalReview: React.FC<ProposalReviewProps> = ({
+  proposalId,
+  isInsideModal,
+}) => {
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const { proposalData, setProposalData, loading } = useProposalData(
     proposalId
@@ -37,9 +41,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ proposalId }) => {
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <h2>Proposal not found</h2>
-        <Button onClick={() => console.log('TODO: Implement this')}>
-          Retry
-        </Button>
+        <Button onClick={() => console.log('Not implemented')}>Retry</Button>
       </Box>
     );
   }
@@ -52,7 +54,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({ proposalId }) => {
   }
 
   return (
-    <SimpleTabs tabNames={tabNames}>
+    <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
       <GeneralInformation
         data={proposalData}
         onProposalChanged={(newProposal): void => setProposalData(newProposal)}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,7 +14,12 @@ import MaterialTable, { Column } from 'material-table';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import { DecodedValueMap, SetQuery } from 'use-query-params';
+import {
+  DecodedValueMap,
+  NumberParam,
+  SetQuery,
+  useQueryParams,
+} from 'use-query-params';
 
 import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
@@ -27,7 +33,6 @@ import {
   Proposal,
   ProposalsFilter,
   ProposalsToInstrumentArgs,
-  Review,
   Sep,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
@@ -37,9 +42,11 @@ import {
   ProposalViewData,
   useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
-import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
+import {
+  fromProposalToProposalView,
+  setSortDirectionOnSortColumn,
+} from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
-import { average, getGrades, standardDeviation } from 'utils/mathFunctions';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
@@ -60,6 +67,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   setUrlQueryParams,
   confirm,
 }) => {
+  const [query] = useQueryParams({
+    reviewModal: NumberParam,
+  });
   const [openAssignment, setOpenAssignment] = useState(false);
   const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
     false
@@ -75,7 +85,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     null
   );
   const [proposalToReviewId, setProposalToReviewId] = useState<number | null>(
-    null
+    query.reviewModal || null
   );
 
   const downloadPDFProposal = useDownloadPDFProposal();
@@ -88,7 +98,8 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
     proposalFilter
   );
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
+  const [reviewModalOpen, setReviewModalOpen] = useState(!!query.reviewModal);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
@@ -479,31 +490,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     const resultProposal = result.cloneProposal.proposal;
 
     if (!result.cloneProposal.error && proposalsData && resultProposal) {
-      const newClonedProposal: ProposalViewData = {
-        id: resultProposal.id,
-        title: resultProposal.title,
-        status: resultProposal.status?.name || '',
-        statusId: resultProposal.status?.id || 1,
-        statusName: resultProposal.status?.name || '',
-        statusDescription: resultProposal.status?.description || '',
-        submitted: resultProposal.submitted,
-        shortCode: resultProposal.shortCode,
-        rankOrder: resultProposal.rankOrder,
-        finalStatus: resultProposal.finalStatus,
-        timeAllocation: resultProposal.technicalReview?.timeAllocation || null,
-        technicalStatus: resultProposal.technicalReview?.status || '',
-        instrumentName: resultProposal.instrument?.name || null,
-        instrumentId: resultProposal.instrument?.id || null,
-        reviewAverage:
-          average(getGrades(resultProposal.reviews as Review[])) || null,
-        reviewDeviation:
-          standardDeviation(getGrades(resultProposal.reviews as Review[])) ||
-          null,
-        sepCode: '',
-        callShortCode: resultProposal.call?.shortCode || null,
-        notified: resultProposal.notified,
-        callId: resultProposal.callId,
-      };
+      const newClonedProposal = fromProposalToProposalView(
+        resultProposal as Proposal
+      );
 
       const newProposalsData = [newClonedProposal, ...proposalsData];
 
@@ -527,6 +516,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     columns,
     urlQueryParams.sortColumn,
     urlQueryParams.sortDirection
+  );
+
+  const proposalToReview = proposalsData.find(
+    (proposal) => proposal.id === proposalToReviewId
   );
 
   return (
@@ -574,46 +567,21 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         </DialogContent>
       </Dialog>
       <ProposalReviewModal
-        title="Review"
+        title={`View proposal: ${proposalToReview?.title} (${proposalToReview?.shortCode})`}
         proposalReviewModalOpen={reviewModalOpen}
         setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
-          console.log(updatedProposal);
-          setReviewModalOpen(false);
-          // TODO: Normalize this data in a helper function so we can reuse it across tables.
           setProposalsData(
             proposalsData.map((proposal) => {
               if (proposal.id === updatedProposal?.id) {
-                return {
-                  callId: updatedProposal.callId,
-                  callShortCode: updatedProposal.call?.shortCode,
-                  finalStatus: updatedProposal.finalStatus,
-                  id: updatedProposal.id,
-                  instrumentId: updatedProposal.instrument?.id,
-                  instrumentName: updatedProposal.instrument?.name,
-                  notified: updatedProposal.notified,
-                  rankOrder: updatedProposal.rankOrder,
-                  reviewAverage: updatedProposal.reviews,
-                  reviewDeviation: updatedProposal.reviews,
-                  sepCode: updatedProposal.sep?.code,
-                  shortCode: updatedProposal.shortCode,
-                  status: updatedProposal.status?.name,
-                  statusDescription: updatedProposal.status?.description,
-                  statusId: updatedProposal.statusId,
-                  statusName: updatedProposal.status?.name,
-                  submitted: updatedProposal.submitted,
-                  technicalStatus: updatedProposal.technicalReview?.status,
-                  timeAllocation:
-                    updatedProposal.technicalReview?.timeAllocation,
-                  title: updatedProposal.title,
-                } as ProposalViewData;
+                return fromProposalToProposalView(updatedProposal);
               } else {
                 return proposal;
               }
             })
           );
-          // updateView();
+          setReviewModalOpen(false);
         }}
-        proposalId={proposalToReviewId}
+        reviewItemId={proposalToReviewId}
       >
         <ProposalReview proposalId={proposalToReviewId as number} />
       </ProposalReviewModal>
@@ -670,7 +638,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           {
             icon: DeleteIcon,
             tooltip: 'Delete proposals',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               confirm(
                 () => {
                   deleteProposals();
@@ -687,7 +655,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           {
             icon: GroupWorkIcon,
             tooltip: 'Assign proposals to SEP',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               setOpenAssignment(true);
             },
             position: 'toolbarOnSelect',
@@ -697,7 +665,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
               'data-cy': 'assign-proposals-to-instrument',
             }),
             tooltip: 'Assign proposals to instrument',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               setOpenInstrumentAssignment(true);
             },
             position: 'toolbarOnSelect',
@@ -705,7 +673,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           {
             icon: EmailIcon,
             tooltip: 'Notify users final result',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               confirm(
                 () => {
                   emailProposals();

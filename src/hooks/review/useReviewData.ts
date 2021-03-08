@@ -29,5 +29,5 @@ export function useReviewData(reviewId: number, sepId?: number | null) {
     };
   }, [reviewId, sepId, api]);
 
-  return { loading, reviewData };
+  return { loading, reviewData, setReviewData };
 }

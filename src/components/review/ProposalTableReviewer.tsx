@@ -45,9 +45,12 @@ const getFilterStatus = (selected: string | ReviewStatus) =>
     : undefined; // if the selected status is not a valid status assume we want to see everything
 
 const ProposalTableReviewer: React.FC = () => {
+  const [query] = useQueryParams({
+    reviewModal: NumberParam,
+  });
   const downloadPDFProposal = useDownloadPDFProposal();
-  const [editReviewID, setEditReviewID] = useState(0);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [editReviewID, setEditReviewID] = useState(query.reviewModal || null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(!!query.reviewModal);
   const { currentAssignment } = useContext(ReviewAndAssignmentContext);
   const { calls, loadingCalls } = useCallsData();
   const { instruments, loadingInstruments } = useInstrumentsData();
@@ -195,6 +198,7 @@ const ProposalTableReviewer: React.FC = () => {
           setReviewModalOpen(false);
           updateView();
         }}
+        reviewItemId={editReviewID}
       >
         <ProposalReview reviewId={editReviewID} />
       </ProposalReviewModal>

@@ -78,18 +78,17 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
 
   return (
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
-      {editReviewID && (
-        <ProposalReviewModal
-          title="Review"
-          proposalReviewModalOpen={reviewModalOpen}
-          setProposalReviewModalOpen={() => {
-            setReviewModalOpen(false);
-            currentAssignment && updateView(currentAssignment);
-          }}
-        >
-          <ProposalReview reviewId={editReviewID} sepId={sepProposal.sepId} />
-        </ProposalReviewModal>
-      )}
+      <ProposalReviewModal
+        title="Review"
+        proposalReviewModalOpen={reviewModalOpen}
+        setProposalReviewModalOpen={() => {
+          setReviewModalOpen(false);
+          currentAssignment && updateView(currentAssignment);
+        }}
+      >
+        <ProposalReview reviewId={editReviewID} sepId={sepProposal.sepId} />
+      </ProposalReviewModal>
+
       <MaterialTable
         icons={tableIcons}
         columns={assignmentColumns}

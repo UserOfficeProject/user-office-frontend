@@ -10,7 +10,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import React, { Ref, useCallback } from 'react';
+import React, { Ref, useEffect } from 'react';
+import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { Proposal } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -37,34 +38,47 @@ type ProposalReviewModalProps = {
   proposalReviewModalOpen: boolean;
   setProposalReviewModalOpen: (updatedProposal?: Proposal) => void;
   title: string;
-  proposalId?: number | null;
+  reviewItemId?: number | null;
+  children: React.ReactElement;
 };
 
 const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
   title,
   proposalReviewModalOpen,
   setProposalReviewModalOpen,
-  proposalId,
+  reviewItemId,
   children,
 }) => {
   const classes = useStyles();
   const { api } = useDataApiWithFeedback();
+  const [, setQuery] = useQueryParams({
+    reviewModal: NumberParam,
+  });
+
+  useEffect(() => {
+    setQuery({
+      reviewModal: proposalReviewModalOpen ? reviewItemId : undefined,
+    });
+  }, [proposalReviewModalOpen, setQuery, reviewItemId]);
 
   const loadProposal = async () => {
-    if (!proposalId) {
+    if (!reviewItemId) {
       return;
     }
 
     return api()
-      .getProposal({ id: proposalId })
+      .getProposal({ id: reviewItemId })
       .then((data) => {
         return data.proposal as Proposal;
       });
   };
 
   const handleClose = async () => {
+    /**
+     * TODO: This needs to be refactored a bit and instead of loading proposal before close we could use the proposal used in the modal content tabs.
+     * For now this is the easiest solution to get all changes that are done on the proposal inside the modal.
+     */
     const freshProposal = await loadProposal();
-    console.log(freshProposal);
     setProposalReviewModalOpen(freshProposal);
   };
 
@@ -83,6 +97,7 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
               color="inherit"
               onClick={handleClose}
               aria-label="close"
+              data-cy="close-modal"
             >
               <CloseIcon />
             </IconButton>
@@ -91,7 +106,12 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
             </Typography>
           </Toolbar>
         </AppBar>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent>
+          {children &&
+            React.cloneElement(children, {
+              isInsideModal: true,
+            })}
+        </DialogContent>
       </Dialog>
     </>
   );
