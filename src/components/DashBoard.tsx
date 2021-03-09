@@ -33,7 +33,6 @@ import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
 import MyBeamTimes from './proposalBooking/MyBeamTimes';
 import ProposalReviewReviewer from './review/ProposalReviewReviewer';
-import ProposalReviewUserOfficer from './review/ProposalReviewUserOfficer';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -244,10 +243,6 @@ const Dashboard: React.FC = () => {
           <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
-          />
-          <Route
-            path="/ProposalReviewUserOfficer/:id"
-            component={ProposalReviewUserOfficer}
           />
           {isUserOfficer && <Route path="/Units" component={UnitTablePage} />}
           {isUserOfficer && (
