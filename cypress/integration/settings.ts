@@ -457,8 +457,7 @@ context('Settings tests', () => {
         text: 'Technical review updated successfully',
       });
 
-      cy.get('[data-cy="close-modal"]').click();
-      cy.wait(100);
+      cy.closeModal();
 
       cy.contains('Proposals').click();
 

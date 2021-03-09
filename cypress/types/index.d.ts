@@ -70,6 +70,16 @@ declare global {
       closeNotification: () => void;
 
       /**
+       * Closes modal.
+       *
+       * @returns {typeof closeModal}
+       * @memberof Chainable
+       * @example
+       *    cy.closeModal()
+       */
+      closeModal: () => void;
+
+      /**
        * Checks if the progressbar does not exist in the dom anymore.
        *
        * @returns {typeof finishedLoading}

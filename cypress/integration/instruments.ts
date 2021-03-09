@@ -457,9 +457,7 @@ context('Instrument tests', () => {
       text: 'Technical review updated successfully',
     });
 
-    cy.get('[data-cy="close-modal"]').click();
-    // NOTE: Need to wait for modal to close with animation.
-    cy.wait(100);
+    cy.closeModal();
 
     cy.contains('Proposals').click();
 
@@ -519,8 +517,7 @@ context('Instrument tests', () => {
       text: 'Technical review updated successfully',
     });
 
-    cy.get('[data-cy="close-modal"]').click();
-    cy.wait(100);
+    cy.closeModal();
 
     cy.logout();
 

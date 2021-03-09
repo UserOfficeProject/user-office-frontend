@@ -517,8 +517,7 @@ context(
       cy.get('[type="submit"]').click();
       // <------------------------------------------
 
-      cy.get('[data-cy="close-modal"]').click();
-      cy.wait(100);
+      cy.closeModal();
 
       cy.contains('SEPs').click();
       cy.get('button[title="Edit"]').first().click();
@@ -1028,8 +1027,7 @@ context(
         text: 'Technical review updated successfully',
       });
 
-      cy.get('[data-cy="close-modal"]').click();
-      cy.wait(100);
+      cy.closeModal();
 
       cy.contains('SEPs').click();
 

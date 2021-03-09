@@ -74,8 +74,7 @@ context('Proposal administration tests', () => {
 
     cy.contains(textManager);
 
-    cy.get('[data-cy="close-modal"]').click();
-    cy.wait(100);
+    cy.closeModal();
 
     cy.contains('Accepted');
 
