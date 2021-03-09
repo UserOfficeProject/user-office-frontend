@@ -519,7 +519,7 @@ context('Instrument tests', () => {
       text: 'Technical review updated successfully',
     });
 
-    cy.get('[data-cy="close-modal"]');
+    cy.get('[data-cy="close-modal"]').click();
     cy.wait(100);
 
     cy.logout();
