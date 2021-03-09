@@ -530,7 +530,7 @@ context('Instrument tests', () => {
     cy.get('[role="listbox"] [data-value="0"]').click();
 
     cy.get('[data-cy="view-proposal"]').first().click();
-    cy.contains('Technical').click();
+    cy.get('[role="dialog"]').contains('Technical').click();
 
     cy.get('[data-cy="update-technical-review"]').should('not.be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('not.be.disabled');
