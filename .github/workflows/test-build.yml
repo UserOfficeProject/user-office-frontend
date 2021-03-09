@@ -57,7 +57,7 @@ jobs:
 
       - name: Build new e2e test image if changed
         run: |
-          DOCKERFILE_VERSION=${{ hashFiles('cypress/Dockerfile') }}
+          DOCKERFILE_VERSION=${{ hashFiles('cypress/Dockerfile', 'cypress/*.json') }}
           MANIFEST_URL="https://docker.pkg.github.com/v2/userofficeproject/user-office-frontend/e2e-cypress-core/manifests/$DOCKERFILE_VERSION"
           MANIFEST_STATUS=$(curl -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' -o /dev/null --silent --get --write-out '%{http_code}' $MANIFEST_URL)
           TAG="docker.pkg.github.com/userofficeproject/user-office-frontend/e2e-cypress-core:$DOCKERFILE_VERSION"
