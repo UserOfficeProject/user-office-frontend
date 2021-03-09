@@ -429,6 +429,20 @@ function createMultipleChoiceQuestion(title, option1, option2, option3) {
     .dragElement([{ direction: 'left', length: 1 }]);
 }
 
+function createFileUploadQuestion(title) {
+  cy.get('[data-cy=questionPicker] [data-cy=show-more-button]').last().click();
+
+  cy.contains('Add File Upload').click();
+
+  cy.get('[data-cy=question]').clear().type(title);
+
+  cy.contains('Save').click();
+
+  cy.contains(title)
+    .parent()
+    .dragElement([{ direction: 'left', length: 1 }]);
+}
+
 function presentationMode() {
   const COMMAND_DELAY = 300;
 
@@ -497,4 +511,9 @@ Cypress.Commands.add('createDateQuestion', createDateQuestion);
 Cypress.Commands.add(
   'createMultipleChoiceQuestion',
   createMultipleChoiceQuestion
+);
+
+Cypress.Commands.add(
+  'createFileUploadQuestion',
+  createFileUploadQuestion
 );
