@@ -517,6 +517,9 @@ context(
       cy.get('[type="submit"]').click();
       // <------------------------------------------
 
+      cy.get('[data-cy="close-modal"]').click();
+      cy.wait(100);
+
       cy.contains('SEPs').click();
       cy.get('button[title="Edit"]').first().click();
 
@@ -1013,7 +1016,7 @@ context(
 
       cy.get('[data-cy="view-proposal"]').first().click();
 
-      cy.contains('Technical').click();
+      cy.get('[role="dialog"]').contains('Technical').click();
       cy.get('[data-cy="timeAllocation"]').type('51');
       cy.get('[data-cy="technical-review-status"]').click();
       cy.contains('Feasible').click();
@@ -1024,6 +1027,9 @@ context(
         variant: 'success',
         text: 'Technical review updated successfully',
       });
+
+      cy.get('[data-cy="close-modal"]').click();
+      cy.wait(100);
 
       cy.contains('SEPs').click();
 
