@@ -809,8 +809,6 @@ context('Settings tests', () => {
         },
         failOnStatusCode: false,
       }).then((response) => {
-        console.log(response.body);
-
         expect(response.body.errors[0].extensions.code).to.equal(
           'INTERNAL_SERVER_ERROR'
         );
