@@ -14,6 +14,7 @@ import { ProposalEndStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 export type AdministrationFormData = {
   id: number;
@@ -23,10 +24,17 @@ export type AdministrationFormData = {
   rankOrder?: number;
 };
 
-export default function ProposalAdmin(props: {
+type ProposalAdminProps = {
   data: Proposal;
   setAdministration: (data: AdministrationFormData) => void;
-}) {
+  confirm: WithConfirmType;
+};
+
+const ProposalAdmin: React.FC<ProposalAdminProps> = ({
+  data,
+  setAdministration,
+  confirm,
+}) => {
   const { api } = useDataApiWithFeedback();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const {
@@ -35,11 +43,11 @@ export default function ProposalAdmin(props: {
   } = useProposalStatusesData();
 
   const initialValues = {
-    id: props.data.id,
-    finalStatus: props.data.finalStatus || ProposalEndStatus.UNSET,
-    proposalStatus: props.data.statusId,
-    commentForUser: props.data.commentForUser || '',
-    commentForManagement: props.data.commentForManagement || '',
+    id: data.id,
+    finalStatus: data.finalStatus || ProposalEndStatus.UNSET,
+    proposalStatus: data.statusId,
+    commentForUser: data.commentForUser || '',
+    commentForManagement: data.commentForManagement || '',
   };
 
   const PromptIfDirty = () => {
@@ -53,8 +61,20 @@ export default function ProposalAdmin(props: {
     );
   };
 
+  const handleProposalAdministration = async (
+    administrationValues: AdministrationFormData
+  ) => {
+    const result = await api('Updated!').administrationProposal(
+      administrationValues
+    );
+
+    if (!result.administrationProposal.error) {
+      setAdministration(administrationValues);
+    }
+  };
+
   return (
-    <Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Administration
       </Typography>
@@ -63,19 +83,31 @@ export default function ProposalAdmin(props: {
         validationSchema={administrationProposalValidationSchema}
         onSubmit={async (values): Promise<void> => {
           const administrationValues = {
-            id: props.data.id,
+            id: data.id,
             finalStatus:
               ProposalEndStatus[values.finalStatus as ProposalEndStatus],
             statusId: values.proposalStatus,
             commentForUser: values.commentForUser,
             commentForManagement: values.commentForManagement,
           };
-          const data = await api('Updated!').administrationProposal(
-            administrationValues
-          );
 
-          if (!data.administrationProposal.error) {
-            props.setAdministration(administrationValues);
+          const isDraftStatus =
+            proposalStatuses.find((status) => status.shortCode === 'DRAFT')
+              ?.id === values.proposalStatus;
+
+          if (isDraftStatus) {
+            confirm(
+              async () => {
+                await handleProposalAdministration(administrationValues);
+              },
+              {
+                title: 'Are you sure?',
+                description:
+                  'This will re-open proposal for changes and submission. Are you sure you want to change status to DRAFT?',
+              }
+            )();
+          } else {
+            await handleProposalAdministration(administrationValues);
           }
         }}
       >
@@ -160,6 +192,8 @@ export default function ProposalAdmin(props: {
           </Form>
         )}
       </Formik>
-    </Fragment>
+    </>
   );
-}
+};
+
+export default withConfirm(ProposalAdmin);
