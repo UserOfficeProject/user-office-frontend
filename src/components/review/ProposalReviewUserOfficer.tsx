@@ -10,6 +10,8 @@ import GeneralInformation from 'components/proposal/GeneralInformation';
 import ProposalAdmin, {
   AdministrationFormData,
 } from 'components/proposal/ProposalAdmin';
+import ExternalReviews from 'components/SEP/MeetingComponents/ProposalViewModal/ExternalReviews';
+import SEPMeetingDecision from 'components/SEP/MeetingComponents/ProposalViewModal/SEPMeetingDecision';
 import {
   CoreTechnicalReviewFragment,
   TechnicalReview,
@@ -49,9 +51,17 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({
   const tabNames = ['General', 'Technical'];
 
   if (isUserOfficer) {
+    tabNames.push('Reviews');
     tabNames.push('Admin');
     tabNames.push('Logs');
   }
+
+  const AllProposalReviews = (
+    <>
+      <ExternalReviews reviews={proposalData.reviews} />
+      <SEPMeetingDecision sepDecision={null} />
+    </>
+  );
 
   return (
     <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
@@ -72,6 +82,7 @@ const ProposalReview: React.FC<ProposalReviewProps> = ({
           })
         }
       />
+      {isUserOfficer && AllProposalReviews}
       {isUserOfficer && (
         <ProposalAdmin
           data={proposalData}
