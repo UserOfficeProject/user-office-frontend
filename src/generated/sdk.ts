@@ -1477,6 +1477,7 @@ export type Query = {
   callsByInstrumentScientist: Maybe<Array<Call>>;
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
+  questions: Array<Question>;
   templates: Maybe<Array<Template>>;
   activeTemplateId: Maybe<Scalars['Int']>;
   basicUserDetails: Maybe<BasicUserDetails>;
@@ -1562,6 +1563,11 @@ export type QueryInstrumentScientistProposalsArgs = {
   filter?: Maybe<ProposalsFilter>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryQuestionsArgs = {
+  filter?: Maybe<QuestionsFilter>;
 };
 
 
@@ -1854,6 +1860,12 @@ export type QuestionResponseWrap = {
   __typename?: 'QuestionResponseWrap';
   error: Maybe<Scalars['String']>;
   question: Maybe<Question>;
+};
+
+export type QuestionsFilter = {
+  text?: Maybe<Scalars['String']>;
+  category?: Maybe<TemplateCategoryId>;
+  dataType?: Maybe<DataType>;
 };
 
 export type QuestionTemplateRelation = {
@@ -4998,6 +5010,19 @@ export type GetProposalTemplatesQuery = (
   )>> }
 );
 
+export type GetQuestionsQueryVariables = Exact<{
+  filter?: Maybe<QuestionsFilter>;
+}>;
+
+
+export type GetQuestionsQuery = (
+  { __typename?: 'Query' }
+  & { questions: Array<(
+    { __typename?: 'Question' }
+    & QuestionFragment
+  )> }
+);
+
 export type GetTemplateQueryVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
@@ -7697,6 +7722,13 @@ export const GetProposalTemplatesDocument = gql`
   }
 }
     `;
+export const GetQuestionsDocument = gql`
+    query getQuestions($filter: QuestionsFilter) {
+  questions(filter: $filter) {
+    ...question
+  }
+}
+    ${QuestionFragmentDoc}`;
 export const GetTemplateDocument = gql`
     query getTemplate($templateId: Int!) {
   template(templateId: $templateId) {
@@ -8500,6 +8532,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getProposalTemplates(variables?: GetProposalTemplatesQueryVariables): Promise<GetProposalTemplatesQuery> {
       return withWrapper(() => client.request<GetProposalTemplatesQuery>(print(GetProposalTemplatesDocument), variables));
+    },
+    getQuestions(variables?: GetQuestionsQueryVariables): Promise<GetQuestionsQuery> {
+      return withWrapper(() => client.request<GetQuestionsQuery>(print(GetQuestionsDocument), variables));
     },
     getTemplate(variables: GetTemplateQueryVariables): Promise<GetTemplateQuery> {
       return withWrapper(() => client.request<GetTemplateQuery>(print(GetTemplateDocument), variables));

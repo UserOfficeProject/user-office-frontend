@@ -1,0 +1,5 @@
+query getQuestions($filter: QuestionsFilter) {
+  questions(filter: $filter) {
+    ...question
+  }
+}
