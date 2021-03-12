@@ -357,7 +357,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                       icon: ViewIcon,
                       onClick: () =>
                         setUrlQueryParams({ reviewModal: rowData.proposalId }),
-                      tooltip: ' View Proposal',
+                      tooltip: 'View Proposal',
                     }),
                     {
                       icon: GetAppIconComponent,
