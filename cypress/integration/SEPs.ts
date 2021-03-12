@@ -1015,7 +1015,7 @@ context(
 
       cy.get('[data-cy="view-proposal"]').first().click();
 
-      cy.get('[role="dialog"]').contains('Technical').click();
+      cy.get('[role="dialog"]').contains('Technical review').click();
       cy.get('[data-cy="timeAllocation"]').type('51');
       cy.get('[data-cy="technical-review-status"]').click();
       cy.contains('Feasible').click();
