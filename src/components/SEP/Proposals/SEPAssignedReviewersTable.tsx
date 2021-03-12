@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core';
-import { Visibility } from '@material-ui/icons';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import RateReviewIcon from '@material-ui/icons/RateReview';
+import Visibility from '@material-ui/icons/Visibility';
 import dateformat from 'dateformat';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
@@ -8,13 +8,10 @@ import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
+import ProposalReview from 'components/review/ProposalReviewReviewer';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
-import {
-  SepProposal,
-  SepAssignment,
-  ReviewStatus,
-  UserRole,
-} from 'generated/sdk';
+import { SepAssignment, ReviewStatus, UserRole } from 'generated/sdk';
+import { SEPProposalType } from 'hooks/SEP/useSEPProposalsData';
 import { tableIcons } from 'utils/materialIcons';
 
 // NOTE: Some custom styles for row expand table.
@@ -31,7 +28,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type SEPAssignedReviewersTableProps = {
-  sepProposal: SepProposal;
+  sepProposal: SEPProposalType;
   removeAssignedReviewer: (
     assignedReviewer: SepAssignment,
     proposalId: number
@@ -71,28 +68,27 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
       render: (rowData: SepAssignment): string =>
         dateformat(new Date(rowData.dateAssigned), 'dd-mmm-yyyy HH:MM:ss'),
     },
-    { title: 'Status', field: 'review.status' },
+    { title: 'Review status', field: 'review.status' },
     {
       title: 'Grade',
       render: (rowData: SepAssignment) =>
-        rowData.review.grade ? rowData.review.grade : '-',
+        rowData.review?.grade ? rowData.review.grade : '-',
     },
   ];
 
-  const RateReviewIconComponent = (): JSX.Element => <RateReviewIcon />;
-
   return (
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
-      {editReviewID && (
-        <ProposalReviewModal
-          editReviewID={editReviewID as number}
-          reviewModalOpen={reviewModalOpen}
-          setReviewModalOpen={() => {
-            setReviewModalOpen(false);
-            updateView(currentAssignment as SepAssignment);
-          }}
-        />
-      )}
+      <ProposalReviewModal
+        title="Review"
+        proposalReviewModalOpen={reviewModalOpen}
+        setProposalReviewModalOpen={() => {
+          setReviewModalOpen(false);
+          currentAssignment && updateView(currentAssignment);
+        }}
+      >
+        <ProposalReview reviewId={editReviewID} sepId={sepProposal.sepId} />
+      </ProposalReviewModal>
+
       <MaterialTable
         icons={tableIcons}
         columns={assignmentColumns}
@@ -101,6 +97,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         editable={
           hasAccessRights
             ? {
+                deleteTooltip: () => 'Remove assignment',
                 onRowDelete: (
                   rowAssignmentsData: SepAssignment
                 ): Promise<void> =>
@@ -112,12 +109,16 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
             : {}
         }
         actions={[
-          rowData => ({
+          (rowData) => ({
             icon:
-              rowData.review.status === ReviewStatus.DRAFT
-                ? RateReviewIconComponent
+              rowData.review?.status === ReviewStatus.DRAFT
+                ? () => <RateReviewIcon />
                 : () => <Visibility />,
             onClick: () => {
+              if (!rowData.review) {
+                return;
+              }
+
               setEditReviewID(rowData.review.id);
               setCurrentAssignment({
                 ...rowData,
@@ -126,7 +127,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
               setReviewModalOpen(true);
             },
             tooltip:
-              rowData.review.status === ReviewStatus.DRAFT
+              rowData.review?.status === ReviewStatus.DRAFT
                 ? 'Review proposal'
                 : 'View review',
           }),

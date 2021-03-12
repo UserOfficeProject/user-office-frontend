@@ -1,9 +1,9 @@
-import { resetPasswordByEmailValidationSchema } from '@esss-swap/duo-validation';
+import { resetPasswordByEmailValidationSchema } from '@esss-swap/duo-validation/lib/User';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Field, Form, Formik } from 'formik';
@@ -16,7 +16,7 @@ import { FormWrapper } from 'styles/StyledComponents';
 
 import PhotoInSide from './PhotoInSide';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -41,18 +41,17 @@ export default function ResetPasswordEmail() {
   const [emailSuccess, setEmailSuccess] = useState<null | boolean>(null);
   const unauthorizedApi = useUnauthorizedApi();
   const requestResetEmail = async (values: { email: string }) => {
-    await unauthorizedApi
+    await unauthorizedApi()
       .resetPasswordEmail({ email: values.email })
-      .then(data => setEmailSuccess(!!data.resetPasswordEmail));
+      .then((data) => setEmailSuccess(!!data.resetPasswordEmail));
   };
 
   return (
     <PhotoInSide>
       <Formik
         initialValues={{ email: '' }}
-        onSubmit={async (values, actions) => {
+        onSubmit={async (values): Promise<void> => {
           await requestResetEmail(values);
-          actions.setSubmitting(false);
         }}
         validationSchema={resetPasswordByEmailValidationSchema}
       >

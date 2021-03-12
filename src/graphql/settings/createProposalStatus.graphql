@@ -1,0 +1,18 @@
+mutation createProposalStatus(
+  $shortCode: String!
+  $name: String!
+  $description: String!
+) {
+  createProposalStatus(
+    newProposalStatusInput: {
+      shortCode: $shortCode
+      name: $name
+      description: $description
+    }
+  ) {
+    proposalStatus {
+      ...proposalStatus
+    }
+    error
+  }
+}

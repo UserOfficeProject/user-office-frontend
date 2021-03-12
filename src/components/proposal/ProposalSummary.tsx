@@ -1,30 +1,45 @@
-import { Button, makeStyles } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import React, { useContext } from 'react';
 
-import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
-import { ProposalStatus } from 'generated/sdk';
-import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
-import { useSubmitProposal } from 'hooks/proposal/useSubmitProposal';
+import { NavigButton } from 'components/common/NavigButton';
+import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
-  EventType,
-  ProposalSubmissionModelState,
-} from 'models/ProposalSubmissionModel';
-import withConfirm from 'utils/withConfirm';
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from 'components/questionary/QuestionaryContext';
+import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
+import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
+import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
+import { EventType } from 'models/QuestionarySubmissionState';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import { ProposalSubmissionContext } from './ProposalContainer';
-import ProposalNavigationFragment from './ProposalNavigationFragment';
+import { ProposalContextType } from './ProposalContainer';
 
-function ProposalReview({ data, readonly, confirm }: IProposalSummaryProps) {
-  const { dispatch } = useContext(ProposalSubmissionContext)!;
-  const { isLoading, submitProposal } = useSubmitProposal();
+type ProposalSummaryProps = {
+  data: ProposalSubmissionState;
+  readonly: boolean;
+  confirm: WithConfirmType;
+};
+
+function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
+  const { state, dispatch } = useContext(
+    QuestionaryContext
+  ) as ProposalContextType;
+
+  if (!dispatch || !state) {
+    throw new Error(createMissingContextErrorMessage());
+  }
+
+  const proposal = state.proposal;
+
   const downloadPDFProposal = useDownloadPDFProposal();
-  const proposal = data.proposal;
 
   const allStepsComplete =
     proposal.questionary &&
-    proposal.questionary.steps.every(step => step.isCompleted);
+    proposal.questionary.steps.every((step) => step.isCompleted);
 
-  const classes = makeStyles(theme => ({
+  const classes = makeStyles((theme) => ({
     buttons: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -34,7 +49,7 @@ function ProposalReview({ data, readonly, confirm }: IProposalSummaryProps) {
       opacity: 0.7,
     },
     button: {
-      marginTop: proposal.status === 'BLANK' ? '40px' : 'auto',
+      marginTop: proposal.status?.id === 0 ? '40px' : 'auto',
       marginLeft: '10px',
       backgroundColor: theme.palette.secondary.main,
       color: '#ffff',
@@ -51,17 +66,14 @@ function ProposalReview({ data, readonly, confirm }: IProposalSummaryProps) {
         className={readonly ? classes.disabled : undefined}
       />
       <div className={classes.buttons}>
-        <ProposalNavigationFragment
-          back={undefined}
-          saveAndNext={{
-            callback: () => {
+        <NavigationFragment disabled={proposal.status?.id === 0}>
+          <NavigButton
+            onClick={() => {
               confirm(
                 () => {
-                  submitProposal(proposal.id).then(() => {
-                    dispatch({
-                      type: EventType.SUBMIT_PROPOSAL_CLICKED,
-                      payload: proposal,
-                    });
+                  dispatch({
+                    type: EventType.PROPOSAL_SUBMIT_CLICKED,
+                    payload: { proposalId: proposal.id },
                   });
                 },
                 {
@@ -70,35 +82,25 @@ function ProposalReview({ data, readonly, confirm }: IProposalSummaryProps) {
                     'I am aware that no further edits can be done after proposal submission.',
                 }
               )();
-            },
-            label:
-              proposal.status === ProposalStatus.SUBMITTED
-                ? '✔ Submitted'
-                : 'Submit',
-            disabled:
-              !allStepsComplete || proposal.status === ProposalStatus.SUBMITTED,
-            isBusy: isLoading,
-          }}
-          reset={undefined}
-          isLoading={false}
-          disabled={proposal.status === 'BLANK'}
-        />
-        <Button
-          className={classes.button}
-          onClick={() => downloadPDFProposal(proposal.id)}
-          variant="contained"
-          disabled={!allStepsComplete}
-        >
-          Download PDF
-        </Button>
+            }}
+            disabled={!allStepsComplete || proposal.submitted}
+            variant="contained"
+            color="primary"
+          >
+            {proposal.submitted ? '✔ Submitted' : 'Submit'}
+          </NavigButton>
+          <Button
+            onClick={() => downloadPDFProposal([proposal.id], proposal.title)}
+            disabled={!allStepsComplete}
+            className={classes.button}
+            variant="contained"
+          >
+            Download PDF
+          </Button>
+        </NavigationFragment>
       </div>
     </>
   );
 }
 
-interface IProposalSummaryProps {
-  data: ProposalSubmissionModelState;
-  readonly: boolean;
-  confirm: Function;
-}
 export default withConfirm(ProposalReview);

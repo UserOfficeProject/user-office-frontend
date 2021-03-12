@@ -8,12 +8,15 @@ query sepProposalsByInstrument(
     sepId: $sepId
     callId: $callId
   ) {
+    sepTimeAllocation
     proposal {
       id
       title
       shortCode
       rankOrder
-      status
+      status {
+        ...proposalStatus
+      }
       reviews {
         id
         comment
@@ -25,6 +28,9 @@ query sepProposalsByInstrument(
         status
         timeAllocation
       }
+    }
+    assignments {
+      sepMemberUserId
     }
   }
 }

@@ -1,56 +1,70 @@
-import {
-  Typography,
-  makeStyles,
-  Grid,
-  TextField,
-  Button,
-} from '@material-ui/core';
+import { administrationProposalValidationSchema } from '@esss-swap/duo-validation';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field } from 'formik';
+import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
 import FormikDropdown from 'components/common/FormikDropdown';
+import UOLoader from 'components/common/UOLoader';
+import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
 import { Proposal, ProposalEndStatus } from 'generated/sdk';
 import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(2, 0, 1, 1),
+  },
+}));
 
 type FinalRankingFormProps = {
-  closeModal: () => void;
   proposalData: Proposal;
+  hasWriteAccess: boolean;
+  closeModal: () => void;
+  meetingSubmitted: (data: AdministrationFormData) => void;
 };
 
 const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
-  closeModal,
   proposalData,
+  hasWriteAccess,
+  closeModal,
+  meetingSubmitted,
 }) => {
-  const classes = makeStyles(() => ({
-    button: {
-      marginTop: '25px',
-      marginLeft: '10px',
-    },
-  }))();
+  const classes = useStyles();
+  const [shouldClose, setShouldClose] = useState<boolean>(false);
+  const { api } = useDataApiWithFeedback();
 
   const initialData = {
-    finalStatus: proposalData.finalStatus || ProposalEndStatus.UNSET,
-    commentForUser: proposalData.commentForUser || '',
-    commentForManagement: proposalData.commentForManagement || '',
-    finalRank: '',
+    id: proposalData.id,
+    finalStatus: proposalData.finalStatus ?? ProposalEndStatus.UNSET,
+    commentForUser: proposalData.commentForUser ?? '',
+    commentForManagement: proposalData.commentForManagement ?? '',
+    rankOrder: proposalData.rankOrder ?? '',
   };
 
-  const handleSubmit = (
-    values: {
-      commentForUser: string | null | undefined;
-      commentForManagement: string | null | undefined;
-      finalStatus: string;
-      finalRank: string;
-    },
-    setSubmitting: Function,
-    shouldClose: boolean
-  ) => {
-    console.log(values);
+  const handleSubmit = async (values: AdministrationFormData) => {
+    const administrationProposalVales = {
+      id: values.id,
+      finalStatus: ProposalEndStatus[values.finalStatus as ProposalEndStatus],
+      commentForUser: values.commentForUser,
+      commentForManagement: values.commentForManagement,
+      rankOrder: values.rankOrder,
+    };
 
-    setSubmitting(false);
+    const data = await api('Saved!').administrationProposal(
+      administrationProposalVales
+    );
 
-    if (shouldClose) {
+    const isError = !!data.administrationProposal.error;
+
+    meetingSubmitted(administrationProposalVales);
+
+    if (shouldClose && !isError) {
       closeModal();
     }
   };
@@ -62,19 +76,19 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={initialData}
-          onSubmit={(values, actions): void => {
-            handleSubmit(values, actions.setSubmitting, false);
+          validationSchema={administrationProposalValidationSchema}
+          onSubmit={async (values): Promise<void> => {
+            if (!hasWriteAccess) {
+              return;
+            }
+
+            await handleSubmit({
+              ...values,
+              rankOrder: +values.rankOrder,
+            });
           }}
         >
-          {({
-            isSubmitting,
-            values,
-            errors,
-            touched,
-            handleChange,
-            setSubmitting,
-            isValid,
-          }): JSX.Element => (
+          {({ isSubmitting }): JSX.Element => (
             <Form>
               <Typography variant="h6" gutterBottom>
                 SEP Meeting form
@@ -86,8 +100,6 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     id="commentForUser"
                     label="Comment for user"
                     type="text"
-                    value={values.commentForUser}
-                    onChange={handleChange}
                     component={TextField}
                     margin="normal"
                     fullWidth
@@ -95,16 +107,8 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     rowsMax="16"
                     rows="3"
                     data-cy="commentForUser"
-                    error={
-                      touched.commentForUser &&
-                      errors.commentForUser !== undefined
-                    }
-                    helperText={
-                      touched.commentForUser &&
-                      errors.commentForUser &&
-                      errors.commentForUser
-                    }
                     required
+                    disabled={!hasWriteAccess}
                   />
                   <FormikDropdown
                     name="finalStatus"
@@ -117,6 +121,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       { text: 'Rejected', value: ProposalEndStatus.REJECTED },
                     ]}
                     required
+                    disabled={!hasWriteAccess}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -131,67 +136,65 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     multiline
                     rowsMax="16"
                     rows="3"
-                    onChange={handleChange}
-                    value={values.commentForManagement}
                     data-cy="commentForManagement"
-                    error={
-                      touched.commentForManagement &&
-                      errors.commentForManagement !== undefined
-                    }
-                    helperText={
-                      touched.commentForManagement &&
-                      errors.commentForManagement &&
-                      errors.commentForManagement
-                    }
                     required
+                    disabled={!hasWriteAccess}
                   />
                   <Field
-                    id="finalRank"
-                    name="finalRank"
-                    label="Final rank"
+                    id="rankOrder"
+                    name="rankOrder"
+                    label="Rank"
                     type="number"
                     component={TextField}
                     margin="normal"
                     fullWidth
-                    onChange={handleChange}
-                    value={values.finalRank}
-                    data-cy="finalRank"
-                    error={touched.finalRank && errors.finalRank !== undefined}
-                    helperText={
-                      touched.finalRank && errors.finalRank && errors.finalRank
-                    }
+                    data-cy="rankOrder"
                     required
+                    disabled={!hasWriteAccess}
                   />
                 </Grid>
               </Grid>
               <ButtonContainer>
+                {hasWriteAccess && (
+                  <>
+                    {isSubmitting && (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        className={classes.button}
+                      >
+                        <UOLoader buttonSized />
+                      </Box>
+                    )}
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      onClick={() => {
+                        setShouldClose(false);
+                      }}
+                      color="primary"
+                      className={classes.button}
+                      data-cy="save"
+                      disabled={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      onClick={() => {
+                        setShouldClose(true);
+                      }}
+                      color="primary"
+                      className={classes.button}
+                      data-cy="saveAndContinue"
+                      disabled={isSubmitting}
+                    >
+                      Save and continue
+                    </Button>
+                  </>
+                )}
                 <Button
-                  disabled={isSubmitting}
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  data-cy="save"
-                >
-                  Save
-                </Button>
-                <Button
-                  disabled={isSubmitting}
-                  type="button"
-                  variant="contained"
-                  onClick={() => {
-                    if (isValid) {
-                      handleSubmit(values, setSubmitting, true);
-                    }
-                  }}
-                  color="primary"
-                  className={classes.button}
-                  data-cy="saveAndContinue"
-                >
-                  Save and continue
-                </Button>
-                <Button
-                  disabled={isSubmitting}
                   type="button"
                   onClick={closeModal}
                   variant="contained"
@@ -212,6 +215,8 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
 FinalRankingForm.propTypes = {
   closeModal: PropTypes.func.isRequired,
   proposalData: PropTypes.any.isRequired,
+  meetingSubmitted: PropTypes.func.isRequired,
+  hasWriteAccess: PropTypes.bool.isRequired,
 };
 
 export default FinalRankingForm;

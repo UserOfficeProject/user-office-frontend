@@ -1,15 +1,52 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { Field } from 'formik';
+import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React from 'react';
+import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 
 import FormikDropdown from 'components/common/FormikDropdown';
-import FormikUICustomDatePicker from 'components/common/FormikUICustomDatePicker';
-import { useProposalsTemplates } from 'hooks/template/useProposalTemplates';
+import {
+  CreateCallMutationVariables,
+  GetProposalTemplatesQuery,
+  ProposalWorkflow,
+  UpdateCallMutationVariables,
+} from 'generated/sdk';
 
-const CallGeneralInfo: React.FC = () => {
-  const { templates } = useProposalsTemplates(false);
+const CallGeneralInfo: React.FC<{
+  templates: Exclude<GetProposalTemplatesQuery['proposalTemplates'], null>;
+  loadingTemplates: boolean;
+  proposalWorkflows: ProposalWorkflow[];
+  loadingProposalWorkflows: boolean;
+}> = ({
+  loadingProposalWorkflows,
+  proposalWorkflows,
+  loadingTemplates,
+  templates,
+}) => {
+  const proposalWorkflowsWithInjectedSelectionRemoval = [
+    { id: '', name: 'None (remove selection)' },
+    ...proposalWorkflows,
+  ].map((proposalWorkflow) => ({
+    text: proposalWorkflow.name,
+    value: proposalWorkflow.id,
+  }));
+
+  const formik = useFormikContext<
+    CreateCallMutationVariables | UpdateCallMutationVariables
+  >();
+  const { startCall, endCall } = formik.values;
+
+  useEffect(() => {
+    if (endCall && endCall < startCall) {
+      formik.setFieldValue('endCall', startCall);
+      /** NOTE: Set field untouched because if we try to update the endCall before startCall and then
+       *  set startCall after endCall it can show error message even though we update the endCall automatically.
+       */
+      formik.setFieldTouched('endCall', false);
+    }
+  }, [startCall, endCall, formik]);
 
   return (
     <>
@@ -20,40 +57,65 @@ const CallGeneralInfo: React.FC = () => {
         component={TextField}
         margin="normal"
         fullWidth
+        required
         data-cy="short-code"
       />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Field
           name="startCall"
           label="Start"
-          component={FormikUICustomDatePicker}
+          format="yyyy-MM-dd"
+          component={KeyboardDatePicker}
           margin="normal"
           fullWidth
+          required
           data-cy="start-date"
         />
 
         <Field
           name="endCall"
           label="End"
-          component={FormikUICustomDatePicker}
+          format="yyyy-MM-dd"
+          component={KeyboardDatePicker}
           margin="normal"
           fullWidth
+          minDate={startCall}
+          required
           data-cy="end-date"
         />
       </MuiPickersUtilsProvider>
-      {templates && templates.length > 0 && (
-        <FormikDropdown
-          name="templateId"
-          label="Call template"
-          items={templates.map(template => ({
-            text: template.name,
-            value: template.templateId,
-          }))}
-          data-cy="call-template"
-        />
-      )}
+      <FormikDropdown
+        name="templateId"
+        label="Call template"
+        loading={loadingTemplates}
+        noOptionsText="No templates"
+        items={templates.map((template) => ({
+          text: template.name,
+          value: template.templateId,
+        }))}
+        InputProps={{ 'data-cy': 'call-template' }}
+      />
+      <FormikDropdown
+        name="proposalWorkflowId"
+        label="Proposal workflow"
+        loading={loadingProposalWorkflows}
+        noOptionsText="No proposal workflows"
+        items={
+          proposalWorkflows.length > 0
+            ? proposalWorkflowsWithInjectedSelectionRemoval
+            : []
+        }
+        InputProps={{ 'data-cy': 'call-workflow' }}
+      />
     </>
   );
+};
+
+CallGeneralInfo.propTypes = {
+  loadingProposalWorkflows: PropTypes.bool.isRequired,
+  proposalWorkflows: PropTypes.array.isRequired,
+  loadingTemplates: PropTypes.bool.isRequired,
+  templates: PropTypes.array.isRequired,
 };
 
 export default CallGeneralInfo;

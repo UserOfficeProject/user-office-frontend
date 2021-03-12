@@ -1,16 +1,14 @@
-import {
-  AppBar,
-  Divider,
-  Fade,
-  Grid,
-  ListItemIcon,
-  makeStyles,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import useTheme from '@material-ui/core/styles/useTheme';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -18,7 +16,12 @@ import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 
 import {
+  getQuestionaryComponentDefinitions,
+  getTemplateFieldIcon,
+} from 'components/questionary/QuestionaryComponentRegistry';
+import {
   DataType,
+  DependenciesLogicOperator,
   Question,
   Template,
   TemplateCategoryId,
@@ -26,7 +29,6 @@ import {
 } from 'generated/sdk';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 
-import getTemplateFieldIcon from './getTemplateFieldIcon';
 import TemplateQuestionEditor, {
   TemplateTopicEditorData,
 } from './TemplateQuestionEditor';
@@ -46,15 +48,21 @@ class QuestionItemAdapter implements TemplateTopicEditorData {
   get dataType() {
     return this.source.dataType;
   }
-  get dependency() {
-    return null;
+  get dependencies() {
+    return [];
   }
   get config() {
     return this.source.config;
   }
+  get dependenciesOperator() {
+    return DependenciesLogicOperator.AND;
+  }
+  get categoryId() {
+    return this.source.categoryId;
+  }
 }
 
-export const QuestionPicker = (props: IQuestionPickerProps) => {
+export const QuestionPicker = (props: QuestionPickerProps) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | SVGSVGElement>(null);
   const open = Boolean(anchorEl);
@@ -85,6 +93,9 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
     },
     itemContainer: {
       minHeight: '180px',
+      maxHeight: '600px',
+      overflowY: 'auto',
+      overflowX: 'hidden',
     },
     addQuestionMenuItem: {
       minHeight: 0,
@@ -95,7 +106,7 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
     },
   }))();
 
-  const getListStyle = (isDraggingOver: any) => ({
+  const getListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver ? theme.palette.primary.light : 'transparent',
     transition: 'all 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000)',
   });
@@ -105,9 +116,11 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
       <TemplateQuestionEditor
         index={index}
         data={new QuestionItemAdapter(question)}
-        onClick={item => {
+        dispatch={dispatch}
+        onClick={(item) => {
           const isAltDown = (window.event as MouseEvent)?.altKey;
 
+          // NOTE: sortOrder is always 0 because we add at that position using alt key and after that you can reorder if you want.
           if (isAltDown) {
             dispatch({
               type: EventType.CREATE_QUESTION_REL_REQUESTED,
@@ -167,80 +180,29 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
             onClose={() => setAnchorEl(null)}
             TransitionComponent={Fade}
           >
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.TEXT_INPUT)}
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.TEXT_INPUT)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Text input</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.EMBELLISHMENT)}
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.EMBELLISHMENT)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Embellishment</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.DATE)}
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.DATE)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Date</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.FILE_UPLOAD)}
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.FILE_UPLOAD)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add File upload</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() =>
-                onCreateNewQuestionClicked(DataType.SELECTION_FROM_OPTIONS)
-              }
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.SELECTION_FROM_OPTIONS)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Multiple choice</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.BOOLEAN)}
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.BOOLEAN)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Boolean</Typography>
-            </MenuItem>
-
-            <MenuItem
-              className={classes.addQuestionMenuItem}
-              onClick={() => onCreateNewQuestionClicked(DataType.SUBTEMPLATE)}
-              disabled={
-                template.categoryId !== TemplateCategoryId.PROPOSAL_QUESTIONARY
-              }
-            >
-              <ListItemIcon>
-                {getTemplateFieldIcon(DataType.SUBTEMPLATE)!}
-              </ListItemIcon>
-              <Typography variant="inherit">Add Subtemplate</Typography>
-            </MenuItem>
+            {getQuestionaryComponentDefinitions()
+              .filter((definition) => definition.creatable)
+              .map((definition) => {
+                return (
+                  <MenuItem
+                    className={classes.addQuestionMenuItem}
+                    onClick={() =>
+                      onCreateNewQuestionClicked(definition.dataType)
+                    }
+                    disabled={
+                      definition.dataType === DataType.SAMPLE_DECLARATION &&
+                      template.categoryId !==
+                        TemplateCategoryId.PROPOSAL_QUESTIONARY
+                    }
+                    key={definition.dataType}
+                  >
+                    <ListItemIcon>
+                      {getTemplateFieldIcon(definition.dataType)}
+                    </ListItemIcon>
+                    <Typography variant="inherit">{`Add ${definition.name}`}</Typography>
+                  </MenuItem>
+                );
+              })}
 
             <Divider />
 
@@ -260,7 +222,7 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
             xs={12}
             ref={provided.innerRef}
             style={getListStyle(snapshot.isDraggingOver)}
-            className={classes.itemContainer}
+            className={`${classes.itemContainer} questionItemsWrapper`}
           >
             {getItems()}
             {provided.placeholder}
@@ -271,7 +233,7 @@ export const QuestionPicker = (props: IQuestionPickerProps) => {
   );
 };
 
-interface IQuestionPickerProps {
+interface QuestionPickerProps {
   topic: Topic;
   template: Template;
   dispatch: React.Dispatch<Event>;

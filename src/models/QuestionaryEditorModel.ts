@@ -1,22 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import produce from 'immer';
 import { Reducer, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import {
-  Template,
   Question,
   QuestionTemplateRelation,
+  Template,
   TemplateCategoryId,
+  TemplateStep,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import {
   getFieldById,
   getQuestionaryStepByTopicId,
   getTopicById,
-} from 'models/ProposalModelFunctions';
+} from 'models/QuestionaryFunctions';
 import {
-  useReducerWithMiddleWares,
   ReducerMiddleware,
+  useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
 export enum EventType {
@@ -36,6 +38,7 @@ export enum EventType {
   CREATE_TOPIC_REQUESTED,
   DELETE_TOPIC_REQUESTED,
   TOPIC_CREATED,
+  TOPIC_REORDERED,
   UPDATE_TOPIC_TITLE_REQUESTED,
   REORDER_TOPIC_REQUESTED,
   PICK_QUESTION_REQUESTED,
@@ -46,6 +49,7 @@ export enum EventType {
   OPEN_QUESTIONREL_EDITOR,
   UPDATE_TEMPLATE_METADATA_REQUESTED,
   TEMPLATE_METADATA_UPDATED,
+  DEPENDENCY_HOVER,
 }
 
 export interface Event {
@@ -56,7 +60,7 @@ export interface Event {
 export default function QuestionaryEditorModel(
   middlewares?: Array<ReducerMiddleware<Template, Event>>
 ) {
-  const { templateId } = useParams();
+  const { templateId } = useParams<{ templateId: string }>();
   const blankInitTemplate: Template = {
     categoryId: TemplateCategoryId.PROPOSAL_QUESTIONARY,
     steps: [],
@@ -65,10 +69,11 @@ export default function QuestionaryEditorModel(
     name: 'blank',
     complementaryQuestions: [],
     description: '',
+    questionaryCount: 0,
   };
 
   function reducer(state: Template, action: Event): Template {
-    return produce(state, draft => {
+    return produce(state, (draft) => {
       switch (action.type) {
         case EventType.READY:
           return action.payload;
@@ -77,42 +82,36 @@ export default function QuestionaryEditorModel(
             return draft;
           }
 
-          const from = draft.steps.find(step => {
+          const from = draft.steps.find((step) => {
             return (
               step.topic.id.toString() === action.payload.source.droppableId
             );
-          })!;
+          }) as TemplateStep;
 
-          const to = draft.steps.find(step => {
+          const to = draft.steps.find((step) => {
             return (
               step.topic.id.toString() ===
               action.payload.destination.droppableId
             );
-          })!;
+          }) as TemplateStep;
 
-          to.fields.splice(
-            action.payload.destination.index,
-            0,
-            ...from.fields.splice(action.payload.source.index, 1)
+          const [fieldToAddAtDestination] = from.fields.splice(
+            action.payload.source.index,
+            1
           );
+
+          to.fields.splice(action.payload.destination.index, 0, {
+            ...fieldToAddAtDestination,
+            sortOrder: action.payload.sortOrder,
+          });
 
           return draft;
         }
-        case EventType.REORDER_TOPIC_REQUESTED:
-          if (!action.payload.destination) {
-            return draft;
-          }
-
-          draft.steps.splice(
-            action.payload.destination.index,
-            0,
-            ...draft.steps.splice(action.payload.source.index, 1)
-          );
-
-          return draft;
         case EventType.UPDATE_TOPIC_TITLE_REQUESTED:
-          getTopicById(draft.steps, action.payload.topicId).topic_title =
-            action.payload.title;
+          const topicById = getTopicById(draft.steps, action.payload.topicId);
+          if (topicById) {
+            topicById.topic.title = action.payload.title;
+          }
 
           return draft;
         case EventType.UPDATE_QUESTION_REL_REQUESTED: {
@@ -130,7 +129,8 @@ export default function QuestionaryEditorModel(
         case EventType.UPDATE_QUESTION_REQUESTED: {
           const field: Question = action.payload.field;
           const fieldToUpdate = draft.complementaryQuestions.find(
-            question => question.proposalQuestionId === field.proposalQuestionId
+            (question) =>
+              question.proposalQuestionId === field.proposalQuestionId
           );
           if (field && fieldToUpdate) {
             Object.assign(fieldToUpdate, field);
@@ -143,7 +143,7 @@ export default function QuestionaryEditorModel(
           const stepToDelete = getQuestionaryStepByTopicId(
             draft.steps,
             action.payload
-          );
+          ) as TemplateStep;
           if (!stepToDelete) {
             return;
           }
@@ -156,7 +156,7 @@ export default function QuestionaryEditorModel(
           const questionId = action.payload;
           draft.complementaryQuestions.splice(
             draft.complementaryQuestions.findIndex(
-              question => question.proposalQuestionId === questionId
+              (question) => question.proposalQuestionId === questionId
             ),
             1
           );
@@ -164,6 +164,7 @@ export default function QuestionaryEditorModel(
           return draft;
         }
         case EventType.TOPIC_CREATED:
+        case EventType.TOPIC_REORDERED:
         case EventType.QUESTION_REL_UPDATED:
         case EventType.QUESTION_REL_DELETED:
           return { ...action.payload };
@@ -177,7 +178,7 @@ export default function QuestionaryEditorModel(
           const newQuestion = action.payload as Question;
           const curQuestion =
             draft.complementaryQuestions.find(
-              curQuestion =>
+              (curQuestion) =>
                 curQuestion.proposalQuestionId ===
                 newQuestion.proposalQuestionId
             ) || getFieldById(draft.steps, newQuestion.proposalQuestionId);
@@ -199,13 +200,16 @@ export default function QuestionaryEditorModel(
     blankInitTemplate,
     middlewares || []
   );
-  const memoizedDispatch = useCallback(dispatch, []); // required to avoid infinite re-render because dispatch function is recreated
+
+  // NOTE: required to avoid infinite re-render because dispatch function is recreated
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedDispatch = useCallback(dispatch, []);
   const api = useDataApi();
 
   useEffect(() => {
     api()
-      .getTemplate({ templateId: parseInt(templateId!) })
-      .then(data => {
+      .getTemplate({ templateId: parseInt(templateId) })
+      .then((data) => {
         memoizedDispatch({
           type: EventType.READY,
           payload: data.template,

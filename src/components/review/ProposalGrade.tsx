@@ -1,19 +1,26 @@
-import { proposalGradeValidationSchema } from '@esss-swap/duo-validation';
+import { proposalGradeValidationSchema } from '@esss-swap/duo-validation/lib/Review';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
-import { Field, Form, Formik } from 'formik';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Field, Form, Formik, useFormikContext } from 'formik';
 import { TextField, Select } from 'formik-material-ui';
-import { useSnackbar } from 'notistack';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { Prompt } from 'react-router';
 
+import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
-import { ReviewStatus, CoreReviewFragment } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
-import { useReviewData } from 'hooks/review/useReviewData';
+import {
+  ReviewStatus,
+  ReviewWithNextProposalStatus,
+  Review,
+} from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles(() => ({
   buttons: {
@@ -25,26 +32,72 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function ProposalGrade(props: {
-  reviewID: number;
-  onChange: Function;
-}) {
-  const classes = useStyles();
-  const { reviewData } = useReviewData(props.reviewID);
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
-  const [review, setReview] = useState<CoreReviewFragment | null | undefined>(
-    null
-  );
-  const { setAssignmentReview } = useContext(ReviewAndAssignmentContext);
+type ProposalGradeProps = {
+  review: Review | null;
+  setReview: React.Dispatch<React.SetStateAction<Review | null>>;
+  onChange: FunctionType;
+  sepId?: number | null;
+  confirm: WithConfirmType;
+};
 
-  useEffect(() => {
-    setReview(reviewData);
-  }, [reviewData]);
+type GradeFormType = {
+  grade: string | number;
+  comment: string;
+  saveOnly: boolean;
+};
+
+const ProposalGrade: React.FC<ProposalGradeProps> = ({
+  review,
+  setReview,
+  onChange,
+  confirm,
+}) => {
+  const classes = useStyles();
+  const { api } = useDataApiWithFeedback();
+  const { setAssignmentReview } = useContext(ReviewAndAssignmentContext);
+  const [shouldSubmit, setShouldSubmit] = useState(false);
 
   if (!review) {
-    return <p>Loading</p>;
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
+
+  const PromptIfDirty = () => {
+    const formik = useFormikContext();
+
+    return (
+      <Prompt
+        when={formik.dirty && formik.submitCount === 0}
+        message="Changes you recently made in this tab will be lost! Are you sure?"
+      />
+    );
+  };
+
+  const isDisabled = (isSubmitting: boolean) =>
+    isSubmitting || review.status === ReviewStatus.SUBMITTED;
+
+  const handleSubmit = async (values: GradeFormType) => {
+    const data = await api(shouldSubmit ? 'Submitted' : 'Updated').addReview({
+      reviewID: review.id,
+      //This should be taken care of in validationSchema
+      grade: +values.grade,
+      comment: values.comment ? values.comment : '',
+      status: shouldSubmit ? ReviewStatus.SUBMITTED : ReviewStatus.DRAFT,
+      sepID: review.sepID,
+    });
+
+    if (!data.addReview.error && data.addReview.review) {
+      setReview({
+        ...review,
+        comment: data.addReview.review.comment,
+        grade: data.addReview.review.grade,
+        status: data.addReview.review.status,
+      });
+      setAssignmentReview(
+        data.addReview.review as ReviewWithNextProposalStatus
+      );
+    }
+    onChange();
+  };
 
   return (
     <Formik
@@ -53,34 +106,27 @@ export default function ProposalGrade(props: {
         comment: review.comment || '',
         saveOnly: true,
       }}
-      onSubmit={async (values, actions) => {
-        await api()
-          .updateReview({
-            reviewID: props.reviewID,
-            //This should be taken care of in validationSchema
-            grade: +values.grade,
-            comment: values.comment ? values.comment : '',
-            status: values.saveOnly
-              ? ReviewStatus.DRAFT
-              : ReviewStatus.SUBMITTED,
-            sepID: review.sepID,
-          })
-          .then(data => {
-            if (data.addReview.error) {
-              enqueueSnackbar(data.addReview.error, { variant: 'error' });
-            } else {
-              enqueueSnackbar('Updated', { variant: 'success' });
-              setReview(data.addReview.review);
-              setAssignmentReview(data.addReview.review);
+      onSubmit={async (values): Promise<void> => {
+        if (shouldSubmit) {
+          confirm(
+            async () => {
+              await handleSubmit(values);
+            },
+            {
+              title: 'Please confirm',
+              description:
+                'I am aware that no further changes to the grade are possible after submission.',
             }
-            props.onChange();
-            actions.setSubmitting(false);
-          });
+          )();
+        } else {
+          await handleSubmit(values);
+        }
       }}
       validationSchema={proposalGradeValidationSchema}
     >
-      {({ isSubmitting, setFieldValue, handleSubmit }) => (
+      {({ isSubmitting }) => (
         <Form>
+          <PromptIfDirty />
           <CssBaseline />
           <Field
             name="comment"
@@ -92,7 +138,7 @@ export default function ProposalGrade(props: {
             multiline
             rowsMax="16"
             rows="4"
-            disabled={review.status === 'SUBMITTED'}
+            disabled={isDisabled(isSubmitting)}
           />
           <InputLabel htmlFor="grade-proposal">Grade</InputLabel>
           <Field
@@ -101,7 +147,8 @@ export default function ProposalGrade(props: {
               id: 'grade-proposal',
             }}
             component={Select}
-            disabled={review.status === 'SUBMITTED'}
+            disabled={isDisabled(isSubmitting)}
+            required
           >
             {[...Array(10)].map((e, i) => (
               <MenuItem key={i} value={i + 1}>
@@ -110,37 +157,37 @@ export default function ProposalGrade(props: {
             ))}
           </Field>
           <ButtonContainer>
+            {isSubmitting && (
+              <Box display="flex" alignItems="center" mx={1}>
+                <UOLoader buttonSized />
+              </Box>
+            )}
             <Button
-              disabled={isSubmitting || review.status === 'SUBMITTED'}
+              disabled={isDisabled(isSubmitting)}
               variant="contained"
-              color="primary"
-              onClick={() => {
-                setFieldValue('saveOnly', true, false);
-                handleSubmit();
-              }}
+              color="secondary"
+              type="submit"
+              onClick={() => setShouldSubmit(false)}
             >
               Save
             </Button>
             <Button
               className={classes.button}
-              disabled={isSubmitting || review.status === 'SUBMITTED'}
+              disabled={isDisabled(isSubmitting)}
               variant="contained"
-              color="secondary"
-              onClick={() => {
-                const confirmed = window.confirm(
-                  'I am aware that no futhure changes to the grade is possible after submission.'
-                );
-                if (confirmed) {
-                  setFieldValue('saveOnly', false, false);
-                  handleSubmit();
-                }
-              }}
+              color="primary"
+              type="submit"
+              onClick={() => setShouldSubmit(true)}
             >
-              Submit
+              {review.status === ReviewStatus.SUBMITTED
+                ? 'Submitted'
+                : 'Submit'}
             </Button>
           </ButtonContainer>
         </Form>
       )}
     </Formik>
   );
-}
+};
+
+export default withConfirm(ProposalGrade);

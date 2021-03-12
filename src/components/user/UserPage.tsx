@@ -1,4 +1,6 @@
-import { Container, Divider, makeStyles } from '@material-ui/core';
+import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
@@ -28,7 +30,7 @@ function UserPage(props: { match: { params: { id: string } } }) {
   const classes = useStyles();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" cy-data="user-page">
       <SimpleTabs tabNames={['General', 'Settings', 'Logs']}>
         <UpdateUserInformation id={userId} />
         <React.Fragment>

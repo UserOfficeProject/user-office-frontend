@@ -1,12 +1,11 @@
 import Grid from '@material-ui/core/Grid';
-import { Edit } from '@material-ui/icons';
-import { useSnackbar } from 'notistack';
+import Edit from '@material-ui/icons/Edit';
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router';
 
 import { UserRole } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import { InviteUserForm } from './InviteUserForm';
 import PeopleTable from './PeopleTable';
@@ -18,16 +17,18 @@ export default function PeoplePage() {
     title: '',
     userRole: UserRole.USER,
   });
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
+  const history = useHistory();
 
   if (userData) {
-    return <Redirect to={`/PeoplePage/${userData.id}`} />;
+    setTimeout(() => {
+      history.push(`/PeoplePage/${userData.id}`);
+    });
   }
 
-  const menuItems = [];
+  const invitationButtons = [];
 
-  menuItems.push({
+  invitationButtons.push({
     title: 'Invite User',
     action: () =>
       setSendUserEmail({
@@ -37,13 +38,13 @@ export default function PeoplePage() {
       }),
   });
 
-  menuItems.push({
+  invitationButtons.push({
     title: 'Invite Reviewer',
     action: () =>
       setSendUserEmail({
         show: true,
         title: 'Invite Reviewer',
-        userRole: UserRole.REVIEWER,
+        userRole: UserRole.SEP_REVIEWER,
       }),
   });
 
@@ -64,25 +65,20 @@ export default function PeoplePage() {
                       userRole: UserRole.USER,
                     })
                   }
-                  action={() => console.log()}
+                  action={() => {}}
                 />
               ) : (
                 <PeopleTable
                   title="Users"
-                  actionText="Edit user"
-                  actionIcon={<Edit />}
-                  action={setUserData}
-                  menuItems={menuItems}
+                  action={{
+                    fn: setUserData,
+                    actionText: 'Edit user',
+                    actionIcon: <Edit />,
+                  }}
+                  selection={false}
+                  invitationButtons={invitationButtons}
                   onRemove={(user: { id: number }) =>
-                    api()
-                      .deleteUser({ id: user.id })
-                      .then(
-                        data =>
-                          data.deleteUser.error &&
-                          enqueueSnackbar(data.deleteUser.error, {
-                            variant: 'error',
-                          })
-                      )
+                    api().deleteUser({ id: user.id })
                   }
                 />
               )}

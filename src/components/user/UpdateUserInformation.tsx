@@ -1,30 +1,33 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
+import { updateUserValidationSchema } from '@esss-swap/duo-validation';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress/CircularProgress';
+import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
+import DoneIcon from '@material-ui/icons/Done';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { makeStyles } from '@material-ui/styles';
 import dateformat from 'dateformat';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
-import { useSnackbar } from 'notistack';
+import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React, { useEffect, useState, useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
-import FormikUICustomDatePicker from 'components/common/FormikUICustomDatePicker';
+import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
-import { UpdateUserMutationVariables, User } from 'generated/sdk';
-import { useInstitutionData } from 'hooks/admin/useInstitutionData';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { UpdateUserMutationVariables, User, UserRole } from 'generated/sdk';
+import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useGetFields } from 'hooks/user/useGetFields';
 import orcid from 'images/orcid.png';
 import { ButtonContainer } from 'styles/StyledComponents';
-import { userFieldSchema } from 'utils/userFieldValidationSchema';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: '25px',
     marginLeft: '10px',
@@ -40,47 +43,49 @@ const useStyles = makeStyles({
     'margin-top': '16px',
     'margin-bottom': '19px',
   },
-});
+  chipSpace: {
+    '& > * + *': {
+      margin: theme.spacing(0.5),
+    },
+  },
+}));
 
 export default function UpdateUserInformation(props: { id: number }) {
-  const { user } = useContext(UserContext);
+  const { user, currentRole } = useContext(UserContext);
   const [userData, setUserData] = useState<User | null>(null);
-  const sendRequest = useDataApi();
+  const { api } = useDataApiWithFeedback();
   const fieldsContent = useGetFields();
-  const { institutionData, loadingInstitutions } = useInstitutionData();
+  const { institutions, loadingInstitutions } = useInstitutionsData();
   const [nationalitiesList, setNationalitiesList] = useState<Option[]>([]);
   const [institutionsList, setInstitutionsList] = useState<Option[]>([]);
-  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
   useEffect(() => {
     const getUserInformation = (id: number) => {
       if (user.id !== props.id) {
-        sendRequest()
+        api()
           .getUser({ id })
-          .then(data => {
+          .then((data) => {
             setUserData({ ...(data.user as User) });
           });
       } else {
-        sendRequest()
+        api()
           .getUserMe()
-          .then(data => {
+          .then((data) => {
             setUserData({ ...(data.me as User) });
           });
       }
     };
     getUserInformation(props.id);
-  }, [props.id, user.id, sendRequest]);
+  }, [props.id, user.id, api]);
 
   if (loadingInstitutions || !fieldsContent || !userData) {
-    return (
-      <CircularProgress style={{ marginLeft: '50%', marginTop: '50px' }} />
-    );
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '50px' }} />;
   }
 
   if (!institutionsList.length) {
     setInstitutionsList(
-      institutionData.map(institution => {
+      institutions.map((institution) => {
         return { text: institution.name, value: institution.id };
       })
     );
@@ -88,27 +93,58 @@ export default function UpdateUserInformation(props: { id: number }) {
 
   if (!nationalitiesList.length) {
     setNationalitiesList(
-      fieldsContent.nationalities.map(nationality => {
+      fieldsContent.nationalities.map((nationality) => {
         return { text: nationality.value, value: nationality.id };
       })
     );
   }
 
   const sendUserUpdate = (variables: UpdateUserMutationVariables) => {
-    sendRequest()
-      .updateUser(variables)
-      .then(data =>
-        enqueueSnackbar('Updated Information', {
-          variant: data.updateUser.error ? 'error' : 'success',
-        })
+    return api('Updated Information').updateUser(variables);
+  };
+
+  const isUserOfficer = currentRole === UserRole.USER_OFFICER;
+
+  const handleSetUserEmailVerified = async () => {
+    const {
+      setUserEmailVerified: { error },
+    } = await api('Email verified').setUserEmailVerified({ id: props.id });
+
+    if (!error) {
+      setUserData((userData) =>
+        userData
+          ? {
+              ...userData,
+              emailVerified: true,
+            }
+          : null
       );
+    }
+  };
+
+  const handleSetUserNotPlaceholder = async () => {
+    const {
+      setUserNotPlaceholder: { error },
+    } = await api('User is no longer placeholder').setUserNotPlaceholder({
+      id: props.id,
+    });
+
+    if (!error) {
+      setUserData((userData) =>
+        userData
+          ? {
+              ...userData,
+              placeholder: false,
+            }
+          : null
+      );
+    }
   };
 
   return (
     <React.Fragment>
       <Formik
         validateOnChange={false}
-        validateOnBlur={false}
         initialValues={{
           username: userData.username,
           firstname: userData.firstname,
@@ -135,7 +171,7 @@ export default function UpdateUserInformation(props: { id: number }) {
           user_title: userData.user_title,
           orcid: userData.orcid,
         }}
-        onSubmit={(values, actions) => {
+        onSubmit={async (values, actions): Promise<void> => {
           const newValues = {
             id: props.id,
             ...values,
@@ -145,18 +181,45 @@ export default function UpdateUserInformation(props: { id: number }) {
               values.gender === 'other' ? values.othergender : values.gender,
           } as UpdateUserMutationVariables;
 
-          sendUserUpdate({
+          await sendUserUpdate({
             ...newValues,
           });
           actions.setFieldValue('oldEmail', values.email);
-          actions.setSubmitting(false);
         }}
-        validationSchema={userFieldSchema}
+        validationSchema={updateUserValidationSchema}
       >
         {({ isSubmitting, values }) => (
           <Form>
             <Typography variant="h6" gutterBottom>
               User Information
+              <Box className={classes.chipSpace}>
+                {!userData.emailVerified && (
+                  <Chip
+                    color="primary"
+                    deleteIcon={<DoneIcon data-cy="btn-verify-email" />}
+                    onDelete={
+                      isUserOfficer ? handleSetUserEmailVerified : undefined
+                    }
+                    icon={<AlternateEmailIcon />}
+                    size="small"
+                    label="Email not verified"
+                  />
+                )}
+                {userData.placeholder && (
+                  <Chip
+                    color="primary"
+                    deleteIcon={
+                      <DoneIcon data-cy="btn-set-user-not-placeholder" />
+                    }
+                    onDelete={
+                      isUserOfficer ? handleSetUserNotPlaceholder : undefined
+                    }
+                    icon={<AccountCircleIcon />}
+                    size="small"
+                    label="Placeholder user"
+                  />
+                )}
+              </Box>
             </Typography>
             <Grid container spacing={3}>
               <Grid item xs={6}>
@@ -242,7 +305,8 @@ export default function UpdateUserInformation(props: { id: number }) {
                     <Field
                       name="birthdate"
                       label="Birthdate"
-                      component={FormikUICustomDatePicker}
+                      format="yyyy-MM-dd"
+                      component={KeyboardDatePicker}
                       margin="normal"
                       fullWidth
                       data-cy="birthdate"
@@ -253,7 +317,11 @@ export default function UpdateUserInformation(props: { id: number }) {
               <Grid item xs={6}>
                 <div className={classes.orcIdContainer}>
                   <InputLabel shrink>ORCID iD</InputLabel>
-                  <a href={'https://orcid.org/' + values.orcid}>
+                  <a
+                    href={'https://orcid.org/' + values.orcid}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     <img
                       className={classes.orcidIconSmall}
                       src={orcid}

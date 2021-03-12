@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { decode } from 'jsonwebtoken';
 import PropTypes from 'prop-types';
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
 import { Role, UserRole } from 'generated/sdk';
-import { User, dummyUser } from 'models/User';
+import { dummyUser, User } from 'models/User';
 
 interface UserContextData {
   user: User;
@@ -17,8 +18,10 @@ interface UserContextData {
   handleRole: React.Dispatch<string | null | undefined>;
 }
 
-interface DecodedTokenData extends UserContextData {
+interface DecodedTokenData
+  extends Pick<UserContextData, 'user' | 'token' | 'roles'> {
   exp: number;
+  currentRole: Role;
 }
 
 enum ActionType {
@@ -34,11 +37,14 @@ const initUserData: UserContextData = {
   token: '',
   roles: [],
   currentRole: null,
-  handleLogin: value => value,
-  handleNewToken: value => value,
+  handleLogin: (value) => value,
+  handleNewToken: (value) => value,
   handleLogout: () => null,
-  handleRole: value => value,
+  handleRole: (value) => value,
 };
+
+export const getCurrentUser = () =>
+  decode(localStorage.token) as DecodedTokenData | null;
 
 const checkLocalStorage = (
   dispatch: React.Dispatch<{
@@ -48,7 +54,7 @@ const checkLocalStorage = (
   state: UserContextData
 ): void => {
   if (!state.token && localStorage.token && localStorage.currentRole) {
-    const decoded = decode(localStorage.token) as DecodedTokenData;
+    const decoded = getCurrentUser();
 
     if (decoded && decoded.exp > Date.now() / 1000) {
       dispatch({
@@ -82,37 +88,39 @@ const reducer = (
         token: action.payload.token,
         expToken: action.payload.expToken,
       };
-    case ActionType.LOGINUSER:
-      const decoded = decode(action.payload) as DecodedTokenData;
-      localStorage.user = JSON.stringify(decoded.user);
+    case ActionType.LOGINUSER: {
+      const { user, exp, roles } = decode(action.payload) as DecodedTokenData;
+      localStorage.user = JSON.stringify(user);
       localStorage.token = action.payload;
-      localStorage.expToken = decoded.exp;
+      localStorage.expToken = exp;
 
-      if (decoded.roles.length === 1) {
-        localStorage.currentRole = decoded.roles[0].shortCode.toUpperCase();
-      }
-
-      return {
-        token: action.payload,
-        user: decoded.user,
-        expToken: decoded.exp,
-        roles: decoded.roles,
-        currentRole:
-          decoded.roles.length === 1
-            ? decoded.roles[0].shortCode.toUpperCase()
-            : null,
-      };
-    case ActionType.SETTOKEN:
-      const newToken = decode(action.payload) as DecodedTokenData;
-      localStorage.token = action.payload;
-      localStorage.expToken = newToken.exp;
+      localStorage.currentRole = roles[0].shortCode.toUpperCase();
 
       return {
         ...state,
-        roles: newToken.roles,
         token: action.payload,
-        expToken: newToken.exp,
+        user: user,
+        expToken: exp,
+        roles: roles,
+        currentRole: roles[0].shortCode.toUpperCase(),
       };
+    }
+    case ActionType.SETTOKEN: {
+      const { currentRole, roles, exp } = decode(
+        action.payload
+      ) as DecodedTokenData;
+      localStorage.token = action.payload;
+      localStorage.expToken = exp;
+      localStorage.currentRole = currentRole.shortCode.toUpperCase();
+
+      return {
+        ...state,
+        roles: roles,
+        token: action.payload,
+        expToken: exp,
+        currentRole: currentRole.shortCode.toUpperCase(),
+      };
+    }
     case ActionType.SELECTROLE:
       localStorage.currentRole = action.payload.toUpperCase();
 
@@ -141,7 +149,16 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
 
   checkLocalStorage(dispatch, state);
   useEffect(() => {
-    setCookie('token', state.token, { path: '/', secure: false });
+    const hostname = window.location.hostname;
+
+    setCookie('token', state.token, {
+      path: '/',
+      secure: false,
+      // looks like domains like `localhost` or `proxy` in e2e
+      // don't support .domain in browsers while setting cookies
+      // include the leading dot only for "real" domains
+      domain: hostname.includes('.') ? `.${hostname}` : hostname,
+    });
   }, [setCookie, state]);
 
   return (
@@ -158,7 +175,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
         handleRole: (role: string): void =>
           dispatch({ type: ActionType.SELECTROLE, payload: role }),
         handleNewToken: useCallback(
-          token => dispatch({ type: ActionType.SETTOKEN, payload: token }),
+          (token) => dispatch({ type: ActionType.SETTOKEN, payload: token }),
           []
         ),
       }}

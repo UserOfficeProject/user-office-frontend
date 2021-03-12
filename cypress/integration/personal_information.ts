@@ -1,9 +1,6 @@
-/// <reference types="Cypress" />
-/// <reference types="../types" />
+import faker from 'faker';
 
 context('Personal information tests', () => {
-  const faker = require('faker');
-
   before(() => {
     cy.resetDB();
   });
@@ -18,14 +15,12 @@ context('Personal information tests', () => {
   const newDepartment = faker.commerce.department();
   const newPreferredName = faker.hacker.noun();
   const newPosition = faker.random.word().split(' ')[0];
-  const newTelephone = faker.phone.phoneNumber();
+  const newTelephone = faker.phone.phoneNumber('0##########');
 
   it('Should be able update personal information', () => {
     cy.login('user');
 
-    cy.get("[data-cy='profile-page-btn']").click();
-
-    cy.contains('Profile').click();
+    cy.get('[data-cy="active-user-profile"]').click();
 
     cy.get("[name='firstname']")
       .clear()
@@ -57,7 +52,7 @@ context('Personal information tests', () => {
 
     cy.contains('Update Profile').click();
 
-    cy.wait(1000);
+    cy.notification({ variant: 'success', text: 'Updated Information' });
 
     cy.reload();
 
@@ -90,55 +85,43 @@ context('Personal information tests', () => {
       .should('eq', newTelephone);
   });
 
-  it('User Officer should be able to see all and change roles if we have multiple', () => {
+  it('User Officer should be able to see all and change roles if there are multiple', () => {
     cy.login('officer');
 
-    cy.contains('View People').click();
+    cy.contains('People').click();
 
-    cy.wait(1000);
+    cy.finishedLoading();
 
-    cy.get('[data-cy="people-table"] table tbody tr')
-      .eq(1)
-      .find('[title="Edit user"]')
+    cy.contains('Andersson')
+      .parent()
+      .find('button[title="Edit user"]')
       .click();
 
-    cy.contains('Settings').click();
+    const mainContentElement = cy.get('main');
+    mainContentElement.contains('Settings').click();
 
-    cy.wait(1000);
+    cy.finishedLoading();
 
     cy.get('[data-cy="add-role-button"]').click();
+
+    cy.finishedLoading();
 
     cy.get('[data-cy="role-modal"]')
       .contains('SEP Chair')
       .parent()
-      .find('[title="Select role"]')
+      .find('input[type="checkbox"]')
       .click();
 
-    cy.wait(1000);
+    cy.contains('Update').click();
 
-    cy.get("[data-cy='profile-page-btn']").click();
+    cy.notification({ variant: 'success', text: 'successfully' });
 
-    cy.get('.MuiPopover-root .MuiMenuItem-root')
-      .contains('Roles')
-      .click();
+    // wait before trying to get profile button otherwise page
+    // might re-render and you could be trying to access element
+    // that is not attached to the DOM
+    cy.wait(2000);
 
-    cy.wait(1000);
-
-    cy.contains('User roles');
-
-    cy.get("[data-cy='role-selection-table'] table tbody tr")
-      .eq(1)
-      .should(element => {
-        expect(element.text()).to.contain('SEP Chair');
-        expect(element.text()).to.contain('Use');
-      });
-
-    cy.get("[data-cy='role-selection-table'] table tbody tr")
-      .eq(1)
-      .contains('Use')
-      .click();
-
-    cy.wait(1000);
+    cy.changeActiveRole('SEP Chair');
 
     cy.contains('Proposals to review');
 
@@ -154,7 +137,7 @@ context('Personal information tests', () => {
 
     cy.contains('Roles').click();
 
-    cy.wait(1000);
+    cy.finishedLoading();
 
     cy.contains('User roles');
 
@@ -165,5 +148,27 @@ context('Personal information tests', () => {
 
         expect(element.text()).to.contain('In Use');
       });
+  });
+
+  it('Should be able to change role even in the view where next role is not allowed to be', () => {
+    const workflowName = faker.lorem.words(2);
+    const workflowDescription = faker.lorem.words(5);
+    cy.login('officer');
+
+    cy.contains('Settings').click();
+    cy.contains('Proposal workflows').click();
+
+    cy.contains('Create').click();
+    cy.get('#name').type(workflowName);
+    cy.get('#description').type(workflowDescription);
+    cy.get('[data-cy="submit"]').click();
+
+    cy.notification({ variant: 'success', text: 'created successfully' });
+
+    cy.get('[data-cy="connection_DRAFT_1"]').should('contain.text', 'DRAFT');
+
+    cy.changeActiveRole('SEP Chair');
+
+    cy.get('[data-cy="SEPRoles-menu-items"]').should('exist');
   });
 });

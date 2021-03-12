@@ -1,4 +1,7 @@
-import { Button, makeStyles, Paper, TextField } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import TextField from '@material-ui/core/TextField';
 import EditIcon from '@material-ui/icons/Edit';
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
@@ -16,7 +19,7 @@ export function TemplateMetadataEditor(props: {
   const { template, dispatch } = props;
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const classes = makeStyles(theme => ({
+  const classes = makeStyles((theme) => ({
     templateName: {
       fontSize: '24px',
       fontWeight: 'bold',
@@ -65,7 +68,7 @@ export function TemplateMetadataEditor(props: {
         name: Yup.string().min(1),
         description: Yup.string().nullable(),
       })}
-      onSubmit={async values => {
+      onSubmit={async (values): Promise<void> => {
         dispatch({
           type: EventType.UPDATE_TEMPLATE_METADATA_REQUESTED,
           payload: { ...values, templateId: template.templateId },

@@ -8,13 +8,13 @@ export function useTemplates(
   category?: TemplateCategoryId
 ) {
   const api = useDataApi();
-  const [templates, setTemplates] = useState<
-    Exclude<GetTemplatesQuery['templates'], null>
-  >([]);
+  const [templates, setTemplates] = useState<GetTemplatesQuery['templates']>(
+    null
+  );
   useEffect(() => {
     api()
       .getTemplates({ filter: { isArchived, category } })
-      .then(data => {
+      .then((data) => {
         if (data.templates) {
           setTemplates(data.templates);
         }

@@ -1,26 +1,21 @@
-import {
-  BottomNavigation,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@material-ui/core';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ExitToApp from '@material-ui/icons/ExitToApp';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
+import { FeatureContext } from 'context/FeatureContextProvider';
 import { UserContext } from 'context/UserContextProvider';
-import { PageName, UserRole } from 'generated/sdk';
+import { FeatureId, PageName, UserRole } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
+import { useCallsData } from 'hooks/call/useCallsData';
 
 import AppToolbar from './AppToolbar/AppToolbar';
 import CallPage from './call/CallPage';
@@ -37,12 +32,21 @@ import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
 import ProposalReviewReviewer from './review/ProposalReviewReviewer';
-import ProposalReviewUserOfficer from './review/ProposalReviewUserOfficer';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
+import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
 import SEPsPage from './SEP/SEPsPage';
+import ApiAccessTokensPage from './settings/apiAccessTokens/ApiAccessTokensPage';
+import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
+import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
+import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
+import UnitTablePage from './settings/unitList/UnitTablePage';
+import ShipmentCreate from './shipments/CreateUpdateShipment';
+import MyShipments from './shipments/MyShipments';
+import ShipmentsPage from './shipments/ShipmentsPage';
 import ProposalTemplates from './template/ProposalTemplates';
-import SampleTemplates from './template/SampleTemplates';
+import SampleTemplatesPage from './template/SampleTemplates';
+import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
@@ -74,14 +78,11 @@ BottomNavItem.propTypes = {
   linkText: PropTypes.string,
 };
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
     display: 'flex',
@@ -90,41 +91,20 @@ const useStyles = makeStyles(theme => ({
     padding: '0 8px',
     ...theme.mixins.toolbar,
   },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
+  drawer: {
     width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: 'hidden',
   },
-  drawerPaperClose: {
+  drawerClose: {
     overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -140,10 +120,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     height: 'calc(100vh - 64px)',
     marginTop: '64px',
-    overflow: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
     padding: `0 ${theme.spacing(2)}px`,
+    width: `calc(100% - ${drawerWidth}px)`,
   },
   bottomNavigation: {
     display: 'flex',
@@ -158,27 +136,32 @@ const useStyles = makeStyles(theme => ({
 
 const Dashboard: React.FC = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(
+    localStorage.drawerOpen ? localStorage.drawerOpen === '1' : true
+  );
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const isSampleSafetyReviewer = useCheckAccess([
+    UserRole.SAMPLE_SAFETY_REVIEWER,
+  ]);
+
+  const featureContext = useContext(FeatureContext);
+  const isShipmentEnabled = !!featureContext.features.get(FeatureId.SHIPPING)
+    ?.isEnabled;
+
   const { currentRole } = useContext(UserContext);
+  const { calls } = useCallsData({ isActive: true });
 
   const handleDrawerOpen = () => {
+    localStorage.setItem('drawerOpen', '1');
     setOpen(true);
   };
   const handleDrawerClose = () => {
+    localStorage.setItem('drawerOpen', '0');
     setOpen(false);
   };
+
   const [, privacyPageContent] = useGetPageContent(PageName.PRIVACYPAGE);
   const [, faqPageContent] = useGetPageContent(PageName.HELPPAGE);
-
-  const logoutMenuListItem = (
-    <ListItem component={Link} to="/LogOut" button data-cy="logout">
-      <ListItemIcon>
-        <ExitToApp />
-      </ListItemIcon>
-      <ListItemText primary="Logout" />
-    </ListItem>
-  );
 
   // TODO: Check who can see what and modify the access controll here.
   return (
@@ -187,8 +170,15 @@ const Dashboard: React.FC = () => {
       <AppToolbar open={open} handleDrawerOpen={handleDrawerOpen} />
       <Drawer
         variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
         classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          paper: clsx({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
         }}
         open={open}
       >
@@ -198,17 +188,28 @@ const Dashboard: React.FC = () => {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          <MenuItems />
-          {logoutMenuListItem}
+        <List disablePadding>
+          <MenuItems callsData={calls} currentRole={currentRole} />
         </List>
         <Divider />
       </Drawer>
       <main className={classes.content}>
         <Switch>
           <Route path="/ProposalEdit/:proposalID" component={ProposalEdit} />
-          <Route path="/ProposalSelectType" component={ProposalChooseCall} />
-          <Route path="/ProposalCreate/:callId" component={ProposalCreate} />
+          <Route
+            path="/ProposalSelectType"
+            component={() => <ProposalChooseCall callsData={calls} />}
+          />
+          <Route
+            path="/ProposalCreate/:callId/:templateId"
+            component={ProposalCreate}
+          />
+          {isShipmentEnabled && (
+            <Route path="/ShipmentCreate" component={ShipmentCreate} />
+          )}
+          {isShipmentEnabled && (
+            <Route path="/MyShipments" component={MyShipments} />
+          )}
           <Route path="/ProfilePage/:id" component={ProfilePage} />
           {isUserOfficer && (
             <Route path="/PeoplePage/:id" component={UserPage} />
@@ -230,16 +231,41 @@ const Dashboard: React.FC = () => {
           <Route path="/ProposalTemplates" component={ProposalTemplates} />
           <Route
             path="/SampleDeclarationTemplates"
-            component={SampleTemplates}
+            component={SampleTemplatesPage}
+          />
+          <Route
+            path="/ShipmentDeclarationTemplates"
+            component={ShipmentTemplatesPage}
           />
           <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
           />
-          <Route
-            path="/ProposalReviewUserOfficer/:id"
-            component={ProposalReviewUserOfficer}
-          />
+          {isUserOfficer && <Route path="/Units" component={UnitTablePage} />}
+          {isUserOfficer && (
+            <Route path="/ProposalStatuses" component={ProposalStatusesPage} />
+          )}
+          {isUserOfficer && (
+            <Route
+              path="/ProposalWorkflows"
+              component={ProposalWorkflowsPage}
+            />
+          )}
+          {isUserOfficer && (
+            <Route
+              path="/ProposalWorkflowEditor/:workflowId"
+              component={ProposalWorkflowEditor}
+            />
+          )}
+          {(isSampleSafetyReviewer || isUserOfficer) && (
+            <Route path="/SampleSafety" component={SampleSafetyPage} />
+          )}
+          {isUserOfficer && (
+            <Route path="/Shipments" component={ShipmentsPage} />
+          )}
+          {isUserOfficer && (
+            <Route path="/ApiAccessTokens" component={ApiAccessTokensPage} />
+          )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
             yes={() => <Route component={ProposalPage} />}
@@ -248,7 +274,7 @@ const Dashboard: React.FC = () => {
                 allowedRoles={[UserRole.USER]}
                 yes={() => (
                   <Route
-                    render={props => (
+                    render={(props) => (
                       <OverviewPage {...props} userRole={UserRole.USER} />
                     )}
                   />
@@ -256,7 +282,6 @@ const Dashboard: React.FC = () => {
                 no={() => (
                   <Can
                     allowedRoles={[
-                      UserRole.REVIEWER,
                       UserRole.SEP_REVIEWER,
                       UserRole.SEP_CHAIR,
                       UserRole.SEP_SECRETARY,
@@ -264,7 +289,7 @@ const Dashboard: React.FC = () => {
                     ]}
                     yes={() => (
                       <Route
-                        render={props => (
+                        render={(props) => (
                           <OverviewPage
                             {...props}
                             userRole={currentRole as UserRole}
@@ -272,7 +297,6 @@ const Dashboard: React.FC = () => {
                         )}
                       />
                     )}
-                    no={() => null}
                   />
                 )}
               />

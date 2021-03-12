@@ -1,31 +1,38 @@
-import { useSnackbar } from 'notistack';
 import React from 'react';
+import { useQueryParams } from 'use-query-params';
 
-import SuperMaterialTable from 'components/common/SuperMaterialTable';
+import SuperMaterialTable, {
+  DefaultQueryParams,
+  UrlQueryParamsType,
+} from 'components/common/SuperMaterialTable';
 import { Institution } from 'generated/sdk';
-import { useInstitutionData } from 'hooks/admin/useInstitutionData';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
 
 import CreateUpdateInstitution from './CreateUpdateInstitution';
 
 const InstitutionPage: React.FC = () => {
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
 
-  const { institutionData, setInstitutionData } = useInstitutionData();
+  const {
+    loadingInstitutions,
+    institutions,
+    setInstitutionsWithLoading: setInstitutions,
+  } = useInstitutionsData();
+  const [
+    urlQueryParams,
+    setUrlQueryParams,
+  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
 
-  const deleteInstitution = async (id: number) => {
-    return await api()
+  const deleteInstitution = async (id: number | string) => {
+    return await api('Institution removed successfully!')
       .deleteInstitution({
-        id: id,
+        id: id as number,
       })
-      .then(resp => {
+      .then((resp) => {
         if (resp.deleteInstitution.error) {
-          enqueueSnackbar('Failed to delete', {
-            variant: 'error',
-          });
-
           return false;
         } else {
           return true;
@@ -43,8 +50,8 @@ const InstitutionPage: React.FC = () => {
   ];
 
   const createModal = (
-    onUpdate: Function,
-    onCreate: Function,
+    onUpdate: FunctionType<void, [Institution | null]>,
+    onCreate: FunctionType<void, [Institution | null]>,
     editInstitution: Institution | null
   ) => (
     <CreateUpdateInstitution
@@ -55,26 +62,25 @@ const InstitutionPage: React.FC = () => {
     />
   );
 
-  if (!institutionData) {
-    return <p>Loading</p>;
-  }
-
   return (
-    <>
+    <div data-cy="institutions-table">
       <SuperMaterialTable
         delete={deleteInstitution}
-        setData={setInstitutionData}
+        setData={setInstitutions}
         createModal={createModal}
         icons={tableIcons}
         title={'Institutions'}
         columns={columns}
-        data={institutionData}
+        isLoading={loadingInstitutions}
+        data={institutions}
         options={{
           search: true,
           debounceInterval: 400,
         }}
+        urlQueryParams={urlQueryParams}
+        setUrlQueryParams={setUrlQueryParams}
       />
-    </>
+    </div>
   );
 };
 

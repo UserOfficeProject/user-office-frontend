@@ -1,17 +1,18 @@
-import { IconButton, Typography } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import EditIcon from '@material-ui/icons/Edit';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { UserRole } from 'generated/sdk';
-import { useBasicUserData, BasicUserData } from 'hooks/user/useUserData';
-import { User } from 'models/User';
+import { BasicUserDetails, UserRole } from 'generated/sdk';
+import { BasicUserData, useBasicUserData } from 'hooks/user/useUserData';
 
 import ParticipantModal from './ParticipantModal';
 
 export default function ProposalParticipant(props: {
   userId?: number;
-  userChanged: (user: User) => void;
-  title?: string;
+  userChanged: (user: BasicUserDetails) => void;
   className?: string;
 }) {
   const [curUser, setCurUser] = useState<BasicUserData | null | undefined>(
@@ -21,11 +22,20 @@ export default function ProposalParticipant(props: {
   const { loadBasicUserData } = useBasicUserData();
 
   useEffect(() => {
+    let unmounted = false;
     if (props.userId) {
-      loadBasicUserData(props.userId).then(user => {
+      loadBasicUserData(props.userId).then((user) => {
+        if (unmounted) {
+          return;
+        }
         setCurUser(user);
       });
     }
+
+    return () => {
+      // used to avoid unmounted component state update error
+      unmounted = true;
+    };
   }, [props.userId, loadBasicUserData]);
 
   return (
@@ -37,23 +47,26 @@ export default function ProposalParticipant(props: {
         close={() => {
           setIsPickerOpen(false);
         }}
-        addParticipant={(user: User) => {
-          setCurUser(user);
-          props.userChanged(user);
+        addParticipants={(users: BasicUserDetails[]) => {
+          setCurUser(users[0]);
+          props.userChanged(users[0]);
           setIsPickerOpen(false);
         }}
       />
-      <Typography variant="h6" component="h6">
-        {props.title}
-      </Typography>
-      <div>
-        {curUser
-          ? `${curUser.firstname} ${curUser.lastname}; ${curUser.organisation}`
-          : ''}
-        <IconButton edge="end" onClick={() => setIsPickerOpen(true)}>
-          <EditIcon />
-        </IconButton>
-      </div>
+      <FormControl margin="dense" fullWidth>
+        <FormLabel component="div">
+          Principal Investigator
+          <Tooltip title="Edit Principal Investigator">
+            <IconButton onClick={() => setIsPickerOpen(true)}>
+              <EditIcon data-cy="edit-proposer-button" />
+            </IconButton>
+          </Tooltip>
+        </FormLabel>
+        <div>
+          {curUser &&
+            `${curUser.firstname} ${curUser.lastname}; ${curUser.organisation}`}
+        </div>
+      </FormControl>
     </div>
   );
 }

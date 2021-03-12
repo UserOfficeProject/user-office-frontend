@@ -1,4 +1,6 @@
-import { Button, Typography, makeStyles } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -32,7 +34,7 @@ export function Impersonate(props: { id: number }) {
           onClick={() =>
             api()
               .getTokenForUser({ userId: props.id })
-              .then(data => {
+              .then((data) => {
                 const { token, error } = data.getTokenForUser;
                 if (error) {
                   enqueueSnackbar(error, { variant: 'error' });

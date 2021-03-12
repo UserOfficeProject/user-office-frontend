@@ -1,41 +1,86 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { ProposalsFilter, ProposalStatus, Proposal } from 'generated/sdk';
+import { UserContext } from 'context/UserContextProvider';
+import { Proposal, ProposalsFilter, UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 export function useProposalsData(filter: ProposalsFilter) {
   const api = useDataApi();
-  const [proposalsData, setProposalsData] = useState<ProposalData[]>([]);
+  const [proposalsData, setProposalsData] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const { currentRole } = useContext(UserContext);
 
-  const { callId, instrumentId, questionaryIds, templateIds, text } = filter;
+  const {
+    callId,
+    instrumentId,
+    proposalStatusId,
+    questionaryIds,
+    text,
+  } = filter;
 
   useEffect(() => {
-    api()
-      .getProposals({
-        filter: { callId, instrumentId, questionaryIds, templateIds, text },
-      })
-      .then(data => {
-        if (data.proposals) {
-          setProposalsData(
-            data.proposals.proposals.map(proposal => {
-              return {
-                ...proposal,
-                status:
-                  proposal.status === ProposalStatus.DRAFT
-                    ? 'Open'
-                    : 'Submitted',
-              } as ProposalData;
-            })
-          );
-        }
-        setLoading(false);
-      });
-  }, [callId, instrumentId, questionaryIds, templateIds, text, api]);
+    let unmounted = false;
+
+    setLoading(true);
+
+    if (currentRole === UserRole.INSTRUMENT_SCIENTIST) {
+      api()
+        .getInstrumentScientistProposals({
+          filter: {
+            callId,
+            instrumentId,
+            proposalStatusId,
+            questionaryIds,
+            text,
+          },
+        })
+        .then((data) => {
+          if (unmounted) {
+            return;
+          }
+
+          if (data.instrumentScientistProposals) {
+            setProposalsData(
+              data.instrumentScientistProposals.proposals as Proposal[]
+            );
+          }
+          setLoading(false);
+        });
+    } else {
+      api()
+        .getProposals({
+          filter: {
+            callId,
+            instrumentId,
+            proposalStatusId,
+            questionaryIds,
+            text,
+          },
+        })
+        .then((data) => {
+          if (unmounted) {
+            return;
+          }
+
+          if (data.proposals) {
+            setProposalsData(data.proposals.proposals as Proposal[]);
+          }
+          setLoading(false);
+        });
+    }
+
+    return () => {
+      unmounted = true;
+    };
+  }, [
+    callId,
+    instrumentId,
+    proposalStatusId,
+    questionaryIds,
+    text,
+    api,
+    currentRole,
+  ]);
 
   return { loading, proposalsData, setProposalsData };
-}
-
-export interface ProposalData extends Omit<Proposal, 'status' | 'questionary'> {
-  status: string;
 }

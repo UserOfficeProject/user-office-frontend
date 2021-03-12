@@ -1,113 +1,48 @@
-import {
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Typography,
-} from '@material-ui/core';
-import React, { Fragment, HTMLAttributes, useEffect, useState } from 'react';
+import { TableProps } from '@material-ui/core';
+import React, { FunctionComponent } from 'react';
 
-import { Answer, DataType } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
-import { FileMetaData } from 'models/FileUpload';
-import { ProposalSubsetSumbission } from 'models/ProposalModel';
-import { getAllFields } from 'models/ProposalModelFunctions';
+import UOLoader from 'components/common/UOLoader';
+import QuestionaryDetails, {
+  TableRowData,
+} from 'components/questionary/QuestionaryDetails';
+import { BasicUserDetails } from 'generated/sdk';
+import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
 
 export default function ProposalQuestionaryReview(
-  props: HTMLAttributes<any> & {
-    data: ProposalSubsetSumbission;
-  }
+  props: {
+    data: ProposalSubsetSubmission;
+  } & TableProps<FunctionComponent<unknown>>
 ) {
-  const questionary = props.data.questionary!;
-  const api = useDataApi();
-  const [files, setFiles] = useState<FileMetaData[]>([]);
+  const { data, ...restProps } = props;
 
-  const classes = makeStyles(theme => ({
-    heading: {
-      marginTop: theme.spacing(2),
-    },
-  }))();
-
-  const allFields = getAllFields(questionary.steps) as Answer[];
-  const completedFields = allFields.filter(field => {
-    return !!field.value;
-  });
-
-  // Get all questions with a file upload and create a string with fileid comma separated
-  const fileIds = completedFields
-    .filter(field => field.question.dataType === DataType.FILE_UPLOAD)
-    .map(fileId => fileId.value)
-    .join(',');
-
-  useEffect(() => {
-    if (fileIds) {
-      api()
-        .getFileMetadata({ fileIds: fileIds.split(',') })
-        .then(data => {
-          setFiles(data?.fileMetadata || []);
-        });
-    }
-  }, [api, fileIds]);
-
-  if (!props.data) {
-    return <div>Loading...</div>;
+  if (!data.questionaryId) {
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
-  const downloadLink = (file: FileMetaData | undefined) => (
-    <>
-      <a href={`/files/download/${file?.fileId}`} download>
-        {file?.originalFileName}
-      </a>
-      <br />
-    </>
-  );
+  const users = data.users || [];
 
-  const users = props.data.users || [];
+  const additionalDetails: TableRowData[] = [
+    { label: 'Proposal ID', value: data.shortCode },
+    { label: 'Title', value: data.title },
+    { label: 'Abstract', value: data.abstract },
+    {
+      label: 'Principal Investigator',
+      value: `${data.proposer?.firstname} ${data.proposer?.lastname}`,
+    },
+    {
+      label: 'Co-Proposers',
+      value: users
+        .map((user: BasicUserDetails) => `${user.firstname} ${user.lastname}`)
+        .join(', '),
+    },
+  ];
 
   return (
-    <Fragment>
-      <Typography variant="h6" className={classes.heading} gutterBottom>
-        Information
-      </Typography>
-      <Table>
-        <TableBody>
-          <TableRow key="title">
-            <TableCell>Title</TableCell>
-            <TableCell>{props.data.title}</TableCell>
-          </TableRow>
-          <TableRow key="abstract">
-            <TableCell>Abstract</TableCell>
-            <TableCell>{props.data.abstract}</TableCell>
-          </TableRow>
-          <TableRow key="principalinvestigator">
-            <TableCell>Principal Investigator</TableCell>
-            <TableCell>{`${props.data.proposer.firstname} ${props.data.proposer.lastname}`}</TableCell>
-          </TableRow>
-          <TableRow key="coproposers">
-            <TableCell>Co-Proposers</TableCell>
-            <TableCell>
-              {users
-                .map((user: any) => ` ${user.firstname} ${user.lastname}`)
-                .toString()}
-            </TableCell>
-          </TableRow>
-          {completedFields.map((row: Answer) => (
-            <TableRow key={row.question.proposalQuestionId}>
-              <TableCell>{row.question.question}</TableCell>
-              <TableCell>
-                {row.question.dataType === DataType.FILE_UPLOAD
-                  ? row.value
-                      .split(',')
-                      .map((value: string) =>
-                        downloadLink(files.find(file => file.fileId === value))
-                      )
-                  : row.value.toString()}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Fragment>
+    <QuestionaryDetails
+      questionaryId={data.questionaryId}
+      additionalDetails={additionalDetails}
+      title="Proposal information"
+      {...restProps}
+    />
   );
 }

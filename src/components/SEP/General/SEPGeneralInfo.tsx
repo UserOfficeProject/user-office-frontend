@@ -1,22 +1,19 @@
-import { updateSEPValidationSchema } from '@esss-swap/duo-validation';
-import {
-  makeStyles,
-  Typography,
-  Grid,
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-} from '@material-ui/core';
+import { updateSEPValidationSchema } from '@esss-swap/duo-validation/lib/SEP';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field } from 'formik';
-import { useSnackbar } from 'notistack';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
+import UOLoader from 'components/common/UOLoader';
 import { Sep, UserRole } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 import { ButtonContainer } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 type SEPPageProps = {
   /** SEP data to be shown */
@@ -35,23 +32,16 @@ const useStyles = makeStyles({
 const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
   const sep = { ...data };
   const classes = useStyles();
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api, isExecutingCall } = useDataApiWithFeedback();
   const hasAccessRights = useCheckAccess([UserRole.USER_OFFICER]);
 
-  const sendSEPUpdate = (values: Sep): void => {
-    api()
-      .updateSEP(values)
-      .then(result => {
-        onSEPUpdate(values);
-        enqueueSnackbar('Updated Information', {
-          variant: result.updateSEP.error ? 'error' : 'success',
-        });
-      });
+  const sendSEPUpdate = async (values: Sep): Promise<void> => {
+    await api('SEP updated successfully!').updateSEP(values);
+    onSEPUpdate(values);
   };
 
   if (!sep) {
-    return <p>Loading...</p>;
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
   return (
@@ -59,14 +49,12 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
       validateOnChange={false}
       validateOnBlur={false}
       initialValues={sep}
-      onSubmit={(values, actions): void => {
-        sendSEPUpdate(values);
-        actions.setSubmitting(false);
+      onSubmit={async (values): Promise<void> => {
+        await sendSEPUpdate(values);
       }}
       validationSchema={updateSEPValidationSchema}
     >
       {({
-        isSubmitting,
         values,
         errors,
         touched,
@@ -92,7 +80,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                 data-cy="code"
                 error={touched.code && errors.code !== undefined}
                 helperText={touched.code && errors.code && errors.code}
-                disabled={!hasAccessRights}
+                disabled={!hasAccessRights || isExecutingCall}
               />
               <Field
                 id="numberRatingsRequired"
@@ -114,7 +102,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                   errors.numberRatingsRequired &&
                   errors.numberRatingsRequired
                 }
-                disabled={!hasAccessRights}
+                disabled={!hasAccessRights || isExecutingCall}
               />
             </Grid>
             <Grid item xs={6}>
@@ -138,7 +126,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                   errors.description &&
                   errors.description
                 }
-                disabled={!hasAccessRights}
+                disabled={!hasAccessRights || isExecutingCall}
               />
               <FormControlLabel
                 control={
@@ -153,7 +141,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                       setFieldValue('active', !values.active)
                     }
                     inputProps={{ 'aria-label': 'primary checkbox' }}
-                    disabled={!hasAccessRights}
+                    disabled={!hasAccessRights || isExecutingCall}
                   />
                 }
                 label="Active"
@@ -163,13 +151,14 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
           {hasAccessRights && (
             <ButtonContainer>
               <Button
-                disabled={isSubmitting}
+                disabled={isExecutingCall}
                 type="submit"
                 variant="contained"
                 color="primary"
                 className={classes.button}
                 data-cy="submit"
               >
+                {isExecutingCall && <UOLoader size={14} />}
                 Update SEP
               </Button>
             </ButtonContainer>
@@ -178,17 +167,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
       )}
     </Formik>
   );
-};
-
-SEPGeneralInfo.propTypes = {
-  data: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    code: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    numberRatingsRequired: PropTypes.number.isRequired,
-    active: PropTypes.bool.isRequired,
-  }).isRequired,
-  onSEPUpdate: PropTypes.func.isRequired,
 };
 
 export default SEPGeneralInfo;

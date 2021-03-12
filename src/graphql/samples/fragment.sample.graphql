@@ -1,0 +1,11 @@
+fragment sample on Sample {
+  id
+  title
+  creatorId
+  questionaryId
+  safetyStatus
+  safetyComment
+  created
+  proposalId
+  questionId
+}

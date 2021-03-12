@@ -1,5 +1,6 @@
-import { makeStyles } from '@material-ui/core';
+import { createUserByEmailInviteValidationSchema } from '@esss-swap/duo-validation/lib/User';
 import Button from '@material-ui/core/Button';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -7,12 +8,13 @@ import React from 'react';
 
 import { UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { emailFieldSchema } from 'utils/userFieldValidationSchema';
+import { FunctionType } from 'utils/utilTypes';
+
 export function InviteUserForm(props: {
-  action: Function;
+  action: FunctionType;
   title: string;
   userRole: UserRole;
-  close: Function;
+  close: FunctionType;
 }) {
   const api = useDataApi();
   const classes = makeStyles({
@@ -33,7 +35,7 @@ export function InviteUserForm(props: {
         lastname: '',
         email: '',
       }}
-      onSubmit={async values => {
+      onSubmit={async (values): Promise<void> => {
         const createResult = await api().createUserByEmailInvite({
           firstname: values.name,
           lastname: values.lastname,
@@ -48,9 +50,9 @@ export function InviteUserForm(props: {
         });
         props.close();
       }}
-      validationSchema={emailFieldSchema}
+      validationSchema={createUserByEmailInviteValidationSchema(UserRole)}
     >
-      {subformik => (
+      {(subformik) => (
         <Form>
           <Typography component="h1" variant="h5">
             {props.title}

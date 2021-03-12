@@ -1,0 +1,16 @@
+mutation assignSepReviewersToProposal(
+  $memberIds: [Int!]!
+  $sepId: Int!
+  $proposalId: Int!
+) {
+  assignSepReviewersToProposal(
+    memberIds: $memberIds
+    sepId: $sepId
+    proposalId: $proposalId
+  ) {
+    error
+    sep {
+      id
+    }
+  }
+}

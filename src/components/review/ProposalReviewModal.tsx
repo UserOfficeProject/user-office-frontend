@@ -1,21 +1,19 @@
-import {
-  IconButton,
-  Dialog,
-  DialogContent,
-  AppBar,
-  Toolbar,
-  Typography,
-  makeStyles,
-  createStyles,
-  Theme,
-  Slide,
-} from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import IconButton from '@material-ui/core/IconButton';
+import Slide from '@material-ui/core/Slide';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import createStyles from '@material-ui/core/styles/createStyles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Toolbar from '@material-ui/core/Toolbar';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
+import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import PropTypes from 'prop-types';
 import React, { Ref } from 'react';
 
-import ProposalReview from './ProposalReviewReviewer';
+import { Proposal } from 'generated/sdk';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,28 +34,50 @@ const SlideComponent = (props: TransitionProps, ref: Ref<unknown>) => (
 const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
 
 type ProposalReviewModalProps = {
-  reviewModalOpen: boolean;
-  setReviewModalOpen: (isOpen: boolean) => void;
-  editReviewID: number;
+  proposalReviewModalOpen: boolean;
+  setProposalReviewModalOpen: (updatedProposal?: Proposal) => void;
+  title: string;
+  reviewItemId?: number | null;
+  children: React.ReactElement;
 };
 
 const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
-  reviewModalOpen,
-  setReviewModalOpen,
-  editReviewID,
+  title,
+  proposalReviewModalOpen,
+  setProposalReviewModalOpen,
+  reviewItemId,
+  children,
 }) => {
   const classes = useStyles();
+  const { api } = useDataApiWithFeedback();
 
-  const handleClose = () => {
-    setReviewModalOpen(false);
+  const loadProposal = async () => {
+    if (!reviewItemId) {
+      return;
+    }
+
+    return api()
+      .getProposal({ id: reviewItemId })
+      .then((data) => {
+        return data.proposal as Proposal;
+      });
+  };
+
+  const handleClose = async () => {
+    /**
+     * TODO: This needs to be refactored a bit and instead of loading proposal before close we could use the proposal used in the modal content tabs.
+     * For now this is the easiest solution to get all changes that are done on the proposal inside the modal.
+     */
+    const freshProposal = await loadProposal();
+    setProposalReviewModalOpen(freshProposal);
   };
 
   return (
     <>
       <Dialog
-        open={reviewModalOpen}
+        open={proposalReviewModalOpen}
         fullScreen
-        onClose={(): void => handleClose()}
+        onClose={(): Promise<void> => handleClose()}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -67,26 +87,24 @@ const ProposalReviewModal: React.FC<ProposalReviewModalProps> = ({
               color="inherit"
               onClick={handleClose}
               aria-label="close"
+              data-cy="close-modal"
             >
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Review
+              {title}
             </Typography>
           </Toolbar>
         </AppBar>
         <DialogContent>
-          <ProposalReview reviewId={editReviewID} />
+          {children &&
+            React.cloneElement(children, {
+              isInsideModal: true,
+            })}
         </DialogContent>
       </Dialog>
     </>
   );
-};
-
-ProposalReviewModal.propTypes = {
-  editReviewID: PropTypes.number.isRequired,
-  reviewModalOpen: PropTypes.bool.isRequired,
-  setReviewModalOpen: PropTypes.func.isRequired,
 };
 
 export default ProposalReviewModal;

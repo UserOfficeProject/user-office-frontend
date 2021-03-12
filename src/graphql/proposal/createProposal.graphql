@@ -2,9 +2,20 @@ mutation createProposal($callId: Int!) {
   createProposal(callId: $callId) {
     proposal {
       id
-      status
+      status {
+        ...proposalStatus
+      }
       shortCode
       questionaryId
+      questionary {
+        ...questionary
+      }
+      proposer {
+        ...basicUserDetails
+      }
+      users {
+        ...basicUserDetails
+      }
     }
     error
   }

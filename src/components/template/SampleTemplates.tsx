@@ -1,4 +1,4 @@
-import { Container } from '@material-ui/core';
+import Container from '@material-ui/core/Container';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
@@ -22,7 +22,7 @@ export default function SampleTemplates() {
                   category: TemplateCategoryId.SAMPLE_DECLARATION,
                 },
               })
-              .then(data => data.templates || [])
+              .then((data) => data.templates || [])
           }
         />
         <SampleTemplatesTable
@@ -34,7 +34,7 @@ export default function SampleTemplates() {
                   category: TemplateCategoryId.SAMPLE_DECLARATION,
                 },
               })
-              .then(data => data.templates || [])
+              .then((data) => data.templates || [])
           }
         />
       </SimpleTabs>

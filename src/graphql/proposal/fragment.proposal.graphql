@@ -2,7 +2,11 @@ fragment proposal on Proposal {
   id
   title
   abstract
-  status
+  statusId
+  status {
+    ...proposalStatus
+  }
+  publicStatus
   shortCode
   rankOrder
   finalStatus
@@ -13,4 +17,5 @@ fragment proposal on Proposal {
   callId
   questionaryId
   notified
+  submitted
 }

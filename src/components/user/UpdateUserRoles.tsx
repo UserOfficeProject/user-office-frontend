@@ -1,13 +1,13 @@
 import Button from '@material-ui/core/Button';
 import MaterialTable from 'material-table';
-import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
+import { UserContext } from 'context/UserContextProvider';
 import { GetUserWithRolesQuery, Role } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 import { useRenewToken } from 'hooks/common/useRenewToken';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import RoleModal from './RoleModal';
 
@@ -16,27 +16,26 @@ export default function UpdateUserRoles(props: { id: number }) {
     GetUserWithRolesQuery['user'] | null
   >(null);
   const [modalOpen, setOpen] = useState(false);
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api, isExecutingCall } = useDataApiWithFeedback();
   const [roles, setRoles] = useState<Array<Role>>([]);
   const { setRenewTokenValue } = useRenewToken();
+  const { user } = useContext(UserContext);
 
   const sendUpdateRoles = async (newRoles: Role[]) => {
     const variables = {
       id: props.id,
-      roles: newRoles.map(role => role.id),
+      roles: newRoles.map((role) => role.id),
     };
 
-    const userUpdateResult = await api().updateUserRoles(variables);
-    setRenewTokenValue();
+    await api('Roles updated successfully!').updateUserRoles(variables);
 
-    enqueueSnackbar('Updated Roles', {
-      variant: userUpdateResult.updateUser.error ? 'error' : 'success',
-    });
+    if (props.id === user.id) {
+      setRenewTokenValue();
+    }
   };
 
-  const addRole = async (role: Role) => {
-    const newRoles = [...roles, role];
+  const addRole = async (newSelectedRoles: Role[]) => {
+    const newRoles = [...roles, ...newSelectedRoles];
     setRoles(newRoles);
     await sendUpdateRoles(newRoles);
     setOpen(false);
@@ -45,7 +44,7 @@ export default function UpdateUserRoles(props: { id: number }) {
   const removeRole = (role: Pick<Role, 'id' | 'title'>) => {
     const newRoles = [...roles];
     newRoles.splice(
-      newRoles.findIndex(element => role.id === element.id),
+      newRoles.findIndex((element) => role.id === element.id),
       1
     );
     setRoles(newRoles);
@@ -57,7 +56,7 @@ export default function UpdateUserRoles(props: { id: number }) {
     const getUserInformation = () => {
       api()
         .getUserWithRoles({ id: props.id })
-        .then(data => {
+        .then((data) => {
           if (data?.user) {
             setUserData({ ...data.user });
             setRoles(data.user.roles);
@@ -69,13 +68,14 @@ export default function UpdateUserRoles(props: { id: number }) {
 
   const columns = [{ title: 'Name', field: 'title' }];
 
-  if (!userData) {
-    return <p>Loading</p>;
-  }
-
   return (
     <React.Fragment>
-      <RoleModal show={modalOpen} close={() => setOpen(false)} add={addRole} />
+      <RoleModal
+        show={modalOpen}
+        close={() => setOpen(false)}
+        add={addRole}
+        activeRoles={roles}
+      />
       <MaterialTable
         title="Roles"
         columns={columns}
@@ -83,12 +83,13 @@ export default function UpdateUserRoles(props: { id: number }) {
         data={roles.map((role: Role) => {
           return { title: role.title, id: role.id };
         })}
+        isLoading={!userData}
         options={{
           search: false,
         }}
         editable={{
-          onRowDelete: oldData =>
-            new Promise(async resolve => {
+          onRowDelete: (oldData) =>
+            new Promise<void>(async (resolve) => {
               const newRoles = removeRole(oldData);
               await sendUpdateRoles(newRoles);
               resolve();
@@ -103,6 +104,7 @@ export default function UpdateUserRoles(props: { id: number }) {
           color="primary"
           data-cy="add-role-button"
           onClick={() => setOpen(true)}
+          disabled={isExecutingCall}
         >
           Add role
         </Button>

@@ -1,85 +1,138 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
-import { IconButton, Tooltip } from '@material-ui/core';
-import { DialogContent, Dialog } from '@material-ui/core';
-import { Visibility, Delete, Email, GroupWork } from '@material-ui/icons';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import Delete from '@material-ui/icons/Delete';
+import Email from '@material-ui/icons/Email';
+import FileCopy from '@material-ui/icons/FileCopy';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import MaterialTable, { Column, Options } from 'material-table';
+import GridOnIcon from '@material-ui/icons/GridOn';
+import GroupWork from '@material-ui/icons/GroupWork';
+import Visibility from '@material-ui/icons/Visibility';
+import MaterialTable, { Column } from 'material-table';
 import { useSnackbar } from 'notistack';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import isEqual from 'react-fast-compare';
+import { DecodedValueMap, SetQuery } from 'use-query-params';
 
-import DialogConfirmation from 'components/common/DialogConfirmation';
-import ScienceIconAdd from 'components/common/ScienceIconAdd';
-import ScienceIconRemove from 'components/common/ScienceIconRemove';
+import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
+import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
+import ProposalReviewModal from 'components/review/ProposalReviewModal';
+import ProposalReview from 'components/review/ProposalReviewUserOfficer';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
-import { Instrument, Sep } from 'generated/sdk';
-import { ProposalsFilter } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import {
+  Call,
+  Instrument,
+  Proposal,
+  ProposalsFilter,
+  ProposalsToInstrumentArgs,
+  Sep,
+} from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
+import { useDownloadXLSXProposal } from 'hooks/proposal/useDownloadXLSXProposal';
 import {
-  useProposalsData,
-  ProposalData,
-} from 'hooks/proposal/useProposalsData';
-import { excelDownload } from 'utils/excelDownload';
+  ProposalViewData,
+  useProposalsCoreData,
+} from 'hooks/proposal/useProposalsCoreData';
+import {
+  fromProposalToProposalView,
+  setSortDirectionOnSortColumn,
+} from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
-import {
-  average,
-  absoluteDifference,
-  standardDeviation,
-  getGrades,
-} from 'utils/mathFunctions';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
+import CallSelectModalOnProposalClone from './CallSelectModalOnProposalClone';
+import { ProposalUrlQueryParamsType } from './ProposalPage';
 import RankInput from './RankInput';
 
 type ProposalTableOfficerProps = {
   proposalFilter: ProposalsFilter;
-  Toolbar: (data: Options) => JSX.Element;
+  urlQueryParams: DecodedValueMap<ProposalUrlQueryParamsType>;
+  setUrlQueryParams: SetQuery<ProposalUrlQueryParamsType>;
+  confirm: WithConfirmType;
 };
 
 const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   proposalFilter,
-  Toolbar,
+  urlQueryParams,
+  setUrlQueryParams,
+  confirm,
 }) => {
-  const { loading, proposalsData, setProposalsData } = useProposalsData(
-    proposalFilter
+  const [openAssignment, setOpenAssignment] = useState(false);
+  const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
+    false
   );
-  const [open, setOpen] = React.useState(false);
-  const [openRemoveInstrument, setOpenRemoveInstrument] = React.useState(false);
-  const [openAssignment, setOpenAssignment] = React.useState(false);
-  const [proposalAndInstrumentId, setProposalAndInstrumentId] = React.useState<{
-    proposalId: number | null;
-    instrumentId: number | null;
-  }>({
-    proposalId: null,
-    instrumentId: null,
-  });
-  const [
-    openInstrumentAssignment,
-    setOpenInstrumentAssignment,
-  ] = React.useState(false);
-  const [openEmailProposals, setOpenEmailProposals] = React.useState(false);
+  const [selectedProposals, setSelectedProposals] = useState<
+    ProposalsToInstrumentArgs[]
+  >([]);
+  const [preselectedProposalsData, setPreselectedProposalsData] = useState<
+    ProposalViewData[]
+  >([]);
+  const [openCallSelection, setOpenCallSelection] = useState(false);
+  const [proposalToCloneId, setProposalToCloneId] = useState<number | null>(
+    null
+  );
 
-  const initalSelectedProposals: number[] = [];
-  const [selectedProposals, setSelectedProposals] = React.useState(
-    initalSelectedProposals
-  );
   const downloadPDFProposal = useDownloadPDFProposal();
-  const api = useDataApi();
+  const downloadXLSXProposal = useDownloadXLSXProposal();
+  const { api } = useDataApiWithFeedback();
   const { enqueueSnackbar } = useSnackbar();
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
-    Column<ProposalData>[] | null
+    Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
+  const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
+    proposalFilter
+  );
+
+  useEffect(() => {
+    setPreselectedProposalsData(proposalsData);
+  }, [proposalsData]);
+
+  useEffect(() => {
+    if (urlQueryParams.selection.length > 0) {
+      const selection = new Set(urlQueryParams.selection);
+
+      setPreselectedProposalsData((preselectedProposalsData) => {
+        const selected: ProposalsToInstrumentArgs[] = [];
+        const preselected = preselectedProposalsData.map((proposal) => {
+          if (selection.has(proposal.id.toString())) {
+            selected.push({ id: proposal.id, callId: proposal.callId });
+          }
+
+          return {
+            ...proposal,
+            tableData: {
+              checked: selection.has(proposal.id.toString()),
+            },
+          };
+        });
+
+        setSelectedProposals(selected);
+
+        return preselected;
+      });
+    } else {
+      setPreselectedProposalsData((proposalsData) =>
+        proposalsData.map((proposal) => ({
+          ...proposal,
+          tableData: { ...(proposal as any).tableData, checked: false },
+        }))
+      );
+      setSelectedProposals([]);
+    }
+  }, [proposalsData, urlQueryParams.selection]);
 
   const setNewRanking = (proposalID: number, ranking: number) => {
     api().administrationProposal({
       id: proposalID,
       rankOrder: ranking,
     });
-    setProposalsData(
-      proposalsData.map(prop => {
+    setProposalsData((proposalsData) =>
+      proposalsData.map((prop) => {
         if (prop.id === proposalID) prop.rankOrder = ranking;
 
         return prop;
@@ -87,38 +140,34 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     );
   };
 
-  const removeProposalFromInstrument = async () => {
-    if (
-      proposalAndInstrumentId.instrumentId &&
-      proposalAndInstrumentId.proposalId
-    ) {
-      const result = await api().removeProposalFromInstrument({
-        proposalId: proposalAndInstrumentId.proposalId,
-        instrumentId: proposalAndInstrumentId.instrumentId,
-      });
+  const removeProposalFromInstrument = async (
+    proposalId: number,
+    instrumentId: number | null
+  ) => {
+    if (!instrumentId || !proposalId) {
+      return;
+    }
 
-      const isError = !!result.removeProposalFromInstrument.error;
+    const result = await api(
+      'Proposal removed from the instrument successfully!'
+    ).removeProposalFromInstrument({
+      proposalId,
+      instrumentId,
+    });
 
-      if (!isError) {
-        setProposalsData(
-          proposalsData.map(prop => {
-            if (prop.id === proposalAndInstrumentId.proposalId) {
-              prop.instrument = null;
-            }
+    const isError = !!result.removeProposalFromInstrument.error;
 
-            return prop;
-          })
-        );
-      }
+    if (!isError) {
+      setProposalsData((proposalsData) =>
+        proposalsData.map((prop) => {
+          if (prop.id === proposalId) {
+            prop.instrumentName = null;
+            prop.instrumentId = null;
+          }
 
-      const message = isError
-        ? 'Could not remove proposal from the instrument'
-        : 'Proposal removed from the instrument';
-      enqueueSnackbar(message, {
-        variant: isError ? 'error' : 'success',
-      });
-
-      setProposalAndInstrumentId({ proposalId: null, instrumentId: null });
+          return prop;
+        })
+      );
     }
   };
 
@@ -128,36 +177,62 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
    * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
    * and selection flag is true they are not working properly.
    */
-  const RowActionButtons = (rowData: ProposalData) => {
+  const RowActionButtons = (rowData: ProposalViewData) => {
     const iconButtonStyle = { padding: '7px' };
 
     return (
       <>
-        <IconButton data-cy="view-proposal" style={iconButtonStyle}>
-          <Link
-            to={`/ProposalReviewUserOfficer/${rowData.id}`}
-            style={{ color: 'inherit', textDecoration: 'inherit' }}
+        <Tooltip title="View proposal">
+          <IconButton
+            data-cy="view-proposal"
+            onClick={() => {
+              setUrlQueryParams({ reviewModal: rowData.id });
+            }}
+            style={iconButtonStyle}
           >
             <Visibility />
-          </Link>
-        </IconButton>
-        <IconButton
-          onClick={() => downloadPDFProposal(rowData.id)}
-          style={iconButtonStyle}
-        >
-          <GetAppIcon />
-        </IconButton>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Clone proposal">
+          <IconButton
+            data-cy="clone-proposal"
+            onClick={() => {
+              setProposalToCloneId(rowData.id);
+              setOpenCallSelection(true);
+            }}
+            style={iconButtonStyle}
+          >
+            <FileCopy />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Download proposal as pdf">
+          <IconButton
+            data-cy="download-proposal"
+            onClick={() => downloadPDFProposal([rowData.id], rowData.title)}
+            style={iconButtonStyle}
+          >
+            <GetAppIcon />
+          </IconButton>
+        </Tooltip>
 
-        {rowData.instrument && (
+        {rowData.instrumentName && (
           <Tooltip title="Remove assigned instrument">
             <IconButton
               style={iconButtonStyle}
               onClick={() => {
-                setProposalAndInstrumentId({
-                  proposalId: rowData.id,
-                  instrumentId: rowData.instrument?.id as number,
-                });
-                setOpenRemoveInstrument(true);
+                confirm(
+                  async () => {
+                    await removeProposalFromInstrument(
+                      rowData.id,
+                      rowData.instrumentId
+                    );
+                  },
+                  {
+                    title: 'Remove assigned instrument',
+                    description:
+                      'This action will remove assigned instrument from proposal.',
+                  }
+                )();
               }}
             >
               <RemoveScienceIcon />
@@ -168,10 +243,18 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     );
   };
 
-  let columns: Column<ProposalData>[] = [
+  const RankComponent = (rowData: ProposalViewData) => (
+    <RankInput
+      proposalID={rowData.id}
+      defaultValue={rowData.rankOrder}
+      onChange={setNewRanking}
+    />
+  );
+
+  let columns: Column<ProposalViewData>[] = [
     {
       title: 'Actions',
-      cellStyle: { padding: 0, minWidth: 120 },
+      cellStyle: { padding: 0, minWidth: 152 },
       sorting: false,
       removable: false,
       render: RowActionButtons,
@@ -184,214 +267,190 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     },
     {
       title: 'Time(Days)',
-      field: 'technicalReview.timeAllocation',
+      field: 'timeAllocation',
       hidden: true,
     },
     {
       title: 'Technical status',
-      render: (rowData: ProposalData): string =>
-        rowData.technicalReview
-          ? getTranslation(rowData.technicalReview.status as ResourceId)
-          : '',
+      field: 'technicalStatus',
     },
-    { title: 'Status', field: 'status' },
+    {
+      title: 'Submitted',
+      render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Status',
+      field: 'statusName',
+    },
     {
       title: 'Deviation',
-      field: 'deviation',
-      hidden: true,
-      render: (rowData: ProposalData): number =>
-        standardDeviation(getGrades(rowData.reviews)),
-      customSort: (a: ProposalData, b: ProposalData) =>
-        (standardDeviation(getGrades(a.reviews)) || 0) -
-        (standardDeviation(getGrades(b.reviews)) || 0),
-    },
-    {
-      title: 'Absolute Difference',
-      field: 'absolute',
-      hidden: true,
-      render: (rowData: ProposalData): number =>
-        absoluteDifference(getGrades(rowData.reviews)),
-      customSort: (a: ProposalData, b: ProposalData) =>
-        (absoluteDifference(getGrades(a.reviews)) || 0) -
-        (absoluteDifference(getGrades(b.reviews)) || 0),
+      field: 'reviewDeviation',
     },
     {
       title: 'Average Score',
-      field: 'average',
-      hidden: true,
-      render: (rowData: ProposalData): number =>
-        average(getGrades(rowData.reviews)),
-      customSort: (a: ProposalData, b: ProposalData) =>
-        (average(getGrades(a.reviews)) || 0) -
-        (average(getGrades(b.reviews)) || 0),
+      field: 'reviewAverage',
     },
     {
       title: 'Final Status',
       field: 'finalStatus',
-      render: (rowData: ProposalData): string =>
-        rowData.finalStatus
-          ? getTranslation(rowData.finalStatus as ResourceId)
-          : '',
     },
     {
       title: 'Ranking',
       field: 'rankOrder',
-      // To be refactored
-      // eslint-disable-next-line react/display-name
-      render: (rowData: ProposalData) => (
-        <RankInput
-          proposalID={rowData.id}
-          defaultvalue={rowData.rankOrder}
-          onChange={setNewRanking}
-        />
-      ),
+      render: RankComponent,
     },
     { title: 'Notified', field: 'notified' },
     {
       title: 'Instrument',
-      render: (rowData: ProposalData): string =>
-        rowData.instrument ? rowData.instrument.name : '-',
+      field: 'instrumentName',
     },
     {
       title: 'Call',
-      render: (rowData: ProposalData): string =>
-        rowData.call ? rowData.call.shortCode : '-',
-      hidden: true,
+      field: 'callShortCode',
     },
     {
       title: 'SEP',
-      render: (rowData: ProposalData): string =>
-        rowData.sep ? rowData.sep.code : '-',
-      hidden: true,
+      field: 'sepCode',
     },
   ];
 
   // NOTE: We are remapping only the hidden field because functions like `render` can not be stringified.
   if (localStorageValue) {
-    columns = columns.map(column => ({
+    columns = columns.map((column) => ({
       ...column,
       hidden: localStorageValue?.find(
-        localStorageValueItem => localStorageValueItem.title === column.title
+        (localStorageValueItem) => localStorageValueItem.title === column.title
       )?.hidden,
     }));
   }
 
+  // TODO: Maybe it will be good to make notifyProposal and deleteProposal bulk functions where we can sent array of proposal ids.
   const emailProposals = (): void => {
-    selectedProposals.forEach(id => {
-      new Promise(async resolve => {
-        await api()
-          .notifyProposal({ id })
-          .then(data => {
-            if (data.notifyProposal.error) {
-              enqueueSnackbar(
-                `Could not send email to all selected proposals`,
-                {
-                  variant: 'error',
-                }
-              );
-            } else {
-              proposalsData[
-                proposalsData.findIndex(val => val.id === id)
-              ].notified = true;
-              setProposalsData([...proposalsData]);
-            }
-          });
-
-        resolve();
+    selectedProposals.forEach(async (proposal) => {
+      const {
+        notifyProposal: { error },
+      } = await api('Notification sent successfully').notifyProposal({
+        id: proposal.id,
       });
+
+      if (error) {
+        return;
+      }
+
+      setProposalsData((proposalsData) =>
+        proposalsData.map((prop) => ({
+          ...prop,
+          notified: prop.id === proposal.id,
+        }))
+      );
     });
   };
 
   const deleteProposals = (): void => {
-    selectedProposals.forEach(id => {
-      new Promise(async resolve => {
-        await api().deleteProposal({ id });
-        proposalsData.splice(
-          proposalsData.findIndex(val => val.id === id),
-          1
-        );
-        setProposalsData([...proposalsData]);
-        resolve();
-      });
+    selectedProposals.forEach(async (proposal) => {
+      const {
+        deleteProposal: { error },
+      } = await api().deleteProposal({ id: proposal.id });
+
+      if (error) {
+        return;
+      }
+
+      setProposalsData((proposalsData) =>
+        proposalsData.filter(({ id }) => id !== proposal.id)
+      );
     });
   };
 
   const assignProposalToSEP = async (sep: Sep): Promise<void> => {
-    const assignmentsErrors = await Promise.all(
-      selectedProposals.map(async id => {
-        const result = await api().assignProposal({
-          proposalId: id,
+    const responses = await Promise.all(
+      selectedProposals.map(async (selectedProposal) => {
+        const result = await api().assignProposalToSEP({
+          proposalId: selectedProposal.id,
           sepId: sep.id,
         });
 
-        return result.assignProposal.error;
+        return {
+          result: result.assignProposalToSEP,
+          proposalId: selectedProposal.id,
+        };
       })
     );
 
-    const isError = !!assignmentsErrors.join('');
+    const errors = responses.map((item) => item.result.error);
+    const isError = !!errors.join('');
+
+    enqueueSnackbar(
+      isError
+        ? 'Proposal/s can not be assigned to SEP'
+        : 'Proposal/s assigned to SEP',
+      {
+        variant: isError ? 'error' : 'success',
+        className: isError ? 'snackbar-error' : 'snackbar-success',
+      }
+    );
 
     if (!isError) {
-      setProposalsData(
-        proposalsData.map(prop => {
+      setProposalsData((proposalsData) =>
+        proposalsData.map((prop) => {
           if (
             selectedProposals.find(
-              selectedProposalId => selectedProposalId === prop.id
+              (selectedProposal) => selectedProposal.id === prop.id
             )
           ) {
-            prop.sep = sep;
+            prop.sepCode = sep.code;
+
+            const proposalNextStatusResponse = responses.find(
+              (item) => item.proposalId === prop.id
+            );
+
+            if (proposalNextStatusResponse?.result.nextProposalStatus?.name) {
+              prop.statusName =
+                proposalNextStatusResponse.result.nextProposalStatus.name;
+            }
           }
 
           return prop;
         })
       );
     }
-
-    const message = isError
-      ? 'Could not assign all selected proposals to SEP'
-      : 'Proposal/s assigned to SEP';
-    enqueueSnackbar(message, {
-      variant: isError ? 'error' : 'success',
-    });
   };
 
   const assignProposalsToInstrument = async (
     instrument: Instrument
   ): Promise<void> => {
     const selectedProposalsWithInstrument = proposalsData.filter(
-      proposalDataItem =>
-        selectedProposals.includes(proposalDataItem.id) &&
-        proposalDataItem.instrument
+      (proposalDataItem) =>
+        selectedProposals.some(
+          (selectedProposal) => selectedProposal.id === proposalDataItem.id
+        ) && proposalDataItem.instrumentId
     );
 
     if (selectedProposalsWithInstrument.length === 0) {
-      const result = await api().assignProposalsToInstrument({
-        proposalIds: selectedProposals,
+      const result = await api(
+        'Proposal/s assigned to the selected instrument'
+      ).assignProposalsToInstrument({
+        proposals: selectedProposals,
         instrumentId: instrument.id,
       });
       const isError = !!result.assignProposalsToInstrument.error;
 
       if (!isError) {
-        setProposalsData(
-          proposalsData.map(prop => {
+        setProposalsData((proposalsData) =>
+          proposalsData.map((prop) => {
             if (
               selectedProposals.find(
-                selectedProposalId => selectedProposalId === prop.id
+                (selectedProposal) => selectedProposal.id === prop.id
               )
             ) {
-              prop.instrument = instrument;
+              prop.instrumentName = instrument.name;
+              prop.instrumentId = instrument.id;
             }
 
             return prop;
           })
         );
       }
-
-      const message = isError
-        ? 'Could not assign all selected proposals to the instrument'
-        : 'Proposal/s assigned to the selected instrument';
-      enqueueSnackbar(message, {
-        variant: isError ? 'error' : 'success',
-      });
     } else {
       enqueueSnackbar(
         'One or more of your selected proposals already have instrument assigned',
@@ -402,35 +461,55 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     }
   };
 
+  const cloneProposalToCall = async (call: Call) => {
+    setProposalToCloneId(null);
+
+    if (!call?.id || !proposalToCloneId) {
+      return;
+    }
+
+    const result = await api('Proposal cloned successfully').cloneProposal({
+      callId: call.id,
+      proposalToCloneId,
+    });
+
+    const resultProposal = result.cloneProposal.proposal;
+
+    if (!result.cloneProposal.error && proposalsData && resultProposal) {
+      const newClonedProposal = fromProposalToProposalView(
+        resultProposal as Proposal
+      );
+
+      const newProposalsData = [newClonedProposal, ...proposalsData];
+
+      setProposalsData(newProposalsData);
+    }
+  };
+
   const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
   const DeleteIcon = (): JSX.Element => <Delete />;
   const GroupWorkIcon = (): JSX.Element => <GroupWork />;
   const EmailIcon = (): JSX.Element => <Email />;
-  const AddScienceIcon = (): JSX.Element => <ScienceIconAdd />;
+  const AddScienceIcon = (
+    props: JSX.IntrinsicAttributes & {
+      children?: React.ReactNode;
+      'data-cy'?: string;
+    }
+  ): JSX.Element => <ScienceIconAdd {...props} />;
+  const ExportIcon = (): JSX.Element => <GridOnIcon />;
+
+  columns = setSortDirectionOnSortColumn(
+    columns,
+    urlQueryParams.sortColumn,
+    urlQueryParams.sortDirection
+  );
+
+  const proposalToReview = proposalsData.find(
+    (proposal) => proposal.id === urlQueryParams.reviewModal
+  );
 
   return (
     <>
-      <DialogConfirmation
-        title="Delete proposals"
-        text="This action will delete proposals and all data associated with them"
-        open={open}
-        action={deleteProposals}
-        handleOpen={setOpen}
-      />
-      <DialogConfirmation
-        title="Remove assigned instrument"
-        text="This action will remove assigned instrument from proposal"
-        open={openRemoveInstrument}
-        action={removeProposalFromInstrument}
-        handleOpen={setOpenRemoveInstrument}
-      />
-      <DialogConfirmation
-        title="Notify results"
-        text="This action will trigger emails to be sent to principal investigators"
-        open={openEmailProposals}
-        action={emailProposals}
-        handleOpen={setOpenEmailProposals}
-      />
       <Dialog
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -454,38 +533,90 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           <AssignProposalsToInstrument
             assignProposalsToInstrument={assignProposalsToInstrument}
             close={(): void => setOpenInstrumentAssignment(false)}
+            callIds={selectedProposals.map(
+              (selectedProposal) => selectedProposal.callId
+            )}
           />
         </DialogContent>
       </Dialog>
+      <Dialog
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={openCallSelection}
+        onClose={(): void => setOpenCallSelection(false)}
+      >
+        <DialogContent>
+          <CallSelectModalOnProposalClone
+            cloneProposalToCall={cloneProposalToCall}
+            close={(): void => setOpenCallSelection(false)}
+          />
+        </DialogContent>
+      </Dialog>
+      <ProposalReviewModal
+        title={`View proposal: ${proposalToReview?.title} (${proposalToReview?.shortCode})`}
+        proposalReviewModalOpen={!!urlQueryParams.reviewModal}
+        setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
+          setProposalsData(
+            proposalsData.map((proposal) => {
+              if (proposal.id === updatedProposal?.id) {
+                return fromProposalToProposalView(updatedProposal);
+              } else {
+                return proposal;
+              }
+            })
+          );
+          setUrlQueryParams({ reviewModal: undefined });
+        }}
+        reviewItemId={proposalToReview?.id}
+      >
+        <ProposalReview proposalId={proposalToReview?.id as number} />
+      </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
         title={'Proposals'}
         columns={columns}
-        data={proposalsData}
+        data={preselectedProposalsData}
         isLoading={loading}
-        components={{
-          Toolbar: Toolbar,
+        onSearchChange={(searchText) => {
+          setUrlQueryParams({ search: searchText ? searchText : undefined });
         }}
-        localization={{
-          toolbar: {
-            exportName: 'Export as Excel',
-          },
+        onSelectionChange={(selectedItems) => {
+          setUrlQueryParams((params) => ({
+            ...params,
+            selection:
+              selectedItems.length > 0
+                ? selectedItems.map((selectedItem) =>
+                    selectedItem.id.toString()
+                  )
+                : undefined,
+          }));
         }}
         options={{
           search: true,
+          searchText: urlQueryParams.search || undefined,
           selection: true,
           debounceInterval: 400,
           columnsButton: true,
-          exportButton: true,
-          exportCsv: excelDownload,
         }}
         actions={[
           {
             icon: GetAppIconComponent,
-            tooltip: 'Download proposals',
+            tooltip: 'Download proposals in PDF',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
-                (rowData as ProposalData[]).map(row => row.id).join(',')
+                (rowData as ProposalViewData[]).map((row) => row.id),
+                (rowData as ProposalViewData[])[0].title
+              );
+            },
+            position: 'toolbarOnSelect',
+          },
+          {
+            icon: ExportIcon,
+            tooltip: 'Export proposals in Excel',
+            onClick: (event, rowData): void => {
+              downloadXLSXProposal(
+                (rowData as ProposalViewData[]).map((row) => row.id),
+                (rowData as ProposalViewData[])[0].title
               );
             },
             position: 'toolbarOnSelect',
@@ -493,54 +624,62 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           {
             icon: DeleteIcon,
             tooltip: 'Delete proposals',
-            onClick: (event, rowData): void => {
-              setOpen(true);
-              setSelectedProposals(
-                (rowData as ProposalData[]).map((row: ProposalData) => row.id)
-              );
+            onClick: () => {
+              confirm(
+                () => {
+                  deleteProposals();
+                },
+                {
+                  title: 'Delete proposals',
+                  description:
+                    'This action will delete proposals and all data associated with them.',
+                }
+              )();
             },
             position: 'toolbarOnSelect',
           },
           {
             icon: GroupWorkIcon,
             tooltip: 'Assign proposals to SEP',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               setOpenAssignment(true);
-              setSelectedProposals(
-                (rowData as ProposalData[]).map((row: ProposalData) => row.id)
-              );
             },
             position: 'toolbarOnSelect',
           },
           {
-            icon: AddScienceIcon,
+            icon: AddScienceIcon.bind(null, {
+              'data-cy': 'assign-proposals-to-instrument',
+            }),
             tooltip: 'Assign proposals to instrument',
-            onClick: (event, rowData): void => {
+            onClick: () => {
               setOpenInstrumentAssignment(true);
-              setSelectedProposals(
-                (rowData as ProposalData[]).map((row: ProposalData) => row.id)
-              );
             },
             position: 'toolbarOnSelect',
           },
           {
             icon: EmailIcon,
             tooltip: 'Notify users final result',
-            onClick: (event, rowData): void => {
-              setOpenEmailProposals(true);
-              setSelectedProposals(
-                (rowData as ProposalData[]).map((row: ProposalData) => row.id)
-              );
+            onClick: () => {
+              confirm(
+                () => {
+                  emailProposals();
+                },
+                {
+                  title: 'Notify results',
+                  description:
+                    'This action will trigger emails to be sent to principal investigators.',
+                }
+              )();
             },
             position: 'toolbarOnSelect',
           },
         ]}
-        onChangeColumnHidden={collumnChange => {
+        onChangeColumnHidden={(columnChange) => {
           const proposalColumns = columns.map(
-            (proposalColumn: Column<ProposalData>) => ({
+            (proposalColumn: Column<ProposalViewData>) => ({
               hidden:
-                proposalColumn.title === collumnChange.title
-                  ? collumnChange.hidden
+                proposalColumn.title === columnChange.title
+                  ? columnChange.hidden
                   : proposalColumn.hidden,
               title: proposalColumn.title,
             })
@@ -548,14 +687,17 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
           setLocalStorageValue(proposalColumns);
         }}
+        onOrderChange={(orderedColumnId, orderDirection) => {
+          setUrlQueryParams &&
+            setUrlQueryParams((params) => ({
+              ...params,
+              sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+              sortDirection: orderDirection ? orderDirection : undefined,
+            }));
+        }}
       />
     </>
   );
 };
 
-ProposalTableOfficer.propTypes = {
-  Toolbar: PropTypes.func.isRequired,
-  proposalFilter: PropTypes.any,
-};
-
-export default ProposalTableOfficer;
+export default React.memo(withConfirm(ProposalTableOfficer), isEqual);

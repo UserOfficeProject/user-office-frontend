@@ -1,4 +1,4 @@
-import { Container } from '@material-ui/core';
+import Container from '@material-ui/core/Container';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
@@ -16,14 +16,14 @@ export default function ProposalTemplates() {
           dataProvider={() =>
             api()
               .getProposalTemplates({ filter: { isArchived: false } })
-              .then(data => data.proposalTemplates || [])
+              .then((data) => data.proposalTemplates || [])
           }
         />
         <ProposalTemplatesTable
           dataProvider={() =>
             api()
               .getProposalTemplates({ filter: { isArchived: true } })
-              .then(data => data.proposalTemplates || [])
+              .then((data) => data.proposalTemplates || [])
           }
         />
       </SimpleTabs>

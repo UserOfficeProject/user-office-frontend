@@ -1,33 +1,29 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
-import { Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import MaterialTable from 'material-table';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { useContext, useState, useEffect } from 'react';
 import { Redirect, useHistory } from 'react-router';
 
 import { UserContext } from 'context/UserContextProvider';
 import { Role } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 import { getUniqueArrayBy } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 type RoleSelectionProps = {
   close: () => void;
 };
 
 const RoleSelection: React.FC<RoleSelectionProps> = ({ close }) => {
-  const { currentRole, user, token, handleNewToken, handleRole } = useContext(
-    UserContext
-  );
+  const { currentRole, user, token, handleNewToken } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-  const api = useDataApi();
+  const { api } = useDataApiWithFeedback();
   const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
   const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
     const getUserInformation = async () => {
+      setLoading(true);
       const data = await api().getMyRoles();
 
       if (data?.me) {
@@ -35,6 +31,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ close }) => {
          *  which is used to determine if the user with that role is member of a SEP.
          */
         setRoles(getUniqueArrayBy(data.me?.roles, 'id'));
+        setLoading(false);
       }
     };
     getUserInformation();
@@ -46,26 +43,19 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ close }) => {
 
   const selectUserRole = async (role: Role) => {
     setLoading(true);
-    const result = await api().selectRole({ token, selectedRoleId: role.id });
+    const result = await api('User role changed!').selectRole({
+      token,
+      selectedRoleId: role.id,
+    });
 
     if (!result.selectRole.error) {
-      handleNewToken(result.selectRole.token);
+      history.push('/');
 
       setTimeout(() => {
-        handleRole(role.shortCode);
-        history.push('/');
-        setLoading(false);
-
-        enqueueSnackbar('User role changed!', {
-          variant: 'success',
-        });
+        handleNewToken(result.selectRole.token);
 
         close();
       }, 500);
-    } else {
-      enqueueSnackbar(getTranslation(result.selectRole.error as ResourceId), {
-        variant: 'error',
-      });
     }
   };
 
@@ -96,6 +86,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ close }) => {
         title="User roles"
         columns={columns}
         data={roles}
+        isLoading={loading}
         options={{
           search: false,
           paging: false,

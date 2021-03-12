@@ -1,38 +1,39 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import { userPasswordFieldValidationSchema } from '@esss-swap/duo-validation';
-import { Card, CardContent, CircularProgress } from '@material-ui/core';
+import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
+import { createUserValidationSchema } from '@esss-swap/duo-validation';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormLabel from '@material-ui/core/FormLabel';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import clsx from 'clsx';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import React, { useContext, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { ObjectSchema } from 'yup';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
+import UOLoader from 'components/common/UOLoader';
 import InformationModal from 'components/pages/InformationModal';
 import { UserContext } from 'context/UserContextProvider';
 import { PageName, CreateUserMutationVariables } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
-import { useInstitutionData } from 'hooks/admin/useInstitutionData';
+import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useUnauthorizedApi } from 'hooks/common/useDataApi';
 import { useGetFields } from 'hooks/user/useGetFields';
 import { useOrcIDInformation } from 'hooks/user/useOrcIDInformation';
 import orcid from 'images/orcid.png';
-import { userFieldSchema } from 'utils/userFieldValidationSchema';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
@@ -126,7 +127,7 @@ const SignUpPropTypes = {
 
 type SignUpProps = PropTypes.InferProps<typeof SignUpPropTypes>;
 
-const SignUp: React.FC<SignUpProps> = props => {
+const SignUp: React.FC<SignUpProps> = (props) => {
   const classes = useStyles();
   const [userID, setUserID] = useState<number | null>(null);
 
@@ -139,11 +140,13 @@ const SignUp: React.FC<SignUpProps> = props => {
   const [, cookiePageContent] = useGetPageContent(PageName.COOKIEPAGE);
 
   const fieldsContent = useGetFields();
-  const { institutionData, loadingInstitutions } = useInstitutionData();
+  const { institutions, loadingInstitutions } = useInstitutionsData();
   const searchParams = queryString.parse(props.location.search);
   const authCodeOrcID = searchParams.code;
   const { loading, orcData } = useOrcIDInformation(authCodeOrcID as string);
   const unauthorizedApi = useUnauthorizedApi();
+  const { enqueueSnackbar } = useSnackbar();
+
   if (orcData && orcData.token) {
     handleLogin(orcData.token);
   }
@@ -169,15 +172,13 @@ const SignUp: React.FC<SignUpProps> = props => {
     return <Redirect to="/" />;
   }
 
-  if (loadingInstitutions || !fieldsContent) {
-    return (
-      <CircularProgress style={{ marginLeft: '50%', marginTop: '100px' }} />
-    );
+  if (loadingInstitutions || !fieldsContent || (authCodeOrcID && loading)) {
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
   if (!institutionsList.length) {
     setInstitutionsList(
-      institutionData.map(institution => {
+      institutions.map((institution) => {
         return { text: institution.name, value: institution.id };
       })
     );
@@ -185,29 +186,32 @@ const SignUp: React.FC<SignUpProps> = props => {
 
   if (!nationalitiesList.length) {
     setNationalitiesList(
-      fieldsContent.nationalities.map(nationality => {
+      fieldsContent.nationalities.map((nationality) => {
         return { text: nationality.value, value: nationality.id };
       })
     );
   }
 
   const sendSignUpRequest = (values: CreateUserMutationVariables) => {
-    unauthorizedApi
+    return unauthorizedApi()
       .createUser({
         ...values,
       })
-      .then(data => setUserID(data?.createUser?.user?.id as number));
+      .then((data) => {
+        if (data.createUser.error) {
+          enqueueSnackbar(getTranslation(data.createUser.error as ResourceId), {
+            variant: 'error',
+          });
+        } else {
+          setUserID(data?.createUser?.user?.id as number);
+        }
+      });
   };
-
-  if (authCodeOrcID && loading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <Container component="main" maxWidth="xs" className={classes.container}>
       <Formik
         validateOnChange={false}
-        validateOnBlur={false}
         initialValues={{
           user_title: '',
           firstname: firstname as string,
@@ -224,13 +228,16 @@ const SignUp: React.FC<SignUpProps> = props => {
           department: '',
           organisation_address: '',
           position: '',
-          email: email as string,
+          email: (email as string) || '',
           telephone: '',
           telephone_alt: '',
           privacy_agreement: false,
           cookie_policy: false,
+          orcid: orcData?.orcid as string,
+          orcidHash: orcData?.orcidHash as string,
+          refreshToken: orcData?.refreshToken as string,
         }}
-        onSubmit={(values, actions) => {
+        onSubmit={async (values): Promise<void> => {
           if (orcData && orcData.orcid) {
             const newValues = {
               ...values,
@@ -246,17 +253,14 @@ const SignUp: React.FC<SignUpProps> = props => {
                 values.gender === 'other' ? values.othergender : values.gender,
             };
 
-            sendSignUpRequest(newValues);
+            await sendSignUpRequest(newValues);
           } else {
             setOrcidError(true);
           }
-          actions.setSubmitting(false);
         }}
-        validationSchema={userFieldSchema.concat(
-          userPasswordFieldValidationSchema as ObjectSchema<object>
-        )}
+        validationSchema={createUserValidationSchema}
       >
-        {({ values }) => (
+        {({ values, isSubmitting }) => (
           <Form>
             <CssBaseline />
             <Avatar className={classes.avatar}>
@@ -379,7 +383,7 @@ const SignUp: React.FC<SignUpProps> = props => {
                       component={TextField}
                       margin="normal"
                       fullWidth
-                      autoComplete="off"
+                      autoComplete="new-password"
                       data-cy="password"
                       helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
                       required
@@ -392,7 +396,7 @@ const SignUp: React.FC<SignUpProps> = props => {
                       component={TextField}
                       margin="normal"
                       fullWidth
-                      autoComplete="off"
+                      autoComplete="new-password"
                       data-cy="confirmPassword"
                       required
                       disabled={!orcData}
@@ -636,6 +640,7 @@ const SignUp: React.FC<SignUpProps> = props => {
                   data-cy="cookie-policy"
                   disabled={!orcData}
                 />
+
                 <Button
                   type="submit"
                   fullWidth
@@ -643,9 +648,13 @@ const SignUp: React.FC<SignUpProps> = props => {
                   color="primary"
                   className={classes.submit}
                   data-cy="submit"
-                  disabled={!values.privacy_agreement || !values.cookie_policy}
+                  disabled={
+                    isSubmitting ||
+                    !values.privacy_agreement ||
+                    !values.cookie_policy
+                  }
                 >
-                  Sign Up
+                  {isSubmitting ? <UOLoader /> : 'Sign Up'}
                 </Button>
               </React.Fragment>
             )}

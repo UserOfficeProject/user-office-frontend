@@ -1,29 +1,83 @@
-import { useEffect, useState, SetStateAction, Dispatch } from 'react';
+import {
+  useEffect,
+  useState,
+  SetStateAction,
+  Dispatch,
+  useContext,
+} from 'react';
 
-import { Instrument } from 'generated/sdk';
+import { UserContext } from 'context/UserContextProvider';
+import { Instrument, UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-export function useInstrumentsData(): {
+export function useInstrumentsData(
+  callIds?: number[]
+): {
   loadingInstruments: boolean;
-  instrumentsData: Instrument[];
-  setInstrumentsData: Dispatch<SetStateAction<Instrument[]>>;
+  instruments: Instrument[];
+  setInstrumentsWithLoading: Dispatch<SetStateAction<Instrument[]>>;
 } {
-  const [instrumentsData, setInstrumentsData] = useState<Instrument[]>([]);
+  const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [loadingInstruments, setLoadingInstruments] = useState(true);
+  const { currentRole } = useContext(UserContext);
 
   const api = useDataApi();
 
-  useEffect(() => {
+  const setInstrumentsWithLoading = (data: SetStateAction<Instrument[]>) => {
     setLoadingInstruments(true);
-    api()
-      .getInstruments()
-      .then(data => {
-        if (data.instruments) {
-          setInstrumentsData(data.instruments.instruments as Instrument[]);
-        }
-        setLoadingInstruments(false);
-      });
-  }, [api]);
+    setInstruments(data);
+    setLoadingInstruments(false);
+  };
 
-  return { loadingInstruments, instrumentsData, setInstrumentsData };
+  useEffect(() => {
+    let unmounted = false;
+
+    setLoadingInstruments(true);
+    if (
+      currentRole &&
+      [
+        UserRole.USER_OFFICER,
+        UserRole.SEP_REVIEWER,
+        UserRole.SEP_CHAIR,
+        UserRole.SEP_SECRETARY,
+      ].includes(currentRole)
+    ) {
+      api()
+        .getInstruments({ callIds })
+        .then((data) => {
+          if (unmounted) {
+            return;
+          }
+
+          if (data.instruments) {
+            setInstruments(data.instruments.instruments as Instrument[]);
+          }
+          setLoadingInstruments(false);
+        });
+    } else {
+      api()
+        .getUserInstruments()
+        .then((data) => {
+          if (unmounted) {
+            return;
+          }
+
+          if (data.me?.instruments) {
+            setInstruments(data.me.instruments as Instrument[]);
+          }
+          setLoadingInstruments(false);
+        });
+    }
+
+    return () => {
+      // used to avoid unmounted component state update error
+      unmounted = true;
+    };
+  }, [api, currentRole, callIds]);
+
+  return {
+    loadingInstruments,
+    instruments,
+    setInstrumentsWithLoading,
+  };
 }

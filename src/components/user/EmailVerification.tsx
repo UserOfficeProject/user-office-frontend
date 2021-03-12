@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Email from '@material-ui/icons/Email';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { FormWrapper } from 'styles/StyledComponents';
 
 import PhotoInSide from './PhotoInSide';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.dark,
@@ -46,7 +46,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ match }) => {
   if (!emailVerified) {
     api()
       .verifyEmail({ token: match.params.token })
-      .then(data =>
+      .then((data) =>
         data.emailVerification.success
           ? setEmailVerified(true)
           : setErrorMessage(true)

@@ -1,4 +1,5 @@
-import { Button, Link } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import dateformat from 'dateformat';
 import MaterialTable, { Column } from 'material-table';
 import React, { useState } from 'react';
@@ -13,7 +14,7 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 
 function CallsList(props: { filterTemplateId: number }) {
-  const { callsData } = useCallsData(undefined, props.filterTemplateId);
+  const { calls } = useCallsData({ templateIds: [props.filterTemplateId] });
   const columns = [
     { title: 'Short Code', field: 'shortCode' },
     {
@@ -35,7 +36,7 @@ function CallsList(props: { filterTemplateId: number }) {
       icons={tableIcons}
       title="Calls"
       columns={columns}
-      data={callsData}
+      data={calls}
     />
   );
 }
@@ -47,7 +48,7 @@ function CallsModal(props: { templateId?: number; onClose: () => void }) {
       onClose={props.onClose}
       fullWidth={true}
     >
-      <CallsList filterTemplateId={props.templateId!} />
+      <CallsList filterTemplateId={props.templateId as number} />
       <ActionButtonContainer>
         <Button variant="text" onClick={() => props.onClose()}>
           Close
@@ -56,32 +57,49 @@ function CallsModal(props: { templateId?: number; onClose: () => void }) {
     </InputDialog>
   );
 }
-type ProposalTemplateRowDataType = TemplateRowDataType & {
-  callCount: number;
-  proposalCount: number;
+export type ProposalTemplateRowDataType = TemplateRowDataType & {
+  callCount?: number;
+  questionaryCount?: number;
 };
 
-function ProposalTemplatesTable(props: IProposalTemplatesTableProps) {
+type ProposalTemplatesTableProps = {
+  dataProvider: () => Promise<
+    Pick<
+      ProposalTemplate,
+      | 'templateId'
+      | 'name'
+      | 'description'
+      | 'isArchived'
+      | 'callCount'
+      | 'questionaryCount'
+    >[]
+  >;
+  confirm: WithConfirmType;
+};
+
+function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
   const [selectedTemplateId, setSelectedTemplateId] = useState<number>();
+
+  const NumberOfCalls = (rowData: ProposalTemplateRowDataType) => (
+    <Link
+      onClick={() => {
+        setSelectedTemplateId(rowData.templateId);
+      }}
+      style={{ cursor: 'pointer' }}
+    >
+      {rowData.callCount || 0}
+    </Link>
+  );
 
   const columns: Column<ProposalTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# proposals', field: 'proposalCount' },
+    { title: '# proposals', field: 'questionaryCount' },
     {
       title: '# calls',
       field: 'callCount',
       editable: 'never',
-      render: rowData => (
-        <Link
-          onClick={() => {
-            setSelectedTemplateId(rowData.templateId);
-          }}
-          style={{ cursor: 'pointer' }}
-        >
-          {rowData.callCount}
-        </Link>
-      ),
+      render: NumberOfCalls,
     },
   ];
 
@@ -90,12 +108,12 @@ function ProposalTemplatesTable(props: IProposalTemplatesTableProps) {
       <TemplatesTable
         columns={columns}
         templateCategory={TemplateCategoryId.PROPOSAL_QUESTIONARY}
-        isRowRemovable={rowData => {
+        isRowRemovable={(rowData) => {
           const proposalTemplateRowData = rowData as ProposalTemplateRowDataType;
 
           return (
             proposalTemplateRowData.callCount === 0 &&
-            proposalTemplateRowData.proposalCount === 0
+            proposalTemplateRowData.questionaryCount === 0
           );
         }}
         dataProvider={props.dataProvider}
@@ -107,21 +125,6 @@ function ProposalTemplatesTable(props: IProposalTemplatesTableProps) {
       ></CallsModal>
     </>
   );
-}
-
-interface IProposalTemplatesTableProps {
-  dataProvider: () => Promise<
-    Pick<
-      ProposalTemplate,
-      | 'templateId'
-      | 'name'
-      | 'description'
-      | 'isArchived'
-      | 'callCount'
-      | 'proposalCount'
-    >[]
-  >;
-  confirm: WithConfirmType;
 }
 
 export default withConfirm(ProposalTemplatesTable);

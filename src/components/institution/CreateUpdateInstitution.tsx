@@ -1,74 +1,70 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
-import { useSnackbar } from 'notistack';
+import { Checkbox, TextField } from 'formik-material-ui';
+import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import UOLoader from 'components/common/UOLoader';
 import { Institution } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 type CreateUpdateInstitutionProps = {
   close: (institution: Institution | null) => void;
   institution: Institution | null;
 };
+
 const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
   close,
   institution,
 }) => {
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api, isExecutingCall } = useDataApiWithFeedback();
   const initialValues = institution
     ? {
         name: institution.name,
-        verified: institution.verified ? 'true' : 'false',
+        verified: institution.verified,
       }
     : {
         name: '',
-        verified: 'false',
+        verified: false,
       };
 
-  const createInstitution = (verified: string, name: string) => {
-    api()
-      .createInstitution({
-        name: name,
-        verified: verified === 'true',
-      })
-      .then(response => {
-        const { error, institution } = response.createInstitution;
-        if (error) {
-          enqueueSnackbar(getTranslation(error as ResourceId), {
-            variant: 'error',
-          });
-          close(null);
-        } else if (institution) {
-          close(institution);
-        }
-      });
+  const createInstitution = async (verified: boolean, name: string) => {
+    const response = await api(
+      'Institution created successfully!'
+    ).createInstitution({
+      name,
+      verified,
+    });
+
+    const { error, institution } = response.createInstitution;
+    if (error) {
+      close(null);
+    } else if (institution) {
+      close(institution);
+    }
   };
 
-  const updateInstitution = (id: number, verified: string, name: string) => {
-    api()
-      .updateInstitution({
-        id: id,
-        name: name,
-        verified: verified === 'true',
-      })
-      .then(response => {
-        const { error, institution } = response.updateInstitution;
-
-        if (error) {
-          enqueueSnackbar('Failed to update', {
-            variant: 'error',
-          });
-          close(null);
-        } else if (institution) {
-          close(institution);
-        }
-      });
+  const updateInstitution = async (
+    id: number,
+    verified: boolean,
+    name: string
+  ) => {
+    const response = await api(
+      'Institution updated successfully!'
+    ).updateInstitution({
+      id,
+      name,
+      verified,
+    });
+    const { error, institution } = response.updateInstitution;
+    if (error) {
+      close(null);
+    } else if (institution) {
+      close(institution);
+    }
   };
 
   return (
@@ -76,52 +72,79 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
       initialValues={initialValues}
       onSubmit={async (values): Promise<void> => {
         institution
-          ? updateInstitution(institution.id, values.verified, values.name)
-          : createInstitution(values.verified, values.name);
+          ? await updateInstitution(
+              institution.id,
+              values.verified,
+              values.name
+            )
+          : await createInstitution(values.verified, values.name);
       }}
-      validationSchema={{
+      validationSchema={Yup.object().shape({
         name: Yup.string().required(),
-        verified: Yup.string().required(),
-      }}
+        verified: Yup.boolean().required(),
+      })}
     >
-      {() => (
+      {({ values, setFieldValue }) => (
         <Form>
           <Typography variant="h6">
             {institution ? 'Update' : 'Create new'} institution
           </Typography>
-
           <Field
             name="name"
+            id="name"
             label="Name"
             type="text"
             component={TextField}
             data-cy="name"
             fullWidth
+            disabled={isExecutingCall}
           />
-
-          <FormikDropdown
-            name="verified"
+          <FormControlLabel
+            style={{ marginTop: '10px' }}
+            control={
+              <Field
+                id="verified"
+                name="verified"
+                type="checkbox"
+                component={Checkbox}
+                value={values.verified}
+                color="primary"
+                onChange={(): void =>
+                  setFieldValue('verified', !values.verified)
+                }
+                inputProps={{
+                  'aria-label': 'primary checkbox',
+                  'data-cy': 'institution-verified',
+                }}
+                disabled={isExecutingCall}
+              />
+            }
             label="Verified"
-            items={[
-              { text: 'true', value: 'true' },
-              { text: 'false', value: 'false' },
-            ]}
-            data-cy="verified"
           />
-
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             data-cy="submit"
+            disabled={isExecutingCall}
           >
+            {isExecutingCall && <UOLoader size={14} />}
             {institution ? 'Update' : 'Create'}
           </Button>
         </Form>
       )}
     </Formik>
   );
+};
+
+CreateUpdateInstitution.propTypes = {
+  institution: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    verified: PropTypes.bool.isRequired,
+  }),
+  close: PropTypes.func.isRequired,
 };
 
 export default CreateUpdateInstitution;

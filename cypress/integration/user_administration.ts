@@ -1,9 +1,6 @@
-/// <reference types="Cypress" />
-/// <reference types="../types" />
+import faker from 'faker';
 
 context('User administration tests', () => {
-  const faker = require('faker');
-
   before(() => {
     cy.resetDB();
   });
@@ -19,12 +16,56 @@ context('User administration tests', () => {
   const newDepartment = faker.commerce.department();
   const newPrefferedName = faker.hacker.noun();
   const newPosition = faker.random.word().split(' ')[0];
-  const newTelephone = faker.phone.phoneNumber();
+  const newTelephone = faker.phone.phoneNumber('0##########');
+  const newTelephoneAlt = faker.phone.phoneNumber('0##########');
+
+  it('should be able to verify email manually', () => {
+    cy.login('officer');
+
+    cy.contains('People').click();
+
+    cy.get('input[aria-label=Search]').type('placeholder');
+
+    cy.get("[title='Edit user']")
+      .first()
+      .click();
+
+    cy.contains('Email not verified');
+
+    cy.get('[data-cy=btn-verify-email]').click();
+
+    cy.notification({ variant: 'success', text: 'Email verified' });
+
+    cy.contains('Email not verified').should('not.exist');
+  });
+
+  it('should be able to remove the placeholder flag', () => {
+    cy.login('officer');
+
+    cy.contains('People').click();
+
+    cy.get('input[aria-label=Search]').type('placeholder');
+
+    cy.get("[title='Edit user']")
+      .first()
+      .click();
+
+    cy.contains('Placeholder user');
+
+    cy.get('[data-cy=btn-set-user-not-placeholder]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'User is no longer placeholder',
+    });
+
+    cy.contains('Placeholder user').should('not.exist');
+  });
 
   it('Should be able administer user information', () => {
     cy.login('officer');
 
-    cy.contains('View People').click();
+    cy.contains('People').click();
 
     cy.get("[title='Edit user']")
       .first()
@@ -58,9 +99,13 @@ context('User administration tests', () => {
       .clear()
       .type(newTelephone);
 
+    cy.get("[name='telephone_alt']")
+      .clear()
+      .type(newTelephoneAlt);
+
     cy.contains('Update Profile').click();
 
-    cy.wait(1000);
+    cy.notification({ variant: 'success', text: 'Updated Information' });
 
     cy.reload();
 
@@ -96,7 +141,7 @@ context('User administration tests', () => {
   it('Should be able to delete user user information', () => {
     cy.login('officer');
 
-    cy.contains('View People').click();
+    cy.contains('People').click();
 
     cy.get("[title='Delete']")
       .first()
@@ -106,6 +151,6 @@ context('User administration tests', () => {
       .first()
       .click();
 
-    cy.contains('1-2 of 2');
+    cy.contains('1-5 of 5');
   });
 });

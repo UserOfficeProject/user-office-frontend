@@ -1,118 +1,90 @@
-import Container from '@material-ui/core/Container';
-import PropTypes from 'prop-types';
-import React, { useEffect, useState, useCallback } from 'react';
+import { Button } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import React from 'react';
 
+import { useCheckAccess } from 'components/common/Can';
 import SimpleTabs from 'components/common/TabPanel';
+import UOLoader from 'components/common/UOLoader';
 import EventLogList from 'components/eventLog/EventLogList';
 import GeneralInformation from 'components/proposal/GeneralInformation';
-import ParticipantModal from 'components/proposal/ParticipantModal';
-import ProposalAdmin from 'components/proposal/ProposalAdmin';
+import ProposalAdmin, {
+  AdministrationFormData,
+} from 'components/proposal/ProposalAdmin';
 import {
-  Proposal,
   CoreTechnicalReviewFragment,
+  TechnicalReview,
   UserRole,
-  Review,
-  BasicUserDetails,
 } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { useProposalData } from 'hooks/proposal/useProposalData';
 
 import ProposalTechnicalReview from './ProposalTechnicalReview';
-import ReviewTable from './ReviewTable';
 
-const ProposalReviewPropTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
+type ProposalReviewProps = {
+  proposalId: number;
+  isInsideModal?: boolean;
 };
 
-type ProposalReviewProps = PropTypes.InferProps<typeof ProposalReviewPropTypes>;
+const ProposalReview: React.FC<ProposalReviewProps> = ({
+  proposalId,
+  isInsideModal,
+}) => {
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const { proposalData, setProposalData, loading } = useProposalData(
+    proposalId
+  );
 
-const ProposalReview: React.FC<ProposalReviewProps> = ({ match }) => {
-  const [modalOpen, setOpen] = useState(false);
-  const [techReview, setTechReview] = useState<
-    CoreTechnicalReviewFragment | null | undefined
-  >(null);
+  if (loading) {
+    return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
+  }
 
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [proposal, setProposal] = useState<Proposal | null>(null);
-  const api = useDataApi();
-  const loadProposal = useCallback(async () => {
-    return api()
-      .getProposal({ id: parseInt(match.params.id) })
-      .then(data => {
-        setProposal(data.proposal as Proposal);
-        if (data.proposal) {
-          setTechReview(data.proposal.technicalReview);
-          setReviews((data.proposal.reviews as Review[]) || []);
-        }
-      });
-  }, [api, match.params.id]);
+  if (!proposalData) {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <h2>Proposal not found</h2>
+        <Button onClick={() => console.log('Not implemented')}>Retry</Button>
+      </Box>
+    );
+  }
 
-  useEffect(() => {
-    loadProposal();
-  }, [loadProposal]);
+  const tabNames = ['General', 'Technical'];
 
-  const addUser = async (user: BasicUserDetails): Promise<void> => {
-    // TODO: This should be reviewed here because we wont have adding user for review outside SEPs.
-    await api().addUserForReview({
-      userID: user.id,
-      proposalID: parseInt(match.params.id),
-      sepID: 0,
-    });
-    setOpen(false);
-    loadProposal();
-  };
-
-  const removeReview = async (reviewID: number): Promise<void> => {
-    await api().removeUserForReview({
-      reviewID,
-    });
-    setReviews(reviews.filter(review => review.id !== reviewID));
-  };
-
-  if (!proposal) {
-    return <p>Loading</p>;
+  if (isUserOfficer) {
+    tabNames.push('Admin');
+    tabNames.push('Logs');
   }
 
   return (
-    <Container maxWidth="lg">
-      <SimpleTabs
-        tabNames={['General', 'Excellence', 'Technical', 'Admin', 'Logs']}
-      >
-        <GeneralInformation
-          data={proposal}
-          onProposalChanged={(newProposal): void => setProposal(newProposal)}
+    <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
+      <GeneralInformation
+        data={proposalData}
+        onProposalChanged={(newProposal): void => setProposalData(newProposal)}
+      />
+      <ProposalTechnicalReview
+        id={proposalData.id}
+        data={proposalData.technicalReview}
+        setReview={(data: CoreTechnicalReviewFragment | null | undefined) =>
+          setProposalData({
+            ...proposalData,
+            technicalReview: {
+              ...proposalData.technicalReview,
+              ...data,
+            } as TechnicalReview,
+          })
+        }
+      />
+      {isUserOfficer && (
+        <ProposalAdmin
+          data={proposalData}
+          setAdministration={(data: AdministrationFormData) =>
+            setProposalData({ ...proposalData, ...data })
+          }
         />
-        <>
-          <ParticipantModal
-            show={modalOpen}
-            close={() => setOpen(false)}
-            addParticipant={addUser}
-            selectedUsers={reviews.map(review => review.userID)}
-            title={'Reviewer'}
-            userRole={UserRole.REVIEWER}
-          />
-          <ReviewTable
-            data={reviews}
-            addReviewer={setOpen}
-            removeReview={removeReview}
-            onChange={loadProposal}
-          />
-        </>
-        <ProposalTechnicalReview
-          id={proposal.id}
-          data={techReview}
-          setReview={setTechReview}
-        />
-        <ProposalAdmin data={proposal} />
-        <EventLogList changedObjectId={proposal.id} eventType="PROPOSAL" />
-      </SimpleTabs>
-    </Container>
+      )}
+      {isUserOfficer && (
+        <EventLogList changedObjectId={proposalData.id} eventType="PROPOSAL" />
+      )}
+    </SimpleTabs>
   );
 };
-
-ProposalReview.propTypes = ProposalReviewPropTypes;
 
 export default ProposalReview;

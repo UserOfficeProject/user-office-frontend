@@ -1,9 +1,6 @@
-/// <reference types="Cypress" />
-/// <reference types="../types" />
+import faker from 'faker';
 
 context('Page tests', () => {
-  const faker = require('faker');
-
   before(() => {
     cy.resetDB();
   });
@@ -13,26 +10,12 @@ context('Page tests', () => {
     cy.viewport(1100, 1000);
   });
 
-  afterEach(() => {
-    cy.wait(500);
-  });
-
   const faqContents = faker.random.words(2);
-  const ADMIN_EMAIL = 'Aaron_Harris49@gmail.com';
-  const ADMIN_PASS = 'Test1234!';
 
   it('Should be able update FAQ', () => {
-    cy.get('[data-cy=input-email] input')
-      .type(ADMIN_EMAIL)
-      .should('have.value', ADMIN_EMAIL);
+    cy.login('officer');
 
-    cy.get('[data-cy=input-password] input')
-      .type(ADMIN_PASS)
-      .should('have.value', ADMIN_PASS);
-
-    cy.get('[data-cy=submit]').click();
-
-    cy.contains('Edit Pages').click();
+    cy.contains('Pages').click();
 
     cy.contains('Set user homepage');
     cy.contains('Help').click();
@@ -43,12 +26,12 @@ context('Page tests', () => {
         cy.contains('Update').click();
         cy.wait(2000);
         cy.reload();
-        cy.contains('View Proposals').click();
+        cy.contains('Proposals').click();
         cy.contains('FAQ').click();
         cy.wait(3000).then(() => {
           cy.contains(faqContents);
           cy.contains('Close').click();
-          cy.contains('Logout').click();
+          cy.logout();
         });
       });
     });

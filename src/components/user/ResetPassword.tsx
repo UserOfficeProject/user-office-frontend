@@ -1,9 +1,9 @@
-import { userPasswordFieldValidationSchema } from '@esss-swap/duo-validation';
+import { userPasswordFieldValidationSchema } from '@esss-swap/duo-validation/lib/User';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Field, Form, Formik } from 'formik';
@@ -17,7 +17,7 @@ import { FormWrapper } from 'styles/StyledComponents';
 
 import PhotoInSide from './PhotoInSide';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -52,15 +52,16 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
   const [passwordReset, setPasswordReset] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
   const unauthorizedApi = useUnauthorizedApi();
+
   const requestResetPassword = async (values: { password: string }) => {
     const { password } = values;
 
-    await unauthorizedApi
+    await unauthorizedApi()
       .resetPassword({
         token: match.params.token,
         password,
       })
-      .then(data =>
+      .then((data) =>
         data.resetPassword.error
           ? setErrorMessage(true)
           : setPasswordReset(true)
@@ -71,9 +72,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
     <PhotoInSide>
       <Formik
         initialValues={{ password: '' }}
-        onSubmit={async (values, actions) => {
+        onSubmit={async (values): Promise<void> => {
           await requestResetPassword(values);
-          actions.setSubmitting(false);
         }}
         validationSchema={userPasswordFieldValidationSchema}
       >
@@ -93,6 +93,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               component={TextField}
               margin="normal"
               helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
+              autoComplete="new-password"
               fullWidth
             />
             <Field
@@ -100,6 +101,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               label="Confirm Password"
               type="password"
               component={TextField}
+              autoComplete="new-password"
               margin="normal"
               fullWidth
             />

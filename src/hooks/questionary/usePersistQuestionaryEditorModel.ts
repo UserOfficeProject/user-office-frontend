@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import {
   DataType,
-  FieldDependency,
+  FieldDependencyInput,
   Question,
   QuestionTemplateRelation,
   Template,
@@ -11,56 +11,40 @@ import {
 import { useDataApi } from 'hooks/common/useDataApi';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
+import { FunctionType } from 'utils/utilTypes';
 
 export function usePersistQuestionaryEditorModel() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const api = useDataApi();
 
-  const assignQuestionsToTopic = async (
-    templateId: number,
-    topicId: number,
-    questionIds: string[]
-  ) => {
-    return api()
-      .assignQuestionsToTopic({
-        templateId,
-        topicId,
-        questionIds,
-      })
-      .then(data => data.assignQuestionsToTopic);
-  };
-
   const updateTopic = async (
     topicId: number,
-    values: { title?: string; isEnabled?: boolean }
+    values: {
+      templateId?: number;
+      title?: string;
+      sortOrder?: number;
+      isEnabled?: boolean;
+    }
   ) => {
     return api()
       .updateTopic({
         ...values,
         topicId,
       })
-      .then(data => {
+      .then((data) => {
         return data.updateTopic;
       });
   };
 
-  const updateTopicOrder = async (topicOrder: number[]) => {
-    return api()
-      .updateTopicOrder({
-        topicOrder,
-      })
-      .then(data => data.updateTopicOrder);
-  };
-
   // Have this until GQL accepts Union types
   // https://github.com/graphql/graphql-spec/blob/master/rfcs/InputUnion.md
-  const prepareDependencies = (dependency: FieldDependency) => {
+  const prepareDependencies = (dependency: FieldDependencyInput) => {
     return {
       ...dependency,
       condition: {
-        ...dependency.condition,
-        params: JSON.stringify({ value: dependency.condition.params }),
+        ...dependency?.condition,
+        params: JSON.stringify({ value: dependency?.condition.params }),
       },
     };
   };
@@ -73,10 +57,10 @@ export function usePersistQuestionaryEditorModel() {
         question: question.question,
         config: question.config ? JSON.stringify(question.config) : undefined,
       })
-      .then(data => data.updateQuestion);
+      .then((data) => data.updateQuestion);
   };
 
-  const updateQuestionTopicRelation = async (
+  const updateQuestionTemplateRelation = async (
     templateId: number,
     field: QuestionTemplateRelation
   ) => {
@@ -87,11 +71,27 @@ export function usePersistQuestionaryEditorModel() {
         sortOrder: field.sortOrder,
         questionId: field.question.proposalQuestionId,
         config: field.config ? JSON.stringify(field.config) : undefined,
-        dependency: field.dependency
-          ? prepareDependencies(field.dependency)
-          : undefined,
       })
-      .then(data => data.updateQuestionTemplateRelation);
+      .then((data) => data.updateQuestionTemplateRelation);
+  };
+
+  const updateQuestionTemplateRelationSettings = async (
+    templateId: number,
+    field: QuestionTemplateRelation
+  ) => {
+    return api()
+      .updateQuestionTemplateRelationSettings({
+        templateId,
+        questionId: field.question.proposalQuestionId,
+        config: field.config ? JSON.stringify(field.config) : undefined,
+        dependencies: field.dependencies
+          ? field.dependencies.map((dependency) =>
+              prepareDependencies(dependency)
+            )
+          : [],
+        dependenciesOperator: field.dependenciesOperator,
+      })
+      .then((data) => data.updateQuestionTemplateRelationSettings);
   };
 
   const createQuestion = async (
@@ -105,7 +105,7 @@ export function usePersistQuestionaryEditorModel() {
         categoryId,
         dataType,
       })
-      .then(questionResponse => {
+      .then((questionResponse) => {
         setIsLoading(false);
 
         return questionResponse.createQuestion;
@@ -117,7 +117,7 @@ export function usePersistQuestionaryEditorModel() {
       .deleteQuestion({
         questionId,
       })
-      .then(data => data.deleteQuestion);
+      .then((data) => data.deleteQuestion);
   };
 
   const deleteQuestionTemplateRelation = async (
@@ -131,7 +131,7 @@ export function usePersistQuestionaryEditorModel() {
         templateId,
         questionId,
       })
-      .then(data => {
+      .then((data) => {
         setIsLoading(false);
 
         return data.deleteQuestionTemplateRelation;
@@ -143,13 +143,13 @@ export function usePersistQuestionaryEditorModel() {
       .deleteTopic({
         topicId,
       })
-      .then(data => data.deleteTopic);
+      .then((data) => data.deleteTopic);
   };
 
   const createTopic = async (templateId: number, sortOrder: number) => {
     return api()
       .createTopic({ templateId, sortOrder })
-      .then(data => {
+      .then((data) => {
         return data.createTopic;
       });
   };
@@ -167,7 +167,7 @@ export function usePersistQuestionaryEditorModel() {
         questionId,
         sortOrder,
       })
-      .then(data => {
+      .then((data) => {
         return data.createQuestionTemplateRelation;
       });
   };
@@ -183,7 +183,7 @@ export function usePersistQuestionaryEditorModel() {
         name,
         description,
       })
-      .then(data => data.updateTemplate);
+      .then((data) => data.updateTemplate);
   };
 
   type MonitorableServiceCall = () => Promise<{
@@ -196,7 +196,7 @@ export function usePersistQuestionaryEditorModel() {
   }: MiddlewareInputParams<Template, Event>) => {
     const executeAndMonitorCall = (call: MonitorableServiceCall) => {
       setIsLoading(true);
-      call().then(result => {
+      call().then((result) => {
         if (result.error) {
           dispatch({
             type: EventType.SERVICE_ERROR_OCCURRED,
@@ -207,7 +207,7 @@ export function usePersistQuestionaryEditorModel() {
       });
     };
 
-    return (next: Function) => (action: Event) => {
+    return (next: FunctionType) => (action: Event) => {
       next(action);
       const state = getState();
 
@@ -218,41 +218,64 @@ export function usePersistQuestionaryEditorModel() {
             action.payload.destination.droppableId
           );
           const reducedTopic = state.steps.find(
-            step => step.topic.id === reducedTopicId
+            (step) => step.topic.id === reducedTopicId
           );
           const extendedTopic = state.steps.find(
-            step => step.topic.id === extendedTopicId
+            (step) => step.topic.id === extendedTopicId
           );
 
-          executeAndMonitorCall(() =>
-            assignQuestionsToTopic(
-              state.templateId,
-              reducedTopic!.topic.id,
-              reducedTopic!.fields.map(
-                field => field.question.proposalQuestionId
-              )
-            )
-          );
+          let destinationTopic = reducedTopic;
+
           if (reducedTopicId !== extendedTopicId) {
-            executeAndMonitorCall(() =>
-              assignQuestionsToTopic(
-                state.templateId,
-                extendedTopic!.topic.id,
-                extendedTopic!.fields.map(
-                  field => field.question.proposalQuestionId
-                )
-              )
-            );
+            destinationTopic = extendedTopic;
           }
+
+          const questionRelToChange =
+            destinationTopic?.fields[action.payload.destination.index];
+
+          const newSortOrder = action.payload.destination.index;
+
+          const questionRel = {
+            ...questionRelToChange,
+            sortOrder: newSortOrder,
+            topicId: destinationTopic?.topic.id,
+          } as QuestionTemplateRelation;
+
+          executeAndMonitorCall(() =>
+            updateQuestionTemplateRelation(state.templateId, questionRel)
+          );
           break;
-        case EventType.REORDER_TOPIC_REQUESTED:
-          const topicOrder = state.steps.map(step => step.topic.id);
-          executeAndMonitorCall(() => updateTopicOrder(topicOrder));
+        case EventType.REORDER_TOPIC_REQUESTED: {
+          const sourceIndex = action.payload.source.index;
+          const destinationIndex = action.payload.destination.index;
+
+          const stepToUpdate = state.steps[sourceIndex];
+          const sortOrder = destinationIndex;
+
+          executeAndMonitorCall(async () => {
+            const result = await updateTopic(stepToUpdate.topic.id, {
+              sortOrder,
+              templateId: state.templateId,
+              title: stepToUpdate.topic.title,
+            });
+
+            if (result.template) {
+              dispatch({
+                type: EventType.TOPIC_REORDERED,
+                payload: result.template,
+              });
+            }
+
+            return result;
+          });
+
           break;
+        }
         case EventType.UPDATE_TOPIC_TITLE_REQUESTED:
           executeAndMonitorCall(() =>
             updateTopic(action.payload.topicId, {
               title: action.payload.title as string,
+              templateId: state.templateId,
             })
           );
           break;
@@ -273,7 +296,8 @@ export function usePersistQuestionaryEditorModel() {
             const questionRel = action.payload
               .field as QuestionTemplateRelation;
             const templateId = action.payload.templateId;
-            const result = await updateQuestionTopicRelation(
+
+            const result = await updateQuestionTemplateRelationSettings(
               templateId,
               questionRel
             );
@@ -336,12 +360,22 @@ export function usePersistQuestionaryEditorModel() {
           });
           break;
         }
-        case EventType.CREATE_TOPIC_REQUESTED:
-          executeAndMonitorCall(async () => {
-            const result = await createTopic(
-              state.templateId,
-              action.payload.sortOrder
+        case EventType.CREATE_TOPIC_REQUESTED: {
+          const { isFirstStep, topicId } = action.payload;
+          let sortOrder = 0;
+
+          if (!isFirstStep) {
+            const stepIndex = state.steps.findIndex(
+              (stepItem) => stepItem.topic.id === topicId
             );
+
+            const previousStep = state.steps[stepIndex];
+
+            sortOrder = previousStep.topic.sortOrder + 1;
+          }
+
+          executeAndMonitorCall(async () => {
+            const result = await createTopic(state.templateId, sortOrder);
             if (result.template) {
               dispatch({
                 type: EventType.TOPIC_CREATED,
@@ -352,6 +386,7 @@ export function usePersistQuestionaryEditorModel() {
             return result;
           });
           break;
+        }
         case EventType.UPDATE_TEMPLATE_METADATA_REQUESTED: {
           const { templateId, name, description } = action.payload;
 
@@ -381,6 +416,7 @@ export function usePersistQuestionaryEditorModel() {
               questionId,
               sortOrder
             );
+
             if (result.template) {
               dispatch({
                 type: EventType.QUESTION_REL_CREATED,

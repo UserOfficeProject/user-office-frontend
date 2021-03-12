@@ -1,6 +1,7 @@
 import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
-import { createTemplateValidationSchema } from '@esss-swap/duo-validation';
-import { Button, Typography } from '@material-ui/core';
+import { createTemplateValidationSchema } from '@esss-swap/duo-validation/lib/Template';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { useSnackbar } from 'notistack';
@@ -25,7 +26,7 @@ const CreateTemplate = (props: {
           name: '',
           description: '',
         }}
-        onSubmit={async values => {
+        onSubmit={async (values): Promise<void> => {
           const result = await api().createTemplate({ ...values, categoryId });
           const {
             createTemplate: { template, error },

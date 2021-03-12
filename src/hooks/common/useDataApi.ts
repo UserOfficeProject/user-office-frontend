@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GraphQLClient } from 'graphql-request';
-import { Variables } from 'graphql-request/dist/src/types';
+import { Variables } from 'graphql-request/dist/types';
 import { decode } from 'jsonwebtoken';
 import { useSnackbar, WithSnackbarProps } from 'notistack';
 import { useCallback, useContext } from 'react';
@@ -20,9 +21,10 @@ const notificationWithClientLog = async (
   });
 
   if (error) {
+    //
     await getSdk(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      new UnauthorizedGraphQLClient(endpoint, enqueueSnackbar)
+      new UnauthorizedGraphQLClient(endpoint, enqueueSnackbar, true)
     ).addClientLog({ error });
   }
 };
@@ -30,7 +32,8 @@ const notificationWithClientLog = async (
 class UnauthorizedGraphQLClient extends GraphQLClient {
   constructor(
     private endpoint: string,
-    private enqueueSnackbar: WithSnackbarProps['enqueueSnackbar']
+    private enqueueSnackbar: WithSnackbarProps['enqueueSnackbar'],
+    private skipErrorReport?: boolean
   ) {
     super(endpoint);
   }
@@ -39,7 +42,14 @@ class UnauthorizedGraphQLClient extends GraphQLClient {
     query: string,
     variables?: Variables
   ): Promise<T> {
-    return super.request(query, variables).catch(error => {
+    return super.request(query, variables).catch((error) => {
+      // if the `notificationWithClientLog` fails
+      // and it fails while reporting an error, it can
+      // easily cause an infinite loop
+      if (this.skipErrorReport) {
+        throw error;
+      }
+
       if (error.response.error.includes('ECONNREFUSED')) {
         notificationWithClientLog(this.enqueueSnackbar, 'Connection problem!');
       } else {
@@ -88,7 +98,7 @@ class AuthorizedGraphQLClient extends GraphQLClient {
       }
     }
 
-    return super.request(query, variables).catch(error => {
+    return super.request(query, variables).catch((error) => {
       if (
         error.response.error &&
         error.response.error.includes('ECONNREFUSED')
@@ -98,7 +108,7 @@ class AuthorizedGraphQLClient extends GraphQLClient {
         notificationWithClientLog(
           this.enqueueSnackbar,
           'Something went wrong!',
-          error.response.errors[0].message
+          error?.response?.errors?.[0].message
         );
       }
 
@@ -127,7 +137,7 @@ export function useDataApi() {
               endpoint,
               token,
               enqueueSnackbar,
-              reason => {
+              (reason) => {
                 console.log(reason);
                 handleLogout();
               },
@@ -142,5 +152,12 @@ export function useDataApi() {
 export function useUnauthorizedApi() {
   const { enqueueSnackbar } = useSnackbar();
 
-  return getSdk(new UnauthorizedGraphQLClient(endpoint, enqueueSnackbar));
+  return useCallback(
+    () => getSdk(new UnauthorizedGraphQLClient(endpoint, enqueueSnackbar)),
+    [enqueueSnackbar]
+  );
+}
+
+export function getUnauthorizedApi() {
+  return getSdk(new GraphQLClient(endpoint));
 }

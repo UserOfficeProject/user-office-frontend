@@ -1,11 +1,15 @@
-import { DoneAll } from '@material-ui/icons';
+import DoneAll from '@material-ui/icons/DoneAll';
 import MaterialTable, { Options } from 'material-table';
+import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { InstrumentWithAvailabilityTime } from 'generated/sdk';
+import { useCheckAccess } from 'components/common/Can';
+import { InstrumentWithAvailabilityTime, UserRole } from 'generated/sdk';
 import { useInstrumentsBySEPData } from 'hooks/instrument/useInstrumentsBySEPData';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import SEPInstrumentProposalsTable from './SEPInstrumentProposalsTable';
 
@@ -13,17 +17,27 @@ type SEPMeetingInstrumentsTableProps = {
   sepId: number;
   Toolbar: (data: Options) => JSX.Element;
   selectedCallId: number;
+  confirm: WithConfirmType;
 };
 
 const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
   sepId,
   selectedCallId,
   Toolbar,
+  confirm,
 }) => {
-  const { loadingInstruments, instrumentsData } = useInstrumentsBySEPData(
-    sepId,
-    selectedCallId
-  );
+  const {
+    loadingInstruments,
+    instrumentsData,
+    setInstrumentsData,
+  } = useInstrumentsBySEPData(sepId, selectedCallId);
+  const { api } = useDataApiWithFeedback();
+  const hasAccessRights = useCheckAccess([
+    UserRole.USER_OFFICER,
+    UserRole.SEP_CHAIR,
+    UserRole.SEP_SECRETARY,
+  ]);
+  const { enqueueSnackbar } = useSnackbar();
 
   const columns = [
     { title: 'Name', field: 'name' },
@@ -33,6 +47,11 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
       title: 'Availability time',
       render: (rowData: InstrumentWithAvailabilityTime) =>
         rowData.availabilityTime ? rowData.availabilityTime : '-',
+    },
+    {
+      title: 'Submitted',
+      render: (rowData: InstrumentWithAvailabilityTime) =>
+        rowData.submitted ? 'Yes' : 'No',
     },
   ];
 
@@ -46,7 +65,80 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
     />
   );
 
+  const submitInstrument = async (
+    instrumentToSubmit: InstrumentWithAvailabilityTime
+  ) => {
+    if (instrumentToSubmit) {
+      const response = await api().sepProposalsByInstrument({
+        instrumentId: instrumentToSubmit.id,
+        sepId: sepId,
+        callId: selectedCallId,
+      });
+      const allProposalsOnInstrumentHaveRankings = response.sepProposalsByInstrument?.every(
+        ({ proposal }) => !!proposal.rankOrder
+      );
+
+      if (allProposalsOnInstrumentHaveRankings) {
+        const { submitInstrument } = await api(
+          'Instrument submitted!'
+        ).submitInstrument({
+          callId: selectedCallId,
+          instrumentId: instrumentToSubmit.id,
+          sepId: sepId,
+        });
+        const isError = submitInstrument.error || !submitInstrument.isSuccess;
+        if (!isError) {
+          const newInstrumentsData = instrumentsData.map((instrument) => {
+            if (instrument.id === instrumentToSubmit.id) {
+              return { ...instrument, submitted: true };
+            }
+
+            return instrument;
+          });
+          setInstrumentsData(newInstrumentsData);
+        }
+      } else {
+        enqueueSnackbar('All proposals must have rankings', {
+          variant: 'error',
+          className: 'snackbar-error',
+        });
+      }
+    }
+  };
+
   const DoneAllIcon = (): JSX.Element => <DoneAll />;
+
+  const actions = [];
+
+  if (hasAccessRights) {
+    actions.push(
+      (
+        rowData:
+          | InstrumentWithAvailabilityTime
+          | InstrumentWithAvailabilityTime[]
+      ) => ({
+        icon: DoneAllIcon,
+        disabled: !!(rowData as InstrumentWithAvailabilityTime).submitted,
+        onClick: (
+          event: Event,
+          rowData:
+            | InstrumentWithAvailabilityTime
+            | InstrumentWithAvailabilityTime[]
+        ) =>
+          confirm(
+            () => {
+              submitInstrument(rowData as InstrumentWithAvailabilityTime);
+            },
+            {
+              title: 'Submit instrument',
+              description: 'Are you sure you want to submit the instrument?',
+            }
+          )(),
+        // setInstrumentToSubmit(rowData as InstrumentWithAvailabilityTime);
+        tooltip: 'Submit instrument',
+      })
+    );
+  }
 
   return (
     <div data-cy="SEP-meeting-components-table">
@@ -59,20 +151,7 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
         }}
         data={instrumentsData}
         isLoading={loadingInstruments}
-        actions={[
-          {
-            icon: DoneAllIcon,
-            onClick: (
-              event,
-              data:
-                | InstrumentWithAvailabilityTime
-                | InstrumentWithAvailabilityTime[]
-            ) => {
-              console.log('Submit', data);
-            },
-            tooltip: 'Submit instrument',
-          },
-        ]}
+        actions={actions}
         detailPanel={[
           {
             tooltip: 'Show proposals',
@@ -92,6 +171,7 @@ SEPMeetingInstrumentsTable.propTypes = {
   sepId: PropTypes.number.isRequired,
   selectedCallId: PropTypes.number.isRequired,
   Toolbar: PropTypes.func.isRequired,
+  confirm: PropTypes.func.isRequired,
 };
 
-export default SEPMeetingInstrumentsTable;
+export default withConfirm(SEPMeetingInstrumentsTable);

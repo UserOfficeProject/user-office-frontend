@@ -1,8 +1,8 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { ProposalStatus, ProposalEndStatus } from 'generated/sdk';
+import { Call, Maybe, ProposalPublicStatus } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+import { getProposalStatus } from 'utils/helperFunctions';
 import { timeAgo } from 'utils/Time';
 
 import ProposalTable from './ProposalTable';
@@ -10,11 +10,15 @@ import ProposalTable from './ProposalTable';
 export type PartialProposalsDataType = {
   id: number;
   title: string;
-  status: string;
+  status: string | null;
+  publicStatus: ProposalPublicStatus;
   finalStatus?: string;
   notified?: boolean;
+  submitted: boolean;
   shortCode: string;
   created: string | null;
+  call: Maybe<Pick<Call, 'shortCode' | 'id'>>;
+  proposerId?: number;
 };
 
 export type UserProposalDataType = {
@@ -25,22 +29,16 @@ export type UserProposalDataType = {
 
 const ProposalTableUser: React.FC = () => {
   const api = useDataApi();
-  const getProposalStatus = (proposal: {
-    status: ProposalStatus;
-    finalStatus?: ProposalEndStatus | null | undefined;
-    notified: boolean;
-  }): string => {
-    if (proposal.notified) {
-      return getTranslation(proposal.finalStatus as ResourceId);
-    } else {
-      return proposal.status === ProposalStatus.DRAFT ? 'Open' : 'Submitted';
-    }
-  };
+  const [loading, setLoading] = useState<boolean>(false);
 
   const sendUserProposalRequest = useCallback(async () => {
+    setLoading(true);
+
     return api()
       .getUserProposals()
-      .then(data => {
+      .then((data) => {
+        setLoading(false);
+
         return {
           page: 0,
           totalCount: data?.me?.proposals.length,
@@ -50,14 +48,18 @@ const ProposalTableUser: React.FC = () => {
                 new Date(b.created).getTime() - new Date(a.created).getTime()
               );
             })
-            .map(proposal => {
+            .map((proposal) => {
               return {
                 id: proposal.id,
                 title: proposal.title,
                 status: getProposalStatus(proposal),
+                publicStatus: proposal.publicStatus,
+                submitted: proposal.submitted,
                 shortCode: proposal.shortCode,
                 created: timeAgo(proposal.created),
                 notified: proposal.notified,
+                proposerId: proposal.proposer?.id,
+                call: proposal.call,
               };
             }),
         };
@@ -66,9 +68,10 @@ const ProposalTableUser: React.FC = () => {
 
   return (
     <ProposalTable
-      title="Your proposals"
+      title="My proposals"
       search={false}
       searchQuery={sendUserProposalRequest}
+      isLoading={loading}
     />
   );
 };

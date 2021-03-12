@@ -1,27 +1,24 @@
-import {
-  StandardProps,
-  ButtonProps,
-  ButtonClassKey,
-  Button,
-  CircularProgress,
-} from '@material-ui/core';
+import Button, { ButtonProps, ButtonClassKey } from '@material-ui/core/Button';
+import { StandardProps } from '@material-ui/core/index';
 import React, { Component } from 'react';
 
+import UOLoader from './UOLoader';
+
 export class NavigButton extends Component<
-  StandardProps<ButtonProps & { isbusy?: boolean }, ButtonClassKey>
+  StandardProps<ButtonProps & { isBusy?: boolean }, ButtonClassKey>
 > {
   render() {
-    const { className, isbusy, ...other } = this.props;
+    const { className, isBusy, disabled, ...other } = this.props;
 
     return (
       <div className={className} style={{ position: 'relative' }}>
         <Button
           {...other}
-          disabled={isbusy}
-          style={{ opacity: isbusy ? 0.8 : 'inherit' }}
+          disabled={isBusy || disabled}
+          style={{ opacity: isBusy ? 0.8 : 'inherit' }}
         />
-        {isbusy && (
-          <CircularProgress
+        {isBusy && (
+          <UOLoader
             size={24}
             style={{
               position: 'absolute',

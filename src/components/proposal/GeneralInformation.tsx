@@ -1,49 +1,79 @@
-import { Switch, FormControlLabel } from '@material-ui/core';
-import React, { HTMLAttributes, useState } from 'react';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Switch from '@material-ui/core/Switch';
+import React, { useState } from 'react';
 
+import { useCheckAccess } from 'components/common/Can';
 import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
-import { Proposal } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { Proposal, UserRole } from 'generated/sdk';
+import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 
 import ProposalContainer from './ProposalContainer';
 
-export default function GeneralInformation(
-  props: HTMLAttributes<any> & {
-    data: Proposal;
-    onProposalChanged?: (newProposal: Proposal) => void;
-  }
-) {
-  const [isEditable, setIsEditable] = useState(false);
-  const [proposal, setProposal] = useState(props.data);
-  const api = useDataApi();
+const useStyles = makeStyles((theme) => ({
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: '20px',
+    backgroundColor: theme.palette.secondary.main,
+    color: '#ffff',
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.light,
+    },
+  },
+}));
 
-  const readonlyView = <ProposalQuestionaryReview data={proposal} />;
-  const editableView = <ProposalContainer data={proposal} />;
+type GeneralInformationProps = {
+  data: Proposal;
+  onProposalChanged?: (newProposal: Proposal) => void;
+};
+
+const GeneralInformation: React.FC<GeneralInformationProps> = ({
+  data,
+  onProposalChanged,
+}) => {
+  const [isEditable, setIsEditable] = useState(false);
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const classes = useStyles();
+  const downloadPDFProposal = useDownloadPDFProposal();
+
+  const getReadonlyView = () => <ProposalQuestionaryReview data={data} />;
+  const getEditableView = () => (
+    <ProposalContainer proposal={data} proposalUpdated={onProposalChanged} />
+  );
 
   return (
     <div>
-      <FormControlLabel
-        style={{ display: 'block', textAlign: 'right' }}
-        control={
-          <Switch
-            checked={isEditable}
-            onChange={() => {
-              api()
-                .getProposal({ id: proposal.id })
-                .then(data => {
-                  const { proposal } = data;
-                  setProposal(proposal as Proposal);
-                  props.onProposalChanged &&
-                    props.onProposalChanged(proposal as Proposal);
-                });
-              setIsEditable(!isEditable);
-            }}
-            color="primary"
-          />
-        }
-        label={isEditable ? 'Close' : 'Edit proposal'}
-      />
-      {isEditable ? editableView : readonlyView}
+      {isUserOfficer && (
+        <FormControlLabel
+          style={{ display: 'block', textAlign: 'right' }}
+          control={
+            <Switch
+              checked={isEditable}
+              onChange={() => {
+                setIsEditable(!isEditable);
+              }}
+              color="primary"
+            />
+          }
+          label={isEditable ? 'Close' : 'Edit proposal'}
+        />
+      )}
+      {isEditable ? getEditableView() : getReadonlyView()}
+      <div className={classes.buttons}>
+        <Button
+          className={classes.button}
+          onClick={() => downloadPDFProposal([data.id], data.title)}
+          variant="contained"
+        >
+          Download PDF
+        </Button>
+      </div>
     </div>
   );
-}
+};
+
+export default GeneralInformation;

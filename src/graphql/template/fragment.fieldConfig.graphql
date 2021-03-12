@@ -8,14 +8,13 @@ fragment fieldConfig on FieldConfig {
     small_label
     required
     tooltip
+    minDate
+    maxDate
+    defaultDate
   }
   ... on EmbellishmentConfig {
     html
     plain
-
-    small_label
-    required
-    tooltip
     omitFromPdf
   }
   ... on FileUploadConfig {
@@ -26,9 +25,46 @@ fragment fieldConfig on FieldConfig {
     required
     tooltip
   }
+
+  ... on IntervalConfig {
+    units
+
+    small_label
+    required
+    tooltip
+  }
+
+  ... on NumberInputConfig {
+    units
+    numberValueConstraint
+
+    small_label
+    required
+    tooltip
+  }
+
+  ... on ProposalBasisConfig {
+    tooltip
+  }
+
+  ... on SampleBasisConfig {
+    titlePlaceholder
+  }
+
+  ... on SubtemplateConfig {
+    addEntryButtonLabel
+    minEntries
+    maxEntries
+    templateId
+    templateCategory
+    required
+    small_label
+  }
+
   ... on SelectionFromOptionsConfig {
     variant
     options
+    isMultipleSelect
 
     small_label
     required
@@ -45,15 +81,19 @@ fragment fieldConfig on FieldConfig {
     tooltip
     htmlQuestion
     isHtmlQuestion
+    isCounterHidden
   }
 
-  ... on SubtemplateConfig {
-    addEntryButtonLabel
-    maxEntries
-    templateId
-
+  ... on ShipmentBasisConfig {
     small_label
     required
     tooltip
+  }
+
+  ... on RichTextInputConfig {
+    small_label
+    required
+    tooltip
+    max
   }
 }

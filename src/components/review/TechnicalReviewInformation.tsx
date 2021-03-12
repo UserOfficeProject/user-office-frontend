@@ -1,22 +1,22 @@
 import { getTranslation } from '@esss-swap/duo-localisation';
-import {
-  Table,
-  TableRow,
-  TableCell,
-  TableBody,
-  Typography,
-  makeStyles,
-} from '@material-ui/core';
-import React, { Fragment, HTMLAttributes } from 'react';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import React, { Fragment } from 'react';
 
 import { TechnicalReview } from 'generated/sdk';
 
-export default function TechnicalReviewInformation(
-  props: HTMLAttributes<any> & {
-    data: TechnicalReview | null | undefined;
-  }
-) {
-  const classes = makeStyles(theme => ({
+type TechnicalReviewInformationProps = {
+  data: TechnicalReview | null | undefined;
+};
+
+const TechnicalReviewInformation: React.FC<TechnicalReviewInformationProps> = (
+  props
+) => {
+  const classes = makeStyles((theme) => ({
     heading: {
       marginTop: theme.spacing(2),
     },
@@ -29,7 +29,7 @@ export default function TechnicalReviewInformation(
   return (
     <Fragment>
       <Typography variant="h6" className={classes.heading} gutterBottom>
-        Tehnical Reivew
+        Technical Review
       </Typography>
       <Table>
         <TableBody>
@@ -51,4 +51,6 @@ export default function TechnicalReviewInformation(
       </Table>
     </Fragment>
   );
-}
+};
+
+export default TechnicalReviewInformation;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useState,
   Reducer,
@@ -6,7 +7,11 @@ import {
   ReducerAction,
 } from 'react';
 
-function compose(...fns: any): any {
+import { FunctionType } from './utilTypes';
+
+function compose(
+  ...fns: ((next: FunctionType<void, unknown[]>) => (action: any) => void)[]
+): any {
   if (fns.length === 0) return (arg: any): any => arg;
   if (fns.length === 1) return fns[0];
 
@@ -16,7 +21,7 @@ function compose(...fns: any): any {
 export function useReducerWithMiddleWares<R extends Reducer<any, any>>(
   reducer: R,
   initialState: ReducerState<R>,
-  middlewares: Array<Function> = []
+  middlewares: Array<ReducerMiddleware<any, any>> = []
 ): [ReducerState<R>, Dispatch<ReducerAction<R>>] {
   const hook = useState(initialState);
   let state = hook[0];
@@ -34,16 +39,16 @@ export function useReducerWithMiddleWares<R extends Reducer<any, any>>(
     dispatch: (...args: any): Dispatch<ReducerAction<R>> =>
       enhancedDispatch(...args),
   };
-  const chain = middlewares.map(middleware => middleware(store));
+  const chain = middlewares.map((middleware) => middleware(store));
   enhancedDispatch = compose(...chain)(dispatch);
 
   return [state, enhancedDispatch];
 }
 
-export interface MiddlewareInputParams<T, A> {
-  getState: () => T;
+export interface MiddlewareInputParams<S, A> {
+  getState: () => S;
   dispatch: React.Dispatch<A>;
 }
-export type ReducerMiddleware<T, A> = (
-  params: MiddlewareInputParams<T, A>
-) => (next: Function) => (action: A) => void;
+export type ReducerMiddleware<S, A> = (
+  params: MiddlewareInputParams<S, A>
+) => (next: FunctionType) => (action: A) => void;

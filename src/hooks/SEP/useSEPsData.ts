@@ -8,13 +8,20 @@ export function useSEPsData(
   active = true,
   role = UserRole.SEP_REVIEWER
 ): {
-  loading: boolean;
-  SEPsData: Sep[];
-  setSEPsData: Dispatch<SetStateAction<Sep[]>>;
+  loadingSEPs: boolean;
+  SEPs: Sep[];
+  setSEPsWithLoading: Dispatch<SetStateAction<Sep[]>>;
 } {
   const api = useDataApi();
-  const [SEPsData, setSEPsData] = useState<Sep[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [SEPs, setSEPs] = useState<Sep[]>([]);
+  const [loadingSEPs, setLoadingSEPs] = useState(true);
+
+  const setSEPsWithLoading = (data: SetStateAction<Sep[]>) => {
+    setLoadingSEPs(true);
+    setSEPs(data);
+    setLoadingSEPs(false);
+  };
+
   useEffect(() => {
     if (role === UserRole.USER_OFFICER) {
       api()
@@ -22,35 +29,35 @@ export function useSEPsData(
           filter: filter,
           active,
         })
-        .then(data => {
+        .then((data) => {
           if (data.seps) {
-            setSEPsData(
-              data.seps.seps.map(sep => {
+            setSEPs(
+              data.seps.seps.map((sep) => {
                 return {
                   ...sep,
                 };
               })
             );
           }
-          setLoading(false);
+          setLoadingSEPs(false);
         });
     } else {
       api()
         .getUserSeps()
-        .then(data => {
+        .then((data) => {
           if (data.me?.seps) {
-            setSEPsData(
-              data.me.seps.map(sep => {
+            setSEPs(
+              data.me.seps.map((sep) => {
                 return {
                   ...sep,
                 };
               })
             );
           }
-          setLoading(false);
+          setLoadingSEPs(false);
         });
     }
   }, [filter, active, api, role]);
 
-  return { loading, SEPsData, setSEPsData };
+  return { loadingSEPs, SEPs, setSEPsWithLoading };
 }

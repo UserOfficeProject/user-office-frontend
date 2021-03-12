@@ -1,12 +1,10 @@
-import {
-  Button,
-  FormControlLabel,
-  FormGroup,
-  LinearProgress,
-  makeStyles,
-  Switch,
-  useTheme,
-} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import useTheme from '@material-ui/core/styles/useTheme';
+import Switch from '@material-ui/core/Switch';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -16,18 +14,24 @@ import {
   Question,
   QuestionaryStep,
   QuestionTemplateRelation,
+  Template,
 } from 'generated/sdk';
 import { usePersistQuestionaryEditorModel } from 'hooks/questionary/usePersistQuestionaryEditorModel';
-import { getQuestionaryStepByTopicId } from 'models/ProposalModelFunctions';
 import QuestionaryEditorModel, {
   Event,
   EventType,
 } from 'models/QuestionaryEditorModel';
+import {
+  getFieldById,
+  getQuestionaryStepByTopicId,
+} from 'models/QuestionaryFunctions';
 import { StyledPaper } from 'styles/StyledComponents';
+import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
+import { FunctionType } from 'utils/utilTypes';
 
-import QuestionEditor from './forms/QuestionEditor';
-import QuestionTemplateRelationEditor from './forms/QuestionTemplateRelationEditor';
+import QuestionEditor from './QuestionEditor';
 import { QuestionPicker } from './QuestionPicker';
+import QuestionTemplateRelationEditor from './QuestionTemplateRelationEditor';
 import { TemplateMetadataEditor } from './TemplateMetadataEditor';
 import QuestionaryEditorTopic from './TemplateTopicEditor';
 
@@ -40,11 +44,16 @@ export default function TemplateEditor() {
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
     null
   );
+
+  const [hoveredDependency, setHoveredDependency] = useState<string>('');
+
   const [questionPickerTopicId, setQuestionPickerTopicId] = useState<
     number | null
   >(null);
-  const reducerMiddleware = () => {
-    return (next: Function) => (action: Event) => {
+  const handleEvents = ({
+    getState,
+  }: MiddlewareInputParams<Template, Event>) => {
+    return (next: FunctionType) => (action: Event) => {
       next(action);
       switch (action.type) {
         case EventType.SERVICE_ERROR_OCCURRED:
@@ -64,11 +73,24 @@ export default function TemplateEditor() {
           break;
 
         case EventType.OPEN_QUESTIONREL_EDITOR:
-          setSelectedQuestionTemplateRelation(action.payload);
+          const templateRelation = getFieldById(
+            getState().steps,
+            action.payload.questionId
+          );
+          if (!templateRelation) {
+            return;
+          }
+
+          setSelectedQuestionTemplateRelation(
+            templateRelation as QuestionTemplateRelation
+          );
           break;
 
         case EventType.QUESTION_PICKER_NEW_QUESTION_CLICKED:
           setQuestionPickerTopicId(action.payload.topic.id);
+          break;
+        case EventType.DEPENDENCY_HOVER:
+          setHoveredDependency(action.payload.dependency);
           break;
       }
     };
@@ -76,7 +98,7 @@ export default function TemplateEditor() {
   const { persistModel, isLoading } = usePersistQuestionaryEditorModel();
   const { state, dispatch } = QuestionaryEditorModel([
     persistModel,
-    reducerMiddleware,
+    handleEvents,
   ]);
 
   const [isTopicReorderMode, setIsTopicReorderMode] = useState(false);
@@ -92,25 +114,49 @@ export default function TemplateEditor() {
     },
   }))();
 
-  const getTopicListStyle = (isDraggingOver: any) => ({
+  const getTopicListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver
       ? theme.palette.primary.light
       : theme.palette.grey[100],
     transition: 'all 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000)',
     display: 'flex',
+    overflow: 'auto',
   });
 
   const onDragEnd = (result: DropResult): void => {
-    if (result.type === 'field') {
-      const dragSource = result.source;
-      const dragDestination = result.destination;
-      if (result.source.droppableId === 'questionPicker') {
+    const dragSource = result.source;
+    const dragDestination = result.destination;
+    if (
+      !dragDestination ||
+      (dragDestination.droppableId === dragSource.droppableId &&
+        dragDestination.index === dragSource.index)
+    ) {
+      return;
+    }
+
+    const isDraggingQuestion = result.type === 'field';
+    const isDraggingTopic = result.type === 'topic';
+
+    if (isDraggingQuestion) {
+      const isDraggingFromQuestionDrawerToTopic =
+        dragSource.droppableId === 'questionPicker' &&
+        dragDestination.droppableId !== 'questionPicker';
+      const isDraggingFromTopicToQuestionDrawer =
+        dragDestination.droppableId === 'questionPicker' &&
+        dragSource.droppableId !== 'questionPicker';
+      const isReorderingInsideTopics =
+        dragDestination.droppableId !== 'questionPicker' &&
+        dragSource.droppableId !== 'questionPicker';
+
+      if (isDraggingFromQuestionDrawerToTopic) {
         const questionId =
           state.complementaryQuestions[dragSource.index].proposalQuestionId;
-        const topicId = dragDestination?.droppableId
+        const topicId = dragDestination.droppableId
           ? +dragDestination.droppableId
           : undefined;
-        const sortOrder = dragDestination?.index;
+
+        const sortOrder = dragDestination.index;
+
         if (topicId && questionId) {
           dispatch({
             type: EventType.CREATE_QUESTION_REL_REQUESTED,
@@ -122,8 +168,7 @@ export default function TemplateEditor() {
             },
           });
         }
-      } else if (result?.destination?.droppableId === 'questionPicker') {
-        const dragSource = result.source;
+      } else if (isDraggingFromTopicToQuestionDrawer) {
         const topicId = parseInt(dragSource.droppableId);
         const step = getQuestionaryStepByTopicId(
           state.steps,
@@ -137,23 +182,26 @@ export default function TemplateEditor() {
             templateId: state.templateId,
           },
         });
-      } else if (result?.destination && result?.source) {
+      } else if (isReorderingInsideTopics) {
         dispatch({
           type: EventType.REORDER_QUESTION_REL_REQUESTED,
-          payload: { source: result.source, destination: result.destination },
+          payload: {
+            source: dragSource,
+            destination: dragDestination,
+          },
         });
       }
     }
-    if (result.type === 'topic') {
+    if (isDraggingTopic) {
       dispatch({
         type: EventType.REORDER_TOPIC_REQUESTED,
-        payload: { source: result.source, destination: result.destination },
+        payload: { source: dragSource, destination: dragDestination },
       });
     }
   };
 
-  const getContainerStyle = (): any => {
-    return isLoading
+  const getContainerStyle = () => {
+    return isLoading || state.templateId === 0
       ? {
           pointerEvents: 'none',
           userSelect: 'none',
@@ -172,7 +220,7 @@ export default function TemplateEditor() {
         onClick={(): void =>
           dispatch({
             type: EventType.CREATE_TOPIC_REQUESTED,
-            payload: { sortOrder: 0 },
+            payload: { isFirstTopic: true },
           })
         }
       >
@@ -213,6 +261,7 @@ export default function TemplateEditor() {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 style={getTopicListStyle(snapshot.isDraggingOver)}
+                className="topicsDroppable"
               >
                 {state.steps.map((step, index) => {
                   const questionPicker =
@@ -221,7 +270,6 @@ export default function TemplateEditor() {
                         topic={step.topic}
                         dispatch={dispatch}
                         template={state}
-                        key="questionPicker"
                         closeMe={() => {
                           setQuestionPickerTopicId(null);
                         }}
@@ -230,16 +278,16 @@ export default function TemplateEditor() {
                     ) : null;
 
                   return (
-                    <>
+                    <React.Fragment key={step.topic.id}>
                       <QuestionaryEditorTopic
                         data={step}
                         dispatch={dispatch}
                         index={index}
-                        key={step.topic.id}
                         dragMode={isTopicReorderMode}
+                        hoveredDependency={hoveredDependency}
                       />
                       {questionPicker}
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 {provided.placeholder}

@@ -7,19 +7,22 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/preview';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/code';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/wordcount';
 import 'tinymce/icons/default/icons';
 
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import { Editor } from '@tinymce/tinymce-react';
-import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 
 import { PageName } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
-import { useDataApi } from 'hooks/common/useDataApi';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles(() => ({
   buttons: {
@@ -39,8 +42,7 @@ export default function PageInputBox(props: {
   const classes = useStyles();
   const [loading, pageContent] = useGetPageContent(props.pageName);
   const [content, setPageContent] = useState('');
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
 
   useEffect(() => {
     setPageContent(pageContent);
@@ -63,7 +65,7 @@ export default function PageInputBox(props: {
             branding: false,
           }}
           id={props.pageName}
-          onEditorChange={content => setPageContent(content)}
+          onEditorChange={(content) => setPageContent(content)}
         />
       )}
       <div className={classes.buttons}>
@@ -72,11 +74,10 @@ export default function PageInputBox(props: {
           color="primary"
           className={classes.button}
           onClick={() =>
-            api()
-              .setPageContent({ id: props.pageName, text: content })
-              .then(() =>
-                enqueueSnackbar('Updated Page', { variant: 'success' })
-              )
+            api('Updated Page').setPageContent({
+              id: props.pageName,
+              text: content,
+            })
           }
         >
           Update

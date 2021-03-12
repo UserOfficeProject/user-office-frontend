@@ -1,35 +1,36 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
 import {
   createInstrumentValidationSchema,
   updateInstrumentValidationSchema,
-} from '@esss-swap/duo-validation';
+} from '@esss-swap/duo-validation/lib/Instrument';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import UOLoader from 'components/common/UOLoader';
 import { Instrument } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
 }));
 
-type AddInstrumentProps = {
+type CreateUpdateInstrumentProps = {
   close: (instrumentAdded: Instrument | null) => void;
   instrument: Instrument | null;
 };
 
-const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
+const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
+  close,
+  instrument,
+}) => {
   const classes = useStyles();
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api, isExecutingCall } = useDataApiWithFeedback();
 
   const initialValues = instrument
     ? instrument
@@ -42,47 +43,29 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={async (values, actions): Promise<void> => {
-        if (!instrument) {
-          await api()
-            .createInstrument(values)
-            .then(data => {
-              const { error, instrument } = data.createInstrument;
-
-              if (error) {
-                enqueueSnackbar(
-                  getTranslation(data.createInstrument.error as ResourceId),
-                  {
-                    variant: 'error',
-                  }
-                );
-                close(null);
-              } else if (instrument) {
-                close(instrument);
-              }
-            });
+      onSubmit={async (values): Promise<void> => {
+        if (instrument) {
+          const data = await api(
+            'Instrument updated successfully!'
+          ).updateInstrument({
+            id: instrument.id,
+            ...values,
+          });
+          if (data.updateInstrument.error) {
+            close(null);
+          } else if (data.updateInstrument.instrument) {
+            close(data.updateInstrument.instrument);
+          }
         } else {
-          await api()
-            .updateInstrument({
-              id: instrument.id,
-              ...values,
-            })
-            .then(data => {
-              const { error, instrument } = data.updateInstrument;
-              if (error) {
-                enqueueSnackbar(
-                  getTranslation(data.updateInstrument.error as ResourceId),
-                  {
-                    variant: 'error',
-                  }
-                );
-                close(null);
-              } else if (instrument) {
-                close(instrument);
-              }
-            });
+          const data = await api(
+            'Instrument created successfully!'
+          ).createInstrument(values);
+          if (data.createInstrument.error) {
+            close(null);
+          } else if (data.createInstrument.instrument) {
+            close(data.createInstrument.instrument);
+          }
         }
-        actions.setSubmitting(false);
       }}
       validationSchema={
         instrument
@@ -104,6 +87,7 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
             margin="normal"
             fullWidth
             data-cy="name"
+            disabled={isExecutingCall}
           />
           <Field
             name="shortCode"
@@ -114,6 +98,7 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
             margin="normal"
             fullWidth
             data-cy="shortCode"
+            disabled={isExecutingCall}
           />
           <Field
             id="description"
@@ -127,6 +112,7 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
             rowsMax="16"
             rows="3"
             data-cy="description"
+            disabled={isExecutingCall}
           />
 
           <Button
@@ -136,7 +122,9 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
             color="primary"
             className={classes.submit}
             data-cy="submit"
+            disabled={isExecutingCall}
           >
+            {isExecutingCall && <UOLoader size={14} />}
             {instrument ? 'Update' : 'Create'}
           </Button>
         </Form>
@@ -145,9 +133,15 @@ const AddInstrument: React.FC<AddInstrumentProps> = ({ close, instrument }) => {
   );
 };
 
-AddInstrument.propTypes = {
-  instrument: PropTypes.any,
+CreateUpdateInstrument.propTypes = {
+  instrument: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    shortCode: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    scientists: PropTypes.array.isRequired,
+  }),
   close: PropTypes.func.isRequired,
 };
 
-export default AddInstrument;
+export default CreateUpdateInstrument;

@@ -1,8 +1,8 @@
-import { connect, FormikContext } from 'formik';
+import { connect, FormikContextType } from 'formik';
 import { Component } from 'react';
 
 interface ErrorFocusInternalProps {
-  formik: FormikContext<any>;
+  formik: FormikContextType<Record<string, unknown>>;
 }
 
 class ErrorFocusInternal extends Component<ErrorFocusInternalProps> {
@@ -21,4 +21,4 @@ class ErrorFocusInternal extends Component<ErrorFocusInternalProps> {
   public render = (): null => null;
 }
 
-export const ErrorFocus = connect<{}>(ErrorFocusInternal);
+export const ErrorFocus = connect<Record<string, unknown>>(ErrorFocusInternal);

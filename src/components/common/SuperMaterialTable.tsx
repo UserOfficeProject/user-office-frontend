@@ -1,65 +1,142 @@
-import { Button } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Edit from '@material-ui/icons/Edit';
 import MaterialTable, { MaterialTableProps } from 'material-table';
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
+import {
+  DecodedValueMap,
+  DelimitedArrayParam,
+  NumberParam,
+  QueryParamConfig,
+  SetQuery,
+  StringParam,
+  withDefault,
+} from 'use-query-params';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import InputDialog from 'components/common/InputDialog';
+import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
+import { FunctionType } from 'utils/utilTypes';
 
-interface SuperProps<RowData extends object> {
+export type UrlQueryParamsType = {
+  search: QueryParamConfig<string | null | undefined>;
+  selection: QueryParamConfig<(string | null | never)[]>;
+  sortColumn: QueryParamConfig<number | null | undefined>;
+  sortDirection: QueryParamConfig<string | null | undefined>;
+};
+
+export const DefaultQueryParams = {
+  sortColumn: NumberParam,
+  sortDirection: StringParam,
+  search: StringParam,
+  selection: withDefault(DelimitedArrayParam, []),
+};
+
+export type SortDirectionType = 'asc' | 'desc' | undefined;
+
+interface SuperProps<RowData extends Record<keyof RowData, unknown>> {
   createModal: (
-    onUpdate: (object: RowData) => void,
-    onCreate: (object: RowData) => void,
+    onUpdate: (object: RowData | null) => void,
+    onCreate: (object: RowData | null) => void,
     object: RowData | null
   ) => React.ReactNode;
-  delete: (id: number) => Promise<boolean>;
-  setData: Function;
+  setData: FunctionType<void, [SetStateAction<RowData[]>]>;
   data: RowData[];
+  createModalSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
+  delete?: (id: number | string) => Promise<boolean>;
+  hasAccess?: { create?: boolean; update?: boolean; remove?: boolean };
+  urlQueryParams?: DecodedValueMap<UrlQueryParamsType>;
+  setUrlQueryParams?: SetQuery<UrlQueryParamsType>;
 }
 
 interface EntryID {
-  id: number;
+  id: number | string;
 }
 
-export default function SuperMaterialTable<Entry extends EntryID>(
-  props: MaterialTableProps<Entry> & SuperProps<Entry>
-) {
+export function SuperMaterialTable<Entry extends EntryID>({
+  hasAccess = {
+    create: true,
+    remove: true,
+    update: true,
+  },
+  ...props
+}: MaterialTableProps<Entry> & SuperProps<Entry>) {
   const [show, setShow] = useState(false);
   const [editObject, setEditObject] = useState<Entry | null>(null);
 
-  const onCreated = (objectAdded: Entry) => {
-    props.setData([...props.data, objectAdded]);
+  let { data, columns } = props;
+  const {
+    setData,
+    options,
+    urlQueryParams,
+    actions,
+    createModal,
+    setUrlQueryParams,
+  } = props;
+
+  // NOTE: If selection is on than read the selected items from the url.
+  if (options?.selection && urlQueryParams) {
+    data = data.map((objectItem) => {
+      return {
+        ...objectItem,
+        tableData: {
+          checked: urlQueryParams?.selection?.some(
+            (selectedItem: number | string | null) =>
+              selectedItem === objectItem.id
+          ),
+        },
+      };
+    });
+  }
+
+  if (options?.search && urlQueryParams) {
+    options.searchText = urlQueryParams.search || undefined;
+  }
+
+  columns = setSortDirectionOnSortColumn(
+    columns,
+    urlQueryParams?.sortColumn,
+    urlQueryParams?.sortDirection
+  );
+
+  const onCreated = (objectAdded: Entry | null) => {
+    if (objectAdded) {
+      setData([...data, objectAdded]);
+    }
     setShow(false);
   };
 
-  const onUpdated = (objectUpdated: Entry) => {
-    const newObjectsArray = props.data.map(objectItem =>
-      objectItem.id === objectUpdated.id ? objectUpdated : objectItem
-    );
-    props.setData(newObjectsArray);
+  const onUpdated = (objectUpdated: Entry | null) => {
+    if (objectUpdated) {
+      const newObjectsArray = data.map((objectItem) =>
+        objectItem.id === objectUpdated.id ? objectUpdated : objectItem
+      );
+      setData(newObjectsArray);
+    }
     setEditObject(null);
     setShow(false);
   };
 
-  const onDelete = async (deletedId: number) => {
-    const deleteResult = await props.delete(deletedId);
+  const onDeleted = async (deletedId: number | string) => {
+    const deleteResult = await (props.delete as FunctionType<Promise<unknown>>)(
+      deletedId
+    );
 
-    if (!deleteResult) {
-      const newObjectsArray = props.data.filter(
-        objectItem => objectItem.id !== deletedId
+    if (deleteResult) {
+      const newObjectsArray = data.filter(
+        (objectItem) => objectItem.id !== deletedId
       );
-      props.setData(newObjectsArray);
+      setData(newObjectsArray);
     }
   };
 
   const EditIcon = (): JSX.Element => <Edit />;
-  let actions: (
+  let localActions: (
     | import('material-table').Action<Entry>
     | ((rowData: Entry) => import('material-table').Action<Entry>)
   )[] = [];
-  if (props.actions) {
-    actions = props.actions;
+  if (actions) {
+    localActions = actions;
   }
 
   return (
@@ -68,42 +145,90 @@ export default function SuperMaterialTable<Entry extends EntryID>(
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         open={show}
+        maxWidth={props.createModalSize}
+        fullWidth={!!props.createModalSize}
         onClose={() => {
           setShow(false);
           setEditObject(null);
         }}
       >
-        {props.createModal(onUpdated, onCreated, editObject)}
+        {createModal(onUpdated, onCreated, editObject)}
       </InputDialog>
       <MaterialTable
         {...props}
+        columns={columns}
+        data={data}
         icons={tableIcons}
-        editable={{
-          onRowDelete: (rowData: Entry): Promise<void> => onDelete(rowData.id),
+        editable={
+          props.delete && hasAccess.remove
+            ? {
+                onRowDelete: (rowData: Entry): Promise<void> =>
+                  onDeleted(rowData.id),
+              }
+            : {}
+        }
+        actions={
+          hasAccess.update
+            ? [
+                {
+                  icon: EditIcon,
+                  tooltip: 'Edit',
+                  onClick: (
+                    _event: React.MouseEvent<JSX.Element>,
+                    rowData: Entry | Entry[]
+                  ) => {
+                    setShow(true);
+                    setEditObject(rowData as Entry);
+                  },
+                  position: 'row',
+                },
+                ...localActions,
+              ]
+            : [...localActions]
+        }
+        onSearchChange={(searchText) => {
+          setUrlQueryParams &&
+            setUrlQueryParams({
+              search: searchText ? searchText : undefined,
+            });
         }}
-        actions={[
-          {
-            icon: EditIcon,
-            tooltip: 'Edit',
-            onClick: (_event: unknown, rowData: Entry | Entry[]) => {
-              setShow(true);
-              setEditObject(rowData as Entry);
-            },
-            position: 'row',
-          },
-          ...actions,
-        ]}
+        onSelectionChange={(selectedItems) => {
+          setUrlQueryParams &&
+            setUrlQueryParams({
+              selection:
+                selectedItems.length > 0
+                  ? selectedItems.map((selectedItem) =>
+                      selectedItem.id.toString()
+                    )
+                  : undefined,
+            });
+        }}
+        onOrderChange={(orderedColumnId, orderDirection) => {
+          setUrlQueryParams &&
+            setUrlQueryParams({
+              sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+              sortDirection: orderDirection ? orderDirection : undefined,
+            });
+        }}
       />
-      <ActionButtonContainer>
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={() => setShow(true)}
-        >
-          Create
-        </Button>
-      </ActionButtonContainer>
+      {hasAccess.create && (
+        <ActionButtonContainer>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={() => setShow(true)}
+            data-cy="create-new-entry"
+          >
+            Create
+          </Button>
+        </ActionButtonContainer>
+      )}
     </>
   );
 }
+
+export default React.memo(
+  SuperMaterialTable,
+  (prevProps, nextProps) => prevProps.isLoading === nextProps.isLoading
+) as typeof SuperMaterialTable;

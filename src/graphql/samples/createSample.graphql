@@ -1,0 +1,21 @@
+mutation createSample(
+  $title: String!
+  $templateId: Int!
+  $proposalId: Int!
+  $questionId: String!
+) {
+  createSample(
+    title: $title
+    templateId: $templateId
+    proposalId: $proposalId
+    questionId: $questionId
+  ) {
+    sample {
+      ...sample
+      questionary {
+        ...questionary
+      }
+    }
+    error
+  }
+}

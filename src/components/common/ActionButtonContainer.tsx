@@ -1,10 +1,12 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import React, { PropsWithChildren } from 'react';
 
 import { ButtonContainer } from 'styles/StyledComponents';
 
-export function ActionButtonContainer(props: PropsWithChildren<{}>) {
-  const classes = makeStyles(theme => ({
+export function ActionButtonContainer(
+  props: PropsWithChildren<Record<string, unknown>>
+) {
+  const classes = makeStyles((theme) => ({
     buttonContainer: {
       justifyItems: 'flex-end',
       marginTop: theme.spacing(3),

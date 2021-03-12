@@ -1,21 +1,26 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
-import { AssignmentInd } from '@material-ui/icons';
-import { useSnackbar } from 'notistack';
+import AssignmentInd from '@material-ui/icons/AssignmentInd';
 import React, { useState } from 'react';
+import { useQueryParams } from 'use-query-params';
 
-import SuperMaterialTable from 'components/common/SuperMaterialTable';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { useCheckAccess } from 'components/common/Can';
+import SuperMaterialTable, {
+  DefaultQueryParams,
+  UrlQueryParamsType,
+} from 'components/common/SuperMaterialTable';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { FunctionType } from 'utils/utilTypes';
 
 import { BasicUserDetails, Instrument, UserRole } from '../../generated/sdk';
 import ParticipantModal from '../proposal/ParticipantModal';
 import AssignedScientistsTable from './AssignedScientistsTable';
 import CreateUpdateInstrument from './CreateUpdateInstrument';
+
 const InstrumentTable: React.FC = () => {
   const {
     loadingInstruments,
-    instrumentsData,
-    setInstrumentsData,
+    instruments,
+    setInstrumentsWithLoading: setInstruments,
   } = useInstrumentsData();
 
   const columns = [
@@ -28,77 +33,62 @@ const InstrumentTable: React.FC = () => {
         rowData.scientists.length > 0 ? rowData.scientists.length : '-',
     },
   ];
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
   const [assigningInstrumentId, setAssigningInstrumentId] = useState<
     number | null
   >(null);
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const [
+    urlQueryParams,
+    setUrlQueryParams,
+  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
 
-  if (loadingInstruments) {
-    return <p>Loading...</p>;
-  }
-
-  const onInstrumentDelete = async (instrumentDeletedId: number) => {
-    return await api()
+  const onInstrumentDelete = async (instrumentDeletedId: number | string) => {
+    return await api('Instrument removed successfully!')
       .deleteInstrument({
-        id: instrumentDeletedId,
+        id: instrumentDeletedId as number,
       })
-      .then(data => {
+      .then((data) => {
         if (data.deleteInstrument.error) {
-          enqueueSnackbar(
-            getTranslation(data.deleteInstrument.error as ResourceId),
-            {
-              variant: 'error',
-            }
-          );
-
-          return true;
-        } else {
           return false;
+        } else {
+          return true;
         }
       });
   };
 
-  const assignScientistsToInstrument = async (scientist: BasicUserDetails) => {
-    const assignScientistToInstrumentResult = await api().assignScientistsToInstrument(
-      {
-        instrumentId: assigningInstrumentId as number,
-        scientistIds: [scientist.id],
-      }
-    );
+  const assignScientistsToInstrument = async (
+    scientists: BasicUserDetails[]
+  ) => {
+    const assignScientistToInstrumentResult = await api(
+      'Scientist assigned to instrument successfully!'
+    ).assignScientistsToInstrument({
+      instrumentId: assigningInstrumentId as number,
+      scientistIds: scientists.map((scientist) => scientist.id),
+    });
 
     if (!assignScientistToInstrumentResult.assignScientistsToInstrument.error) {
-      if (!scientist.organisation) {
-        scientist.organisation = 'Other';
-      }
+      scientists = scientists.map((scientist) => {
+        if (!scientist.organisation) {
+          scientist.organisation = 'Other';
+        }
 
-      if (instrumentsData) {
-        const newInstrumentsData = instrumentsData.map(instrumentItem => {
+        return scientist;
+      });
+
+      setInstruments((instruments) =>
+        instruments.map((instrumentItem) => {
           if (instrumentItem.id === assigningInstrumentId) {
             return {
               ...instrumentItem,
-              scientists: [...instrumentItem.scientists, { ...scientist }],
+              scientists: [...instrumentItem.scientists, ...scientists],
             };
           } else {
             return instrumentItem;
           }
-        });
-
-        setInstrumentsData(newInstrumentsData);
-      }
+        })
+      );
     }
-
-    const errorMessage = assignScientistToInstrumentResult
-      .assignScientistsToInstrument.error
-      ? 'Could not assign scientist to instrument'
-      : 'Scientist assigned to instrument';
-
-    enqueueSnackbar(errorMessage, {
-      variant: assignScientistToInstrumentResult.assignScientistsToInstrument
-        .error
-        ? 'error'
-        : 'success',
-    });
 
     setAssigningInstrumentId(null);
   };
@@ -107,11 +97,11 @@ const InstrumentTable: React.FC = () => {
     scientistToRemoveId: number,
     instrumentToRemoveFromId: number
   ) => {
-    if (instrumentsData) {
-      const newInstrumentsData = instrumentsData.map(instrumentItem => {
+    setInstruments((instruments) =>
+      instruments.map((instrumentItem) => {
         if (instrumentItem.id === instrumentToRemoveFromId) {
           const newScientists = instrumentItem.scientists.filter(
-            scientistItem => scientistItem.id !== scientistToRemoveId
+            (scientistItem) => scientistItem.id !== scientistToRemoveId
           );
 
           return {
@@ -121,11 +111,9 @@ const InstrumentTable: React.FC = () => {
         } else {
           return instrumentItem;
         }
-      });
-
-      setInstrumentsData(newInstrumentsData);
-      setAssigningInstrumentId(null);
-    }
+      })
+    );
+    setAssigningInstrumentId(null);
   };
 
   const AssignmentIndIcon = (): JSX.Element => <AssignmentInd />;
@@ -140,8 +128,8 @@ const InstrumentTable: React.FC = () => {
   );
 
   const createModal = (
-    onUpdate: Function,
-    onCreate: Function,
+    onUpdate: FunctionType<void, [Instrument | null]>,
+    onCreate: FunctionType<void, [Instrument | null]>,
     editInstrument: Instrument | null
   ) => (
     <CreateUpdateInstrument
@@ -151,8 +139,8 @@ const InstrumentTable: React.FC = () => {
       }
     />
   );
-  const instrumentAssignments = instrumentsData?.find(
-    instrumentItem => instrumentItem.id === assigningInstrumentId
+  const instrumentAssignments = instruments?.find(
+    (instrumentItem) => instrumentItem.id === assigningInstrumentId
   );
 
   return (
@@ -160,10 +148,11 @@ const InstrumentTable: React.FC = () => {
       <ParticipantModal
         show={!!assigningInstrumentId}
         close={(): void => setAssigningInstrumentId(null)}
-        addParticipant={assignScientistsToInstrument}
+        addParticipants={assignScientistsToInstrument}
         selectedUsers={instrumentAssignments?.scientists.map(
-          scientist => scientist.id
+          (scientist) => scientist.id
         )}
+        selection={true}
         userRole={UserRole.INSTRUMENT_SCIENTIST}
         title={'Instrument scientist'}
         invitationUserRole={UserRole.INSTRUMENT_SCIENTIST}
@@ -171,14 +160,20 @@ const InstrumentTable: React.FC = () => {
       <div data-cy="instruments-table">
         <SuperMaterialTable
           delete={onInstrumentDelete}
-          setData={setInstrumentsData}
+          setData={setInstruments}
+          hasAccess={{
+            create: isUserOfficer,
+            update: isUserOfficer,
+            remove: isUserOfficer,
+          }}
           title={'Instruments'}
           columns={columns}
-          data={instrumentsData}
+          data={instruments}
+          isLoading={loadingInstruments}
           createModal={createModal}
           detailPanel={[
             {
-              tooltip: 'Show Instruments',
+              tooltip: 'Show Scientists',
               render: AssignedScientists,
             },
           ]}
@@ -186,14 +181,20 @@ const InstrumentTable: React.FC = () => {
             search: true,
             debounceInterval: 400,
           }}
-          actions={[
-            {
-              icon: AssignmentIndIcon,
-              tooltip: 'Assign scientist',
-              onClick: (_event: unknown, rowData: unknown): void =>
-                setAssigningInstrumentId((rowData as Instrument).id),
-            },
-          ]}
+          actions={
+            isUserOfficer
+              ? [
+                  {
+                    icon: AssignmentIndIcon,
+                    tooltip: 'Assign scientist',
+                    onClick: (_event: unknown, rowData: unknown): void =>
+                      setAssigningInstrumentId((rowData as Instrument).id),
+                  },
+                ]
+              : []
+          }
+          urlQueryParams={urlQueryParams}
+          setUrlQueryParams={setUrlQueryParams}
         />
       </div>
     </>

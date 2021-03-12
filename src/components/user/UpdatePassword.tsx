@@ -1,14 +1,13 @@
-import { userPasswordFieldValidationSchema } from '@esss-swap/duo-validation';
+import { userPasswordFieldValidationSchema } from '@esss-swap/duo-validation/lib/User';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/styles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
-import { useSnackbar } from 'notistack';
 import React from 'react';
 
-import { useDataApi } from 'hooks/common/useDataApi';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles({
   buttons: {
@@ -22,16 +21,9 @@ const useStyles = makeStyles({
 });
 
 export default function UpdatePassword(props: { id: number }) {
-  const api = useDataApi();
-  const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
   const sendPasswordUpdate = (password: string) => {
-    api()
-      .updatePassword({ id: props.id, password })
-      .then(data =>
-        enqueueSnackbar('Updated Password', {
-          variant: data.updatePassword.error ? 'error' : 'success',
-        })
-      );
+    return api('Updated Password').updatePassword({ id: props.id, password });
   };
 
   const classes = useStyles();
@@ -43,9 +35,8 @@ export default function UpdatePassword(props: { id: number }) {
           password: '',
           confirmPassword: '',
         }}
-        onSubmit={(values, actions) => {
-          sendPasswordUpdate(values.password);
-          actions.setSubmitting(false);
+        onSubmit={async (values): Promise<void> => {
+          await sendPasswordUpdate(values.password);
         }}
         validationSchema={userPasswordFieldValidationSchema}
       >
@@ -63,7 +54,7 @@ export default function UpdatePassword(props: { id: number }) {
                   component={TextField}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
+                  autoComplete="new-password"
                   data-cy="password"
                   helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
                 />
@@ -76,7 +67,7 @@ export default function UpdatePassword(props: { id: number }) {
                   component={TextField}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
+                  autoComplete="new-password"
                   data-cy="confirmPassword"
                 />
               </Grid>

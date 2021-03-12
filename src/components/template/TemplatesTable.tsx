@@ -1,15 +1,23 @@
-import { Button } from '@material-ui/core';
-import { Archive, Delete, Edit, FileCopy } from '@material-ui/icons';
+import Button from '@material-ui/core/Button';
+import Archive from '@material-ui/icons/Archive';
+import Delete from '@material-ui/icons/Delete';
+import Edit from '@material-ui/icons/Edit';
+import FileCopy from '@material-ui/icons/FileCopy';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
-import MaterialTable, { Column } from 'material-table';
+import MaterialTable, { Column, MaterialTableProps } from 'material-table';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import InputDialog from 'components/common/InputDialog';
-import { GetTemplatesQuery, Template, TemplateCategoryId } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import {
+  GetTemplatesQuery,
+  Template,
+  TemplateCategoryId,
+  TemplateMetadataFragment,
+} from 'generated/sdk';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { WithConfirmType } from 'utils/withConfirm';
 
 import CreateTemplate from './CreateTemplate';
@@ -20,32 +28,34 @@ export type TemplateRowDataType = Pick<
 >;
 
 interface TemplatesTableProps {
-  columns: Column<any>[];
+  columns: Column<TemplateRowDataType>[];
   templateCategory: TemplateCategoryId;
   dataProvider: () => Promise<Exclude<GetTemplatesQuery['templates'], null>>;
   isRowRemovable: (row: TemplateRowDataType) => boolean;
   confirm: WithConfirmType;
+  actions?: MaterialTableProps<TemplateRowDataType>['actions'];
 }
 export function TemplatesTable(props: TemplatesTableProps) {
   const [templates, setTemplates] = useState<TemplateRowDataType[]>([]);
-  const api = useDataApi();
+  const { api } = useDataApiWithFeedback();
   const history = useHistory();
   const [show, setShow] = useState(false);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
 
   useEffect(() => {
-    props.dataProvider().then(data => {
+    props.dataProvider().then((data) => {
       data && setTemplates(data);
       setLoadingTemplates(false);
     });
   }, [props]);
 
+  const UnarchiveIconComponent = () => <UnarchiveIcon />;
   const getUnarchiveButton = () => {
     return {
-      icon: () => <UnarchiveIcon />,
+      icon: UnarchiveIconComponent,
       tooltip: 'Unarchive',
       onClick: (
-        event: any,
+        event: React.MouseEvent<HTMLButtonElement>,
         data: TemplateRowDataType | TemplateRowDataType[]
       ) => {
         props.confirm(
@@ -55,16 +65,16 @@ export function TemplatesTable(props: TemplatesTableProps) {
                 templateId: (data as TemplateRowDataType).templateId,
                 isArchived: false,
               })
-              .then(response => {
+              .then((response) => {
                 const data = [...templates];
                 data.splice(
                   templates.findIndex(
-                    elem =>
+                    (elem) =>
                       elem.templateId ===
                       response.updateTemplate.template?.templateId
                   ),
                   1,
-                  response.updateTemplate.template!
+                  response.updateTemplate.template as TemplateMetadataFragment
                 );
                 setTemplates(data);
               });
@@ -82,31 +92,32 @@ export function TemplatesTable(props: TemplatesTableProps) {
     };
   };
 
+  const ArchiveIconComponent = () => <Archive />;
   const getArchiveButton = () => {
     return {
-      icon: () => <Archive />,
+      icon: ArchiveIconComponent,
       tooltip: 'Archive',
       onClick: (
-        event: any,
+        event: React.MouseEvent<HTMLButtonElement>,
         data: TemplateRowDataType | TemplateRowDataType[]
       ) => {
         props.confirm(
           () => {
-            api()
+            api('Template archived successfully')
               .updateTemplate({
                 templateId: (data as TemplateRowDataType).templateId,
                 isArchived: true,
               })
-              .then(response => {
+              .then((response) => {
                 const data = [...templates];
                 data.splice(
                   templates.findIndex(
-                    elem =>
+                    (elem) =>
                       elem.templateId ===
                       response.updateTemplate.template?.templateId
                   ),
                   1,
-                  response.updateTemplate.template!
+                  response.updateTemplate.template as TemplateMetadataFragment
                 );
                 setTemplates(data);
               });
@@ -124,12 +135,13 @@ export function TemplatesTable(props: TemplatesTableProps) {
     };
   };
 
+  const DeleteIconComponent = () => <Delete />;
   const getDeleteButton = () => {
     return {
-      icon: () => <Delete />,
+      icon: DeleteIconComponent,
       tooltip: 'Delete',
       onClick: (
-        event: any,
+        event: React.MouseEvent<HTMLButtonElement>,
         data: TemplateRowDataType | TemplateRowDataType[]
       ) => {
         props.confirm(
@@ -138,11 +150,11 @@ export function TemplatesTable(props: TemplatesTableProps) {
               .deleteTemplate({
                 id: (data as TemplateRowDataType).templateId,
               })
-              .then(response => {
+              .then((response) => {
                 const data = [...templates];
                 data.splice(
                   templates.findIndex(
-                    elem =>
+                    (elem) =>
                       elem.templateId ===
                       response.deleteTemplate.template?.templateId
                   ),
@@ -177,13 +189,25 @@ export function TemplatesTable(props: TemplatesTableProps) {
     }
   };
 
+  const editTemplate = (templateId: number) => {
+    history.push(`/QuestionaryEditor/${templateId}`);
+  };
+
+  const customActions = props.actions || [];
+  const EditIconComponent = () => <Edit />;
+  const FileCopyIconComponent = () => <FileCopy />;
+
   return (
     <>
       <InputDialog open={show} onClose={() => setShow(false)}>
         <CreateTemplate
-          onComplete={template => {
+          onComplete={(template) => {
             if (template) {
               setTemplates([...templates, template]);
+
+              setTimeout(() => {
+                editTemplate(template.templateId);
+              });
             }
             setShow(false);
           }}
@@ -192,22 +216,20 @@ export function TemplatesTable(props: TemplatesTableProps) {
       </InputDialog>
       <MaterialTable
         icons={tableIcons}
-        title="Proposal templates"
+        title="Templates"
         columns={props.columns}
         isLoading={loadingTemplates}
         data={templates}
         actions={[
           {
-            icon: () => <Edit />,
+            icon: EditIconComponent,
             tooltip: 'Edit',
             onClick: (event, data) => {
-              history.push(
-                `/QuestionaryEditor/${(data as TemplateRowDataType).templateId}`
-              );
+              editTemplate((data as TemplateRowDataType).templateId);
             },
           },
           {
-            icon: () => <FileCopy />,
+            icon: FileCopyIconComponent,
             hidden: false,
             tooltip: 'Clone',
             onClick: (event, data) => {
@@ -217,7 +239,7 @@ export function TemplatesTable(props: TemplatesTableProps) {
                     .cloneTemplate({
                       templateId: (data as TemplateRowDataType).templateId,
                     })
-                    .then(result => {
+                    .then((result) => {
                       const clonedTemplate = result.cloneTemplate.template;
                       if (clonedTemplate) {
                         const newTemplates = [...templates];
@@ -237,7 +259,8 @@ export function TemplatesTable(props: TemplatesTableProps) {
               )();
             },
           },
-          rowData => getMaintenanceButton(rowData),
+          (rowData) => getMaintenanceButton(rowData),
+          ...customActions,
         ]}
       />
       <ActionButtonContainer>

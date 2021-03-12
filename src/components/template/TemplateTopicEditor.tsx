@@ -1,23 +1,32 @@
-import {
-  AppBar,
-  Divider,
-  Fade,
-  Grid,
-  ListItemIcon,
-  makeStyles,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import useTheme from '@material-ui/core/styles/useTheme';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import {
+  Draggable,
+  DraggingStyle,
+  Droppable,
+  NotDraggingStyle,
+} from 'react-beautiful-dnd';
 
-import { QuestionTemplateRelation, TemplateStep } from 'generated/sdk';
+import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
+import {
+  DependenciesLogicOperator,
+  QuestionTemplateRelation,
+  TemplateStep,
+} from 'generated/sdk';
 import { Event, EventType } from 'models/QuestionaryEditorModel';
 
 import TemplateQuestionEditor, {
@@ -39,11 +48,17 @@ class TemplateTopicEditor implements TemplateTopicEditorData {
   get dataType() {
     return this.source.question.dataType;
   }
-  get dependency() {
-    return this.source.dependency;
+  get dependencies() {
+    return this.source.dependencies;
+  }
+  get dependenciesOperator() {
+    return this.source.dependenciesOperator as DependenciesLogicOperator;
   }
   get config() {
     return this.source.config;
+  }
+  get categoryId() {
+    return this.source.question.categoryId;
   }
 }
 
@@ -52,10 +67,12 @@ export default function QuestionaryEditorTopic(props: {
   dispatch: React.Dispatch<Event>;
   index: number;
   dragMode: boolean;
+  hoveredDependency: string;
 }) {
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const classes = makeStyles(theme => ({
+  const classes = makeStyles((theme) => ({
     container: {
       alignItems: 'flex-start',
       alignContent: 'flex-start',
@@ -80,6 +97,7 @@ export default function QuestionaryEditorTopic(props: {
     },
     itemContainer: {
       minHeight: '180px',
+      padding: '1px',
     },
     topic: {
       fontSize: '15px',
@@ -115,14 +133,16 @@ export default function QuestionaryEditorTopic(props: {
   const [anchorEl, setAnchorEl] = React.useState<null | SVGSVGElement>(null);
   const open = Boolean(anchorEl);
 
-  const getListStyle = (isDraggingOver: any) => ({
+  const getListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver
       ? theme.palette.primary.light
       : theme.palette.grey[100],
     transition: 'all 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000)',
   });
 
-  const getItemStyle = (isDragging: any, draggableStyle: any) => ({
+  const getItemStyle = (
+    draggableStyle: DraggingStyle | NotDraggingStyle | undefined
+  ) => ({
     background: '#FFF',
     ...draggableStyle,
   });
@@ -133,7 +153,7 @@ export default function QuestionaryEditorTopic(props: {
       value={title}
       data-cy="topic-title-input"
       className={classes.inputHeading}
-      onChange={event => setTitle(event.target.value)}
+      onChange={(event) => setTitle(event.target.value)}
       onBlur={() => {
         setIsEditMode(false);
         dispatch({
@@ -154,7 +174,7 @@ export default function QuestionaryEditorTopic(props: {
       }}
       data-cy="topic-title"
     >
-      {index + 2}. {title}
+      {title}
     </span>
   );
 
@@ -166,10 +186,14 @@ export default function QuestionaryEditorTopic(props: {
         <TemplateQuestionEditor
           index={index}
           data={new TemplateTopicEditor(item)}
-          onClick={item =>
+          isHighlighted={
+            props.hoveredDependency === item.question.proposalQuestionId
+          }
+          dispatch={dispatch}
+          onClick={(item) =>
             dispatch({
               type: EventType.OPEN_QUESTIONREL_EDITOR,
-              payload: (item as TemplateTopicEditor).source,
+              payload: { questionId: item.proposalQuestionId },
             })
           }
           key={item.question.proposalQuestionId.toString()}
@@ -185,7 +209,7 @@ export default function QuestionaryEditorTopic(props: {
       index={index}
       isDragDisabled={!props.dragMode}
     >
-      {(provided, snapshotDraggable) => (
+      {(provided) => (
         <Grid
           container
           className={`${classes.container} ${
@@ -193,10 +217,7 @@ export default function QuestionaryEditorTopic(props: {
           }`}
           {...provided.draggableProps}
           ref={provided.innerRef}
-          style={getItemStyle(
-            snapshotDraggable.isDragging,
-            provided.draggableProps.style
-          )}
+          style={getItemStyle(provided.draggableProps.style)}
           {...provided.dragHandleProps}
         >
           <AppBar position="static" className={classes.appbar}>
@@ -220,6 +241,7 @@ export default function QuestionaryEditorTopic(props: {
                   TransitionComponent={Fade}
                 >
                   <MenuItem
+                    data-cy="add-question-menu-item"
                     className={classes.addQuestionMenuItem}
                     onClick={() => {
                       dispatch({
@@ -241,12 +263,34 @@ export default function QuestionaryEditorTopic(props: {
                   <Divider />
                   <MenuItem
                     className={classes.addQuestionMenuItem}
-                    onClick={() =>
+                    data-cy="delete-topic-menu-item"
+                    onClick={() => {
+                      const isAllQuestionsInTopicDeletable = data.fields.every(
+                        (item) => {
+                          const definition = getQuestionaryComponentDefinition(
+                            item.question.dataType
+                          );
+
+                          return definition.creatable;
+                        }
+                      );
+                      if (isAllQuestionsInTopicDeletable === false) {
+                        enqueueSnackbar(
+                          'This topic can not be deleted because it contains protected question(s)',
+                          {
+                            variant: 'warning',
+                          }
+                        );
+
+                        return;
+                      }
+
                       dispatch({
                         type: EventType.DELETE_TOPIC_REQUESTED,
                         payload: data.topic.id,
-                      })
-                    }
+                      });
+                      setAnchorEl(null);
+                    }}
                   >
                     <ListItemIcon>
                       <DeleteRoundedIcon />
@@ -256,13 +300,17 @@ export default function QuestionaryEditorTopic(props: {
 
                   <MenuItem
                     className={classes.addQuestionMenuItem}
-                    onClick={() =>
+                    data-cy="add-topic-menu-item"
+                    onClick={() => {
                       dispatch({
                         type: EventType.CREATE_TOPIC_REQUESTED,
-                        payload: { sortOrder: index + 1 },
-                        // +1 means - add immediately after this topic
-                      })
-                    }
+                        payload: {
+                          topicId: data.topic.id,
+                          isFirstTopic: false,
+                        },
+                      });
+                      setAnchorEl(null);
+                    }}
                   >
                     <ListItemIcon>
                       <PlaylistAddIcon />

@@ -1,10 +1,7 @@
-/// <reference types="Cypress" />
-/// <reference types="../types" />
+import dateformat from 'dateformat';
+import faker from 'faker';
 
 context('Event log tests', () => {
-  const faker = require('faker');
-  const dateformat = require('dateformat');
-
   before(() => {
     cy.resetDB();
   });
@@ -14,22 +11,12 @@ context('Event log tests', () => {
     cy.viewport(1100, 1000);
   });
 
-  afterEach(() => {
-    cy.wait(500);
-  });
-
   it('If user creates a proposal, officer should be able to see the event logs for that proposal', () => {
-    const title = faker.random.words(3);
-    const abstract = faker.random.words(8);
-
     cy.login('user');
 
-    cy.contains('New Proposal').click();
-    cy.get('#title').type(title);
-    cy.get('#abstract').type(abstract);
-    cy.contains('Save and continue').click();
+    cy.createProposal();
 
-    cy.contains('Logout').click();
+    cy.logout();
 
     cy.login('officer');
 
@@ -45,9 +32,7 @@ context('Event log tests', () => {
 
     cy.login('user');
 
-    cy.get("[data-cy='profile-page-btn']").click();
-
-    cy.contains('Profile').click();
+    cy.get('[data-cy="active-user-profile"]').click();
 
     cy.get("[name='firstname']")
       .clear()
@@ -58,24 +43,17 @@ context('Event log tests', () => {
     // NOTE: Hour date format is enough because we don't know the exact time in seconds and minutes when update will happen in the database.
     const updateProfileDate = dateformat(new Date(), 'dd-mmm-yyyy HH');
 
-    cy.contains('Logout').click();
+    cy.logout();
 
     cy.login('officer');
 
-    cy.contains('View People').click();
+    cy.contains('People').click();
 
-    cy.wait(2000);
+    cy.get('[aria-label="Search"]').type('Carlsson');
 
-    let peopleTable = cy.get('[data-cy="co-proposers"]');
-
-    const lastPeoplePageButtonElement = peopleTable.find(
-      'span[title="Last Page"] > button'
-    );
-
-    lastPeoplePageButtonElement.click({ force: true });
-
-    cy.get('button[title="Edit user"]')
-      .last()
+    cy.contains('Carlsson')
+      .parent()
+      .find('button[title="Edit user"]')
       .click();
 
     cy.get("[name='firstname']").should('have.value', newFirstName);

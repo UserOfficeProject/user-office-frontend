@@ -1,4 +1,4 @@
-mutation updateReview(
+mutation addReview(
   $reviewID: Int!
   $grade: Int!
   $comment: String!
@@ -14,7 +14,17 @@ mutation updateReview(
   ) {
     error
     review {
-      ...coreReview
+      id
+      userID
+      status
+      comment
+      grade
+      sepID
+      nextProposalStatus {
+        id
+        shortCode
+        name
+      }
     }
   }
 }

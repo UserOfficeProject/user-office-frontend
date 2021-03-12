@@ -3,23 +3,22 @@ query getSEPProposals($sepId: Int!, $callId: Int!) {
     proposalId
     dateAssigned
     sepId
+    sepTimeAllocation
     proposal {
       title
       id
       shortCode
-      status
+      status {
+        ...proposalStatus
+      }
     }
     assignments {
       sepMemberUserId
       dateAssigned
       user {
-        id
-        firstname
-        lastname
-        organisation
-        position
+        ...basicUserDetails
       }
-      roles {
+      role {
         id
         shortCode
         title
