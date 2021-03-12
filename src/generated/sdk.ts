@@ -1800,7 +1800,7 @@ export type Service = {
 
 export type Question = {
   __typename?: 'Question';
-  proposalQuestionId: Scalars['String'];
+  id: Scalars['String'];
   categoryId: TemplateCategoryId;
   naturalKey: Scalars['String'];
   dataType: DataType;
@@ -4828,7 +4828,7 @@ export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfig
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
-  & Pick<Question, 'question' | 'proposalQuestionId' | 'naturalKey' | 'dataType' | 'categoryId'>
+  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
   & { config: (
     { __typename?: 'BooleanConfig' }
     & FieldConfigBooleanConfigFragment
@@ -5762,8 +5762,8 @@ export const FieldConfigFragmentDoc = gql`
     `;
 export const QuestionFragmentDoc = gql`
     fragment question on Question {
+  id
   question
-  proposalQuestionId
   naturalKey
   dataType
   categoryId
