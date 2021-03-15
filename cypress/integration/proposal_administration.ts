@@ -44,9 +44,8 @@ context('Proposal administration tests', () => {
     cy.contains('Proposals').click();
 
     cy.get('[data-cy=view-proposal]').click();
-    cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
-    cy.get('@dialog').contains('Admin').click();
+    cy.get('[role="dialog"]').contains('Admin').click();
 
     cy.get('#mui-component-select-finalStatus').click();
 
@@ -90,8 +89,8 @@ context('Proposal administration tests', () => {
     cy.contains('Proposals').click();
 
     cy.get('[data-cy=view-proposal]').first().click();
-    cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
+    cy.get('[role="dialog"]').as('dialog');
     cy.get('@dialog').contains('Admin').click();
 
     cy.contains('Loading...').should('not.exist');
@@ -134,17 +133,16 @@ context('Proposal administration tests', () => {
     cy.contains('Proposals').click();
 
     cy.get('[data-cy=view-proposal]').click();
-
-    cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
+    cy.get('[role="dialog"]').as('dialog');
 
-    cy.contains('Admin').click();
+    cy.get('@dialog').contains('Admin').click();
 
     cy.reload();
 
     cy.get('[data-cy="commentForUser"]').should('exist');
 
-    cy.get('[role="dialog"]').contains('Technical').click();
+    cy.get('@dialog').contains('Technical review').click();
 
     cy.reload();
 
