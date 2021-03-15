@@ -9,6 +9,7 @@ import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import { Proposal, UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
@@ -21,6 +22,8 @@ export type AdministrationFormData = {
   commentForUser: string;
   commentForManagement: string;
   finalStatus: ProposalEndStatus;
+  managementTimeAllocation?: number;
+  managementDecisionSubmitted?: boolean;
   rankOrder?: number;
 };
 
@@ -48,6 +51,8 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
     proposalStatus: data.statusId,
     commentForUser: data.commentForUser || '',
     commentForManagement: data.commentForManagement || '',
+    managementTimeAllocation: data.managementTimeAllocation || '',
+    managementDecisionSubmitted: data.managementDecisionSubmitted,
   };
 
   const PromptIfDirty = () => {
@@ -89,6 +94,8 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
             statusId: values.proposalStatus,
             commentForUser: values.commentForUser,
             commentForManagement: values.commentForManagement,
+            managementTimeAllocation: +values.managementTimeAllocation,
+            managementDecisionSubmitted: values.managementDecisionSubmitted,
           };
 
           const isDraftStatus =
@@ -115,7 +122,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
           <Form>
             <PromptIfDirty />
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <FormikDropdown
                   name="finalStatus"
                   label="Final status"
@@ -127,10 +134,10 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     { text: 'Rejected', value: ProposalEndStatus.REJECTED },
                   ]}
                   required
-                  disabled={!isUserOfficer}
+                  disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <FormikDropdown
                   name="proposalStatus"
                   label="Proposal status"
@@ -141,7 +148,20 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     value: proposalStatus.id,
                   }))}
                   required
-                  disabled={!isUserOfficer}
+                  disabled={!isUserOfficer || isSubmitting}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <Field
+                  name="managementTimeAllocation"
+                  label="Management time allocation(Days)"
+                  type="number"
+                  component={TextField}
+                  margin="normal"
+                  fullWidth
+                  autoComplete="off"
+                  data-cy="managementTimeAllocation"
+                  disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -157,7 +177,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={!isUserOfficer}
+                  disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -173,12 +193,20 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                   multiline
                   rowsMax="16"
                   rows="4"
-                  disabled={!isUserOfficer}
+                  disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>
             </Grid>
             {isUserOfficer && (
               <ButtonContainer>
+                <Field
+                  id="managementDecisionSubmitted"
+                  name="managementDecisionSubmitted"
+                  component={FormikUICustomCheckbox}
+                  label="Submitted"
+                  color="primary"
+                  data-cy="is-management-decision-submitted"
+                />
                 <Button
                   disabled={isSubmitting}
                   type="submit"
