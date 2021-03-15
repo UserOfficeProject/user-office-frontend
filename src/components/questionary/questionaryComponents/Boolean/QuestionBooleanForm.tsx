@@ -1,16 +1,15 @@
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React from 'react';
+import React, { FC } from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
-import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
+import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionFormShell } from 'components/questionary/questionaryComponents/QuestionFormShell';
-import { Question } from 'generated/sdk';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
-export const QuestionBooleanForm: FormComponent<Question> = (props) => {
+export const QuestionBooleanForm: FC<QuestionFormProps> = (props) => {
   const field = props.field;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
 

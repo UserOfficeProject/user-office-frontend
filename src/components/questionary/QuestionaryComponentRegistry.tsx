@@ -1,4 +1,4 @@
-import React, { FC, FunctionComponent } from 'react';
+import React, { FC } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
@@ -26,16 +26,17 @@ import { sampleDeclarationDefinition } from './questionaryComponents/SampleDecla
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 
-export interface FormProps<ValueObjectType> {
-  field: ValueObjectType;
-  template: Template;
+export interface QuestionFormProps {
+  field: Question;
   dispatch: React.Dispatch<Event>;
   closeMe: () => void;
 }
-
-export type FormComponent<ValueObjectType> = FunctionComponent<
-  FormProps<ValueObjectType>
->;
+export interface QuestionTemplateRelationFormProps {
+  field: QuestionTemplateRelation;
+  dispatch: React.Dispatch<Event>;
+  closeMe: () => void;
+  template: Template;
+}
 
 export interface Renderers {
   readonly questionRenderer: (props: {
@@ -47,8 +48,8 @@ export interface Renderers {
 export interface QuestionaryComponentDefinition {
   readonly dataType: DataType;
   readonly name: string;
-  readonly questionTemplateRelationForm: () => FormComponent<QuestionTemplateRelation>;
-  readonly questionForm: () => FormComponent<Question>;
+  readonly questionTemplateRelationForm: () => FC<QuestionTemplateRelationFormProps>;
+  readonly questionForm: () => FC<QuestionFormProps>;
   readonly questionaryComponent: (
     props: BasicComponentProps
   ) => JSX.Element | null;
@@ -101,7 +102,7 @@ export function getQuestionaryComponentDefinition(id: DataType) {
 export const getQuestionaryComponentDefinitions = () => registry;
 
 export function createQuestionTemplateRelationForm(
-  props: FormProps<QuestionTemplateRelation>
+  props: QuestionTemplateRelationFormProps
 ): JSX.Element {
   const dataType = props.field.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
@@ -109,9 +110,7 @@ export function createQuestionTemplateRelationForm(
   return React.createElement(definition.questionTemplateRelationForm(), props);
 }
 
-export function createQuestionTemplateForm(
-  props: FormProps<Question>
-): JSX.Element {
+export function createQuestionForm(props: QuestionFormProps): JSX.Element {
   const dataType = props.field.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 

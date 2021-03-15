@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { FC } from 'react';
 import * as Yup from 'yup';
 
-import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
-import { QuestionTemplateRelation } from 'generated/sdk';
+import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationProposalBasisForm: FormComponent<QuestionTemplateRelation> = (
+export const QuestionTemplateRelationProposalBasisForm: FC<QuestionTemplateRelationFormProps> = (
   props
 ) => {
   return (

@@ -1,15 +1,14 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React from 'react';
+import React, { FC } from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
-import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
+import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionExcerpt } from 'components/questionary/questionaryComponents/QuestionExcerpt';
-import { QuestionTemplateRelation } from 'generated/sdk';
 import { useUnitsData } from 'hooks/settings/useUnitData';
 
 import QuestionDependencyList from '../QuestionDependencyList';
@@ -21,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const QuestionTemplateRelationIntervalForm: FormComponent<QuestionTemplateRelation> = (
+export const QuestionTemplateRelationIntervalForm: FC<QuestionTemplateRelationFormProps> = (
   props
 ) => {
   const classes = useStyles();

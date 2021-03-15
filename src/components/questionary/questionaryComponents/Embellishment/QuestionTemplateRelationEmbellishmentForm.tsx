@@ -1,18 +1,17 @@
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React from 'react';
+import React, { FC } from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import TitledContainer from 'components/common/TitledContainer';
-import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
-import { QuestionTemplateRelation } from 'generated/sdk';
+import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationEmbellishmentForm: FormComponent<QuestionTemplateRelation> = (
+export const QuestionTemplateRelationEmbellishmentForm: FC<QuestionTemplateRelationFormProps> = (
   props
 ) => {
   return (
