@@ -54,7 +54,7 @@ context('Proposal administration tests', () => {
     cy.contains('Loading...').should('not.exist');
     cy.get('#mui-component-select-proposalStatus').click();
 
-    cy.get('[id="menu-proposalStatus"] [role="option"]').first().click();
+    cy.get('[id="menu-proposalStatus"]').contains('DRAFT').click();
 
     cy.get('[data-cy="managementTimeAllocation"] input')
       .clear()
@@ -77,6 +77,8 @@ context('Proposal administration tests', () => {
     cy.get('[data-cy="is-management-decision-submitted"]').click();
 
     cy.contains('Update').click();
+
+    cy.get('[data-cy="confirm-ok"]').click();
 
     cy.notification({ variant: 'success', text: 'Updated' });
 
@@ -130,6 +132,10 @@ context('Proposal administration tests', () => {
 
     cy.get('@dialog').contains('Update').click();
 
+    cy.get('[data-cy="confirm-ok"]').click();
+
+    cy.notification({ variant: 'success', text: 'Updated' });
+
     cy.closeModal();
 
     cy.contains(proposalName1).parent().contains('No');
@@ -153,15 +159,14 @@ context('Proposal administration tests', () => {
 
     cy.get('[data-cy=view-proposal]').click();
     cy.finishedLoading();
-    cy.get('[role="dialog"]').as('dialog');
 
-    cy.get('@dialog').contains('Admin').click();
+    cy.get('[role="dialog"]').contains('Admin').click();
 
     cy.reload();
 
     cy.get('[data-cy="commentForUser"]').should('exist');
 
-    cy.get('@dialog').contains('Technical review').click();
+    cy.get('[role="dialog"]').contains('Technical review').click();
 
     cy.reload();
 
