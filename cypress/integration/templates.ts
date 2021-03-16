@@ -537,6 +537,8 @@ context('Template tests', () => {
 
     cy.contains('Save').click();
 
+    cy.wait(1000);
+
     cy.contains(dateQuestion)
       .closest('[data-cy=question-container]')
       .find("[data-cy='proposal-question-id']")
@@ -561,7 +563,7 @@ context('Template tests', () => {
     cy.get('[data-cy="maxDate"] input').clear().type('2021-01-31');
     cy.get('[data-cy="defaultDate"] input').clear().type('2021-01-10');
 
-    cy.contains('Save').click();
+    cy.contains('Update').click();
 
     cy.logout();
 
