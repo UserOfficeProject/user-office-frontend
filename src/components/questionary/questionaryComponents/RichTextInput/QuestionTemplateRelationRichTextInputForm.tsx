@@ -16,10 +16,7 @@ export const QuestionTemplateRelationRichTextInputForm: FC<QuestionTemplateRelat
 ) => {
   return (
     <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
-      template={props.template}
+      {...props}
       validationSchema={Yup.object().shape({
         question: Yup.object({
           config: Yup.object({
@@ -30,7 +27,7 @@ export const QuestionTemplateRelationRichTextInputForm: FC<QuestionTemplateRelat
     >
       {(formikProps) => (
         <>
-          <QuestionExcerpt question={props.field.question} />
+          <QuestionExcerpt question={props.questionRel.question} />
 
           <TitledContainer label="Constraints">
             <Field

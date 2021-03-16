@@ -8,11 +8,6 @@ export const QuestionTemplateRelationShipmentBasisForm: FC<QuestionTemplateRelat
   props
 ) => {
   return (
-    <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
-      template={props.template}
-    ></QuestionTemplateRelationFormShell>
+    <QuestionTemplateRelationFormShell {...props} validationSchema={null} />
   );
 };

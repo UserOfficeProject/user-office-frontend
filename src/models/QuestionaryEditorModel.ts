@@ -5,7 +5,6 @@ import { useParams } from 'react-router';
 
 import {
   Question,
-  QuestionTemplateRelation,
   Template,
   TemplateCategoryId,
   TemplateStep,
@@ -24,13 +23,9 @@ import {
 export enum EventType {
   READY,
   CREATE_QUESTION_REQUESTED,
-  UPDATE_QUESTION_REQUESTED,
-  DELETE_QUESTION_REQUESTED,
   QUESTION_CREATED,
   QUESTION_UPDATED,
   CREATE_QUESTION_REL_REQUESTED,
-  UPDATE_QUESTION_REL_REQUESTED,
-  DELETE_QUESTION_REL_REQUESTED,
   QUESTION_REL_CREATED,
   QUESTION_REL_UPDATED,
   QUESTION_REL_DELETED,
@@ -114,30 +109,6 @@ export default function QuestionaryEditorModel(
           }
 
           return draft;
-        case EventType.UPDATE_QUESTION_REL_REQUESTED: {
-          const questionRel: QuestionTemplateRelation = action.payload.field;
-          const questionRelToUpdate = getFieldById(
-            draft.steps,
-            questionRel.question.proposalQuestionId
-          );
-          if (questionRel && questionRelToUpdate) {
-            Object.assign(questionRelToUpdate, questionRel);
-          }
-
-          return draft;
-        }
-        case EventType.UPDATE_QUESTION_REQUESTED: {
-          const field: Question = action.payload.field;
-          const fieldToUpdate = draft.complementaryQuestions.find(
-            (question) =>
-              question.proposalQuestionId === field.proposalQuestionId
-          );
-          if (field && fieldToUpdate) {
-            Object.assign(fieldToUpdate, field);
-          }
-
-          return draft;
-        }
 
         case EventType.DELETE_TOPIC_REQUESTED: {
           const stepToDelete = getQuestionaryStepByTopicId(
@@ -181,9 +152,10 @@ export default function QuestionaryEditorModel(
               (curQuestion) =>
                 curQuestion.proposalQuestionId ===
                 newQuestion.proposalQuestionId
-            ) || getFieldById(draft.steps, newQuestion.proposalQuestionId);
+            ) ||
+            getFieldById(draft.steps, newQuestion.proposalQuestionId)?.question;
           if (newQuestion && curQuestion) {
-            Object.assign(curQuestion.question, newQuestion);
+            Object.assign(curQuestion, newQuestion);
           }
 
           return draft;

@@ -19,15 +19,12 @@ export const QuestionTemplateRelationDateForm: FC<QuestionTemplateRelationFormPr
 ) => {
   return (
     <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
-      template={props.template}
+      {...props}
       validationSchema={Yup.object().shape({})}
     >
       {(formikProps) => (
         <>
-          <QuestionExcerpt question={props.field.question} />
+          <QuestionExcerpt question={props.questionRel.question} />
           <Field
             name="config.tooltip"
             label="Tooltip"

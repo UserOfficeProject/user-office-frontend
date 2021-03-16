@@ -16,10 +16,7 @@ export const QuestionTemplateRelationEmbellishmentForm: FC<QuestionTemplateRelat
 ) => {
   return (
     <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
-      template={props.template}
+      {...props}
       validationSchema={Yup.object().shape({
         question: Yup.object({
           config: Yup.object({

@@ -1,3 +1,4 @@
+import { FormikProps } from 'formik';
 import React, { FC } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
@@ -9,7 +10,6 @@ import {
   QuestionTemplateRelation,
   Template,
 } from 'generated/sdk';
-import { Event } from 'models/QuestionaryEditorModel';
 import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
 
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
@@ -26,16 +26,25 @@ import { sampleDeclarationDefinition } from './questionaryComponents/SampleDecla
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 
+export type FormChildren<ValueObjectType> = (
+  formikProps: FormikProps<ValueObjectType>
+) => React.ReactNode;
+
 export interface QuestionFormProps {
-  field: Question;
-  dispatch: React.Dispatch<Event>;
-  closeMe: () => void;
+  question: Question;
+  closeMe: () => unknown;
+  onUpdated?: (question: Question) => unknown;
+  onDeleted?: (question: Question) => unknown;
+  children?: FormChildren<Question>;
 }
 export interface QuestionTemplateRelationFormProps {
-  field: QuestionTemplateRelation;
-  dispatch: React.Dispatch<Event>;
-  closeMe: () => void;
+  questionRel: QuestionTemplateRelation;
   template: Template;
+  closeMe: () => unknown;
+  onUpdated?: (template: Template) => unknown;
+  onDeleted?: (template: Template) => unknown;
+  onOpenQuestionClicked?: (question: Question) => unknown;
+  children?: FormChildren<QuestionTemplateRelation>;
 }
 
 export interface Renderers {
@@ -104,14 +113,14 @@ export const getQuestionaryComponentDefinitions = () => registry;
 export function createQuestionTemplateRelationForm(
   props: QuestionTemplateRelationFormProps
 ): JSX.Element {
-  const dataType = props.field.question.dataType;
+  const dataType = props.questionRel.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 
   return React.createElement(definition.questionTemplateRelationForm(), props);
 }
 
 export function createQuestionForm(props: QuestionFormProps): JSX.Element {
-  const dataType = props.field.dataType;
+  const dataType = props.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 
   return React.createElement(definition.questionForm(), props);

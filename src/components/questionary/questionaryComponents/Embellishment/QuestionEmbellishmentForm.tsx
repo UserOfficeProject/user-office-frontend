@@ -12,14 +12,12 @@ import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionEmbellishmentForm: FC<QuestionFormProps> = (props) => {
-  const field = props.field;
+  const field = props.question;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
 
   return (
     <QuestionFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      question={props.field}
+      {...props}
       validationSchema={Yup.object().shape({
         naturalKey: naturalKeySchema,
         config: Yup.object({

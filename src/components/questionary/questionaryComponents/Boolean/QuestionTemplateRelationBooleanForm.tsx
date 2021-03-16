@@ -15,9 +15,7 @@ export const QuestionTemplateRelationBooleanForm: FC<QuestionTemplateRelationFor
 ) => {
   return (
     <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
+      {...props}
       template={props.template}
       validationSchema={Yup.object().shape({
         question: Yup.object({
@@ -29,7 +27,7 @@ export const QuestionTemplateRelationBooleanForm: FC<QuestionTemplateRelationFor
     >
       {(formikProps) => (
         <>
-          <QuestionExcerpt question={props.field.question} />
+          <QuestionExcerpt question={props.questionRel.question} />
           <TitledContainer label="Constraints">
             <Field
               name="config.required"

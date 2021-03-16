@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const QuestionIntervalForm: FC<QuestionFormProps> = (props) => {
-  const field = props.field;
+  const field = props.question;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
   const { units } = useUnitsData();
 
@@ -27,9 +27,7 @@ export const QuestionIntervalForm: FC<QuestionFormProps> = (props) => {
 
   return (
     <QuestionFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      question={props.field}
+      {...props}
       validationSchema={Yup.object().shape({
         naturalKey: naturalKeySchema,
         question: Yup.string().required('Question is required'),

@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import * as Yup from 'yup';
 
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 
@@ -10,18 +9,8 @@ export const QuestionTemplateRelationProposalBasisForm: FC<QuestionTemplateRelat
   props
 ) => {
   return (
-    <QuestionTemplateRelationFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      questionRel={props.field}
-      template={props.template}
-      validationSchema={Yup.object().shape({})}
-    >
-      {() => (
-        <>
-          <QuestionExcerpt question={props.field.question} />
-        </>
-      )}
+    <QuestionTemplateRelationFormShell {...props} validationSchema={null}>
+      {() => <QuestionExcerpt question={props.questionRel.question} />}
     </QuestionTemplateRelationFormShell>
   );
 };
