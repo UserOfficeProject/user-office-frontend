@@ -40,7 +40,7 @@ export const QuestionFormShell = (
   const submitHandler = async (values: Question): Promise<void> => {
     api()
       .updateQuestion({
-        id: values.proposalQuestionId,
+        id: values.id,
         naturalKey: values.naturalKey,
         question: values.question,
         config: values.config ? JSON.stringify(values.config) : undefined,
@@ -56,7 +56,7 @@ export const QuestionFormShell = (
   const deleteHandler = () =>
     api()
       .deleteQuestion({
-        questionId: props.question.proposalQuestionId,
+        questionId: props.question.id,
       })
       .then((data) => {
         if (data.deleteQuestion.question) {

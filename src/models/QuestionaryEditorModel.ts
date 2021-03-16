@@ -127,7 +127,7 @@ export default function QuestionaryEditorModel(
           const questionId = action.payload;
           draft.complementaryQuestions.splice(
             draft.complementaryQuestions.findIndex(
-              (question) => question.proposalQuestionId === questionId
+              (question) => question.id === questionId
             ),
             1
           );
@@ -149,11 +149,8 @@ export default function QuestionaryEditorModel(
           const newQuestion = action.payload as Question;
           const curQuestion =
             draft.complementaryQuestions.find(
-              (curQuestion) =>
-                curQuestion.proposalQuestionId ===
-                newQuestion.proposalQuestionId
-            ) ||
-            getFieldById(draft.steps, newQuestion.proposalQuestionId)?.question;
+              (curQuestion) => curQuestion.id === newQuestion.id
+            ) || getFieldById(draft.steps, newQuestion.id)?.question;
           if (newQuestion && curQuestion) {
             Object.assign(curQuestion, newQuestion);
           }

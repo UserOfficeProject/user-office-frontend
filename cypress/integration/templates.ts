@@ -452,9 +452,9 @@ context('Template tests', () => {
     cy.contains('this_word_should_be_multiline').should('not.exist');
     cy.get(`#${textId}`).clear().type(textAnswer);
     cy.contains(`${textAnswer.length}/${minimumCharacters}`);
-    cy.get(`[data-cy='${dateId}_field'] button`).click();
+    cy.get(`[data-cy='${dateId}.value'] button`).click();
     cy.wait(300);
-    cy.get(`[data-cy='${dateId}_field'] button`).click({ force: true }); // click twice because ui hangs sometimes
+    cy.get(`[data-cy='${dateId}.value'] button`).click({ force: true }); // click twice because ui hangs sometimes
     cy.contains('15').click({ force: true });
 
     cy.get(`#${multipleChoiceId}`).click();
@@ -573,7 +573,7 @@ context('Template tests', () => {
 
     cy.contains(dateQuestion);
     cy.get('body').then(() => {
-      cy.get(`[data-cy="${dateFieldId}_field"] input`).as('dateField');
+      cy.get(`[data-cy="${dateFieldId}.value"] input`).as('dateField');
 
       cy.get('@dateField').should('have.value', '2021-01-10');
 

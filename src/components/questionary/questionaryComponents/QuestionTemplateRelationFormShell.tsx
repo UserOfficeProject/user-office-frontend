@@ -62,7 +62,7 @@ export const QuestionTemplateRelationFormShell = (
     api()
       .updateQuestionTemplateRelationSettings({
         templateId: props.template.templateId,
-        questionId: values.question.proposalQuestionId,
+        questionId: values.question.id,
         config: values.config ? JSON.stringify(values.config) : undefined,
         dependencies: values.dependencies
           ? values.dependencies.map((dependency) =>
@@ -84,7 +84,7 @@ export const QuestionTemplateRelationFormShell = (
   const deleteHandler = async () => {
     const result = await api().deleteQuestionTemplateRelation({
       templateId: props.template.templateId,
-      questionId: props.questionRel.question.proposalQuestionId,
+      questionId: props.questionRel.question.id,
     });
 
     if (result.deleteQuestionTemplateRelation.template) {

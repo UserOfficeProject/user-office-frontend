@@ -44,7 +44,7 @@ export function usePersistQuestionaryEditorModel() {
         templateId,
         topicId: field.topicId,
         sortOrder: field.sortOrder,
-        questionId: field.question.proposalQuestionId,
+        questionId: field.question.id,
         config: field.config ? JSON.stringify(field.config) : undefined,
       })
       .then((data) => data.updateQuestionTemplateRelation);
