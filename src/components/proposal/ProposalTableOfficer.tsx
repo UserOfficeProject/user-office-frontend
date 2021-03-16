@@ -29,7 +29,7 @@ import {
   Proposal,
   ProposalsFilter,
   ProposalStatus,
-  ProposalsToInstrumentArgs,
+  ProposalIdWithCallId,
   Sep,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
@@ -73,7 +73,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     false
   );
   const [selectedProposals, setSelectedProposals] = useState<
-    ProposalsToInstrumentArgs[]
+    ProposalIdWithCallId[]
   >([]);
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
     ProposalViewData[]
@@ -103,7 +103,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const selection = new Set(urlQueryParams.selection);
 
       setPreselectedProposalsData((preselectedProposalsData) => {
-        const selected: ProposalsToInstrumentArgs[] = [];
+        const selected: ProposalIdWithCallId[] = [];
         const preselected = preselectedProposalsData.map((proposal) => {
           if (selection.has(proposal.id.toString())) {
             selected.push({ id: proposal.id, callId: proposal.callId });
@@ -493,8 +493,41 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   };
 
   const changeStatusOnProposals = async (status: ProposalStatus) => {
-    // TODO: Finish this!
-    console.log('new status', status, selectedProposals);
+    if (status?.id && selectedProposals?.length) {
+      const shouldAddPluralLetter = selectedProposals.length > 1 ? 's' : '';
+      const result = await api(
+        `Proposal${shouldAddPluralLetter} status changed successfully!`
+      ).changeProposalsStatus({
+        proposals: selectedProposals,
+        statusId: status.id,
+      });
+
+      const isError = !!result.changeProposalsStatus.error;
+
+      if (!isError) {
+        const shouldChangeSubmittedValue = status.shortCode === 'DRAFT';
+
+        setProposalsData((proposalsData) =>
+          proposalsData.map((prop) => {
+            if (
+              selectedProposals.find(
+                (selectedProposal) => selectedProposal.id === prop.id
+              )
+            ) {
+              prop.statusId = status.id;
+              prop.statusName = status.name;
+              prop.statusDescription = status.description;
+
+              if (shouldChangeSubmittedValue) {
+                prop.submitted = false;
+              }
+            }
+
+            return prop;
+          })
+        );
+      }
+    }
   };
 
   const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;

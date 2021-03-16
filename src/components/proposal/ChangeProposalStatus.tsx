@@ -3,6 +3,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
+import Alert from '@material-ui/lab/Alert';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
@@ -62,8 +63,8 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
         }}
         validationSchema={changeProposalStatusValidationSchema}
       >
-        {({ isSubmitting }): JSX.Element => (
-          <Form>
+        {({ isSubmitting, values }): JSX.Element => (
+          <Form style={{ width: '240px' }}>
             <Typography className={classes.cardHeader}>
               Change proposal/s status
             </Typography>
@@ -82,6 +83,12 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
                 />
               </Grid>
             </Grid>
+            {values.selectedStatusId === '1' && (
+              <Alert severity="warning">
+                Be aware that changing status to &quot;DRAFT&quot; will reopen
+                proposal for changes and submission.
+              </Alert>
+            )}
             <Button
               type="submit"
               fullWidth
@@ -89,7 +96,7 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
               color="primary"
               className={classes.submit}
               disabled={loadingProposalStatuses || isSubmitting}
-              data-cy="submit=proposal-status-change"
+              data-cy="submit-proposal-status-change"
             >
               Change status
             </Button>
