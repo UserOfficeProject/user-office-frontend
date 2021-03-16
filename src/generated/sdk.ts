@@ -3596,6 +3596,9 @@ export type GetProposalQuery = (
     )>, call: Maybe<(
       { __typename?: 'Call' }
       & Pick<Call, 'id' | 'shortCode'>
+    )>, sep: Maybe<(
+      { __typename?: 'SEP' }
+      & Pick<Sep, 'id' | 'code'>
     )> }
     & ProposalFragment
   )> }
@@ -6914,6 +6917,10 @@ export const GetProposalDocument = gql`
     call {
       id
       shortCode
+    }
+    sep {
+      id
+      code
     }
   }
 }
