@@ -174,7 +174,7 @@ context('Proposal administration tests', () => {
 
     cy.get('[data-cy="commentForUser"]').should('exist');
 
-    cy.get('[role="dialog"]').contains('Technical').click();
+    cy.get('[role="dialog"]').contains('Technical review').click();
 
     cy.reload();
 
