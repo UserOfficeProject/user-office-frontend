@@ -14,8 +14,8 @@ import UOLoader from 'components/common/UOLoader';
 import { Event } from 'generated/sdk';
 import { useProposalEventsData } from 'hooks/settings/useProposalEventsData';
 
-const addNextStatusEventsToConnectionValidationSchema = yup.object().shape({
-  selectedNextStatusEvents: yup
+const addStatusChangingEventsToConnectionValidationSchema = yup.object().shape({
+  selectedStatusChangingEvents: yup
     .array()
     .of(yup.string())
     .required('You must select at least one event'),
@@ -47,25 +47,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type AddNextStatusEventsToConnectionProps = {
+type AddStatusChangingEventsToConnectionProps = {
   close: () => void;
-  addNextStatusEventsToConnection: (nextStatusEvents: string[]) => void;
-  nextStatusEvents?: Event[];
+  addStatusChangingEventsToConnection: (statusChangingEvents: string[]) => void;
+  statusChangingEvents?: Event[];
 };
 
-const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionProps> = ({
-  nextStatusEvents,
+const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToConnectionProps> = ({
+  statusChangingEvents,
   close,
-  addNextStatusEventsToConnection,
+  addStatusChangingEventsToConnection,
 }) => {
   const classes = useStyles();
 
   const { proposalEvents, loadingProposalEvents } = useProposalEventsData();
 
   const initialValues: {
-    selectedNextStatusEvents: Event[];
+    selectedStatusChangingEvents: Event[];
   } = {
-    selectedNextStatusEvents: nextStatusEvents || [],
+    selectedStatusChangingEvents: statusChangingEvents || [],
   };
 
   return (
@@ -73,10 +73,12 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
       <Formik
         initialValues={initialValues}
         onSubmit={async (values): Promise<void> => {
-          addNextStatusEventsToConnection(values.selectedNextStatusEvents);
+          addStatusChangingEventsToConnection(
+            values.selectedStatusChangingEvents
+          );
           close();
         }}
-        validationSchema={addNextStatusEventsToConnectionValidationSchema}
+        validationSchema={addStatusChangingEventsToConnectionValidationSchema}
       >
         {({ isSubmitting, values }): JSX.Element => (
           <Form>
@@ -89,7 +91,7 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
                 <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
               ) : (
                 <FieldArray
-                  name="selectedNextStatusEvents"
+                  name="selectedStatusChangingEvents"
                   render={(arrayHelpers) => (
                     <>
                       {proposalEvents.map((proposalEvent, index) => (
@@ -98,9 +100,9 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
                             control={
                               <Checkbox
                                 id={proposalEvent.name}
-                                name="selectedNextStatusEvents"
+                                name="selectedStatusChangingEvents"
                                 value={proposalEvent.name}
-                                checked={values.selectedNextStatusEvents.includes(
+                                checked={values.selectedStatusChangingEvents.includes(
                                   proposalEvent.name
                                 )}
                                 color="primary"
@@ -109,7 +111,7 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
                                   if (e.target.checked)
                                     arrayHelpers.push(proposalEvent.name);
                                   else {
-                                    const idx = values.selectedNextStatusEvents.indexOf(
+                                    const idx = values.selectedStatusChangingEvents.indexOf(
                                       proposalEvent.name
                                     );
                                     arrayHelpers.remove(idx);
@@ -141,7 +143,7 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
                 <ErrorMessage
                   className={classes.error}
                   component="span"
-                  name="selectedNextStatusEvents"
+                  name="selectedStatusChangingEvents"
                 />
 
                 <Button
@@ -162,10 +164,10 @@ const AddNextStatusEventsToConnection: React.FC<AddNextStatusEventsToConnectionP
   );
 };
 
-AddNextStatusEventsToConnection.propTypes = {
+AddStatusChangingEventsToConnection.propTypes = {
   close: PropTypes.func.isRequired,
-  addNextStatusEventsToConnection: PropTypes.func.isRequired,
-  nextStatusEvents: PropTypes.array,
+  addStatusChangingEventsToConnection: PropTypes.func.isRequired,
+  statusChangingEvents: PropTypes.array,
 };
 
-export default AddNextStatusEventsToConnection;
+export default AddStatusChangingEventsToConnection;
