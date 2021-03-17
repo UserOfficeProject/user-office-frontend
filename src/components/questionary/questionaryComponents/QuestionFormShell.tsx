@@ -48,7 +48,7 @@ export const QuestionFormShell = (
       .then((data) => {
         if (data.updateQuestion.question) {
           props.onUpdated?.(data.updateQuestion.question);
-          props.closeMe();
+          props.closeMe?.();
         }
       });
   };
@@ -61,7 +61,7 @@ export const QuestionFormShell = (
       .then((data) => {
         if (data.deleteQuestion.question) {
           props.onDeleted?.(data.deleteQuestion.question);
-          props.closeMe();
+          props.closeMe?.();
         }
       });
 
