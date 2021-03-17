@@ -9,7 +9,8 @@ import {
 import React, { useState } from 'react';
 
 import { getQuestionaryComponentDefinitions } from 'components/questionary/QuestionaryComponentRegistry';
-import { DataType, QuestionsFilter } from 'generated/sdk';
+import { DataType, QuestionsFilter, TemplateCategoryId } from 'generated/sdk';
+import { useTemplateCategories } from 'hooks/template/useTemplateCategories';
 
 interface QuestionsTableFilterProps {
   onChange?: (filter: QuestionsFilter) => unknown;
@@ -29,23 +30,55 @@ const questionTypes = getQuestionaryComponentDefinitions();
 
 function QuestionsTableFilter(props: QuestionsTableFilterProps) {
   const classes = useStyles();
+  const { categories } = useTemplateCategories();
+  const [category, setCategory] = useState<TemplateCategoryId | undefined>();
   const [questionType, setQuestionType] = useState<DataType | undefined>();
   const [searchText, setSearchText] = useState<string | undefined>();
 
+  const handleChange = (update: Partial<QuestionsFilter>) => {
+    props.onChange?.({
+      dataType: questionType,
+      text: searchText,
+      category: category,
+      ...update,
+    });
+  };
+
   return (
     <div>
+      <FormControl className={classes.formControl}>
+        <InputLabel shrink>Category</InputLabel>
+        <Select
+          onChange={(e) => {
+            const newCategory = e.target.value as TemplateCategoryId;
+            setCategory(newCategory);
+            handleChange({ category: newCategory });
+          }}
+          value={category ?? ''}
+        >
+          <MenuItem value={undefined} key={'None'}>
+            All
+          </MenuItem>
+          {categories.map((category) => (
+            <MenuItem value={category.categoryId} key={category.categoryId}>
+              {category.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <FormControl className={classes.formControl}>
         <InputLabel shrink>Type</InputLabel>
         <Select
           onChange={(e) => {
             const newDataType = e.target.value as DataType;
             setQuestionType(newDataType);
-            props.onChange?.({ dataType: newDataType, text: searchText });
+            handleChange({ dataType: newDataType });
           }}
           value={questionType ?? ''}
         >
           <MenuItem value={undefined} key={'None'}>
-            None
+            All
           </MenuItem>
           {questionTypes.map((questionType) => (
             <MenuItem value={questionType.dataType} key={questionType.dataType}>
@@ -62,7 +95,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
           onChange={(event) => setSearchText(event.target.value)}
           onKeyPress={(event) => {
             if (event.key === 'Enter') {
-              props.onChange?.({ dataType: questionType, text: searchText });
+              handleChange({ text: searchText });
               event.preventDefault();
             }
           }}

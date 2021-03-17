@@ -1,6 +1,7 @@
-import { Grid } from '@material-ui/core';
-import React from 'react';
+import { Grid, Link } from '@material-ui/core';
+import React, { useState } from 'react';
 
+import StyledModal from 'components/common/StyledModal';
 import { SuperMaterialTable } from 'components/common/SuperMaterialTable';
 import { createQuestionForm } from 'components/questionary/QuestionaryComponentRegistry';
 import { Question } from 'generated/sdk';
@@ -9,15 +10,9 @@ import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
 import { FunctionType } from 'utils/utilTypes';
 
+import AnswerCountDetails from './AnswerCountDetails';
 import QuestionsTableFilter from './QuestionsTableFilter';
-
-const columns = [
-  { title: 'Question', field: 'question' },
-  { title: 'Key', field: 'naturalKey' },
-  { title: 'Category', field: 'categoryId' },
-  { title: '# Answers', field: 'answerCount' },
-  { title: '# Templates', field: 'templateCount' },
-];
+import TemplateCountDetails from './TemplateCountDetails';
 
 function QuestionsPage() {
   const {
@@ -26,6 +21,16 @@ function QuestionsPage() {
     setQuestionsFilter,
     loadingQuestions,
   } = useQuestions();
+
+  const [
+    selectedTemplateCountDetailsQuestion,
+    setSelectedTemplateCountDetailsQuestion,
+  ] = useState<Question | null>(null);
+
+  const [
+    selectedAnswerCountDetailsQuestion,
+    setSelectedAnswerCountDetailsQuestion,
+  ] = useState<Question | null>(null);
 
   const createModal = (
     onUpdate: FunctionType<void, [Question | null]>,
@@ -36,6 +41,38 @@ function QuestionsPage() {
       return createQuestionForm({ question, onUpdated: onUpdate });
     }
   };
+
+  const templateCountButton = (rowData: Question) => (
+    <Link
+      onClick={() => setSelectedTemplateCountDetailsQuestion(rowData)}
+      style={{ cursor: 'pointer' }}
+    >
+      {rowData.templateCount}
+    </Link>
+  );
+
+  const answerCountButton = (rowData: Question) => (
+    <Link
+      onClick={() => setSelectedAnswerCountDetailsQuestion(rowData)}
+      style={{ cursor: 'pointer' }}
+    >
+      {rowData.answerCount}
+    </Link>
+  );
+
+  const columns = [
+    { title: 'Question', field: 'question' },
+    { title: 'Key', field: 'naturalKey' },
+    { title: 'Category', field: 'categoryId' },
+    {
+      title: '# Proposals',
+      render: answerCountButton,
+    },
+    {
+      title: '# Templates',
+      render: templateCountButton,
+    },
+  ];
 
   return (
     <ContentContainer>
@@ -60,6 +97,18 @@ function QuestionsPage() {
           </StyledPaper>
         </Grid>
       </Grid>
+      <StyledModal
+        onClose={() => setSelectedTemplateCountDetailsQuestion(null)}
+        open={selectedTemplateCountDetailsQuestion !== null}
+      >
+        <TemplateCountDetails question={selectedTemplateCountDetailsQuestion} />
+      </StyledModal>
+      <StyledModal
+        onClose={() => setSelectedAnswerCountDetailsQuestion(null)}
+        open={selectedAnswerCountDetailsQuestion !== null}
+      >
+        <AnswerCountDetails question={selectedAnswerCountDetailsQuestion} />
+      </StyledModal>
     </ContentContainer>
   );
 }
