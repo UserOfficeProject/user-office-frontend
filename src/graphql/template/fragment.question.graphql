@@ -7,4 +7,6 @@ fragment question on Question {
   config {
     ...fieldConfig
   }
+  answerCount
+  templateCount
 }

@@ -15,6 +15,8 @@ const columns = [
   { title: 'Question', field: 'question' },
   { title: 'Key', field: 'naturalKey' },
   { title: 'Category', field: 'categoryId' },
+  { title: '# Answers', field: 'answerCount' },
+  { title: '# Templates', field: 'templateCount' },
 ];
 
 function QuestionsPage() {

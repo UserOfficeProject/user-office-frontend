@@ -60,6 +60,12 @@ class TemplateTopicEditor implements TemplateTopicEditorData {
   get categoryId() {
     return this.source.question.categoryId;
   }
+  get answerCount() {
+    return this.source.question.answerCount;
+  }
+  get templateCount() {
+    return this.source.question.templateCount;
+  }
 }
 
 export default function QuestionaryEditorTopic(props: {

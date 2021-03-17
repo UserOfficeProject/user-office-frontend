@@ -1817,6 +1817,8 @@ export type Question = {
   dataType: DataType;
   question: Scalars['String'];
   config: FieldConfig;
+  answerCount: Scalars['Int'];
+  templateCount: Scalars['Int'];
 };
 
 export type Questionary = {
@@ -4850,7 +4852,7 @@ export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfig
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
-  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
+  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId' | 'answerCount' | 'templateCount'>
   & { config: (
     { __typename?: 'BooleanConfig' }
     & FieldConfigBooleanConfigFragment
@@ -5807,6 +5809,8 @@ export const QuestionFragmentDoc = gql`
   config {
     ...fieldConfig
   }
+  answerCount
+  templateCount
 }
     ${FieldConfigFragmentDoc}`;
 export const FieldConditionFragmentDoc = gql`
