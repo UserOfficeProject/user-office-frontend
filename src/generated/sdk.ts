@@ -2000,7 +2000,7 @@ export type SampleResponseWrap = {
 export type SamplesFilter = {
   title?: Maybe<Scalars['String']>;
   creatorId?: Maybe<Scalars['Int']>;
-  questionaryId?: Maybe<Scalars['Int']>;
+  questionaryIds?: Maybe<Array<Scalars['Int']>>;
   sampleIds?: Maybe<Array<Scalars['Int']>>;
   status?: Maybe<SampleStatus>;
   questionId?: Maybe<Scalars['String']>;
@@ -2118,7 +2118,7 @@ export type ShipmentsFilter = {
   title?: Maybe<Scalars['String']>;
   creatorId?: Maybe<Scalars['Int']>;
   proposalId?: Maybe<Scalars['Int']>;
-  questionaryId?: Maybe<Scalars['Int']>;
+  questionaryIds?: Maybe<Array<Scalars['Int']>>;
   status?: Maybe<ShipmentStatus>;
   externalRef?: Maybe<Scalars['String']>;
   shipmentIds?: Maybe<Array<Scalars['Int']>>;
@@ -2212,6 +2212,7 @@ export type TemplateResponseWrap = {
 export type TemplatesFilter = {
   isArchived?: Maybe<Scalars['Boolean']>;
   category?: Maybe<TemplateCategoryId>;
+  templateIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type TemplateStep = {

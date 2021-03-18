@@ -12,6 +12,7 @@ import { FunctionType } from 'utils/utilTypes';
 import AnswerCountDetails from './AnswerCountDetails';
 import QuestionsTableFilter from './QuestionsTableFilter';
 import TemplateCountDetails from './TemplateCountDetails';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 function QuestionsPage() {
   const {
@@ -20,6 +21,8 @@ function QuestionsPage() {
     setQuestionsFilter,
     loadingQuestions,
   } = useQuestions();
+
+  const { api } = useDataApiWithFeedback();
 
   const [
     selectedTemplateCountDetailsQuestion,
@@ -37,8 +40,10 @@ function QuestionsPage() {
     question: QuestionWithUsage | null
   ) => {
     if (question) {
-      // @ts-ignore
-      return createQuestionForm({ question, onUpdated: onUpdate });
+      return createQuestionForm({
+        question,
+        onUpdated: (q) => onUpdate(q as QuestionWithUsage),
+      });
     }
   };
 
@@ -65,12 +70,16 @@ function QuestionsPage() {
     { title: 'Key', field: 'naturalKey' },
     { title: 'Category', field: 'categoryId' },
     {
-      title: '# Proposals',
+      title: '# Answers',
       render: answerCountButton,
+      customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
+        a.answers.length - b.answers.length,
     },
     {
       title: '# Templates',
       render: templateCountButton,
+      customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
+        a.templates.length - b.templates.length,
     },
   ];
 
@@ -86,6 +95,11 @@ function QuestionsPage() {
             />
             <SuperMaterialTable
               createModal={createModal}
+              delete={(questionId) =>
+                api('Question deleted')
+                  .deleteQuestion({ questionId: questionId as string })
+                  .then((result) => result.deleteQuestion === null)
+              }
               setData={setQuestions}
               icons={tableIcons}
               title="Questions"
