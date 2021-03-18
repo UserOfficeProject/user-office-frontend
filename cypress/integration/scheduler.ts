@@ -4,12 +4,16 @@ import faker from 'faker';
 context('Scheduler tests', () => {
   before(() => {
     cy.resetDB();
-    cy.resetSchedulerDB();
+    cy.resetSchedulerDB(true);
   });
 
   beforeEach(() => {
     cy.visit('/');
     cy.viewport(1100, 1000);
+  });
+
+  after(() => {
+    cy.resetSchedulerDB();
   });
 
   const futureDate = faker.date.future().toISOString().split('T')[0];

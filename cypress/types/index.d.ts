@@ -24,7 +24,7 @@ declare global {
        * @example
        *    cy.resetSchedulerDB()
        */
-      resetSchedulerDB: () => void;
+      resetSchedulerDB: (includeSeeds?: boolean) => void;
 
       /**
        * Logs in user with provided credentials

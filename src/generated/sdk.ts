@@ -1522,6 +1522,7 @@ export type Query = {
   instrumentScientistHasAccess: Maybe<Scalars['Boolean']>;
   isNaturalKeyPresent: Maybe<Scalars['Boolean']>;
   proposal: Maybe<Proposal>;
+  userHasAccessToProposal: Maybe<Scalars['Boolean']>;
   proposalStatus: Maybe<ProposalStatus>;
   proposalStatuses: Maybe<Array<ProposalStatus>>;
   proposalsView: Maybe<Array<ProposalView>>;
@@ -1690,6 +1691,11 @@ export type QueryIsNaturalKeyPresentArgs = {
 
 export type QueryProposalArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryUserHasAccessToProposalArgs = {
+  proposalId: Scalars['Int'];
 };
 
 
@@ -2572,6 +2578,11 @@ export type MutationNotifyProposalArgs = {
 };
 
 
+export type MutationPrepareDbArgs = {
+  includeSeeds?: Maybe<Scalars['Boolean']>;
+};
+
+
 export type MutationRemoveUserForReviewArgs = {
   sepId: Scalars['Int'];
   reviewId: Scalars['Int'];
@@ -2686,6 +2697,11 @@ export type MutationFinalizeProposalBookingArgs = {
 
 export type MutationActivateProposalBookingArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationResetSchedulerDbArgs = {
+  includeSeeds?: Maybe<Scalars['Boolean']>;
 };
 
 export type AssignProposalToSepMutationVariables = Exact<{
