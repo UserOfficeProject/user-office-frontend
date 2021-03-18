@@ -363,7 +363,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
         aria-describedby="simple-modal-description"
         open={!!workflowConnection}
         onClose={(): void => setWorkflowConnection(null)}
-        data-cy="next-status-events-modal"
+        data-cy="status-changing-events-modal"
       >
         <DialogContent>
           <AddStatusChangingEventsToConnection
@@ -373,6 +373,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
                 (statusChangingEvent) => statusChangingEvent.statusChangingEvent
               ) as ProposalEvent[]
             }
+            statusName={workflowConnection?.proposalStatus.name}
             addStatusChangingEventsToConnection={(
               statusChangingEvents: string[]
             ) =>
@@ -393,7 +394,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
           className={classes.addRowButton}
           onClick={() => setOpenNewRowDialog(true)}
         >
-          Add multicolumn row
+          Add multi-column row
         </Button>
       </Grid>
       {connectionGroups}

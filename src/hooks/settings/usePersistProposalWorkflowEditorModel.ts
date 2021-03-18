@@ -95,7 +95,7 @@ export function usePersistProposalWorkflowEditorModel() {
       proposalWorkflowConnectionId: number,
       statusChangingEvents: string[]
     ) => {
-      return api('Next status events added successfully!')
+      return api('Status changing events added successfully!')
         .addStatusChangingEventsToConnection({
           proposalWorkflowConnectionId,
           statusChangingEvents,

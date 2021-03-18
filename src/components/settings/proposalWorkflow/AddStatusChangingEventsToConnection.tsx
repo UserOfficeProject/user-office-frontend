@@ -28,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
   cardHeader: {
     fontSize: '20px',
     padding: '22px 0 0',
+    '& .statusName': {
+      fontWeight: 'bold',
+    },
   },
   container: {
     minHeight: '350px',
@@ -51,12 +54,14 @@ type AddStatusChangingEventsToConnectionProps = {
   close: () => void;
   addStatusChangingEventsToConnection: (statusChangingEvents: string[]) => void;
   statusChangingEvents?: Event[];
+  statusName?: string;
 };
 
 const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToConnectionProps> = ({
   statusChangingEvents,
   close,
   addStatusChangingEventsToConnection,
+  statusName,
 }) => {
   const classes = useStyles();
 
@@ -83,7 +88,8 @@ const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToCon
         {({ isSubmitting, values }): JSX.Element => (
           <Form>
             <Typography className={classes.cardHeader}>
-              Events that are triggering next status
+              Events that will trigger the change to{' '}
+              <span className="statusName">{statusName}</span> status
             </Typography>
 
             <Grid container spacing={1} className={classes.container}>
@@ -106,7 +112,7 @@ const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToCon
                                   proposalEvent.name
                                 )}
                                 color="primary"
-                                data-cy="next-status-event"
+                                data-cy="status-changing-event"
                                 onChange={(e) => {
                                   if (e.target.checked)
                                     arrayHelpers.push(proposalEvent.name);
@@ -153,7 +159,7 @@ const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToCon
                   disabled={isSubmitting || loadingProposalEvents}
                   data-cy="submit"
                 >
-                  Add next status events
+                  Add status changing events
                 </Button>
               </Grid>
             </Grid>
