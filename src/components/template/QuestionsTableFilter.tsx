@@ -45,7 +45,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
   };
 
   return (
-    <div>
+    <div data-cy="questions-table-filter">
       <FormControl className={classes.formControl}>
         <InputLabel shrink>Category</InputLabel>
         <Select
@@ -55,6 +55,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
             handleChange({ category: newCategory });
           }}
           value={category ?? ''}
+          data-cy="category-dropdown"
         >
           <MenuItem value={undefined} key={'None'}>
             All
@@ -76,6 +77,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
             handleChange({ dataType: newDataType });
           }}
           value={questionType ?? ''}
+          data-cy="type-dropdown"
         >
           <MenuItem value={undefined} key={'None'}>
             All
@@ -99,6 +101,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
               event.preventDefault();
             }
           }}
+          data-cy="search-input"
         />
       </FormControl>
     </div>
