@@ -7,12 +7,12 @@ import { createQuestionForm } from 'components/questionary/QuestionaryComponentR
 import { QuestionWithUsage, useQuestions } from 'hooks/template/useQuestions';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 
 import AnswerCountDetails from './AnswerCountDetails';
 import QuestionsTableFilter from './QuestionsTableFilter';
 import TemplateCountDetails from './TemplateCountDetails';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 function QuestionsPage() {
   const {

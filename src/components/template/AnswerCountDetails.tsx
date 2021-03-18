@@ -4,9 +4,9 @@ import React, { useMemo } from 'react';
 import { TemplateCategoryId } from 'generated/sdk';
 import { useProposalsData } from 'hooks/proposal/useProposalsData';
 import { useSamples } from 'hooks/sample/useSamples';
+import { useShipments } from 'hooks/shipment/useShipments';
 import { QuestionWithUsage } from 'hooks/template/useQuestions';
 import { tableIcons } from 'utils/materialIcons';
-import { useShipments } from 'hooks/shipment/useShipments';
 
 function ProposalList({ question }: { question: QuestionWithUsage }) {
   const questionaryIds = useMemo(
