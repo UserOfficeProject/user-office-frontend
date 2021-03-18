@@ -60,13 +60,6 @@ class QuestionItemAdapter implements TemplateTopicEditorData {
   get categoryId() {
     return this.source.categoryId;
   }
-
-  get answerCount() {
-    return this.source.answerCount;
-  }
-  get templateCount() {
-    return this.source.templateCount;
-  }
 }
 
 export const QuestionPicker = (props: QuestionPickerProps) => {

@@ -222,6 +222,4 @@ export interface TemplateTopicEditorData {
   dependenciesOperator: DependenciesLogicOperator;
   config: FieldConfig;
   categoryId: TemplateCategoryId;
-  answerCount: number;
-  templateCount: number;
 }

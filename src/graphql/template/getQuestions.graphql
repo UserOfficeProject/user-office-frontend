@@ -1,5 +1,18 @@
 query getQuestions($filter: QuestionsFilter) {
   questions(filter: $filter) {
-    ...question
+    id
+    question
+    naturalKey
+    dataType
+    categoryId
+    config {
+      ...fieldConfig
+    }
+    answers {
+      questionaryId
+    }
+    templates {
+      templateId
+    }
   }
 }

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { Question, QuestionsFilter } from 'generated/sdk';
+import { GetQuestionsQuery, QuestionsFilter } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+
+export type QuestionWithUsage = GetQuestionsQuery['questions'][number];
 
 export function useQuestions(filter?: QuestionsFilter) {
   const [questionsFilter, setQuestionsFilter] = useState(filter);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<QuestionWithUsage[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   const api = useDataApi();

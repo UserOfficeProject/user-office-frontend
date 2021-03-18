@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import StyledModal from 'components/common/StyledModal';
 import { SuperMaterialTable } from 'components/common/SuperMaterialTable';
 import { createQuestionForm } from 'components/questionary/QuestionaryComponentRegistry';
-import { Question } from 'generated/sdk';
-import { useQuestions } from 'hooks/template/useQuestions';
+import { QuestionWithUsage, useQuestions } from 'hooks/template/useQuestions';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
 import { FunctionType } from 'utils/utilTypes';
@@ -25,38 +24,39 @@ function QuestionsPage() {
   const [
     selectedTemplateCountDetailsQuestion,
     setSelectedTemplateCountDetailsQuestion,
-  ] = useState<Question | null>(null);
+  ] = useState<QuestionWithUsage | null>(null);
 
   const [
     selectedAnswerCountDetailsQuestion,
     setSelectedAnswerCountDetailsQuestion,
-  ] = useState<Question | null>(null);
+  ] = useState<QuestionWithUsage | null>(null);
 
   const createModal = (
-    onUpdate: FunctionType<void, [Question | null]>,
-    onCreate: FunctionType<void, [Question | null]>,
-    question: Question | null
+    onUpdate: FunctionType<void, [QuestionWithUsage | null]>,
+    onCreate: FunctionType<void, [QuestionWithUsage | null]>,
+    question: QuestionWithUsage | null
   ) => {
     if (question) {
+      // @ts-ignore
       return createQuestionForm({ question, onUpdated: onUpdate });
     }
   };
 
-  const templateCountButton = (rowData: Question) => (
+  const templateCountButton = (rowData: QuestionWithUsage) => (
     <Link
       onClick={() => setSelectedTemplateCountDetailsQuestion(rowData)}
       style={{ cursor: 'pointer' }}
     >
-      {rowData.templateCount}
+      {rowData.templates.length}
     </Link>
   );
 
-  const answerCountButton = (rowData: Question) => (
+  const answerCountButton = (rowData: QuestionWithUsage) => (
     <Link
       onClick={() => setSelectedAnswerCountDetailsQuestion(rowData)}
       style={{ cursor: 'pointer' }}
     >
-      {rowData.answerCount}
+      {rowData.answers.length}
     </Link>
   );
 

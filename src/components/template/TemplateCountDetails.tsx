@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Question } from 'generated/sdk';
+import { QuestionWithUsage } from 'hooks/template/useQuestions';
 
-function TemplateCountDetails(props: { question: Question | null }) {
+function TemplateCountDetails(props: { question: QuestionWithUsage | null }) {
   return <div>TemplateCountDetails</div>;
 }
 

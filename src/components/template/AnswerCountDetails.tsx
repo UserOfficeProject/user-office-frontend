@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Question } from 'generated/sdk';
+import { Question } from 'models/Question';
 
 function AnswerCountDetails(props: { question: Question | null }) {
   return <div>AnswerCountDetails</div>;

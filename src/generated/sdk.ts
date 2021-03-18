@@ -65,6 +65,15 @@ export type Answer = {
   value: Maybe<Scalars['IntStringDateBoolArray']>;
 };
 
+export type AnswerBasic = {
+  __typename?: 'AnswerBasic';
+  answerId: Maybe<Scalars['Int']>;
+  answer: Scalars['IntStringDateBoolArray'];
+  questionaryId: Scalars['Int'];
+  questionId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+};
+
 export type AnswerInput = {
   questionId: Scalars['String'];
   value?: Maybe<Scalars['String']>;
@@ -1482,7 +1491,7 @@ export type Query = {
   callsByInstrumentScientist: Maybe<Array<Call>>;
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
-  questions: Array<Question>;
+  questions: Array<QuestionWithUsage>;
   templates: Maybe<Array<Template>>;
   activeTemplateId: Maybe<Scalars['Int']>;
   basicUserDetails: Maybe<BasicUserDetails>;
@@ -1817,8 +1826,6 @@ export type Question = {
   dataType: DataType;
   question: Scalars['String'];
   config: FieldConfig;
-  answerCount: Scalars['Int'];
-  templateCount: Scalars['Int'];
 };
 
 export type Questionary = {
@@ -1883,6 +1890,18 @@ export type QuestionTemplateRelation = {
   config: FieldConfig;
   dependencies: Array<FieldDependency>;
   dependenciesOperator: Maybe<DependenciesLogicOperator>;
+};
+
+export type QuestionWithUsage = {
+  __typename?: 'QuestionWithUsage';
+  id: Scalars['String'];
+  categoryId: TemplateCategoryId;
+  naturalKey: Scalars['String'];
+  dataType: DataType;
+  question: Scalars['String'];
+  config: FieldConfig;
+  answers: Array<AnswerBasic>;
+  templates: Array<Template>;
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
@@ -4852,7 +4871,7 @@ export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfig
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
-  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId' | 'answerCount' | 'templateCount'>
+  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
   & { config: (
     { __typename?: 'BooleanConfig' }
     & FieldConfigBooleanConfigFragment
@@ -5030,8 +5049,54 @@ export type GetQuestionsQueryVariables = Exact<{
 export type GetQuestionsQuery = (
   { __typename?: 'Query' }
   & { questions: Array<(
-    { __typename?: 'Question' }
-    & QuestionFragment
+    { __typename?: 'QuestionWithUsage' }
+    & Pick<QuestionWithUsage, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
+    & { config: (
+      { __typename?: 'BooleanConfig' }
+      & FieldConfigBooleanConfigFragment
+    ) | (
+      { __typename?: 'DateConfig' }
+      & FieldConfigDateConfigFragment
+    ) | (
+      { __typename?: 'EmbellishmentConfig' }
+      & FieldConfigEmbellishmentConfigFragment
+    ) | (
+      { __typename?: 'FileUploadConfig' }
+      & FieldConfigFileUploadConfigFragment
+    ) | (
+      { __typename?: 'SelectionFromOptionsConfig' }
+      & FieldConfigSelectionFromOptionsConfigFragment
+    ) | (
+      { __typename?: 'TextInputConfig' }
+      & FieldConfigTextInputConfigFragment
+    ) | (
+      { __typename?: 'SampleBasisConfig' }
+      & FieldConfigSampleBasisConfigFragment
+    ) | (
+      { __typename?: 'SubtemplateConfig' }
+      & FieldConfigSubtemplateConfigFragment
+    ) | (
+      { __typename?: 'ProposalBasisConfig' }
+      & FieldConfigProposalBasisConfigFragment
+    ) | (
+      { __typename?: 'IntervalConfig' }
+      & FieldConfigIntervalConfigFragment
+    ) | (
+      { __typename?: 'NumberInputConfig' }
+      & FieldConfigNumberInputConfigFragment
+    ) | (
+      { __typename?: 'ShipmentBasisConfig' }
+      & FieldConfigShipmentBasisConfigFragment
+    ) | (
+      { __typename?: 'RichTextInputConfig' }
+      & FieldConfigRichTextInputConfigFragment
+    ), answers: Array<(
+      { __typename?: 'AnswerBasic' }
+      & Pick<AnswerBasic, 'questionaryId'>
+    )>, templates: Array<(
+      { __typename?: 'Template' }
+      & Pick<Template, 'templateId'>
+    )> }
   )> }
 );
 
@@ -5809,8 +5874,6 @@ export const QuestionFragmentDoc = gql`
   config {
     ...fieldConfig
   }
-  answerCount
-  templateCount
 }
     ${FieldConfigFragmentDoc}`;
 export const FieldConditionFragmentDoc = gql`
@@ -7748,10 +7811,23 @@ export const GetProposalTemplatesDocument = gql`
 export const GetQuestionsDocument = gql`
     query getQuestions($filter: QuestionsFilter) {
   questions(filter: $filter) {
-    ...question
+    id
+    question
+    naturalKey
+    dataType
+    categoryId
+    config {
+      ...fieldConfig
+    }
+    answers {
+      questionaryId
+    }
+    templates {
+      templateId
+    }
   }
 }
-    ${QuestionFragmentDoc}`;
+    ${FieldConfigFragmentDoc}`;
 export const GetTemplateDocument = gql`
     query getTemplate($templateId: Int!) {
   template(templateId: $templateId) {
