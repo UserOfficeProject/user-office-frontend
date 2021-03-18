@@ -540,6 +540,7 @@ export type Mutation = {
   deleteProposal: ProposalResponseWrap;
   deleteQuestion: QuestionResponseWrap;
   deleteSample: SampleResponseWrap;
+  deleteSEP: SepResponseWrap;
   deleteShipment: ShipmentResponseWrap;
   deleteTemplate: TemplateResponseWrap;
   deleteTopic: TemplateResponseWrap;
@@ -1099,6 +1100,11 @@ export type MutationDeleteQuestionArgs = {
 
 export type MutationDeleteSampleArgs = {
   sampleId: Scalars['Int'];
+};
+
+
+export type MutationDeleteSepArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1816,7 +1822,7 @@ export type Service = {
 
 export type Question = {
   __typename?: 'Question';
-  proposalQuestionId: Scalars['String'];
+  id: Scalars['String'];
   categoryId: TemplateCategoryId;
   naturalKey: Scalars['String'];
   dataType: DataType;
@@ -2452,6 +2458,23 @@ export type CreateSepMutation = (
   ) }
 );
 
+export type DeleteSepMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteSepMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteSEP: (
+    { __typename?: 'SEPResponseWrap' }
+    & Pick<SepResponseWrap, 'error'>
+    & { sep: Maybe<(
+      { __typename?: 'SEP' }
+      & Pick<Sep, 'id'>
+    )> }
+  ) }
+);
+
 export type GetInstrumentsBySepQueryVariables = Exact<{
   sepId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -2664,7 +2687,7 @@ export type GetSepReviewersQuery = (
 
 export type GetSePsQueryVariables = Exact<{
   filter: Scalars['String'];
-  active: Scalars['Boolean'];
+  active?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -3609,6 +3632,9 @@ export type GetProposalQuery = (
     )>, call: Maybe<(
       { __typename?: 'Call' }
       & Pick<Call, 'id' | 'shortCode'>
+    )>, sep: Maybe<(
+      { __typename?: 'SEP' }
+      & Pick<Sep, 'id' | 'code'>
     )> }
     & ProposalFragment
   )> }
@@ -4860,7 +4886,7 @@ export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfig
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
-  & Pick<Question, 'question' | 'proposalQuestionId' | 'naturalKey' | 'dataType' | 'categoryId'>
+  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
   & { config: (
     { __typename?: 'BooleanConfig' }
     & FieldConfigBooleanConfigFragment
@@ -5796,8 +5822,8 @@ export const FieldConfigFragmentDoc = gql`
     `;
 export const QuestionFragmentDoc = gql`
     fragment question on Question {
+  id
   question
-  proposalQuestionId
   naturalKey
   dataType
   categoryId
@@ -6033,6 +6059,16 @@ export const CreateSepDocument = gql`
   }
 }
     ${BasicUserDetailsFragmentDoc}`;
+export const DeleteSepDocument = gql`
+    mutation deleteSEP($id: Int!) {
+  deleteSEP(id: $id) {
+    error
+    sep {
+      id
+    }
+  }
+}
+    `;
 export const GetInstrumentsBySepDocument = gql`
     query getInstrumentsBySEP($sepId: Int!, $callId: Int!) {
   instrumentsBySep(sepId: $sepId, callId: $callId) {
@@ -6251,7 +6287,7 @@ export const GetSepReviewersDocument = gql`
 }
     `;
 export const GetSePsDocument = gql`
-    query getSEPs($filter: String!, $active: Boolean!) {
+    query getSEPs($filter: String!, $active: Boolean) {
   seps(filter: $filter, active: $active) {
     seps {
       id
@@ -6524,7 +6560,6 @@ export const DeleteCallDocument = gql`
     call {
       id
     }
-    error
   }
 }
     `;
@@ -6923,6 +6958,10 @@ export const GetProposalDocument = gql`
     call {
       id
       shortCode
+    }
+    sep {
+      id
+      code
     }
   }
 }
@@ -8200,6 +8239,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createSEP(variables: CreateSepMutationVariables): Promise<CreateSepMutation> {
       return withWrapper(() => client.request<CreateSepMutation>(print(CreateSepDocument), variables));
+    },
+    deleteSEP(variables: DeleteSepMutationVariables): Promise<DeleteSepMutation> {
+      return withWrapper(() => client.request<DeleteSepMutation>(print(DeleteSepDocument), variables));
     },
     getInstrumentsBySEP(variables: GetInstrumentsBySepQueryVariables): Promise<GetInstrumentsBySepQuery> {
       return withWrapper(() => client.request<GetInstrumentsBySepQuery>(print(GetInstrumentsBySepDocument), variables));

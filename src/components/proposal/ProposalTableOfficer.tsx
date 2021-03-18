@@ -20,8 +20,10 @@ import ListStatusIcon from 'components/common/icons/ListStatusIcon';
 import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
+import ProposalReviewContent, {
+  TabNames,
+} from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
-import ProposalReview from 'components/review/ProposalReviewUserOfficer';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
 import {
   Call,
@@ -558,6 +560,14 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     (proposal) => proposal.id === urlQueryParams.reviewModal
   );
 
+  const userOfficerProposalReviewTabs: TabNames[] = [
+    'Proposal information',
+    'Technical review',
+    'Reviews',
+    'Admin',
+    'Logs',
+  ];
+
   return (
     <>
       <Dialog
@@ -632,7 +642,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         }}
         reviewItemId={proposalToReview?.id}
       >
-        <ProposalReview proposalId={proposalToReview?.id as number} />
+        <ProposalReviewContent
+          proposalId={proposalToReview?.id as number}
+          tabNames={userOfficerProposalReviewTabs}
+        />
       </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
