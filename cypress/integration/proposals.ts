@@ -148,7 +148,7 @@ context('Proposal tests', () => {
     cy.login('user');
 
     cy.contains(`Copy of ${proposalToCloneTitle}`)
-      .closest('tr')
+      .parent()
       .find('[title="Delete proposal"]')
       .click();
 
