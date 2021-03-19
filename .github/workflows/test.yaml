@@ -1,0 +1,29 @@
+name: Testing
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop and master branches
+on: push
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo ${{ github.action }}
+      - run: echo ${{ github.action_path }}
+      - run: echo ${{ github.actor }}
+      - run: echo ${{ github.base_ref }}
+      - run: echo ${{ github.event }}
+      - run: echo ${{ github.event_name }}
+      - run: echo ${{ github.event_path }}
+      - run: echo ${{ github.head_ref }}
+      - run: echo ${{ github.job }}
+      - run: echo ${{ github.ref }}
+      - run: echo ${{ github.repository }}
+      - run: echo ${{ github.repository_owner }}
+      - run: echo ${{ github.run_id }}
+      - run: echo ${{ github.run_number }}
+      - run: echo ${{ github.sha }}
+      - run: echo ${{ github.workflow }}
+      - run: echo ${{ github.workspace }}
