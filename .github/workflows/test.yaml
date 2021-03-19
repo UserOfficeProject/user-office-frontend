@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo ${{ github.action }}
-      - run: echo ${{ github.action_path }}
-      - run: echo ${{ github.actor }}
-      - run: echo ${{ github.base_ref }}
-      - run: echo ${{ github.event }}
-      - run: echo ${{ github.event_name }}
-      - run: echo ${{ github.event_path }}
-      - run: echo ${{ github.head_ref }}
-      - run: echo ${{ github.job }}
-      - run: echo ${{ github.ref }}
-      - run: echo ${{ github.repository }}
-      - run: echo ${{ github.repository_owner }}
-      - run: echo ${{ github.run_id }}
-      - run: echo ${{ github.run_number }}
-      - run: echo ${{ github.sha }}
-      - run: echo ${{ github.workflow }}
-      - run: echo ${{ github.workspace }}
+      - run: echo "action ${{ github.action }}"
+      - run: echo "action_path ${{ github.action_path }}"
+      - run: echo "actor ${{ github.actor }}"
+      - run: echo "base_ref ${{ github.base_ref }}"
+      - run: echo "event ${{ github.event }}"
+      - run: echo "event_name ${{ github.event_name }}"
+      - run: echo "event_path ${{ github.event_path }}"
+      - run: echo "head_ref ${{ github.head_ref }}"
+      - run: echo "job ${{ github.job }}"
+      - run: echo "ref ${{ github.ref }}"
+      - run: echo "repository ${{ github.repository }}"
+      - run: echo "repository_owner ${{ github.repository_owner }}"
+      - run: echo "run_id ${{ github.run_id }}"
+      - run: echo "run_number ${{ github.run_number }}"
+      - run: echo "sha ${{ github.sha }}"
+      - run: echo "workflow ${{ github.workflow }}"
+      - run: echo "workspace ${{ github.workspace }}"
