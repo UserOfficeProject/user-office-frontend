@@ -15,6 +15,8 @@ jobs:
       - run: echo "actor ${{ github.actor }}"
       - run: echo "base_ref ${{ github.base_ref }}"
       - run: echo "event ${{ github.event }}"
+      - run: echo "event.before ${{ github.event.before }}"
+      - run: echo "event.after ${{ github.event.after }}"
       - run: echo "event_name ${{ github.event_name }}"
       - run: echo "event_path ${{ github.event_path }}"
       - run: echo "head_ref ${{ github.head_ref }}"
