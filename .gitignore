@@ -15,6 +15,10 @@
 
 /src/generated/sdk.ts
 
+# Env files
+.env*
+!.env.example
+
 # misc
 .DS_Store
 .env.local
