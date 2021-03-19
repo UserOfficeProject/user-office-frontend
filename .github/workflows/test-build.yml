@@ -8,6 +8,62 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  resolve_dep:
+    runs-on: ubuntu-latest
+    outputs:
+      BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}
+      FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}
+
+    steps:
+      - name: Resolve required repositories
+        id: resolve_rep
+        run: |
+          # this assumes the result is an array, and .name property is used
+          check_feature() {
+            # first param is the branch, everything after is endpoint for curl
+            local branch=$1
+            local found=0
+
+            shift
+
+            for endpoint in $@; do
+              local json=$(curl -s $endpoint)
+              local branch_found=$(echo $json | jq -c ".[] | select(.name==\"$branch\") | .name")
+
+              # to track what we found
+              echo "$endpoint -> $branch_found" &> /dev/stderr
+
+              if [[ $branch_found != "" ]]; then
+                found=$((found += 1))
+              fi
+            done
+
+            echo $found
+          }
+
+          BE_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-backend/branches
+          )
+
+          FACTORY_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-factory/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-factory/branches
+          )
+
+          BE_TAG=develop
+          if [[ $BE_TAGS == "2" ]]; then
+            BE_TAG="${{ github.head_ref }}"
+          fi
+
+          FACTORY_TAG=develop
+          if [[ $FACTORY_TAGS == "2" ]]; then
+            FACTORY_TAG="${{ github.head_ref }}"
+          fi
+
+          echo ::set-output name=BE_TAG::${BE_TAG}
+          echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
+
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -15,6 +71,52 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+
+      - name: Generate SDK
+        run: npm ci --production
+
+      - name: Download required repositories
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+          git clone --depth 1 --branch "${{ jobs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
+
+      - name: Setup base docker-compose
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+          cat > docker-compose.all.yml << EOF
+          version: "3.1"
+          services:
+            proxy:
+              image: traefik:1.7
+              command: --api --docker
+              ports:
+                - "80:80" # The HTTP port
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock:ro
+          EOF
+
+      - name: Run docker-compose
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+
+          REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
+
+          export USER_OFFICE_BACKEND_TAG=${{ steps.resolve_rep.outputs.BE_TAG }}
+          export USER_OFFICE_BACKEND_DIR=user-office-backend
+
+          export USER_OFFICE_FACTORY_ENDPOINT=noop
+
+          docker-compose -f docker-compose.all.yml \
+            -f user-office-backend/docker-compose.e2e.yml \
+            up -d
+
+          sleep 30
+
+          cd $GITHUB_WORKSPACE
+          export SCHEMA_URL=http://localhost:80/graphql
+          npm run generate:local
+
+          rm -rf node_modules
 
       - name: Cache app docker layers and image
         id: cached-image
@@ -108,60 +210,11 @@ jobs:
         run: |
           docker load --input /tmp/.buildx-image-cache/img.tar
 
-      - name: Resolve required repositories
-        id: resolve_rep
-        run: |
-          # this assumes the result is an array, and .name property is used
-          check_feature() {
-            # first param is the branch, everything after is endpoint for curl
-            local branch=$1
-            local found=0
-
-            shift
-
-            for endpoint in $@; do
-              local json=$(curl -s $endpoint)
-              local branch_found=$(echo $json | jq -c ".[] | select(.name==\"$branch\") | .name")
-
-              # to track what we found
-              echo "$endpoint -> $branch_found" &> /dev/stderr
-
-              if [[ $branch_found != "" ]]; then
-                found=$((found += 1))
-              fi
-            done
-
-            echo $found
-          }
-
-          BE_TAGS=$(check_feature ${{ github.head_ref }} \
-            https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags \
-            https://api.github.com/repos/UserOfficeProject/user-office-backend/branches
-          )
-
-          FACTORY_TAGS=$(check_feature ${{ github.head_ref }} \
-            https://registry.hub.docker.com/v1/repositories/dmsc/duo-factory/tags \
-            https://api.github.com/repos/UserOfficeProject/user-office-factory/branches
-          )
-
-          BE_TAG=develop
-          if [[ $BE_TAGS == "2" ]]; then
-            BE_TAG="${{ github.head_ref }}"
-          fi
-
-          FACTORY_TAG=develop
-          if [[ $FACTORY_TAGS == "2" ]]; then
-            FACTORY_TAG="${{ github.head_ref }}"
-          fi
-
-          echo ::set-output name=BE_TAG::${BE_TAG}
-          echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
-
       - name: Download required repositories
         run: |
           cd "$GITHUB_WORKSPACE/.."
-          git clone --depth 1 --branch "${{ steps.resolve_rep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
-          git clone --depth 1 --branch "${{ steps.resolve_rep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
+          git clone --depth 1 --branch "${{ jobs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
+          git clone --depth 1 --branch "${{ jobs.resolve_dep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
 
       - name: Setup base docker-compose
         run: |
