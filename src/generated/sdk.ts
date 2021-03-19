@@ -5340,12 +5340,12 @@ export type QuestionTemplateRelationFragment = (
 
 export type TemplateFragment = (
   { __typename?: 'Template' }
-  & Pick<Template, 'templateId' | 'categoryId' | 'name' | 'description'>
+  & Pick<Template, 'isArchived' | 'questionaryCount' | 'templateId' | 'categoryId' | 'name' | 'description'>
   & { steps: Array<(
     { __typename?: 'TemplateStep' }
     & { topic: (
       { __typename?: 'Topic' }
-      & Pick<Topic, 'title' | 'id' | 'sortOrder'>
+      & TopicFragment
     ), fields: Array<(
       { __typename?: 'QuestionTemplateRelation' }
       & QuestionTemplateRelationFragment
@@ -6301,14 +6301,14 @@ export const TemplateFragmentDoc = gql`
     fragment template on Template {
   steps {
     topic {
-      title
-      id
-      sortOrder
+      ...topic
     }
     fields {
       ...questionTemplateRelation
     }
   }
+  isArchived
+  questionaryCount
   templateId
   categoryId
   name
@@ -6317,7 +6317,8 @@ export const TemplateFragmentDoc = gql`
     ...question
   }
 }
-    ${QuestionTemplateRelationFragmentDoc}
+    ${TopicFragmentDoc}
+${QuestionTemplateRelationFragmentDoc}
 ${QuestionFragmentDoc}`;
 export const TemplateMetadataFragmentDoc = gql`
     fragment templateMetadata on Template {
