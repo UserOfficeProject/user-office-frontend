@@ -78,8 +78,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: node-modules-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+
       - name: Generate SDK
-        run: npm ci --production
+        run: npm ci --production --loglevel error --no-fund
 
       - name: Download required repositories
         run: |
@@ -131,8 +141,9 @@ jobs:
           path: |
             /tmp/.buildx-layer-cache
             /tmp/.buildx-image-cache
-          key: ${{ runner.os }}-buildx-${{ github.head_ref }}-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.head_ref }}-${{ github.sha }}-${{ hashFiles('src/generated/sdk.ts') }}
           restore-keys: |
+            ${{ runner.os }}-buildx-${{ github.head_ref }}-${{ github.sha }}-
             ${{ runner.os }}-buildx-${{ github.head_ref }}-
             ${{ runner.os }}-buildx-
 
@@ -237,10 +248,10 @@ jobs:
 
           REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
 
-          export USER_OFFICE_BACKEND_TAG=${{ steps.resolve_rep.outputs.BE_TAG }}
+          export USER_OFFICE_BACKEND_TAG=${{ needs.resolve_dep.outputs.BE_TAG }}
           export USER_OFFICE_BACKEND_DIR=user-office-backend
 
-          export USER_OFFICE_FACTORY_TAG=${{ steps.resolve_rep.outputs.FACTORY_TAG }}
+          export USER_OFFICE_FACTORY_TAG=${{ needs.resolve_dep.outputs.FACTORY_TAG }}
           export USER_OFFICE_FACTORY_ENDPOINT=http://factory:4500/generate
 
           export USER_OFFICE_FRONTEND_DIR=$REPO_DIR_NAME
