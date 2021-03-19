@@ -13,6 +13,8 @@
 # production
 /build
 
+/src/generated/sdk.ts
+
 # misc
 .DS_Store
 .env.local
