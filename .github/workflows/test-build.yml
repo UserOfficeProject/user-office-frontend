@@ -64,6 +64,11 @@ jobs:
           echo ::set-output name=BE_TAG::${BE_TAG}
           echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
 
+      - name: Resolved
+        run: |
+          echo "BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}"
+          echo "FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}"
+
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -102,7 +107,7 @@ jobs:
 
           REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
 
-          export USER_OFFICE_BACKEND_TAG=${{ steps.resolve_rep.outputs.BE_TAG }}
+          export USER_OFFICE_BACKEND_TAG=${{ needs.resolve_dep.outputs.BE_TAG }}
           export USER_OFFICE_BACKEND_DIR=user-office-backend
 
           export USER_OFFICE_FACTORY_ENDPOINT=noop
