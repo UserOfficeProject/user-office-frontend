@@ -1,4 +1,4 @@
-import { administrationProposalValidationSchema } from '@esss-swap/duo-validation';
+// import { administrationProposalValidationSchema } from '@esss-swap/duo-validation';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -11,8 +11,12 @@ import React, { useState } from 'react';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
-import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
-import { Proposal, ProposalEndStatus } from 'generated/sdk';
+import {
+  Proposal,
+  ProposalEndStatus,
+  SaveSepMeetingDecisionInput,
+  SepMeetingDecision,
+} from 'generated/sdk';
 import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -26,7 +30,7 @@ type FinalRankingFormProps = {
   proposalData: Proposal;
   hasWriteAccess: boolean;
   closeModal: () => void;
-  meetingSubmitted: (data: AdministrationFormData) => void;
+  meetingSubmitted: (data: SepMeetingDecision) => void;
 };
 
 const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
@@ -39,30 +43,39 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   const [shouldClose, setShouldClose] = useState<boolean>(false);
   const { api } = useDataApiWithFeedback();
 
-  const initialData = {
-    id: proposalData.id,
-    finalStatus: proposalData.finalStatus ?? ProposalEndStatus.UNSET,
-    commentForUser: proposalData.commentForUser ?? '',
-    commentForManagement: proposalData.commentForManagement ?? '',
-    rankOrder: proposalData.rankOrder ?? '',
+  const initialData: SaveSepMeetingDecisionInput = {
+    proposalId: proposalData.id,
+    commentForUser: proposalData.sepMeetingDecision?.commentForUser ?? '',
+    commentForManagement:
+      proposalData.sepMeetingDecision?.commentForManagement ?? '',
+    rankOrder: proposalData.sepMeetingDecision?.rankOrder ?? 0,
+    recommendation:
+      proposalData.sepMeetingDecision?.recommendation ??
+      ProposalEndStatus.UNSET,
+    submitted: proposalData.sepMeetingDecision?.submitted ?? false,
   };
 
-  const handleSubmit = async (values: AdministrationFormData) => {
-    const administrationProposalVales = {
-      id: values.id,
-      finalStatus: ProposalEndStatus[values.finalStatus as ProposalEndStatus],
+  const handleSubmit = async (values: SaveSepMeetingDecisionInput) => {
+    const saveSepMeetingDecisionInput = {
+      proposalId: values.proposalId,
+      recommendation:
+        ProposalEndStatus[values.recommendation as ProposalEndStatus],
       commentForUser: values.commentForUser,
       commentForManagement: values.commentForManagement,
       rankOrder: values.rankOrder,
+      submitted: false,
     };
 
-    const data = await api('Saved!').administrationProposal(
-      administrationProposalVales
-    );
+    const data = await api(
+      'SEP meeting decision saved successfully!'
+    ).saveSepMeetingDecision({ saveSepMeetingDecisionInput });
 
-    const isError = !!data.administrationProposal.error;
+    const isError = !!data.saveSepMeetingDecision.error;
 
-    meetingSubmitted(administrationProposalVales);
+    meetingSubmitted({
+      ...saveSepMeetingDecisionInput,
+      submittedBy: proposalData.sepMeetingDecision?.submittedBy || null,
+    });
 
     if (shouldClose && !isError) {
       closeModal();
@@ -76,7 +89,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={initialData}
-          validationSchema={administrationProposalValidationSchema}
+          // validationSchema={administrationProposalValidationSchema}
           onSubmit={async (values): Promise<void> => {
             if (!hasWriteAccess) {
               return;
@@ -111,9 +124,9 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     disabled={!hasWriteAccess}
                   />
                   <FormikDropdown
-                    name="finalStatus"
+                    name="recommendation"
                     label="Recommendation"
-                    data-cy="proposalFinalStatus"
+                    data-cy="proposalSepMeetingRecommendation"
                     items={[
                       { text: 'Unset', value: ProposalEndStatus.UNSET },
                       { text: 'Accepted', value: ProposalEndStatus.ACCEPTED },

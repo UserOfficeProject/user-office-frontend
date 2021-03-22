@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
-import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
 import { UserContext } from 'context/UserContextProvider';
 import {
   SepProposal,
   InstrumentWithAvailabilityTime,
   UserRole,
+  SepMeetingDecision,
 } from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
@@ -61,14 +61,20 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const { user } = useContext(UserContext);
 
   const sortByRankOrder = (a: SepProposal, b: SepProposal) => {
-    if (a.proposal.rankOrder === b.proposal.rankOrder) {
+    if (
+      a.proposal.sepMeetingDecision?.rankOrder ===
+      b.proposal.sepMeetingDecision?.rankOrder
+    ) {
       return -1;
-    } else if (a.proposal.rankOrder === null) {
+    } else if (a.proposal.sepMeetingDecision?.rankOrder === null) {
       return 1;
-    } else if (b.proposal.rankOrder === null) {
+    } else if (b.proposal.sepMeetingDecision?.rankOrder === null) {
       return -1;
     } else {
-      return a.proposal.rankOrder > b.proposal.rankOrder ? 1 : -1;
+      return (a.proposal.sepMeetingDecision as SepMeetingDecision).rankOrder >
+        (b.proposal.sepMeetingDecision as SepMeetingDecision).rankOrder
+        ? 1
+        : -1;
     }
   };
 
@@ -169,7 +175,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     {
       title: 'Current rank',
       render: (rowData: SepProposal) =>
-        rowData.proposal.rankOrder ? rowData.proposal.rankOrder : '-',
+        rowData.proposal.sepMeetingDecision
+          ? rowData.proposal.sepMeetingDecision.rankOrder
+          : '-',
     },
     {
       title: 'Time allocation',
@@ -182,19 +190,19 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     {
       title: 'Review meeting',
       render: (rowData: SepProposal): string =>
-        rowData.proposal.rankOrder ? 'Yes' : 'No',
+        rowData.proposal.sepMeetingDecision ? 'Yes' : 'No',
     },
   ];
 
-  const onMeetingSubmitted = (data: AdministrationFormData) => {
+  const onMeetingSubmitted = (data: SepMeetingDecision) => {
     const newInstrumentProposalsData = instrumentProposalsData.map(
       (proposalData) => {
-        if (proposalData.proposal.id === data.id) {
+        if (proposalData.proposal.id === data.proposalId) {
           return {
             ...proposalData,
             proposal: {
               ...proposalData.proposal,
-              ...data,
+              sepMeetingDecision: data,
             },
           };
         } else {
