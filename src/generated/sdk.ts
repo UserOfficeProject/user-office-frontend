@@ -156,6 +156,11 @@ export type CallsFilter = {
   isSEPReviewEnded?: Maybe<Scalars['Boolean']>;
 };
 
+export type ChangeProposalsStatusInput = {
+  statusId: Scalars['Int'];
+  proposals: Array<ProposalIdWithCallId>;
+};
+
 export type CheckExternalTokenWrap = {
   __typename?: 'CheckExternalTokenWrap';
   error: Maybe<Scalars['String']>;
@@ -293,6 +298,7 @@ export enum Event {
   PROPOSAL_INSTRUMENT_SUBMITTED = 'PROPOSAL_INSTRUMENT_SUBMITTED',
   PROPOSAL_ACCEPTED = 'PROPOSAL_ACCEPTED',
   PROPOSAL_REJECTED = 'PROPOSAL_REJECTED',
+  PROPOSAL_STATUS_UPDATED = 'PROPOSAL_STATUS_UPDATED',
   CALL_ENDED = 'CALL_ENDED',
   CALL_REVIEW_ENDED = 'CALL_REVIEW_ENDED',
   CALL_SEP_REVIEW_ENDED = 'CALL_SEP_REVIEW_ENDED',
@@ -590,6 +596,11 @@ export type ProposalEvent = {
   description: Maybe<Scalars['String']>;
 };
 
+export type ProposalIdWithCallId = {
+  id: Scalars['Int'];
+  callId: Scalars['Int'];
+};
+
 export type ProposalNextStatusEventResponseWrap = {
   __typename?: 'ProposalNextStatusEventResponseWrap';
   error: Maybe<Scalars['String']>;
@@ -640,11 +651,6 @@ export type ProposalStatusResponseWrap = {
   __typename?: 'ProposalStatusResponseWrap';
   error: Maybe<Scalars['String']>;
   proposalStatus: Maybe<ProposalStatus>;
-};
-
-export type ProposalsToInstrumentArgs = {
-  id: Scalars['Int'];
-  callId: Scalars['Int'];
 };
 
 export type ProposalTemplate = {
@@ -1888,6 +1894,7 @@ export type Mutation = {
   updateCall: CallResponseWrap;
   assignInstrumentsToCall: CallResponseWrap;
   removeAssignedInstrumentFromCall: CallResponseWrap;
+  changeProposalsStatus: SuccessResponseWrap;
   assignProposalsToInstrument: SuccessResponseWrap;
   removeProposalFromInstrument: SuccessResponseWrap;
   assignScientistsToInstrument: SuccessResponseWrap;
@@ -2048,8 +2055,13 @@ export type MutationRemoveAssignedInstrumentFromCallArgs = {
 };
 
 
+export type MutationChangeProposalsStatusArgs = {
+  changeProposalsStatusInput: ChangeProposalsStatusInput;
+};
+
+
 export type MutationAssignProposalsToInstrumentArgs = {
-  proposals: Array<ProposalsToInstrumentArgs>;
+  proposals: Array<ProposalIdWithCallId>;
   instrumentId: Scalars['Int'];
 };
 
@@ -3573,7 +3585,7 @@ export type GetEventLogsQuery = (
 );
 
 export type AssignProposalsToInstrumentMutationVariables = Exact<{
-  proposals: Array<ProposalsToInstrumentArgs> | ProposalsToInstrumentArgs;
+  proposals: Array<ProposalIdWithCallId> | ProposalIdWithCallId;
   instrumentId: Scalars['Int'];
 }>;
 
@@ -3778,6 +3790,20 @@ export type AdministrationProposalMutation = (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id'>
     )> }
+  ) }
+);
+
+export type ChangeProposalsStatusMutationVariables = Exact<{
+  proposals: Array<ProposalIdWithCallId> | ProposalIdWithCallId;
+  statusId: Scalars['Int'];
+}>;
+
+
+export type ChangeProposalsStatusMutation = (
+  { __typename?: 'Mutation' }
+  & { changeProposalsStatus: (
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
   ) }
 );
 
@@ -6982,7 +7008,7 @@ export const GetEventLogsDocument = gql`
 }
     `;
 export const AssignProposalsToInstrumentDocument = gql`
-    mutation assignProposalsToInstrument($proposals: [ProposalsToInstrumentArgs!]!, $instrumentId: Int!) {
+    mutation assignProposalsToInstrument($proposals: [ProposalIdWithCallId!]!, $instrumentId: Int!) {
   assignProposalsToInstrument(proposals: $proposals, instrumentId: $instrumentId) {
     error
     isSuccess
@@ -7136,6 +7162,16 @@ export const AdministrationProposalDocument = gql`
   }
 }
     `;
+export const ChangeProposalsStatusDocument = gql`
+    mutation changeProposalsStatus($proposals: [ProposalIdWithCallId!]!, $statusId: Int!) {
+  changeProposalsStatus(
+    changeProposalsStatusInput: {proposals: $proposals, statusId: $statusId}
+  ) {
+    error
+    isSuccess
+  }
+}
+    `;
 export const CloneProposalDocument = gql`
     mutation cloneProposal($proposalToCloneId: Int!, $callId: Int!) {
   cloneProposal(
@@ -7218,7 +7254,6 @@ export const DeleteProposalDocument = gql`
     proposal {
       id
     }
-    error
   }
 }
     `;
@@ -8760,6 +8795,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     administrationProposal(variables: AdministrationProposalMutationVariables): Promise<AdministrationProposalMutation> {
       return withWrapper(() => client.request<AdministrationProposalMutation>(print(AdministrationProposalDocument), variables));
+    },
+    changeProposalsStatus(variables: ChangeProposalsStatusMutationVariables): Promise<ChangeProposalsStatusMutation> {
+      return withWrapper(() => client.request<ChangeProposalsStatusMutation>(print(ChangeProposalsStatusDocument), variables));
     },
     cloneProposal(variables: CloneProposalMutationVariables): Promise<CloneProposalMutation> {
       return withWrapper(() => client.request<CloneProposalMutation>(print(CloneProposalDocument), variables));
