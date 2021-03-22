@@ -31,6 +31,7 @@ import ProposalChooseCall from './proposal/ProposalChooseCall';
 import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
+import MyBeamTimes from './proposalBooking/MyBeamTimes';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -146,6 +147,8 @@ const Dashboard: React.FC = () => {
   const featureContext = useContext(FeatureContext);
   const isShipmentEnabled = !!featureContext.features.get(FeatureId.SHIPPING)
     ?.isEnabled;
+  const isSchedulerEnabled = featureContext.features.get(FeatureId.SCHEDULER)
+    ?.isEnabled;
 
   const { currentRole } = useContext(UserContext);
   const { calls } = useCallsData({ isActive: true });
@@ -162,7 +165,7 @@ const Dashboard: React.FC = () => {
   const [, privacyPageContent] = useGetPageContent(PageName.PRIVACYPAGE);
   const [, faqPageContent] = useGetPageContent(PageName.HELPPAGE);
 
-  // TODO: Check who can see what and modify the access controll here.
+  // TODO: Check who can see what and modify the access control here.
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -263,6 +266,9 @@ const Dashboard: React.FC = () => {
           )}
           {isUserOfficer && (
             <Route path="/ApiAccessTokens" component={ApiAccessTokensPage} />
+          )}
+          {isSchedulerEnabled && (
+            <Route path="/MyBeamTimes" component={MyBeamTimes} />
           )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
