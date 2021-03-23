@@ -8,7 +8,6 @@ fragment proposal on Proposal {
   }
   publicStatus
   shortCode
-  rankOrder
   finalStatus
   commentForUser
   commentForManagement

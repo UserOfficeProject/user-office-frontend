@@ -549,7 +549,6 @@ export type Proposal = {
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   shortCode: Scalars['String'];
-  rankOrder: Maybe<Scalars['Int']>;
   finalStatus: Maybe<ProposalEndStatus>;
   callId: Scalars['Int'];
   questionaryId: Scalars['Int'];
@@ -1962,6 +1961,7 @@ export type Mutation = {
   assignProposalToSEP: NextProposalStatusResponseWrap;
   removeProposalAssignment: SepResponseWrap;
   createSEP: SepResponseWrap;
+  overwriteSepMeetingDecisionRanking: SepMeetingDecisionResponseWrap;
   saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
   updateSEP: SepResponseWrap;
   updateSEPTimeAllocation: SepProposalResponseWrap;
@@ -2009,7 +2009,6 @@ export type Mutation = {
   getTokenForUser: TokenResponseWrap;
   login: TokenResponseWrap;
   notifyProposal: ProposalResponseWrap;
-  overwriteSepMeetingDecisionRanking: SepMeetingDecisionResponseWrap;
   prepareDB: PrepareDbResponseWrap;
   removeUserForReview: ReviewResponseWrap;
   resetPasswordEmail: ResetPasswordEmailResponseWrap;
@@ -2154,7 +2153,6 @@ export type MutationAdministrationProposalArgs = {
   commentForManagement?: Maybe<Scalars['String']>;
   finalStatus?: Maybe<ProposalEndStatus>;
   statusId?: Maybe<Scalars['Int']>;
-  rankOrder?: Maybe<Scalars['Int']>;
   managementTimeAllocation?: Maybe<Scalars['Int']>;
   managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
 };
@@ -2314,6 +2312,11 @@ export type MutationCreateSepArgs = {
   description: Scalars['String'];
   numberRatingsRequired?: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
+};
+
+
+export type MutationOverwriteSepMeetingDecisionRankingArgs = {
+  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
 };
 
 
@@ -2627,11 +2630,6 @@ export type MutationLoginArgs = {
 
 export type MutationNotifyProposalArgs = {
   id: Scalars['Int'];
-};
-
-
-export type MutationOverwriteSepMeetingDecisionRankingArgs = {
-  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
 };
 
 
@@ -3054,7 +3052,7 @@ export type SepProposalsByInstrumentQuery = (
     & Pick<SepProposal, 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'id' | 'title' | 'shortCode' | 'rankOrder'>
+      & Pick<Proposal, 'id' | 'title' | 'shortCode'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
@@ -3858,7 +3856,6 @@ export type UpdateInstrumentMutation = (
 
 export type AdministrationProposalMutationVariables = Exact<{
   id: Scalars['Int'];
-  rankOrder?: Maybe<Scalars['Int']>;
   finalStatus?: Maybe<ProposalEndStatus>;
   statusId?: Maybe<Scalars['Int']>;
   commentForUser?: Maybe<Scalars['String']>;
@@ -3992,7 +3989,7 @@ export type CoreTechnicalReviewFragment = (
 
 export type ProposalFragment = (
   { __typename?: 'Proposal' }
-  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'rankOrder' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted'>
+  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted'>
   & { status: Maybe<(
     { __typename?: 'ProposalStatus' }
     & ProposalStatusFragment
@@ -6190,7 +6187,6 @@ export const ProposalFragmentDoc = gql`
   }
   publicStatus
   shortCode
-  rankOrder
   finalStatus
   commentForUser
   commentForManagement
@@ -6728,7 +6724,6 @@ export const SepProposalsByInstrumentDocument = gql`
       id
       title
       shortCode
-      rankOrder
       status {
         ...proposalStatus
       }
@@ -7277,10 +7272,9 @@ export const UpdateInstrumentDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
-    mutation administrationProposal($id: Int!, $rankOrder: Int, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
+    mutation administrationProposal($id: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
   administrationProposal(
     id: $id
-    rankOrder: $rankOrder
     finalStatus: $finalStatus
     statusId: $statusId
     commentForUser: $commentForUser
