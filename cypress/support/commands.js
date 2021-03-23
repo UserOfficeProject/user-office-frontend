@@ -50,6 +50,18 @@ const resetDB = () => {
   cy.wrap(request);
 };
 
+const resetSchedulerDB = (includeSeeds = false) => {
+  const query = `mutation($includeSeeds: Boolean) {
+    resetSchedulerDb(includeSeeds: $includeSeeds)
+  }`;
+  const authHeader = `Bearer ${Cypress.env('SVC_ACC_TOKEN')}`;
+  const request = new GraphQLClient('/graphql', {
+    headers: { authorization: authHeader },
+  }).rawRequest(query, { includeSeeds });
+
+  cy.wrap(request);
+};
+
 const navigateToTemplatesSubmenu = (submenuName) => {
   cy.contains('Templates').click();
   cy.get(`[title='${submenuName}']`).first().click();
@@ -132,6 +144,8 @@ const closeModal = () => {
   cy.get('[role="dialog"] [data-cy="close-modal"]').click();
   // NOTE: Need to wait for modal to close with animation.
   cy.wait(100);
+
+  cy.get('[role="dialog"]').should('not.exist');
 };
 
 const finishedLoading = () => {
@@ -262,6 +276,41 @@ const createSampleQuestion = (
   cy.contains('Save').click();
 };
 
+const createProposalWorkflow = (workflowName, workflowDescription) => {
+  cy.contains('Proposal workflows').click();
+  cy.contains('Create').click();
+
+  cy.get('#name').type(workflowName);
+  cy.get('#description').type(workflowDescription);
+  cy.get('[data-cy="submit"]').click();
+
+  cy.notification({ variant: 'success', text: 'created successfully' });
+};
+
+const addProposalStatusChangingEventToStatus = (
+  statusCode,
+  statusChangingEvents
+) => {
+  cy.get(`[data-cy^="connection_${statusCode}"]`).click();
+
+  cy.get('[data-cy="status-changing-events-modal"]').should('exist');
+
+  statusChangingEvents.forEach((statusChangingEvent) => {
+    cy.contains(statusChangingEvent).click();
+  });
+
+  cy.get('[data-cy="submit"]').click();
+
+  cy.notification({
+    variant: 'success',
+    text: 'Status changing events added successfully!',
+  });
+
+  statusChangingEvents.forEach((statusChangingEvent) => {
+    cy.contains(statusChangingEvent);
+  });
+};
+
 const createCall = ({
   shortCode,
   startDate,
@@ -351,8 +400,8 @@ function createBooleanQuestion(title) {
   cy.contains(title)
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
-  
-    cy.finishedLoading();
+
+  cy.finishedLoading();
 }
 
 function createTextQuestion(
@@ -386,7 +435,7 @@ function createTextQuestion(
     .dragElement([{ direction: 'left', length: 1 }])
     .wait(500);
 
-    cy.finishedLoading();
+  cy.finishedLoading();
 }
 
 function createDateQuestion(title) {
@@ -404,7 +453,7 @@ function createDateQuestion(title) {
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.finishedLoading();
+  cy.finishedLoading();
 }
 
 function createMultipleChoiceQuestion(title, option1, option2, option3) {
@@ -440,7 +489,7 @@ function createMultipleChoiceQuestion(title, option1, option2, option3) {
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.finishedLoading();
+  cy.finishedLoading();
 }
 
 function createFileUploadQuestion(title) {
@@ -456,7 +505,7 @@ function createFileUploadQuestion(title) {
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.finishedLoading();
+  cy.finishedLoading();
 }
 
 function createNumberInputQuestion(title) {
@@ -472,7 +521,7 @@ function createNumberInputQuestion(title) {
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
 
-    cy.finishedLoading();
+  cy.finishedLoading();
 }
 
 function createIntervalQuestion(title) {
@@ -517,6 +566,8 @@ function presentationMode() {
 
 Cypress.Commands.add('resetDB', resetDB);
 
+Cypress.Commands.add('resetSchedulerDB', resetSchedulerDB);
+
 Cypress.Commands.add('navigateToTemplatesSubmenu', navigateToTemplatesSubmenu);
 
 Cypress.Commands.add('login', login);
@@ -535,6 +586,13 @@ Cypress.Commands.add('createTemplate', createTemplate);
 Cypress.Commands.add('createProposal', createProposal);
 
 Cypress.Commands.add('createCall', createCall);
+
+Cypress.Commands.add('createProposalWorkflow', createProposalWorkflow);
+
+Cypress.Commands.add(
+  'addProposalStatusChangingEventToStatus',
+  addProposalStatusChangingEventToStatus
+);
 
 Cypress.Commands.add(
   'dragElement',
@@ -565,12 +623,6 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('createFileUploadQuestion', createFileUploadQuestion);
 
-Cypress.Commands.add(
-  'createNumberInputQuestion',
-  createNumberInputQuestion
-);
+Cypress.Commands.add('createNumberInputQuestion', createNumberInputQuestion);
 
-Cypress.Commands.add(
-  'createIntervalQuestion',
-  createIntervalQuestion
-);
+Cypress.Commands.add('createIntervalQuestion', createIntervalQuestion);
