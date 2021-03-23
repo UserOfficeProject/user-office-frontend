@@ -17,6 +17,9 @@ query sepProposalsByInstrument(
       status {
         ...proposalStatus
       }
+      sepMeetingDecision {
+        ...sepMeetingDecision
+      }
       reviews {
         id
         comment

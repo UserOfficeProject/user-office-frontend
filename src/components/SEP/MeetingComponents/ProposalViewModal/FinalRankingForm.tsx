@@ -4,10 +4,11 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { Prompt } from 'react-router';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
@@ -53,6 +54,17 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
       proposalData.sepMeetingDecision?.recommendation ??
       ProposalEndStatus.UNSET,
     submitted: proposalData.sepMeetingDecision?.submitted ?? false,
+  };
+
+  const PromptIfDirty = () => {
+    const formik = useFormikContext();
+
+    return (
+      <Prompt
+        when={formik.dirty && formik.submitCount === 0}
+        message="Changes you recently made in this tab will be lost! Are you sure?"
+      />
+    );
   };
 
   const handleSubmit = async (values: SaveSepMeetingDecisionInput) => {
@@ -103,6 +115,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
         >
           {({ isSubmitting }): JSX.Element => (
             <Form>
+              <PromptIfDirty />
               <Typography variant="h6" gutterBottom>
                 SEP Meeting form
               </Typography>
@@ -161,6 +174,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     component={TextField}
                     margin="normal"
                     fullWidth
+                    InputProps={{ inputProps: { min: 0 } }}
                     data-cy="rankOrder"
                     required
                     disabled={!hasWriteAccess}

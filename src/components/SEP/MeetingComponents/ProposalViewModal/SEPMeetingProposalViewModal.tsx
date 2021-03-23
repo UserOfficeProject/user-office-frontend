@@ -49,7 +49,7 @@ const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
 
 type SEPMeetingProposalViewModalProps = {
   proposalViewModalOpen: boolean;
-  proposalId: number;
+  proposalId?: number | null;
   sepId: number;
   meetingSubmitted: (data: SepMeetingDecision) => void;
   setProposalViewModalOpen: (isOpen: boolean) => void;
@@ -83,7 +83,6 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
 
   const handleClose = () => {
     setProposalViewModalOpen(false);
-    setSEPProposalData(null);
   };
 
   const sepTimeAllocation = SEPProposalData?.sepTimeAllocation ?? null;

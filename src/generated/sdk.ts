@@ -501,6 +501,11 @@ export type OrcIdInformation = {
   token: Maybe<Scalars['String']>;
 };
 
+export type OverwriteSepMeetingDecisionRankingInput = {
+  proposalId: Scalars['Int'];
+  rankOrder: Scalars['Int'];
+};
+
 export type Page = {
   __typename?: 'Page';
   id: Scalars['Int'];
@@ -2004,6 +2009,7 @@ export type Mutation = {
   getTokenForUser: TokenResponseWrap;
   login: TokenResponseWrap;
   notifyProposal: ProposalResponseWrap;
+  overwriteSepMeetingDecisionRanking: SepMeetingDecisionResponseWrap;
   prepareDB: PrepareDbResponseWrap;
   removeUserForReview: ReviewResponseWrap;
   resetPasswordEmail: ResetPasswordEmailResponseWrap;
@@ -2624,6 +2630,11 @@ export type MutationNotifyProposalArgs = {
 };
 
 
+export type MutationOverwriteSepMeetingDecisionRankingArgs = {
+  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
+};
+
+
 export type MutationPrepareDbArgs = {
   includeSeeds?: Maybe<Scalars['Boolean']>;
 };
@@ -3047,6 +3058,9 @@ export type SepProposalsByInstrumentQuery = (
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
+      )>, sepMeetingDecision: Maybe<(
+        { __typename?: 'SepMeetingDecision' }
+        & SepMeetingDecisionFragment
       )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'comment' | 'grade' | 'status'>
@@ -3104,6 +3118,23 @@ export type GetSePsQuery = (
       )> }
     )> }
   )> }
+);
+
+export type OverwriteSepMeetingDecisionRankingMutationVariables = Exact<{
+  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
+}>;
+
+
+export type OverwriteSepMeetingDecisionRankingMutation = (
+  { __typename?: 'Mutation' }
+  & { overwriteSepMeetingDecisionRanking: (
+    { __typename?: 'SepMeetingDecisionResponseWrap' }
+    & Pick<SepMeetingDecisionResponseWrap, 'error'>
+    & { sepMeetingDecision: Maybe<(
+      { __typename?: 'SepMeetingDecision' }
+      & Pick<SepMeetingDecision, 'proposalId'>
+    )> }
+  ) }
 );
 
 export type RemoveProposalAssignmentMutationVariables = Exact<{
@@ -6701,6 +6732,9 @@ export const SepProposalsByInstrumentDocument = gql`
       status {
         ...proposalStatus
       }
+      sepMeetingDecision {
+        ...sepMeetingDecision
+      }
       reviews {
         id
         comment
@@ -6718,7 +6752,8 @@ export const SepProposalsByInstrumentDocument = gql`
     }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${SepMeetingDecisionFragmentDoc}`;
 export const GetSepReviewersDocument = gql`
     query getSEPReviewers($sepId: Int!) {
   sepReviewers(sepId: $sepId) {
@@ -6761,6 +6796,18 @@ export const GetSePsDocument = gql`
   }
 }
     ${BasicUserDetailsFragmentDoc}`;
+export const OverwriteSepMeetingDecisionRankingDocument = gql`
+    mutation overwriteSepMeetingDecisionRanking($overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput!) {
+  overwriteSepMeetingDecisionRanking(
+    overwriteSepMeetingDecisionRankingInput: $overwriteSepMeetingDecisionRankingInput
+  ) {
+    error
+    sepMeetingDecision {
+      proposalId
+    }
+  }
+}
+    `;
 export const RemoveProposalAssignmentDocument = gql`
     mutation removeProposalAssignment($proposalId: Int!, $sepId: Int!) {
   removeProposalAssignment(proposalId: $proposalId, sepId: $sepId) {
@@ -8755,6 +8802,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getSEPs(variables: GetSePsQueryVariables): Promise<GetSePsQuery> {
       return withWrapper(() => client.request<GetSePsQuery>(print(GetSePsDocument), variables));
+    },
+    overwriteSepMeetingDecisionRanking(variables: OverwriteSepMeetingDecisionRankingMutationVariables): Promise<OverwriteSepMeetingDecisionRankingMutation> {
+      return withWrapper(() => client.request<OverwriteSepMeetingDecisionRankingMutation>(print(OverwriteSepMeetingDecisionRankingDocument), variables));
     },
     removeProposalAssignment(variables: RemoveProposalAssignmentMutationVariables): Promise<RemoveProposalAssignmentMutation> {
       return withWrapper(() => client.request<RemoveProposalAssignmentMutation>(print(RemoveProposalAssignmentDocument), variables));

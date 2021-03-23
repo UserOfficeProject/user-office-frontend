@@ -5,7 +5,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
+import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
 import { UserContext } from 'context/UserContextProvider';
@@ -48,6 +49,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   sepId,
   selectedCallId,
 }) => {
+  const [urlQueryParams, setUrlQueryParams] = useQueryParams({
+    sepMeetingModal: NumberParam,
+  });
   const {
     instrumentProposalsData,
     loadingInstrumentProposals,
@@ -56,7 +60,6 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   } = useSEPProposalsByInstrument(sepInstrument.id, sepId, selectedCallId);
   const classes = useStyles();
   const theme = useTheme();
-  const [openProposalId, setOpenProposalId] = useState<number | null>(null);
   const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { user } = useContext(UserContext);
 
@@ -232,12 +235,12 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   return (
     <div className={classes.root} data-cy="sep-instrument-proposals-table">
       <SEPMeetingProposalViewModal
-        proposalViewModalOpen={!!openProposalId}
+        proposalViewModalOpen={!!urlQueryParams.sepMeetingModal}
         setProposalViewModalOpen={() => {
-          setOpenProposalId(null);
+          setUrlQueryParams({ sepMeetingModal: undefined });
           refreshInstrumentProposalsData();
         }}
-        proposalId={openProposalId || 0}
+        proposalId={urlQueryParams.sepMeetingModal}
         meetingSubmitted={onMeetingSubmitted}
         sepId={sepId}
       />
@@ -251,7 +254,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
           (rowData) => ({
             icon: ViewIcon,
             onClick: (event, data) => {
-              setOpenProposalId((data as SepProposal).proposal.id);
+              setUrlQueryParams({
+                sepMeetingModal: (data as SepProposal).proposal.id,
+              });
             },
             tooltip: 'View proposal details',
             hidden:
