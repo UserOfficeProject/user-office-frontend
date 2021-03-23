@@ -10,20 +10,24 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Prompt } from 'react-router';
 
+import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import UOLoader from 'components/common/UOLoader';
 import {
   Proposal,
   ProposalEndStatus,
   SaveSepMeetingDecisionInput,
   SepMeetingDecision,
+  UserRole,
 } from 'generated/sdk';
 import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    margin: theme.spacing(2, 0, 1, 1),
+    margin: theme.spacing(0, 0, 0, 1),
   },
 }));
 
@@ -32,6 +36,7 @@ type FinalRankingFormProps = {
   hasWriteAccess: boolean;
   closeModal: () => void;
   meetingSubmitted: (data: SepMeetingDecision) => void;
+  confirm: WithConfirmType;
 };
 
 const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
@@ -39,10 +44,13 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   hasWriteAccess,
   closeModal,
   meetingSubmitted,
+  confirm,
 }) => {
   const classes = useStyles();
   const [shouldClose, setShouldClose] = useState<boolean>(false);
   const { api } = useDataApiWithFeedback();
+  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const initialData: SaveSepMeetingDecisionInput = {
     proposalId: proposalData.id,
@@ -68,6 +76,9 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   };
 
   const handleSubmit = async (values: SaveSepMeetingDecisionInput) => {
+    const shouldSubmitMeetingDecision =
+      (!isUserOfficer && shouldSubmit) || (isUserOfficer && values.submitted);
+
     const saveSepMeetingDecisionInput = {
       proposalId: values.proposalId,
       recommendation:
@@ -75,11 +86,13 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
       commentForUser: values.commentForUser,
       commentForManagement: values.commentForManagement,
       rankOrder: values.rankOrder,
-      submitted: false,
+      submitted: shouldSubmitMeetingDecision,
     };
 
     const data = await api(
-      'SEP meeting decision saved successfully!'
+      `SEP meeting decision ${
+        shouldSubmitMeetingDecision ? 'submitted' : 'saved'
+      } successfully!`
     ).saveSepMeetingDecision({ saveSepMeetingDecisionInput });
 
     const isError = !!data.saveSepMeetingDecision.error;
@@ -94,6 +107,10 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
     }
   };
 
+  const shouldDisableForm = (isSubmitting: boolean) =>
+    (isSubmitting || proposalData.sepMeetingDecision?.submitted) &&
+    !isUserOfficer;
+
   return (
     <div data-cy="SEP-meeting-components-final-ranking-form">
       <StyledPaper margin={[0, 0, 2, 0]}>
@@ -107,10 +124,33 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
               return;
             }
 
-            await handleSubmit({
-              ...values,
-              rankOrder: +values.rankOrder,
-            });
+            if (shouldSubmit) {
+              if (!isUserOfficer) {
+                confirm(
+                  async () => {
+                    await handleSubmit({
+                      ...values,
+                      rankOrder: +values.rankOrder,
+                    });
+                  },
+                  {
+                    title: 'Please confirm',
+                    description:
+                      'I am aware that no further changes to the sep meeting are possible after submission.',
+                  }
+                )();
+              } else {
+                await handleSubmit({
+                  ...values,
+                  rankOrder: +values.rankOrder,
+                });
+              }
+            } else {
+              await handleSubmit({
+                ...values,
+                rankOrder: +values.rankOrder,
+              });
+            }
           }}
         >
           {({ isSubmitting }): JSX.Element => (
@@ -134,7 +174,9 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     rows="3"
                     data-cy="commentForUser"
                     required
-                    disabled={!hasWriteAccess}
+                    disabled={
+                      !hasWriteAccess || shouldDisableForm(isSubmitting)
+                    }
                   />
                   <FormikDropdown
                     name="recommendation"
@@ -147,7 +189,9 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       { text: 'Rejected', value: ProposalEndStatus.REJECTED },
                     ]}
                     required
-                    disabled={!hasWriteAccess}
+                    disabled={
+                      !hasWriteAccess || shouldDisableForm(isSubmitting)
+                    }
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -164,7 +208,9 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     rows="3"
                     data-cy="commentForManagement"
                     required
-                    disabled={!hasWriteAccess}
+                    disabled={
+                      !hasWriteAccess || shouldDisableForm(isSubmitting)
+                    }
                   />
                   <Field
                     id="rankOrder"
@@ -177,11 +223,24 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     InputProps={{ inputProps: { min: 0 } }}
                     data-cy="rankOrder"
                     required
-                    disabled={!hasWriteAccess}
+                    disabled={
+                      !hasWriteAccess || shouldDisableForm(isSubmitting)
+                    }
                   />
                 </Grid>
               </Grid>
-              <ButtonContainer>
+              <ButtonContainer style={{ margin: '1rem 0' }}>
+                {isUserOfficer && (
+                  <Field
+                    id="submitted"
+                    name="submitted"
+                    component={FormikUICustomCheckbox}
+                    label="Submitted"
+                    color="primary"
+                    disabled={isSubmitting}
+                    data-cy="is-sep-meeting-submitted"
+                  />
+                )}
                 {hasWriteAccess && (
                   <>
                     {isSubmitting && (
@@ -198,11 +257,12 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       variant="contained"
                       onClick={() => {
                         setShouldClose(false);
+                        setShouldSubmit(false);
                       }}
-                      color="primary"
+                      color={isUserOfficer ? 'primary' : 'secondary'}
                       className={classes.button}
                       data-cy="save"
-                      disabled={isSubmitting}
+                      disabled={shouldDisableForm(isSubmitting)}
                     >
                       Save
                     </Button>
@@ -211,25 +271,33 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       variant="contained"
                       onClick={() => {
                         setShouldClose(true);
+                        setShouldSubmit(false);
                       }}
-                      color="primary"
+                      color={isUserOfficer ? 'primary' : 'secondary'}
                       className={classes.button}
                       data-cy="saveAndContinue"
-                      disabled={isSubmitting}
+                      disabled={shouldDisableForm(isSubmitting)}
                     >
                       Save and continue
                     </Button>
+                    {!isUserOfficer && (
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        onClick={() => {
+                          setShouldClose(false);
+                          setShouldSubmit(true);
+                        }}
+                        color={'primary'}
+                        className={classes.button}
+                        data-cy="submitSepMeeting"
+                        disabled={shouldDisableForm(isSubmitting)}
+                      >
+                        Submit
+                      </Button>
+                    )}
                   </>
                 )}
-                <Button
-                  type="button"
-                  onClick={closeModal}
-                  variant="contained"
-                  className={classes.button}
-                  data-cy="close"
-                >
-                  Close
-                </Button>
               </ButtonContainer>
             </Form>
           )}
@@ -246,4 +314,4 @@ FinalRankingForm.propTypes = {
   hasWriteAccess: PropTypes.bool.isRequired,
 };
 
-export default FinalRankingForm;
+export default withConfirm(FinalRankingForm);
