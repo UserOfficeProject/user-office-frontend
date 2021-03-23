@@ -1431,7 +1431,7 @@ export enum ProposalBookingStatus {
 }
 
 export type ProposalProposalBookingFilter = {
-  status?: Maybe<ProposalBookingStatus>;
+  status?: Maybe<Array<ProposalBookingStatus>>;
 };
 
 export type ScheduledEvent = {
