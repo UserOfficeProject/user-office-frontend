@@ -1,4 +1,4 @@
-// import { administrationProposalValidationSchema } from '@esss-swap/duo-validation';
+import { saveSepMeetingDecisionValidationSchema } from '@esss-swap/duo-validation';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -118,7 +118,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={initialData}
-          // validationSchema={administrationProposalValidationSchema}
+          validationSchema={saveSepMeetingDecisionValidationSchema}
           onSubmit={async (values): Promise<void> => {
             if (!hasWriteAccess) {
               return;
@@ -220,7 +220,6 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                     component={TextField}
                     margin="normal"
                     fullWidth
-                    InputProps={{ inputProps: { min: 0 } }}
                     data-cy="rankOrder"
                     required
                     disabled={
@@ -230,17 +229,6 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                 </Grid>
               </Grid>
               <ButtonContainer style={{ margin: '1rem 0' }}>
-                {isUserOfficer && (
-                  <Field
-                    id="submitted"
-                    name="submitted"
-                    component={FormikUICustomCheckbox}
-                    label="Submitted"
-                    color="primary"
-                    disabled={isSubmitting}
-                    data-cy="is-sep-meeting-submitted"
-                  />
-                )}
                 {hasWriteAccess && (
                   <>
                     {isSubmitting && (
@@ -251,6 +239,17 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       >
                         <UOLoader buttonSized />
                       </Box>
+                    )}
+                    {isUserOfficer && (
+                      <Field
+                        id="submitted"
+                        name="submitted"
+                        component={FormikUICustomCheckbox}
+                        label="Submitted"
+                        color="primary"
+                        disabled={isSubmitting}
+                        data-cy="is-sep-meeting-submitted"
+                      />
                     )}
                     <Button
                       type="submit"
