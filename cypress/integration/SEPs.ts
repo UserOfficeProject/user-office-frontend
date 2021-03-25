@@ -57,7 +57,10 @@ function editFinalRankingForm() {
 
   cy.get('[data-cy="save"]').click();
 
-  cy.notification({ variant: 'success', text: 'Saved!' });
+  cy.notification({
+    variant: 'success',
+    text: 'SEP meeting decision saved successfully!',
+  });
 }
 
 const sepMembers = {
