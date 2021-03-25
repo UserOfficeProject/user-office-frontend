@@ -170,7 +170,7 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy=show-more-button]').last().click();
 
-    cy.get('[data-cy=add-question-menu-item]').click();
+    cy.get('[data-cy=add-question-menu-item]').last().click();
 
     cy.createBooleanQuestion(questionText);
 
@@ -388,15 +388,14 @@ context('Instrument tests', () => {
     cy.contains(proposal1.title).should('not.exist');
     cy.contains(proposal2.title).should('not.exist');
 
+    cy.get('[data-cy="instrument-filter"]').click();
+    cy.get('[role="listbox"]').contains('All').click();
+    cy.finishedLoading();
+
     cy.get('[data-cy=question-search-toggle]').click();
 
     cy.get('[data-cy=question-list]').click();
     cy.contains(questionText).click();
-    cy.get('[data-cy=is-checked]').click();
-    cy.get('[role=listbox]').contains('No').click();
-    cy.contains('Search').click();
-    cy.contains(proposal1.title).should('not.exist');
-
     cy.get('[data-cy=is-checked]').click();
     cy.get('[role=listbox]').contains('Yes').click();
     cy.contains('Search').click();
