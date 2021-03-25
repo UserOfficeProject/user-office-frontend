@@ -22,7 +22,7 @@ export function useTemplates(filter: TemplatesFilter) {
           setTemplates(data.templates);
         }
       });
-  }, [api]);
+  }, [api, templatesFilter]);
 
   return { templates, setTemplates, setTemplatesFilter };
 }

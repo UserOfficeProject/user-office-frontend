@@ -17,13 +17,9 @@ context('Questions tests', () => {
 
     cy.navigateToTemplatesSubmenu('Proposal templates');
 
-    cy.contains('default template')
-      .parent()
-      .get("[title='Edit']")
-      .first()
-      .click();
+    cy.contains('default template').parent().get("[title='Edit']").click();
 
-    cy.get('[data-cy=show-more-button]').last().click();
+    cy.get('[data-cy=show-more-button]').click();
 
     cy.get('[data-cy=add-question-menu-item]').last().click();
 
