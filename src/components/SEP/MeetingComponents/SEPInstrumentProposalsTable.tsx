@@ -1,11 +1,12 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import DragHandle from '@material-ui/icons/DragHandle';
 import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
-import MaterialTable from 'material-table';
+import MaterialTable, { MTableBodyRow } from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState, DragEvent } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import { AdministrationFormData } from 'components/proposal/ProposalAdmin';
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiPaper-root': {
       padding: '0 40px',
       backgroundColor: '#fafafa',
+    },
+
+    '& .draggingRow': {
+      backgroundColor: theme.palette.warning.light,
     },
   },
   disabled: {
@@ -59,6 +64,11 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const [openProposalId, setOpenProposalId] = useState<number | null>(null);
   const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { user } = useContext(UserContext);
+
+  const DragState = {
+    row: -1,
+    dropIndex: -1,
+  };
 
   const sortByRankOrder = (a: SepProposal, b: SepProposal) => {
     if (a.proposal.rankOrder === b.proposal.rankOrder) {
@@ -213,6 +223,12 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   );
 
   const ViewIcon = (): JSX.Element => <Visibility />;
+  const DragHandleIcon = (
+    props: JSX.IntrinsicAttributes & {
+      children?: React.ReactNode;
+      'data-cy'?: string;
+    }
+  ): JSX.Element => <DragHandle {...props} style={{ cursor: 'grab' }} />;
 
   const redBackgroundWhenOutOfAvailabilityZone = (
     isInsideAvailabilityZone: boolean
@@ -220,6 +236,80 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     isInsideAvailabilityZone
       ? {}
       : { backgroundColor: theme.palette.error.light };
+
+  const updateAllProposalRankings = (proposals: SepProposal[]) => {
+    const proposalsWithUpdatedRanking = proposals.map((item, index) => ({
+      ...item,
+      proposal: {
+        ...item.proposal,
+        rankOrder: (item.proposal.rankOrder = index + 1),
+      },
+    }));
+
+    return proposalsWithUpdatedRanking;
+  };
+
+  const reorderArray = (
+    { fromIndex, toIndex }: { fromIndex: number; toIndex: number },
+    originalArray: SepProposal[]
+  ) => {
+    const movedItem = originalArray.find((item, index) => index === fromIndex);
+
+    if (!movedItem) {
+      return originalArray;
+    }
+
+    const remainingItems = originalArray.filter(
+      (item, index) => index !== fromIndex
+    );
+
+    const reorderedItems = [
+      ...remainingItems.slice(0, toIndex),
+      movedItem,
+      ...remainingItems.slice(toIndex),
+    ];
+
+    return reorderedItems;
+  };
+
+  const reOrderRow = (fromIndex: number, toIndex: number) => {
+    const newTableData = reorderArray(
+      { fromIndex, toIndex },
+      sortedProposalsWithAverageScore
+    );
+
+    const tableDataWithRankingsUpdated = updateAllProposalRankings(
+      newTableData
+    );
+
+    setInstrumentProposalsData(tableDataWithRankingsUpdated);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const RowDraggableComponent = (props: any) => (
+    <MTableBodyRow
+      {...props}
+      draggable="true"
+      onDragStart={(e: DragEvent<HTMLDivElement>) => {
+        e.currentTarget.classList.add('draggingRow');
+        DragState.row = props.data.tableData.id;
+      }}
+      onDragEnter={(e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        if (props.data.tableData.id !== DragState.row) {
+          DragState.dropIndex = props.data.tableData.id;
+        }
+      }}
+      onDragEnd={(e: DragEvent<HTMLDivElement>) => {
+        e.currentTarget.classList.remove('draggingRow');
+        if (DragState.dropIndex !== -1) {
+          reOrderRow(DragState.row, DragState.dropIndex);
+        }
+        DragState.row = -1;
+        DragState.dropIndex = -1;
+      }}
+    />
+  );
 
   return (
     <div className={classes.root} data-cy="sep-instrument-proposals-table">
@@ -239,7 +329,18 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         title={'Assigned reviewers'}
         data={sortedProposalsWithAverageScore}
         isLoading={loadingInstrumentProposals}
+        components={{
+          Row: RowDraggableComponent,
+        }}
         actions={[
+          () => ({
+            icon: DragHandleIcon.bind(null, {
+              'data-cy': 'drag-proposal-to-reorder',
+            }),
+            onClick: () => {},
+            tooltip: 'Drag rows to reorder',
+            iconProps: { 'aria-describedby': 'testtest' },
+          }),
           (rowData) => ({
             icon: ViewIcon,
             onClick: (event, data) => {
