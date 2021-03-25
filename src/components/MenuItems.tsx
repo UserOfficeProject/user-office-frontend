@@ -7,6 +7,7 @@ import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import DescriptionIcon from '@material-ui/icons/Description';
+import EventIcon from '@material-ui/icons/Event';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import FolderOpen from '@material-ui/icons/FolderOpen';
@@ -205,6 +206,9 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
   const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
     ?.isEnabled;
 
+  const isSchedulerEnabled = context.features.get(FeatureId.SCHEDULER)
+    ?.isEnabled;
+
   const user = (
     <div data-cy="user-menu-items">
       <ListItem component={NavLink} to="/" exact button>
@@ -234,6 +238,14 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
             <LocalShippingIcon />
           </ListItemIcon>
           <ListItemText primary="My shipments" />
+        </ListItem>
+      )}
+      {isSchedulerEnabled && (
+        <ListItem component={NavLink} to="/MyBeamTimes" button>
+          <ListItemIcon>
+            <EventIcon />
+          </ListItemIcon>
+          <ListItemText primary="My beam times" />
         </ListItem>
       )}
       <ListItem component={NavLink} to="/HelpPage" button>
