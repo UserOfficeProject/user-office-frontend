@@ -1,7 +1,6 @@
 context('Instrument tests', () => {
   const faker = require('faker');
-  const questionText = faker.lorem.words(3)
-
+  const questionText = faker.lorem.words(3);
 
   function createInstrument({
     name,
@@ -165,17 +164,13 @@ context('Instrument tests', () => {
 
     cy.navigateToTemplatesSubmenu('Proposal templates');
 
-    cy.contains('default template')
-      .parent()
-      .get("[title='Edit']")
-      .first()
-      .click();
+    cy.contains('default template').parent().get("[title='Edit']").click();
 
     cy.createTopic('Topic for questions');
 
     cy.get('[data-cy=show-more-button]').last().click();
 
-    cy.get('[data-cy=add-question-menu-item]').last().click();
+    cy.get('[data-cy=add-question-menu-item]').click();
 
     cy.createBooleanQuestion(questionText);
 
@@ -394,7 +389,7 @@ context('Instrument tests', () => {
     cy.contains(proposal2.title).should('not.exist');
 
     cy.get('[data-cy=question-search-toggle]').click();
-    
+
     cy.get('[data-cy=question-list]').click();
     cy.contains(questionText).click();
     cy.get('[data-cy=is-checked]').click();
@@ -404,7 +399,7 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy=is-checked]').click();
     cy.get('[role=listbox]').contains('Yes').click();
-    cy.contains('Search').click()
+    cy.contains('Search').click();
     cy.contains(proposal1.title).should('exist');
   });
 
