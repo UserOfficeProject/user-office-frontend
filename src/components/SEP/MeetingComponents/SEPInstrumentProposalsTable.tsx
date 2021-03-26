@@ -1,12 +1,14 @@
+import IconButton from '@material-ui/core/IconButton';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import Tooltip from '@material-ui/core/Tooltip';
 import DragHandle from '@material-ui/icons/DragHandle';
 import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
 import MaterialTable, { MTableBodyRow } from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useContext, DragEvent } from 'react';
+import React, { useContext, DragEvent, useState } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -20,6 +22,7 @@ import {
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
 import { getGrades, average } from 'utils/mathFunctions';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
 
@@ -67,6 +70,8 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const theme = useTheme();
   const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { user } = useContext(UserContext);
+  const { api } = useDataApiWithFeedback();
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const DragState = {
     row: -1,
@@ -84,8 +89,8 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     } else if (b.proposal.sepMeetingDecision?.rankOrder === null) {
       return -1;
     } else {
-      return (a.proposal.sepMeetingDecision as SepMeetingDecision).rankOrder >
-        (b.proposal.sepMeetingDecision as SepMeetingDecision).rankOrder
+      return (a.proposal.sepMeetingDecision?.rankOrder as number) >
+        (b.proposal.sepMeetingDecision?.rankOrder as number)
         ? 1
         : -1;
     }
@@ -167,7 +172,45 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     );
   };
 
+  const RowActionButtons = (rowData: SepProposal) => {
+    const showViewIcon =
+      !isSEPReviewer ||
+      rowData.assignments?.some(
+        ({ sepMemberUserId }) => sepMemberUserId === user.id
+      );
+
+    return (
+      <>
+        <Tooltip title="Drag proposals to reorder">
+          <IconButton style={{ cursor: 'grab' }} color="inherit">
+            <DragHandle />
+          </IconButton>
+        </Tooltip>
+        {showViewIcon && (
+          <Tooltip title="View proposal details">
+            <IconButton
+              color="inherit"
+              onClick={() =>
+                setUrlQueryParams({
+                  sepMeetingModal: rowData.proposal.id,
+                })
+              }
+            >
+              <Visibility />
+            </IconButton>
+          </Tooltip>
+        )}
+      </>
+    );
+  };
+
   const assignmentColumns = [
+    {
+      title: 'Actions',
+      cellStyle: { padding: 0, minWidth: 100 },
+      sorting: false,
+      render: RowActionButtons,
+    },
     {
       title: 'Title',
       field: 'proposal.title',
@@ -178,7 +221,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     },
     { title: 'Status', field: 'proposal.status.name' },
     {
-      title: 'Initial rank (by average score)',
+      title: 'Average score',
       render: (
         rowData: SepProposal & {
           proposalAverageScore: number;
@@ -201,9 +244,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       ) => proposalTimeAllocationColumn(rowData),
     },
     {
-      title: 'Review meeting',
+      title: 'SEP meeting submitted',
       render: (rowData: SepProposal): string =>
-        rowData.proposal.sepMeetingDecision ? 'Yes' : 'No',
+        rowData.proposal.sepMeetingDecision?.submitted ? 'Yes' : 'No',
     },
   ];
 
@@ -233,14 +276,6 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     instrumentProposalsData
   );
 
-  const ViewIcon = (): JSX.Element => <Visibility />;
-  const DragHandleIcon = (
-    props: JSX.IntrinsicAttributes & {
-      children?: React.ReactNode;
-      'data-cy'?: string;
-    }
-  ): JSX.Element => <DragHandle {...props} style={{ cursor: 'grab' }} />;
-
   const redBackgroundWhenOutOfAvailabilityZone = (
     isInsideAvailabilityZone: boolean
   ): CSSProperties =>
@@ -253,12 +288,18 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       ...item,
       proposal: {
         ...item.proposal,
-        sepMeetingDecision: item.proposal.sepMeetingDecision
-          ? {
-              ...item.proposal.sepMeetingDecision,
-              rankOrder: index + 1,
-            }
-          : null,
+        sepMeetingDecision: {
+          proposalId: item.proposal.id,
+          rankOrder: index + 1,
+          commentForManagement:
+            item.proposal.sepMeetingDecision?.commentForManagement || null,
+          commentForUser:
+            item.proposal.sepMeetingDecision?.commentForUser || null,
+          recommendation:
+            item.proposal.sepMeetingDecision?.recommendation || null,
+          submitted: item.proposal.sepMeetingDecision?.submitted || false,
+          submittedBy: item.proposal.sepMeetingDecision?.submittedBy || null,
+        },
       },
     }));
 
@@ -288,7 +329,8 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     return reorderedItems;
   };
 
-  const reOrderRow = (fromIndex: number, toIndex: number) => {
+  const reOrderRow = async (fromIndex: number, toIndex: number) => {
+    setSavingOrder(true);
     const newTableData = reorderArray(
       { fromIndex, toIndex },
       sortedProposalsWithAverageScore
@@ -298,7 +340,26 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       newTableData
     );
 
-    setInstrumentProposalsData(tableDataWithRankingsUpdated);
+    const reorderSepMeetingDecisionProposalsInput = tableDataWithRankingsUpdated.map(
+      (item) => ({
+        proposalId: item.proposal.id,
+        rankOrder: item.proposal.sepMeetingDecision?.rankOrder,
+      })
+    );
+
+    const result = await api(
+      'Reordering of proposals saved successfully!'
+    ).reorderSepMeetingDecisionProposals({
+      reorderSepMeetingDecisionProposalsInput: {
+        proposals: reorderSepMeetingDecisionProposalsInput,
+      },
+    });
+
+    if (!result.reorderSepMeetingDecisionProposals.error) {
+      setInstrumentProposalsData(tableDataWithRankingsUpdated);
+    }
+
+    setSavingOrder(false);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -312,14 +373,17 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       }}
       onDragEnter={(e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        if (props.data.tableData.id !== DragState.row) {
-          DragState.dropIndex = props.data.tableData.id;
-        }
+
+        DragState.dropIndex = props.data.tableData.id;
       }}
-      onDragEnd={(e: DragEvent<HTMLDivElement>) => {
+      onDragEnd={async (e: DragEvent<HTMLDivElement>) => {
         e.currentTarget.classList.remove('draggingRow');
-        if (DragState.dropIndex !== -1) {
-          reOrderRow(DragState.row, DragState.dropIndex);
+
+        if (
+          DragState.dropIndex !== -1 &&
+          DragState.dropIndex !== DragState.row
+        ) {
+          await reOrderRow(DragState.row, DragState.dropIndex);
         }
         DragState.row = -1;
         DragState.dropIndex = -1;
@@ -344,34 +408,10 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         columns={assignmentColumns}
         title={'Assigned reviewers'}
         data={sortedProposalsWithAverageScore}
-        isLoading={loadingInstrumentProposals}
+        isLoading={loadingInstrumentProposals || savingOrder}
         components={{
           Row: RowDraggableComponent,
         }}
-        actions={[
-          () => ({
-            icon: DragHandleIcon.bind(null, {
-              'data-cy': 'drag-proposal-to-reorder',
-            }),
-            onClick: () => {},
-            tooltip: 'Drag rows to reorder',
-            iconProps: { 'aria-describedby': 'testtest' },
-          }),
-          (rowData) => ({
-            icon: ViewIcon,
-            onClick: (event, data) => {
-              setUrlQueryParams({
-                sepMeetingModal: (data as SepProposal).proposal.id,
-              });
-            },
-            tooltip: 'View proposal details',
-            hidden:
-              isSEPReviewer &&
-              !rowData.assignments?.some(
-                ({ sepMemberUserId }) => sepMemberUserId === user.id
-              ),
-          }),
-        ]}
         options={{
           search: false,
           paging: false,
