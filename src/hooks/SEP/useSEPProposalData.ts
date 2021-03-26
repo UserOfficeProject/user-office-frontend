@@ -12,7 +12,7 @@ export type SepProposalBasics = Pick<
 
 export function useSEPProposalData(
   sepId: number,
-  proposalId: number
+  proposalId?: number | null
 ): {
   loading: boolean;
   SEPProposalData: SepProposalBasics | null;
@@ -28,18 +28,20 @@ export function useSEPProposalData(
     let canceled = false;
     setLoading(true);
 
-    api()
-      .getSEPProposal({ sepId, proposalId })
-      .then((data) => {
-        if (canceled) {
-          return;
-        }
+    if (proposalId && sepId) {
+      api()
+        .getSEPProposal({ sepId, proposalId })
+        .then((data) => {
+          if (canceled) {
+            return;
+          }
 
-        if (data.sepProposal) {
-          setSEPProposalData(data.sepProposal as SepProposalBasics);
-        }
-        setLoading(false);
-      });
+          if (data.sepProposal) {
+            setSEPProposalData(data.sepProposal as SepProposalBasics);
+          }
+          setLoading(false);
+        });
+    }
 
     return () => {
       canceled = true;

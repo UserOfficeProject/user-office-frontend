@@ -501,6 +501,11 @@ export type OrcIdInformation = {
   token: Maybe<Scalars['String']>;
 };
 
+export type OverwriteSepMeetingDecisionRankingInput = {
+  proposalId: Scalars['Int'];
+  rankOrder: Scalars['Int'];
+};
+
 export type Page = {
   __typename?: 'Page';
   id: Scalars['Int'];
@@ -544,7 +549,6 @@ export type Proposal = {
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   shortCode: Scalars['String'];
-  rankOrder: Maybe<Scalars['Int']>;
   finalStatus: Maybe<ProposalEndStatus>;
   callId: Scalars['Int'];
   questionaryId: Scalars['Int'];
@@ -564,6 +568,7 @@ export type Proposal = {
   sep: Maybe<Sep>;
   call: Maybe<Call>;
   questionary: Maybe<Questionary>;
+  sepMeetingDecision: Maybe<SepMeetingDecision>;
   proposalBooking: Maybe<ProposalBooking>;
 };
 
@@ -911,6 +916,15 @@ export enum SampleStatus {
   HIGH_RISK = 'HIGH_RISK'
 }
 
+export type SaveSepMeetingDecisionInput = {
+  proposalId: Scalars['Int'];
+  commentForUser: Scalars['String'];
+  commentForManagement: Scalars['String'];
+  recommendation: ProposalEndStatus;
+  rankOrder: Scalars['Int'];
+  submitted: Scalars['Boolean'];
+};
+
 export type SelectionFromOptionsConfig = {
   __typename?: 'SelectionFromOptionsConfig';
   small_label: Scalars['String'];
@@ -945,6 +959,23 @@ export type SepAssignment = {
   role: Maybe<Role>;
   user: Maybe<BasicUserDetails>;
   review: Maybe<Review>;
+};
+
+export type SepMeetingDecision = {
+  __typename?: 'SepMeetingDecision';
+  proposalId: Scalars['Int'];
+  recommendation: Maybe<ProposalEndStatus>;
+  commentForManagement: Scalars['String'];
+  commentForUser: Scalars['String'];
+  rankOrder: Scalars['Int'];
+  submitted: Scalars['Boolean'];
+  submittedBy: Maybe<Scalars['Int']>;
+};
+
+export type SepMeetingDecisionResponseWrap = {
+  __typename?: 'SepMeetingDecisionResponseWrap';
+  error: Maybe<Scalars['String']>;
+  sepMeetingDecision: Maybe<SepMeetingDecision>;
 };
 
 export type SepProposal = {
@@ -1930,6 +1961,8 @@ export type Mutation = {
   assignProposalToSEP: NextProposalStatusResponseWrap;
   removeProposalAssignment: SepResponseWrap;
   createSEP: SepResponseWrap;
+  overwriteSepMeetingDecisionRanking: SepMeetingDecisionResponseWrap;
+  saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
   updateSEP: SepResponseWrap;
   updateSEPTimeAllocation: SepProposalResponseWrap;
   createShipment: ShipmentResponseWrap;
@@ -2120,7 +2153,6 @@ export type MutationAdministrationProposalArgs = {
   commentForManagement?: Maybe<Scalars['String']>;
   finalStatus?: Maybe<ProposalEndStatus>;
   statusId?: Maybe<Scalars['Int']>;
-  rankOrder?: Maybe<Scalars['Int']>;
   managementTimeAllocation?: Maybe<Scalars['Int']>;
   managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
 };
@@ -2280,6 +2312,16 @@ export type MutationCreateSepArgs = {
   description: Scalars['String'];
   numberRatingsRequired?: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
+};
+
+
+export type MutationOverwriteSepMeetingDecisionRankingArgs = {
+  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
+};
+
+
+export type MutationSaveSepMeetingDecisionArgs = {
+  saveSepMeetingDecisionInput: SaveSepMeetingDecisionInput;
 };
 
 
@@ -2833,6 +2875,11 @@ export type DeleteSepMutation = (
   ) }
 );
 
+export type SepMeetingDecisionFragment = (
+  { __typename?: 'SepMeetingDecision' }
+  & Pick<SepMeetingDecision, 'proposalId' | 'recommendation' | 'commentForUser' | 'commentForManagement' | 'rankOrder' | 'submitted' | 'submittedBy'>
+);
+
 export type GetInstrumentsBySepQueryVariables = Exact<{
   sepId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -3005,10 +3052,13 @@ export type SepProposalsByInstrumentQuery = (
     & Pick<SepProposal, 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'id' | 'title' | 'shortCode' | 'rankOrder'>
+      & Pick<Proposal, 'id' | 'title' | 'shortCode'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
+      )>, sepMeetingDecision: Maybe<(
+        { __typename?: 'SepMeetingDecision' }
+        & SepMeetingDecisionFragment
       )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'comment' | 'grade' | 'status'>
@@ -3068,6 +3118,23 @@ export type GetSePsQuery = (
   )> }
 );
 
+export type OverwriteSepMeetingDecisionRankingMutationVariables = Exact<{
+  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
+}>;
+
+
+export type OverwriteSepMeetingDecisionRankingMutation = (
+  { __typename?: 'Mutation' }
+  & { overwriteSepMeetingDecisionRanking: (
+    { __typename?: 'SepMeetingDecisionResponseWrap' }
+    & Pick<SepMeetingDecisionResponseWrap, 'error'>
+    & { sepMeetingDecision: Maybe<(
+      { __typename?: 'SepMeetingDecision' }
+      & Pick<SepMeetingDecision, 'proposalId'>
+    )> }
+  ) }
+);
+
 export type RemoveProposalAssignmentMutationVariables = Exact<{
   proposalId: Scalars['Int'];
   sepId: Scalars['Int'];
@@ -3120,6 +3187,23 @@ export type RemoveMemberFromSepProposalMutation = (
     & { sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
+    )> }
+  ) }
+);
+
+export type SaveSepMeetingDecisionMutationVariables = Exact<{
+  saveSepMeetingDecisionInput: SaveSepMeetingDecisionInput;
+}>;
+
+
+export type SaveSepMeetingDecisionMutation = (
+  { __typename?: 'Mutation' }
+  & { saveSepMeetingDecision: (
+    { __typename?: 'SepMeetingDecisionResponseWrap' }
+    & Pick<SepMeetingDecisionResponseWrap, 'error'>
+    & { sepMeetingDecision: Maybe<(
+      { __typename?: 'SepMeetingDecision' }
+      & Pick<SepMeetingDecision, 'proposalId'>
     )> }
   ) }
 );
@@ -3772,7 +3856,6 @@ export type UpdateInstrumentMutation = (
 
 export type AdministrationProposalMutationVariables = Exact<{
   id: Scalars['Int'];
-  rankOrder?: Maybe<Scalars['Int']>;
   finalStatus?: Maybe<ProposalEndStatus>;
   statusId?: Maybe<Scalars['Int']>;
   commentForUser?: Maybe<Scalars['String']>;
@@ -3906,10 +3989,13 @@ export type CoreTechnicalReviewFragment = (
 
 export type ProposalFragment = (
   { __typename?: 'Proposal' }
-  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'rankOrder' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted'>
+  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted'>
   & { status: Maybe<(
     { __typename?: 'ProposalStatus' }
     & ProposalStatusFragment
+  )>, sepMeetingDecision: Maybe<(
+    { __typename?: 'SepMeetingDecision' }
+    & SepMeetingDecisionFragment
   )> }
 );
 
@@ -6079,6 +6165,17 @@ export const ProposalStatusFragmentDoc = gql`
   isDefault
 }
     `;
+export const SepMeetingDecisionFragmentDoc = gql`
+    fragment sepMeetingDecision on SepMeetingDecision {
+  proposalId
+  recommendation
+  commentForUser
+  commentForManagement
+  rankOrder
+  submitted
+  submittedBy
+}
+    `;
 export const ProposalFragmentDoc = gql`
     fragment proposal on Proposal {
   id
@@ -6090,7 +6187,6 @@ export const ProposalFragmentDoc = gql`
   }
   publicStatus
   shortCode
-  rankOrder
   finalStatus
   commentForUser
   commentForManagement
@@ -6102,8 +6198,12 @@ export const ProposalFragmentDoc = gql`
   submitted
   managementTimeAllocation
   managementDecisionSubmitted
+  sepMeetingDecision {
+    ...sepMeetingDecision
+  }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${SepMeetingDecisionFragmentDoc}`;
 export const TopicFragmentDoc = gql`
     fragment topic on Topic {
   title
@@ -6624,9 +6724,11 @@ export const SepProposalsByInstrumentDocument = gql`
       id
       title
       shortCode
-      rankOrder
       status {
         ...proposalStatus
+      }
+      sepMeetingDecision {
+        ...sepMeetingDecision
       }
       reviews {
         id
@@ -6645,7 +6747,8 @@ export const SepProposalsByInstrumentDocument = gql`
     }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${SepMeetingDecisionFragmentDoc}`;
 export const GetSepReviewersDocument = gql`
     query getSEPReviewers($sepId: Int!) {
   sepReviewers(sepId: $sepId) {
@@ -6688,6 +6791,18 @@ export const GetSePsDocument = gql`
   }
 }
     ${BasicUserDetailsFragmentDoc}`;
+export const OverwriteSepMeetingDecisionRankingDocument = gql`
+    mutation overwriteSepMeetingDecisionRanking($overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput!) {
+  overwriteSepMeetingDecisionRanking(
+    overwriteSepMeetingDecisionRankingInput: $overwriteSepMeetingDecisionRankingInput
+  ) {
+    error
+    sepMeetingDecision {
+      proposalId
+    }
+  }
+}
+    `;
 export const RemoveProposalAssignmentDocument = gql`
     mutation removeProposalAssignment($proposalId: Int!, $sepId: Int!) {
   removeProposalAssignment(proposalId: $proposalId, sepId: $sepId) {
@@ -6718,6 +6833,18 @@ export const RemoveMemberFromSepProposalDocument = gql`
     error
     sep {
       id
+    }
+  }
+}
+    `;
+export const SaveSepMeetingDecisionDocument = gql`
+    mutation saveSepMeetingDecision($saveSepMeetingDecisionInput: SaveSEPMeetingDecisionInput!) {
+  saveSepMeetingDecision(
+    saveSepMeetingDecisionInput: $saveSepMeetingDecisionInput
+  ) {
+    error
+    sepMeetingDecision {
+      proposalId
     }
   }
 }
@@ -7145,10 +7272,9 @@ export const UpdateInstrumentDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
-    mutation administrationProposal($id: Int!, $rankOrder: Int, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
+    mutation administrationProposal($id: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
   administrationProposal(
     id: $id
-    rankOrder: $rankOrder
     finalStatus: $finalStatus
     statusId: $statusId
     commentForUser: $commentForUser
@@ -8671,6 +8797,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getSEPs(variables: GetSePsQueryVariables): Promise<GetSePsQuery> {
       return withWrapper(() => client.request<GetSePsQuery>(print(GetSePsDocument), variables));
     },
+    overwriteSepMeetingDecisionRanking(variables: OverwriteSepMeetingDecisionRankingMutationVariables): Promise<OverwriteSepMeetingDecisionRankingMutation> {
+      return withWrapper(() => client.request<OverwriteSepMeetingDecisionRankingMutation>(print(OverwriteSepMeetingDecisionRankingDocument), variables));
+    },
     removeProposalAssignment(variables: RemoveProposalAssignmentMutationVariables): Promise<RemoveProposalAssignmentMutation> {
       return withWrapper(() => client.request<RemoveProposalAssignmentMutation>(print(RemoveProposalAssignmentDocument), variables));
     },
@@ -8679,6 +8808,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     removeMemberFromSEPProposal(variables: RemoveMemberFromSepProposalMutationVariables): Promise<RemoveMemberFromSepProposalMutation> {
       return withWrapper(() => client.request<RemoveMemberFromSepProposalMutation>(print(RemoveMemberFromSepProposalDocument), variables));
+    },
+    saveSepMeetingDecision(variables: SaveSepMeetingDecisionMutationVariables): Promise<SaveSepMeetingDecisionMutation> {
+      return withWrapper(() => client.request<SaveSepMeetingDecisionMutation>(print(SaveSepMeetingDecisionDocument), variables));
     },
     updateSEP(variables: UpdateSepMutationVariables): Promise<UpdateSepMutation> {
       return withWrapper(() => client.request<UpdateSepMutation>(print(UpdateSepDocument), variables));
