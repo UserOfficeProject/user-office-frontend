@@ -40,15 +40,11 @@ function editFinalRankingForm() {
   cy.get('#commentForUser').clear().type(faker.lorem.words(3));
   cy.get('#commentForManagement').clear().type(faker.lorem.words(3));
 
-  cy.get('#rankOrder').clear().type('-123').blur();
   cy.get('[data-cy="save"]').click();
   cy.contains('Must be greater than or equal to');
 
-  cy.get('#rankOrder').clear().type('987654321').blur();
   cy.get('[data-cy="save"]').click();
   cy.contains('Must be less than or equal to');
-
-  cy.get('#rankOrder').clear().type('5');
 
   cy.contains('External reviews').parent().find('table').as('reviewsTable');
 
@@ -935,7 +931,7 @@ context(
       cy.contains('External reviews');
     });
 
-    it('Officer should not be able to submit an instrument if all proposals are not ranked in SEP', () => {
+    it('Officer should not be able to submit an instrument if all proposals are not submitted in SEP meetings', () => {
       cy.login('officer');
 
       cy.contains('SEPs').click();
@@ -951,7 +947,7 @@ context(
 
       cy.notification({
         variant: 'error',
-        text: 'All proposals must have rankings',
+        text: 'All proposal meetings should be submitted',
       });
 
       cy.contains('Proposals and Assignments').click();
@@ -1312,9 +1308,8 @@ context(
       cy.get('[role="dialog"] > header + div').scrollTo('top');
       cy.get('#commentForUser').type('Test');
       cy.get('#commentForManagement').type('Test');
-      cy.get('#rankOrder').type('1');
 
-      cy.get('[data-cy="saveAndContinue"]').click();
+      cy.get('[data-cy="submitSepMeeting"]').click();
 
       cy.notification({
         variant: 'success',
@@ -1376,8 +1371,6 @@ context(
 
       cy.get('#commentForManagement').should('be.disabled');
 
-      cy.get('#rankOrder').should('be.disabled');
-
       cy.get('[data-cy="save"]').should('not.exist');
       cy.get('[data-cy="saveAndContinue"]').should('not.exist');
     });
@@ -1403,8 +1396,6 @@ context(
       cy.get('#commentForUser').should('be.disabled');
 
       cy.get('#commentForManagement').should('be.disabled');
-
-      cy.get('#rankOrder').should('be.disabled');
 
       cy.get('[data-cy="save"]').should('not.exist');
       cy.get('[data-cy="saveAndContinue"]').should('not.exist');
