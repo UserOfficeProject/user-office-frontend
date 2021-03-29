@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     },
 
     '& .draggingRow': {
-      backgroundColor: theme.palette.warning.light,
+      backgroundColor: `${theme.palette.warning.light} !important`,
     },
   },
   disabled: {
