@@ -40,12 +40,6 @@ function editFinalRankingForm() {
   cy.get('#commentForUser').clear().type(faker.lorem.words(3));
   cy.get('#commentForManagement').clear().type(faker.lorem.words(3));
 
-  cy.get('[data-cy="save"]').click();
-  cy.contains('Must be greater than or equal to');
-
-  cy.get('[data-cy="save"]').click();
-  cy.contains('Must be less than or equal to');
-
   cy.contains('External reviews').parent().find('table').as('reviewsTable');
 
   cy.get('@reviewsTable').contains('Carl Carlsson');
@@ -55,7 +49,7 @@ function editFinalRankingForm() {
 
   cy.notification({
     variant: 'success',
-    text: 'SEP meeting decision saved successfully!',
+    text: 'successfully',
   });
 }
 
@@ -1291,7 +1285,7 @@ context(
       ).should('not.have.css', 'background-color', 'rgb(246, 104, 94)');
     });
 
-    it('Officer should be able to submit an instrument if all proposals are ranked in existing SEP', () => {
+    it('Officer should be able to submit an instrument if all proposals SEP meetings are submitted in existing SEP', () => {
       cy.login('officer');
 
       cy.contains('SEPs').click();
@@ -1309,11 +1303,12 @@ context(
       cy.get('#commentForUser').type('Test');
       cy.get('#commentForManagement').type('Test');
 
-      cy.get('[data-cy="submitSepMeeting"]').click();
+      cy.get('[data-cy="is-sep-meeting-submitted"]').click();
+      cy.get('[data-cy="saveAndContinue"]').click();
 
       cy.notification({
         variant: 'success',
-        text: 'SEP meeting decision saved successfully',
+        text: 'SEP meeting decision submitted successfully',
       });
 
       cy.get("[title='Submit instrument']").first().click();
