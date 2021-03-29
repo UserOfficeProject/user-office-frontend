@@ -98,7 +98,7 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
           setInstrumentsData(newInstrumentsData);
         }
       } else {
-        enqueueSnackbar('All proposal meetings should be submitted', {
+        enqueueSnackbar('All proposal SEP meetings should be submitted', {
           variant: 'error',
           className: 'snackbar-error',
         });

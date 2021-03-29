@@ -947,7 +947,7 @@ context(
 
       cy.notification({
         variant: 'error',
-        text: 'All proposal meetings should be submitted',
+        text: 'All proposal SEP meetings should be submitted',
       });
 
       cy.contains('Proposals and Assignments').click();

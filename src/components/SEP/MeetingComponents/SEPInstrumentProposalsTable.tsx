@@ -8,7 +8,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
 import MaterialTable, { MTableBodyRow } from 'material-table';
 import PropTypes from 'prop-types';
-import React, { useContext, DragEvent, useState } from 'react';
+import React, { useContext, DragEvent, useState, useEffect } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -78,10 +78,20 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     dropIndex: -1,
   };
 
+  useEffect(() => {
+    if (!loadingInstrumentProposals && sepInstrument.submitted) {
+      refreshInstrumentProposalsData();
+    }
+    // NOTE: Should refresh proposals when we submit instrument to update rankings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sepInstrument.submitted]);
+
   const sortByRankOrder = (a: SepProposal, b: SepProposal) => {
     if (
       a.proposal.sepMeetingDecision?.rankOrder ===
-      b.proposal.sepMeetingDecision?.rankOrder
+        b.proposal.sepMeetingDecision?.rankOrder ||
+      (!a.proposal.sepMeetingDecision?.rankOrder &&
+        !b.proposal.sepMeetingDecision?.rankOrder)
     ) {
       return -1;
     } else if (a.proposal.sepMeetingDecision?.rankOrder === null) {
@@ -231,7 +241,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     {
       title: 'Current rank',
       render: (rowData: SepProposal) =>
-        rowData.proposal.sepMeetingDecision
+        rowData.proposal.sepMeetingDecision?.rankOrder
           ? rowData.proposal.sepMeetingDecision.rankOrder
           : '-',
     },
