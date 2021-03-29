@@ -1311,9 +1311,21 @@ context(
         text: 'SEP meeting decision submitted successfully',
       });
 
+      cy.get('[title="Show proposals"]').first().click();
+
       cy.get("[title='Submit instrument']").first().click();
 
       cy.get('[data-cy="confirm-ok"]').click();
+
+      cy.notification({
+        variant: 'success',
+        text: 'Instrument submitted',
+      });
+
+      cy.get('[data-cy="sep-instrument-proposals-table"]').should(
+        'not.contain.text',
+        '-'
+      );
 
       cy.contains('Proposals and Assignments').click();
 
