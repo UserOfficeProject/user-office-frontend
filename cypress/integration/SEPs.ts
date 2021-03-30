@@ -1311,8 +1311,6 @@ context(
         text: 'SEP meeting decision submitted successfully',
       });
 
-      cy.get('[title="Show proposals"]').first().click();
-
       cy.get("[title='Submit instrument']").first().click();
 
       cy.get('[data-cy="confirm-ok"]').click();
