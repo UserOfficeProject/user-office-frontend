@@ -1320,10 +1320,12 @@ context(
         text: 'Instrument submitted',
       });
 
-      cy.get('[data-cy="sep-instrument-proposals-table"]').should(
-        'not.contain.text',
-        '-'
-      );
+      cy.get('[data-cy="sep-instrument-proposals-table"] tbody tr')
+        .first()
+        .find('td')
+        .eq(5)
+        .should('not.contain.text', '-')
+        .should('contain.text', '1');
 
       cy.contains('Proposals and Assignments').click();
 
