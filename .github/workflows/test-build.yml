@@ -181,20 +181,31 @@ jobs:
           cd $GITHUB_WORKSPACE
 
           sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
-          OLD_SUM=$(sha256sum src/generated/sdk.ts)
+          GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
+
           npm run generate:local
+
           sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
-          NEW_SUM=$(sha256sum src/generated/sdk.ts)
+          PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_pipeline_generated.ts
 
           # for debugging
-          echo "OLD_SUM: $OLD_SUM"
-          echo "NEW_SUM: $NEW_SUM"
+          echo "GIT_TRACKED_SUM: $GIT_TRACKED_SUM"
+          echo "PIPELINE_GENERATED_SUM: $PIPELINE_GENERATED_SUM"
           git diff
 
           # if there is a mismatch it will fail
-          echo "$OLD_SUM" | sha256sum -c
+          echo "$GIT_TRACKED_SUM" | sha256sum -c
 
           docker stop $(docker ps -q)
+
+      - name: Upload git tracked and pipeline generated SDK
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk-files
+          path: /tmp/sdk_*
 
       - name: Cache app docker layers and image
         id: cached-image
