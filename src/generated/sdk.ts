@@ -293,7 +293,9 @@ export enum Event {
   PROPOSAL_SEP_REVIEW_UPDATED = 'PROPOSAL_SEP_REVIEW_UPDATED',
   PROPOSAL_SEP_REVIEW_SUBMITTED = 'PROPOSAL_SEP_REVIEW_SUBMITTED',
   PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED = 'PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED',
+  PROPOSAL_SEP_MEETING_SAVED = 'PROPOSAL_SEP_MEETING_SAVED',
   PROPOSAL_SEP_MEETING_SUBMITTED = 'PROPOSAL_SEP_MEETING_SUBMITTED',
+  PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN = 'PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN',
   PROPOSAL_MANAGEMENT_DECISION_UPDATED = 'PROPOSAL_MANAGEMENT_DECISION_UPDATED',
   PROPOSAL_MANAGEMENT_DECISION_SUBMITTED = 'PROPOSAL_MANAGEMENT_DECISION_SUBMITTED',
   PROPOSAL_INSTRUMENT_SUBMITTED = 'PROPOSAL_INSTRUMENT_SUBMITTED',
@@ -1349,7 +1351,7 @@ export type DeleteEquipmentAssignmentInput = {
 export type Equipment = {
   __typename?: 'Equipment';
   id: Scalars['ID'];
-  owner: User;
+  owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
@@ -1380,7 +1382,7 @@ export type EquipmentResponseWrap = {
 export type EquipmentWithAssignmentStatus = {
   __typename?: 'EquipmentWithAssignmentStatus';
   id: Scalars['ID'];
-  owner: User;
+  owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
@@ -1423,13 +1425,13 @@ export type NewScheduledEventInput = {
 export type ProposalBooking = {
   __typename?: 'ProposalBooking';
   id: Scalars['ID'];
-  call: Call;
-  proposal: Proposal;
+  call: Maybe<Call>;
+  proposal: Maybe<Proposal>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   status: ProposalBookingStatus;
   allocatedTime: Scalars['Int'];
-  instrument: Instrument;
+  instrument: Maybe<Instrument>;
   scheduledEvents: Array<ScheduledEvent>;
 };
 
@@ -1462,7 +1464,7 @@ export enum ProposalBookingStatus {
 }
 
 export type ProposalProposalBookingFilter = {
-  status?: Maybe<ProposalBookingStatus>;
+  status?: Maybe<Array<ProposalBookingStatus>>;
 };
 
 export type ScheduledEvent = {
@@ -1473,9 +1475,9 @@ export type ScheduledEvent = {
   bookingType: ScheduledEventBookingType;
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
-  scheduledBy: User;
+  scheduledBy: Maybe<User>;
   description: Maybe<Scalars['String']>;
-  instrument: Instrument;
+  instrument: Maybe<Instrument>;
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
 };
