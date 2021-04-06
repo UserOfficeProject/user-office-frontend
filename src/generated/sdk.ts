@@ -2739,6 +2739,11 @@ export type UserReviewsArgs = {
   callId?: Maybe<Scalars['Int']>;
 };
 
+
+export type UserProposalsArgs = {
+  instrumentId?: Maybe<Scalars['Int']>;
+};
+
 export type UserQueryResult = {
   __typename?: 'UserQueryResult';
   users: Array<BasicUserDetails>;
@@ -4206,6 +4211,8 @@ export type UpdateProposalMutation = (
 
 export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
   endsAfter?: Maybe<Scalars['TzLessDateTime']>;
+  status?: Maybe<Array<ProposalBookingStatus> | ProposalBookingStatus>;
+  instrumentId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -7596,13 +7603,13 @@ export const UpdateProposalDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
-    query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime) {
+    query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatus!], $instrumentId: Int) {
   me {
-    proposals {
+    proposals(instrumentId: $instrumentId) {
       id
       title
       shortCode
-      proposalBooking {
+      proposalBooking(filter: {status: $status}) {
         scheduledEvents(filter: {endsAfter: $endsAfter}) {
           startsAt
           endsAt

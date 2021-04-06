@@ -31,7 +31,8 @@ import ProposalChooseCall from './proposal/ProposalChooseCall';
 import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
-import MyBeamTimes from './proposalBooking/MyBeamTimes';
+import InstrSciUpcomingBeamTimesTable from './proposalBooking/InstrSciUpcomingBeamTimesTable';
+import UserMyBeamTimesTable from './proposalBooking/UserMyBeamTimesTable';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -268,7 +269,13 @@ const Dashboard: React.FC = () => {
             <Route path="/ApiAccessTokens" component={ApiAccessTokensPage} />
           )}
           {isSchedulerEnabled && (
-            <Route path="/MyBeamTimes" component={MyBeamTimes} />
+            <Route path="/MyBeamTimes" component={UserMyBeamTimesTable} />
+          )}
+          {isSchedulerEnabled && (
+            <Route
+              path="/UpcomingBeamTimes"
+              component={InstrSciUpcomingBeamTimesTable}
+            />
           )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
