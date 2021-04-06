@@ -25,14 +25,14 @@ export function useSEPProposalData(
   ] = useState<SepProposalBasics | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    let canceled = false;
+    let unmounted = false;
     setLoading(true);
 
     if (proposalId && sepId) {
       api()
         .getSEPProposal({ sepId, proposalId })
         .then((data) => {
-          if (canceled) {
+          if (unmounted) {
             return;
           }
 
@@ -41,10 +41,12 @@ export function useSEPProposalData(
           }
           setLoading(false);
         });
+    } else {
+      setLoading(false);
     }
 
     return () => {
-      canceled = true;
+      unmounted = true;
     };
   }, [sepId, api, proposalId]);
 
