@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { FormikProps } from 'formik';
 import React, { FC } from 'react';
 
@@ -8,6 +9,7 @@ import {
   DataType,
   Question,
   QuestionTemplateRelation,
+  Sdk,
   Template,
 } from 'generated/sdk';
 import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
@@ -63,8 +65,13 @@ export interface QuestionaryComponentDefinition {
     props: BasicComponentProps
   ) => JSX.Element | null;
   readonly renderers?: Renderers;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly createYupValidationSchema: ((field: Answer) => object) | null;
+  readonly createYupValidationSchema:
+    | ((
+        field: Answer,
+        state: QuestionarySubmissionState,
+        api?: () => Sdk
+      ) => object)
+    | null;
   readonly getYupInitialValue: (props: {
     answer: Answer;
     state: QuestionarySubmissionState;
