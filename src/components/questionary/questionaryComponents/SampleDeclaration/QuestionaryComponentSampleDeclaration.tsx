@@ -115,6 +115,7 @@ function QuestionaryComponentSampleDeclaration(
           onComplete(newStateValue);
         }
       });
+
   useEffect(() => {
     const getSamples = async (
       proposalId: number,
@@ -245,6 +246,10 @@ function QuestionaryComponentSampleDeclaration(
                 ...rows[index],
                 ...sampleToListRow(updatedSample),
               });
+              const newStateValue = [...stateValue];
+
+              setStateValue(newStateValue);
+              onComplete(newStateValue);
               setRows(newRows);
             }}
             sampleCreated={(newSample) => {
