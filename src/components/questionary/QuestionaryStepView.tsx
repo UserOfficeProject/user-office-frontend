@@ -283,6 +283,7 @@ export default function QuestionaryStepView(props: {
                   isBusy={isSubmitting}
                   variant="contained"
                   color="primary"
+                  data-cy="save-button"
                 >
                   Save
                 </NavigButton>
