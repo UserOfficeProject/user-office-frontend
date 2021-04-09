@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import StyledModal from 'components/common/StyledModal';
 import { SuperMaterialTable } from 'components/common/SuperMaterialTable';
 import { createQuestionForm } from 'components/questionary/QuestionaryComponentRegistry';
-import { QuestionWithUsage, useQuestions } from 'hooks/template/useQuestions';
+import { useCreatableQuestions } from 'hooks/template/useCreatableQuestions';
+import { QuestionWithUsage } from 'hooks/template/useQuestions';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -20,7 +21,7 @@ function QuestionsPage() {
     setQuestions,
     setQuestionsFilter,
     loadingQuestions,
-  } = useQuestions();
+  } = useCreatableQuestions();
 
   const { api } = useDataApiWithFeedback();
 
@@ -107,6 +108,7 @@ function QuestionsPage() {
               isLoading={loadingQuestions}
               data={questions}
               options={{ search: false }}
+              hasAccess={{ create: false, update: true, remove: true }}
             />
           </StyledPaper>
         </Grid>

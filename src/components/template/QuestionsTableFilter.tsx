@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 
-import { getQuestionaryComponentDefinitions } from 'components/questionary/QuestionaryComponentRegistry';
+import { creatableQuestions } from 'components/questionary/QuestionaryComponentRegistry';
 import { DataType, QuestionsFilter, TemplateCategoryId } from 'generated/sdk';
 import { useTemplateCategories } from 'hooks/template/useTemplateCategories';
 
@@ -26,16 +26,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const questionTypes = getQuestionaryComponentDefinitions();
-
 function QuestionsTableFilter(props: QuestionsTableFilterProps) {
   const classes = useStyles();
   const { categories } = useTemplateCategories();
   const [category, setCategory] = useState<TemplateCategoryId | undefined>();
-  const [questionType, setQuestionType] = useState<DataType | undefined>();
+  const [questionType, setQuestionType] = useState<DataType[] | undefined>();
   const [searchText, setSearchText] = useState<string | undefined>();
 
   const handleChange = (update: Partial<QuestionsFilter>) => {
+    console.log(update);
     props.onChange?.({
       dataType: questionType,
       text: searchText,
@@ -72,7 +71,9 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
         <InputLabel shrink>Type</InputLabel>
         <Select
           onChange={(e) => {
-            const newDataType = e.target.value as DataType;
+            const value = e.target.value as DataType | undefined;
+            const newDataType = value ? [value] : undefined;
+
             setQuestionType(newDataType);
             handleChange({ dataType: newDataType });
           }}
@@ -82,7 +83,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
           <MenuItem value={undefined} key={'None'}>
             All
           </MenuItem>
-          {questionTypes.map((questionType) => (
+          {creatableQuestions.map((questionType) => (
             <MenuItem value={questionType.dataType} key={questionType.dataType}>
               {questionType.name}
             </MenuItem>

@@ -2232,7 +2232,8 @@ export type QuestionaryStepResponseWrap = {
 export type QuestionsFilter = {
   text?: Maybe<Scalars['String']>;
   category?: Maybe<TemplateCategoryId>;
-  dataType?: Maybe<DataType>;
+  dataType?: Maybe<Array<DataType>>;
+  excludeDataType?: Maybe<Array<DataType>>;
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
