@@ -318,7 +318,7 @@ export type Entry = {
 export type Equipment = {
   __typename?: 'Equipment';
   id: Scalars['ID'];
-  owner: User;
+  owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
@@ -349,7 +349,7 @@ export type EquipmentResponseWrap = {
 export type EquipmentWithAssignmentStatus = {
   __typename?: 'EquipmentWithAssignmentStatus';
   id: Scalars['ID'];
-  owner: User;
+  owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
@@ -1556,13 +1556,13 @@ export type ProposalBasisConfig = {
 export type ProposalBooking = {
   __typename?: 'ProposalBooking';
   id: Scalars['ID'];
-  call: Call;
-  proposal: Proposal;
+  call: Maybe<Call>;
+  proposal: Maybe<Proposal>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   status: ProposalBookingStatus;
   allocatedTime: Scalars['Int'];
-  instrument: Instrument;
+  instrument: Maybe<Instrument>;
   scheduledEvents: Array<ScheduledEvent>;
 };
 
@@ -2430,9 +2430,9 @@ export type ScheduledEvent = {
   bookingType: ScheduledEventBookingType;
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
-  scheduledBy: User;
+  scheduledBy: Maybe<User>;
   description: Maybe<Scalars['String']>;
-  instrument: Instrument;
+  instrument: Maybe<Instrument>;
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
 };
