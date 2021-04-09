@@ -18,7 +18,7 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
   questionForm: () => QuestionSampleDeclarationForm,
   questionTemplateRelationForm: () =>
     QuestionTemplateRelationSampleDeclarationForm,
-  readonly: false,
+  readonly: true,
   creatable: true,
   icon: <AssignmentIcon />,
   renderers: {

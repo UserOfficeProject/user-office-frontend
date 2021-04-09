@@ -73,7 +73,6 @@ function QuestionaryComponentSampleDeclaration(
 ) {
   const {
     answer,
-    onComplete,
     confirm,
     formikProps: { errors },
   } = props;
@@ -97,7 +96,6 @@ function QuestionaryComponentSampleDeclaration(
           const newStateValue = [...stateValue, clonedSample.id];
           setStateValue(newStateValue);
           setRows([...rows, sampleToListRow(clonedSample)]);
-          onComplete(newStateValue);
         }
       });
   const deleteSample = (id: number) =>
@@ -110,7 +108,6 @@ function QuestionaryComponentSampleDeclaration(
           );
           setStateValue(newStateValue);
           setRows(rows.filter((row) => row.id !== id));
-          onComplete(newStateValue);
         }
       });
   useEffect(() => {
@@ -249,7 +246,6 @@ function QuestionaryComponentSampleDeclaration(
               const newStateValue = [...stateValue, newSample.id];
               setSelectedSample(newSample);
               setStateValue(newStateValue);
-              onComplete(newStateValue);
 
               const newRows = [...rows, sampleToListRow(newSample)];
               setRows(newRows);
