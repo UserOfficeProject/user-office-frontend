@@ -185,28 +185,25 @@ function QuestionaryComponentSampleDeclaration(
                 <SampleDeclarationContainer
                   sample={selectedSample}
                   sampleUpdated={(updatedSample) => {
-                    const index = field.value.findIndex(
-                      (sample) => sample.id === updatedSample.id
+                    const newValue = field.value.map((sample) =>
+                      sample.id === updatedSample.id ? updatedSample : sample
                     );
 
-                    form.setFieldValue(
-                      answerId,
-                      field.value.splice(index, 1, updatedSample)
-                    );
+                    form.setFieldValue(answerId, newValue);
                   }}
                   sampleCreated={(newSample) => {
                     form.setFieldValue(answerId, [...field.value, newSample]);
                   }}
                   // TODO remove it if async is working fine
                   sampleEditDone={() => {
-                    const index = field.value.findIndex(
-                      (sample) => sample.id === selectedSample.id
-                    );
+                    // const index = field.value.findIndex(
+                    //   (sample) => sample.id === selectedSample.id
+                    // );
 
-                    form.setFieldValue(
-                      answerId,
-                      field.value.splice(index, 1, { ...selectedSample })
-                    );
+                    // form.setFieldValue(
+                    //   answerId,
+                    //   field.value.splice(index, 1, { ...selectedSample })
+                    // );
 
                     setSelectedSample(null);
                   }}
