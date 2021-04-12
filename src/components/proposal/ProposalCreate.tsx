@@ -38,6 +38,7 @@ function createProposalStub(
     },
     submitted: false,
     users: [],
+    samples: [],
   };
 }
 

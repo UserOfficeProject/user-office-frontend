@@ -12,7 +12,7 @@ import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import { Answer, BasicUserDetails } from 'generated/sdk';
+import { BasicUserDetails } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { EventType } from 'models/QuestionarySubmissionState';
@@ -142,8 +142,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const proposalBasisPreSubmit = (answer: Answer) => async ({
+const proposalBasisPreSubmit = (/*answer: Answer*/) => async ({
   api,
   dispatch,
   state,

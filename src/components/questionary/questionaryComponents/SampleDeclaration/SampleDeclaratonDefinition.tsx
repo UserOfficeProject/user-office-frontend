@@ -30,6 +30,9 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
   createYupValidationSchema: (answer, state, api) => {
     const config = answer.config as SubtemplateConfig;
     let schema = Yup.array().of(Yup.number());
+    // .transform(function (value: Sample[]) { // TODO check if this can be deleted
+    //   return value.filter((value) => value.questionId === answer.question.id);
+    // });
     if (config.minEntries) {
       schema = schema.min(
         config.minEntries,
@@ -68,5 +71,11 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
 
     return schema;
   },
-  getYupInitialValue: ({ answer }) => answer.value || [],
+  getYupInitialValue: ({ state, answer }) => {
+    return (
+      state.proposal?.samples?.filter(
+        (sample) => sample.questionId === answer.question.id
+      ) ?? []
+    );
+  },
 };

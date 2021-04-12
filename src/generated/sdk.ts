@@ -1540,6 +1540,7 @@ export type Proposal = {
   call: Maybe<Call>;
   questionary: Maybe<Questionary>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
+  samples: Maybe<Array<Sample>>;
   proposalBooking: Maybe<ProposalBooking>;
 };
 
@@ -4030,7 +4031,10 @@ export type CreateProposalMutation = (
       )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      )> }
+      )>, samples: Maybe<Array<(
+        { __typename?: 'Sample' }
+        & SampleFragment
+      )>> }
     )> }
   ) }
 );
@@ -4149,7 +4153,10 @@ export type GetProposalQuery = (
     )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code'>
-    )> }
+    )>, samples: Maybe<Array<(
+      { __typename?: 'Sample' }
+      & SampleFragment
+    )>> }
     & ProposalFragment
   )> }
 );
@@ -7508,13 +7515,17 @@ export const CreateProposalDocument = gql`
       users {
         ...basicUserDetails
       }
+      samples {
+        ...sample
+      }
     }
     error
   }
 }
     ${ProposalStatusFragmentDoc}
 ${QuestionaryFragmentDoc}
-${BasicUserDetailsFragmentDoc}`;
+${BasicUserDetailsFragmentDoc}
+${SampleFragmentDoc}`;
 export const DeleteProposalDocument = gql`
     mutation deleteProposal($id: Int!) {
   deleteProposal(id: $id) {
@@ -7613,12 +7624,16 @@ export const GetProposalDocument = gql`
       id
       code
     }
+    samples {
+      ...sample
+    }
   }
 }
     ${ProposalFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
-${CoreTechnicalReviewFragmentDoc}`;
+${CoreTechnicalReviewFragmentDoc}
+${SampleFragmentDoc}`;
 export const GetProposalsDocument = gql`
     query getProposals($filter: ProposalsFilter) {
   proposals(filter: $filter) {
