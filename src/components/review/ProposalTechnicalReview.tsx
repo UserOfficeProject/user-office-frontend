@@ -196,7 +196,7 @@ const ProposalTechnicalReview = ({
               <Grid item xs={12}>
                 <Field
                   name="publicComment"
-                  label="Public comment"
+                  label="Comments for the review panel"
                   type="text"
                   component={TextField}
                   margin="normal"
