@@ -479,7 +479,7 @@ context('Instrument tests', () => {
 
     cy.contains('Proposal information').click();
 
-    cy.contains('Update').click();
+    cy.get('[data-cy="save-technical-review"]').click();
 
     cy.notification({
       variant: 'success',
