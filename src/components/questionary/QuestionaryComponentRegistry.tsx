@@ -7,11 +7,11 @@ import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInpu
 import {
   Answer,
   DataType,
-  Question,
   QuestionTemplateRelation,
   Sdk,
   Template,
 } from 'generated/sdk';
+import { Question } from 'models/Question';
 import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
 
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
@@ -34,7 +34,7 @@ export type FormChildren<ValueObjectType> = (
 
 export interface QuestionFormProps {
   question: Question;
-  closeMe: () => unknown;
+  closeMe?: () => unknown;
   onUpdated?: (question: Question) => unknown;
   onDeleted?: (question: Question) => unknown;
   children?: FormChildren<Question>;
@@ -42,7 +42,7 @@ export interface QuestionFormProps {
 export interface QuestionTemplateRelationFormProps {
   questionRel: QuestionTemplateRelation;
   template: Template;
-  closeMe: () => unknown;
+  closeMe?: () => unknown;
   onUpdated?: (template: Template) => unknown;
   onDeleted?: (template: Template) => unknown;
   onOpenQuestionClicked?: (question: Question) => unknown;
@@ -145,3 +145,11 @@ export function createQuestionaryComponent(
 export const getTemplateFieldIcon = (dataType: DataType) => {
   return getQuestionaryComponentDefinition(dataType).icon;
 };
+
+export const creatableQuestions = registry.filter(
+  (def) => def.creatable === true
+);
+
+export const nonCreatableQuestions = registry.filter(
+  (def) => def.creatable === false
+);
