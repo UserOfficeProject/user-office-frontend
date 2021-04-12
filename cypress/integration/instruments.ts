@@ -519,7 +519,7 @@ context('Instrument tests', () => {
 
     cy.get('[data-cy="confirm-ok"]').click();
 
-    cy.get('[data-cy="update-technical-review"]').should('be.disabled');
+    cy.get('[data-cy="save-technical-review"]').should('be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('be.disabled');
     cy.get('[data-cy="timeAllocation"] input').should('be.disabled');
   });
@@ -539,7 +539,7 @@ context('Instrument tests', () => {
       .click()
       .should('have.value', 'false');
 
-    cy.get('[data-cy="update-technical-review"]').click();
+    cy.get('[data-cy="save-technical-review"]').click();
 
     cy.notification({
       variant: 'success',
@@ -561,7 +561,7 @@ context('Instrument tests', () => {
     cy.get('[data-cy="view-proposal"]').first().click();
     cy.get('[role="dialog"]').contains('Technical review').click();
 
-    cy.get('[data-cy="update-technical-review"]').should('not.be.disabled');
+    cy.get('[data-cy="save-technical-review"]').should('not.be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('not.be.disabled');
     cy.get('[data-cy="timeAllocation"] input').should('not.be.disabled');
   });

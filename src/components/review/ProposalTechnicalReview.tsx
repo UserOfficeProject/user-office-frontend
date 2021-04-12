@@ -231,9 +231,9 @@ const ProposalTechnicalReview = ({
                 onClick={() => setShouldSubmit(false)}
                 variant="contained"
                 color={isUserOfficer ? 'primary' : 'secondary'}
-                data-cy="update-technical-review"
+                data-cy="save-technical-review"
               >
-                Update
+                Save
               </Button>
               {!isUserOfficer && (
                 <Button
