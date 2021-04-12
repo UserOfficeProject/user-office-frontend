@@ -5,7 +5,6 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import StyledModal from 'components/common/StyledModal';
 import UOLoader from 'components/common/UOLoader';
-import { ProposalContextType } from 'components/proposal/ProposalContainer';
 import ProposalErrorLabel from 'components/proposal/ProposalErrorLabel';
 import {
   createMissingContextErrorMessage,
@@ -26,7 +25,10 @@ import {
   QuestionnairesList,
   QuestionnairesListRow,
 } from '../QuestionnairesList';
-import { SampleDeclarationContainer } from './SampleDeclarationContainer';
+import {
+  SampleContextType,
+  SampleDeclarationContainer,
+} from './SampleDeclarationContainer';
 
 const sampleToListRow = (sample: SampleBasic): QuestionnairesListRow => {
   return {
@@ -78,7 +80,7 @@ function QuestionaryComponentSampleDeclaration(
   } = props;
   const id = answer.question.id;
   const config = answer.config as SubtemplateConfig;
-  const { state } = useContext(QuestionaryContext) as ProposalContextType;
+  const { state } = useContext(QuestionaryContext) as SampleContextType;
 
   const isError = errors[id] ? true : false;
 
@@ -110,6 +112,7 @@ function QuestionaryComponentSampleDeclaration(
           setRows(rows.filter((row) => row.id !== id));
         }
       });
+
   useEffect(() => {
     const getSamples = async (
       proposalId: number,
@@ -122,7 +125,7 @@ function QuestionaryComponentSampleDeclaration(
         });
     };
 
-    const proposalId = state?.proposal.id;
+    const proposalId = state?.proposal?.id;
     const questionId = answer.question.id;
 
     if (proposalId && questionId) {
@@ -186,7 +189,7 @@ function QuestionaryComponentSampleDeclaration(
               throw new Error('Sample Declaration is missing proposal context');
             }
 
-            const proposalId = state.proposal.id;
+            const proposalId = state.proposal?.id as number;
             const questionId = props.answer.question.id;
             if (proposalId <= 0 || !questionId) {
               throw new Error(
@@ -240,6 +243,10 @@ function QuestionaryComponentSampleDeclaration(
                 ...rows[index],
                 ...sampleToListRow(updatedSample),
               });
+              const newStateValue = [...stateValue];
+
+              setStateValue(newStateValue);
+              onComplete(newStateValue);
               setRows(newRows);
             }}
             sampleCreated={(newSample) => {
