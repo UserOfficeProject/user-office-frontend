@@ -620,7 +620,6 @@ export type Mutation = {
   assignProposalToSEP: NextProposalStatusResponseWrap;
   removeProposalAssignment: SepResponseWrap;
   createSEP: SepResponseWrap;
-  overwriteSepMeetingDecisionRanking: SepMeetingDecisionResponseWrap;
   reorderSepMeetingDecisionProposals: SepMeetingDecisionResponseWrap;
   saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
   updateSEP: SepResponseWrap;
@@ -972,11 +971,6 @@ export type MutationCreateSepArgs = {
   description: Scalars['String'];
   numberRatingsRequired?: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
-};
-
-
-export type MutationOverwriteSepMeetingDecisionRankingArgs = {
-  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
 };
 
 
@@ -1470,11 +1464,6 @@ export type OrcIdInformation = {
   orcidHash: Maybe<Scalars['String']>;
   refreshToken: Maybe<Scalars['String']>;
   token: Maybe<Scalars['String']>;
-};
-
-export type OverwriteSepMeetingDecisionRankingInput = {
-  proposalId: Scalars['Int'];
-  rankOrder: Scalars['Int'];
 };
 
 export type Page = {
@@ -3171,23 +3160,6 @@ export type GetSePsQuery = (
       )> }
     )> }
   )> }
-);
-
-export type OverwriteSepMeetingDecisionRankingMutationVariables = Exact<{
-  overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput;
-}>;
-
-
-export type OverwriteSepMeetingDecisionRankingMutation = (
-  { __typename?: 'Mutation' }
-  & { overwriteSepMeetingDecisionRanking: (
-    { __typename?: 'SepMeetingDecisionResponseWrap' }
-    & Pick<SepMeetingDecisionResponseWrap, 'error'>
-    & { sepMeetingDecision: Maybe<(
-      { __typename?: 'SepMeetingDecision' }
-      & Pick<SepMeetingDecision, 'proposalId'>
-    )> }
-  ) }
 );
 
 export type RemoveProposalAssignmentMutationVariables = Exact<{
@@ -6926,18 +6898,6 @@ export const GetSePsDocument = gql`
   }
 }
     ${BasicUserDetailsFragmentDoc}`;
-export const OverwriteSepMeetingDecisionRankingDocument = gql`
-    mutation overwriteSepMeetingDecisionRanking($overwriteSepMeetingDecisionRankingInput: OverwriteSepMeetingDecisionRankingInput!) {
-  overwriteSepMeetingDecisionRanking(
-    overwriteSepMeetingDecisionRankingInput: $overwriteSepMeetingDecisionRankingInput
-  ) {
-    error
-    sepMeetingDecision {
-      proposalId
-    }
-  }
-}
-    `;
 export const RemoveProposalAssignmentDocument = gql`
     mutation removeProposalAssignment($proposalId: Int!, $sepId: Int!) {
   removeProposalAssignment(proposalId: $proposalId, sepId: $sepId) {
@@ -8971,9 +8931,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getSEPs(variables: GetSePsQueryVariables): Promise<GetSePsQuery> {
       return withWrapper(() => client.request<GetSePsQuery>(print(GetSePsDocument), variables));
-    },
-    overwriteSepMeetingDecisionRanking(variables: OverwriteSepMeetingDecisionRankingMutationVariables): Promise<OverwriteSepMeetingDecisionRankingMutation> {
-      return withWrapper(() => client.request<OverwriteSepMeetingDecisionRankingMutation>(print(OverwriteSepMeetingDecisionRankingDocument), variables));
     },
     removeProposalAssignment(variables: RemoveProposalAssignmentMutationVariables): Promise<RemoveProposalAssignmentMutation> {
       return withWrapper(() => client.request<RemoveProposalAssignmentMutation>(print(RemoveProposalAssignmentDocument), variables));
