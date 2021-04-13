@@ -23,6 +23,7 @@ function createProposalStub(
     proposer: proposer,
     questionary: {
       questionaryId: 0,
+      isCompleted: false,
       templateId: templateId,
       created: new Date(),
       steps: questionarySteps,

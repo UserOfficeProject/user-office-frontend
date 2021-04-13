@@ -1,7 +1,7 @@
 import { Field, FieldProps, FormikProps } from 'formik';
-import { fieldToDateTimePicker } from 'formik-material-ui-pickers';
 import React, { useContext, useState } from 'react';
 
+import ErrorMessage from 'components/common/ErrorMessage';
 import StyledModal from 'components/common/StyledModal';
 import UOLoader from 'components/common/UOLoader';
 import { ProposalContextType } from 'components/proposal/ProposalContainer';
@@ -30,7 +30,7 @@ const sampleToListRow = (sample: SampleBasic): QuestionnairesListRow => {
   return {
     id: sample.id,
     label: sample.title,
-    isCompleted: !!sample.questionary?.steps.every((step) => step.isCompleted),
+    isCompleted: sample.questionary?.isCompleted ?? false,
   };
 };
 
@@ -49,6 +49,7 @@ function createSampleStub(
       templateId: templateId,
       created: new Date(),
       steps: questionarySteps,
+      isCompleted: false,
     },
     questionId: questionId,
     questionaryId: 0,
@@ -175,7 +176,8 @@ function QuestionaryComponentSampleDeclaration(
               {...props}
             />
 
-            {/* TODO add small label */}
+            <ErrorMessage name={answerId} />
+
             <StyledModal
               onClose={() => setSelectedSample(null)}
               open={selectedSample !== null}
@@ -194,16 +196,18 @@ function QuestionaryComponentSampleDeclaration(
                   sampleCreated={(newSample) => {
                     form.setFieldValue(answerId, [...field.value, newSample]);
                   }}
-                  // TODO remove it if async is working fine
                   sampleEditDone={() => {
-                    // const index = field.value.findIndex(
-                    //   (sample) => sample.id === selectedSample.id
-                    // );
-
-                    // form.setFieldValue(
-                    //   answerId,
-                    //   field.value.splice(index, 1, { ...selectedSample })
-                    // );
+                    // refresh all samples
+                    api()
+                      .getSamples({
+                        filter: {
+                          questionId: answer.question.id,
+                          proposalId: state.proposal.id,
+                        },
+                      })
+                      .then((result) => {
+                        form.setFieldValue(answerId, result.samples);
+                      });
 
                     setSelectedSample(null);
                   }}

@@ -3,7 +3,7 @@ import React from 'react';
 import * as Yup from 'yup';
 
 import defaultRenderer from 'components/questionary/DefaultQuestionRenderer';
-import { DataType, SubtemplateConfig } from 'generated/sdk';
+import { DataType, Sample, SubtemplateConfig } from 'generated/sdk';
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import QuestionaryComponentSampleDeclaration from './QuestionaryComponentSampleDeclaration';
@@ -27,12 +27,10 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
     },
     questionRenderer: defaultRenderer.questionRenderer,
   },
-  createYupValidationSchema: (answer, state, api) => {
+  createYupValidationSchema: (answer) => {
     const config = answer.config as SubtemplateConfig;
-    let schema = Yup.array().of(Yup.number());
-    // .transform(function (value: Sample[]) { // TODO check if this can be deleted
-    //   return value.filter((value) => value.questionId === answer.question.id);
-    // });
+    let schema = Yup.array().of(Yup.object<Sample>());
+
     if (config.minEntries) {
       schema = schema.min(
         config.minEntries,
@@ -47,26 +45,10 @@ export const sampleDeclarationDefinition: QuestionaryComponentDefinition = {
     }
 
     schema = schema.test(
-      'validateSamplesCompleted',
+      'allSamplesCompleted',
       'All samples must be completed',
-      async () => {
-        const samples = await api?.().getSamples({
-          filter: {
-            questionId: answer.question.id,
-            proposalId: state.proposal?.id,
-          },
-        });
-
-        if (samples) {
-          const test = samples?.samples?.every((sample) =>
-            sample.questionary.steps.every((step) => step.isCompleted)
-          );
-
-          return !!test;
-        }
-
-        return true;
-      }
+      (value) =>
+        value?.every((sample) => sample?.questionary.isCompleted) ?? false
     );
 
     return schema;

@@ -2209,6 +2209,7 @@ export type Questionary = {
   templateId: Scalars['Int'];
   created: Scalars['DateTime'];
   steps: Array<QuestionaryStep>;
+  isCompleted: Scalars['Boolean'];
 };
 
 export type QuestionaryResponseWrap = {
@@ -4155,6 +4156,10 @@ export type GetProposalQuery = (
       & Pick<Sep, 'id' | 'code'>
     )>, samples: Maybe<Array<(
       { __typename?: 'Sample' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+      ) }
       & SampleFragment
     )>> }
     & ProposalFragment
@@ -4633,6 +4638,7 @@ export type CloneSampleMutation = (
       { __typename?: 'Sample' }
       & { questionary: (
         { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
       ) }
       & SampleFragment
@@ -4657,6 +4663,7 @@ export type CreateSampleMutation = (
       { __typename?: 'Sample' }
       & { questionary: (
         { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
       ) }
       & SampleFragment
@@ -4697,6 +4704,7 @@ export type GetSampleQuery = (
     { __typename?: 'Sample' }
     & { questionary: (
       { __typename?: 'Questionary' }
+      & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
     ) }
     & SampleFragment
@@ -4714,10 +4722,7 @@ export type GetSamplesQuery = (
     { __typename?: 'Sample' }
     & { questionary: (
       { __typename?: 'Questionary' }
-      & { steps: Array<(
-        { __typename?: 'QuestionaryStep' }
-        & Pick<QuestionaryStep, 'isCompleted'>
-      )> }
+      & Pick<Questionary, 'isCompleted'>
     ) }
     & SampleFragment
   )>> }
@@ -4734,10 +4739,7 @@ export type GetSamplesByCallIdQuery = (
     { __typename?: 'Sample' }
     & { questionary: (
       { __typename?: 'Questionary' }
-      & { steps: Array<(
-        { __typename?: 'QuestionaryStep' }
-        & Pick<QuestionaryStep, 'isCompleted'>
-      )> }
+      & Pick<Questionary, 'isCompleted'>
     ) }
     & SampleFragment
   )>> }
@@ -4760,10 +4762,7 @@ export type UpdateSampleMutation = (
       { __typename?: 'Sample' }
       & { questionary: (
         { __typename?: 'Questionary' }
-        & { steps: Array<(
-          { __typename?: 'QuestionaryStep' }
-          & Pick<QuestionaryStep, 'isCompleted'>
-        )> }
+        & Pick<Questionary, 'isCompleted'>
       ) }
       & SampleFragment
     )> }
@@ -7626,6 +7625,9 @@ export const GetProposalDocument = gql`
     }
     samples {
       ...sample
+      questionary {
+        isCompleted
+      }
     }
   }
 }
@@ -7939,6 +7941,7 @@ export const CloneSampleDocument = gql`
     sample {
       ...sample
       questionary {
+        isCompleted
         ...questionary
       }
     }
@@ -7958,6 +7961,7 @@ export const CreateSampleDocument = gql`
     sample {
       ...sample
       questionary {
+        isCompleted
         ...questionary
       }
     }
@@ -7981,6 +7985,7 @@ export const GetSampleDocument = gql`
   sample(sampleId: $sampleId) {
     ...sample
     questionary {
+      isCompleted
       ...questionary
     }
   }
@@ -7992,9 +7997,7 @@ export const GetSamplesDocument = gql`
   samples(filter: $filter) {
     ...sample
     questionary {
-      steps {
-        isCompleted
-      }
+      isCompleted
     }
   }
 }
@@ -8004,9 +8007,7 @@ export const GetSamplesByCallIdDocument = gql`
   samplesByCallId(callId: $callId) {
     ...sample
     questionary {
-      steps {
-        isCompleted
-      }
+      isCompleted
     }
   }
 }
@@ -8022,9 +8023,7 @@ export const UpdateSampleDocument = gql`
     sample {
       ...sample
       questionary {
-        steps {
-          isCompleted
-        }
+        isCompleted
       }
     }
     error

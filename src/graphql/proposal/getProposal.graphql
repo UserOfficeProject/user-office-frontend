@@ -41,6 +41,9 @@ query getProposal($id: Int!) {
     }
     samples {
       ...sample
+      questionary {
+        isCompleted
+      }
     }
   }
 }

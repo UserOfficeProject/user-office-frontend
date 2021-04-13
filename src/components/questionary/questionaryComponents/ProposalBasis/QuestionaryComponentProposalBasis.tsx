@@ -1,8 +1,9 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { ErrorMessage, Field } from 'formik';
+import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { ChangeEvent, useContext, useState } from 'react';
 
+import ErrorMessage from 'components/common/ErrorMessage';
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalContextType } from 'components/proposal/ProposalContainer';
@@ -26,10 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     margin: theme.spacing(1, 0),
-  },
-  error: {
-    color: theme.palette.error.main,
-    marginRight: '10px',
   },
 }));
 
@@ -133,11 +130,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
         // https://github.com/mbrn/material-table/issues/666
         users={JSON.parse(JSON.stringify(users))}
       />
-      <ErrorMessage
-        name={`${id}.users`}
-        className={classes.error}
-        component="span"
-      />
+      <ErrorMessage name={`${id}.users`} />
     </div>
   );
 }
