@@ -529,7 +529,7 @@ context('Instrument tests', () => {
       .find('td')
       .last()
       .then((element) => {
-        expect(element.text()).to.be.equal('-');
+        expect(element.text()).to.be.equal('0');
       });
   });
 

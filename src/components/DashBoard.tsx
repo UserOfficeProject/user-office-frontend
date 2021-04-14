@@ -46,6 +46,7 @@ import ShipmentCreate from './shipments/CreateUpdateShipment';
 import MyShipments from './shipments/MyShipments';
 import ShipmentsPage from './shipments/ShipmentsPage';
 import ProposalTemplates from './template/ProposalTemplates';
+import QuestionsPage from './template/QuestionsPage';
 import SampleTemplatesPage from './template/SampleTemplates';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
@@ -276,6 +277,9 @@ const Dashboard: React.FC = () => {
               path="/UpcomingBeamTimes"
               component={InstrSciUpcomingBeamTimesTable}
             />
+          )}
+          {isUserOfficer && (
+            <Route path="/Questions" component={QuestionsPage} />
           )}
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
