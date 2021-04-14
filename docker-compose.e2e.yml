@@ -1,20 +1,20 @@
-version: '3.1'
+version: "3.1"
 
 services:
   proxy:
     image: traefik:1.7 # The official Traefik docker image
     command: --api --docker # Enables the web UI and tells Traefik to listen to docker
     ports:
-      - '80:80' # The HTTP port
-      - '8080:8080' # The Web UI (enabled by --api)
+      - "80:80" # The HTTP port
+      - "8080:8080" # The Web UI (enabled by --api)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   frontend:
-    image: 'duo-frontend:${BUILD_TAG}'
+    image: "duo-frontend:${BUILD_TAG}"
     labels:
-      - 'traefik.frontend.rule=PathPrefix:/'
-      - 'traefik.port=80'
+      - "traefik.frontend.rule=PathPrefix:/"
+      - "traefik.port=80"
     depends_on:
       - backend
 
@@ -23,13 +23,13 @@ services:
     ipc: host # see https://github.com/cypress-io/cypress/issues/350
     environment:
       CYPRESS_SVC_ACC_TOKEN: $SVC_ACC_TOKEN
-    entrypoint: ['/wait-for-frontend.sh', 'frontend:80', 'npm run cy:run']
+    entrypoint: ["/wait-for-frontend.sh", "frontend:80", "npm run cy:run"]
     depends_on:
       - frontend
     volumes:
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/screenshots:/tmp/screenshots'
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/fixtures:/e2e/cypress/fixtures'
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/integration:/e2e/cypress/integration'
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/plugins:/e2e/cypress/plugins'
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/support:/e2e/cypress/support'
-      - './${USER_OFFICE_FRONTEND_DIR}/cypress/types:/e2e/cypress/types'
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/screenshots:/tmp/screenshots"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/fixtures:/e2e/cypress/fixtures"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/integration:/e2e/cypress/integration"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/plugins:/e2e/cypress/plugins"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/support:/e2e/cypress/support"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/types:/e2e/cypress/types"
