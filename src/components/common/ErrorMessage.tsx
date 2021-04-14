@@ -8,6 +8,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
   },
 }));
+/**
+ * Error message for Formik forms with applied styles
+ * @param props
+ * @returns
+ */
 function ErrorMessage(props: ErrorMessageProps) {
   const classes = useStyles();
 

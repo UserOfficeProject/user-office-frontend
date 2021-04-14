@@ -135,7 +135,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   );
 }
 
-const proposalBasisPreSubmit = (/*answer: Answer*/) => async ({
+const proposalBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,

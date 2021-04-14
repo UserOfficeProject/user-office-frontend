@@ -161,7 +161,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   );
 }
 
-const shipmentBasisPreSubmit = (/*answer: Answer*/) => async ({
+const shipmentBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,

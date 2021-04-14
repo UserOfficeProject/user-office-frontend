@@ -55,7 +55,7 @@ function QuestionaryDetails(
 
     return (
       (!definition.readonly ||
-        field.question.dataType === DataType.SAMPLE_DECLARATION) && // TODO: should not depend on speciffuc datatype
+        field.question.dataType === DataType.SAMPLE_DECLARATION) &&
       areDependenciesSatisfied(questionary.steps, field.question.id)
     );
   });
