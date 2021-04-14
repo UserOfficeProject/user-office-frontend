@@ -18,7 +18,7 @@ context('Samples tests', () => {
   const safetyComment = faker.lorem.words(5);
   const sampleTitle = faker.lorem.words(2);
   const proposalTitleUpdated = faker.lorem.words(2);
-  const sampleTopic2Question = faker.lorem.words(2);
+  const sampleQuestionaryQuestion = faker.lorem.words(2);
 
   it('Should be able to create proposal template with sample', () => {
     cy.login('officer');
@@ -33,7 +33,7 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=add-question-menu-item]').last().click();
 
-    cy.createTextQuestion(sampleTopic2Question, false, false);
+    cy.createTextQuestion(sampleQuestionaryQuestion, false, false);
 
     cy.visit('/');
 
