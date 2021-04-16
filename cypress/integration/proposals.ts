@@ -160,8 +160,9 @@ context('Proposal tests', () => {
   it('User should not be able to edit and submit proposal with inactive call', () => {
     cy.login('officer');
     const pastDate = faker.date.past().toISOString().slice(0, 10);
-    const topic = faker.random.word();
-    const textQuestion = faker.random.word();
+    const topic = faker.random.words(2);
+    const textQuestion = faker.random.words(2);
+    const proposalName = faker.random.words(3);
 
     cy.navigateToTemplatesSubmenu('Proposal templates');
 
@@ -175,7 +176,7 @@ context('Proposal tests', () => {
     cy.logout();
 
     cy.login('user');
-    cy.createProposal();
+    cy.createProposal(proposalName, '-', 'call 1');
     cy.contains(textQuestion).then(($elem: any) => {
       cy.get(`#${$elem.attr('for')}`).type(faker.random.word());
     });
@@ -187,7 +188,7 @@ context('Proposal tests', () => {
     cy.login('officer');
 
     cy.contains('Calls').click();
-    cy.get('[title="Edit"]').first().click();
+    cy.contains('call 1').parent().find('[title="Edit"]').click();
 
     cy.get('[data-cy=start-date] input')
       .clear()
@@ -208,7 +209,7 @@ context('Proposal tests', () => {
 
     cy.login('user');
 
-    cy.get('[title="View proposal"]').click();
+    cy.contains(proposalName).parent().find('[title="View proposal"]').click();
 
     cy.contains('Submit').should('be.disabled');
 
