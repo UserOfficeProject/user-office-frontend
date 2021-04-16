@@ -162,10 +162,10 @@ export type Call = {
   surveyComment: Scalars['String'];
   proposalWorkflowId: Maybe<Scalars['Int']>;
   templateId: Maybe<Scalars['Int']>;
-  isActive: Scalars['Boolean'];
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
   proposalCount: Scalars['Int'];
+  isActive: Scalars['Boolean'];
 };
 
 export type CallResponseWrap = {
