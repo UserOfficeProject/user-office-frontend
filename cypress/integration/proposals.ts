@@ -156,4 +156,78 @@ context('Proposal tests', () => {
 
     cy.contains(`Copy of ${proposalToCloneTitle}`).should('not.exist');
   });
+
+  it('User should not be able to edit and submit proposal with inactive call', () => {
+    cy.login('officer');
+    const pastDate = faker.date.past().toISOString().slice(0, 10);
+    const topic = faker.random.word();
+    const textQuestion = faker.random.word();
+
+    cy.navigateToTemplatesSubmenu('Proposal templates');
+
+    cy.get('[title="Edit"]').first().click();
+
+    cy.createTopic(topic);
+    cy.get('[data-cy=show-more-button]').last().click();
+    cy.get('[data-cy=add-question-menu-item]').last().click();
+    cy.createTextQuestion(textQuestion, false, false);
+
+    cy.logout();
+
+    cy.login('user');
+    cy.createProposal();
+    cy.contains(textQuestion).then(($elem: any) => {
+      cy.get(`#${$elem.attr('for')}`).type(faker.random.word());
+    });
+    cy.contains('Save and continue').click();
+    cy.notification({ text: 'Saved', variant: 'success' });
+
+    cy.logout();
+
+    cy.login('officer');
+
+    cy.contains('Calls').click();
+    cy.get('[title="Edit"]').first().click();
+
+    cy.get('[data-cy=start-date] input')
+      .clear()
+      .type(pastDate)
+      .should('have.value', pastDate);
+
+    cy.get('[data-cy=end-date] input')
+      .clear()
+      .type(pastDate)
+      .should('have.value', pastDate);
+
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="next-step"]').click();
+    cy.get('[data-cy="submit"]').click();
+    cy.notification({ variant: 'success', text: 'successfully' });
+
+    cy.logout();
+
+    cy.login('user');
+
+    cy.get('[title="View proposal"]').click();
+
+    cy.contains('Submit').should('be.disabled');
+
+    cy.contains(topic).click();
+
+    cy.contains('label', textQuestion).then(($elem: any) => {
+      cy.get(`#${$elem.attr('for')}`).then(($inputElem) => {
+        expect($inputElem.css('pointer-events')).to.be.eq('none');
+      });
+    });
+
+    cy.contains('Save and continue').should('not.exist');
+
+    cy.contains('New proposal').click();
+
+    cy.get('[data-cy="title"]').then(($inputElem) => {
+      expect($inputElem.css('pointer-events')).to.be.eq('none');
+    });
+
+    cy.contains('Save and continue').should('not.exist');
+  });
 });
