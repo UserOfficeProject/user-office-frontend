@@ -16,8 +16,13 @@ export const createDateValidationSchema: QuestionaryComponentDefinition['createY
   answer
 ) => {
   let schema = Yup.date()
+    .nullable()
     .typeError('Invalid Date Format')
-    .transform(function (value: Date) {
+    .transform(function (value: Date | null) {
+      if (value === null) {
+        return null;
+      }
+
       return normalizeDate(value);
     });
 
