@@ -49,8 +49,6 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
               date?.setUTCHours(0, 0, 0, 0); // omit time
               onComplete(date);
             }}
-            minDate={minDate}
-            maxDate={maxDate}
           />
         </MuiPickersUtilsProvider>
       </FormControl>
