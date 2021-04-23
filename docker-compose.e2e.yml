@@ -24,6 +24,7 @@ services:
     environment:
       CYPRESS_SVC_ACC_TOKEN: $SVC_ACC_TOKEN
       CI_BUILDID: $CI_BUILDID
+      CY_KEY: $CI_KEY
     entrypoint: ["/wait-for-frontend.sh", "frontend:80", "npm run cy:run"]
     depends_on:
       - frontend

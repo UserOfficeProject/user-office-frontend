@@ -323,6 +323,7 @@ jobs:
         env:
           SVC_ACC_TOKEN: ${{ secrets.SVC_ACC_TOKEN }}
           CI_BUILDID: ${{ github.head_ref }}-${{ github.sha }}
+          CI_KEY: ${{ secrets.CI_KEY }}
         run: |
           cd "$GITHUB_WORKSPACE/.."
 
