@@ -148,7 +148,7 @@ context('Calls tests', () => {
       .type('2021-02-27')
       .should('have.value', '2021-02-27');
 
-    cy.get('[data-cy=end-date] input').should('have.value', '3021-02-27');
+    cy.get('[data-cy=end-date] input').should('have.value', '2021-02-27');
   });
 
   it('A user-officer should be able to create a call', () => {
