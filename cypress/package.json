@@ -13,6 +13,6 @@
   },
   "scripts": {
     "cypress:open": "cypress open",
-    "cy:run": "cypress run --spec integration/calls_n1.ts --browser chrome --config defaultCommandTimeout=15000"
+    "cy:run": "cypress run --spec integration/*_n$MATRIX_NODE_ID.ts --browser chrome --config defaultCommandTimeout=15000"
   }
 }
