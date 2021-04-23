@@ -13,6 +13,6 @@
   },
   "scripts": {
     "cypress:open": "cypress open",
-    "cy:run": "cypress run --browser chrome --record --parallel --key $CI_KEY --ci-build-id=$CI_BUILDID --config defaultCommandTimeout=15000"
+    "cy:run": "cypress run --browser chrome --record --parallel --key d3995c1c-1bad-4849-b477-fad60f57e4dd --ci-build-id=$CI_BUILDID --config defaultCommandTimeout=15000"
   }
 }
