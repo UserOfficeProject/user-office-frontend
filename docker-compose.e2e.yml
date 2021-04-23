@@ -23,12 +23,8 @@ services:
     ipc: host # see https://github.com/cypress-io/cypress/issues/350
     environment:
       CYPRESS_SVC_ACC_TOKEN: $SVC_ACC_TOKEN
-    entrypoint:
-      [
-        "/wait-for-frontend.sh",
-        "frontend:80",
-        "env RUNNER_ID=${RUNNER_ID} npm run cy:run",
-      ]
+      RUNNER_ID: $RUNNER_ID
+    entrypoint: ["/wait-for-frontend.sh", "frontend:80", "npm run cy:run"]
     depends_on:
       - frontend
     volumes:
