@@ -266,7 +266,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [1, 2, 3, 4, 5]
         pattern:
           [
             "cypress/integration/[c-e]*.ts",
