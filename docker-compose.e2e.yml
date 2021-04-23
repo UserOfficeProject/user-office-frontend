@@ -27,7 +27,7 @@ services:
       [
         "/wait-for-frontend.sh",
         "frontend:80",
-        "env MATRIX_NODE_ID=1 npm run cy:run",
+        "env RUNNER_ID=${RUNNER_ID} npm run cy:run",
       ]
     depends_on:
       - frontend
