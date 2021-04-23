@@ -23,8 +23,12 @@ services:
     ipc: host # see https://github.com/cypress-io/cypress/issues/350
     environment:
       CYPRESS_SVC_ACC_TOKEN: $SVC_ACC_TOKEN
-      RUNNER_ID: $RUNNER_ID
-    entrypoint: ["/wait-for-frontend.sh", "frontend:80", "npm run cy:run"]
+    entrypoint:
+      [
+        "/wait-for-frontend.sh",
+        "frontend:80",
+        "node_modules/cypress/bin/cypress run --spec integration/*_n${RUNNER_ID}.ts --browser chrome --config defaultCommandTimeout=15000",
+      ]
     depends_on:
       - frontend
     volumes:
