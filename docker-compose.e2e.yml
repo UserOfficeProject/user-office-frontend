@@ -27,14 +27,7 @@ services:
       [
         "/wait-for-frontend.sh",
         "frontend:80",
-        "cypress",
-        "run",
-        "--spec",
-        "integration/*_n${RUNNER_ID}.ts",
-        "--browser",
-        "chrome",
-        "--config",
-        "defaultCommandTimeout=15000",
+        "cypress run --spec /integration/*_n${RUNNER_ID}.ts --browser chrome --config defaultCommandTimeout=15000",
       ]
     depends_on:
       - frontend
