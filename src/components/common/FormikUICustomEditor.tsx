@@ -1,7 +1,7 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { FormikHelpers, FormikValues } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { FunctionType } from 'utils/utilTypes';
 
@@ -29,6 +29,7 @@ const FormikUICustomEditor = ({
   label?: string;
 }) => {
   const classes = useStyles();
+  const [fieldValue, setFieldValue] = useState(field.value);
 
   return (
     <>
@@ -36,7 +37,8 @@ const FormikUICustomEditor = ({
       <Editor
         initialValue={field.value}
         {...props}
-        onEditorChange={(content) => form.setFieldValue(field.name, content)}
+        onEditorChange={(content) => setFieldValue(content)}
+        onBlur={() => form.setFieldValue(field.name, fieldValue)}
       />
     </>
   );

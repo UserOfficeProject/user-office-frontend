@@ -11,6 +11,7 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
+import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
@@ -23,6 +24,10 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 const useStyles = makeStyles((theme) => ({
   submitButton: {
     marginLeft: theme.spacing(1),
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 }));
 
@@ -180,75 +185,96 @@ const ProposalTechnicalReview = ({
               <Grid item xs={12}>
                 <Field
                   name="comment"
-                  label="Internal comment"
                   type="text"
-                  component={TextField}
+                  label="Internal comment"
+                  component={FormikUICustomEditor}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
-                  data-cy="comment"
-                  multiline
-                  rowsMax="16"
-                  rows="4"
+                  init={{
+                    skin: false,
+                    content_css: false,
+                    plugins: [
+                      'link',
+                      'preview',
+                      'code',
+                      'charmap',
+                      'wordcount',
+                    ],
+                    toolbar: 'bold italic',
+                    branding: false,
+                  }}
                   disabled={shouldDisableForm(isSubmitting)}
+                  data-cy="comment"
                 />
               </Grid>
               <Grid item xs={12}>
                 <Field
                   name="publicComment"
-                  label="Comments for the review panel"
                   type="text"
-                  component={TextField}
+                  label="Comments for the review panel"
+                  component={FormikUICustomEditor}
                   margin="normal"
                   fullWidth
-                  autoComplete="off"
-                  data-cy="publicComment"
-                  multiline
-                  rowsMax="16"
-                  rows="4"
+                  init={{
+                    skin: false,
+                    content_css: false,
+                    plugins: [
+                      'link',
+                      'preview',
+                      'code',
+                      'charmap',
+                      'wordcount',
+                    ],
+                    toolbar: 'bold italic',
+                    branding: false,
+                  }}
                   disabled={shouldDisableForm(isSubmitting)}
+                  data-cy="publicComment"
                 />
               </Grid>
+
+              <Grid item xs={12} className={classes.buttonContainer}>
+                <ButtonContainer>
+                  {isUserOfficer && (
+                    <Field
+                      id="submitted"
+                      name="submitted"
+                      component={FormikUICustomCheckbox}
+                      label="Submitted"
+                      color="primary"
+                      disabled={isSubmitting}
+                      data-cy="is-review-submitted"
+                    />
+                  )}
+                  <Button
+                    disabled={
+                      shouldDisableForm(isSubmitting) ||
+                      (isUserOfficer && isSubmitting)
+                    }
+                    type="submit"
+                    onClick={() => setShouldSubmit(false)}
+                    variant="contained"
+                    color={isUserOfficer ? 'primary' : 'secondary'}
+                    data-cy="save-technical-review"
+                  >
+                    Save
+                  </Button>
+                  {!isUserOfficer && (
+                    <Button
+                      disabled={isSubmitting || data?.submitted}
+                      type="submit"
+                      className={classes.submitButton}
+                      onClick={() => setShouldSubmit(true)}
+                      variant="contained"
+                      color="primary"
+                      data-cy="submit-technical-review"
+                    >
+                      {data?.submitted ? 'Submitted' : 'Submit'}
+                    </Button>
+                  )}
+                </ButtonContainer>
+              </Grid>
             </Grid>
-            <ButtonContainer>
-              {isUserOfficer && (
-                <Field
-                  id="submitted"
-                  name="submitted"
-                  component={FormikUICustomCheckbox}
-                  label="Submitted"
-                  color="primary"
-                  disabled={isSubmitting}
-                  data-cy="is-review-submitted"
-                />
-              )}
-              <Button
-                disabled={
-                  shouldDisableForm(isSubmitting) ||
-                  (isUserOfficer && isSubmitting)
-                }
-                type="submit"
-                onClick={() => setShouldSubmit(false)}
-                variant="contained"
-                color={isUserOfficer ? 'primary' : 'secondary'}
-                data-cy="save-technical-review"
-              >
-                Save
-              </Button>
-              {!isUserOfficer && (
-                <Button
-                  disabled={isSubmitting || data?.submitted}
-                  type="submit"
-                  className={classes.submitButton}
-                  onClick={() => setShouldSubmit(true)}
-                  variant="contained"
-                  color="primary"
-                  data-cy="submit-technical-review"
-                >
-                  {data?.submitted ? 'Submitted' : 'Submit'}
-                </Button>
-              )}
-            </ButtonContainer>
           </Form>
         )}
       </Formik>

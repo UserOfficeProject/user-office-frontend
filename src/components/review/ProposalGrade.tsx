@@ -2,14 +2,13 @@ import { proposalGradeValidationSchema } from '@esss-swap/duo-validation/lib/Rev
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Field, Form, Formik, useFormikContext } from 'formik';
-import { TextField, Select } from 'formik-material-ui';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
+import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
+import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
@@ -22,13 +21,16 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   buttons: {
     display: 'flex',
     justifyContent: 'flex-end',
   },
   button: {
-    marginLeft: '10px',
+    marginLeft: theme.spacing(1),
+  },
+  gradeInput: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -101,7 +103,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
   return (
     <Formik
       initialValues={{
-        grade: review.grade || '',
+        grade: review.grade?.toString() || '',
         comment: review.comment || '',
         saveOnly: true,
       }}
@@ -129,32 +131,37 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
           <CssBaseline />
           <Field
             name="comment"
-            label="Comment"
             type="text"
-            component={TextField}
+            label="Comment"
+            component={FormikUICustomEditor}
             margin="normal"
             fullWidth
-            multiline
-            rowsMax="16"
-            rows="4"
-            disabled={isDisabled(isSubmitting)}
-          />
-          <InputLabel htmlFor="grade-proposal">Grade</InputLabel>
-          <Field
-            name="grade"
-            inputProps={{
-              id: 'grade-proposal',
+            init={{
+              skin: false,
+              content_css: false,
+              plugins: ['link', 'preview', 'code', 'charmap', 'wordcount'],
+              toolbar: 'bold italic',
+              branding: false,
             }}
-            component={Select}
             disabled={isDisabled(isSubmitting)}
-            required
-          >
-            {[...Array(10)].map((e, i) => (
-              <MenuItem key={i} value={i + 1}>
-                {i + 1}
-              </MenuItem>
-            ))}
-          </Field>
+            data-cy="comment"
+          />
+          <Box marginTop={1} width={150}>
+            <Field
+              name="grade"
+              label="Grade"
+              fullWidth
+              component={FormikUICustomSelect}
+              inputProps={{
+                id: 'grade-proposal',
+              }}
+              availableOptions={[...Array(10)].map((e, i) =>
+                (i + 1).toString()
+              )}
+              disabled={isDisabled(isSubmitting)}
+              required
+            />
+          </Box>
           <ButtonContainer>
             {isSubmitting && (
               <Box display="flex" alignItems="center" mx={1}>
