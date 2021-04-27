@@ -26,6 +26,14 @@
 
 import 'cypress-file-upload';
 
+const KEY_CODES = {
+  space: 32,
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40,
+};
+
 const notification = ({ variant, text }) => {
   let notificationQuerySelector = '';
   let bgColor = '';
@@ -98,6 +106,25 @@ function presentationMode() {
     });
   }
 }
+
+const dragElement = (element, moveArgs) => {
+  const focusedElement = cy.get(element);
+
+  focusedElement.trigger('keydown', { keyCode: KEY_CODES.space });
+
+  moveArgs.forEach(({ direction, length }) => {
+    for (let i = 1; i <= length; i++) {
+      focusedElement.trigger('keydown', {
+        keyCode: KEY_CODES[direction],
+        force: true,
+      });
+    }
+  });
+
+  focusedElement.trigger('keydown', { keyCode: KEY_CODES.space, force: true });
+
+  return element;
+};
 
 Cypress.Commands.add('notification', notification);
 

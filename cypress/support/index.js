@@ -16,11 +16,11 @@
 // Import commands.js using ES2015 syntax:
 import './admin';
 import './call';
-import './commands';
 import './instrument';
 import './proposal';
 import './template';
 import './user';
+import './utils';
 import './workflow';
 
 // Alternatively you can use CommonJS syntax:
