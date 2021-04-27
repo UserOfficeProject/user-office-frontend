@@ -167,6 +167,7 @@ export type Call = {
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
   proposalCount: Scalars['Int'];
+  isActive: Scalars['Boolean'];
 };
 
 export type CallResponseWrap = {
@@ -3987,7 +3988,7 @@ export type CloneProposalMutation = (
         & Pick<Instrument, 'id' | 'name' | 'shortCode'>
       )>, call: Maybe<(
         { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode'>
+        & Pick<Call, 'id' | 'shortCode' | 'isActive'>
       )> }
       & ProposalFragment
     )> }
@@ -4137,7 +4138,7 @@ export type GetProposalQuery = (
       & Pick<Instrument, 'id' | 'name' | 'shortCode'>
     )>, call: Maybe<(
       { __typename?: 'Call' }
-      & Pick<Call, 'id' | 'shortCode'>
+      & Pick<Call, 'id' | 'shortCode' | 'isActive'>
     )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code'>
@@ -6020,7 +6021,7 @@ export type GetUserProposalsQuery = (
         & Pick<BasicUserDetails, 'id'>
       )>, call: Maybe<(
         { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode'>
+        & Pick<Call, 'id' | 'shortCode' | 'isActive'>
       )> }
     )> }
   )> }
@@ -7464,6 +7465,7 @@ export const CloneProposalDocument = gql`
       call {
         id
         shortCode
+        isActive
       }
     }
     error
@@ -7596,6 +7598,7 @@ export const GetProposalDocument = gql`
     call {
       id
       shortCode
+      isActive
     }
     sep {
       id
@@ -8768,6 +8771,7 @@ export const GetUserProposalsDocument = gql`
       call {
         id
         shortCode
+        isActive
       }
     }
   }
