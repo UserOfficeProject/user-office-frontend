@@ -20,6 +20,26 @@ declare global {
        *    cy.changeActiveRole('User Officer')
        */
       changeActiveRole: (role: string) => void;
+
+      /**
+       * Logs in user with provided credentials
+       *
+       * @returns {typeof login}
+       * @memberof Chainable
+       * @example
+       *    cy.login('user')
+       */
+      login: (role: string | { email: string; password: string }) => void;
+
+      /**
+       * Logs user out
+       *
+       * @returns {typeof logout}
+       * @memberof Chainable
+       * @example
+       *    cy.logout()
+       */
+      logout: () => void;
     }
   }
 }
