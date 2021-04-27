@@ -180,6 +180,7 @@ const ProposalTechnicalReview = ({
               </Grid>
               <Grid item xs={12}>
                 <Field
+                  id="comment"
                   name="comment"
                   type="text"
                   label="Internal comment"
@@ -200,11 +201,11 @@ const ProposalTechnicalReview = ({
                     branding: false,
                   }}
                   disabled={shouldDisableForm(isSubmitting)}
-                  data-cy="comment"
                 />
               </Grid>
               <Grid item xs={12}>
                 <Field
+                  id="publicComment"
                   name="publicComment"
                   type="text"
                   label="Comments for the review panel"
@@ -225,7 +226,6 @@ const ProposalTechnicalReview = ({
                     branding: false,
                   }}
                   disabled={shouldDisableForm(isSubmitting)}
-                  data-cy="publicComment"
                 />
               </Grid>
 

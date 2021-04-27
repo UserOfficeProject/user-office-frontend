@@ -663,6 +663,28 @@ function createInstrument({ name, shortCode, description }) {
   cy.notification({ variant: 'success', text: 'created successfully' });
 }
 
+const setTinyMceContent = (tinyMceId, content) => {
+  cy.get(`#${tinyMceId}`).should('exist');
+
+  cy.window().then((win) => {
+    const editor = win.tinyMCE.editors[tinyMceId];
+    editor.setContent(content);
+    editor.save();
+
+    editor.iframeElement.blur();
+  });
+};
+
+const getTinyMceContent = (tinyMceId) => {
+  cy.get(`#${tinyMceId}`).should('exist');
+
+  cy.window().then((win) => {
+    const editor = win.tinymce.editors[tinyMceId];
+
+    return editor.getContent();
+  });
+};
+
 Cypress.Commands.add('resetDB', resetDB);
 
 Cypress.Commands.add('resetSchedulerDB', resetSchedulerDB);
@@ -738,3 +760,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createInstrument', createInstrument);
+
+Cypress.Commands.add('setTinyMceContent', setTinyMceContent);
+Cypress.Commands.add('getTinyMceContent', getTinyMceContent);

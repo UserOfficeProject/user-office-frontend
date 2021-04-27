@@ -26,13 +26,14 @@ const FormikUICustomEditor = ({
     value: string;
   };
   form: FormikHelpers<FormikValues>;
+  'data-cy'?: string;
   label?: string;
 }) => {
   const classes = useStyles();
   const [fieldValue, setFieldValue] = useState(field.value);
 
   return (
-    <>
+    <div data-cy={props['data-cy']}>
       {props.label && <label className={classes.label}>{props.label}</label>}
       <Editor
         initialValue={field.value}
@@ -40,7 +41,7 @@ const FormikUICustomEditor = ({
         onEditorChange={(content) => setFieldValue(content)}
         onBlur={() => form.setFieldValue(field.name, fieldValue)}
       />
-    </>
+    </div>
   );
 };
 
