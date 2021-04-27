@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field, useFormikContext } from 'formik';
-import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Prompt } from 'react-router';
@@ -13,6 +12,7 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
+import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import UOLoader from 'components/common/UOLoader';
 import {
   Proposal,
@@ -157,21 +157,30 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
               <Grid container spacing={3}>
                 <Grid item xs={6}>
                   <Field
-                    name="commentForUser"
                     id="commentForUser"
-                    label="Comment for user"
+                    name="commentForUser"
                     type="text"
-                    component={TextField}
+                    label="Comment for user"
+                    component={FormikUICustomEditor}
                     margin="normal"
                     fullWidth
-                    multiline
-                    rowsMax="16"
-                    rows="3"
-                    data-cy="commentForUser"
-                    required
+                    init={{
+                      skin: false,
+                      content_css: false,
+                      plugins: [
+                        'link',
+                        'preview',
+                        'code',
+                        'charmap',
+                        'wordcount',
+                      ],
+                      toolbar: 'bold italic',
+                      branding: false,
+                    }}
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
+                    data-cy="commentForUser"
                   />
                   <FormikDropdown
                     name="recommendation"
@@ -193,19 +202,28 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                   <Field
                     id="commentForManagement"
                     name="commentForManagement"
-                    label="Comment for management"
                     type="text"
-                    component={TextField}
+                    label="Comment for management"
+                    component={FormikUICustomEditor}
                     margin="normal"
                     fullWidth
-                    multiline
-                    rowsMax="16"
-                    rows="3"
-                    data-cy="commentForManagement"
-                    required
+                    init={{
+                      skin: false,
+                      content_css: false,
+                      plugins: [
+                        'link',
+                        'preview',
+                        'code',
+                        'charmap',
+                        'wordcount',
+                      ],
+                      toolbar: 'bold italic',
+                      branding: false,
+                    }}
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
+                    data-cy="commentForManagement"
                   />
                   <ButtonContainer style={{ margin: '2rem 0 0' }}>
                     {hasWriteAccess && (

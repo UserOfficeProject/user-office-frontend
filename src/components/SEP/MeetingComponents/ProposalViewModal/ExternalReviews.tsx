@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { RichTextInputRendererComponent } from 'components/questionary/questionaryComponents/RichTextInput/RichTextInputRenderer';
 import { Review } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 
@@ -48,17 +47,11 @@ const ExternalReviews: React.FC<ExternalReviewsProps> = ({ reviews }) => {
               <TableRow key={`externalReviews_${review.id}_${review.userID}`}>
                 <TableCell>{`${review.reviewer?.firstname} ${review.reviewer?.lastname}`}</TableCell>
                 <TableCell>{review.grade || '-'}</TableCell>
-                <TableCell>
-                  {review.comment ? (
-                    <RichTextInputRendererComponent
-                      id={review.id.toString()}
-                      title="Comment"
-                      valueToRender={review.comment}
-                    />
-                  ) : (
-                    '-'
-                  )}
-                </TableCell>
+                <TableCell
+                  dangerouslySetInnerHTML={{
+                    __html: review?.comment || '-',
+                  }}
+                />
               </TableRow>
             ))}
           </TableBody>

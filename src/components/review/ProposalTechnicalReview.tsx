@@ -25,10 +25,6 @@ const useStyles = makeStyles((theme) => ({
   submitButton: {
     marginLeft: theme.spacing(1),
   },
-  buttonContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
 }));
 
 type TechnicalReviewFormType = {
@@ -145,7 +141,7 @@ const ProposalTechnicalReview = ({
         {({ isSubmitting }) => (
           <Form>
             <PromptIfDirty />
-            <Grid container spacing={3}>
+            <Grid container spacing={2}>
               <Grid item xs={6}>
                 <FormikDropdown
                   name="status"
@@ -233,7 +229,7 @@ const ProposalTechnicalReview = ({
                 />
               </Grid>
 
-              <Grid item xs={12} className={classes.buttonContainer}>
+              <Grid item xs={12}>
                 <ButtonContainer>
                   {isUserOfficer && (
                     <Field
