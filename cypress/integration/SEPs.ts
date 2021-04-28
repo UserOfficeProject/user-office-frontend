@@ -16,10 +16,8 @@ function readWriteReview() {
   cy.get('@dialog').contains('Technical review');
   cy.get('@dialog').contains('Grade').click({ force: true });
 
-  cy.get('@dialog')
-    .get('textarea[name="comment"]')
-    .clear()
-    .type(faker.lorem.words(3));
+  cy.setTinyMceContent('comment', faker.lorem.words(3));
+
   cy.get('@dialog').get('[id="mui-component-select-grade"]').click();
 
   cy.get('[role="listbox"] > [role="option"]').first().click();
@@ -37,8 +35,8 @@ function readWriteReview() {
 function editFinalRankingForm() {
   cy.get('[role="dialog"] > header + div').scrollTo('top');
 
-  cy.get('#commentForUser').clear().type(faker.lorem.words(3));
-  cy.get('#commentForManagement').clear().type(faker.lorem.words(3));
+  cy.setTinyMceContent('commentForUser', faker.lorem.words(3));
+  cy.setTinyMceContent('commentForManagement', faker.lorem.words(3));
 
   cy.contains('External reviews').parent().find('table').as('reviewsTable');
 
@@ -1300,8 +1298,9 @@ context(
       cy.get('[title="View proposal details"]').first().click();
 
       cy.get('[role="dialog"] > header + div').scrollTo('top');
-      cy.get('#commentForUser').type('Test');
-      cy.get('#commentForManagement').type('Test');
+
+      cy.setTinyMceContent('commentForUser', 'Test');
+      cy.setTinyMceContent('commentForManagement', 'Test');
 
       cy.get('[data-cy="is-sep-meeting-submitted"]').click();
       cy.get('[data-cy="saveAndContinue"]').click();
