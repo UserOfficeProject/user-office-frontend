@@ -136,7 +136,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             Comment
           </InputLabel>
           <Editor
-            id="publicComment"
+            id="comment"
             initialValue={initialValues.comment}
             init={{
               skin: false,
