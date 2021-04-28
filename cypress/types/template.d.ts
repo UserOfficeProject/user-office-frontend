@@ -17,13 +17,15 @@ declare global {
        * @returns {typeof createTextQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createTextQuestion()
+       *    cy.createTextQuestion('Question')
        */
       createTextQuestion: (
         title: string,
-        isRequired: boolean,
-        isMultipleLines: boolean,
-        minimumCharacters?: number
+        options?: {
+          isRequired?: boolean;
+          isMultipleLines?: boolean;
+          minimumCharacters?: number;
+        }
       ) => void;
 
       /**
@@ -46,9 +48,11 @@ declare global {
        */
       createMultipleChoiceQuestion: (
         title: string,
-        option1: string,
-        option2: string,
-        option3: string
+        options?: {
+          option1?: string;
+          option2?: string;
+          option3?: string;
+        }
       ) => void;
 
       /**
@@ -69,9 +73,12 @@ declare global {
        * @returns {typeof createNumberInputQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createNumberInputQuestion('Specify temperature')
+       *    cy.createNumberInputQuestion('Specify temperature', ['<0', '>=0'])
        */
-      createNumberInputQuestion: (title: string) => void;
+      createNumberInputQuestion: (
+        title: string,
+        options?: { units?: string[] }
+      ) => void;
 
       /**
        * Creates interval question.
@@ -80,9 +87,12 @@ declare global {
        * @returns {typeof createIntervalQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createIntervalQuestion('Specify temperature interval')
+       *    cy.createIntervalQuestion('Specify temperature interval', ['0-23', '24-30'])
        */
-      createIntervalQuestion: (title: string) => void;
+      createIntervalQuestion: (
+        title: string,
+        options?: { units?: string[] }
+      ) => void;
 
       /**
        * Creates sample question
@@ -90,13 +100,25 @@ declare global {
        * @returns {typeof createSampleQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createSampleQuestion('Provide sample', 'default sample template', '1', '5')
+       *    cy.createSampleQuestion('Provide sample', 'default sample template', {minEntries:1, maxEntries:5})
        */
       createSampleQuestion: (
         question: string,
         template: string,
-        minEntries?: string,
-        maxEntries?: string
+        options?: { minEntries?: number; maxEntries?: number }
+      ) => void;
+
+      /**
+       * Creates rich text input question
+       *
+       * @returns {typeof createRichTextInput}
+       * @memberof Chainable
+       * @example
+       *    cy.createRichTextInput('Question', {maxChars:500})
+       */
+      createRichTextInput: (
+        question: string,
+        options?: { maxChars?: number }
       ) => void;
 
       /**
