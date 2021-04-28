@@ -22,6 +22,3 @@ import './template';
 import './user';
 import './utils';
 import './workflow';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')

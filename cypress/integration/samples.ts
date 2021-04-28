@@ -50,8 +50,6 @@ context('Samples tests', () => {
       maxEntries: 2,
     });
 
-    cy.get('[data-cy=close-button]').click(); // closing question list
-
     cy.contains(sampleQuestion); // checking if question in the topic column
   });
 

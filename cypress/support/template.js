@@ -254,16 +254,20 @@ const createSampleQuestion = (question, templateName, options) => {
   cy.contains(templateName).click();
 
   if (options?.minEntries) {
-    cy.get('[data-cy=min-entries] input').clear().type(minEntries.toString());
+    cy.get('[data-cy=min-entries] input')
+      .clear()
+      .type(options.minEntries.toString());
   }
 
   if (options?.maxEntries) {
-    cy.get('[data-cy=max-entries] input').clear().type(maxEntries.toString());
+    cy.get('[data-cy=max-entries] input')
+      .clear()
+      .type(options.maxEntries.toString());
   }
 
   cy.contains('Save').click();
 
-  cy.contains(title)
+  cy.contains(question)
     .parent()
     .dragElement([{ direction: 'left', length: 1 }]);
 
