@@ -196,6 +196,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                       type="submit"
                       variant="contained"
                       color="primary"
+                      data-cy="save-admin-decision"
                     >
                       Save
                     </Button>
