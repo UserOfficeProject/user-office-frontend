@@ -18,7 +18,7 @@ function readWriteReview() {
 
   cy.setTinyMceContent('comment', faker.lorem.words(3));
 
-  cy.get('@dialog').get('[id="mui-component-select-grade"]').click();
+  cy.get('@dialog').get('[data-cy="grade-proposal"]').click();
 
   cy.get('[role="listbox"] > [role="option"]').first().click();
 

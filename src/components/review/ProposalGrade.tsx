@@ -164,6 +164,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               )}
               disabled={isDisabled(isSubmitting)}
               required
+              data-cy="grade-proposal"
             />
           </Box>
           <ButtonContainer>
