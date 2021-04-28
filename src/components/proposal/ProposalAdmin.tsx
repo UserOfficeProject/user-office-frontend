@@ -1,7 +1,9 @@
 import { administrationProposalValidationSchema } from '@esss-swap/duo-validation/lib/Proposal';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
+import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React from 'react';
@@ -10,7 +12,6 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import { Proposal, UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
@@ -91,7 +92,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
           await handleProposalAdministration(administrationValues);
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form>
             <PromptIfDirty />
             <Grid container spacing={2}>
@@ -124,13 +125,12 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
-                  name="commentForUser"
-                  type="text"
-                  label="Comment for user"
-                  component={FormikUICustomEditor}
-                  margin="normal"
-                  fullWidth
+                <InputLabel htmlFor="commentForUser" shrink margin="dense">
+                  Comment for user
+                </InputLabel>
+                <Editor
+                  id="commentForUser"
+                  initialValue={initialValues.commentForUser}
                   init={{
                     skin: false,
                     content_css: false,
@@ -144,18 +144,23 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('commentForUser', content)
+                  }
                   disabled={!isUserOfficer || isSubmitting}
-                  data-cy="commentForUser"
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
-                  name="commentForManagement"
-                  type="text"
-                  label="Comment for management"
-                  component={FormikUICustomEditor}
-                  margin="normal"
-                  fullWidth
+                <InputLabel
+                  htmlFor="commentForManagement"
+                  shrink
+                  margin="dense"
+                >
+                  Comment for management
+                </InputLabel>
+                <Editor
+                  id="commentForManagement"
+                  initialValue={initialValues.commentForManagement}
                   init={{
                     skin: false,
                     content_css: false,
@@ -169,8 +174,10 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('commentForManagement', content)
+                  }
                   disabled={!isUserOfficer || isSubmitting}
-                  data-cy="commentForManagement"
                 />
               </Grid>
               {isUserOfficer && (

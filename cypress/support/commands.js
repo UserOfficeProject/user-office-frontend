@@ -669,9 +669,6 @@ const setTinyMceContent = (tinyMceId, content) => {
   cy.window().then((win) => {
     const editor = win.tinyMCE.editors[tinyMceId];
     editor.setContent(content);
-    editor.save();
-
-    editor.iframeElement.blur();
   });
 };
 

@@ -14,6 +14,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/* NOTE: We prefer using Editor component directly into the forms (example: ProposalTechnicalReview component) instead of FormikUICustomEditor with Formik Field component.
+  This is because FormikUICustomEditor is not updated properly when we set form field onEditorChange
+  (it returns the cursor at the beginning on every keypress because we are updating the form field).
+  It works when we use onBlur event to update the form field but it is problematic to test that with Cypress,
+  because for some reason it is not firing the onBlur event and form is not updated when we try to submit or save.
+*/
 const FormikUICustomEditor = ({
   field,
   form,

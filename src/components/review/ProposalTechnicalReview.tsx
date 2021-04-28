@@ -1,8 +1,10 @@
 import { proposalTechnicalReviewValidationSchema } from '@esss-swap/duo-validation/lib/Review';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
+import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { useState } from 'react';
@@ -11,7 +13,6 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
@@ -138,7 +139,7 @@ const ProposalTechnicalReview = ({
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form>
             <PromptIfDirty />
             <Grid container spacing={2}>
@@ -179,14 +180,17 @@ const ProposalTechnicalReview = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
+                <InputLabel htmlFor="comment" shrink margin="dense">
+                  Internal comment
+                </InputLabel>
+                {/* NOTE: We are using Editor directly instead of FormikUICustomEditor with Formik Field component.
+                    This is because FormikUICustomEditor is not updated properly when we set form field onEditorChange.
+                    It works when we use onBlur on Editor but it is problematic to test that with Cypress,
+                    because for some reason it is not firing the onBlur event and form is not updated.
+                */}
+                <Editor
                   id="comment"
-                  name="comment"
-                  type="text"
-                  label="Internal comment"
-                  component={FormikUICustomEditor}
-                  margin="normal"
-                  fullWidth
+                  initialValue={initialValues.comment}
                   init={{
                     skin: false,
                     content_css: false,
@@ -200,18 +204,19 @@ const ProposalTechnicalReview = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('comment', content)
+                  }
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
+                <InputLabel htmlFor="publicComment" shrink margin="dense">
+                  Comments for the review panel
+                </InputLabel>
+                <Editor
                   id="publicComment"
-                  name="publicComment"
-                  type="text"
-                  label="Comments for the review panel"
-                  component={FormikUICustomEditor}
-                  margin="normal"
-                  fullWidth
+                  initialValue={initialValues.publicComment}
                   init={{
                     skin: false,
                     content_css: false,
@@ -225,6 +230,9 @@ const ProposalTechnicalReview = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('publicComment', content)
+                  }
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>

@@ -406,9 +406,7 @@ context('Instrument tests', () => {
     cy.get('@dialog').contains('Technical review').click();
 
     cy.setTinyMceContent('comment', internalComment);
-    cy.get('[data-cy="submit-technical-review"]').focus().blur();
     cy.setTinyMceContent('publicComment', publicComment);
-    cy.get('[data-cy="submit-technical-review"]').focus().blur();
 
     cy.getTinyMceContent('comment').then((content) =>
       expect(content).to.have.string(internalComment)

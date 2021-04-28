@@ -2,12 +2,13 @@ import { proposalGradeValidationSchema } from '@esss-swap/duo-validation/lib/Rev
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import InputLabel from '@material-ui/core/InputLabel';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Editor } from '@tinymce/tinymce-react';
 import { Field, Form, Formik, useFormikContext } from 'formik';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
-import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
@@ -62,6 +63,12 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
+  const initialValues = {
+    grade: review.grade?.toString() || '',
+    comment: review.comment || '',
+    saveOnly: true,
+  };
+
   const PromptIfDirty = () => {
     const formik = useFormikContext();
 
@@ -102,11 +109,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
 
   return (
     <Formik
-      initialValues={{
-        grade: review.grade?.toString() || '',
-        comment: review.comment || '',
-        saveOnly: true,
-      }}
+      initialValues={initialValues}
       onSubmit={async (values): Promise<void> => {
         if (shouldSubmit) {
           confirm(
@@ -125,17 +128,16 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
       }}
       validationSchema={proposalGradeValidationSchema}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, setFieldValue }) => (
         <Form>
           <PromptIfDirty />
           <CssBaseline />
-          <Field
-            name="comment"
-            type="text"
-            label="Comment"
-            component={FormikUICustomEditor}
-            margin="normal"
-            fullWidth
+          <InputLabel htmlFor="comment" shrink margin="dense">
+            Comment
+          </InputLabel>
+          <Editor
+            id="publicComment"
+            initialValue={initialValues.comment}
             init={{
               skin: false,
               content_css: false,
@@ -143,8 +145,10 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               toolbar: 'bold italic',
               branding: false,
             }}
+            onEditorChange={(content: string) =>
+              setFieldValue('comment', content)
+            }
             disabled={isDisabled(isSubmitting)}
-            data-cy="comment"
           />
           <Box marginTop={1} width={150}>
             <Field

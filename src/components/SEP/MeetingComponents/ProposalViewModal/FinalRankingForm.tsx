@@ -2,8 +2,10 @@ import { saveSepMeetingDecisionValidationSchema } from '@esss-swap/duo-validatio
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
+import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -12,7 +14,6 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import UOLoader from 'components/common/UOLoader';
 import {
   Proposal,
@@ -148,7 +149,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
             }
           }}
         >
-          {({ isSubmitting }): JSX.Element => (
+          {({ isSubmitting, setFieldValue }): JSX.Element => (
             <Form>
               <PromptIfDirty />
               <Typography variant="h6" gutterBottom>
@@ -156,14 +157,12 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
               </Typography>
               <Grid container spacing={3}>
                 <Grid item xs={6}>
-                  <Field
+                  <InputLabel htmlFor="commentForUser" shrink margin="dense">
+                    Comment for user
+                  </InputLabel>
+                  <Editor
                     id="commentForUser"
-                    name="commentForUser"
-                    type="text"
-                    label="Comment for user"
-                    component={FormikUICustomEditor}
-                    margin="normal"
-                    fullWidth
+                    initialValue={initialData.commentForUser}
                     init={{
                       skin: false,
                       content_css: false,
@@ -177,10 +176,12 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       toolbar: 'bold italic',
                       branding: false,
                     }}
+                    onEditorChange={(content: string) =>
+                      setFieldValue('commentForUser', content)
+                    }
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
-                    data-cy="commentForUser"
                   />
                   <FormikDropdown
                     name="recommendation"
@@ -199,14 +200,16 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <Field
+                  <InputLabel
+                    htmlFor="commentForManagement"
+                    shrink
+                    margin="dense"
+                  >
+                    Comment for management
+                  </InputLabel>
+                  <Editor
                     id="commentForManagement"
-                    name="commentForManagement"
-                    type="text"
-                    label="Comment for management"
-                    component={FormikUICustomEditor}
-                    margin="normal"
-                    fullWidth
+                    initialValue={initialData.commentForManagement}
                     init={{
                       skin: false,
                       content_css: false,
@@ -220,10 +223,12 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       toolbar: 'bold italic',
                       branding: false,
                     }}
+                    onEditorChange={(content: string) =>
+                      setFieldValue('commentForManagement', content)
+                    }
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
-                    data-cy="commentForManagement"
                   />
                   <ButtonContainer style={{ margin: '2rem 0 0' }}>
                     {hasWriteAccess && (
