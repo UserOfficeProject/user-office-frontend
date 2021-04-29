@@ -1371,9 +1371,15 @@ context(
 
       cy.get('[title="View proposal details"]').click();
 
-      cy.get('#commentForUser').should('be.disabled');
+      cy.get('#commentForUser')
+        .parent()
+        .find('.tox-menubar button')
+        .should('be.disabled');
 
-      cy.get('#commentForManagement').should('be.disabled');
+      cy.get('#commentForManagement')
+        .parent()
+        .find('.tox-menubar button')
+        .should('be.disabled');
 
       cy.get('[data-cy="save"]').should('not.exist');
       cy.get('[data-cy="saveAndContinue"]').should('not.exist');
@@ -1397,9 +1403,15 @@ context(
 
       cy.get('[title="View proposal details"]').click();
 
-      cy.get('#commentForUser').should('be.disabled');
+      cy.get('#commentForUser')
+        .parent()
+        .find('.tox-menubar button')
+        .should('be.disabled');
 
-      cy.get('#commentForManagement').should('be.disabled');
+      cy.get('#commentForManagement')
+        .parent()
+        .find('.tox-menubar button')
+        .should('be.disabled');
 
       cy.get('[data-cy="save"]').should('not.exist');
       cy.get('[data-cy="saveAndContinue"]').should('not.exist');
