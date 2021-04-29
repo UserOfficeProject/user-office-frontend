@@ -510,17 +510,14 @@ context(
       cy.contains('Assign to SEP').click();
 
       // Manually changing the proposal status to be shown in the SEPs. -------->
-      cy.get('[title="View proposal"]').first().click();
+      cy.changeProposalStatus('SEP_REVIEW', proposal1.proposalTitle);
+
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[title="View proposal"]')
+        .click();
 
       cy.finishedLoading();
-
-      cy.get('[role="dialog"]').contains('Admin').click();
-
-      cy.get('#mui-component-select-proposalStatus').click();
-
-      cy.contains('SEP_REVIEW').click();
-
-      cy.get('[type="submit"]').click();
 
       cy.get('[role="dialog"]').contains('Technical').click();
       cy.get('[data-cy="timeAllocation"]').type('51');
@@ -1004,7 +1001,6 @@ context(
 
       cy.finishedLoading();
 
-      // Manually changing the proposal status to be shown in the SEPs. -------->
       cy.get('[data-cy="status-filter"]').click();
       cy.get('[role="listbox"] [data-value="1"]').click();
 
@@ -1040,15 +1036,14 @@ context(
 
       cy.contains('Assign to Instrument').click();
 
-      cy.get('[title="View proposal"]').first().click();
+      cy.changeProposalStatus('SEP_REVIEW', proposal1.proposalTitle);
 
-      cy.get('[role="dialog"]').contains('Admin').click();
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[title="View proposal"]')
+        .click();
 
-      cy.get('#mui-component-select-proposalStatus').click();
-
-      cy.contains('SEP_REVIEW').click();
-
-      cy.get('[type="submit"]').click();
+      cy.finishedLoading();
 
       cy.get('[role="dialog"]').contains('Technical').click();
       cy.get('[data-cy="timeAllocation"]').type('51');
@@ -1057,7 +1052,6 @@ context(
 
       cy.get('[data-cy=save-technical-review] > .MuiButton-label').click();
       cy.closeModal();
-      // <------------------------------------------
 
       cy.contains('Calls').click();
 

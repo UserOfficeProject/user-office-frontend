@@ -112,33 +112,7 @@ context('Proposal administration tests', () => {
   it('Should be able to re-open proposal for submission', () => {
     cy.login('officer');
 
-    cy.contains('Proposals').click();
-
-    cy.contains(proposalName1).parent().find('[type="checkbox"]').check();
-
-    cy.get('[data-cy="change-proposal-status"]').click();
-
-    cy.get('[role="presentation"] .MuiDialogContent-root').as('dialog');
-    cy.get('@dialog').contains('Change proposal/s status');
-
-    cy.get('@dialog')
-      .find('#mui-component-select-selectedStatusId')
-      .should('not.have.class', 'Mui-disabled');
-
-    cy.get('@dialog').find('#mui-component-select-selectedStatusId').click();
-
-    cy.get('[role="listbox"]').contains('DRAFT').click();
-
-    cy.get('[role="alert"] .MuiAlert-message').contains(
-      'Be aware that changing status to "DRAFT" will reopen proposal for changes and submission.'
-    );
-
-    cy.get('[data-cy="submit-proposal-status-change"]').click();
-
-    cy.notification({
-      variant: 'success',
-      text: 'status changed successfully',
-    });
+    cy.changeProposalStatus('DRAFT', proposalName1);
 
     cy.contains(proposalName1).parent().contains('No');
 
