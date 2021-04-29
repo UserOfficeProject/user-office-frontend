@@ -58,19 +58,7 @@ const ProposalWorkflowEditor: React.FC = () => {
       )
   );
 
-  const proposalStatusesPartOfWorkflow = proposalWorkflowConnectionsPartOfWorkflow.map(
-    (proposalWorkflowConnection) => proposalWorkflowConnection.proposalStatus
-  );
-
-  const proposalStatusesInThePicker = state.id
-    ? proposalStatuses.filter(
-        (proposalStatus) =>
-          !proposalStatusesPartOfWorkflow.find(
-            (proposalStatusPartOfWorkflow) =>
-              proposalStatusPartOfWorkflow.id === proposalStatus.id
-          )
-      )
-    : [];
+  const proposalStatusesInThePicker = state.id ? proposalStatuses : [];
 
   const getPreviousWorkflowStatus = (
     destinationIndex: number,
@@ -143,7 +131,8 @@ const ProposalWorkflowEditor: React.FC = () => {
 
       const statusDroppedBeforeDraft =
         currentDroppableGroup?.groupId === 'proposalWorkflowConnections_0' &&
-        destination.index === 0;
+        destination.index === 0 &&
+        currentDroppableGroup.connections.length > 0;
 
       if (statusDroppedBeforeDraft) {
         enqueueSnackbar('Dropping before DRAFT status not alowed', {
