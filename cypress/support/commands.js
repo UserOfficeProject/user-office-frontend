@@ -47,7 +47,7 @@ const resetDB = () => {
     headers: { authorization: authHeader },
   }).rawRequest(query, null);
 
-  cy.wrap(request);
+  cy.wrap(request).its('data').its('prepareDB').its('error').should('eq', null);
 };
 
 const resetSchedulerDB = (includeSeeds = false) => {
@@ -77,6 +77,7 @@ const login = (roleOrCredentials) => {
       email: 'Aaron_Harris49@gmail.com',
       password: 'Test1234!',
     },
+    
   };
 
   const credentials =
