@@ -83,6 +83,10 @@ const proposal1 = {
   proposalTitle: faker.random.words(3),
 };
 
+const proposal2 = {
+  proposalTitle: faker.random.words(3),
+};
+
 context(
   'Scientific evaluation panel tests',
   {
@@ -954,7 +958,7 @@ context(
       const { code, description } = sep2;
 
       cy.login('user');
-      cy.createProposal();
+      cy.createProposal(proposal2.proposalTitle);
       cy.contains('Submit').click();
       cy.contains('OK').click();
       cy.logout();
@@ -1036,9 +1040,9 @@ context(
 
       cy.contains('Assign to Instrument').click();
 
-      cy.changeProposalStatus('SEP_REVIEW', proposal1.proposalTitle);
+      cy.changeProposalStatus('SEP_REVIEW', proposal2.proposalTitle);
 
-      cy.contains(proposal1.proposalTitle)
+      cy.contains(proposal2.proposalTitle)
         .parent()
         .find('[title="View proposal"]')
         .click();
