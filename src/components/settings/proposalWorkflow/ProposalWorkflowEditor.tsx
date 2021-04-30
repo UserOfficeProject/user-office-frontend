@@ -157,7 +157,7 @@ const ProposalWorkflowEditor: React.FC = () => {
       const nextProposalStatusesId = getNextWorkflowStatuses(
         destination,
         currentDroppableGroup as ProposalWorkflowConnectionGroup
-      ).map((status) => status.id);
+      ).map((status) => status?.id);
       const prevProposalStatusId = getPreviousWorkflowStatus(
         destination.index,
         currentDroppableGroup as ProposalWorkflowConnectionGroup

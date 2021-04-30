@@ -148,7 +148,7 @@ context('Settings tests', () => {
       cy.createProposalWorkflow(workflowName, workflowDescription);
 
       cy.get('[data-cy^="connection_DRAFT"]').should('contain.text', 'DRAFT');
-      cy.get('[data-cy^="status_DRAFT"]').should('not.exist');
+      cy.get('[data-cy^="status_DRAFT"]').should('exist');
 
       cy.get('[data-cy="remove-workflow-status-button"]').should('not.exist');
     });
@@ -197,7 +197,7 @@ context('Settings tests', () => {
         text: 'Workflow status added successfully',
       });
 
-      cy.get('[data-cy^="status_FEASIBILITY_REVIEW"]').should('not.exist');
+      cy.get('[data-cy^="status_FEASIBILITY_REVIEW"]').should('exist');
     });
 
     it('User Officer should be able to select events that are triggering change to workflow status', () => {
@@ -241,7 +241,7 @@ context('Settings tests', () => {
         text: 'Workflow status added successfully',
       });
 
-      cy.get('[data-cy^="status_FEASIBILITY_REVIEW"]').should('not.exist');
+      cy.get('[data-cy^="status_FEASIBILITY_REVIEW"]').should('exist');
 
       cy.get('[data-cy^="status_SEP_SELECTION"]').dragElement([
         { direction: 'left', length: 1 },
@@ -258,7 +258,7 @@ context('Settings tests', () => {
         text: 'Workflow status added successfully',
       });
 
-      cy.get('[data-cy^="status_SEP_SELECTION"]').should('not.exist');
+      cy.get('[data-cy^="status_SEP_SELECTION"]').should('exist');
 
       cy.get('[data-cy^="status_SEP_REVIEW"]').dragElement([
         { direction: 'left', length: 1 },
@@ -275,7 +275,7 @@ context('Settings tests', () => {
         text: 'Workflow status added successfully',
       });
 
-      cy.get('[data-cy^="status_SEP_REVIEW"]').should('not.exist');
+      cy.get('[data-cy^="status_SEP_REVIEW"]').should('exist');
 
       cy.get('[data-cy^="status_SEP_MEETING"]').dragElement([
         { direction: 'left', length: 1 },
@@ -292,7 +292,7 @@ context('Settings tests', () => {
         text: 'Workflow status added successfully',
       });
 
-      cy.get('[data-cy^="status_SEP_MEETING"]').should('not.exist');
+      cy.get('[data-cy^="status_SEP_MEETING"]').should('exist');
 
       cy.addProposalStatusChangingEventToStatus('FEASIBILITY_REVIEW', [
         'PROPOSAL_SUBMITTED',
