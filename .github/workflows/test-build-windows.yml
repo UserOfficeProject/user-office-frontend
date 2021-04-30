@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   resolve_dep:
-    runs-on: windows-lastest
+    runs-on: windows-latest
     outputs:
       BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}
       FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}
