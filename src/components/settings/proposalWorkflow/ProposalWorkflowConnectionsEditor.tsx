@@ -186,9 +186,9 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
   const getUniqueKey = (
     proposalWorkflowConnection: ProposalWorkflowConnection
   ) => {
-    return `${proposalWorkflowConnection.prevProposalStatusId || ''}_${
-      proposalWorkflowConnection.proposalStatus.shortCode
-    }_${proposalWorkflowConnection.proposalStatus.id}`;
+    return `${proposalWorkflowConnection.proposalStatus.shortCode}_${
+      proposalWorkflowConnection.proposalStatus.id
+    }_${proposalWorkflowConnection.prevProposalStatusId || ''}`;
   };
 
   const getConnectionGroupItems = (
