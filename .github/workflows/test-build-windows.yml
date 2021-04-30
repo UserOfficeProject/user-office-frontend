@@ -1,0 +1,95 @@
+name: E2E and build testing Windows.
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop and master branches
+on:
+  push:
+    branches:
+      - 88-run-end-to-end-tests-on-windows
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  resolve_dep:
+    runs-on: windows-lastest
+    outputs:
+      BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}
+      FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}
+      SCHEDULER_BE_TAG: ${{ steps.resolve_rep.outputs.SCHEDULER_BE_TAG }}
+      GATEWAY_TAG: ${{ steps.resolve_rep.outputs.GATEWAY_TAG }}
+
+    steps:
+      - name: Resolve required repositories
+        id: resolve_rep
+        run: |
+          # this assumes the result is an array, and .name property is used
+          check_feature() {
+            # first param is the branch, everything after is endpoint for curl
+            local branch=$1
+            local found=0
+            shift
+            for endpoint in $@; do
+              local json=$(curl -s $endpoint)
+              local branch_found=$(echo $json | jq -c ".[] | select(.name==\"$branch\") | .name")
+              # to track what we found
+              >&2 echo "$endpoint -> $branch_found"
+              if [[ $branch_found != "" ]]; then
+                found=$((found += 1))
+              fi
+            done
+            echo $found
+          }
+
+          BE_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-backend/branches
+          )
+          FACTORY_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-factory/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-factory/branches
+          )
+
+          SCHEDULER_BE_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-scheduler-backend/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-scheduler-backend/branches
+          )
+
+          GATEWAY_TAGS=$(check_feature ${{ github.head_ref }} \
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-gateway/tags \
+            https://api.github.com/repos/UserOfficeProject/user-office-gateway/branches
+          )
+
+          BE_TAG=develop
+          if [[ $BE_TAGS == "2" ]]; then
+            BE_TAG="${{ github.head_ref }}"
+          fi
+
+          FACTORY_TAG=develop
+          if [[ $FACTORY_TAGS == "2" ]]; then
+            FACTORY_TAG="${{ github.head_ref }}"
+          fi
+
+          SCHEDULER_BE_TAG=develop
+          if [[ $SCHEDULER_BE_TAGS == "2" ]]; then
+            SCHEDULER_BE_TAG="${{ github.head_ref }}"
+          fi
+
+          GATEWAY_TAG=develop
+          if [[ $GATEWAY_TAGS == "2" ]]; then
+            GATEWAY_TAG="${{ github.head_ref }}"
+          fi
+
+          echo ::set-output name=BE_TAG::${BE_TAG}
+          echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
+          echo ::set-output name=SCHEDULER_BE_TAG::${SCHEDULER_BE_TAG}
+          echo ::set-output name=GATEWAY_TAG::${GATEWAY_TAG}
+
+      - name: Resolved
+        run: |
+          echo "BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}"
+          echo "FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}"
+          echo "SCHEDULER_BE_TAG: ${{ steps.resolve_rep.outputs.SCHEDULER_BE_TAG }}"
+          echo "GATEWAY_TAG: ${{ steps.resolve_rep.outputs.GATEWAY_TAG }}"
