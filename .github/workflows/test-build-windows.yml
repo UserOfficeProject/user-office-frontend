@@ -8,13 +8,13 @@ on:
       - 88-run-end-to-end-tests-on-windows
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-defaults:
+defults:
   run:
     shell: bash
 
 jobs:
   resolve_dep:
-    runs-on: windows-lastest
+    runs-on: windows-latest
     outputs:
       BE_TAG: ${{ steps.resolve_rep.outputs.BE_TAG }}
       FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}
@@ -93,3 +93,145 @@ jobs:
           echo "FACTORY_TAG: ${{ steps.resolve_rep.outputs.FACTORY_TAG }}"
           echo "SCHEDULER_BE_TAG: ${{ steps.resolve_rep.outputs.SCHEDULER_BE_TAG }}"
           echo "GATEWAY_TAG: ${{ steps.resolve_rep.outputs.GATEWAY_TAG }}"
+
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    needs: resolve_dep
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache node_modules
+        id: cached-modules
+        uses: actions/cache@v2
+        env:
+          cache-name: node-modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+
+      - name: Install dependencies
+        if: steps.cached-modules.outputs.cache-hit != 'true'
+        run: npm ci --production --loglevel error --no-fund
+
+      - name: Download required repositories
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
+          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
+          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
+
+      - name: Setup base docker-compose
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+          cat > docker-compose.all.yml << EOF
+          version: "3.1"
+          services:
+            proxy:
+              image: traefik:1.7
+              command: --api --docker
+              ports:
+                - "80:80" # The HTTP port
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock:ro
+          EOF
+
+      - name: Run docker-compose, generate and compare SDK
+        run: |
+          cd "$GITHUB_WORKSPACE/.."
+
+          REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
+
+          export USER_OFFICE_BACKEND_TAG=${{ needs.resolve_dep.outputs.BE_TAG }}
+          export USER_OFFICE_BACKEND_DIR=user-office-backend
+          export USER_OFFICE_BACKEND=http://backend:4000/graphql
+          export USER_OFFICE_ENDPOINT=$USER_OFFICE_BACKEND
+
+          export USER_OFFICE_FACTORY_ENDPOINT=noop
+
+          export USER_OFFICE_SCHEDULER_BACKEND_TAG=${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}
+          export USER_OFFICE_SCHEDULER_BACKEND_DIR=user-office-scheduler-backend
+          export USER_OFFICE_SCHEDULER_BACKEND=http://scheduler-backend:4000/graphql
+
+          export USER_OFFICE_GATEWAY_TAG=${{ needs.resolve_dep.outputs.GATEWAY_TAG }}
+
+          docker-compose -f docker-compose.all.yml \
+            -f user-office-backend/docker-compose.e2e.yml \
+            -f user-office-scheduler-backend/docker-compose.e2e.yml \
+            -f user-office-gateway/docker-compose.e2e.yml \
+            up -d
+
+          export SCHEMA_URL=http://localhost:80/graphql
+
+          while true; do
+            STATUS=$(curl \
+              -o /dev/stderr \
+              --silent \
+              --write-out '%{http_code}' \
+              "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
+
+            if [[ "$STATUS" == "200" ]]; then
+              echo "gateway is ready"
+              break
+            fi
+
+            >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
+            sleep 10
+          done;
+
+          cd $GITHUB_WORKSPACE
+
+          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
+
+          npm run generate:local
+
+          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_pipeline_generated.ts
+
+          # for debugging
+          echo -e "GIT_TRACKED_SUM:\t$GIT_TRACKED_SUM"
+          echo -e "PIPELINE_GENERATED_SUM:\t$PIPELINE_GENERATED_SUM"
+          git diff
+
+          # if there is a mismatch it will fail
+          echo "$GIT_TRACKED_SUM" | sha256sum -c
+
+          docker stop $(docker ps -q)
+
+      - name: Upload git tracked and pipeline generated SDK
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk-files
+          path: /tmp/sdk_*
+
+      - name: Cache app docker layers and image
+        id: cached-image
+        uses: actions/cache@v2
+        with:
+          path: |
+            /tmp/.buildx-layer-cache
+            /tmp/.buildx-image-cache
+          key: ${{ runner.os }}-buildx-${{ github.head_ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ github.head_ref }}-
+            ${{ runner.os }}-buildx-
+
+      - name: Set up Docker Buildx
+        if: steps.cached-image.outputs.cache-hit != 'true'
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and cache image
+        if: steps.cached-image.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/.buildx-image-cache
+          TAG=duo-frontend:${{ github.sha }}
+
+          docker buildx build --cache-to="type=local,dest=/tmp/.buildx-layer-cache,mode=max" --cache-from="type=local,src=/tmp/.buildx-layer-cache" -t $TAG -o type=docker,dest=- . > /tmp/.buildx-image-cache/img.tar
