@@ -137,7 +137,8 @@ context('Settings tests', () => {
 
     beforeEach(() => {
       cy.visit('/');
-      cy.viewport(1100, 1000);
+      // NOTE: Cypress scrolls automatically to the status position and dragging element is problematic when the droppable area is out of the view. For now this solution to extend the height of the view is the fastest
+      cy.viewport(1200, 2000);
     });
 
     it('User Officer should be able to create proposal workflow and it should contain default DRAFT status', () => {
