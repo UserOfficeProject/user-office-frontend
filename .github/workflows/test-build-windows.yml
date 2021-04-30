@@ -8,7 +8,7 @@ on:
       - 88-run-end-to-end-tests-on-windows
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-defults:
+defaults:
   run:
     shell: bash
 
