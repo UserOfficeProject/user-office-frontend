@@ -576,7 +576,7 @@ context(
       cy.get('[role="dialog"]').contains('Download PDF');
     });
 
-    it('Proposal should contain standard deviation field inside proposals and assignments and meeting components', () => {
+    it('Proposal should contain standard deviation field inside proposals and assignments', () => {
       cy.login('officer');
 
       cy.contains('SEPs').click();
@@ -935,6 +935,10 @@ context(
       cy.get("[title='Submit instrument']").should('exist');
 
       cy.get("[title='Show proposals']").first().click();
+
+      cy.get('[data-cy="sep-instrument-proposals-table"] thead').contains(
+        'Deviation'
+      );
 
       cy.get(
         '[data-cy="sep-instrument-proposals-table"] [title="View proposal details"]'
