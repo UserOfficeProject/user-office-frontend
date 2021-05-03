@@ -10,8 +10,10 @@ import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
-import { Instrument } from 'generated/sdk';
+import { Instrument, UserRole } from 'generated/sdk';
+import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,13 +33,20 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
 }) => {
   const classes = useStyles();
   const { api, isExecutingCall } = useDataApiWithFeedback();
+  const { usersData } = useUsersData({
+    userRole: UserRole.INSTRUMENT_SCIENTIST,
+  });
 
+  if (!usersData) {
+    return <UOLoader />;
+  }
   const initialValues = instrument
     ? instrument
     : {
         name: '',
         shortCode: '',
         description: '',
+        managerUserId: null,
       };
 
   return (
@@ -115,6 +124,20 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             disabled={isExecutingCall}
           />
 
+          <FormikDropdown
+            name="managerUserId"
+            label="Beamline manager"
+            noOptionsText="No one"
+            items={usersData.users.map((user) => ({
+              text: `${user.firstname} ${user.lastname}`,
+              value: user.id,
+            }))}
+            InputProps={{
+              'data-cy': 'beamline-manager',
+            }}
+            isClearable
+          />
+
           <Button
             type="submit"
             fullWidth
@@ -139,6 +162,7 @@ CreateUpdateInstrument.propTypes = {
     name: PropTypes.string.isRequired,
     shortCode: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    managerUserId: PropTypes.number.isRequired,
     scientists: PropTypes.array.isRequired,
   }),
   close: PropTypes.func.isRequired,

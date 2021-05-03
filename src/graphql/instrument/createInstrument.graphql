@@ -13,6 +13,7 @@ mutation createInstrument(
       name
       shortCode
       description
+      managerUserId
       scientists {
         ...basicUserDetails
       }

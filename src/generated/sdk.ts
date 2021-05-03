@@ -523,6 +523,7 @@ export type Instrument = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId: Maybe<Scalars['Int']>;
   scientists: Array<BasicUserDetails>;
 };
 
@@ -538,6 +539,7 @@ export type InstrumentWithAvailabilityTime = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId: Maybe<Scalars['Int']>;
   scientists: Array<BasicUserDetails>;
   availabilityTime: Maybe<Scalars['Int']>;
   submitted: Maybe<Scalars['Boolean']>;
@@ -796,6 +798,7 @@ export type MutationUpdateInstrumentArgs = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -3773,7 +3776,7 @@ export type CreateInstrumentMutation = (
     & Pick<InstrumentResponseWrap, 'error'>
     & { instrument: Maybe<(
       { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
+      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
       & { scientists: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
@@ -3807,7 +3810,7 @@ export type GetInstrumentsQuery = (
     & Pick<InstrumentsQueryResult, 'totalCount'>
     & { instruments: Array<(
       { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
+      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
       & { scientists: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
@@ -3897,6 +3900,7 @@ export type UpdateInstrumentMutationVariables = Exact<{
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -3907,7 +3911,7 @@ export type UpdateInstrumentMutation = (
     & Pick<InstrumentResponseWrap, 'error'>
     & { instrument: Maybe<(
       { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
+      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
       & { scientists: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
@@ -7290,6 +7294,7 @@ export const CreateInstrumentDocument = gql`
       name
       shortCode
       description
+      managerUserId
       scientists {
         ...basicUserDetails
       }
@@ -7313,6 +7318,7 @@ export const GetInstrumentsDocument = gql`
       name
       shortCode
       description
+      managerUserId
       scientists {
         ...basicUserDetails
       }
@@ -7379,18 +7385,20 @@ export const SubmitInstrumentDocument = gql`
 }
     `;
 export const UpdateInstrumentDocument = gql`
-    mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!) {
+    mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!, $managerUserId: Int) {
   updateInstrument(
     id: $id
     name: $name
     shortCode: $shortCode
     description: $description
+    managerUserId: $managerUserId
   ) {
     instrument {
       id
       name
       shortCode
       description
+      managerUserId
       scientists {
         ...basicUserDetails
       }

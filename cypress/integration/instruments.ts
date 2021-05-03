@@ -1,5 +1,6 @@
 context('Instrument tests', () => {
   const faker = require('faker');
+
   const questionText = faker.lorem.words(3);
 
   const instrument1 = {
@@ -229,6 +230,28 @@ context('Instrument tests', () => {
     cy.get('[title="Show Scientists"]').should('exist');
   });
 
+  it('User Officer should be able to set beamline manager', () => {
+    cy.login('officer');
+
+    cy.contains('Instruments').click();
+
+    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
+
+    cy.get('[data-cy=beamline-manager]').click();
+
+    cy.get('[role=presentation]').contains(scientist1).click();
+
+    cy.get('[role=presentation] [data-cy=submit]').click();
+
+    cy.finishedLoading();
+
+    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
+
+    cy.get('[role=presentation] [data-cy=beamline-manager]').contains(
+      scientist1
+    );
+  });
+
   it('Instrument scientist should be able to see proposals assigned to instrument where he is instrument scientist', () => {
     cy.login('user');
     cy.changeActiveRole('Instrument Scientist');
@@ -324,7 +347,6 @@ context('Instrument tests', () => {
     cy.contains(proposal1.title)
       .parent()
       .find('[data-cy="download-proposal"]')
-
       .click();
 
     cy.get('[data-cy="preparing-download-dialog"]').should('exist');
