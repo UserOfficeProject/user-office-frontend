@@ -542,7 +542,7 @@ context(
 
       cy.get('[data-cy="sep-assignments-table"]')
         .find('tbody td')
-        .should('have.length', 8);
+        .should('have.length', 9);
 
       cy.get('[data-cy="sep-assignments-table"]')
         .find('tbody td')
