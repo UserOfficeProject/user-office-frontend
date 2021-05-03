@@ -576,6 +576,29 @@ context(
       cy.get('[role="dialog"]').contains('Download PDF');
     });
 
+    it('Proposal should contain standard deviation field inside proposals and assignments and meeting components', () => {
+      cy.login('officer');
+
+      cy.contains('SEPs').click();
+      cy.get('button[title="Edit"]').first().click();
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.get('[data-cy="sep-assignments-table"] thead').contains('Deviation');
+
+      cy.contains('Meeting Components').click();
+
+      cy.finishedLoading();
+
+      cy.get("[title='Show proposals']").first().click();
+
+      cy.get('[data-cy="sep-instrument-proposals-table"] thead').contains(
+        'Deviation'
+      );
+    });
+
     it('Officer should be able to assign SEP member to proposal in existing SEP', () => {
       cy.login('officer');
 
