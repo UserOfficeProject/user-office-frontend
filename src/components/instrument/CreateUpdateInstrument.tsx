@@ -46,7 +46,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
         name: '',
         shortCode: '',
         description: '',
-        managerUserId: null,
+        managerUserId: 0,
       };
 
   return (

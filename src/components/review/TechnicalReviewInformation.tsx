@@ -23,7 +23,7 @@ const TechnicalReviewInformation: React.FC<TechnicalReviewInformationProps> = (
   }))();
 
   if (!props.data) {
-    return <p>Can&apos;t find technical review</p>;
+    return <p>Proposal has no technical review</p>;
   }
 
   return (

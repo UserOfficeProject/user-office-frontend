@@ -3,7 +3,7 @@ mutation updateInstrument(
   $name: String!
   $shortCode: String!
   $description: String!
-  $managerUserId: Int
+  $managerUserId: Int!
 ) {
   updateInstrument(
     id: $id

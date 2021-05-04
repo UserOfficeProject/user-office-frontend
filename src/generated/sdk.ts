@@ -523,7 +523,7 @@ export type Instrument = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
-  managerUserId: Maybe<Scalars['Int']>;
+  managerUserId: Scalars['Int'];
   scientists: Array<BasicUserDetails>;
 };
 
@@ -539,7 +539,7 @@ export type InstrumentWithAvailabilityTime = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
-  managerUserId: Maybe<Scalars['Int']>;
+  managerUserId: Scalars['Int'];
   scientists: Array<BasicUserDetails>;
   availabilityTime: Maybe<Scalars['Int']>;
   submitted: Maybe<Scalars['Boolean']>;
@@ -619,6 +619,7 @@ export type Mutation = {
   updateAnswer: UpdateAnswerResponseWrap;
   addReview: ReviewWithNextStatusResponseWrap;
   addUserForReview: ReviewResponseWrap;
+  updateTechnicalReviewAssignee: ProposalsResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
@@ -798,7 +799,7 @@ export type MutationUpdateInstrumentArgs = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
-  managerUserId?: Maybe<Scalars['Int']>;
+  managerUserId: Scalars['Int'];
 };
 
 
@@ -913,6 +914,12 @@ export type MutationAddUserForReviewArgs = {
   userID: Scalars['Int'];
   proposalID: Scalars['Int'];
   sepID: Scalars['Int'];
+};
+
+
+export type MutationUpdateTechnicalReviewAssigneeArgs = {
+  userId: Scalars['Int'];
+  proposalIds: Array<Scalars['Int']>;
 };
 
 
@@ -1528,6 +1535,7 @@ export type Proposal = {
   submitted: Scalars['Boolean'];
   managementTimeAllocation: Maybe<Scalars['Int']>;
   managementDecisionSubmitted: Scalars['Boolean'];
+  technicalReviewAssignee: Maybe<Scalars['Int']>;
   users: Array<BasicUserDetails>;
   proposer: Maybe<BasicUserDetails>;
   status: Maybe<ProposalStatus>;
@@ -1750,6 +1758,12 @@ export type ProposalsFilter = {
 export type ProposalsQueryResult = {
   __typename?: 'ProposalsQueryResult';
   totalCount: Scalars['Int'];
+  proposals: Array<Proposal>;
+};
+
+export type ProposalsResponseWrap = {
+  __typename?: 'ProposalsResponseWrap';
+  error: Maybe<Scalars['String']>;
   proposals: Array<Proposal>;
 };
 
@@ -3900,7 +3914,7 @@ export type UpdateInstrumentMutationVariables = Exact<{
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
-  managerUserId?: Maybe<Scalars['Int']>;
+  managerUserId: Scalars['Int'];
 }>;
 
 
@@ -4058,7 +4072,7 @@ export type CoreTechnicalReviewFragment = (
 
 export type ProposalFragment = (
   { __typename?: 'Proposal' }
-  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted'>
+  & Pick<Proposal, 'id' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted' | 'technicalReviewAssignee'>
   & { status: Maybe<(
     { __typename?: 'ProposalStatus' }
     & ProposalStatusFragment
@@ -4492,6 +4506,24 @@ export type AddUserForReviewMutation = (
     & { review: Maybe<(
       { __typename?: 'Review' }
       & Pick<Review, 'id'>
+    )> }
+  ) }
+);
+
+export type UpdateTechnicalReviewAssigneeMutationVariables = Exact<{
+  proposalIds: Array<Scalars['Int']> | Scalars['Int'];
+  userId: Scalars['Int'];
+}>;
+
+
+export type UpdateTechnicalReviewAssigneeMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTechnicalReviewAssignee: (
+    { __typename?: 'ProposalsResponseWrap' }
+    & Pick<ProposalsResponseWrap, 'error'>
+    & { proposals: Array<(
+      { __typename?: 'Proposal' }
+      & ProposalFragment
     )> }
   ) }
 );
@@ -6330,6 +6362,7 @@ export const ProposalFragmentDoc = gql`
   submitted
   managementTimeAllocation
   managementDecisionSubmitted
+  technicalReviewAssignee
   sepMeetingDecision {
     ...sepMeetingDecision
   }
@@ -7385,7 +7418,7 @@ export const SubmitInstrumentDocument = gql`
 }
     `;
 export const UpdateInstrumentDocument = gql`
-    mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!, $managerUserId: Int) {
+    mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!, $managerUserId: Int!) {
   updateInstrument(
     id: $id
     name: $name
@@ -7832,6 +7865,16 @@ export const AddUserForReviewDocument = gql`
   }
 }
     `;
+export const UpdateTechnicalReviewAssigneeDocument = gql`
+    mutation updateTechnicalReviewAssignee($proposalIds: [Int!]!, $userId: Int!) {
+  updateTechnicalReviewAssignee(proposalIds: $proposalIds, userId: $userId) {
+    proposals {
+      ...proposal
+    }
+    error
+  }
+}
+    ${ProposalFragmentDoc}`;
 export const GetProposalReviewsDocument = gql`
     query getProposalReviews($proposalId: Int!) {
   proposalReviews(proposalId: $proposalId) {
@@ -9152,6 +9195,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     addUserForReview(variables: AddUserForReviewMutationVariables): Promise<AddUserForReviewMutation> {
       return withWrapper(() => client.request<AddUserForReviewMutation>(print(AddUserForReviewDocument), variables));
+    },
+    updateTechnicalReviewAssignee(variables: UpdateTechnicalReviewAssigneeMutationVariables): Promise<UpdateTechnicalReviewAssigneeMutation> {
+      return withWrapper(() => client.request<UpdateTechnicalReviewAssigneeMutation>(print(UpdateTechnicalReviewAssigneeDocument), variables));
     },
     getProposalReviews(variables: GetProposalReviewsQueryVariables): Promise<GetProposalReviewsQuery> {
       return withWrapper(() => client.request<GetProposalReviewsQuery>(print(GetProposalReviewsDocument), variables));
