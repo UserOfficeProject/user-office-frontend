@@ -102,10 +102,6 @@ context('Instrument tests', () => {
 
     cy.createTopic('Topic for questions');
 
-    cy.get('[data-cy=show-more-button]').last().click();
-
-    cy.get('[data-cy=add-question-menu-item]').last().click();
-
     cy.createBooleanQuestion(questionText);
 
     cy.logout();
@@ -405,12 +401,21 @@ context('Instrument tests', () => {
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
 
-    cy.get('[data-cy="comment"] textarea').first().type(internalComment);
-    cy.get('[data-cy="publicComment"] textarea').first().type(publicComment);
+    cy.setTinyMceContent('comment', internalComment);
+    cy.setTinyMceContent('publicComment', publicComment);
+
+    cy.getTinyMceContent('comment').then((content) =>
+      expect(content).to.have.string(internalComment)
+    );
+
+    cy.getTinyMceContent('publicComment').then((content) =>
+      expect(content).to.have.string(publicComment)
+    );
 
     cy.get('[data-cy="submit-technical-review"]').click();
-
     cy.get('[data-cy="confirm-ok"]').click();
+
+    cy.notification({ text: 'successfully', variant: 'success' });
 
     cy.get('[data-cy="save-technical-review"]').should('be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('be.disabled');
