@@ -2,7 +2,7 @@ import { Button, makeStyles, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
 
-import { Proposal, UserRole } from 'generated/sdk';
+import { BasicUserDetails, Proposal, UserRole } from 'generated/sdk';
 import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -10,6 +10,9 @@ interface AssignTechnicalReviewProps {
   proposal: Proposal;
   onProposalUpdated: (proposal: Proposal) => void;
 }
+
+const getName = (user: BasicUserDetails | undefined) =>
+  `${user?.firstname} ${user?.lastname}`;
 
 const useStyles = makeStyles((theme) => ({
   userList: {
@@ -45,7 +48,7 @@ function AssignTechnicalReview({
         id="user-list"
         options={usersData.users}
         renderInput={(params) => <TextField {...params} />}
-        getOptionLabel={(option) => `${option.firstname} ${option.lastname}`}
+        getOptionLabel={(option) => getName(option)}
         onChange={(_event, newValue) => {
           if (newValue) {
             setSelectedUser(newValue.id);
@@ -59,7 +62,11 @@ function AssignTechnicalReview({
       <Button
         onClick={() => {
           if (selectedUser) {
-            api()
+            api(
+              `Assigned to ${getName(
+                usersData.users.find((user) => user.id === selectedUser)
+              )}`
+            )
               .updateTechnicalReviewAssignee({
                 userId: selectedUser,
                 proposalIds: [proposal.id],
