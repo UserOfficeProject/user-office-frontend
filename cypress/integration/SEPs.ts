@@ -1337,7 +1337,7 @@ context(
       cy.get('[data-cy="sep-instrument-proposals-table"] tbody tr')
         .first()
         .find('td')
-        .eq(5)
+        .eq(6)
         .should('not.contain.text', '-')
         .should('contain.text', '1');
 
