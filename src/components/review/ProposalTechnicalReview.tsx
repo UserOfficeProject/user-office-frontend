@@ -5,12 +5,13 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
+import { UserContext } from 'context/UserContextProvider';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
@@ -51,6 +52,7 @@ const ProposalTechnicalReview = ({
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const classes = useStyles();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const { user } = useContext(UserContext);
 
   const initialValues: TechnicalReviewFormType = {
     status: data?.status || '',
@@ -90,6 +92,7 @@ const ProposalTechnicalReview = ({
       publicComment: values.publicComment,
       status: TechnicalReviewStatus[values.status as TechnicalReviewStatus],
       submitted: shouldSubmit,
+      reviewerId: user.id,
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

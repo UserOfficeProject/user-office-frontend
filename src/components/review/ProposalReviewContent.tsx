@@ -15,6 +15,7 @@ import SEPMeetingDecision from 'components/SEP/MeetingComponents/ProposalViewMod
 import { UserContext } from 'context/UserContextProvider';
 import {
   CoreTechnicalReviewFragment,
+  Proposal,
   TechnicalReview,
   UserRole,
 } from 'generated/sdk';
@@ -89,34 +90,44 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
     />
   );
 
+  const assignAnotherReviewerView = (proposal: Proposal) => {
+    if (proposal.technicalReview?.submitted) {
+      return null;
+    }
+
+    return (
+      <Paper elevation={1} className={classes.reassignContainer}>
+        <Typography variant="h6" gutterBottom>
+          Assign to someone else?
+        </Typography>
+        If you think there is a better candidate to do the review for the
+        proposal, you can re-assign it to someone else
+        <div>
+          {showReassign ? (
+            <AssignTechnicalReview
+              proposal={proposal}
+              onProposalUpdated={(updatedProposal) => {
+                setProposalData(updatedProposal);
+                setShowReassign(false);
+              }}
+            />
+          ) : (
+            <Link
+              onClick={() => setShowReassign(true)}
+              className={classes.showReassignLink}
+            >
+              Re-assign...
+            </Link>
+          )}
+        </div>
+      </Paper>
+    );
+  };
+
   const TechnicalReviewTab =
     isUserOfficer || proposalData.technicalReviewAssignee === user.id ? (
       <>
-        <Paper elevation={1} className={classes.reassignContainer}>
-          <Typography variant="h6" gutterBottom>
-            Assign to someone else?
-          </Typography>
-          If you think there is a better candidate to do the review for the
-          proposal, you can re-assign it to someone else
-          <div>
-            {showReassign ? (
-              <AssignTechnicalReview
-                proposal={proposalData}
-                onProposalUpdated={(updatedProposal) => {
-                  setProposalData(updatedProposal);
-                  setShowReassign(false);
-                }}
-              />
-            ) : (
-              <Link
-                onClick={() => setShowReassign(true)}
-                className={classes.showReassignLink}
-              >
-                Re-assign...
-              </Link>
-            )}
-          </div>
-        </Paper>
+        {assignAnotherReviewerView(proposalData)}
         <ProposalTechnicalReview
           id={proposalData.id}
           data={proposalData.technicalReview}

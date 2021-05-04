@@ -5,11 +5,13 @@ import React, { useState } from 'react';
 import { BasicUserDetails, Proposal, UserRole } from 'generated/sdk';
 import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-interface AssignTechnicalReviewProps {
+type AssignTechnicalReviewProps = {
   proposal: Proposal;
   onProposalUpdated: (proposal: Proposal) => void;
-}
+  confirm: WithConfirmType;
+};
 
 const getName = (user: BasicUserDetails | undefined) =>
   `${user?.firstname} ${user?.lastname}`;
@@ -27,8 +29,11 @@ const useStyles = makeStyles((theme) => ({
 function AssignTechnicalReview({
   proposal,
   onProposalUpdated,
+  confirm,
 }: AssignTechnicalReviewProps) {
   const classes = useStyles();
+  const { api } = useDataApiWithFeedback();
+
   const [selectedUser, setSelectedUser] = useState(
     proposal.technicalReviewAssignee
   );
@@ -36,11 +41,12 @@ function AssignTechnicalReview({
     userRole: UserRole.INSTRUMENT_SCIENTIST,
   });
 
-  const { api } = useDataApiWithFeedback();
-
   if (!usersData) {
     return null;
   }
+
+  const userIdToUser = (userId: number | null) =>
+    usersData.users.find((user) => user.id === userId);
 
   return (
     <div>
@@ -55,28 +61,33 @@ function AssignTechnicalReview({
           }
         }}
         className={classes.userList}
-        value={usersData.users.find((user) => user.id === selectedUser)}
+        value={userIdToUser(selectedUser)}
         disableClearable
         data-cy="user-list"
       />
       <Button
         onClick={() => {
           if (selectedUser) {
-            api(
-              `Assigned to ${getName(
-                usersData.users.find((user) => user.id === selectedUser)
-              )}`
-            )
-              .updateTechnicalReviewAssignee({
-                userId: selectedUser,
-                proposalIds: [proposal.id],
-              })
-              .then((result) => {
-                onProposalUpdated({
-                  ...proposal,
-                  ...result.updateTechnicalReviewAssignee.proposals[0],
-                });
-              });
+            confirm(
+              () =>
+                api(`Assigned to ${getName(userIdToUser(selectedUser))}`)
+                  .updateTechnicalReviewAssignee({
+                    userId: selectedUser,
+                    proposalIds: [proposal.id],
+                  })
+                  .then((result) => {
+                    onProposalUpdated({
+                      ...proposal,
+                      ...result.updateTechnicalReviewAssignee.proposals[0],
+                    });
+                  }),
+              {
+                title: 'Are you sure?',
+                description: `You are about to set ${getName(
+                  userIdToUser(selectedUser)
+                )} as a technical reviewer for this proposal. Are you sure?`,
+              }
+            )();
           }
         }}
         type="button"
@@ -86,8 +97,20 @@ function AssignTechnicalReview({
       >
         Assign
       </Button>
+
+      <Button
+        onClick={() => {
+          onProposalUpdated(proposal);
+        }}
+        type="button"
+        variant="outlined"
+        color="primary"
+        className={classes.submitButton}
+      >
+        Cancel
+      </Button>
     </div>
   );
 }
 
-export default AssignTechnicalReview;
+export default withConfirm(AssignTechnicalReview);

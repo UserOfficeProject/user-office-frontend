@@ -41,6 +41,7 @@ export type AddTechnicalReviewInput = {
   timeAllocation?: Maybe<Scalars['Int']>;
   status?: Maybe<TechnicalReviewStatus>;
   submitted?: Maybe<Scalars['Boolean']>;
+  reviewerId?: Maybe<Scalars['Int']>;
 };
 
 export type AddUserRoleResponseWrap = {
@@ -2586,6 +2587,7 @@ export type SubmitTechnicalReviewInput = {
   timeAllocation?: Maybe<Scalars['Int']>;
   status?: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
+  reviewerId: Scalars['Int'];
 };
 
 export type SubtemplateConfig = {
@@ -2614,7 +2616,9 @@ export type TechnicalReview = {
   timeAllocation: Maybe<Scalars['Int']>;
   status: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
+  reviewerId: Scalars['Int'];
   proposal: Maybe<Proposal>;
+  reviewer: Maybe<BasicUserDetails>;
 };
 
 export type TechnicalReviewResponseWrap = {
@@ -3060,6 +3064,10 @@ export type GetSepProposalQuery = (
         & QuestionaryFragment
       )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
+        & { reviewer: Maybe<(
+          { __typename?: 'BasicUserDetails' }
+          & BasicUserDetailsFragment
+        )> }
         & CoreTechnicalReviewFragment
       )>, reviews: Maybe<Array<(
         { __typename?: 'Review' }
@@ -4145,6 +4153,10 @@ export type GetProposalQuery = (
       & QuestionaryFragment
     )>, technicalReview: Maybe<(
       { __typename?: 'TechnicalReview' }
+      & { reviewer: Maybe<(
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      )> }
       & CoreTechnicalReviewFragment
     )>, reviews: Maybe<Array<(
       { __typename?: 'Review' }
@@ -4201,6 +4213,10 @@ export type GetProposalsQuery = (
         & BasicUserDetailsFragment
       )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
+        & { reviewer: Maybe<(
+          { __typename?: 'BasicUserDetails' }
+          & BasicUserDetailsFragment
+        )> }
         & CoreTechnicalReviewFragment
       )>, instrument: Maybe<(
         { __typename?: 'Instrument' }
@@ -4476,6 +4492,7 @@ export type AddTechnicalReviewMutationVariables = Exact<{
   publicComment?: Maybe<Scalars['String']>;
   status?: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
+  reviewerId: Scalars['Int'];
 }>;
 
 
@@ -4563,6 +4580,9 @@ export type GetReviewQuery = (
         { __typename?: 'BasicUserDetails' }
         & Pick<BasicUserDetails, 'id'>
       )> }
+    )>, reviewer: Maybe<(
+      { __typename?: 'BasicUserDetails' }
+      & BasicUserDetailsFragment
     )> }
     & CoreReviewFragment
   )> }
@@ -4589,6 +4609,7 @@ export type SubmitTechnicalReviewMutationVariables = Exact<{
   publicComment?: Maybe<Scalars['String']>;
   status?: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
+  reviewerId: Scalars['Int'];
 }>;
 
 
@@ -6809,6 +6830,9 @@ export const GetSepProposalDocument = gql`
       }
       technicalReview {
         ...coreTechnicalReview
+        reviewer {
+          ...basicUserDetails
+        }
       }
       reviews {
         id
@@ -7619,6 +7643,9 @@ export const GetProposalDocument = gql`
     }
     technicalReview {
       ...coreTechnicalReview
+      reviewer {
+        ...basicUserDetails
+      }
     }
     reviews {
       id
@@ -7686,6 +7713,9 @@ export const GetProposalsDocument = gql`
       }
       technicalReview {
         ...coreTechnicalReview
+        reviewer {
+          ...basicUserDetails
+        }
       }
       instrument {
         id
@@ -7844,9 +7874,9 @@ export const GetQuestionaryDocument = gql`
 }
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
-    mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
+    mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
   addTechnicalReview(
-    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
+    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
   ) {
     error
     technicalReview {
@@ -7899,9 +7929,13 @@ export const GetReviewDocument = gql`
         id
       }
     }
+    reviewer {
+      ...basicUserDetails
+    }
   }
 }
-    ${CoreReviewFragmentDoc}`;
+    ${CoreReviewFragmentDoc}
+${BasicUserDetailsFragmentDoc}`;
 export const RemoveUserForReviewDocument = gql`
     mutation removeUserForReview($reviewId: Int!, $sepId: Int!) {
   removeUserForReview(reviewId: $reviewId, sepId: $sepId) {
@@ -7910,9 +7944,9 @@ export const RemoveUserForReviewDocument = gql`
 }
     `;
 export const SubmitTechnicalReviewDocument = gql`
-    mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
+    mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
   submitTechnicalReview(
-    submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
+    submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
   ) {
     error
     technicalReview {

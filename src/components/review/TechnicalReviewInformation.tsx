@@ -47,6 +47,10 @@ const TechnicalReviewInformation: React.FC<TechnicalReviewInformationProps> = (
             <TableCell>Time Allocation</TableCell>
             <TableCell>{props.data.timeAllocation}</TableCell>
           </TableRow>
+          <TableRow key="reviewer">
+            <TableCell>Reviewer</TableCell>
+            <TableCell>{`${props.data.reviewer?.firstname} ${props.data.reviewer?.lastname}`}</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </Fragment>
