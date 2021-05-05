@@ -55,27 +55,30 @@ export interface Renderers {
   readonly questionRenderer: QuestionRenderer;
   readonly answerRenderer: AnswerRenderer;
 }
+type CreateYupValidation =
+  | ((
+      field: Answer,
+      state: QuestionarySubmissionState,
+      api?: () => Sdk
+    ) => object)
+  | null;
+
+type GetYupInitialValue = (props: {
+  answer: Answer;
+  state: QuestionarySubmissionState;
+}) => Answer['value'];
+
+type QuestionaryComponent = (props: BasicComponentProps) => JSX.Element | null;
 
 export interface QuestionaryComponentDefinition {
   readonly dataType: DataType;
   readonly name: string;
   readonly questionTemplateRelationForm: () => FC<QuestionTemplateRelationFormProps>;
   readonly questionForm: () => FC<QuestionFormProps>;
-  readonly questionaryComponent: (
-    props: BasicComponentProps
-  ) => JSX.Element | null;
+  readonly questionaryComponent: QuestionaryComponent;
   readonly renderers?: Renderers;
-  readonly createYupValidationSchema:
-    | ((
-        field: Answer,
-        state: QuestionarySubmissionState,
-        api?: () => Sdk
-      ) => object)
-    | null;
-  readonly getYupInitialValue: (props: {
-    answer: Answer;
-    state: QuestionarySubmissionState;
-  }) => Answer['value'];
+  readonly createYupValidationSchema: CreateYupValidation;
+  readonly getYupInitialValue: GetYupInitialValue;
   readonly readonly: boolean; // if true then no answer will be produced
   readonly creatable: boolean; // if true then the question can be added to a questionary
   readonly icon: JSX.Element;
