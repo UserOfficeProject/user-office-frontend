@@ -575,11 +575,7 @@ context('Instrument tests', () => {
 
     cy.finishedLoading();
 
-    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
-
-    cy.get('[role=presentation] [data-cy=beamline-manager]').contains(
-      scientist2
-    );
+    cy.contains('Instrument updated successfully!');
   });
 
   it('User Officer should be able to delete Instrument', () => {
