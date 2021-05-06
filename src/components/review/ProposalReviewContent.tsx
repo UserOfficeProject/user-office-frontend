@@ -115,6 +115,7 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
             <Link
               onClick={() => setShowReassign(true)}
               className={classes.showReassignLink}
+              data-cy="re-assign"
             >
               Re-assign...
             </Link>

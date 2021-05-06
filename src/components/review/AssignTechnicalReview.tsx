@@ -90,6 +90,7 @@ function AssignTechnicalReview({
             )();
           }
         }}
+        data-cy="re-assign-submit"
         type="button"
         variant="contained"
         color="primary"

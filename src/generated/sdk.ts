@@ -792,6 +792,7 @@ export type MutationCreateInstrumentArgs = {
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId: Scalars['Int'];
 };
 
 
@@ -3788,6 +3789,7 @@ export type CreateInstrumentMutationVariables = Exact<{
   name: Scalars['String'];
   shortCode: Scalars['String'];
   description: Scalars['String'];
+  managerUserId: Scalars['Int'];
 }>;
 
 
@@ -7344,8 +7346,13 @@ export const AssignScientistsToInstrumentDocument = gql`
 }
     `;
 export const CreateInstrumentDocument = gql`
-    mutation createInstrument($name: String!, $shortCode: String!, $description: String!) {
-  createInstrument(name: $name, shortCode: $shortCode, description: $description) {
+    mutation createInstrument($name: String!, $shortCode: String!, $description: String!, $managerUserId: Int!) {
+  createInstrument(
+    name: $name
+    shortCode: $shortCode
+    description: $description
+    managerUserId: $managerUserId
+  ) {
     instrument {
       id
       name

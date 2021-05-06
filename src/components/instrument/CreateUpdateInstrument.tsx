@@ -46,7 +46,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
         name: '',
         shortCode: '',
         description: '',
-        managerUserId: 0,
+        managerUserId: -1,
       };
 
   return (
@@ -135,7 +135,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             InputProps={{
               'data-cy': 'beamline-manager',
             }}
-            isClearable
+            isClearable={false}
           />
 
           <Button

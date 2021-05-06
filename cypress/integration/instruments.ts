@@ -57,11 +57,17 @@ context('Instrument tests', () => {
   it('User Officer should be able to create Instrument', () => {
     cy.login('officer');
 
+    cy.contains('People').click();
+    cy.addScientistRoleToUser(scientist1);
+
+    cy.contains('People').click();
+    cy.addScientistRoleToUser(scientist2);
+
     cy.contains('Instruments').click();
 
-    cy.createInstrument(instrument1);
+    cy.createInstrument(instrument1, scientist1);
     cy.wait(100);
-    cy.createInstrument(instrument2);
+    cy.createInstrument(instrument2, scientist2);
   });
 
   it('User Officer should be able to update Instrument', () => {
@@ -208,12 +214,6 @@ context('Instrument tests', () => {
   it('User Officer should be able to assign scientist to instrument and instrument scientist should be able to see instruments he is assigned to', () => {
     cy.login('officer');
 
-    cy.contains('People').click();
-    cy.addScientistRoleToUser(scientist1);
-
-    cy.contains('People').click();
-    cy.addScientistRoleToUser(scientist2);
-
     cy.contains('Instruments').click();
 
     cy.assignScientistsToInstrument(instrument1.shortCode);
@@ -228,28 +228,6 @@ context('Instrument tests', () => {
     cy.contains('Instruments').click();
 
     cy.get('[title="Show Scientists"]').should('exist');
-  });
-
-  it('User Officer should be able to set beamline manager', () => {
-    cy.login('officer');
-
-    cy.contains('Instruments').click();
-
-    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
-
-    cy.get('[data-cy=beamline-manager]').click();
-
-    cy.get('[role=presentation]').contains(scientist1).click();
-
-    cy.get('[role=presentation] [data-cy=submit]').click();
-
-    cy.finishedLoading();
-
-    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
-
-    cy.get('[role=presentation] [data-cy=beamline-manager]').contains(
-      scientist1
-    );
   });
 
   it('Instrument scientist should be able to see proposals assigned to instrument where he is instrument scientist', () => {
@@ -358,13 +336,28 @@ context('Instrument tests', () => {
   it('Instrument scientist should be able to save technical review on proposal where he is instrument scientist', () => {
     cy.login('user');
     cy.changeActiveRole('Instrument Scientist');
+    cy.assignReviewer(proposal1.title, scientist2);
+    cy.get('[data-cy="save-technical-review"]').should('not.exist'); // the form should not be visible
+    cy.closeModal();
+    cy.logout();
+
+    cy.login('officer');
+    cy.assignReviewer(proposal1.title, scientist1);
+    cy.closeModal();
+    cy.logout();
+
+    cy.login('user');
+    cy.changeActiveRole('Instrument Scientist');
 
     cy.contains('Proposals');
 
     cy.get('[data-cy="status-filter"]').click();
     cy.get('[role="listbox"] [data-value="0"]').click();
 
-    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
     cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
@@ -418,7 +411,10 @@ context('Instrument tests', () => {
     cy.get('[data-cy="status-filter"]').click();
     cy.get('[role="listbox"] [data-value="0"]').click();
 
-    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
     cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
@@ -449,7 +445,10 @@ context('Instrument tests', () => {
 
     cy.contains('Proposals');
 
-    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
     cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
@@ -478,7 +477,10 @@ context('Instrument tests', () => {
     cy.get('[data-cy="status-filter"]').click();
     cy.get('[role="listbox"] [data-value="0"]').click();
 
-    cy.get('[data-cy="view-proposal"]').first().click();
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
     cy.get('[role="dialog"]').contains('Technical review').click();
 
     cy.get('[data-cy="save-technical-review"]').should('not.be.disabled');
@@ -558,6 +560,28 @@ context('Instrument tests', () => {
       .then((element) => {
         expect(element.text()).to.be.equal('0');
       });
+  });
+
+  it('User Officer should be able to update beamline manager', () => {
+    cy.login('officer');
+
+    cy.contains('Instruments').click();
+
+    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
+
+    cy.get('[data-cy=beamline-manager]').click();
+
+    cy.get('[role=presentation]').contains(scientist2).click();
+
+    cy.get('[role=presentation] [data-cy=submit]').click();
+
+    cy.finishedLoading();
+
+    cy.contains(instrument1.name).parent().find('[title="Edit"]').click();
+
+    cy.get('[role=presentation] [data-cy=beamline-manager]').contains(
+      scientist2
+    );
   });
 
   it('User Officer should be able to delete Instrument', () => {
