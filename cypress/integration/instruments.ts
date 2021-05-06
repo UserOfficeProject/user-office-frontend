@@ -63,8 +63,6 @@ context('Instrument tests', () => {
     cy.contains('People').click();
     cy.addScientistRoleToUser(scientist2);
 
-    cy.contains('Instruments').click();
-
     cy.createInstrument(instrument1, scientist1);
     cy.wait(100);
     cy.createInstrument(instrument2, scientist2);

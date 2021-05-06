@@ -1,4 +1,5 @@
 function createInstrument({ name, shortCode, description }, scientist) {
+  cy.contains('Instruments').click();
   cy.contains('Create').click();
   cy.get('#name').type(name);
   cy.get('#shortCode').type(shortCode);

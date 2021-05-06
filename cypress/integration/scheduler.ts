@@ -40,7 +40,6 @@ context('Scheduler tests', () => {
     cy.contains('People').click();
     cy.addScientistRoleToUser(scientist);
 
-    cy.contains('Instruments').click();
     cy.createInstrument(instrument, scientist);
 
     cy.contains('Instruments').click();
