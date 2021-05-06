@@ -294,6 +294,7 @@ export type DeleteEquipmentAssignmentInput = {
 export type DeleteProposalWorkflowStatusInput = {
   proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
+  sortOrder: Scalars['Int'];
 };
 
 export enum DependenciesLogicOperator {
@@ -4919,6 +4920,7 @@ export type DeleteProposalWorkflowMutation = (
 export type DeleteProposalWorkflowStatusMutationVariables = Exact<{
   proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
+  sortOrder: Scalars['Int'];
 }>;
 
 
@@ -8145,9 +8147,9 @@ export const DeleteProposalWorkflowDocument = gql`
 }
     `;
 export const DeleteProposalWorkflowStatusDocument = gql`
-    mutation deleteProposalWorkflowStatus($proposalStatusId: Int!, $proposalWorkflowId: Int!) {
+    mutation deleteProposalWorkflowStatus($proposalStatusId: Int!, $proposalWorkflowId: Int!, $sortOrder: Int!) {
   deleteProposalWorkflowStatus(
-    deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId}
+    deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId, sortOrder: $sortOrder}
   ) {
     isSuccess
     error
