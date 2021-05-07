@@ -37,7 +37,7 @@ const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
       <Select
         onChange={(e) => onChange(e.target.value as ReviewerFilter)}
         value={reviewer}
-        data-cy="review-owner-filter"
+        data-cy="reviewer-filter"
       >
         <MenuItem value={ReviewerFilter.YOU}>You</MenuItem>
         <MenuItem value={ReviewerFilter.ALL}>All</MenuItem>
