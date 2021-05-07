@@ -49,7 +49,7 @@ function AssignTechnicalReview({
     usersData.users.find((user) => user.id === userId);
 
   return (
-    <div>
+    <>
       <Autocomplete
         id="user-list"
         options={usersData.users}
@@ -110,7 +110,7 @@ function AssignTechnicalReview({
       >
         Cancel
       </Button>
-    </div>
+    </>
   );
 }
 
