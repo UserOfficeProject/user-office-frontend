@@ -2,9 +2,10 @@ import { Button, makeStyles, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
 
-import { BasicUserDetails, Proposal, UserRole } from 'generated/sdk';
+import { Proposal, UserRole } from 'generated/sdk';
 import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 type AssignTechnicalReviewProps = {
@@ -12,9 +13,6 @@ type AssignTechnicalReviewProps = {
   onProposalUpdated: (proposal: Proposal) => void;
   confirm: WithConfirmType;
 };
-
-const getName = (user: BasicUserDetails | undefined) =>
-  `${user?.firstname} ${user?.lastname}`;
 
 const useStyles = makeStyles((theme) => ({
   userList: {
@@ -54,7 +52,7 @@ function AssignTechnicalReview({
         id="user-list"
         options={usersData.users}
         renderInput={(params) => <TextField {...params} />}
-        getOptionLabel={(option) => getName(option)}
+        getOptionLabel={(option) => getFullUserName(option)}
         onChange={(_event, newValue) => {
           if (newValue) {
             setSelectedUser(newValue.id);
@@ -70,7 +68,9 @@ function AssignTechnicalReview({
           if (selectedUser) {
             confirm(
               () =>
-                api(`Assigned to ${getName(userIdToUser(selectedUser))}`)
+                api(
+                  `Assigned to ${getFullUserName(userIdToUser(selectedUser))}`
+                )
                   .updateTechnicalReviewAssignee({
                     userId: selectedUser,
                     proposalIds: [proposal.id],
@@ -83,7 +83,7 @@ function AssignTechnicalReview({
                   }),
               {
                 title: 'Are you sure?',
-                description: `You are about to set ${getName(
+                description: `You are about to set ${getFullUserName(
                   userIdToUser(selectedUser)
                 )} as a technical reviewer for this proposal. Are you sure?`,
               }

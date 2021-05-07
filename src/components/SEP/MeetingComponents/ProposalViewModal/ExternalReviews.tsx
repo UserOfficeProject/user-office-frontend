@@ -9,6 +9,7 @@ import React from 'react';
 
 import { Review } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
+import { getFullUserName } from 'utils/user';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -45,7 +46,7 @@ const ExternalReviews: React.FC<ExternalReviewsProps> = ({ reviews }) => {
             </TableRow>
             {reviews?.map((review) => (
               <TableRow key={`externalReviews_${review.id}_${review.userID}`}>
-                <TableCell>{`${review.reviewer?.firstname} ${review.reviewer?.lastname}`}</TableCell>
+                <TableCell>{getFullUserName(review.reviewer)}</TableCell>
                 <TableCell>{review.grade || '-'}</TableCell>
                 <TableCell
                   dangerouslySetInnerHTML={{

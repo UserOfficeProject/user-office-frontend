@@ -8,10 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { Proposal, BasicUserDetails } from 'generated/sdk';
+import { Proposal } from 'generated/sdk';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { StyledPaper } from 'styles/StyledComponents';
 import { average, getGrades } from 'utils/mathFunctions';
+import { getFullUserName } from 'utils/user';
 
 type ProposalDetailsProps = {
   proposal: Proposal;
@@ -58,19 +59,14 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
               <TableCell className={classes.textBold}>
                 Principal Investigator
               </TableCell>
-              <TableCell>{`${proposal.proposer?.firstname} ${proposal.proposer?.lastname}`}</TableCell>
+              <TableCell>{getFullUserName(proposal.proposer)}</TableCell>
               <TableCell className={classes.textBold}>Status</TableCell>
               <TableCell>{proposal.status?.name}</TableCell>
             </TableRow>
             <TableRow key="coProposersAndCall">
               <TableCell className={classes.textBold}>Co-Proposers</TableCell>
               <TableCell>
-                {proposal.users
-                  .map(
-                    (user: BasicUserDetails) =>
-                      ` ${user.firstname} ${user.lastname}`
-                  )
-                  .toString()}
+                {proposal.users.map((user) => getFullUserName(user)).join(', ')}
               </TableCell>
               <TableCell className={classes.textBold}>Call</TableCell>
               <TableCell>{proposal.call?.shortCode}</TableCell>

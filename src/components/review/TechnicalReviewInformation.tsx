@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { Fragment } from 'react';
 
 import { TechnicalReview } from 'generated/sdk';
+import { getFullUserName } from 'utils/user';
 
 type TechnicalReviewInformationProps = {
   data: TechnicalReview | null | undefined;
@@ -53,7 +54,7 @@ const TechnicalReviewInformation: React.FC<TechnicalReviewInformationProps> = (
           </TableRow>
           <TableRow key="reviewer">
             <TableCell>Reviewer</TableCell>
-            <TableCell>{`${props.data.reviewer?.firstname} ${props.data.reviewer?.lastname}`}</TableCell>
+            <TableCell>{getFullUserName(props.data.reviewer)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

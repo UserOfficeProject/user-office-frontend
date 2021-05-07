@@ -15,6 +15,7 @@ import UOLoader from 'components/common/UOLoader';
 import { Instrument, UserRole } from 'generated/sdk';
 import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -129,7 +130,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             label="Beamline manager"
             noOptionsText="No one"
             items={usersData.users.map((user) => ({
-              text: `${user.firstname} ${user.lastname}`,
+              text: getFullUserName(user),
               value: user.id,
             }))}
             InputProps={{
