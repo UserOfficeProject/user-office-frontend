@@ -16,6 +16,8 @@ mutation updateSample(
         isCompleted
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

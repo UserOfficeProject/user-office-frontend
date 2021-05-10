@@ -109,7 +109,7 @@ function QuestionaryComponentSampleDeclaration(
           api()
             .deleteSample({ sampleId: id })
             .then((response) => {
-              if (!response.deleteSample.error) {
+              if (!response.deleteSample.rejection) {
                 const newStateValue = field.value.filter(
                   (sample) => sample.id !== id
                 );
