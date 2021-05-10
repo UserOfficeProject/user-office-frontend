@@ -26,12 +26,8 @@ function useDataApiWithFeedback() {
 
             if (result && isMutationResult(result)) {
               if (result.rejection) {
-                const {
-                  reason,
-                  context,
-                  exception,
-                } = result.rejection as Rejection;
-                enqueueSnackbar(`${reason} ${context} ${exception}`, {
+                const { reason } = result.rejection as Rejection;
+                enqueueSnackbar(reason, {
                   variant: 'error',
                   className: 'snackbar-error',
                   autoHideDuration: 10000,
