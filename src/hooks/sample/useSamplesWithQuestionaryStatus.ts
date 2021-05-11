@@ -13,15 +13,24 @@ export function useSamplesWithQuestionaryStatus(filter?: SamplesFilter) {
   const api = useDataApi();
 
   useEffect(() => {
+    let unmounted = false;
+
     setLoadingSamples(true);
     api()
       .getSamplesWithQuestionaryStatus({ filter: samplesFilter })
       .then((data) => {
+        if (unmounted) {
+          return;
+        }
         if (data.samples) {
           setSamples(data.samples);
         }
         setLoadingSamples(false);
       });
+
+    return () => {
+      unmounted = true;
+    };
   }, [api, samplesFilter]);
 
   return { samples, loadingSamples, setSamples, setSamplesFilter };
