@@ -54,11 +54,7 @@ const getFilterStatus = (selected: string | ReviewStatus) =>
     : undefined; // if the selected status is not a valid status assume we want to see everything
 
 const getFilterReviewer = (selected: string | ReviewerFilter) =>
-  selected === ReviewerFilter.YOU
-    ? ReviewerFilter.YOU
-    : selected === ReviewerFilter.ALL
-    ? ReviewerFilter.ALL
-    : undefined; // if the selected status is not a valid status assume we want to see everything
+  selected === ReviewerFilter.YOU ? ReviewerFilter.YOU : ReviewerFilter.ALL;
 
 const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
   confirm,
