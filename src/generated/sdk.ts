@@ -2310,6 +2310,11 @@ export type ReviewWithNextStatusResponseWrap = {
   review: Maybe<ReviewWithNextProposalStatus>;
 };
 
+export enum ReviewerFilter {
+  YOU = 'YOU',
+  ALL = 'ALL'
+}
+
 export type RichTextInputConfig = {
   __typename?: 'RichTextInputConfig';
   small_label: Scalars['String'];
@@ -2400,6 +2405,7 @@ export type Sample = {
   safetyComment: Scalars['String'];
   created: Scalars['DateTime'];
   questionary: Questionary;
+  proposal: Proposal;
 };
 
 export type SampleBasisConfig = {
@@ -2810,6 +2816,7 @@ export type User = {
 
 
 export type UserReviewsArgs = {
+  reviewer?: Maybe<ReviewerFilter>;
   status?: Maybe<ReviewStatus>;
   instrumentId?: Maybe<Scalars['Int']>;
   callId?: Maybe<Scalars['Int']>;
@@ -4768,6 +4775,7 @@ export type UserWithReviewsQueryVariables = Exact<{
   callId?: Maybe<Scalars['Int']>;
   instrumentId?: Maybe<Scalars['Int']>;
   status?: Maybe<ReviewStatus>;
+  reviewer?: Maybe<ReviewerFilter>;
 }>;
 
 
@@ -4880,23 +4888,6 @@ export type GetSampleQuery = (
   )> }
 );
 
-export type GetSamplesQueryVariables = Exact<{
-  filter?: Maybe<SamplesFilter>;
-}>;
-
-
-export type GetSamplesQuery = (
-  { __typename?: 'Query' }
-  & { samples: Maybe<Array<(
-    { __typename?: 'Sample' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-    ) }
-    & SampleFragment
-  )>> }
-);
-
 export type GetSamplesByCallIdQueryVariables = Exact<{
   callId: Scalars['Int'];
 }>;
@@ -4905,6 +4896,40 @@ export type GetSamplesByCallIdQueryVariables = Exact<{
 export type GetSamplesByCallIdQuery = (
   { __typename?: 'Query' }
   & { samplesByCallId: Maybe<Array<(
+    { __typename?: 'Sample' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & Pick<Proposal, 'id' | 'shortCode'>
+    ) }
+    & SampleFragment
+  )>> }
+);
+
+export type GetSamplesWithProposalDataQueryVariables = Exact<{
+  filter?: Maybe<SamplesFilter>;
+}>;
+
+
+export type GetSamplesWithProposalDataQuery = (
+  { __typename?: 'Query' }
+  & { samples: Maybe<Array<(
+    { __typename?: 'Sample' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & Pick<Proposal, 'id' | 'shortCode'>
+    ) }
+    & SampleFragment
+  )>> }
+);
+
+export type GetSamplesWithQuestionaryStatusQueryVariables = Exact<{
+  filter?: Maybe<SamplesFilter>;
+}>;
+
+
+export type GetSamplesWithQuestionaryStatusQuery = (
+  { __typename?: 'Query' }
+  & { samples: Maybe<Array<(
     { __typename?: 'Sample' }
     & { questionary: (
       { __typename?: 'Questionary' }
@@ -4928,10 +4953,6 @@ export type UpdateSampleMutation = (
     { __typename?: 'SampleResponseWrap' }
     & { sample: Maybe<(
       { __typename?: 'Sample' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-      ) }
       & SampleFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -8331,13 +8352,18 @@ export const AddReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UserWithReviewsDocument = gql`
-    query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus) {
+    query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus, $reviewer: ReviewerFilter) {
   me {
     id
     firstname
     lastname
     organisation
-    reviews(callId: $callId, instrumentId: $instrumentId, status: $status) {
+    reviews(
+      callId: $callId
+      instrumentId: $instrumentId
+      status: $status
+      reviewer: $reviewer
+    ) {
       id
       grade
       comment
@@ -8418,19 +8444,31 @@ export const GetSampleDocument = gql`
 }
     ${SampleFragmentDoc}
 ${QuestionaryFragmentDoc}`;
-export const GetSamplesDocument = gql`
-    query getSamples($filter: SamplesFilter) {
-  samples(filter: $filter) {
+export const GetSamplesByCallIdDocument = gql`
+    query getSamplesByCallId($callId: Int!) {
+  samplesByCallId(callId: $callId) {
     ...sample
-    questionary {
-      isCompleted
+    proposal {
+      id
+      shortCode
     }
   }
 }
     ${SampleFragmentDoc}`;
-export const GetSamplesByCallIdDocument = gql`
-    query getSamplesByCallId($callId: Int!) {
-  samplesByCallId(callId: $callId) {
+export const GetSamplesWithProposalDataDocument = gql`
+    query getSamplesWithProposalData($filter: SamplesFilter) {
+  samples(filter: $filter) {
+    ...sample
+    proposal {
+      id
+      shortCode
+    }
+  }
+}
+    ${SampleFragmentDoc}`;
+export const GetSamplesWithQuestionaryStatusDocument = gql`
+    query getSamplesWithQuestionaryStatus($filter: SamplesFilter) {
+  samples(filter: $filter) {
     ...sample
     questionary {
       isCompleted
@@ -8448,9 +8486,6 @@ export const UpdateSampleDocument = gql`
   ) {
     sample {
       ...sample
-      questionary {
-        isCompleted
-      }
     }
     rejection {
       ...rejection
@@ -9736,11 +9771,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getSample(variables: GetSampleQueryVariables): Promise<GetSampleQuery> {
       return withWrapper(() => client.request<GetSampleQuery>(print(GetSampleDocument), variables));
     },
-    getSamples(variables?: GetSamplesQueryVariables): Promise<GetSamplesQuery> {
-      return withWrapper(() => client.request<GetSamplesQuery>(print(GetSamplesDocument), variables));
-    },
     getSamplesByCallId(variables: GetSamplesByCallIdQueryVariables): Promise<GetSamplesByCallIdQuery> {
       return withWrapper(() => client.request<GetSamplesByCallIdQuery>(print(GetSamplesByCallIdDocument), variables));
+    },
+    getSamplesWithProposalData(variables?: GetSamplesWithProposalDataQueryVariables): Promise<GetSamplesWithProposalDataQuery> {
+      return withWrapper(() => client.request<GetSamplesWithProposalDataQuery>(print(GetSamplesWithProposalDataDocument), variables));
+    },
+    getSamplesWithQuestionaryStatus(variables?: GetSamplesWithQuestionaryStatusQueryVariables): Promise<GetSamplesWithQuestionaryStatusQuery> {
+      return withWrapper(() => client.request<GetSamplesWithQuestionaryStatusQuery>(print(GetSamplesWithQuestionaryStatusDocument), variables));
     },
     updateSample(variables: UpdateSampleMutationVariables): Promise<UpdateSampleMutation> {
       return withWrapper(() => client.request<UpdateSampleMutation>(print(UpdateSampleDocument), variables));
