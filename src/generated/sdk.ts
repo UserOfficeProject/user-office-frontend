@@ -683,7 +683,7 @@ export type Mutation = {
   notifyProposal: ProposalResponseWrap;
   prepareDB: PrepareDbResponseWrap;
   removeUserForReview: ReviewResponseWrap;
-  resetPasswordEmail: ResetPasswordEmailResponseWrap;
+  resetPasswordEmail: SuccessResponseWrap;
   resetPassword: BasicUserDetailsResponseWrap;
   setPageContent: PageResponseWrap;
   deleteProposalStatus: ProposalStatusResponseWrap;
@@ -2272,12 +2272,6 @@ export type RemoveAssignedInstrumentFromCallInput = {
 
 export type ReorderSepMeetingDecisionProposalsInput = {
   proposals: Array<ProposalIdWithRankOrder>;
-};
-
-export type ResetPasswordEmailResponseWrap = {
-  __typename?: 'ResetPasswordEmailResponseWrap';
-  error: Maybe<Scalars['String']>;
-  success: Maybe<Scalars['Boolean']>;
 };
 
 export type Review = {
@@ -6213,8 +6207,8 @@ export type ResetPasswordEmailMutationVariables = Exact<{
 export type ResetPasswordEmailMutation = (
   { __typename?: 'Mutation' }
   & { resetPasswordEmail: (
-    { __typename?: 'ResetPasswordEmailResponseWrap' }
-    & Pick<ResetPasswordEmailResponseWrap, 'error' | 'success'>
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
   ) }
 );
 
@@ -8992,7 +8986,7 @@ export const ResetPasswordEmailDocument = gql`
     mutation resetPasswordEmail($email: String!) {
   resetPasswordEmail(email: $email) {
     error
-    success
+    isSuccess
   }
 }
     `;
