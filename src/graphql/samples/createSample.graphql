@@ -13,9 +13,12 @@ mutation createSample(
     sample {
       ...sample
       questionary {
+        isCompleted
         ...questionary
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

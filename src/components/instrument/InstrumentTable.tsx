@@ -29,8 +29,8 @@ const InstrumentTable: React.FC = () => {
     { title: 'Description', field: 'description' },
     {
       title: 'Scientists',
-      render: (rowData: Instrument) =>
-        rowData.scientists.length > 0 ? rowData.scientists.length : '-',
+      field: 'scientists.length',
+      emptyValue: '-',
     },
   ];
   const { api } = useDataApiWithFeedback();
@@ -49,7 +49,7 @@ const InstrumentTable: React.FC = () => {
         id: instrumentDeletedId as number,
       })
       .then((data) => {
-        if (data.deleteInstrument.error) {
+        if (data.deleteInstrument.rejection) {
           return false;
         } else {
           return true;
@@ -67,7 +67,9 @@ const InstrumentTable: React.FC = () => {
       scientistIds: scientists.map((scientist) => scientist.id),
     });
 
-    if (!assignScientistToInstrumentResult.assignScientistsToInstrument.error) {
+    if (
+      !assignScientistToInstrumentResult.assignScientistsToInstrument.rejection
+    ) {
       scientists = scientists.map((scientist) => {
         if (!scientist.organisation) {
           scientist.organisation = 'Other';

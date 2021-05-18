@@ -6,8 +6,7 @@ context('Proposal administration tests', () => {
   });
 
   beforeEach(() => {
-    cy.viewport(1100, 900);
-    cy.visit('/');
+    cy.viewport(1920, 1080);
   });
 
   const proposalName1 = faker.random.words(3);
@@ -20,21 +19,30 @@ context('Proposal administration tests', () => {
   const answerDate = '2030-01-01';
   const answerMultipleChoice = 'One';
   const answerText = faker.random.words(3);
+  const answerNumberInput = 99.9;
+  const answerIntervalMin = 1;
+  const answerIntervalMax = 100;
 
   const textQuestion = faker.random.words(3);
   const dateQuestion = faker.random.words(3);
   const boolQuestion = faker.random.words(3);
   const multipleChoiceQuestion = faker.random.words(3);
+  const numberInputQuestion = faker.random.words(3);
   const fileUploadQuestion = faker.random.words(3);
+  const intervalQuestion = faker.random.words(3);
 
   let textQuestionId: string;
   let dateQuestionId: string;
   let boolQuestionId: string;
   let multipleChoiceQuestionId: string;
+  let fileUploadQuestionId: string;
+  let numberInputQuestionId: string;
+  let intervalQuestionId: string;
 
   it('Should be able to set comment for user/manager and final status', () => {
     cy.login('user');
     cy.createProposal(proposalName1);
+    cy.finishedLoading();
     cy.contains('Submit').click();
     cy.contains('OK').click();
     cy.logout();
@@ -44,45 +52,79 @@ context('Proposal administration tests', () => {
     cy.contains('Proposals').click();
 
     cy.get('[data-cy=view-proposal]').click();
-    cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
-    cy.contains('Admin').click();
+    cy.get('[role="dialog"]').contains('Admin').click();
 
     cy.get('#mui-component-select-finalStatus').click();
 
     cy.contains('Accepted').click();
 
-    cy.get('#mui-component-select-proposalStatus').click();
+    cy.get('[data-cy="managementTimeAllocation"] input')
+      .clear()
+      .type('-123')
+      .blur();
+    cy.contains('Must be greater than or equal to');
 
-    cy.contains('Loading...').should('not.exist');
+    cy.get('[data-cy="managementTimeAllocation"] input')
+      .clear()
+      .type('987654321')
+      .blur();
+    cy.contains('Must be less than or equal to');
 
-    cy.get('[id="menu-proposalStatus"] [role="option"]').first().click();
+    cy.get('[data-cy="managementTimeAllocation"] input').clear().type('20');
 
-    cy.get('[data-cy=commentForUser]').type(textUser);
+    cy.setTinyMceContent('commentForUser', textUser);
+    cy.setTinyMceContent('commentForManagement', textManager);
 
-    cy.get('[data-cy=commentForManagement]').type(textManager);
+    cy.get('[data-cy="is-management-decision-submitted"]').click();
 
-    cy.contains('Update').click();
+    cy.get('[data-cy="save-admin-decision"]').click();
 
-    cy.notification({ variant: 'success', text: 'Updated' });
+    cy.notification({ variant: 'success', text: 'Saved' });
 
     cy.reload();
 
-    cy.contains('Admin').click();
+    cy.getTinyMceContent('commentForUser').then((content) =>
+      expect(content).to.have.string(textUser)
+    );
 
-    cy.contains(textUser);
+    cy.getTinyMceContent('commentForManagement').then((content) =>
+      expect(content).to.have.string(textManager)
+    );
 
-    cy.contains(textManager);
+    cy.get('[data-cy="managementTimeAllocation"] input').should(
+      'have.value',
+      '20'
+    );
+
+    cy.get('[data-cy="is-management-decision-submitted"] input').should(
+      'have.value',
+      'true'
+    );
 
     cy.closeModal();
 
     cy.contains('Accepted');
-
     cy.contains('DRAFT');
+  });
 
-    cy.contains('Proposals').click();
+  it('Should be able to re-open proposal for submission', () => {
+    cy.login('officer');
 
-    cy.contains('DRAFT');
+    cy.changeProposalStatus('DRAFT', proposalName1);
+
+    cy.contains(proposalName1).parent().contains('No');
+
+    cy.logout();
+
+    cy.login('user');
+
+    cy.contains(proposalName1).parent().get('[title="Edit proposal"]').click();
+
+    cy.finishedLoading();
+    cy.contains(proposalName1);
+
+    cy.contains('Submit').parent().should('not.be.disabled');
   });
 
   it('If you select a tab in tabular view and reload the page it should stay on specific selected tab', () => {
@@ -91,17 +133,15 @@ context('Proposal administration tests', () => {
     cy.contains('Proposals').click();
 
     cy.get('[data-cy=view-proposal]').click();
-
-    cy.get('[role="dialog"]').as('dialog');
     cy.finishedLoading();
 
-    cy.contains('Admin').click();
+    cy.get('[role="dialog"]').contains('Admin').click();
 
     cy.reload();
 
-    cy.get('[data-cy="commentForUser"]').should('exist');
+    cy.get('#commentForUser').should('exist');
 
-    cy.get('[role="dialog"]').contains('Technical').click();
+    cy.get('[role="dialog"]').contains('Technical review').click();
 
     cy.reload();
 
@@ -124,7 +164,13 @@ context('Proposal administration tests', () => {
 
     cy.contains('Proposals').click();
 
-    cy.request('GET', '/download/pdf/proposal/1').then((response) => {
+    cy.request({
+      url: '/download/pdf/proposal/1',
+      method: 'GET',
+      headers: {
+        authorization: `Bearer ${Cypress.env('SVC_ACC_TOKEN')}`,
+      },
+    }).then((response) => {
       expect(response.headers['content-type']).to.be.equal('application/pdf');
       expect(response.status).to.be.equal(200);
     });
@@ -228,9 +274,14 @@ context('Proposal administration tests', () => {
 
     cy.createTopic('Topic for questions');
 
-    cy.get('[data-cy=show-more-button]').last().click();
-
-    cy.get('[data-cy=add-question-menu-item]').last().click();
+    cy.createIntervalQuestion(intervalQuestion);
+    cy.contains(intervalQuestion)
+      .closest('[data-cy=question-container]')
+      .find("[data-cy='proposal-question-id']")
+      .invoke('html')
+      .then((fieldId) => {
+        intervalQuestionId = fieldId;
+      });
 
     cy.createBooleanQuestion(boolQuestion);
     cy.contains(boolQuestion)
@@ -250,14 +301,11 @@ context('Proposal administration tests', () => {
         dateQuestionId = fieldId;
       });
 
-    cy.createMultipleChoiceQuestion(
-      multipleChoiceQuestion,
-      'One',
-      'Two',
-      'Three'
-    );
-
-    cy.createFileUploadQuestion(fileUploadQuestion);
+    cy.createMultipleChoiceQuestion(multipleChoiceQuestion, {
+      option1: 'One',
+      option2: 'Two',
+      option3: 'Three',
+    });
     cy.contains(multipleChoiceQuestion)
       .closest('[data-cy=question-container]')
       .find("[data-cy='proposal-question-id']")
@@ -266,7 +314,7 @@ context('Proposal administration tests', () => {
         multipleChoiceQuestionId = fieldId;
       });
 
-    cy.createTextQuestion(textQuestion, false, false);
+    cy.createTextQuestion(textQuestion);
     cy.contains(textQuestion)
       .closest('[data-cy=question-container]')
       .find("[data-cy='proposal-question-id']")
@@ -274,18 +322,36 @@ context('Proposal administration tests', () => {
       .then((fieldId) => {
         textQuestionId = fieldId;
       });
+
+    cy.createFileUploadQuestion(fileUploadQuestion);
+    cy.contains(fileUploadQuestion)
+      .closest('[data-cy=question-container]')
+      .find("[data-cy='proposal-question-id']")
+      .invoke('html')
+      .then((fieldId) => {
+        fileUploadQuestionId = fieldId;
+      });
+
+    cy.createNumberInputQuestion(numberInputQuestion);
+    cy.contains(numberInputQuestion)
+      .closest('[data-cy=question-container]')
+      .find("[data-cy='proposal-question-id']")
+      .invoke('html')
+      .then((fieldId) => {
+        numberInputQuestionId = fieldId;
+      });
   });
 
   it('Should be able to search by question', () => {
     cy.login('user');
 
-    //Create test  proposal
+    // Create a test proposal
     cy.createProposal(proposalName2);
     cy.contains('Save and continue').click();
 
     cy.get(`#${boolQuestionId}`).click();
 
-    cy.get(`[data-cy='${dateQuestionId}_field'] input`)
+    cy.get(`[data-cy='${dateQuestionId}.value'] input`)
       .clear()
       .type(answerDate);
 
@@ -296,6 +362,18 @@ context('Proposal administration tests', () => {
     cy.get('body').type('{esc}');
 
     cy.get(`#${textQuestionId}`).clear().type(answerText);
+
+    cy.get(`[data-cy='${numberInputQuestionId}.value'] input`)
+      .clear()
+      .type(answerNumberInput.toString());
+
+    cy.get(`[data-cy='${intervalQuestionId}.min'] input`)
+      .clear()
+      .type(answerIntervalMin.toString());
+
+    cy.get(`[data-cy='${intervalQuestionId}.max'] input`)
+      .clear()
+      .type(answerIntervalMax.toString());
 
     cy.contains('Save and continue').click();
 
@@ -308,9 +386,9 @@ context('Proposal administration tests', () => {
 
     cy.get('[role=listbox]').contains('call 1').first().click();
 
-    // Boolean questions
     cy.get('[data-cy=question-search-toggle]').click();
 
+    // Boolean questions
     cy.get('[data-cy=question-list]').click();
 
     cy.contains(boolQuestion).click();
@@ -408,6 +486,115 @@ context('Proposal administration tests', () => {
     cy.contains('Search').click();
 
     cy.contains(proposalName2);
+
+    // NumberInput questions
+    cy.get('[data-cy=question-list]').click();
+
+    cy.contains(numberInputQuestion).click();
+
+    // NumberInput questions - Less than
+    cy.get('[data-cy=comparator]').click();
+
+    cy.get('[role=listbox]').contains('Less than').click();
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerNumberInput - 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('not.exist');
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerNumberInput + 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('exist');
+
+    // NumberInput questions - Equals
+    cy.get('[data-cy=comparator]').click();
+
+    cy.get('[role=listbox]').contains('Equals').click();
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerNumberInput + 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('not.exist');
+
+    cy.get('[data-cy=value] input').clear().type(answerNumberInput.toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('exist');
+
+    // NumberInput questions - Less than
+    cy.get('[data-cy=comparator]').click();
+
+    cy.get('[role=listbox]').contains('Less than').click();
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerNumberInput - 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('not.exist');
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerNumberInput + 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('exist');
+
+    // Interval question
+    cy.get('[data-cy=question-list]').click();
+
+    cy.contains(intervalQuestion).click();
+
+    // Interval question - Less than
+    cy.get('[data-cy=comparator]').click();
+
+    cy.get('[role=listbox]').contains('Less than').click();
+
+    cy.get('[data-cy=value] input').clear().type(answerIntervalMax.toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('not.exist');
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerIntervalMax + 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('exist');
+
+    // Interval question -  Greater than
+    cy.get('[data-cy=comparator]').click();
+
+    cy.get('[role=listbox]').contains('Greater than').click();
+
+    cy.get('[data-cy=value] input').clear().type(answerIntervalMin.toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('not.exist');
+
+    cy.get('[data-cy=value] input')
+      .clear()
+      .type((answerIntervalMin - 1).toString());
+
+    cy.contains('Search').click();
+
+    cy.contains(proposalName2).should('exist');
   });
 
   it('Should preserve the ordering when row is selected', () => {
@@ -424,5 +611,20 @@ context('Proposal administration tests', () => {
     cy.get('table tbody tr input[type="checkbox"]').first().click();
 
     cy.get('table tbody tr').eq(2).contains(proposalFixedName);
+  });
+
+  it('User officer should see Reviews tab before doing the Admin(management decision)', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals').click();
+
+    cy.finishedLoading();
+
+    cy.get('[data-cy=view-proposal]').first().click();
+    cy.finishedLoading();
+    cy.get('[role="dialog"]').contains('Reviews').click();
+
+    cy.get('[role="dialog"]').contains('External reviews');
+    cy.get('[role="dialog"]').contains('SEP Meeting decision');
   });
 });

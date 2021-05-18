@@ -16,18 +16,22 @@ import React, { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
 
+import ListStatusIcon from 'components/common/icons/ListStatusIcon';
 import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
 import ScienceIconRemove from 'components/common/icons/ScienceIconRemove';
 import AssignProposalsToInstrument from 'components/instrument/AssignProposalsToInstrument';
+import ProposalReviewContent, {
+  TabNames,
+} from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
-import ProposalReview from 'components/review/ProposalReviewUserOfficer';
 import AssignProposalToSEP from 'components/SEP/Proposals/AssignProposalToSEP';
 import {
   Call,
   Instrument,
   Proposal,
   ProposalsFilter,
-  ProposalsToInstrumentArgs,
+  ProposalStatus,
+  ProposalIdWithCallId,
   Sep,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
@@ -46,8 +50,8 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import CallSelectModalOnProposalClone from './CallSelectModalOnProposalClone';
+import ChangeProposalStatus from './ChangeProposalStatus';
 import { ProposalUrlQueryParamsType } from './ProposalPage';
-import RankInput from './RankInput';
 
 type ProposalTableOfficerProps = {
   proposalFilter: ProposalsFilter;
@@ -66,8 +70,11 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
     false
   );
+  const [openChangeProposalStatus, setOpenChangeProposalStatus] = useState(
+    false
+  );
   const [selectedProposals, setSelectedProposals] = useState<
-    ProposalsToInstrumentArgs[]
+    ProposalIdWithCallId[]
   >([]);
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
     ProposalViewData[]
@@ -97,7 +104,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const selection = new Set(urlQueryParams.selection);
 
       setPreselectedProposalsData((preselectedProposalsData) => {
-        const selected: ProposalsToInstrumentArgs[] = [];
+        const selected: ProposalIdWithCallId[] = [];
         const preselected = preselectedProposalsData.map((proposal) => {
           if (selection.has(proposal.id.toString())) {
             selected.push({ id: proposal.id, callId: proposal.callId });
@@ -126,20 +133,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     }
   }, [proposalsData, urlQueryParams.selection]);
 
-  const setNewRanking = (proposalID: number, ranking: number) => {
-    api().administrationProposal({
-      id: proposalID,
-      rankOrder: ranking,
-    });
-    setProposalsData((proposalsData) =>
-      proposalsData.map((prop) => {
-        if (prop.id === proposalID) prop.rankOrder = ranking;
-
-        return prop;
-      })
-    );
-  };
-
   const removeProposalFromInstrument = async (
     proposalId: number,
     instrumentId: number | null
@@ -155,7 +148,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       instrumentId,
     });
 
-    const isError = !!result.removeProposalFromInstrument.error;
+    const isError = !!result.removeProposalFromInstrument.rejection;
 
     if (!isError) {
       setProposalsData((proposalsData) =>
@@ -243,14 +236,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     );
   };
 
-  const RankComponent = (rowData: ProposalViewData) => (
-    <RankInput
-      proposalID={rowData.id}
-      defaultValue={rowData.rankOrder}
-      onChange={setNewRanking}
-    />
-  );
-
   let columns: Column<ProposalViewData>[] = [
     {
       title: 'Actions',
@@ -297,7 +282,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     {
       title: 'Ranking',
       field: 'rankOrder',
-      render: RankComponent,
     },
     { title: 'Notified', field: 'notified' },
     {
@@ -328,12 +312,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const emailProposals = (): void => {
     selectedProposals.forEach(async (proposal) => {
       const {
-        notifyProposal: { error },
+        notifyProposal: { rejection },
       } = await api('Notification sent successfully').notifyProposal({
         id: proposal.id,
       });
 
-      if (error) {
+      if (rejection) {
         return;
       }
 
@@ -349,10 +333,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const deleteProposals = (): void => {
     selectedProposals.forEach(async (proposal) => {
       const {
-        deleteProposal: { error },
+        deleteProposal: { rejection },
       } = await api().deleteProposal({ id: proposal.id });
 
-      if (error) {
+      if (rejection) {
         return;
       }
 
@@ -377,7 +361,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       })
     );
 
-    const errors = responses.map((item) => item.result.error);
+    const errors = responses.map((item) => item.result.rejection);
     const isError = !!errors.join('');
 
     enqueueSnackbar(
@@ -433,7 +417,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         proposals: selectedProposals,
         instrumentId: instrument.id,
       });
-      const isError = !!result.assignProposalsToInstrument.error;
+      const isError = !!result.assignProposalsToInstrument.rejection;
 
       if (!isError) {
         setProposalsData((proposalsData) =>
@@ -475,7 +459,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
     const resultProposal = result.cloneProposal.proposal;
 
-    if (!result.cloneProposal.error && proposalsData && resultProposal) {
+    if (!result.cloneProposal.rejection && proposalsData && resultProposal) {
       const newClonedProposal = fromProposalToProposalView(
         resultProposal as Proposal
       );
@@ -483,6 +467,44 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const newProposalsData = [newClonedProposal, ...proposalsData];
 
       setProposalsData(newProposalsData);
+    }
+  };
+
+  const changeStatusOnProposals = async (status: ProposalStatus) => {
+    if (status?.id && selectedProposals?.length) {
+      const shouldAddPluralLetter = selectedProposals.length > 1 ? 's' : '';
+      const result = await api(
+        `Proposal${shouldAddPluralLetter} status changed successfully!`
+      ).changeProposalsStatus({
+        proposals: selectedProposals,
+        statusId: status.id,
+      });
+
+      const isError = !!result.changeProposalsStatus.rejection;
+
+      if (!isError) {
+        const shouldChangeSubmittedValue = status.shortCode === 'DRAFT';
+
+        setProposalsData((proposalsData) =>
+          proposalsData.map((prop) => {
+            if (
+              selectedProposals.find(
+                (selectedProposal) => selectedProposal.id === prop.id
+              )
+            ) {
+              prop.statusId = status.id;
+              prop.statusName = status.name;
+              prop.statusDescription = status.description;
+
+              if (shouldChangeSubmittedValue) {
+                prop.submitted = false;
+              }
+            }
+
+            return prop;
+          })
+        );
+      }
     }
   };
 
@@ -496,6 +518,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       'data-cy'?: string;
     }
   ): JSX.Element => <ScienceIconAdd {...props} />;
+  const ChangeProposalStatusIcon = (
+    props: JSX.IntrinsicAttributes & {
+      children?: React.ReactNode;
+      'data-cy'?: string;
+    }
+  ): JSX.Element => <ListStatusIcon {...props} />;
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
   columns = setSortDirectionOnSortColumn(
@@ -507,6 +535,14 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const proposalToReview = proposalsData.find(
     (proposal) => proposal.id === urlQueryParams.reviewModal
   );
+
+  const userOfficerProposalReviewTabs: TabNames[] = [
+    'Proposal information',
+    'Technical review',
+    'Reviews',
+    'Admin',
+    'Logs',
+  ];
 
   return (
     <>
@@ -542,6 +578,19 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       <Dialog
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        open={openChangeProposalStatus}
+        onClose={(): void => setOpenChangeProposalStatus(false)}
+      >
+        <DialogContent>
+          <ChangeProposalStatus
+            changeStatusOnProposals={changeStatusOnProposals}
+            close={(): void => setOpenChangeProposalStatus(false)}
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
         open={openCallSelection}
         onClose={(): void => setOpenCallSelection(false)}
       >
@@ -569,7 +618,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         }}
         reviewItemId={proposalToReview?.id}
       >
-        <ProposalReview proposalId={proposalToReview?.id as number} />
+        <ProposalReviewContent
+          proposalId={proposalToReview?.id as number}
+          tabNames={userOfficerProposalReviewTabs}
+        />
       </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
@@ -653,6 +705,16 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
             tooltip: 'Assign proposals to instrument',
             onClick: () => {
               setOpenInstrumentAssignment(true);
+            },
+            position: 'toolbarOnSelect',
+          },
+          {
+            icon: ChangeProposalStatusIcon.bind(null, {
+              'data-cy': 'change-proposal-status',
+            }),
+            tooltip: 'Change proposal status',
+            onClick: () => {
+              setOpenChangeProposalStatus(true);
             },
             position: 'toolbarOnSelect',
           },

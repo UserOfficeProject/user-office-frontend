@@ -9,8 +9,10 @@ import React, { useContext } from 'react';
 import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
+import ProposalReviewContent, {
+  TabNames,
+} from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
-import ProposalReview from 'components/review/ProposalReviewUserOfficer';
 import { UserContext } from 'context/UserContextProvider';
 import { Proposal, ProposalsFilter } from 'generated/sdk';
 import { useInstrumentScientistCallsData } from 'hooks/call/useInstrumentScientistCallsData';
@@ -28,7 +30,9 @@ import {
   standardDeviation,
 } from 'utils/mathFunctions';
 
-import ProposalFilterBar from './ProposalFilterBar';
+import ProposalFilterBar, {
+  questionaryFilterFromUrlQuery,
+} from './ProposalFilterBar';
 import { ProposalUrlQueryParamsType } from './ProposalPage';
 
 const ProposalTableInstrumentScientist: React.FC = () => {
@@ -53,6 +57,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     callId: urlQueryParams.call,
     instrumentId: urlQueryParams.instrument,
     proposalStatusId: urlQueryParams.proposalStatus || 2,
+    questionFilter: questionaryFilterFromUrlQuery(urlQueryParams),
   });
   const { instruments, loadingInstruments } = useInstrumentsData();
   const { calls, loadingCalls } = useInstrumentScientistCallsData(user.id);
@@ -65,6 +70,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     proposalStatusId: proposalFilter.proposalStatusId,
     instrumentId: proposalFilter.instrumentId,
     callId: proposalFilter.callId,
+    questionFilter: proposalFilter.questionFilter,
   });
 
   const downloadPDFProposal = useDownloadPDFProposal();
@@ -186,19 +192,19 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     },
     {
       title: 'Instrument',
-      render: (rowData: Proposal): string =>
-        rowData.instrument ? rowData.instrument.name : '-',
+      field: 'instrument.name',
+      emptyValue: '-',
     },
     {
       title: 'Call',
-      render: (rowData: Proposal): string =>
-        rowData.call ? rowData.call.shortCode : '-',
+      field: 'call.shortCode',
+      emptyValue: '-',
       hidden: true,
     },
     {
       title: 'SEP',
-      render: (rowData: Proposal): string =>
-        rowData.sep ? rowData.sep.code : '-',
+      field: 'sep.code',
+      emptyValue: '-',
       hidden: true,
     },
   ];
@@ -225,6 +231,11 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     (proposal) => proposal.id === urlQueryParams.reviewModal
   );
 
+  const instrumentScientistProposalReviewTabs: TabNames[] = [
+    'Proposal information',
+    'Technical review',
+  ];
+
   return (
     <>
       <ProposalReviewModal
@@ -244,7 +255,10 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         }}
         reviewItemId={urlQueryParams.reviewModal}
       >
-        <ProposalReview proposalId={urlQueryParams.reviewModal as number} />
+        <ProposalReviewContent
+          proposalId={urlQueryParams.reviewModal as number}
+          tabNames={instrumentScientistProposalReviewTabs}
+        />
       </ProposalReviewModal>
       <ProposalFilterBar
         calls={{ data: calls, isLoading: loadingCalls }}

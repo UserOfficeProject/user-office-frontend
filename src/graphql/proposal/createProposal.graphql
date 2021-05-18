@@ -16,7 +16,12 @@ mutation createProposal($callId: Int!) {
       users {
         ...basicUserDetails
       }
+      samples {
+        ...sample
+      }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

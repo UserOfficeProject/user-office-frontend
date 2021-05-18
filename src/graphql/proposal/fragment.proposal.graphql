@@ -8,7 +8,6 @@ fragment proposal on Proposal {
   }
   publicStatus
   shortCode
-  rankOrder
   finalStatus
   commentForUser
   commentForManagement
@@ -18,4 +17,9 @@ fragment proposal on Proposal {
   questionaryId
   notified
   submitted
+  managementTimeAllocation
+  managementDecisionSubmitted
+  sepMeetingDecision {
+    ...sepMeetingDecision
+  }
 }

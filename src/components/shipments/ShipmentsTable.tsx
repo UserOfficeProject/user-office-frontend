@@ -14,6 +14,7 @@ import { useDownloadPDFShipmentLabel } from 'hooks/proposal/useDownloadPDFShipme
 import { useShipments } from 'hooks/shipment/useShipments';
 import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 import { tableIcons } from 'utils/materialIcons';
+import { tableLocalization } from 'utils/materialLocalization';
 import { timeAgo } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -51,7 +52,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
             shipmentId: shipmentToDelete.id,
           })
           .then((data) => {
-            if (!data.deleteShipment.error) {
+            if (!data.deleteShipment.rejection) {
               setShipments(
                 shipments.filter(
                   (shipment) => shipment.id !== shipmentToDelete.id
@@ -87,6 +88,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
         createModal={createModal}
         hasAccess={{ update: true, create: true, remove: true }}
         icons={tableIcons}
+        localization={tableLocalization}
         title="Shipments"
         columns={columns}
         isLoading={loadingShipments}

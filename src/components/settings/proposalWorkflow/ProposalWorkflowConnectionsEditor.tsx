@@ -24,7 +24,7 @@ import {
 import { Event as ProposalEvent } from 'generated/sdk';
 
 import AddNewWorkflowConnectionsRow from './AddNewWorkflowConnectionsRow';
-import AddNextStatusEventsToConnection from './AddNextStatusEventsToConnection';
+import AddStatusChangingEventsToConnection from './AddStatusChangingEventsToConnection';
 import { Event, EventType } from './ProposalWorkflowEditorModel';
 
 type ProposalWorkflowConnectionsEditorProps = {
@@ -84,7 +84,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
       padding: '5px',
       color: theme.palette.grey[500],
     },
-    nextStatusEvents: {
+    statusChangingEvents: {
       textAlign: 'center',
       display: 'block',
       padding: '2px 0',
@@ -106,7 +106,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
   });
 
   const allWorkflowGroupIds = proposalWorkflowStatusConnectionGroups.map(
-    (proposalWorkfowConnectionGroup) => proposalWorkfowConnectionGroup.groupId
+    (proposalWorkflowConnectionGroup) => proposalWorkflowConnectionGroup.groupId
   );
 
   /**
@@ -116,12 +116,12 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
    * The function calls itself recursively to find children of children.
    */
   const buildWorkflowTree = (
-    proposalWorkfowConnectionGroups: ProposalWorkflowConnectionGroup[],
+    proposalWorkflowConnectionGroups: ProposalWorkflowConnectionGroup[],
     parentId: string | null = null
   ) => {
     const result: ProposalWorkflowConnectionGroupWithSubGroups[] = [];
 
-    proposalWorkfowConnectionGroups.forEach(
+    proposalWorkflowConnectionGroups.forEach(
       (
         proposalWorkflowConnectionGroup: ProposalWorkflowConnectionGroup,
         index: number
@@ -133,7 +133,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
 
         if (proposalWorkflowConnectionGroup.parentGroupId === parentId) {
           const children = buildWorkflowTree(
-            proposalWorkfowConnectionGroups,
+            proposalWorkflowConnectionGroups,
             newElement.groupId
           );
 
@@ -174,11 +174,22 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
     }
   };
 
-  const isDraftStatus = (
+  const isVeryFirstDraftStatus = (
     proposalWorkflowConnection: ProposalWorkflowConnection
   ) =>
     proposalWorkflowConnection.proposalStatus.id === 1 &&
-    proposalWorkflowConnection.proposalStatus.shortCode === 'DRAFT';
+    proposalWorkflowConnection.proposalStatus.shortCode === 'DRAFT' &&
+    proposalWorkflowConnection.sortOrder === 0 &&
+    proposalWorkflowConnection.droppableGroupId ===
+      'proposalWorkflowConnections_0';
+
+  const getUniqueKey = (
+    proposalWorkflowConnection: ProposalWorkflowConnection
+  ) => {
+    return `${proposalWorkflowConnection.proposalStatus.shortCode}_${
+      proposalWorkflowConnection.proposalStatus.id
+    }_${proposalWorkflowConnection.prevProposalStatusId || ''}`;
+  };
 
   const getConnectionGroupItems = (
     connections: ProposalWorkflowConnection[]
@@ -186,17 +197,29 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
     return connections.map((proposalWorkflowConnection, index) => {
       return (
         <Draggable
-          key={`${proposalWorkflowConnection.proposalStatus.id}_${proposalWorkflowConnection.proposalStatus.shortCode}`}
-          draggableId={`${proposalWorkflowConnection.proposalStatus.id}_${proposalWorkflowConnection.proposalStatus.shortCode}`}
+          key={getUniqueKey(proposalWorkflowConnection)}
+          draggableId={getUniqueKey(proposalWorkflowConnection)}
           index={index}
           isDragDisabled={true}
         >
           {(provided, snapshot) => (
             <>
+              {!!proposalWorkflowConnection.statusChangingEvents?.length && (
+                <small className={classes.statusChangingEvents}>
+                  {proposalWorkflowConnection.statusChangingEvents
+                    .map(
+                      (statusChangingEvent) =>
+                        statusChangingEvent.statusChangingEvent
+                    )
+                    .join(' & ')}
+                </small>
+              )}
               <Grid
                 item
                 xs={12}
-                data-cy={`connection_${proposalWorkflowConnection.proposalStatus.shortCode}_${proposalWorkflowConnection.proposalStatus.id}`}
+                data-cy={`connection_${getUniqueKey(
+                  proposalWorkflowConnection
+                )}`}
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
@@ -206,12 +229,12 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
                 )}
                 className={classes.item}
                 onClick={() => {
-                  if (proposalWorkflowConnection.nextProposalStatusId) {
+                  if (proposalWorkflowConnection.prevProposalStatusId) {
                     setWorkflowConnection(proposalWorkflowConnection);
                   }
                 }}
               >
-                {!isDraftStatus(proposalWorkflowConnection) && (
+                {!isVeryFirstDraftStatus(proposalWorkflowConnection) && (
                   <DialogActions className={classes.dialogActions}>
                     <IconButton
                       size="small"
@@ -242,13 +265,6 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
                   {proposalWorkflowConnection.proposalStatus.description}
                 </Box>
               </Grid>
-              {!!proposalWorkflowConnection.nextStatusEvents?.length && (
-                <small className={classes.nextStatusEvents}>
-                  {proposalWorkflowConnection.nextStatusEvents
-                    .map((nextEventStatus) => nextEventStatus.nextStatusEvent)
-                    .join(' & ')}
-                </small>
-              )}
             </>
           )}
         </Draggable>
@@ -360,21 +376,24 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
         aria-describedby="simple-modal-description"
         open={!!workflowConnection}
         onClose={(): void => setWorkflowConnection(null)}
-        data-cy="next-status-events-modal"
+        data-cy="status-changing-events-modal"
       >
         <DialogContent>
-          <AddNextStatusEventsToConnection
+          <AddStatusChangingEventsToConnection
             close={(): void => setWorkflowConnection(null)}
-            nextStatusEvents={
-              workflowConnection?.nextStatusEvents?.map(
-                (nextStatusEvent) => nextStatusEvent.nextStatusEvent
+            statusChangingEvents={
+              workflowConnection?.statusChangingEvents?.map(
+                (statusChangingEvent) => statusChangingEvent.statusChangingEvent
               ) as ProposalEvent[]
             }
-            addNextStatusEventsToConnection={(nextStatusEvents: string[]) =>
+            statusName={workflowConnection?.proposalStatus.name}
+            addStatusChangingEventsToConnection={(
+              statusChangingEvents: string[]
+            ) =>
               dispatch({
                 type: EventType.ADD_NEXT_STATUS_EVENTS_REQUESTED,
                 payload: {
-                  nextStatusEvents,
+                  statusChangingEvents,
                   workflowConnection,
                 },
               })
@@ -388,7 +407,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEdi
           className={classes.addRowButton}
           onClick={() => setOpenNewRowDialog(true)}
         >
-          Add multicolumn row
+          Add multi-column row
         </Button>
       </Grid>
       {connectionGroups}

@@ -1,12 +1,14 @@
 mutation assignProposalsToInstrument(
-  $proposals: [ProposalsToInstrumentArgs!]!
+  $proposals: [ProposalIdWithCallId!]!
   $instrumentId: Int!
 ) {
   assignProposalsToInstrument(
     proposals: $proposals
     instrumentId: $instrumentId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }

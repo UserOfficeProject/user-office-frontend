@@ -8,7 +8,6 @@ import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import { Answer } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { EventType } from 'models/QuestionarySubmissionState';
 import { SampleSubmissionState } from 'models/SampleSubmissionState';
@@ -20,7 +19,7 @@ const TextFieldNoSubmit = withPreventSubmit(TextField);
 function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
   const {
     answer: {
-      question: { proposalQuestionId },
+      question: { id },
     },
   } = props;
 
@@ -37,7 +36,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
   return (
     <>
       <Field
-        name={proposalQuestionId}
+        name={id}
         label={props.answer.question.question}
         inputProps={{
           onChange: (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +59,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sampleBasisPreSubmit = (answer: Answer) => async ({
+const sampleBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,
@@ -80,7 +78,7 @@ const sampleBasisPreSubmit = (answer: Answer) => async ({
       dispatch({
         type: EventType.SAMPLE_UPDATED,
         payload: {
-          sample: result.updateSample.sample,
+          sample: { ...sample, ...result.updateSample.sample },
         },
       });
     }

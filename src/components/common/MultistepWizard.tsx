@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     stepper: {
       padding: '20px 0 0',
+      flexWrap: 'wrap',
     },
     formErrors: {
       color: theme.palette.error.main,
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     step: {
       cursor: 'pointer',
+      padding: theme.spacing(1),
     },
   })
 );
@@ -87,7 +89,7 @@ export const Wizard: React.FC<WizardProps> = ({
       await step.props.onSubmit(values, actions);
     }
     if (isLastStep) {
-      return onSubmit(values, actions);
+      return await onSubmit(values, actions);
     } else {
       actions.setTouched({});
       next(values);
@@ -144,7 +146,7 @@ export const Wizard: React.FC<WizardProps> = ({
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting && <UOLoader size={14} />}
-              {isLastStep ? (shouldCreate ? 'Update' : 'Create') : 'Next'}
+              {isLastStep ? (shouldCreate ? 'Create' : 'Update') : 'Next'}
             </Button>
           </ActionButtonContainer>
         </Form>

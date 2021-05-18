@@ -6,6 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import DescriptionIcon from '@material-ui/icons/Description';
+import EventIcon from '@material-ui/icons/Event';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import FolderOpen from '@material-ui/icons/FolderOpen';
@@ -17,7 +19,6 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import NoteAdd from '@material-ui/icons/NoteAdd';
 import People from '@material-ui/icons/People';
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Settings from '@material-ui/icons/Settings';
 import SettingsApplications from '@material-ui/icons/SettingsApplications';
 import VpnKey from '@material-ui/icons/VpnKey';
@@ -29,6 +30,7 @@ import { FeatureContext } from 'context/FeatureContextProvider';
 import { Call, FeatureId, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
+import CommentQuestionIcon from './common/icons/CommentQuestionIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
 import ProposalWorkflowIcon from './common/icons/ProposalWorkflowIcon';
 import ScienceIcon from './common/icons/ScienceIcon';
@@ -141,7 +143,7 @@ const TemplateMenuListItem = () => {
       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
         <ListItem component={NavLink} to="/ProposalTemplates" button>
           <ListItemIcon>
-            <QuestionAnswerIcon />
+            <DescriptionIcon />
           </ListItemIcon>
           <ListItemText primary="Proposal" title="Proposal templates" />
         </ListItem>
@@ -204,43 +206,64 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
   const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
     ?.isEnabled;
 
+  const isSchedulerEnabled = context.features.get(FeatureId.SCHEDULER)
+    ?.isEnabled;
+
   const user = (
     <div data-cy="user-menu-items">
-      <ListItem component={NavLink} to="/" exact button>
-        <ListItemIcon>
-          <DashboardIcon />
-        </ListItemIcon>
-        <ListItemText primary="Dashboard" />
-      </ListItem>
-      <ListItem
-        component={NavLink}
-        to={
-          multipleCalls
-            ? '/ProposalSelectType'
-            : `/ProposalCreate/${callsData[0]?.id}/${callsData[0]?.templateId}`
-        }
-        button
-        disabled={proposalDisabled}
-      >
-        <ListItemIcon>
-          <NoteAdd />
-        </ListItemIcon>
-        <ListItemText primary="New Proposal" />
-      </ListItem>
-      {isShipmentFeatureEnabled && (
-        <ListItem component={NavLink} to="/MyShipments" button>
+      <Tooltip title="Dashboard">
+        <ListItem component={NavLink} to="/" exact button>
           <ListItemIcon>
-            <LocalShippingIcon />
+            <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="My shipments" />
+          <ListItemText primary="Dashboard" />
         </ListItem>
+      </Tooltip>
+      <Tooltip title="New Proposal">
+        <ListItem
+          component={NavLink}
+          to={
+            multipleCalls
+              ? '/ProposalSelectType'
+              : `/ProposalCreate/${callsData[0]?.id}/${callsData[0]?.templateId}`
+          }
+          button
+          disabled={proposalDisabled}
+        >
+          <ListItemIcon>
+            <NoteAdd />
+          </ListItemIcon>
+          <ListItemText primary="New Proposal" />
+        </ListItem>
+      </Tooltip>
+      {isShipmentFeatureEnabled && (
+        <Tooltip title="My shipments">
+          <ListItem component={NavLink} to="/MyShipments" button>
+            <ListItemIcon>
+              <LocalShippingIcon />
+            </ListItemIcon>
+            <ListItemText primary="My shipments" />
+          </ListItem>
+        </Tooltip>
       )}
-      <ListItem component={NavLink} to="/HelpPage" button>
-        <ListItemIcon>
-          <Help />
-        </ListItemIcon>
-        <ListItemText primary="Help" />
-      </ListItem>
+      {isSchedulerEnabled && (
+        <Tooltip title="My Beam Times">
+          <ListItem component={NavLink} to="/MyBeamTimes" button>
+            <ListItemIcon>
+              <EventIcon />
+            </ListItemIcon>
+            <ListItemText primary="My beam times" />
+          </ListItem>
+        </Tooltip>
+      )}
+      <Tooltip title="Help">
+        <ListItem component={NavLink} to="/HelpPage" button>
+          <ListItemIcon>
+            <Help />
+          </ListItemIcon>
+          <ListItemText primary="Help" />
+        </ListItem>
+      </Tooltip>
     </div>
   );
 
@@ -291,6 +314,12 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         <ListItemText primary="Institutions" />
       </ListItem>
       <TemplateMenuListItem />
+      <ListItem component={NavLink} to="/Questions" button>
+        <ListItemIcon>
+          <CommentQuestionIcon />
+        </ListItemIcon>
+        <ListItemText primary="Questions" />
+      </ListItem>
       <SamplesMenuListItem />
       {isShipmentFeatureEnabled && <ShipmentMenuListItem />}
       <SettingsMenuListItem />
@@ -341,6 +370,14 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         </ListItemIcon>
         <ListItemText primary="Instruments" />
       </ListItem>
+      {isSchedulerEnabled && (
+        <ListItem component={NavLink} to="/UpcomingBeamTimes" button>
+          <ListItemIcon>
+            <EventIcon />
+          </ListItemIcon>
+          <ListItemText primary="Upcoming beam times" />
+        </ListItem>
+      )}
     </div>
   );
 

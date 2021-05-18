@@ -25,7 +25,8 @@ import {
   getFieldById,
   getQuestionaryStepByTopicId,
 } from 'models/QuestionaryFunctions';
-import { StyledPaper } from 'styles/StyledComponents';
+import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -37,6 +38,7 @@ import QuestionaryEditorTopic from './TemplateTopicEditor';
 
 export default function TemplateEditor() {
   const { enqueueSnackbar } = useSnackbar();
+  const { api } = useDataApiWithFeedback();
   const [
     selectedQuestionTemplateRelation,
     setSelectedQuestionTemplateRelation,
@@ -149,8 +151,7 @@ export default function TemplateEditor() {
         dragSource.droppableId !== 'questionPicker';
 
       if (isDraggingFromQuestionDrawerToTopic) {
-        const questionId =
-          state.complementaryQuestions[dragSource.index].proposalQuestionId;
+        const questionId = state.complementaryQuestions[dragSource.index].id;
         const topicId = dragDestination.droppableId
           ? +dragDestination.droppableId
           : undefined;
@@ -175,13 +176,19 @@ export default function TemplateEditor() {
           topicId
         ) as QuestionaryStep;
         const question = step.fields[dragSource.index].question;
-        dispatch({
-          type: EventType.DELETE_QUESTION_REL_REQUESTED,
-          payload: {
-            fieldId: question.proposalQuestionId,
+        api()
+          .deleteQuestionTemplateRelation({
             templateId: state.templateId,
-          },
-        });
+            questionId: question.id,
+          })
+          .then((data) => {
+            if (data.deleteQuestionTemplateRelation.template) {
+              dispatch({
+                type: EventType.QUESTION_REL_UPDATED,
+                payload: data.deleteQuestionTemplateRelation.template,
+              });
+            }
+          });
       } else if (isReorderingInsideTopics) {
         dispatch({
           type: EventType.REORDER_QUESTION_REL_REQUESTED,
@@ -249,7 +256,7 @@ export default function TemplateEditor() {
     ) : null;
 
   return (
-    <>
+    <ContentContainer>
       <TemplateMetadataEditor dispatch={dispatch} template={state} />
       <StyledPaper style={getContainerStyle()}>
         {progressJsx}
@@ -311,6 +318,6 @@ export default function TemplateEditor() {
         closeMe={() => setSelectedQuestion(null)}
         template={state}
       />
-    </>
+    </ContentContainer>
   );
 }
