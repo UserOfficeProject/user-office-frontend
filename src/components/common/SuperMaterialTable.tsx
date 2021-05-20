@@ -36,7 +36,10 @@ export type SortDirectionType = 'asc' | 'desc' | undefined;
 
 interface SuperProps<RowData extends Record<keyof RowData, unknown>> {
   createModal: (
-    onUpdate: (object: RowData | null) => void,
+    onUpdate: (
+      object: RowData | null,
+      shouldCloseAfterUpdate?: boolean
+    ) => void,
     onCreate: (
       object: RowData | null,
       shouldCloseAfterCreation?: boolean
@@ -115,7 +118,10 @@ export function SuperMaterialTable<Entry extends EntryID>({
     }
   };
 
-  const onUpdated = (objectUpdated: Entry | null) => {
+  const onUpdated = (
+    objectUpdated: Entry | null,
+    shouldCloseAfterUpdate = true
+  ) => {
     if (objectUpdated) {
       const newObjectsArray = data.map((objectItem) =>
         objectItem.id === objectUpdated.id ? objectUpdated : objectItem
@@ -123,7 +129,9 @@ export function SuperMaterialTable<Entry extends EntryID>({
       setData(newObjectsArray);
     }
     setEditObject(null);
-    setShow(false);
+    if (shouldCloseAfterUpdate) {
+      setShow(false);
+    }
   };
 
   const onDeleted = async (deletedId: number | string) => {

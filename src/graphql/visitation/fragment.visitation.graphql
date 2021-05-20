@@ -1,0 +1,8 @@
+fragment visitation on Visitation {
+  id
+  proposalId
+  status
+  questionaryId
+  instrumentId
+  visitorId
+}

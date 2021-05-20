@@ -1,0 +1,16 @@
+query getVisitation($visitationId: Int!) {
+  visitation(visitationId: $visitationId) {
+    ...visitation
+    questionary {
+      ...questionary
+    }
+    team {
+      id
+      firstname
+      lastname
+    }
+    proposal {
+      ...proposal
+    }
+  }
+}

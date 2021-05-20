@@ -1,0 +1,31 @@
+mutation createVisitation(
+  $proposalId: Int!
+  $instrumentId: Int!
+  $team: [Int!]
+) {
+  createVisitation(
+    proposalId: $proposalId
+    instrumentId: $instrumentId
+    team: $team
+  ) {
+    visitation {
+      ...visitation
+
+      questionary {
+        ...questionary
+      }
+      team {
+        id
+        firstname
+        lastname
+      }
+      proposal {
+        ...proposal
+      }
+    }
+
+    rejection {
+      ...rejection
+    }
+  }
+}

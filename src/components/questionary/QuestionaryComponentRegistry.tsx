@@ -27,6 +27,7 @@ import { sampleBasisDefinition } from './questionaryComponents/SampleBasis/Sampl
 import { sampleDeclarationDefinition } from './questionaryComponents/SampleDeclaration/SampleDeclaratonDefinition';
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
+import { visitationBasisDefinition } from './questionaryComponents/VisitationBasis/VisitiationBasisDefinition';
 
 export type FormChildren<ValueObjectType> = (
   formikProps: FormikProps<ValueObjectType>
@@ -55,7 +56,7 @@ export interface Renderers {
   readonly questionRenderer: QuestionRenderer;
   readonly answerRenderer: AnswerRenderer;
 }
-type CreateYupValidation =
+export type CreateYupValidation =
   | ((
       field: Answer,
       state: QuestionarySubmissionState,
@@ -63,7 +64,7 @@ type CreateYupValidation =
     ) => object)
   | null;
 
-type GetYupInitialValue = (props: {
+export type GetYupInitialValue = (props: {
   answer: Answer;
   state: QuestionarySubmissionState;
 }) => Answer['value'];
@@ -99,6 +100,7 @@ const registry = [
   numberInputDefinition,
   shipmentBasisDefinition,
   richTextInputDefinition,
+  visitationBasisDefinition,
 ];
 
 Object.freeze(registry);

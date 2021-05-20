@@ -1,0 +1,5 @@
+query getVisitations($filter: VisitationsFilter) {
+  visitations(filter: $filter) {
+    ...visitation
+  }
+}
