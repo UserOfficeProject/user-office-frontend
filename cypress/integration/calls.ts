@@ -32,6 +32,8 @@ context('Calls tests', () => {
     description: faker.random.words(8),
   };
 
+  const scientist = 'Carl';
+
   it('A user should not be able to see/visit calls', () => {
     cy.login('user');
 
@@ -223,9 +225,9 @@ context('Calls tests', () => {
     cy.login('officer');
 
     cy.contains('People').click();
-    cy.addScientistRoleToUser('Carl');
+    cy.addScientistRoleToUser(scientist);
 
-    cy.createInstrument(instrumentAssignedToCall, 'Carl');
+    cy.createInstrument(instrumentAssignedToCall, scientist);
     cy.contains('Calls').click();
 
     cy.contains(updatedCall.shortCode)
