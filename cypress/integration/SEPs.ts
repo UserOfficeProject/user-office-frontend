@@ -98,8 +98,7 @@ context(
     });
 
     beforeEach(() => {
-      cy.visit('/');
-      cy.viewport(1100, 1000);
+      cy.viewport(1920, 1080);
     });
 
     it('User should not be able to see SEPs page', () => {
@@ -873,7 +872,8 @@ context(
 
       cy.notification({
         variant: 'error',
-        text: /Failed to delete proposal with ID "([^"]+)", it has dependencies which need to be deleted first/i,
+        text:
+          'Failed to delete proposal because, it has dependencies which need to be deleted first',
       });
     });
 

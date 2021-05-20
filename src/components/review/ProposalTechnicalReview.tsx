@@ -146,7 +146,7 @@ const ProposalTechnicalReview = ({
           <Form>
             <PromptIfDirty />
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid item sm={6} xs={12}>
                 <FormikDropdown
                   name="status"
                   label="Status"
@@ -168,7 +168,7 @@ const ProposalTechnicalReview = ({
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item sm={6} xs={12}>
                 <Field
                   name="timeAllocation"
                   label="Time Allocation(Days)"

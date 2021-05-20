@@ -18,7 +18,9 @@ mutation submitTechnicalReview(
       reviewerId: $reviewerId
     }
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     technicalReview {
       id
     }

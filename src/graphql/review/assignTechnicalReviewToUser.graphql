@@ -3,6 +3,8 @@ mutation updateTechnicalReviewAssignee($proposalIds: [Int!]!, $userId: Int!) {
     proposals {
       ...proposal
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

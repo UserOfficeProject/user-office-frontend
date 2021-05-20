@@ -22,6 +22,8 @@ mutation updateInstrument(
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

@@ -20,6 +20,8 @@ mutation createInstrument(
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
