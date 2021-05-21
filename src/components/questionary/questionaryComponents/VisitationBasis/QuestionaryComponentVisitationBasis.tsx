@@ -41,14 +41,14 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
     <>
       <FormikDropdown
         name={`${questionId}.proposalId`}
-        label="Proposal"
+        label="Select proposal"
         loading={loadingProposals}
         noOptionsText="No proposals"
         items={proposals.map((proposal) => ({
           text: proposal.title,
           value: proposal.id,
         }))}
-        InputProps={{ 'data-cy': 'proposal' }}
+        InputProps={{ 'data-cy': 'proposal-selection' }}
         onChange={(event) => {
           dispatch({
             type: EventType.VISITATION_MODIFIED,
@@ -64,7 +64,7 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
       />
 
       <Participants
-        title="Add additional visitors"
+        title="Add More Visitors"
         className={classes.container}
         setUsers={(team: BasicUserDetails[]) => {
           formikProps.setFieldValue(

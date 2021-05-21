@@ -56,10 +56,10 @@ const Participants: React.FC<ParticipantsProps> = ({
       />
       <FormControl margin="dense" fullWidth>
         <FormLabel component="div">
-          Co-Proposers
-          <Tooltip title="Add Co-Proposers">
+          {title}
+          <Tooltip title={title}>
             <IconButton onClick={openModal}>
-              <People data-cy="co-proposers-button" />
+              <People data-cy="add-participant-button" />
             </IconButton>
           </Tooltip>
         </FormLabel>

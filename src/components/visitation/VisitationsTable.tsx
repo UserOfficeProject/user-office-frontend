@@ -43,7 +43,7 @@ const VisitationsTable = (props: { confirm: WithConfirmType }) => {
   const deleteHandler = (visitationToDelete: VisitationBasic) => {
     props.confirm(
       () => {
-        api()
+        api('Visitation deleted')
           .deleteVisitation({
             visitationId: visitationToDelete.id,
           })
