@@ -21,7 +21,7 @@ function createVisitationStub(
   visitorId: number,
   templateId: number,
   questionarySteps: QuestionaryStep[]
-) {
+): VisitationExtended {
   return {
     id: 0,
     status: VisitationStatus.DRAFT,
@@ -55,6 +55,7 @@ function createVisitationStub(
       managementDecisionSubmitted: false,
       status: null,
       sepMeetingDecision: null,
+      technicalReviewAssignee: 0,
     },
     instrumentId: 0,
   };
