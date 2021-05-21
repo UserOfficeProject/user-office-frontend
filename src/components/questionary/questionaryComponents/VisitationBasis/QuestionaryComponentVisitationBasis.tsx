@@ -10,7 +10,6 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import { VisitationContextType } from 'components/visitation/VisitationContainer';
 import { BasicUserDetails } from 'generated/sdk';
-import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { EventType } from 'models/QuestionarySubmissionState';
@@ -26,7 +25,6 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
   const { answer, formikProps } = props;
   const classes = useStyles();
 
-  const { instruments, loadingInstruments } = useInstrumentsData();
   const { proposals, loadingProposals } = useUserProposals();
 
   const { dispatch, state } = useContext(
@@ -41,29 +39,6 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
 
   return (
     <>
-      <FormikDropdown
-        name={`${questionId}.instrumentId`}
-        label="Instrument"
-        loading={loadingInstruments}
-        noOptionsText="No instruments"
-        items={instruments.map((instrument) => ({
-          text: instrument.name,
-          value: instrument.id,
-        }))}
-        InputProps={{ 'data-cy': 'instrument' }}
-        onChange={(event) => {
-          dispatch({
-            type: EventType.VISITATION_MODIFIED,
-            payload: {
-              visitation: {
-                ...state.visitation,
-                instrumentId: event.target.value,
-              },
-            },
-          });
-        }}
-        required
-      />
       <FormikDropdown
         name={`${questionId}.proposalId`}
         label="Proposal"
@@ -113,12 +88,11 @@ const visitationBasisPreSubmit = () => async ({
   state,
 }: SubmitActionDependencyContainer) => {
   const visitation = (state as VisitationSubmissionState).visitation;
-  const { instrumentId, proposalId, team } = visitation;
+  const { proposalId, team } = visitation;
   let returnValue = state.questionaryId;
   if (visitation.id > 0) {
     const result = await api.updateVisitation({
       visitationId: visitation.id,
-      instrumentId: visitation.instrumentId,
       proposalId: visitation.proposalId,
       team: visitation.team.map((user) => user.id),
     });
@@ -134,7 +108,6 @@ const visitationBasisPreSubmit = () => async ({
   } else {
     const result = await api.createVisitation({
       proposalId: proposalId,
-      instrumentId: instrumentId,
       team: team.map((user) => user.id),
     });
 

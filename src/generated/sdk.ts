@@ -1257,7 +1257,6 @@ export type MutationCreateProposalArgs = {
 
 export type MutationCreateVisitationArgs = {
   proposalId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']>>;
 };
 
@@ -1422,7 +1421,6 @@ export type MutationUpdateVisitationArgs = {
   visitationId: Scalars['Int'];
   status?: Maybe<VisitationStatus>;
   proposalId?: Maybe<Scalars['Int']>;
-  instrumentId?: Maybe<Scalars['Int']>;
   team?: Maybe<Array<Scalars['Int']>>;
 };
 
@@ -2923,7 +2921,6 @@ export type Visitation = {
   instrumentId: Scalars['Int'];
   visitorId: Scalars['Int'];
   proposal: Proposal;
-  instrument: Instrument;
   team: Array<BasicUserDetails>;
   questionary: Questionary;
 };
@@ -6705,7 +6702,6 @@ export type VerifyEmailMutation = (
 
 export type CreateVisitationMutationVariables = Exact<{
   proposalId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
@@ -6724,6 +6720,10 @@ export type CreateVisitationMutation = (
         & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname'>
       )>, proposal: (
         { __typename?: 'Proposal' }
+        & { instrument: Maybe<(
+          { __typename?: 'Instrument' }
+          & Pick<Instrument, 'name'>
+        )> }
         & ProposalFragment
       ) }
       & VisitationFragment
@@ -6755,7 +6755,7 @@ export type DeleteVisitationMutation = (
 
 export type VisitationFragment = (
   { __typename?: 'Visitation' }
-  & Pick<Visitation, 'id' | 'proposalId' | 'status' | 'questionaryId' | 'instrumentId' | 'visitorId'>
+  & Pick<Visitation, 'id' | 'proposalId' | 'status' | 'questionaryId' | 'visitorId'>
 );
 
 export type GetMyVisitationsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6765,6 +6765,14 @@ export type GetMyVisitationsQuery = (
   { __typename?: 'Query' }
   & { myVisitations: Array<(
     { __typename?: 'Visitation' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & { instrument: Maybe<(
+        { __typename?: 'Instrument' }
+        & Pick<Instrument, 'name'>
+      )> }
+      & ProposalFragment
+    ) }
     & VisitationFragment
   )> }
 );
@@ -6786,6 +6794,10 @@ export type GetVisitationQuery = (
       & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname'>
     )>, proposal: (
       { __typename?: 'Proposal' }
+      & { instrument: Maybe<(
+        { __typename?: 'Instrument' }
+        & Pick<Instrument, 'name'>
+      )> }
       & ProposalFragment
     ) }
     & VisitationFragment
@@ -6801,6 +6813,14 @@ export type GetVisitationsQuery = (
   { __typename?: 'Query' }
   & { visitations: Array<(
     { __typename?: 'Visitation' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & { instrument: Maybe<(
+        { __typename?: 'Instrument' }
+        & Pick<Instrument, 'name'>
+      )> }
+      & ProposalFragment
+    ) }
     & VisitationFragment
   )> }
 );
@@ -6809,7 +6829,6 @@ export type UpdateVisitationMutationVariables = Exact<{
   visitationId: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   status?: Maybe<VisitationStatus>;
-  instrumentId?: Maybe<Scalars['Int']>;
   proposalId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -6828,6 +6847,10 @@ export type UpdateVisitationMutation = (
         & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname'>
       )>, proposal: (
         { __typename?: 'Proposal' }
+        & { instrument: Maybe<(
+          { __typename?: 'Instrument' }
+          & Pick<Instrument, 'name'>
+        )> }
         & ProposalFragment
       ) }
       & VisitationFragment
@@ -7229,7 +7252,6 @@ export const VisitationFragmentDoc = gql`
   proposalId
   status
   questionaryId
-  instrumentId
   visitorId
 }
     `;
@@ -9843,12 +9865,8 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitationDocument = gql`
-    mutation createVisitation($proposalId: Int!, $instrumentId: Int!, $team: [Int!]) {
-  createVisitation(
-    proposalId: $proposalId
-    instrumentId: $instrumentId
-    team: $team
-  ) {
+    mutation createVisitation($proposalId: Int!, $team: [Int!]) {
+  createVisitation(proposalId: $proposalId, team: $team) {
     visitation {
       ...visitation
       questionary {
@@ -9861,6 +9879,9 @@ export const CreateVisitationDocument = gql`
       }
       proposal {
         ...proposal
+        instrument {
+          name
+        }
       }
     }
     rejection {
@@ -9889,9 +9910,16 @@ export const GetMyVisitationsDocument = gql`
     query getMyVisitations {
   myVisitations {
     ...visitation
+    proposal {
+      ...proposal
+      instrument {
+        name
+      }
+    }
   }
 }
-    ${VisitationFragmentDoc}`;
+    ${VisitationFragmentDoc}
+${ProposalFragmentDoc}`;
 export const GetVisitationDocument = gql`
     query getVisitation($visitationId: Int!) {
   visitation(visitationId: $visitationId) {
@@ -9906,6 +9934,9 @@ export const GetVisitationDocument = gql`
     }
     proposal {
       ...proposal
+      instrument {
+        name
+      }
     }
   }
 }
@@ -9916,14 +9947,20 @@ export const GetVisitationsDocument = gql`
     query getVisitations($filter: VisitationsFilter) {
   visitations(filter: $filter) {
     ...visitation
+    proposal {
+      ...proposal
+      instrument {
+        name
+      }
+    }
   }
 }
-    ${VisitationFragmentDoc}`;
+    ${VisitationFragmentDoc}
+${ProposalFragmentDoc}`;
 export const UpdateVisitationDocument = gql`
-    mutation updateVisitation($visitationId: Int!, $team: [Int!], $status: VisitationStatus, $instrumentId: Int, $proposalId: Int) {
+    mutation updateVisitation($visitationId: Int!, $team: [Int!], $status: VisitationStatus, $proposalId: Int) {
   updateVisitation(
     visitationId: $visitationId
-    instrumentId: $instrumentId
     proposalId: $proposalId
     team: $team
     status: $status
@@ -9940,6 +9977,9 @@ export const UpdateVisitationDocument = gql`
       }
       proposal {
         ...proposal
+        instrument {
+          name
+        }
       }
     }
     rejection {

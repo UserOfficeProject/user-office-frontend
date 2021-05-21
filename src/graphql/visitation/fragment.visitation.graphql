@@ -3,6 +3,5 @@ fragment visitation on Visitation {
   proposalId
   status
   questionaryId
-  instrumentId
   visitorId
 }

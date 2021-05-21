@@ -1,13 +1,5 @@
-mutation createVisitation(
-  $proposalId: Int!
-  $instrumentId: Int!
-  $team: [Int!]
-) {
-  createVisitation(
-    proposalId: $proposalId
-    instrumentId: $instrumentId
-    team: $team
-  ) {
+mutation createVisitation($proposalId: Int!, $team: [Int!]) {
+  createVisitation(proposalId: $proposalId, team: $team) {
     visitation {
       ...visitation
 
@@ -21,6 +13,9 @@ mutation createVisitation(
       }
       proposal {
         ...proposal
+        instrument {
+          name
+        }
       }
     }
 

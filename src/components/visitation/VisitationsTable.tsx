@@ -34,7 +34,11 @@ const VisitationsTable = (props: { confirm: WithConfirmType }) => {
     return <UOLoader />;
   }
 
-  const columns = [{ title: 'Status', field: 'status' }];
+  const columns = [
+    { title: 'Proposal', field: 'proposal.title' },
+    { title: 'Instrument', field: 'proposal.instrument.name' },
+    { title: 'Visitation status', field: 'status' },
+  ];
 
   const deleteHandler = (visitationToDelete: VisitationBasic) => {
     props.confirm(
@@ -94,7 +98,7 @@ const VisitationsTable = (props: { confirm: WithConfirmType }) => {
         setUrlQueryParams={setUrlQueryParams}
         actions={[
           (rowData) => {
-            const readOnly = rowData.status !== VisitationStatus.DRAFT;
+            const readOnly = rowData.status === VisitationStatus.ACCEPTED;
 
             return {
               icon: Delete,

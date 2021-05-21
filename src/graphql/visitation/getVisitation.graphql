@@ -11,6 +11,9 @@ query getVisitation($visitationId: Int!) {
     }
     proposal {
       ...proposal
+      instrument {
+        name
+      }
     }
   }
 }

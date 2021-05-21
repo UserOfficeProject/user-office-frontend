@@ -2,12 +2,10 @@ mutation updateVisitation(
   $visitationId: Int!
   $team: [Int!]
   $status: VisitationStatus
-  $instrumentId: Int
   $proposalId: Int
 ) {
   updateVisitation(
     visitationId: $visitationId
-    instrumentId: $instrumentId
     proposalId: $proposalId
     team: $team
     status: $status
@@ -23,8 +21,12 @@ mutation updateVisitation(
         firstname
         lastname
       }
+
       proposal {
         ...proposal
+        instrument {
+          name
+        }
       }
     }
 

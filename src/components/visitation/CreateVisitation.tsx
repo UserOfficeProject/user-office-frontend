@@ -56,8 +56,10 @@ function createVisitationStub(
       status: null,
       sepMeetingDecision: null,
       technicalReviewAssignee: 0,
+      instrument: {
+        name: '',
+      },
     },
-    instrumentId: 0,
   };
 }
 
