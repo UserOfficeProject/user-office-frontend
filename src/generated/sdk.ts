@@ -45,7 +45,7 @@ export type AddTechnicalReviewInput = {
 
 export type AddUserRoleResponseWrap = {
   __typename?: 'AddUserRoleResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   success: Maybe<Scalars['Boolean']>;
 };
 
@@ -77,7 +77,7 @@ export type AnswerInput = {
 
 export type ApiAccessTokenResponseWrap = {
   __typename?: 'ApiAccessTokenResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   apiAccessToken: Maybe<PermissionsWithAccessToken>;
 };
 
@@ -123,7 +123,7 @@ export type BasicUserDetails = {
 
 export type BasicUserDetailsResponseWrap = {
   __typename?: 'BasicUserDetailsResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   user: Maybe<BasicUserDetails>;
 };
 
@@ -172,7 +172,7 @@ export type Call = {
 
 export type CallResponseWrap = {
   __typename?: 'CallResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   call: Maybe<Call>;
 };
 
@@ -191,7 +191,7 @@ export type ChangeProposalsStatusInput = {
 
 export type CheckExternalTokenWrap = {
   __typename?: 'CheckExternalTokenWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   token: Maybe<Scalars['String']>;
 };
 
@@ -244,7 +244,7 @@ export type CreateProposalWorkflowInput = {
 
 export type CreateUserByEmailInviteResponseWrap = {
   __typename?: 'CreateUserByEmailInviteResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   id: Maybe<Scalars['Int']>;
 };
 
@@ -294,6 +294,7 @@ export type DeleteEquipmentAssignmentInput = {
 export type DeleteProposalWorkflowStatusInput = {
   proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
+  sortOrder: Scalars['Int'];
 };
 
 export enum DependenciesLogicOperator {
@@ -303,7 +304,7 @@ export enum DependenciesLogicOperator {
 
 export type EmailVerificationResponseWrap = {
   __typename?: 'EmailVerificationResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   success: Maybe<Scalars['Boolean']>;
 };
 
@@ -330,6 +331,13 @@ export type Equipment = {
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
+  events: Array<ScheduledEvent>;
+};
+
+
+export type EquipmentEventsArgs = {
+  endsAt: Scalars['TzLessDateTime'];
+  startsAt: Scalars['TzLessDateTime'];
 };
 
 export enum EquipmentAssignmentStatus {
@@ -361,7 +369,14 @@ export type EquipmentWithAssignmentStatus = {
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
+  events: Array<ScheduledEvent>;
   status: EquipmentAssignmentStatus;
+};
+
+
+export type EquipmentWithAssignmentStatusEventsArgs = {
+  endsAt: Scalars['TzLessDateTime'];
+  startsAt: Scalars['TzLessDateTime'];
 };
 
 export enum EvaluatorOperator {
@@ -509,7 +524,7 @@ export type Institution = {
 
 export type InstitutionResponseWrap = {
   __typename?: 'InstitutionResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   institution: Maybe<Institution>;
 };
 
@@ -528,7 +543,7 @@ export type Instrument = {
 
 export type InstrumentResponseWrap = {
   __typename?: 'InstrumentResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   instrument: Maybe<Instrument>;
 };
 
@@ -617,6 +632,7 @@ export type Mutation = {
   updateAnswer: UpdateAnswerResponseWrap;
   addReview: ReviewWithNextStatusResponseWrap;
   addUserForReview: ReviewResponseWrap;
+  submitProposalsReview: SuccessResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
@@ -677,7 +693,7 @@ export type Mutation = {
   notifyProposal: ProposalResponseWrap;
   prepareDB: PrepareDbResponseWrap;
   removeUserForReview: ReviewResponseWrap;
-  resetPasswordEmail: ResetPasswordEmailResponseWrap;
+  resetPasswordEmail: SuccessResponseWrap;
   resetPassword: BasicUserDetailsResponseWrap;
   setPageContent: PageResponseWrap;
   deleteProposalStatus: ProposalStatusResponseWrap;
@@ -910,6 +926,11 @@ export type MutationAddUserForReviewArgs = {
   userID: Scalars['Int'];
   proposalID: Scalars['Int'];
   sepID: Scalars['Int'];
+};
+
+
+export type MutationSubmitProposalsReviewArgs = {
+  submitProposalsReviewInput: SubmitProposalsReviewInput;
 };
 
 
@@ -1444,7 +1465,7 @@ export type NextProposalStatus = {
 
 export type NextProposalStatusResponseWrap = {
   __typename?: 'NextProposalStatusResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   nextProposalStatus: Maybe<NextProposalStatus>;
 };
 
@@ -1489,7 +1510,7 @@ export enum PageName {
 
 export type PageResponseWrap = {
   __typename?: 'PageResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   page: Maybe<Page>;
 };
 
@@ -1503,7 +1524,7 @@ export type PermissionsWithAccessToken = {
 
 export type PrepareDbResponseWrap = {
   __typename?: 'PrepareDBResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   log: Maybe<Scalars['String']>;
 };
 
@@ -1614,6 +1635,11 @@ export type ProposalIdWithRankOrder = {
   rankOrder: Scalars['Int'];
 };
 
+export type ProposalIdWithReviewId = {
+  proposalId: Scalars['Int'];
+  reviewId: Scalars['Int'];
+};
+
 export type ProposalProposalBookingFilter = {
   status?: Maybe<Array<ProposalBookingStatus>>;
 };
@@ -1629,7 +1655,7 @@ export enum ProposalPublicStatus {
 
 export type ProposalResponseWrap = {
   __typename?: 'ProposalResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   proposal: Maybe<Proposal>;
 };
 
@@ -1644,13 +1670,13 @@ export type ProposalStatus = {
 
 export type ProposalStatusChangingEventResponseWrap = {
   __typename?: 'ProposalStatusChangingEventResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   statusChangingEvents: Maybe<Array<StatusChangingEvent>>;
 };
 
 export type ProposalStatusResponseWrap = {
   __typename?: 'ProposalStatusResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   proposalStatus: Maybe<ProposalStatus>;
 };
 
@@ -1724,13 +1750,13 @@ export type ProposalWorkflowConnectionGroup = {
 
 export type ProposalWorkflowConnectionResponseWrap = {
   __typename?: 'ProposalWorkflowConnectionResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   proposalWorkflowConnection: Maybe<ProposalWorkflowConnection>;
 };
 
 export type ProposalWorkflowResponseWrap = {
   __typename?: 'ProposalWorkflowResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
 };
 
@@ -1824,7 +1850,6 @@ export type Query = {
   scheduledEvent: Maybe<ScheduledEvent>;
   proposalBookingScheduledEvents: Array<ScheduledEvent>;
   proposalBookingScheduledEvent: Maybe<ScheduledEvent>;
-  equipmentScheduledEvents: Array<ScheduledEvent>;
   equipments: Array<Equipment>;
   availableEquipments: Array<Equipment>;
   equipment: Maybe<Equipment>;
@@ -2117,8 +2142,8 @@ export type QueryProposalBookingScheduledEventArgs = {
 };
 
 
-export type QueryEquipmentScheduledEventsArgs = {
-  equipmentId: Scalars['ID'];
+export type QueryEquipmentsArgs = {
+  equipmentIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 
@@ -2173,7 +2198,7 @@ export type QuestionFilterInput = {
 
 export type QuestionResponseWrap = {
   __typename?: 'QuestionResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   question: Maybe<Question>;
 };
 
@@ -2210,7 +2235,7 @@ export type Questionary = {
 
 export type QuestionaryResponseWrap = {
   __typename?: 'QuestionaryResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   questionary: Maybe<Questionary>;
 };
 
@@ -2223,7 +2248,7 @@ export type QuestionaryStep = {
 
 export type QuestionaryStepResponseWrap = {
   __typename?: 'QuestionaryStepResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   questionaryStep: Maybe<QuestionaryStep>;
 };
 
@@ -2234,6 +2259,13 @@ export type QuestionsFilter = {
   excludeDataType?: Maybe<Array<DataType>>;
 };
 
+export type Rejection = {
+  __typename?: 'Rejection';
+  reason: Scalars['String'];
+  context: Maybe<Scalars['String']>;
+  exception: Maybe<Scalars['String']>;
+};
+
 export type RemoveAssignedInstrumentFromCallInput = {
   instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
@@ -2241,12 +2273,6 @@ export type RemoveAssignedInstrumentFromCallInput = {
 
 export type ReorderSepMeetingDecisionProposalsInput = {
   proposals: Array<ProposalIdWithRankOrder>;
-};
-
-export type ResetPasswordEmailResponseWrap = {
-  __typename?: 'ResetPasswordEmailResponseWrap';
-  error: Maybe<Scalars['String']>;
-  success: Maybe<Scalars['Boolean']>;
 };
 
 export type Review = {
@@ -2263,7 +2289,7 @@ export type Review = {
 
 export type ReviewResponseWrap = {
   __typename?: 'ReviewResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   review: Maybe<Review>;
 };
 
@@ -2287,9 +2313,14 @@ export type ReviewWithNextProposalStatus = {
 
 export type ReviewWithNextStatusResponseWrap = {
   __typename?: 'ReviewWithNextStatusResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   review: Maybe<ReviewWithNextProposalStatus>;
 };
+
+export enum ReviewerFilter {
+  YOU = 'YOU',
+  ALL = 'ALL'
+}
 
 export type RichTextInputConfig = {
   __typename?: 'RichTextInputConfig';
@@ -2345,13 +2376,13 @@ export type SepProposal = {
 
 export type SepProposalResponseWrap = {
   __typename?: 'SEPProposalResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   sepProposal: Maybe<SepProposal>;
 };
 
 export type SepResponseWrap = {
   __typename?: 'SEPResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   sep: Maybe<Sep>;
 };
 
@@ -2381,6 +2412,7 @@ export type Sample = {
   safetyComment: Scalars['String'];
   created: Scalars['DateTime'];
   questionary: Questionary;
+  proposal: Proposal;
 };
 
 export type SampleBasisConfig = {
@@ -2390,7 +2422,7 @@ export type SampleBasisConfig = {
 
 export type SampleResponseWrap = {
   __typename?: 'SampleResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   sample: Maybe<Sample>;
 };
 
@@ -2432,26 +2464,23 @@ export type ScheduledEvent = {
   scheduledBy: Maybe<User>;
   description: Maybe<Scalars['String']>;
   instrument: Maybe<Instrument>;
+  equipmentId: Scalars['Int'];
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
   proposalBooking: Maybe<ProposalBooking>;
-};
-
-
-export type ScheduledEventEquipmentAssignmentStatusArgs = {
-  equipmentId: Scalars['ID'];
 };
 
 export enum ScheduledEventBookingType {
   USER_OPERATIONS = 'USER_OPERATIONS',
   MAINTENANCE = 'MAINTENANCE',
   SHUTDOWN = 'SHUTDOWN',
-  COMMISSIONING = 'COMMISSIONING'
+  COMMISSIONING = 'COMMISSIONING',
+  EQUIPMENT = 'EQUIPMENT'
 }
 
 export type ScheduledEventFilter = {
-  startsAt?: Maybe<Scalars['TzLessDateTime']>;
-  endsAt?: Maybe<Scalars['TzLessDateTime']>;
+  startsAt: Scalars['TzLessDateTime'];
+  endsAt: Scalars['TzLessDateTime'];
   instrumentId?: Maybe<Scalars['ID']>;
 };
 
@@ -2495,7 +2524,7 @@ export type SepMeetingDecision = {
 
 export type SepMeetingDecisionResponseWrap = {
   __typename?: 'SepMeetingDecisionResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
 };
 
@@ -2522,7 +2551,7 @@ export type ShipmentBasisConfig = {
 
 export type ShipmentResponseWrap = {
   __typename?: 'ShipmentResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   shipment: Maybe<Shipment>;
 };
 
@@ -2562,6 +2591,10 @@ export type StatusChangingEvent = {
   statusChangingEvent: Scalars['String'];
 };
 
+export type SubmitProposalsReviewInput = {
+  proposals: Array<ProposalIdWithReviewId>;
+};
+
 export type SubmitTechnicalReviewInput = {
   proposalID: Scalars['Int'];
   comment?: Maybe<Scalars['String']>;
@@ -2584,7 +2617,7 @@ export type SubtemplateConfig = {
 
 export type SuccessResponseWrap = {
   __typename?: 'SuccessResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   isSuccess: Maybe<Scalars['Boolean']>;
 };
 
@@ -2602,7 +2635,7 @@ export type TechnicalReview = {
 
 export type TechnicalReviewResponseWrap = {
   __typename?: 'TechnicalReviewResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   technicalReview: Maybe<TechnicalReview>;
 };
 
@@ -2638,7 +2671,7 @@ export enum TemplateCategoryId {
 
 export type TemplateResponseWrap = {
   __typename?: 'TemplateResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   template: Maybe<Template>;
 };
 
@@ -2672,7 +2705,7 @@ export type TokenPayloadUnion = AuthJwtPayload | AuthJwtApiTokenPayload;
 
 export type TokenResponseWrap = {
   __typename?: 'TokenResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   token: Maybe<Scalars['String']>;
 };
 
@@ -2700,13 +2733,13 @@ export type Unit = {
 
 export type UnitResponseWrap = {
   __typename?: 'UnitResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   unit: Maybe<Unit>;
 };
 
 export type UpdateAnswerResponseWrap = {
   __typename?: 'UpdateAnswerResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   questionId: Maybe<Scalars['String']>;
 };
 
@@ -2787,6 +2820,7 @@ export type User = {
 
 
 export type UserReviewsArgs = {
+  reviewer?: Maybe<ReviewerFilter>;
   status?: Maybe<ReviewStatus>;
   instrumentId?: Maybe<Scalars['Int']>;
   callId?: Maybe<Scalars['Int']>;
@@ -2805,7 +2839,7 @@ export type UserQueryResult = {
 
 export type UserResponseWrap = {
   __typename?: 'UserResponseWrap';
-  error: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
   user: Maybe<User>;
 };
 
@@ -2829,8 +2863,10 @@ export type AssignProposalToSepMutation = (
   { __typename?: 'Mutation' }
   & { assignProposalToSEP: (
     { __typename?: 'NextProposalStatusResponseWrap' }
-    & Pick<NextProposalStatusResponseWrap, 'error'>
-    & { nextProposalStatus: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, nextProposalStatus: Maybe<(
       { __typename?: 'NextProposalStatus' }
       & Pick<NextProposalStatus, 'id' | 'shortCode' | 'name'>
     )> }
@@ -2847,8 +2883,10 @@ export type AssignReviewersToSepMutation = (
   { __typename?: 'Mutation' }
   & { assignReviewersToSEP: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -2864,8 +2902,10 @@ export type AssignChairOrSecretaryMutation = (
   { __typename?: 'Mutation' }
   & { assignChairOrSecretary: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -2883,8 +2923,10 @@ export type AssignSepReviewersToProposalMutation = (
   { __typename?: 'Mutation' }
   & { assignSepReviewersToProposal: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -2903,7 +2945,6 @@ export type CreateSepMutation = (
   { __typename?: 'Mutation' }
   & { createSEP: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
     & { sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
@@ -2914,6 +2955,9 @@ export type CreateSepMutation = (
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -2927,8 +2971,10 @@ export type DeleteSepMutation = (
   { __typename?: 'Mutation' }
   & { deleteSEP: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -3188,8 +3234,10 @@ export type RemoveProposalAssignmentMutation = (
   { __typename?: 'Mutation' }
   & { removeProposalAssignment: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -3207,8 +3255,10 @@ export type RemoveMemberFromSepMutation = (
   { __typename?: 'Mutation' }
   & { removeMemberFromSep: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -3226,8 +3276,10 @@ export type RemoveMemberFromSepProposalMutation = (
   { __typename?: 'Mutation' }
   & { removeMemberFromSEPProposal: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
-    & { sep: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
     )> }
@@ -3243,8 +3295,10 @@ export type ReorderSepMeetingDecisionProposalsMutation = (
   { __typename?: 'Mutation' }
   & { reorderSepMeetingDecisionProposals: (
     { __typename?: 'SepMeetingDecisionResponseWrap' }
-    & Pick<SepMeetingDecisionResponseWrap, 'error'>
-    & { sepMeetingDecision: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sepMeetingDecision: Maybe<(
       { __typename?: 'SepMeetingDecision' }
       & Pick<SepMeetingDecision, 'proposalId'>
     )> }
@@ -3260,8 +3314,10 @@ export type SaveSepMeetingDecisionMutation = (
   { __typename?: 'Mutation' }
   & { saveSepMeetingDecision: (
     { __typename?: 'SepMeetingDecisionResponseWrap' }
-    & Pick<SepMeetingDecisionResponseWrap, 'error'>
-    & { sepMeetingDecision: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, sepMeetingDecision: Maybe<(
       { __typename?: 'SepMeetingDecision' }
       & Pick<SepMeetingDecision, 'proposalId'>
     )> }
@@ -3281,10 +3337,12 @@ export type UpdateSepMutation = (
   { __typename?: 'Mutation' }
   & { updateSEP: (
     { __typename?: 'SEPResponseWrap' }
-    & Pick<SepResponseWrap, 'error'>
     & { sep: Maybe<(
       { __typename?: 'SEP' }
       & Pick<Sep, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3300,7 +3358,10 @@ export type UpdateSepTimeAllocationMutation = (
   { __typename?: 'Mutation' }
   & { updateSEPTimeAllocation: (
     { __typename?: 'SEPProposalResponseWrap' }
-    & Pick<SepProposalResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3313,7 +3374,11 @@ export type AddClientLogMutation = (
   { __typename?: 'Mutation' }
   & { addClientLog: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess' | 'error'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3327,8 +3392,10 @@ export type CreateApiAccessTokenMutation = (
   { __typename?: 'Mutation' }
   & { createApiAccessToken: (
     { __typename?: 'ApiAccessTokenResponseWrap' }
-    & Pick<ApiAccessTokenResponseWrap, 'error'>
-    & { apiAccessToken: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, apiAccessToken: Maybe<(
       { __typename?: 'PermissionsWithAccessToken' }
       & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
     )> }
@@ -3345,10 +3412,12 @@ export type CreateInstitutionMutation = (
   { __typename?: 'Mutation' }
   & { createInstitution: (
     { __typename?: 'InstitutionResponseWrap' }
-    & Pick<InstitutionResponseWrap, 'error'>
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'name' | 'verified'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3362,10 +3431,12 @@ export type CreateUnitMutation = (
   { __typename?: 'Mutation' }
   & { createUnit: (
     { __typename?: 'UnitResponseWrap' }
-    & Pick<UnitResponseWrap, 'error'>
     & { unit: Maybe<(
       { __typename?: 'Unit' }
       & Pick<Unit, 'id' | 'name'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3379,7 +3450,11 @@ export type DeleteApiAccessTokenMutation = (
   { __typename?: 'Mutation' }
   & { deleteApiAccessToken: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3392,10 +3467,12 @@ export type DeleteInstitutionMutation = (
   { __typename?: 'Mutation' }
   & { deleteInstitution: (
     { __typename?: 'InstitutionResponseWrap' }
-    & Pick<InstitutionResponseWrap, 'error'>
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'verified'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3409,10 +3486,12 @@ export type DeleteUnitMutation = (
   { __typename?: 'Mutation' }
   & { deleteUnit: (
     { __typename?: 'UnitResponseWrap' }
-    & Pick<UnitResponseWrap, 'error'>
     & { unit: Maybe<(
       { __typename?: 'Unit' }
       & Pick<Unit, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3484,6 +3563,11 @@ export type GetUnitsQuery = (
   )>> }
 );
 
+export type RejectionFragment = (
+  { __typename?: 'Rejection' }
+  & Pick<Rejection, 'reason' | 'context' | 'exception'>
+);
+
 export type SetPageContentMutationVariables = Exact<{
   id: PageName;
   text: Scalars['String'];
@@ -3494,10 +3578,12 @@ export type SetPageContentMutation = (
   { __typename?: 'Mutation' }
   & { setPageContent: (
     { __typename?: 'PageResponseWrap' }
-    & Pick<PageResponseWrap, 'error'>
     & { page: Maybe<(
       { __typename?: 'Page' }
       & Pick<Page, 'id' | 'content'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3513,8 +3599,10 @@ export type UpdateApiAccessTokenMutation = (
   { __typename?: 'Mutation' }
   & { updateApiAccessToken: (
     { __typename?: 'ApiAccessTokenResponseWrap' }
-    & Pick<ApiAccessTokenResponseWrap, 'error'>
-    & { apiAccessToken: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, apiAccessToken: Maybe<(
       { __typename?: 'PermissionsWithAccessToken' }
       & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
     )> }
@@ -3532,10 +3620,12 @@ export type UpdateInstitutionMutation = (
   { __typename?: 'Mutation' }
   & { updateInstitution: (
     { __typename?: 'InstitutionResponseWrap' }
-    & Pick<InstitutionResponseWrap, 'error'>
     & { institution: Maybe<(
       { __typename?: 'Institution' }
       & Pick<Institution, 'id' | 'verified' | 'name'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3550,8 +3640,10 @@ export type AssignInstrumentsToCallMutation = (
   { __typename?: 'Mutation' }
   & { assignInstrumentsToCall: (
     { __typename?: 'CallResponseWrap' }
-    & Pick<CallResponseWrap, 'error'>
-    & { call: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, call: Maybe<(
       { __typename?: 'Call' }
       & Pick<Call, 'id'>
     )> }
@@ -3582,8 +3674,10 @@ export type CreateCallMutation = (
   { __typename?: 'Mutation' }
   & { createCall: (
     { __typename?: 'CallResponseWrap' }
-    & Pick<CallResponseWrap, 'error'>
-    & { call: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, call: Maybe<(
       { __typename?: 'Call' }
       & CallFragment
     )> }
@@ -3599,8 +3693,11 @@ export type DeleteCallMutation = (
   { __typename?: 'Mutation' }
   & { deleteCall: (
     { __typename?: 'CallResponseWrap' }
-    & Pick<CallResponseWrap, 'error'>
-    & { call: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+      & RejectionFragment
+    )>, call: Maybe<(
       { __typename?: 'Call' }
       & Pick<Call, 'id'>
     )> }
@@ -3672,8 +3769,10 @@ export type RemoveAssignedInstrumentFromCallMutation = (
   { __typename?: 'Mutation' }
   & { removeAssignedInstrumentFromCall: (
     { __typename?: 'CallResponseWrap' }
-    & Pick<CallResponseWrap, 'error'>
-    & { call: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, call: Maybe<(
       { __typename?: 'Call' }
       & Pick<Call, 'id'>
     )> }
@@ -3705,8 +3804,10 @@ export type UpdateCallMutation = (
   { __typename?: 'Mutation' }
   & { updateCall: (
     { __typename?: 'CallResponseWrap' }
-    & Pick<CallResponseWrap, 'error'>
-    & { call: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, call: Maybe<(
       { __typename?: 'Call' }
       & CallFragment
     )> }
@@ -3741,7 +3842,11 @@ export type AssignProposalsToInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { assignProposalsToInstrument: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3755,7 +3860,11 @@ export type AssignScientistsToInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { assignScientistsToInstrument: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3770,7 +3879,6 @@ export type CreateInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { createInstrument: (
     { __typename?: 'InstrumentResponseWrap' }
-    & Pick<InstrumentResponseWrap, 'error'>
     & { instrument: Maybe<(
       { __typename?: 'Instrument' }
       & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
@@ -3778,6 +3886,9 @@ export type CreateInstrumentMutation = (
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3791,7 +3902,10 @@ export type DeleteInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { deleteInstrument: (
     { __typename?: 'InstrumentResponseWrap' }
-    & Pick<InstrumentResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3844,7 +3958,11 @@ export type RemoveProposalFromInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { removeProposalFromInstrument: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3858,7 +3976,11 @@ export type RemoveScientistFromInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { removeScientistFromInstrument: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3873,7 +3995,11 @@ export type SetInstrumentAvailabilityTimeMutation = (
   { __typename?: 'Mutation' }
   & { setInstrumentAvailabilityTime: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3888,7 +4014,11 @@ export type SubmitInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { submitInstrument: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3904,7 +4034,6 @@ export type UpdateInstrumentMutation = (
   { __typename?: 'Mutation' }
   & { updateInstrument: (
     { __typename?: 'InstrumentResponseWrap' }
-    & Pick<InstrumentResponseWrap, 'error'>
     & { instrument: Maybe<(
       { __typename?: 'Instrument' }
       & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
@@ -3912,6 +4041,9 @@ export type UpdateInstrumentMutation = (
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3931,10 +4063,12 @@ export type AdministrationProposalMutation = (
   { __typename?: 'Mutation' }
   & { administrationProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -3949,7 +4083,11 @@ export type ChangeProposalsStatusMutation = (
   { __typename?: 'Mutation' }
   & { changeProposalsStatus: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'error' | 'isSuccess'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -3963,7 +4101,6 @@ export type CloneProposalMutation = (
   { __typename?: 'Mutation' }
   & { cloneProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & { proposer: Maybe<(
@@ -3993,6 +4130,9 @@ export type CloneProposalMutation = (
         & Pick<Call, 'id' | 'shortCode' | 'isActive'>
       )> }
       & ProposalFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4006,7 +4146,6 @@ export type CreateProposalMutation = (
   { __typename?: 'Mutation' }
   & { createProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'shortCode' | 'questionaryId'>
@@ -4026,6 +4165,9 @@ export type CreateProposalMutation = (
         { __typename?: 'Sample' }
         & SampleFragment
       )>> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4039,8 +4181,10 @@ export type DeleteProposalMutation = (
   { __typename?: 'Mutation' }
   & { deleteProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
-    & { proposal: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id'>
     )> }
@@ -4221,10 +4365,12 @@ export type NotifyProposalMutation = (
   { __typename?: 'Mutation' }
   & { notifyProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4238,10 +4384,12 @@ export type SubmitProposalMutation = (
   { __typename?: 'Mutation' }
   & { submitProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & ProposalFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4259,7 +4407,6 @@ export type UpdateProposalMutation = (
   { __typename?: 'Mutation' }
   & { updateProposal: (
     { __typename?: 'ProposalResponseWrap' }
-    & Pick<ProposalResponseWrap, 'error'>
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'id' | 'title' | 'abstract'>
@@ -4270,6 +4417,9 @@ export type UpdateProposalMutation = (
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4311,10 +4461,12 @@ export type AnswerTopicMutation = (
   { __typename?: 'Mutation' }
   & { answerTopic: (
     { __typename?: 'QuestionaryStepResponseWrap' }
-    & Pick<QuestionaryStepResponseWrap, 'error'>
     & { questionaryStep: Maybe<(
       { __typename?: 'QuestionaryStep' }
       & QuestionaryStepFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4328,10 +4480,12 @@ export type CreateQuestionaryMutation = (
   { __typename?: 'Mutation' }
   & { createQuestionary: (
     { __typename?: 'QuestionaryResponseWrap' }
-    & Pick<QuestionaryResponseWrap, 'error'>
     & { questionary: Maybe<(
       { __typename?: 'Questionary' }
       & QuestionaryFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4465,8 +4619,10 @@ export type AddTechnicalReviewMutation = (
   { __typename?: 'Mutation' }
   & { addTechnicalReview: (
     { __typename?: 'TechnicalReviewResponseWrap' }
-    & Pick<TechnicalReviewResponseWrap, 'error'>
-    & { technicalReview: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, technicalReview: Maybe<(
       { __typename?: 'TechnicalReview' }
       & Pick<TechnicalReview, 'id'>
     )> }
@@ -4484,8 +4640,10 @@ export type AddUserForReviewMutation = (
   { __typename?: 'Mutation' }
   & { addUserForReview: (
     { __typename?: 'ReviewResponseWrap' }
-    & Pick<ReviewResponseWrap, 'error'>
-    & { review: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, review: Maybe<(
       { __typename?: 'Review' }
       & Pick<Review, 'id'>
     )> }
@@ -4542,7 +4700,27 @@ export type RemoveUserForReviewMutation = (
   { __typename?: 'Mutation' }
   & { removeUserForReview: (
     { __typename?: 'ReviewResponseWrap' }
-    & Pick<ReviewResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
+export type SubmitProposalsReviewMutationVariables = Exact<{
+  proposals: Array<ProposalIdWithReviewId> | ProposalIdWithReviewId;
+}>;
+
+
+export type SubmitProposalsReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { submitProposalsReview: (
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -4560,8 +4738,10 @@ export type SubmitTechnicalReviewMutation = (
   { __typename?: 'Mutation' }
   & { submitTechnicalReview: (
     { __typename?: 'TechnicalReviewResponseWrap' }
-    & Pick<TechnicalReviewResponseWrap, 'error'>
-    & { technicalReview: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, technicalReview: Maybe<(
       { __typename?: 'TechnicalReview' }
       & Pick<TechnicalReview, 'id'>
     )> }
@@ -4581,8 +4761,10 @@ export type AddReviewMutation = (
   { __typename?: 'Mutation' }
   & { addReview: (
     { __typename?: 'ReviewWithNextStatusResponseWrap' }
-    & Pick<ReviewWithNextStatusResponseWrap, 'error'>
-    & { review: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, review: Maybe<(
       { __typename?: 'ReviewWithNextProposalStatus' }
       & Pick<ReviewWithNextProposalStatus, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
       & { nextProposalStatus: Maybe<(
@@ -4597,6 +4779,7 @@ export type UserWithReviewsQueryVariables = Exact<{
   callId?: Maybe<Scalars['Int']>;
   instrumentId?: Maybe<Scalars['Int']>;
   status?: Maybe<ReviewStatus>;
+  reviewer?: Maybe<ReviewerFilter>;
 }>;
 
 
@@ -4625,7 +4808,6 @@ export type CloneSampleMutation = (
   { __typename?: 'Mutation' }
   & { cloneSample: (
     { __typename?: 'SampleResponseWrap' }
-    & Pick<SampleResponseWrap, 'error'>
     & { sample: Maybe<(
       { __typename?: 'Sample' }
       & { questionary: (
@@ -4634,6 +4816,9 @@ export type CloneSampleMutation = (
         & QuestionaryFragment
       ) }
       & SampleFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4650,7 +4835,6 @@ export type CreateSampleMutation = (
   { __typename?: 'Mutation' }
   & { createSample: (
     { __typename?: 'SampleResponseWrap' }
-    & Pick<SampleResponseWrap, 'error'>
     & { sample: Maybe<(
       { __typename?: 'Sample' }
       & { questionary: (
@@ -4659,6 +4843,9 @@ export type CreateSampleMutation = (
         & QuestionaryFragment
       ) }
       & SampleFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4672,10 +4859,12 @@ export type DeleteSampleMutation = (
   { __typename?: 'Mutation' }
   & { deleteSample: (
     { __typename?: 'SampleResponseWrap' }
-    & Pick<SampleResponseWrap, 'error'>
     & { sample: Maybe<(
       { __typename?: 'Sample' }
       & SampleFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4703,23 +4892,6 @@ export type GetSampleQuery = (
   )> }
 );
 
-export type GetSamplesQueryVariables = Exact<{
-  filter?: Maybe<SamplesFilter>;
-}>;
-
-
-export type GetSamplesQuery = (
-  { __typename?: 'Query' }
-  & { samples: Maybe<Array<(
-    { __typename?: 'Sample' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-    ) }
-    & SampleFragment
-  )>> }
-);
-
 export type GetSamplesByCallIdQueryVariables = Exact<{
   callId: Scalars['Int'];
 }>;
@@ -4728,6 +4900,40 @@ export type GetSamplesByCallIdQueryVariables = Exact<{
 export type GetSamplesByCallIdQuery = (
   { __typename?: 'Query' }
   & { samplesByCallId: Maybe<Array<(
+    { __typename?: 'Sample' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & Pick<Proposal, 'id' | 'shortCode'>
+    ) }
+    & SampleFragment
+  )>> }
+);
+
+export type GetSamplesWithProposalDataQueryVariables = Exact<{
+  filter?: Maybe<SamplesFilter>;
+}>;
+
+
+export type GetSamplesWithProposalDataQuery = (
+  { __typename?: 'Query' }
+  & { samples: Maybe<Array<(
+    { __typename?: 'Sample' }
+    & { proposal: (
+      { __typename?: 'Proposal' }
+      & Pick<Proposal, 'id' | 'shortCode'>
+    ) }
+    & SampleFragment
+  )>> }
+);
+
+export type GetSamplesWithQuestionaryStatusQueryVariables = Exact<{
+  filter?: Maybe<SamplesFilter>;
+}>;
+
+
+export type GetSamplesWithQuestionaryStatusQuery = (
+  { __typename?: 'Query' }
+  & { samples: Maybe<Array<(
     { __typename?: 'Sample' }
     & { questionary: (
       { __typename?: 'Questionary' }
@@ -4749,14 +4955,12 @@ export type UpdateSampleMutation = (
   { __typename?: 'Mutation' }
   & { updateSample: (
     { __typename?: 'SampleResponseWrap' }
-    & Pick<SampleResponseWrap, 'error'>
     & { sample: Maybe<(
       { __typename?: 'Sample' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-      ) }
       & SampleFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4776,10 +4980,12 @@ export type AddProposalWorkflowStatusMutation = (
   { __typename?: 'Mutation' }
   & { addProposalWorkflowStatus: (
     { __typename?: 'ProposalWorkflowConnectionResponseWrap' }
-    & Pick<ProposalWorkflowConnectionResponseWrap, 'error'>
     & { proposalWorkflowConnection: Maybe<(
       { __typename?: 'ProposalWorkflowConnection' }
       & Pick<ProposalWorkflowConnection, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4794,11 +5000,13 @@ export type AddStatusChangingEventsToConnectionMutation = (
   { __typename?: 'Mutation' }
   & { addStatusChangingEventsToConnection: (
     { __typename?: 'ProposalStatusChangingEventResponseWrap' }
-    & Pick<ProposalStatusChangingEventResponseWrap, 'error'>
     & { statusChangingEvents: Maybe<Array<(
       { __typename?: 'StatusChangingEvent' }
       & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
-    )>> }
+    )>>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -4813,10 +5021,12 @@ export type CreateProposalStatusMutation = (
   { __typename?: 'Mutation' }
   & { createProposalStatus: (
     { __typename?: 'ProposalStatusResponseWrap' }
-    & Pick<ProposalStatusResponseWrap, 'error'>
     & { proposalStatus: Maybe<(
       { __typename?: 'ProposalStatus' }
       & ProposalStatusFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4831,7 +5041,6 @@ export type CreateProposalWorkflowMutation = (
   { __typename?: 'Mutation' }
   & { createProposalWorkflow: (
     { __typename?: 'ProposalWorkflowResponseWrap' }
-    & Pick<ProposalWorkflowResponseWrap, 'error'>
     & { proposalWorkflow: Maybe<(
       { __typename?: 'ProposalWorkflow' }
       & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
@@ -4850,6 +5059,9 @@ export type CreateProposalWorkflowMutation = (
           )> }
         )> }
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4863,10 +5075,12 @@ export type DeleteProposalStatusMutation = (
   { __typename?: 'Mutation' }
   & { deleteProposalStatus: (
     { __typename?: 'ProposalStatusResponseWrap' }
-    & Pick<ProposalStatusResponseWrap, 'error'>
     & { proposalStatus: Maybe<(
       { __typename?: 'ProposalStatus' }
       & ProposalStatusFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4880,10 +5094,12 @@ export type DeleteProposalWorkflowMutation = (
   { __typename?: 'Mutation' }
   & { deleteProposalWorkflow: (
     { __typename?: 'ProposalWorkflowResponseWrap' }
-    & Pick<ProposalWorkflowResponseWrap, 'error'>
     & { proposalWorkflow: Maybe<(
       { __typename?: 'ProposalWorkflow' }
       & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -4891,6 +5107,7 @@ export type DeleteProposalWorkflowMutation = (
 export type DeleteProposalWorkflowStatusMutationVariables = Exact<{
   proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
+  sortOrder: Scalars['Int'];
 }>;
 
 
@@ -4898,7 +5115,11 @@ export type DeleteProposalWorkflowStatusMutation = (
   { __typename?: 'Mutation' }
   & { deleteProposalWorkflowStatus: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess' | 'error'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -4979,7 +5200,10 @@ export type MoveProposalWorkflowStatusMutation = (
   { __typename?: 'Mutation' }
   & { moveProposalWorkflowStatus: (
     { __typename?: 'ProposalWorkflowConnectionResponseWrap' }
-    & Pick<ProposalWorkflowConnectionResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -4995,10 +5219,12 @@ export type UpdateProposalStatusMutation = (
   { __typename?: 'Mutation' }
   & { updateProposalStatus: (
     { __typename?: 'ProposalStatusResponseWrap' }
-    & Pick<ProposalStatusResponseWrap, 'error'>
     & { proposalStatus: Maybe<(
       { __typename?: 'ProposalStatus' }
       & ProposalStatusFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5014,7 +5240,6 @@ export type UpdateProposalWorkflowMutation = (
   { __typename?: 'Mutation' }
   & { updateProposalWorkflow: (
     { __typename?: 'ProposalWorkflowResponseWrap' }
-    & Pick<ProposalWorkflowResponseWrap, 'error'>
     & { proposalWorkflow: Maybe<(
       { __typename?: 'ProposalWorkflow' }
       & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
@@ -5033,6 +5258,9 @@ export type UpdateProposalWorkflowMutation = (
           )> }
         )> }
       )> }
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5047,8 +5275,10 @@ export type AddSamplesToShipmentMutation = (
   { __typename?: 'Mutation' }
   & { addSamplesToShipment: (
     { __typename?: 'ShipmentResponseWrap' }
-    & Pick<ShipmentResponseWrap, 'error'>
-    & { shipment: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, shipment: Maybe<(
       { __typename?: 'Shipment' }
       & { samples: Array<(
         { __typename?: 'Sample' }
@@ -5069,7 +5299,6 @@ export type CreateShipmentMutation = (
   { __typename?: 'Mutation' }
   & { createShipment: (
     { __typename?: 'ShipmentResponseWrap' }
-    & Pick<ShipmentResponseWrap, 'error'>
     & { shipment: Maybe<(
       { __typename?: 'Shipment' }
       & { questionary: (
@@ -5080,6 +5309,9 @@ export type CreateShipmentMutation = (
         & SampleFragment
       )> }
       & ShipmentFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5093,7 +5325,10 @@ export type DeleteShipmentMutation = (
   { __typename?: 'Mutation' }
   & { deleteShipment: (
     { __typename?: 'ShipmentResponseWrap' }
-    & Pick<ShipmentResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5145,7 +5380,11 @@ export type SetActiveTemplateMutation = (
   { __typename?: 'Mutation' }
   & { setActiveTemplate: (
     { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess' | 'error'>
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5158,8 +5397,10 @@ export type SubmitShipmentMutation = (
   { __typename?: 'Mutation' }
   & { submitShipment: (
     { __typename?: 'ShipmentResponseWrap' }
-    & Pick<ShipmentResponseWrap, 'error'>
-    & { shipment: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, shipment: Maybe<(
       { __typename?: 'Shipment' }
       & ShipmentFragment
     )> }
@@ -5178,8 +5419,10 @@ export type UpdateShipmentMutation = (
   { __typename?: 'Mutation' }
   & { updateShipment: (
     { __typename?: 'ShipmentResponseWrap' }
-    & Pick<ShipmentResponseWrap, 'error'>
-    & { shipment: Maybe<(
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )>, shipment: Maybe<(
       { __typename?: 'Shipment' }
       & { questionary: (
         { __typename?: 'Questionary' }
@@ -5199,10 +5442,12 @@ export type CloneTemplateMutation = (
   { __typename?: 'Mutation' }
   & { cloneTemplate: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateMetadataFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5218,10 +5463,12 @@ export type CreateTemplateMutation = (
   { __typename?: 'Mutation' }
   & { createTemplate: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateMetadataFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5236,10 +5483,12 @@ export type CreateQuestionMutation = (
   { __typename?: 'Mutation' }
   & { createQuestion: (
     { __typename?: 'QuestionResponseWrap' }
-    & Pick<QuestionResponseWrap, 'error'>
     & { question: Maybe<(
       { __typename?: 'Question' }
       & QuestionFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5256,10 +5505,12 @@ export type CreateQuestionTemplateRelationMutation = (
   { __typename?: 'Mutation' }
   & { createQuestionTemplateRelation: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5274,10 +5525,12 @@ export type CreateTopicMutation = (
   { __typename?: 'Mutation' }
   & { createTopic: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5291,10 +5544,12 @@ export type DeleteQuestionMutation = (
   { __typename?: 'Mutation' }
   & { deleteQuestion: (
     { __typename?: 'QuestionResponseWrap' }
-    & Pick<QuestionResponseWrap, 'error'>
     & { question: Maybe<(
       { __typename?: 'Question' }
       & QuestionFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5309,10 +5564,12 @@ export type DeleteQuestionTemplateRelationMutation = (
   { __typename?: 'Mutation' }
   & { deleteQuestionTemplateRelation: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5326,10 +5583,12 @@ export type DeleteTemplateMutation = (
   { __typename?: 'Mutation' }
   & { deleteTemplate: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & Pick<Template, 'templateId' | 'name'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5343,7 +5602,10 @@ export type DeleteTopicMutation = (
   { __typename?: 'Mutation' }
   & { deleteTopic: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5699,10 +5961,12 @@ export type UpdateQuestionMutation = (
   { __typename?: 'Mutation' }
   & { updateQuestion: (
     { __typename?: 'QuestionResponseWrap' }
-    & Pick<QuestionResponseWrap, 'error'>
     & { question: Maybe<(
       { __typename?: 'Question' }
       & QuestionFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5720,10 +5984,12 @@ export type UpdateQuestionTemplateRelationMutation = (
   { __typename?: 'Mutation' }
   & { updateQuestionTemplateRelation: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5741,10 +6007,12 @@ export type UpdateQuestionTemplateRelationSettingsMutation = (
   { __typename?: 'Mutation' }
   & { updateQuestionTemplateRelationSettings: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5761,10 +6029,12 @@ export type UpdateTemplateMutation = (
   { __typename?: 'Mutation' }
   & { updateTemplate: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateMetadataFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5782,10 +6052,12 @@ export type UpdateTopicMutation = (
   { __typename?: 'Mutation' }
   & { updateTopic: (
     { __typename?: 'TemplateResponseWrap' }
-    & Pick<TemplateResponseWrap, 'error'>
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5799,7 +6071,11 @@ export type CheckExternalTokenMutation = (
   { __typename?: 'Mutation' }
   & { checkExternalToken: (
     { __typename?: 'CheckExternalTokenWrap' }
-    & Pick<CheckExternalTokenWrap, 'token' | 'error'>
+    & Pick<CheckExternalTokenWrap, 'token'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5843,10 +6119,12 @@ export type CreateUserMutation = (
   { __typename?: 'Mutation' }
   & { createUser: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5863,7 +6141,11 @@ export type CreateUserByEmailInviteMutation = (
   { __typename?: 'Mutation' }
   & { createUserByEmailInvite: (
     { __typename?: 'CreateUserByEmailInviteResponseWrap' }
-    & Pick<CreateUserByEmailInviteResponseWrap, 'error' | 'id'>
+    & Pick<CreateUserByEmailInviteResponseWrap, 'id'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5876,10 +6158,12 @@ export type DeleteUserMutation = (
   { __typename?: 'Mutation' }
   & { deleteUser: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -5964,7 +6248,11 @@ export type GetTokenMutation = (
   { __typename?: 'Mutation' }
   & { token: (
     { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token' | 'error'>
+    & Pick<TokenResponseWrap, 'token'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -5977,7 +6265,11 @@ export type GetTokenForUserMutation = (
   { __typename?: 'Mutation' }
   & { getTokenForUser: (
     { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token' | 'error'>
+    & Pick<TokenResponseWrap, 'token'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6077,7 +6369,11 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token' | 'error'>
+    & Pick<TokenResponseWrap, 'token'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6091,7 +6387,10 @@ export type ResetPasswordMutation = (
   { __typename?: 'Mutation' }
   & { resetPassword: (
     { __typename?: 'BasicUserDetailsResponseWrap' }
-    & Pick<BasicUserDetailsResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6103,8 +6402,12 @@ export type ResetPasswordEmailMutationVariables = Exact<{
 export type ResetPasswordEmailMutation = (
   { __typename?: 'Mutation' }
   & { resetPasswordEmail: (
-    { __typename?: 'ResetPasswordEmailResponseWrap' }
-    & Pick<ResetPasswordEmailResponseWrap, 'error' | 'success'>
+    { __typename?: 'SuccessResponseWrap' }
+    & Pick<SuccessResponseWrap, 'isSuccess'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6118,7 +6421,11 @@ export type SelectRoleMutation = (
   { __typename?: 'Mutation' }
   & { selectRole: (
     { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token' | 'error'>
+    & Pick<TokenResponseWrap, 'token'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6131,7 +6438,10 @@ export type SetUserEmailVerifiedMutation = (
   { __typename?: 'Mutation' }
   & { setUserEmailVerified: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6144,7 +6454,10 @@ export type SetUserNotPlaceholderMutation = (
   { __typename?: 'Mutation' }
   & { setUserNotPlaceholder: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6158,7 +6471,10 @@ export type UpdatePasswordMutation = (
   { __typename?: 'Mutation' }
   & { updatePassword: (
     { __typename?: 'BasicUserDetailsResponseWrap' }
-    & Pick<BasicUserDetailsResponseWrap, 'error'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
@@ -6185,10 +6501,12 @@ export type UpdateUserMutation = (
   { __typename?: 'Mutation' }
   & { updateUser: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -6203,10 +6521,12 @@ export type UpdateUserRolesMutation = (
   { __typename?: 'Mutation' }
   & { updateUserRoles: (
     { __typename?: 'UserResponseWrap' }
-    & Pick<UserResponseWrap, 'error'>
     & { user: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
     )> }
   ) }
 );
@@ -6220,10 +6540,21 @@ export type VerifyEmailMutation = (
   { __typename?: 'Mutation' }
   & { emailVerification: (
     { __typename?: 'EmailVerificationResponseWrap' }
-    & Pick<EmailVerificationResponseWrap, 'error' | 'success'>
+    & Pick<EmailVerificationResponseWrap, 'success'>
+    & { rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
   ) }
 );
 
+export const RejectionFragmentDoc = gql`
+    fragment rejection on Rejection {
+  reason
+  context
+  exception
+}
+    `;
 export const BasicUserDetailsFragmentDoc = gql`
     fragment basicUserDetails on BasicUserDetails {
   id
@@ -6599,7 +6930,9 @@ export const TemplateStepFragmentDoc = gql`
 export const AssignProposalToSepDocument = gql`
     mutation assignProposalToSEP($proposalId: Int!, $sepId: Int!) {
   assignProposalToSEP(proposalId: $proposalId, sepId: $sepId) {
-    error
+    rejection {
+      ...rejection
+    }
     nextProposalStatus {
       id
       shortCode
@@ -6607,29 +6940,33 @@ export const AssignProposalToSepDocument = gql`
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AssignReviewersToSepDocument = gql`
     mutation assignReviewersToSEP($memberIds: [Int!]!, $sepId: Int!) {
   assignReviewersToSEP(memberIds: $memberIds, sepId: $sepId) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AssignChairOrSecretaryDocument = gql`
     mutation assignChairOrSecretary($assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSEPInput!) {
   assignChairOrSecretary(
     assignChairOrSecretaryToSEPInput: $assignChairOrSecretaryToSEPInput
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AssignSepReviewersToProposalDocument = gql`
     mutation assignSepReviewersToProposal($memberIds: [Int!]!, $sepId: Int!, $proposalId: Int!) {
   assignSepReviewersToProposal(
@@ -6637,13 +6974,15 @@ export const AssignSepReviewersToProposalDocument = gql`
     sepId: $sepId
     proposalId: $proposalId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateSepDocument = gql`
     mutation createSEP($code: String!, $description: String!, $numberRatingsRequired: Int!, $active: Boolean!) {
   createSEP(
@@ -6665,20 +7004,25 @@ export const CreateSepDocument = gql`
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteSepDocument = gql`
     mutation deleteSEP($id: Int!) {
   deleteSEP(id: $id) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetInstrumentsBySepDocument = gql`
     query getInstrumentsBySEP($sepId: Int!, $callId: Int!) {
   instrumentsBySep(sepId: $sepId, callId: $callId) {
@@ -6922,23 +7266,27 @@ export const GetSePsDocument = gql`
 export const RemoveProposalAssignmentDocument = gql`
     mutation removeProposalAssignment($proposalId: Int!, $sepId: Int!) {
   removeProposalAssignment(proposalId: $proposalId, sepId: $sepId) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const RemoveMemberFromSepDocument = gql`
     mutation removeMemberFromSep($memberId: Int!, $sepId: Int!, $roleId: UserRole!) {
   removeMemberFromSep(memberId: $memberId, sepId: $sepId, roleId: $roleId) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const RemoveMemberFromSepProposalDocument = gql`
     mutation removeMemberFromSEPProposal($memberId: Int!, $sepId: Int!, $proposalId: Int!) {
   removeMemberFromSEPProposal(
@@ -6946,37 +7294,43 @@ export const RemoveMemberFromSepProposalDocument = gql`
     sepId: $sepId
     proposalId: $proposalId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     sep {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const ReorderSepMeetingDecisionProposalsDocument = gql`
     mutation reorderSepMeetingDecisionProposals($reorderSepMeetingDecisionProposalsInput: ReorderSepMeetingDecisionProposalsInput!) {
   reorderSepMeetingDecisionProposals(
     reorderSepMeetingDecisionProposalsInput: $reorderSepMeetingDecisionProposalsInput
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     sepMeetingDecision {
       proposalId
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SaveSepMeetingDecisionDocument = gql`
     mutation saveSepMeetingDecision($saveSepMeetingDecisionInput: SaveSEPMeetingDecisionInput!) {
   saveSepMeetingDecision(
     saveSepMeetingDecisionInput: $saveSepMeetingDecisionInput
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     sepMeetingDecision {
       proposalId
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateSepDocument = gql`
     mutation updateSEP($id: Int!, $code: String!, $description: String!, $numberRatingsRequired: Int!, $active: Boolean!) {
   updateSEP(
@@ -6989,10 +7343,12 @@ export const UpdateSepDocument = gql`
     sep {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateSepTimeAllocationDocument = gql`
     mutation updateSEPTimeAllocation($sepId: Int!, $proposalId: Int!, $sepTimeAllocation: Int) {
   updateSEPTimeAllocation(
@@ -7000,24 +7356,30 @@ export const UpdateSepTimeAllocationDocument = gql`
     proposalId: $proposalId
     sepTimeAllocation: $sepTimeAllocation
   ) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AddClientLogDocument = gql`
     mutation addClientLog($error: String!) {
   addClientLog(error: $error) {
     isSuccess
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateApiAccessTokenDocument = gql`
     mutation createApiAccessToken($name: String!, $accessPermissions: String!) {
   createApiAccessToken(
     createApiAccessTokenInput: {name: $name, accessPermissions: $accessPermissions}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     apiAccessToken {
       id
       name
@@ -7026,7 +7388,7 @@ export const CreateApiAccessTokenDocument = gql`
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateInstitutionDocument = gql`
     mutation createInstitution($name: String!, $verified: Boolean!) {
   createInstitution(name: $name, verified: $verified) {
@@ -7035,10 +7397,12 @@ export const CreateInstitutionDocument = gql`
       name
       verified
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateUnitDocument = gql`
     mutation createUnit($name: String!) {
   createUnit(name: $name) {
@@ -7046,18 +7410,22 @@ export const CreateUnitDocument = gql`
       id
       name
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteInstitutionDocument = gql`
     mutation deleteInstitution($id: Int!) {
   deleteInstitution(id: $id) {
@@ -7065,20 +7433,24 @@ export const DeleteInstitutionDocument = gql`
       id
       verified
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteUnitDocument = gql`
     mutation deleteUnit($id: Int!) {
   deleteUnit(id: $id) {
     unit {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetAllApiAccessTokensAndPermissionsDocument = gql`
     query getAllApiAccessTokensAndPermissions {
   allAccessTokensAndPermissions {
@@ -7135,16 +7507,20 @@ export const SetPageContentDocument = gql`
       id
       content
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateApiAccessTokenDocument = gql`
     mutation updateApiAccessToken($accessTokenId: String!, $name: String!, $accessPermissions: String!) {
   updateApiAccessToken(
     updateApiAccessTokenInput: {accessTokenId: $accessTokenId, name: $name, accessPermissions: $accessPermissions}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     apiAccessToken {
       id
       name
@@ -7153,7 +7529,7 @@ export const UpdateApiAccessTokenDocument = gql`
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateInstitutionDocument = gql`
     mutation updateInstitution($id: Int!, $name: String!, $verified: Boolean!) {
   updateInstitution(id: $id, name: $name, verified: $verified) {
@@ -7162,45 +7538,57 @@ export const UpdateInstitutionDocument = gql`
       verified
       name
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AssignInstrumentsToCallDocument = gql`
     mutation assignInstrumentsToCall($instrumentIds: [Int!]!, $callId: Int!) {
   assignInstrumentsToCall(
     assignInstrumentsToCallInput: {instrumentIds: $instrumentIds, callId: $callId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     call {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateCallDocument = gql`
     mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $referenceNumberFormat: String, $proposalWorkflowId: Int, $templateId: Int) {
   createCall(
     createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     call {
       ...call
     }
   }
 }
-    ${CallFragmentDoc}`;
+    ${RejectionFragmentDoc}
+${CallFragmentDoc}`;
 export const DeleteCallDocument = gql`
     mutation deleteCall($id: Int!) {
   deleteCall(id: $id) {
-    error
+    rejection {
+      ...rejection
+      ...rejection
+    }
     call {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetCallDocument = gql`
     query getCall($id: Int!) {
   call(id: $id) {
@@ -7227,25 +7615,30 @@ export const RemoveAssignedInstrumentFromCallDocument = gql`
   removeAssignedInstrumentFromCall(
     removeAssignedInstrumentFromCallInput: {instrumentId: $instrumentId, callId: $callId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     call {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateCallDocument = gql`
     mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $referenceNumberFormat: String, $proposalWorkflowId: Int, $templateId: Int) {
   updateCall(
     updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     call {
       ...call
     }
   }
 }
-    ${CallFragmentDoc}`;
+    ${RejectionFragmentDoc}
+${CallFragmentDoc}`;
 export const GetEventLogsDocument = gql`
     query getEventLogs($eventType: String!, $changedObjectId: String!) {
   eventLogs(eventType: $eventType, changedObjectId: $changedObjectId) {
@@ -7266,22 +7659,26 @@ export const GetEventLogsDocument = gql`
 export const AssignProposalsToInstrumentDocument = gql`
     mutation assignProposalsToInstrument($proposals: [ProposalIdWithCallId!]!, $instrumentId: Int!) {
   assignProposalsToInstrument(proposals: $proposals, instrumentId: $instrumentId) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AssignScientistsToInstrumentDocument = gql`
     mutation assignScientistsToInstrument($scientistIds: [Int!]!, $instrumentId: Int!) {
   assignScientistsToInstrument(
     scientistIds: $scientistIds
     instrumentId: $instrumentId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateInstrumentDocument = gql`
     mutation createInstrument($name: String!, $shortCode: String!, $description: String!) {
   createInstrument(name: $name, shortCode: $shortCode, description: $description) {
@@ -7294,17 +7691,22 @@ export const CreateInstrumentDocument = gql`
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteInstrumentDocument = gql`
     mutation deleteInstrument($id: Int!) {
   deleteInstrument(id: $id) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetInstrumentsDocument = gql`
     query getInstruments($callIds: [Int!]) {
   instruments(callIds: $callIds) {
@@ -7342,22 +7744,26 @@ export const RemoveProposalFromInstrumentDocument = gql`
     proposalId: $proposalId
     instrumentId: $instrumentId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const RemoveScientistFromInstrumentDocument = gql`
     mutation removeScientistFromInstrument($scientistId: Int!, $instrumentId: Int!) {
   removeScientistFromInstrument(
     scientistId: $scientistId
     instrumentId: $instrumentId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SetInstrumentAvailabilityTimeDocument = gql`
     mutation setInstrumentAvailabilityTime($callId: Int!, $instrumentId: Int!, $availabilityTime: Int!) {
   setInstrumentAvailabilityTime(
@@ -7365,19 +7771,23 @@ export const SetInstrumentAvailabilityTimeDocument = gql`
     instrumentId: $instrumentId
     availabilityTime: $availabilityTime
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SubmitInstrumentDocument = gql`
     mutation submitInstrument($callId: Int!, $instrumentId: Int!, $sepId: Int!) {
   submitInstrument(callId: $callId, instrumentId: $instrumentId, sepId: $sepId) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateInstrumentDocument = gql`
     mutation updateInstrument($id: Int!, $name: String!, $shortCode: String!, $description: String!) {
   updateInstrument(
@@ -7395,10 +7805,13 @@ export const UpdateInstrumentDocument = gql`
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
     mutation administrationProposal($id: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
   administrationProposal(
@@ -7413,20 +7826,24 @@ export const AdministrationProposalDocument = gql`
     proposal {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const ChangeProposalsStatusDocument = gql`
     mutation changeProposalsStatus($proposals: [ProposalIdWithCallId!]!, $statusId: Int!) {
   changeProposalsStatus(
     changeProposalsStatusInput: {proposals: $proposals, statusId: $statusId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CloneProposalDocument = gql`
     mutation cloneProposal($proposalToCloneId: Int!, $callId: Int!) {
   cloneProposal(
@@ -7470,13 +7887,16 @@ export const CloneProposalDocument = gql`
         isActive
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
     ${ProposalFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
-${CoreTechnicalReviewFragmentDoc}`;
+${CoreTechnicalReviewFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateProposalDocument = gql`
     mutation createProposal($callId: Int!) {
   createProposal(callId: $callId) {
@@ -7500,23 +7920,28 @@ export const CreateProposalDocument = gql`
         ...sample
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
     ${ProposalStatusFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
-${SampleFragmentDoc}`;
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteProposalDocument = gql`
     mutation deleteProposal($id: Int!) {
   deleteProposal(id: $id) {
-    error
+    rejection {
+      ...rejection
+    }
     proposal {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetInstrumentScientistProposalsDocument = gql`
     query getInstrumentScientistProposals($filter: ProposalsFilter) {
   instrumentScientistProposals(filter: $filter) {
@@ -7696,20 +8121,25 @@ export const NotifyProposalDocument = gql`
     proposal {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SubmitProposalDocument = gql`
     mutation submitProposal($id: Int!) {
   submitProposal(id: $id) {
     proposal {
       ...proposal
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${ProposalFragmentDoc}`;
+    ${ProposalFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateProposalDocument = gql`
     mutation updateProposal($id: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
   updateProposal(
@@ -7730,10 +8160,13 @@ export const UpdateProposalDocument = gql`
         ...basicUserDetails
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
     query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatus!], $instrumentId: Int) {
   me {
@@ -7763,20 +8196,26 @@ export const AnswerTopicDocument = gql`
     questionaryStep {
       ...questionaryStep
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${QuestionaryStepFragmentDoc}`;
+    ${QuestionaryStepFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateQuestionaryDocument = gql`
     mutation createQuestionary($templateId: Int!) {
   createQuestionary(templateId: $templateId) {
     questionary {
       ...questionary
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${QuestionaryFragmentDoc}`;
+    ${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
 export const GetBlankQuestionaryStepsDocument = gql`
     query getBlankQuestionarySteps($templateId: Int!) {
   blankQuestionarySteps(templateId: $templateId) {
@@ -7807,23 +8246,27 @@ export const AddTechnicalReviewDocument = gql`
   addTechnicalReview(
     addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     technicalReview {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AddUserForReviewDocument = gql`
     mutation addUserForReview($userID: Int!, $proposalID: Int!, $sepID: Int!) {
   addUserForReview(userID: $userID, proposalID: $proposalID, sepID: $sepID) {
-    error
+    rejection {
+      ...rejection
+    }
     review {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetProposalReviewsDocument = gql`
     query getProposalReviews($proposalId: Int!) {
   proposalReviews(proposalId: $proposalId) {
@@ -7854,22 +8297,36 @@ export const GetReviewDocument = gql`
 export const RemoveUserForReviewDocument = gql`
     mutation removeUserForReview($reviewId: Int!, $sepId: Int!) {
   removeUserForReview(reviewId: $reviewId, sepId: $sepId) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
+export const SubmitProposalsReviewDocument = gql`
+    mutation submitProposalsReview($proposals: [ProposalIdWithReviewId!]!) {
+  submitProposalsReview(submitProposalsReviewInput: {proposals: $proposals}) {
+    rejection {
+      ...rejection
+    }
+    isSuccess
+  }
+}
+    ${RejectionFragmentDoc}`;
 export const SubmitTechnicalReviewDocument = gql`
     mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!) {
   submitTechnicalReview(
     submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     technicalReview {
       id
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AddReviewDocument = gql`
     mutation addReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
   addReview(
@@ -7879,7 +8336,9 @@ export const AddReviewDocument = gql`
     status: $status
     sepID: $sepID
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     review {
       id
       userID
@@ -7895,15 +8354,20 @@ export const AddReviewDocument = gql`
     }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UserWithReviewsDocument = gql`
-    query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus) {
+    query userWithReviews($callId: Int, $instrumentId: Int, $status: ReviewStatus, $reviewer: ReviewerFilter) {
   me {
     id
     firstname
     lastname
     organisation
-    reviews(callId: $callId, instrumentId: $instrumentId, status: $status) {
+    reviews(
+      callId: $callId
+      instrumentId: $instrumentId
+      status: $status
+      reviewer: $reviewer
+    ) {
       id
       grade
       comment
@@ -7928,11 +8392,14 @@ export const CloneSampleDocument = gql`
         ...questionary
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
     ${SampleFragmentDoc}
-${QuestionaryFragmentDoc}`;
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateSampleDocument = gql`
     mutation createSample($title: String!, $templateId: Int!, $proposalId: Int!, $questionId: String!) {
   createSample(
@@ -7948,21 +8415,27 @@ export const CreateSampleDocument = gql`
         ...questionary
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
     ${SampleFragmentDoc}
-${QuestionaryFragmentDoc}`;
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteSampleDocument = gql`
     mutation deleteSample($sampleId: Int!) {
   deleteSample(sampleId: $sampleId) {
     sample {
       ...sample
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${SampleFragmentDoc}`;
+    ${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const GetSampleDocument = gql`
     query getSample($sampleId: Int!) {
   sample(sampleId: $sampleId) {
@@ -7975,19 +8448,31 @@ export const GetSampleDocument = gql`
 }
     ${SampleFragmentDoc}
 ${QuestionaryFragmentDoc}`;
-export const GetSamplesDocument = gql`
-    query getSamples($filter: SamplesFilter) {
-  samples(filter: $filter) {
+export const GetSamplesByCallIdDocument = gql`
+    query getSamplesByCallId($callId: Int!) {
+  samplesByCallId(callId: $callId) {
     ...sample
-    questionary {
-      isCompleted
+    proposal {
+      id
+      shortCode
     }
   }
 }
     ${SampleFragmentDoc}`;
-export const GetSamplesByCallIdDocument = gql`
-    query getSamplesByCallId($callId: Int!) {
-  samplesByCallId(callId: $callId) {
+export const GetSamplesWithProposalDataDocument = gql`
+    query getSamplesWithProposalData($filter: SamplesFilter) {
+  samples(filter: $filter) {
+    ...sample
+    proposal {
+      id
+      shortCode
+    }
+  }
+}
+    ${SampleFragmentDoc}`;
+export const GetSamplesWithQuestionaryStatusDocument = gql`
+    query getSamplesWithQuestionaryStatus($filter: SamplesFilter) {
+  samples(filter: $filter) {
     ...sample
     questionary {
       isCompleted
@@ -8005,14 +8490,14 @@ export const UpdateSampleDocument = gql`
   ) {
     sample {
       ...sample
-      questionary {
-        isCompleted
-      }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${SampleFragmentDoc}`;
+    ${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const AddProposalWorkflowStatusDocument = gql`
     mutation addProposalWorkflowStatus($proposalWorkflowId: Int!, $sortOrder: Int!, $droppableGroupId: String!, $parentDroppableGroupId: String, $proposalStatusId: Int!, $nextProposalStatusId: Int, $prevProposalStatusId: Int) {
   addProposalWorkflowStatus(
@@ -8021,10 +8506,12 @@ export const AddProposalWorkflowStatusDocument = gql`
     proposalWorkflowConnection {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AddStatusChangingEventsToConnectionDocument = gql`
     mutation addStatusChangingEventsToConnection($proposalWorkflowConnectionId: Int!, $statusChangingEvents: [String!]!) {
   addStatusChangingEventsToConnection(
@@ -8035,10 +8522,12 @@ export const AddStatusChangingEventsToConnectionDocument = gql`
       proposalWorkflowConnectionId
       statusChangingEvent
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateProposalStatusDocument = gql`
     mutation createProposalStatus($shortCode: String!, $name: String!, $description: String!) {
   createProposalStatus(
@@ -8047,10 +8536,13 @@ export const CreateProposalStatusDocument = gql`
     proposalStatus {
       ...proposalStatus
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateProposalWorkflowDocument = gql`
     mutation createProposalWorkflow($name: String!, $description: String!) {
   createProposalWorkflow(
@@ -8082,20 +8574,26 @@ export const CreateProposalWorkflowDocument = gql`
         }
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteProposalStatusDocument = gql`
     mutation deleteProposalStatus($id: Int!) {
   deleteProposalStatus(id: $id) {
     proposalStatus {
       ...proposalStatus
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteProposalWorkflowDocument = gql`
     mutation deleteProposalWorkflow($id: Int!) {
   deleteProposalWorkflow(id: $id) {
@@ -8104,20 +8602,24 @@ export const DeleteProposalWorkflowDocument = gql`
       name
       description
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteProposalWorkflowStatusDocument = gql`
-    mutation deleteProposalWorkflowStatus($proposalStatusId: Int!, $proposalWorkflowId: Int!) {
+    mutation deleteProposalWorkflowStatus($proposalStatusId: Int!, $proposalWorkflowId: Int!, $sortOrder: Int!) {
   deleteProposalWorkflowStatus(
-    deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId}
+    deleteProposalWorkflowStatusInput: {proposalStatusId: $proposalStatusId, proposalWorkflowId: $proposalWorkflowId, sortOrder: $sortOrder}
   ) {
     isSuccess
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetProposalEventsDocument = gql`
     query getProposalEvents {
   proposalEvents {
@@ -8177,10 +8679,12 @@ export const MoveProposalWorkflowStatusDocument = gql`
   moveProposalWorkflowStatus(
     moveProposalWorkflowStatusInput: {from: $from, to: $to, proposalWorkflowId: $proposalWorkflowId}
   ) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateProposalStatusDocument = gql`
     mutation updateProposalStatus($id: Int!, $shortCode: String!, $name: String!, $description: String!) {
   updateProposalStatus(
@@ -8189,10 +8693,13 @@ export const UpdateProposalStatusDocument = gql`
     proposalStatus {
       ...proposalStatus
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${ProposalStatusFragmentDoc}`;
+    ${ProposalStatusFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateProposalWorkflowDocument = gql`
     mutation updateProposalWorkflow($id: Int!, $name: String!, $description: String!) {
   updateProposalWorkflow(
@@ -8226,14 +8733,18 @@ export const UpdateProposalWorkflowDocument = gql`
         }
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const AddSamplesToShipmentDocument = gql`
     mutation addSamplesToShipment($shipmentId: Int!, $sampleIds: [Int!]!) {
   addSamplesToShipment(shipmentId: $shipmentId, sampleIds: $sampleIds) {
-    error
+    rejection {
+      ...rejection
+    }
     shipment {
       ...shipment
       samples {
@@ -8242,7 +8753,8 @@ export const AddSamplesToShipmentDocument = gql`
     }
   }
 }
-    ${ShipmentFragmentDoc}
+    ${RejectionFragmentDoc}
+${ShipmentFragmentDoc}
 ${SampleFragmentDoc}`;
 export const CreateShipmentDocument = gql`
     mutation createShipment($title: String!, $proposalId: Int!) {
@@ -8256,19 +8768,24 @@ export const CreateShipmentDocument = gql`
         ...sample
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
     ${ShipmentFragmentDoc}
 ${QuestionaryFragmentDoc}
-${SampleFragmentDoc}`;
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteShipmentDocument = gql`
     mutation deleteShipment($shipmentId: Int!) {
   deleteShipment(shipmentId: $shipmentId) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetShipmentDocument = gql`
     query getShipment($shipmentId: Int!) {
   shipment(shipmentId: $shipmentId) {
@@ -8298,20 +8815,25 @@ export const SetActiveTemplateDocument = gql`
     templateCategoryId: $templateCategoryId
   ) {
     isSuccess
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SubmitShipmentDocument = gql`
     mutation submitShipment($shipmentId: Int!) {
   submitShipment(shipmentId: $shipmentId) {
-    error
+    rejection {
+      ...rejection
+    }
     shipment {
       ...shipment
     }
   }
 }
-    ${ShipmentFragmentDoc}`;
+    ${RejectionFragmentDoc}
+${ShipmentFragmentDoc}`;
 export const UpdateShipmentDocument = gql`
     mutation updateShipment($shipmentId: Int!, $title: String, $proposalId: Int, $status: ShipmentStatus) {
   updateShipment(
@@ -8320,7 +8842,9 @@ export const UpdateShipmentDocument = gql`
     status: $status
     proposalId: $proposalId
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     shipment {
       ...shipment
       questionary {
@@ -8329,7 +8853,8 @@ export const UpdateShipmentDocument = gql`
     }
   }
 }
-    ${ShipmentFragmentDoc}
+    ${RejectionFragmentDoc}
+${ShipmentFragmentDoc}
 ${QuestionaryFragmentDoc}`;
 export const CloneTemplateDocument = gql`
     mutation cloneTemplate($templateId: Int!) {
@@ -8337,30 +8862,39 @@ export const CloneTemplateDocument = gql`
     template {
       ...templateMetadata
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateMetadataFragmentDoc}`;
+    ${TemplateMetadataFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateTemplateDocument = gql`
     mutation createTemplate($categoryId: TemplateCategoryId!, $name: String!, $description: String) {
   createTemplate(categoryId: $categoryId, name: $name, description: $description) {
     template {
       ...templateMetadata
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateMetadataFragmentDoc}`;
+    ${TemplateMetadataFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateQuestionDocument = gql`
     mutation createQuestion($categoryId: TemplateCategoryId!, $dataType: DataType!) {
   createQuestion(categoryId: $categoryId, dataType: $dataType) {
     question {
       ...question
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${QuestionFragmentDoc}`;
+    ${QuestionFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateQuestionTemplateRelationDocument = gql`
     mutation createQuestionTemplateRelation($templateId: Int!, $questionId: String!, $topicId: Int!, $sortOrder: Int!) {
   createQuestionTemplateRelation(
@@ -8372,40 +8906,52 @@ export const CreateQuestionTemplateRelationDocument = gql`
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateTopicDocument = gql`
     mutation createTopic($templateId: Int!, $sortOrder: Int!) {
   createTopic(templateId: $templateId, sortOrder: $sortOrder) {
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteQuestionDocument = gql`
     mutation deleteQuestion($questionId: String!) {
   deleteQuestion(questionId: $questionId) {
     question {
       ...question
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${QuestionFragmentDoc}`;
+    ${QuestionFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteQuestionTemplateRelationDocument = gql`
     mutation deleteQuestionTemplateRelation($questionId: String!, $templateId: Int!) {
   deleteQuestionTemplateRelation(questionId: $questionId, templateId: $templateId) {
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteTemplateDocument = gql`
     mutation deleteTemplate($id: Int!) {
   deleteTemplate(templateId: $id) {
@@ -8413,17 +8959,21 @@ export const DeleteTemplateDocument = gql`
       templateId
       name
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteTopicDocument = gql`
     mutation deleteTopic($topicId: Int!) {
   deleteTopic(topicId: $topicId) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetActiveTemplateIdDocument = gql`
     query getActiveTemplateId($templateCategoryId: TemplateCategoryId!) {
   activeTemplateId(templateCategoryId: $templateCategoryId)
@@ -8503,10 +9053,13 @@ export const UpdateQuestionDocument = gql`
     question {
       ...question
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${QuestionFragmentDoc}`;
+    ${QuestionFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateQuestionTemplateRelationDocument = gql`
     mutation updateQuestionTemplateRelation($questionId: String!, $templateId: Int!, $topicId: Int, $sortOrder: Int!, $config: String) {
   updateQuestionTemplateRelation(
@@ -8519,10 +9072,13 @@ export const UpdateQuestionTemplateRelationDocument = gql`
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateQuestionTemplateRelationSettingsDocument = gql`
     mutation updateQuestionTemplateRelationSettings($questionId: String!, $templateId: Int!, $config: String, $dependencies: [FieldDependencyInput!]!, $dependenciesOperator: DependenciesLogicOperator) {
   updateQuestionTemplateRelationSettings(
@@ -8535,10 +9091,13 @@ export const UpdateQuestionTemplateRelationSettingsDocument = gql`
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateTemplateDocument = gql`
     mutation updateTemplate($templateId: Int!, $name: String, $description: String, $isArchived: Boolean) {
   updateTemplate(
@@ -8550,10 +9109,13 @@ export const UpdateTemplateDocument = gql`
     template {
       ...templateMetadata
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateMetadataFragmentDoc}`;
+    ${TemplateMetadataFragmentDoc}
+${RejectionFragmentDoc}`;
 export const UpdateTopicDocument = gql`
     mutation updateTopic($topicId: Int!, $templateId: Int, $title: String, $sortOrder: Int, $isEnabled: Boolean) {
   updateTopic(
@@ -8566,18 +9128,23 @@ export const UpdateTopicDocument = gql`
     template {
       ...template
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    ${TemplateFragmentDoc}`;
+    ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CheckExternalTokenDocument = gql`
     mutation checkExternalToken($externalToken: String!) {
   checkExternalToken(externalToken: $externalToken) {
     token
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CheckTokenDocument = gql`
     query checkToken($token: String!) {
   checkToken(token: $token) {
@@ -8611,10 +9178,12 @@ export const CreateUserDocument = gql`
     user {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const CreateUserByEmailInviteDocument = gql`
     mutation createUserByEmailInvite($firstname: String!, $lastname: String!, $email: String!, $userRole: UserRole!) {
   createUserByEmailInvite(
@@ -8623,21 +9192,25 @@ export const CreateUserByEmailInviteDocument = gql`
     email: $email
     userRole: $userRole
   ) {
-    error
+    rejection {
+      ...rejection
+    }
     id
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const DeleteUserDocument = gql`
     mutation deleteUser($id: Int!) {
   deleteUser(id: $id) {
     user {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetBasicUserDetailsDocument = gql`
     query getBasicUserDetails($id: Int!) {
   basicUserDetails(id: $id) {
@@ -8693,18 +9266,22 @@ export const GetTokenDocument = gql`
     mutation getToken($token: String!) {
   token(token: $token) {
     token
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetTokenForUserDocument = gql`
     mutation getTokenForUser($userId: Int!) {
   getTokenForUser(userId: $userId) {
     token
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const GetUserDocument = gql`
     query getUser($id: Int!) {
   user(id: $id) {
@@ -8812,54 +9389,68 @@ export const LoginDocument = gql`
     mutation login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     token
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const ResetPasswordDocument = gql`
     mutation resetPassword($token: String!, $password: String!) {
   resetPassword(token: $token, password: $password) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const ResetPasswordEmailDocument = gql`
     mutation resetPasswordEmail($email: String!) {
   resetPasswordEmail(email: $email) {
-    error
-    success
+    rejection {
+      ...rejection
+    }
+    isSuccess
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SelectRoleDocument = gql`
     mutation selectRole($token: String!, $selectedRoleId: Int!) {
   selectRole(token: $token, selectedRoleId: $selectedRoleId) {
     token
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SetUserEmailVerifiedDocument = gql`
     mutation setUserEmailVerified($id: Int!) {
   setUserEmailVerified(id: $id) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const SetUserNotPlaceholderDocument = gql`
     mutation setUserNotPlaceholder($id: Int!) {
   setUserNotPlaceholder(id: $id) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdatePasswordDocument = gql`
     mutation updatePassword($id: Int!, $password: String!) {
   updatePassword(id: $id, password: $password) {
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateUserDocument = gql`
     mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: String!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String) {
   updateUser(
@@ -8882,28 +9473,34 @@ export const UpdateUserDocument = gql`
     user {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const UpdateUserRolesDocument = gql`
     mutation updateUserRoles($id: Int!, $roles: [Int!]) {
   updateUserRoles(id: $id, roles: $roles) {
     user {
       id
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 export const VerifyEmailDocument = gql`
     mutation verifyEmail($token: String!) {
   emailVerification(token: $token) {
-    error
+    rejection {
+      ...rejection
+    }
     success
   }
 }
-    `;
+    ${RejectionFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 
@@ -9154,6 +9751,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     removeUserForReview(variables: RemoveUserForReviewMutationVariables): Promise<RemoveUserForReviewMutation> {
       return withWrapper(() => client.request<RemoveUserForReviewMutation>(print(RemoveUserForReviewDocument), variables));
     },
+    submitProposalsReview(variables: SubmitProposalsReviewMutationVariables): Promise<SubmitProposalsReviewMutation> {
+      return withWrapper(() => client.request<SubmitProposalsReviewMutation>(print(SubmitProposalsReviewDocument), variables));
+    },
     submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables): Promise<SubmitTechnicalReviewMutation> {
       return withWrapper(() => client.request<SubmitTechnicalReviewMutation>(print(SubmitTechnicalReviewDocument), variables));
     },
@@ -9175,11 +9775,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getSample(variables: GetSampleQueryVariables): Promise<GetSampleQuery> {
       return withWrapper(() => client.request<GetSampleQuery>(print(GetSampleDocument), variables));
     },
-    getSamples(variables?: GetSamplesQueryVariables): Promise<GetSamplesQuery> {
-      return withWrapper(() => client.request<GetSamplesQuery>(print(GetSamplesDocument), variables));
-    },
     getSamplesByCallId(variables: GetSamplesByCallIdQueryVariables): Promise<GetSamplesByCallIdQuery> {
       return withWrapper(() => client.request<GetSamplesByCallIdQuery>(print(GetSamplesByCallIdDocument), variables));
+    },
+    getSamplesWithProposalData(variables?: GetSamplesWithProposalDataQueryVariables): Promise<GetSamplesWithProposalDataQuery> {
+      return withWrapper(() => client.request<GetSamplesWithProposalDataQuery>(print(GetSamplesWithProposalDataDocument), variables));
+    },
+    getSamplesWithQuestionaryStatus(variables?: GetSamplesWithQuestionaryStatusQueryVariables): Promise<GetSamplesWithQuestionaryStatusQuery> {
+      return withWrapper(() => client.request<GetSamplesWithQuestionaryStatusQuery>(print(GetSamplesWithQuestionaryStatusDocument), variables));
     },
     updateSample(variables: UpdateSampleMutationVariables): Promise<UpdateSampleMutation> {
       return withWrapper(() => client.request<UpdateSampleMutation>(print(UpdateSampleDocument), variables));
