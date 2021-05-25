@@ -9,7 +9,6 @@ import {
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
 import { QuestionaryStep, VisitationStatus } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
-import { usePersistVisitationModel } from 'hooks/visitation/usePersistVisitationModel';
 import {
   Event,
   EventType,
@@ -113,7 +112,6 @@ export interface VisitationContainerProps {
 }
 export default function VisitationContainer(props: VisitationContainerProps) {
   const { api } = useDataApiWithFeedback();
-  const { persistModel: persistVisitationModel } = usePersistVisitationModel();
 
   const previousInitialVisitation = usePrevious(props.visitation);
 
@@ -228,7 +226,7 @@ export default function VisitationContainer(props: VisitationContainerProps) {
     dispatch,
   } = QuestionarySubmissionModel<VisitationSubmissionState>(
     initialState,
-    [handleEvents, persistVisitationModel],
+    [handleEvents],
     visitationReducer
   );
 
