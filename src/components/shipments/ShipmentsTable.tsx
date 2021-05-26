@@ -1,6 +1,6 @@
 import { Delete } from '@material-ui/icons';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import React, { useContext } from 'react';
+import React from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import {
@@ -9,10 +9,9 @@ import {
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
 import UOLoader from 'components/common/UOLoader';
-import { UserContext } from 'context/UserContextProvider';
 import { ShipmentFragment, ShipmentStatus } from 'generated/sdk';
 import { useDownloadPDFShipmentLabel } from 'hooks/proposal/useDownloadPDFShipmentLabel';
-import { useShipments } from 'hooks/shipment/useShipments';
+import { useMyShipments } from 'hooks/shipment/useMyShipments';
 import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 import { tableIcons } from 'utils/materialIcons';
 import { tableLocalization } from 'utils/materialLocalization';
@@ -23,10 +22,7 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import CreateUpdateShipment from './CreateUpdateShipment';
 
 const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
-  const { user } = useContext(UserContext);
-  const { loadingShipments, shipments, setShipments } = useShipments({
-    creatorId: user.id,
-  });
+  const { loadingMyShipments, myShipments, setMyShipments } = useMyShipments();
   const downloadShipmentLabel = useDownloadPDFShipmentLabel();
   const [
     urlQueryParams,
@@ -34,7 +30,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
   const { api } = useDataApiWithFeedback();
 
-  if (!shipments) {
+  if (!myShipments) {
     return <UOLoader />;
   }
 
@@ -57,8 +53,8 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
           })
           .then((data) => {
             if (!data.deleteShipment.rejection) {
-              setShipments(
-                shipments.filter(
+              setMyShipments(
+                myShipments.filter(
                   (shipment) => shipment.id !== shipmentToDelete.id
                 )
               );
@@ -88,15 +84,15 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   return (
     <div data-cy="shipments-table">
       <SuperMaterialTable
-        setData={setShipments}
+        setData={setMyShipments}
         createModal={createModal}
         hasAccess={{ update: true, create: true, remove: true }}
         icons={tableIcons}
         localization={tableLocalization}
         title="Shipments"
         columns={columns}
-        isLoading={loadingShipments}
-        data={shipments}
+        isLoading={loadingMyShipments}
+        data={myShipments}
         urlQueryParams={urlQueryParams}
         setUrlQueryParams={setUrlQueryParams}
         actions={[
