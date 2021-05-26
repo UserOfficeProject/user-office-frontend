@@ -1,6 +1,6 @@
 import { Delete } from '@material-ui/icons';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import {
@@ -9,6 +9,7 @@ import {
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
 import UOLoader from 'components/common/UOLoader';
+import { UserContext } from 'context/UserContextProvider';
 import { ShipmentFragment, ShipmentStatus } from 'generated/sdk';
 import { useDownloadPDFShipmentLabel } from 'hooks/proposal/useDownloadPDFShipmentLabel';
 import { useShipments } from 'hooks/shipment/useShipments';
@@ -22,7 +23,10 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import CreateUpdateShipment from './CreateUpdateShipment';
 
 const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
-  const { loadingShipments, shipments, setShipments } = useShipments();
+  const { user } = useContext(UserContext);
+  const { loadingShipments, shipments, setShipments } = useShipments({
+    creatorId: user.id,
+  });
   const downloadShipmentLabel = useDownloadPDFShipmentLabel();
   const [
     urlQueryParams,
