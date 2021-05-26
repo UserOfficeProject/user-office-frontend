@@ -7,11 +7,12 @@ on:
     branches:
       - 88-run-end-to-end-tests-on-windows
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Run everything on gitbash so we can reuse the code from test-build.yml
 defaults:
   run:
     shell: bash
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   resolve_dep:
     runs-on: windows-latest
@@ -125,6 +126,7 @@ jobs:
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
 
+      #This could break
       - name: Setup base docker-compose
         run: |
           cd "$GITHUB_WORKSPACE/.."
@@ -132,12 +134,14 @@ jobs:
           version: "3.1"
           services:
             proxy:
-              image: traefik:1.7
-              command: --api --docker
+              image: 1.7-windowsservercore-1809
+              command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
               ports:
-                - "80:80" # The HTTP port
+                - "8080:80" # The HTTP port
               volumes:
-                - /var/run/docker.sock:/var/run/docker.sock:ro
+                - type: npipe
+                  source: \\.\pipe\docker_engine
+                  target: \\.\pipe\docker_engine
           EOF
 
       - name: Run docker-compose, generate and compare SDK
@@ -160,9 +164,9 @@ jobs:
           export USER_OFFICE_GATEWAY_TAG=${{ needs.resolve_dep.outputs.GATEWAY_TAG }}
 
           docker-compose -f docker-compose.all.yml \
-            -f user-office-backend/docker-compose.e2e.yml \
-            -f user-office-scheduler-backend/docker-compose.e2e.yml \
-            -f user-office-gateway/docker-compose.e2e.yml \
+            -f user-office-backend/docker-compose.e2e.win.yml \
+            -f user-office-scheduler-backend/docker-compose.win.e2e.yml \
+            -f user-office-gateway/docker-compose.e2e.win.yml \
             up -d
 
           export SCHEMA_URL=http://localhost:80/graphql
@@ -189,7 +193,7 @@ jobs:
           GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
           cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
 
-          npm run generate:local
+          npm run generate:local:windows
 
           sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
           PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
