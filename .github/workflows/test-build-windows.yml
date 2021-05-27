@@ -174,7 +174,7 @@ jobs:
             -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' \
             -f 'user-office-gateway/docker-compose.e2e.win.yml' \
             -f "$REPO_DIR_NAME/docker-compose.e2e.win.yml" \ 
-            
+            -d up            
 
           export SCHEMA_URL=http://localhost:80/graphql
 
