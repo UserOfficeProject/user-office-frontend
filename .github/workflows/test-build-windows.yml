@@ -77,7 +77,7 @@ jobs:
 
           SCHEDULER_BE_TAG=develop
           if [[ $SCHEDULER_BE_TAGS == "2" ]]; then
-            SCHEDULER_BE_TAG="88-run-end-to-end-tests-on-windows}"
+            SCHEDULER_BE_TAG="88-run-end-to-end-tests-on-windows"
           fi
 
           GATEWAY_TAG=develop
