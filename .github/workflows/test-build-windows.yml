@@ -46,43 +46,43 @@ jobs:
           }
           
           # CHANGE TO HEAD_REF WHEN CREATING PR
-          BE_TAGS=$(check_feature ${{ github.ref }} \
+          BE_TAGS=$(check_feature "88-run-end-to-end-tests-on-windows" \
             https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend-win/tags \
             https://api.github.com/repos/UserOfficeProject/user-office-backend/branches
           )
-          FACTORY_TAGS=$(check_feature ${{ github.ref }} \
+          FACTORY_TAGS=$(check_feature "88-run-end-to-end-tests-on-windows" \
             https://registry.hub.docker.com/v1/repositories/dmsc/duo-factory-win/tags \
             https://api.github.com/repos/UserOfficeProject/user-office-factory/branches
           )
 
-          SCHEDULER_BE_TAGS=$(check_feature ${{ github.ref }} \
+          SCHEDULER_BE_TAGS=$(check_feature "88-run-end-to-end-tests-on-windows" \
             https://registry.hub.docker.com/v1/repositories/dmsc/duo-scheduler-backend-win/tags \
             https://api.github.com/repos/UserOfficeProject/user-office-scheduler-backend/branches
           )
 
-          GATEWAY_TAGS=$(check_feature ${{ github.ref }} \
+          GATEWAY_TAGS=$(check_feature "88-run-end-to-end-tests-on-windows" \
             https://registry.hub.docker.com/v1/repositories/dmsc/duo-gateway-win/tags \
             https://api.github.com/repos/UserOfficeProject/user-office-gateway/branches
           )
 
           BE_TAG=develop
           if [[ $BE_TAGS == "2" ]]; then
-            BE_TAG="${{ github.head_ref }}"
+            BE_TAG="88-run-end-to-end-tests-on-windows"
           fi
 
           FACTORY_TAG=develop
           if [[ $FACTORY_TAGS == "2" ]]; then
-            FACTORY_TAG="${{ github.head_ref }}"
+            FACTORY_TAG="88-run-end-to-end-tests-on-windows"
           fi
 
           SCHEDULER_BE_TAG=develop
           if [[ $SCHEDULER_BE_TAGS == "2" ]]; then
-            SCHEDULER_BE_TAG="${{ github.head_ref }}"
+            SCHEDULER_BE_TAG="88-run-end-to-end-tests-on-windows}"
           fi
 
           GATEWAY_TAG=develop
           if [[ $GATEWAY_TAGS == "2" ]]; then
-            GATEWAY_TAG="${{ github.head_ref }}"
+            GATEWAY_TAG="88-run-end-to-end-tests-on-windows"
           fi
 
           echo ::set-output name=BE_TAG::${BE_TAG}
