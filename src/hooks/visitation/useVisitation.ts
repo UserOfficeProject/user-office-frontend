@@ -11,13 +11,22 @@ export function useVisitation(visitationId: number) {
   const api = useDataApi();
 
   useEffect(() => {
+    let unmounted = false;
+
     api()
       .getVisitation({ visitationId })
       .then((data) => {
+        if (unmounted) {
+          return;
+        }
         if (data.visitation) {
           setVisitation(data.visitation);
         }
       });
+
+    return () => {
+      unmounted = true;
+    };
   }, [api, visitationId]);
 
   return { visitation };

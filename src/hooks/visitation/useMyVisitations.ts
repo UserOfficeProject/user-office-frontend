@@ -10,15 +10,24 @@ export function useMyVisitations() {
   const api = useDataApi();
 
   useEffect(() => {
+    let unmounted = false;
+
     setLoadingVisitations(true);
     api()
       .getMyVisitations()
       .then((data) => {
+        if (unmounted) {
+          return;
+        }
         if (data.myVisitations) {
           setVisitations(data.myVisitations);
         }
         setLoadingVisitations(false);
       });
+
+    return () => {
+      unmounted = true;
+    };
   }, [api]);
 
   return {
