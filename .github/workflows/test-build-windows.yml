@@ -30,6 +30,7 @@ jobs:
           check_feature() {
             # first param is the branch, everything after is endpoint for curl
             local branch=$1
+            echo branch
             local found=0
             shift
             for endpoint in $@; do
