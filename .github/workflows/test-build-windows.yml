@@ -125,8 +125,8 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/.."
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
+          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
 
       #This could break
       - name: Setup base docker-compose
