@@ -64,12 +64,7 @@ jobs:
             https://api.github.com/repos/UserOfficeProject/user-office-gateway/branches
           )
 
-          BE_TAG=develop
-          echo "BE_TAGS: $BE_TAGS"
-          echo "FACTORY_TAGS: $BE_TAGS"
-          echo "SCHEDULER_BE_TAGS: $BE_TAGS"
-          echo "GATEWAY_TAGS: $BE_TAGS"
-          
+          BE_TAG=develop        
           if [[ $BE_TAGS -eq "2" ]]; then
             echo "This should print"
             # BE_TAG="${{ github.head_ref }}"
