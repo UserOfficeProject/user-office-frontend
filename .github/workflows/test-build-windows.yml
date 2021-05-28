@@ -134,7 +134,7 @@ jobs:
           version: "3.1"
           services:
             proxy:
-              image: 1.7-windowsservercore-1809
+              image: traefik:windowsservercore-1809
               command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
               ports:
                 - "8080:80" # The HTTP port
