@@ -85,6 +85,11 @@ jobs:
             GATEWAY_TAG="88-run-end-to-end-tests-on-windows"
           fi
 
+          echo "$BE_TAGS"
+          echo "$FACTORY_TAGS"
+          echo "$SCHEDULER_BE_TAGS"
+          echo "$GATEWAY_TAGS"
+
           echo ::set-output name=BE_TAG::${BE_TAG}
           echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
           echo ::set-output name=SCHEDULER_BE_TAG::${SCHEDULER_BE_TAG}
