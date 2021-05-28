@@ -225,9 +225,7 @@ export default function QuestionaryStepView(props: {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={
-        isUserOfficer ? null : Yup.object().shape(validationSchema)
-      }
+      validationSchema={Yup.object().shape(validationSchema)}
       onSubmit={() => {}}
       enableReinitialize={true}
     >
