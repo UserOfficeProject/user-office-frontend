@@ -67,6 +67,7 @@ jobs:
 
           BE_TAG=develop
           if [[ $BE_TAGS == "2" ]]; then
+            echo "This should print"
             BE_TAG=88-run-end-to-end-tests-on-windows
           fi
 
@@ -84,11 +85,6 @@ jobs:
           if [[ $GATEWAY_TAGS == "2" ]]; then
             GATEWAY_TAG=88-run-end-to-end-tests-on-windows
           fi
-
-          echo "$BE_TAGS"
-          echo "$FACTORY_TAGS"
-          echo "$SCHEDULER_BE_TAGS"
-          echo "$GATEWAY_TAGS"
 
           echo ::set-output name=BE_TAG::${BE_TAG}
           echo ::set-output name=FACTORY_TAG::${FACTORY_TAG}
