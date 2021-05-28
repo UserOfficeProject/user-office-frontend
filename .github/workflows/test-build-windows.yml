@@ -43,7 +43,7 @@ jobs:
             done
             echo $found
           }
-          
+
           # CHANGE TO HEAD_REF WHEN CREATING PR
           BE_TAGS=$(check_feature "88-run-end-to-end-tests-on-windows" \
             https://registry.hub.docker.com/v1/repositories/dmsc/duo-backend-win/tags \
@@ -98,7 +98,7 @@ jobs:
           echo "SCHEDULER_BE_TAG: ${{ steps.resolve_rep.outputs.SCHEDULER_BE_TAG }}"
           echo "GATEWAY_TAG: ${{ steps.resolve_rep.outputs.GATEWAY_TAG }}"
 
-  testbuildonrunner:
+  build:
     runs-on: windows-latest
     needs: resolve_dep
 
@@ -127,7 +127,6 @@ jobs:
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
 
       #This could break
       - name: Setup base docker-compose
@@ -167,14 +166,8 @@ jobs:
 
           export USER_OFFICE_GATEWAY_TAG=${{ needs.resolve_dep.outputs.GATEWAY_TAG }}
 
-          export USER_OFFICE_FRONTEND_DIR=$REPO_DIR_NAME
-          export BUILD_TAG=88-run-end-to-end-tests-on-windows
-          # export BUILD_TAG=${{ github.sha }}
 
-
-          docker-compose -f 'docker-compose.all.yml' up -d
-          docker ps --format "{{.ID}} : {{.Names }} : {{ .Networks }}"
-          docker-compose -f 'user-office-backend/docker-compose.e2e.win.yml' -f 'user-office-factory/docker-compose.e2e.win.yml' -f 'user-office-factory/docker-compose.e2e.win.yml' -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' -f 'user-office-gateway/docker-compose.e2e.win.yml' -f "$REPO_DIR_NAME/docker-compose.e2e.win.yml" up -d 
+          docker-compose -f 'docker-compose.all.yml' -f 'user-office-backend/docker-compose.e2e.win.yml' -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' -f 'user-office-gateway/docker-compose.e2e.win.yml' up -d 
 
 
           export SCHEMA_URL=http://localhost:80/graphql
@@ -194,3 +187,54 @@ jobs:
             >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
             sleep 10
           done;
+
+          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
+
+          npm run generate:local
+
+          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
+          cp src/generated/sdk.ts /tmp/sdk_pipeline_generated.ts
+
+          # for debugging
+          echo -e "GIT_TRACKED_SUM:\t$GIT_TRACKED_SUM"
+          echo -e "PIPELINE_GENERATED_SUM:\t$PIPELINE_GENERATED_SUM"
+          git diff
+
+          # if there is a mismatch it will fail
+          echo "$GIT_TRACKED_SUM" | sha256sum -c
+
+          docker stop $(docker ps -q)
+
+      - name: Upload git tracked and pipeline generated SDK
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk-files
+          path: /tmp/sdk_*
+
+      - name: Cache app docker layers and image
+        id: cached-image
+        uses: actions/cache@v2
+        with:
+          path: |
+            /tmp/.buildx-layer-cache
+            /tmp/.buildx-image-cache
+          key: ${{ runner.os }}-buildx-${{ github.head_ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ github.head_ref }}-
+            ${{ runner.os }}-buildx-
+
+      - name: Set up Docker Buildx
+        if: steps.cached-image.outputs.cache-hit != 'true'
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and cache image
+        if: steps.cached-image.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/.buildx-image-cache
+          TAG=duo-frontend:${{ github.sha }}
+
+          docker buildx build --cache-to="type=local,dest=/tmp/.buildx-layer-cache,mode=max" --cache-from="type=local,src=/tmp/.buildx-layer-cache" -t $TAG -o type=docker,dest=- . > /tmp/.buildx-image-cache/img.tar
