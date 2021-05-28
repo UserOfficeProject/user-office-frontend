@@ -67,7 +67,7 @@ jobs:
 
           BE_TAG=develop
           echo "$BE_TAGS"
-          if [ $BE_TAGS == "2" ]; then
+          if [[ $BE_TAGS == 2 ]]; then
             echo "This should print"
             # BE_TAG="${{ github.head_ref }}"
             BE_TAG=88-run-end-to-end-tests-on-windows
@@ -100,100 +100,100 @@ jobs:
           echo "SCHEDULER_BE_TAG: ${{ steps.resolve_rep.outputs.SCHEDULER_BE_TAG }}"
           echo "GATEWAY_TAG: ${{ steps.resolve_rep.outputs.GATEWAY_TAG }}"
 
-  testbuildonrunner:
-    runs-on: windows-latest
-    needs: resolve_dep
+#   testbuildonrunner:
+#     runs-on: windows-latest
+#     needs: resolve_dep
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - uses: actions/checkout@v2
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: Cache node_modules
-        id: cached-modules
-        uses: actions/cache@v2
-        env:
-          cache-name: node-modules-cache
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
+#       - name: Cache node_modules
+#         id: cached-modules
+#         uses: actions/cache@v2
+#         env:
+#           cache-name: node-modules-cache
+#         with:
+#           path: node_modules
+#           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ env.cache-name }}-
 
-      - name: Install dependencies
-        if: steps.cached-modules.outputs.cache-hit != 'true'
-        run: npm ci --production --loglevel error --no-fund
+#       - name: Install dependencies
+#         if: steps.cached-modules.outputs.cache-hit != 'true'
+#         run: npm ci --production --loglevel error --no-fund
 
-      - name: Download required repositories
-        run: |
-          cd "$GITHUB_WORKSPACE/.."
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
-          git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
+#       - name: Download required repositories
+#         run: |
+#           cd "$GITHUB_WORKSPACE/.."
+#           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
+#           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.FACTORY_TAG }}" https://github.com/UserOfficeProject/user-office-factory.git
+#           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
+#           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.GATEWAY_TAG }}" https://github.com/UserOfficeProject/user-office-gateway.git
 
-      #This could break
-      - name: Setup base docker-compose
-        run: |
-          cd "$GITHUB_WORKSPACE/.."
-          cat > docker-compose.all.yml << EOF
-          version: "3.1"
-          services:
-            proxy:
-              image: traefik:windowsservercore-1809
-              command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
-              ports:
-                - "8080:80" # The HTTP port
-              volumes:
-                - type: npipe
-                  source: \\\\.\\pipe\\docker_engine
-                  target: \\\\.\\pipe\\docker_engine
-          EOF
+#       #This could break
+#       - name: Setup base docker-compose
+#         run: |
+#           cd "$GITHUB_WORKSPACE/.."
+#           cat > docker-compose.all.yml << EOF
+#           version: "3.1"
+#           services:
+#             proxy:
+#               image: traefik:windowsservercore-1809
+#               command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
+#               ports:
+#                 - "8080:80" # The HTTP port
+#               volumes:
+#                 - type: npipe
+#                   source: \\\\.\\pipe\\docker_engine
+#                   target: \\\\.\\pipe\\docker_engine
+#           EOF
 
-      - name: Run docker-compose, generate and compare SDK
-        run: |
-          cd "$GITHUB_WORKSPACE/.."
+#       - name: Run docker-compose, generate and compare SDK
+#         run: |
+#           cd "$GITHUB_WORKSPACE/.."
 
-          REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
+#           REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
 
-          export USER_OFFICE_BACKEND_TAG=${{ needs.resolve_dep.outputs.BE_TAG }}
-          export USER_OFFICE_BACKEND_DIR=user-office-backend
-          export USER_OFFICE_BACKEND=http://backend:4000/graphql
-          export USER_OFFICE_ENDPOINT=$USER_OFFICE_BACKEND
+#           export USER_OFFICE_BACKEND_TAG=${{ needs.resolve_dep.outputs.BE_TAG }}
+#           export USER_OFFICE_BACKEND_DIR=user-office-backend
+#           export USER_OFFICE_BACKEND=http://backend:4000/graphql
+#           export USER_OFFICE_ENDPOINT=$USER_OFFICE_BACKEND
 
-          export USER_OFFICE_FACTORY_TAG=${{ needs.resolve_dep.outputs.FACTORY_TAG }}
-          export USER_OFFICE_FACTORY_ENDPOINT=http://factory:4500/generate
+#           export USER_OFFICE_FACTORY_TAG=${{ needs.resolve_dep.outputs.FACTORY_TAG }}
+#           export USER_OFFICE_FACTORY_ENDPOINT=http://factory:4500/generate
 
-          export USER_OFFICE_SCHEDULER_BACKEND_TAG=${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}
-          export USER_OFFICE_SCHEDULER_BACKEND_DIR=user-office-scheduler-backend
-          export USER_OFFICE_SCHEDULER_BACKEND=http://scheduler-backend:4000/graphql
+#           export USER_OFFICE_SCHEDULER_BACKEND_TAG=${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}
+#           export USER_OFFICE_SCHEDULER_BACKEND_DIR=user-office-scheduler-backend
+#           export USER_OFFICE_SCHEDULER_BACKEND=http://scheduler-backend:4000/graphql
 
-          export USER_OFFICE_GATEWAY_TAG=${{ needs.resolve_dep.outputs.GATEWAY_TAG }}
+#           export USER_OFFICE_GATEWAY_TAG=${{ needs.resolve_dep.outputs.GATEWAY_TAG }}
 
-          export USER_OFFICE_FRONTEND_DIR=$REPO_DIR_NAME
-          export BUILD_TAG=${{ github.sha }}
+#           export USER_OFFICE_FRONTEND_DIR=$REPO_DIR_NAME
+#           export BUILD_TAG=${{ github.sha }}
 
 
-          docker-compose -f 'docker-compose.all.yml' up -d
-          docker-compose -f 'user-office-backend/docker-compose.e2e.win.yml' up -d 
-          docker-compose -f 'user-office-factory/docker-compose.e2e.win.yml' up -d 
-          docker-compose -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' up -d 
-          docker-compose -f 'user-office-gateway/docker-compose.e2e.win.yml' up -d 
-          docker-compose -f "$REPO_DIR_NAME/docker-compose.e2e.win.yml" up -d 
+#           docker-compose -f 'docker-compose.all.yml' up -d
+#           docker-compose -f 'user-office-backend/docker-compose.e2e.win.yml' up -d 
+#           docker-compose -f 'user-office-factory/docker-compose.e2e.win.yml' up -d 
+#           docker-compose -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' up -d 
+#           docker-compose -f 'user-office-gateway/docker-compose.e2e.win.yml' up -d 
+#           docker-compose -f "$REPO_DIR_NAME/docker-compose.e2e.win.yml" up -d 
 
-          export SCHEMA_URL=http://localhost:80/graphql
+#           export SCHEMA_URL=http://localhost:80/graphql
 
-          while true; do
-            STATUS=$(curl \
-              -o /dev/stderr \
-              --silent \
-              --write-out '%{http_code}' \
-              "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
+#           while true; do
+#             STATUS=$(curl \
+#               -o /dev/stderr \
+#               --silent \
+#               --write-out '%{http_code}' \
+#               "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
 
-            if [[ "$STATUS" == "200" ]]; then
-              echo "gateway is ready"
-              break
-            fi
+#             if [[ "$STATUS" == "200" ]]; then
+#               echo "gateway is ready"
+#               break
+#             fi
 
-            >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
-            sleep 10
-          done;
+#             >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
+#             sleep 10
+#           done;
