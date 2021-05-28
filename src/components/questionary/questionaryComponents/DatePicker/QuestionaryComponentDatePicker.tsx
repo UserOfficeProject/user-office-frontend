@@ -21,7 +21,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
   } = answer;
   const { tooltip, required } = answer.config as DateConfig;
 
-  const dateFormat = 'dd-MMM-yyyy';
+  const dateFormat = 'yyyy-MM-dd';
   const timeFormat = `${dateFormat} HH:mm`;
 
   const getDateField = () => (

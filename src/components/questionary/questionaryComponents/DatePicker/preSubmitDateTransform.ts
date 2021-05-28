@@ -1,4 +1,4 @@
-import dateformat from 'dateformat';
+import moment from 'moment';
 
 import { QuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 
@@ -7,6 +7,6 @@ export const preSubmitDateTransform: QuestionaryComponentDefinition['preSubmitTr
 ) => {
   return {
     ...answer,
-    value: dateformat(answer.value, 'dd-mmm-yyyy HH:MM:ss'),
+    value: moment(answer.value).format('YYYY-MM-DDTHH:mm:ss.SSS'),
   };
 };
