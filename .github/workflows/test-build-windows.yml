@@ -66,8 +66,10 @@ jobs:
           )
 
           BE_TAG=develop
-          if [[ $BE_TAGS == "2" ]]; then
+          echo "$BE_TAG"
+          if [[ BE_TAG == "2" ]]; then
             echo "This should print"
+            # BE_TAG="${{ github.head_ref }}"
             BE_TAG=88-run-end-to-end-tests-on-windows
           fi
 
