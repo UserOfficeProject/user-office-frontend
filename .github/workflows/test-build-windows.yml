@@ -67,22 +67,22 @@ jobs:
 
           BE_TAG=develop
           if [[ $BE_TAGS == "2" ]]; then
-            BE_TAG="88-run-end-to-end-tests-on-windows"
+            BE_TAG=88-run-end-to-end-tests-on-windows
           fi
 
           FACTORY_TAG=develop
           if [[ $FACTORY_TAGS == "2" ]]; then
-            FACTORY_TAG="88-run-end-to-end-tests-on-windows"
+            FACTORY_TAG=88-run-end-to-end-tests-on-windows
           fi
 
           SCHEDULER_BE_TAG=develop
           if [[ $SCHEDULER_BE_TAGS == "2" ]]; then
-            SCHEDULER_BE_TAG="88-run-end-to-end-tests-on-windows"
+            SCHEDULER_BE_TAG=88-run-end-to-end-tests-on-windows
           fi
 
           GATEWAY_TAG=develop
           if [[ $GATEWAY_TAGS == "2" ]]; then
-            GATEWAY_TAG="88-run-end-to-end-tests-on-windows"
+            GATEWAY_TAG=88-run-end-to-end-tests-on-windows
           fi
 
           echo "$BE_TAGS"
