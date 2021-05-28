@@ -11,7 +11,7 @@ export default function VisitationTemplatesPage() {
   const api = useDataApi();
 
   return (
-    <Container maxWidth="lg">
+    <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
         <VisitationsTemplatesTable
           dataProvider={() =>
