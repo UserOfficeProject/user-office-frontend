@@ -18,7 +18,8 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import { ShipmentContextType } from 'components/shipments/ShipmentContainer';
-import { Answer, Sample } from 'generated/sdk';
+import { UserContext } from 'context/UserContextProvider';
+import { Sample, UserRole } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
@@ -48,14 +49,12 @@ const samplesToSampleIds = (samples: Pick<Sample, 'id'>[]) =>
 function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const {
     answer: {
-      question: { proposalQuestionId },
+      question: { id },
     },
     formikProps: { errors },
   } = props;
 
-  const fieldErrors = errors[proposalQuestionId] as FormikErrors<
-    Record<string, unknown>
-  >;
+  const fieldErrors = errors[id] as FormikErrors<Record<string, unknown>>;
   const classes = useStyles();
   const { state, dispatch } = useContext(
     QuestionaryContext
@@ -69,7 +68,10 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
     state?.shipment.samples.map((sample) => sample.id) || []
   );
 
-  const { proposals, loadingProposals } = useUserProposals();
+  const { currentRole } = useContext(UserContext);
+  const { proposals, loadingProposals } = useUserProposals(
+    currentRole as UserRole
+  );
   const { samples, loadingSamples } = useProposalSamples(proposalId);
 
   if (!state || !dispatch) {
@@ -163,8 +165,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const shipmentBasisPreSubmit = (answer: Answer) => async ({
+const shipmentBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,

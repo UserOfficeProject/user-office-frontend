@@ -1,14 +1,17 @@
-import { Sample, QuestionaryStep } from 'generated/sdk';
+import {
+  GetSampleQuery,
+  GetSamplesWithQuestionaryStatusQuery,
+  GetSamplesWithProposalDataQuery,
+} from 'generated/sdk';
 
-export type SampleBasic = Pick<
-  Sample,
-  | 'id'
-  | 'title'
-  | 'safetyStatus'
-  | 'safetyComment'
-  | 'questionaryId'
-  | 'created'
-  | 'creatorId'
-> & {
-  questionary?: { steps: Array<Pick<QuestionaryStep, 'isCompleted'>> };
-};
+export type SampleWithQuestionaryStatus = Exclude<
+  GetSamplesWithQuestionaryStatusQuery['samples'],
+  null
+>[number];
+
+export type SampleWithQuestionary = Exclude<GetSampleQuery['sample'], null>;
+
+export type SampleWithProposalData = Exclude<
+  GetSamplesWithProposalDataQuery['samples'],
+  null
+>[number];

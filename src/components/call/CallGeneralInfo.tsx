@@ -25,13 +25,12 @@ const CallGeneralInfo: React.FC<{
   loadingTemplates,
   templates,
 }) => {
-  const proposalWorkflowsWithInjectedSelectionRemoval = [
-    { id: '', name: 'None (remove selection)' },
-    ...proposalWorkflows,
-  ].map((proposalWorkflow) => ({
-    text: proposalWorkflow.name,
-    value: proposalWorkflow.id,
-  }));
+  const proposalWorkflowsWithInjectedSelectionRemoval = proposalWorkflows.map(
+    (proposalWorkflow) => ({
+      text: proposalWorkflow.name,
+      value: proposalWorkflow.id,
+    })
+  );
 
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
@@ -83,6 +82,15 @@ const CallGeneralInfo: React.FC<{
           required
           data-cy="end-date"
         />
+        <Field
+          name="referenceNumberFormat"
+          label="Reference number format"
+          type="text"
+          component={TextField}
+          margin="normal"
+          fullWidth
+          data-cy="reference-number-format"
+        />
       </MuiPickersUtilsProvider>
       <FormikDropdown
         name="templateId"
@@ -105,7 +113,10 @@ const CallGeneralInfo: React.FC<{
             ? proposalWorkflowsWithInjectedSelectionRemoval
             : []
         }
-        InputProps={{ 'data-cy': 'call-workflow' }}
+        InputProps={{
+          'data-cy': 'call-workflow',
+        }}
+        isClearable
       />
     </>
   );

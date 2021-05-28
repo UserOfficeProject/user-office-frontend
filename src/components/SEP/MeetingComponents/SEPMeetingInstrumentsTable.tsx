@@ -45,8 +45,8 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
     { title: 'Description', field: 'description' },
     {
       title: 'Availability time',
-      render: (rowData: InstrumentWithAvailabilityTime) =>
-        rowData.availabilityTime ? rowData.availabilityTime : '-',
+      field: 'availabilityTime',
+      emptyValue: '-',
     },
     {
       title: 'Submitted',
@@ -75,7 +75,7 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
         callId: selectedCallId,
       });
       const allProposalsOnInstrumentHaveRankings = response.sepProposalsByInstrument?.every(
-        ({ proposal }) => !!proposal.rankOrder
+        ({ proposal }) => !!proposal.sepMeetingDecision?.submitted
       );
 
       if (allProposalsOnInstrumentHaveRankings) {
@@ -86,7 +86,8 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
           instrumentId: instrumentToSubmit.id,
           sepId: sepId,
         });
-        const isError = submitInstrument.error || !submitInstrument.isSuccess;
+        const isError =
+          submitInstrument.rejection || !submitInstrument.isSuccess;
         if (!isError) {
           const newInstrumentsData = instrumentsData.map((instrument) => {
             if (instrument.id === instrumentToSubmit.id) {
@@ -98,7 +99,7 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
           setInstrumentsData(newInstrumentsData);
         }
       } else {
-        enqueueSnackbar('All proposals must have rankings', {
+        enqueueSnackbar('All proposal SEP meetings should be submitted', {
           variant: 'error',
           className: 'snackbar-error',
         });
@@ -131,10 +132,10 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
             },
             {
               title: 'Submit instrument',
-              description: 'Are you sure you want to submit the instrument?',
+              description:
+                'No further changes to sep meeting decisions and rankings are possible after submission. Are you sure you want to submit the instrument?',
             }
           )(),
-        // setInstrumentToSubmit(rowData as InstrumentWithAvailabilityTime);
         tooltip: 'Submit instrument',
       })
     );

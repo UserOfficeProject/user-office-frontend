@@ -3,9 +3,12 @@ mutation cloneSample($sampleId: Int!) {
     sample {
       ...sample
       questionary {
+        isCompleted
         ...questionary
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

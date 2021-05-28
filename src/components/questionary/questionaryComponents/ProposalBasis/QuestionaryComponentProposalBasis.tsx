@@ -1,8 +1,9 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { ErrorMessage, Field } from 'formik';
+import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { ChangeEvent, useContext, useState } from 'react';
 
+import ErrorMessage from 'components/common/ErrorMessage';
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalContextType } from 'components/proposal/ProposalContainer';
@@ -12,7 +13,7 @@ import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import { Answer, BasicUserDetails } from 'generated/sdk';
+import { BasicUserDetails } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { EventType } from 'models/QuestionarySubmissionState';
@@ -27,16 +28,12 @@ const useStyles = makeStyles((theme) => ({
   container: {
     margin: theme.spacing(1, 0),
   },
-  error: {
-    color: theme.palette.error.main,
-    marginRight: '10px',
-  },
 }));
 
 function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   const {
     answer: {
-      question: { proposalQuestionId },
+      question: { id },
     },
     formikProps,
   } = props;
@@ -59,7 +56,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
     <div>
       <div className={classes.container}>
         <Field
-          name={`${proposalQuestionId}.title`}
+          name={`${id}.title`}
           label="Title"
           inputProps={{
             onChange: (event: ChangeEvent<HTMLInputElement>) =>
@@ -82,7 +79,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
       </div>
       <div className={classes.container}>
         <Field
-          name={`${proposalQuestionId}.abstract`}
+          name={`${id}.abstract`}
           label="Abstract"
           inputProps={{
             onChange: (event: ChangeEvent<HTMLInputElement>) =>
@@ -108,7 +105,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
       </div>
       <ProposalParticipant
         userChanged={(user: BasicUserDetails) => {
-          formikProps.setFieldValue(`${proposalQuestionId}.proposer`, user.id);
+          formikProps.setFieldValue(`${id}.proposer`, user.id);
           dispatch({
             type: EventType.PROPOSAL_MODIFIED,
             payload: { proposal: { ...state.proposal, proposer: user } },
@@ -121,7 +118,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
         className={classes.container}
         setUsers={(users: BasicUserDetails[]) => {
           formikProps.setFieldValue(
-            `${proposalQuestionId}.users`,
+            `${id}.users`,
             users.map((user) => user.id)
           );
           dispatch({
@@ -133,17 +130,15 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
         // https://github.com/mbrn/material-table/issues/666
         users={JSON.parse(JSON.stringify(users))}
       />
-      <ErrorMessage
-        name={`${proposalQuestionId}.users`}
-        className={classes.error}
-        component="span"
-      />
+      <ErrorMessage name={`${id}.users`} />
     </div>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const proposalBasisPreSubmit = (answer: Answer) => async ({
+export const PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR =
+  'PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR';
+
+const proposalBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,
@@ -169,6 +164,8 @@ const proposalBasisPreSubmit = (answer: Answer) => async ({
           proposal: { ...proposal, ...result.updateProposal.proposal },
         },
       });
+    } else if (result.updateProposal.rejection) {
+      throw PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR;
     }
   } else {
     const createResult = await api.createProposal({
@@ -194,6 +191,8 @@ const proposalBasisPreSubmit = (answer: Answer) => async ({
         },
       });
       returnValue = createResult.createProposal.proposal.questionaryId;
+    } else if (createResult.createProposal.rejection) {
+      throw PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR;
     }
   }
 

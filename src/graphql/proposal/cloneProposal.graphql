@@ -40,8 +40,11 @@ mutation cloneProposal($proposalToCloneId: Int!, $callId: Int!) {
       call {
         id
         shortCode
+        isActive
       }
     }
-    error
+    rejection {
+      ...rejection
+    }
   }
 }

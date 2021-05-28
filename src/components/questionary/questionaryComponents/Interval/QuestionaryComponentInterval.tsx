@@ -35,11 +35,11 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
     formikProps: { errors, touched },
   } = props;
   const {
-    question: { proposalQuestionId, question },
+    question: { id, question },
   } = answer;
   const config = answer.config as IntervalConfig;
-  const fieldError = getIn(errors, proposalQuestionId);
-  const isError = getIn(touched, proposalQuestionId) && !!fieldError;
+  const fieldError = getIn(errors, id);
+  const isError = getIn(touched, id) && !!fieldError;
   const [stateValue, setStateValue] = useState<{
     min: AcceptableUserInput;
     max: AcceptableUserInput;
@@ -48,9 +48,9 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
 
   const classes = useStyles();
 
-  const minFieldId = `${proposalQuestionId}.min`;
-  const maxFieldId = `${proposalQuestionId}.max`;
-  const unitFieldId = `${proposalQuestionId}.unit`;
+  const minFieldId = `${id}.min`;
+  const maxFieldId = `${id}.max`;
+  const unitFieldId = `${id}.unit`;
 
   const getNumberOrDefault = (
     input: string,
@@ -115,7 +115,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
             </>
           </FormLabel>
         </Grid>
-        <Grid item xs={2} className={classes.unitField}>
+        <Grid item xs={3} className={classes.unitField}>
           <TextField
             label="Min"
             onChange={(e) =>
@@ -135,7 +135,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           />
         </Grid>
 
-        <Grid item xs={2} className={classes.unitField}>
+        <Grid item xs={3} className={classes.unitField}>
           <TextField
             label="Max"
             onChange={(e) =>
@@ -154,17 +154,17 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
             error={isError}
           />
         </Grid>
-        <Grid item xs={8} className={classes.unitField}>
+        <Grid item xs={6} className={classes.unitField}>
           {getUnits()}
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           {isError && <FormHelperText>{fieldError.min}</FormHelperText>}
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           {isError && <FormHelperText>{fieldError.max}</FormHelperText>}
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={6}>
           {isError && <FormHelperText>{fieldError.unit}</FormHelperText>}
         </Grid>
       </Grid>

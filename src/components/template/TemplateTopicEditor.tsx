@@ -36,8 +36,8 @@ import TemplateQuestionEditor, {
 class TemplateTopicEditor implements TemplateTopicEditorData {
   constructor(public source: QuestionTemplateRelation) {}
 
-  get proposalQuestionId() {
-    return this.source.question.proposalQuestionId;
+  get id() {
+    return this.source.question.id;
   }
   get question() {
     return this.source.question.question;
@@ -72,14 +72,16 @@ export default function QuestionaryEditorTopic(props: {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
-  const classes = makeStyles((theme) => ({
+  const classes = makeStyles({
+    // TODO move out styles
     container: {
       alignItems: 'flex-start',
       alignContent: 'flex-start',
       background: '#FFF',
       flexBasis: '100%',
+      height: '100%',
     },
-    appbar: {
+    appBar: {
       background: 'transparent',
       boxShadow: 'none',
       paddingRight: 0,
@@ -97,6 +99,7 @@ export default function QuestionaryEditorTopic(props: {
     },
     itemContainer: {
       minHeight: '180px',
+      height: 'calc(100% - 36px)',
       padding: '1px',
     },
     topic: {
@@ -125,7 +128,7 @@ export default function QuestionaryEditorTopic(props: {
       borderWidth: '1px',
       borderStyle: 'dashed',
     },
-  }))();
+  })();
 
   const { data, dispatch, index } = props;
   const [title, setTitle] = useState<string>(data.topic.title);
@@ -158,7 +161,11 @@ export default function QuestionaryEditorTopic(props: {
         setIsEditMode(false);
         dispatch({
           type: EventType.UPDATE_TOPIC_TITLE_REQUESTED,
-          payload: { topicId: data.topic.id, title: title },
+          payload: {
+            topicId: data.topic.id,
+            title: title,
+            sortOrder: data.topic.sortOrder,
+          },
         });
       }}
       onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -186,17 +193,15 @@ export default function QuestionaryEditorTopic(props: {
         <TemplateQuestionEditor
           index={index}
           data={new TemplateTopicEditor(item)}
-          isHighlighted={
-            props.hoveredDependency === item.question.proposalQuestionId
-          }
+          isHighlighted={props.hoveredDependency === item.question.id}
           dispatch={dispatch}
           onClick={(item) =>
             dispatch({
               type: EventType.OPEN_QUESTIONREL_EDITOR,
-              payload: { questionId: item.proposalQuestionId },
+              payload: { questionId: item.id },
             })
           }
-          key={item.question.proposalQuestionId.toString()}
+          key={item.question.id.toString()}
         />
       ));
     }
@@ -220,7 +225,7 @@ export default function QuestionaryEditorTopic(props: {
           style={getItemStyle(provided.draggableProps.style)}
           {...provided.dragHandleProps}
         >
-          <AppBar position="static" className={classes.appbar}>
+          <AppBar position="static" className={classes.appBar}>
             <Toolbar className={classes.toolbar}>
               <Grid item xs={10} className={classes.topic}>
                 {titleJsx}

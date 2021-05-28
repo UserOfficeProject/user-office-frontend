@@ -8,11 +8,13 @@ import dateformat from 'dateformat';
 import MaterialTable, { Options } from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
+import ProposalReviewContent from 'components/review/ProposalReviewContent';
+import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import {
   SepAssignment,
-  ReviewStatus,
   UserRole,
   ReviewWithNextProposalStatus,
   ProposalStatus,
@@ -24,10 +26,9 @@ import {
   SEPProposalAssignmentType,
 } from 'hooks/SEP/useSEPProposalsData';
 import { tableIcons } from 'utils/materialIcons';
-import { average } from 'utils/mathFunctions';
+import { average, standardDeviation } from 'utils/mathFunctions';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import SEPProposalViewModal from '../MeetingComponents/ProposalViewModal/SEPProposalViewModal';
 import AssignSEPMemberToProposal, {
   SepAssignedMember,
 } from './AssignSEPMemberToProposal';
@@ -47,6 +48,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   selectedCallId,
   Toolbar,
 }) => {
+  const [urlQueryParams, setUrlQueryParams] = useQueryParams({
+    reviewModal: NumberParam,
+  });
   const {
     loadingSEPProposals,
     SEPProposalsData,
@@ -54,7 +58,6 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   } = useSEPProposalsData(sepId, selectedCallId);
   const { api } = useDataApiWithFeedback();
   const [proposalId, setProposalId] = useState<null | number>(null);
-  const [openProposalId, setOpenProposalId] = useState<number | null>(null);
   const downloadPDFProposal = useDownloadPDFProposal();
 
   const hasRightToAssignReviewers = useCheckAccess([
@@ -67,11 +70,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   ]);
 
   const getGradesFromAssignments = (assignments: SEPProposalAssignmentType[]) =>
-    assignments
-      ?.filter(
-        (assignment) => assignment.review?.status === ReviewStatus.SUBMITTED
-      )
-      .map((assignment) => assignment.review?.grade) ?? [];
+    assignments?.map((assignment) => assignment.review?.grade) ?? [];
 
   const SEPProposalColumns = [
     { title: 'ID', field: 'proposal.shortCode' },
@@ -91,8 +90,8 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     },
     {
       title: 'Reviewers',
-      render: (rowData: SEPProposalType): string =>
-        rowData.assignments ? rowData.assignments.length.toString() : '-',
+      field: 'assignments.length',
+      emptyValue: '-',
     },
     {
       title: 'Average grade',
@@ -103,6 +102,29 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
 
         return isNaN(avgGrade) ? '-' : `${avgGrade}`;
       },
+      customSort: (a: SEPProposalType, b: SEPProposalType) =>
+        (average(getGradesFromAssignments(a.assignments ?? []) as number[]) ||
+          0) -
+        (average(getGradesFromAssignments(b.assignments ?? []) as number[]) ||
+          0),
+    },
+    {
+      title: 'Deviation',
+      field: 'deviation',
+      render: (rowData: SEPProposalType): string => {
+        const stdDeviation = standardDeviation(
+          getGradesFromAssignments(rowData.assignments ?? []) as number[]
+        );
+
+        return isNaN(stdDeviation) ? '-' : `${stdDeviation}`;
+      },
+      customSort: (a: SEPProposalType, b: SEPProposalType) =>
+        (standardDeviation(
+          getGradesFromAssignments(a.assignments ?? []) as number[]
+        ) || 0) -
+        (standardDeviation(
+          getGradesFromAssignments(b.assignments ?? []) as number[]
+        ) || 0),
     },
   ];
 
@@ -173,14 +195,14 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     }
 
     const {
-      assignSepReviewersToProposal: { error },
+      assignSepReviewersToProposal: { rejection },
     } = await api('Members assigned').assignSepReviewersToProposal({
       memberIds: assignedMembers.map(({ id }) => id),
       proposalId: proposalId,
       sepId,
     });
 
-    if (error) {
+    if (rejection) {
       return;
     }
 
@@ -286,13 +308,18 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
 
   return (
     <React.Fragment>
-      <SEPProposalViewModal
-        proposalViewModalOpen={!!openProposalId}
-        setProposalViewModalOpen={() => {
-          setOpenProposalId(null);
+      <ProposalReviewModal
+        title="SEP - Proposal View"
+        proposalReviewModalOpen={!!urlQueryParams.reviewModal}
+        setProposalReviewModalOpen={() => {
+          setUrlQueryParams({ reviewModal: undefined });
         }}
-        proposalId={openProposalId || 0}
-      />
+      >
+        <ProposalReviewContent
+          proposalId={urlQueryParams.reviewModal}
+          tabNames={['Proposal information', 'Technical review']}
+        />
+      </ProposalReviewModal>
       <Dialog
         maxWidth="sm"
         fullWidth
@@ -345,8 +372,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                     }),
                     (rowData) => ({
                       icon: ViewIcon,
-                      onClick: () => setOpenProposalId(rowData.proposalId),
-                      tooltip: ' View Proposal',
+                      onClick: () =>
+                        setUrlQueryParams({ reviewModal: rowData.proposalId }),
+                      tooltip: 'View Proposal',
                     }),
                     {
                       icon: GetAppIconComponent,

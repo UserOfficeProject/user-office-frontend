@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Container } from '@material-ui/core';
 import { default as React, useEffect } from 'react';
 
 import Questionary from 'components/questionary/Questionary';
@@ -22,7 +21,7 @@ import {
   QuestionarySubmissionState,
   WizardStep,
 } from 'models/QuestionarySubmissionState';
-import { StyledPaper } from 'styles/StyledComponents';
+import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
@@ -76,8 +75,20 @@ const proposalReducer = (
   return draftState;
 };
 
-const isProposalSubmitted = (proposal: { submitted: boolean }) =>
+const isProposalSubmitted = (proposal: Pick<Proposal, 'submitted'>) =>
   proposal.submitted;
+
+function isReadOnly(proposal: ProposalSubsetSubmission) {
+  if (
+    proposal.status != null &&
+    (proposal.status.shortCode.toString() === 'DRAFT' ||
+      proposal.status.shortCode.toString() === 'EDITABLE_SUBMITTED')
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 const createQuestionaryWizardStep = (
   step: QuestionaryStep,
@@ -92,9 +103,7 @@ const createQuestionaryWizardStep = (
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
-      isReadonly:
-        isProposalSubmitted(proposalState.proposal) ||
-        (index > 0 && state.steps[index - 1].isCompleted === false),
+      isReadonly: isReadOnly(proposalState.proposal),
     };
   },
 });
@@ -109,8 +118,8 @@ const createReviewWizardStep = (): WizardStep => ({
       title: 'Review',
       isCompleted: isProposalSubmitted(proposalState.proposal),
       isReadonly:
-        isProposalSubmitted(proposalState.proposal) ||
-        lastProposalStep.isCompleted === false,
+        isReadOnly(proposalState.proposal) &&
+        lastProposalStep.isCompleted === true,
     };
   },
 });
@@ -147,7 +156,7 @@ export default function ProposalContainer(props: {
           />
         );
       case 'ProposalReview':
-        return <ProposalSummary data={state} readonly={false} />;
+        return <ProposalSummary data={state} readonly={isReadonly} />;
 
       default:
         throw new Error(`Unknown step type ${metadata.type}`);
@@ -250,7 +259,7 @@ export default function ProposalContainer(props: {
 
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
-      <Container maxWidth="lg">
+      <ContentContainer maxWidth="md">
         <StyledPaper>
           <Questionary
             title={state.proposal.title || 'New Proposal'}
@@ -263,7 +272,7 @@ export default function ProposalContainer(props: {
             displayElementFactory={displayElementFactory}
           />
         </StyledPaper>
-      </Container>
+      </ContentContainer>
     </QuestionaryContext.Provider>
   );
 }

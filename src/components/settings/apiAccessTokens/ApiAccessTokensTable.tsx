@@ -30,7 +30,10 @@ const ApiAccessTokensTable: React.FC = () => {
 
   const createModal = (
     onUpdate: FunctionType<void, [PermissionsWithAccessToken | null]>,
-    onCreate: FunctionType<void, [PermissionsWithAccessToken | null]>,
+    onCreate: (
+      token: PermissionsWithAccessToken | null,
+      shouldCloseAfterCreation?: boolean
+    ) => void,
     editApiAccessToken: PermissionsWithAccessToken | null
   ) => (
     <CreateUpdateApiAccessToken
@@ -38,7 +41,7 @@ const ApiAccessTokensTable: React.FC = () => {
       close={(apiAccessToken: PermissionsWithAccessToken | null) =>
         !!editApiAccessToken
           ? onUpdate(apiAccessToken)
-          : onCreate(apiAccessToken)
+          : onCreate(apiAccessToken, false)
       }
     />
   );
@@ -49,7 +52,7 @@ const ApiAccessTokensTable: React.FC = () => {
         accessTokenId: id as string,
       })
       .then((resp) => {
-        if (resp.deleteApiAccessToken.error) {
+        if (resp.deleteApiAccessToken.rejection) {
           return false;
         } else {
           return true;

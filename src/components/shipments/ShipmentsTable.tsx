@@ -14,6 +14,7 @@ import { useDownloadPDFShipmentLabel } from 'hooks/proposal/useDownloadPDFShipme
 import { useShipments } from 'hooks/shipment/useShipments';
 import { ShipmentBasic } from 'models/ShipmentSubmissionState';
 import { tableIcons } from 'utils/materialIcons';
+import { tableLocalization } from 'utils/materialLocalization';
 import { timeAgo } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -21,7 +22,11 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import CreateUpdateShipment from './CreateUpdateShipment';
 
 const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
-  const { loadingShipments, shipments, setShipments } = useShipments();
+  const {
+    loadingShipments,
+    shipments,
+    setShipmentsWithLoading: setShipments,
+  } = useShipments();
   const downloadShipmentLabel = useDownloadPDFShipmentLabel();
   const [
     urlQueryParams,
@@ -34,6 +39,10 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   }
 
   const columns = [
+    {
+      title: 'Proposal ID',
+      field: 'proposal.shortCode',
+    },
     { title: 'Title', field: 'title' },
     { title: 'Status', field: 'status' },
     {
@@ -51,7 +60,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
             shipmentId: shipmentToDelete.id,
           })
           .then((data) => {
-            if (!data.deleteShipment.error) {
+            if (!data.deleteShipment.rejection) {
               setShipments(
                 shipments.filter(
                   (shipment) => shipment.id !== shipmentToDelete.id
@@ -74,9 +83,17 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   ) => (
     <CreateUpdateShipment
       shipment={editShipment}
-      close={(shipment: ShipmentBasic | null) =>
-        !!editShipment ? onUpdate(shipment) : onCreate(shipment)
-      }
+      close={async () => {
+        /**
+         * NOTE: Hacky workaround but for now this is the only working solution to get the records in the table updated
+         * after creation or update because state is really messy and is not updated properly inside ShipmentsContainer.
+         */
+        const result = await api().getShipments();
+
+        if (result.shipments) {
+          setShipments(result.shipments);
+        }
+      }}
     />
   );
 
@@ -87,6 +104,7 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
         createModal={createModal}
         hasAccess={{ update: true, create: true, remove: true }}
         icons={tableIcons}
+        localization={tableLocalization}
         title="Shipments"
         columns={columns}
         isLoading={loadingShipments}

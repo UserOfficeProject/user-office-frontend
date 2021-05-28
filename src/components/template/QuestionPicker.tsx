@@ -9,6 +9,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from '@material-ui/icons/Close';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -36,8 +37,8 @@ import TemplateQuestionEditor, {
 class QuestionItemAdapter implements TemplateTopicEditorData {
   constructor(public source: Question) {}
 
-  get proposalQuestionId() {
-    return this.source.proposalQuestionId;
+  get id() {
+    return this.source.id;
   }
   get question() {
     return this.source.question;
@@ -67,6 +68,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | SVGSVGElement>(null);
   const open = Boolean(anchorEl);
   const { dispatch, template, closeMe } = props;
+  const isExtraLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
 
   const classes = makeStyles(() => ({
     container: {
@@ -76,6 +78,9 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
       marginRight: '10px',
       backgroundColor: theme.palette.grey[200],
       boxShadow: '5px 7px 9px -5px rgba(0,0,0,0.29)',
+      position: 'sticky',
+      top: 0,
+      borderLeft: `2px solid ${theme.palette.grey[200]}`,
     },
     appbar: {
       background: 'transparent',
@@ -93,7 +98,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
     },
     itemContainer: {
       minHeight: '180px',
-      maxHeight: '600px',
+      maxHeight: isExtraLargeScreen ? '1240px' : '660px',
       overflowY: 'auto',
       overflowX: 'hidden',
     },
@@ -126,7 +131,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
               type: EventType.CREATE_QUESTION_REL_REQUESTED,
               payload: {
                 topicId: props.topic.id,
-                questionId: item.proposalQuestionId,
+                questionId: item.id,
                 sortOrder: 0,
                 templateId: template.templateId,
               },
@@ -138,7 +143,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
             });
           }
         }}
-        key={question.proposalQuestionId.toString()}
+        key={question.id.toString()}
       />
     ));
   };
@@ -222,7 +227,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
             xs={12}
             ref={provided.innerRef}
             style={getListStyle(snapshot.isDraggingOver)}
-            className={`${classes.itemContainer} questionItemsWrapper`}
+            className={`${classes.itemContainer} tinyScroll`}
           >
             {getItems()}
             {provided.placeholder}

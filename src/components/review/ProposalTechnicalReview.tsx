@@ -1,16 +1,19 @@
 import { proposalTechnicalReviewValidationSchema } from '@esss-swap/duo-validation/lib/Review';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
+import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
+import { UserContext } from 'context/UserContextProvider';
 import {
   TechnicalReviewStatus,
   CoreTechnicalReviewFragment,
@@ -51,6 +54,7 @@ const ProposalTechnicalReview = ({
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const classes = useStyles();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
+  const { user } = useContext(UserContext);
 
   const initialValues: TechnicalReviewFormType = {
     status: data?.status || '',
@@ -90,6 +94,7 @@ const ProposalTechnicalReview = ({
       publicComment: values.publicComment,
       status: TechnicalReviewStatus[values.status as TechnicalReviewStatus],
       submitted: shouldSubmit,
+      reviewerId: user.id,
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,11 +142,11 @@ const ProposalTechnicalReview = ({
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form>
             <PromptIfDirty />
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
+            <Grid container spacing={2}>
+              <Grid item sm={6} xs={12}>
                 <FormikDropdown
                   name="status"
                   label="Status"
@@ -163,7 +168,7 @@ const ProposalTechnicalReview = ({
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item sm={6} xs={12}>
                 <Field
                   name="timeAllocation"
                   label="Time Allocation(Days)"
@@ -178,73 +183,105 @@ const ProposalTechnicalReview = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
-                  name="comment"
-                  label="Internal comment"
-                  type="text"
-                  component={TextField}
-                  margin="normal"
-                  fullWidth
-                  autoComplete="off"
-                  data-cy="comment"
-                  multiline
-                  rowsMax="16"
-                  rows="4"
+                <InputLabel htmlFor="comment" shrink margin="dense">
+                  Internal comment
+                </InputLabel>
+                {/* NOTE: We are using Editor directly instead of FormikUICustomEditor with Formik Field component.
+                    This is because FormikUICustomEditor is not updated properly when we set form field onEditorChange.
+                    It works when we use onBlur on Editor but it is problematic to test that with Cypress,
+                    because for some reason it is not firing the onBlur event and form is not updated.
+                */}
+                <Editor
+                  id="comment"
+                  initialValue={initialValues.comment}
+                  init={{
+                    skin: false,
+                    content_css: false,
+                    plugins: [
+                      'link',
+                      'preview',
+                      'code',
+                      'charmap',
+                      'wordcount',
+                    ],
+                    toolbar: 'bold italic',
+                    branding: false,
+                  }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('comment', content)
+                  }
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
               <Grid item xs={12}>
-                <Field
-                  name="publicComment"
-                  label="Public comment"
-                  type="text"
-                  component={TextField}
-                  margin="normal"
-                  fullWidth
-                  autoComplete="off"
-                  data-cy="publicComment"
-                  multiline
-                  rowsMax="16"
-                  rows="4"
+                <InputLabel htmlFor="publicComment" shrink margin="dense">
+                  Comments for the review panel
+                </InputLabel>
+                <Editor
+                  id="publicComment"
+                  initialValue={initialValues.publicComment}
+                  init={{
+                    skin: false,
+                    content_css: false,
+                    plugins: [
+                      'link',
+                      'preview',
+                      'code',
+                      'charmap',
+                      'wordcount',
+                    ],
+                    toolbar: 'bold italic',
+                    branding: false,
+                  }}
+                  onEditorChange={(content: string) =>
+                    setFieldValue('publicComment', content)
+                  }
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
+
+              <Grid item xs={12}>
+                <ButtonContainer>
+                  {isUserOfficer && (
+                    <Field
+                      id="submitted"
+                      name="submitted"
+                      component={FormikUICustomCheckbox}
+                      label="Submitted"
+                      color="primary"
+                      disabled={isSubmitting}
+                      data-cy="is-review-submitted"
+                    />
+                  )}
+                  <Button
+                    disabled={
+                      shouldDisableForm(isSubmitting) ||
+                      (isUserOfficer && isSubmitting)
+                    }
+                    type="submit"
+                    onClick={() => setShouldSubmit(false)}
+                    variant="contained"
+                    color={isUserOfficer ? 'primary' : 'secondary'}
+                    data-cy="save-technical-review"
+                  >
+                    Save
+                  </Button>
+                  {!isUserOfficer && (
+                    <Button
+                      disabled={isSubmitting || data?.submitted}
+                      type="submit"
+                      className={classes.submitButton}
+                      onClick={() => setShouldSubmit(true)}
+                      variant="contained"
+                      color="primary"
+                      data-cy="submit-technical-review"
+                    >
+                      {data?.submitted ? 'Submitted' : 'Submit'}
+                    </Button>
+                  )}
+                </ButtonContainer>
+              </Grid>
             </Grid>
-            <ButtonContainer>
-              {isUserOfficer && (
-                <Field
-                  id="submitted"
-                  name="submitted"
-                  component={FormikUICustomCheckbox}
-                  label="Submitted"
-                  color="primary"
-                  data-cy="is-review-submitted"
-                />
-              )}
-              <Button
-                disabled={shouldDisableForm(isSubmitting)}
-                type="submit"
-                onClick={() => setShouldSubmit(false)}
-                variant="contained"
-                color={isUserOfficer ? 'primary' : 'secondary'}
-                data-cy="update-technical-review"
-              >
-                Update
-              </Button>
-              {!isUserOfficer && (
-                <Button
-                  disabled={isSubmitting || data?.submitted}
-                  type="submit"
-                  className={classes.submitButton}
-                  onClick={() => setShouldSubmit(true)}
-                  variant="contained"
-                  color="primary"
-                  data-cy="submit-technical-review"
-                >
-                  {data?.submitted ? 'Submitted' : 'Submit'}
-                </Button>
-              )}
-            </ButtonContainer>
           </Form>
         )}
       </Formik>

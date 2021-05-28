@@ -1,15 +1,17 @@
-import React, { FC, FunctionComponent } from 'react';
+/* eslint-disable @typescript-eslint/ban-types */
+import { FormikProps } from 'formik';
+import React, { FC } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
 import {
   Answer,
   DataType,
-  Question,
   QuestionTemplateRelation,
+  Sdk,
   Template,
 } from 'generated/sdk';
-import { Event } from 'models/QuestionaryEditorModel';
+import { Question } from 'models/Question';
 import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
 
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
@@ -26,35 +28,50 @@ import { sampleDeclarationDefinition } from './questionaryComponents/SampleDecla
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 
-export interface FormProps<ValueObjectType> {
-  field: ValueObjectType;
+export type FormChildren<ValueObjectType> = (
+  formikProps: FormikProps<ValueObjectType>
+) => React.ReactNode;
+
+export interface QuestionFormProps {
+  question: Question;
+  closeMe?: () => unknown;
+  onUpdated?: (question: Question) => unknown;
+  onDeleted?: (question: Question) => unknown;
+  children?: FormChildren<Question>;
+}
+export interface QuestionTemplateRelationFormProps {
+  questionRel: QuestionTemplateRelation;
   template: Template;
-  dispatch: React.Dispatch<Event>;
-  closeMe: () => void;
+  closeMe?: () => unknown;
+  onUpdated?: (template: Template) => unknown;
+  onDeleted?: (template: Template) => unknown;
+  onOpenQuestionClicked?: (question: Question) => unknown;
+  children?: FormChildren<QuestionTemplateRelation>;
 }
 
-export type FormComponent<ValueObjectType> = FunctionComponent<
-  FormProps<ValueObjectType>
->;
-
+export type QuestionRenderer = React.FunctionComponent<Question>;
+export type AnswerRenderer = React.FunctionComponent<Answer>;
 export interface Renderers {
-  readonly questionRenderer: (props: {
-    question: Question;
-  }) => JSX.Element | null;
-  readonly answerRenderer: (props: { answer: Answer }) => JSX.Element | null;
+  readonly questionRenderer: QuestionRenderer;
+  readonly answerRenderer: AnswerRenderer;
 }
 
 export interface QuestionaryComponentDefinition {
   readonly dataType: DataType;
   readonly name: string;
-  readonly questionTemplateRelationForm: () => FormComponent<QuestionTemplateRelation>;
-  readonly questionForm: () => FormComponent<Question>;
+  readonly questionTemplateRelationForm: () => FC<QuestionTemplateRelationFormProps>;
+  readonly questionForm: () => FC<QuestionFormProps>;
   readonly questionaryComponent: (
     props: BasicComponentProps
   ) => JSX.Element | null;
   readonly renderers?: Renderers;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly createYupValidationSchema: ((field: Answer) => object) | null;
+  readonly createYupValidationSchema:
+    | ((
+        field: Answer,
+        state: QuestionarySubmissionState,
+        api?: () => Sdk
+      ) => object)
+    | null;
   readonly getYupInitialValue: (props: {
     answer: Answer;
     state: QuestionarySubmissionState;
@@ -101,18 +118,16 @@ export function getQuestionaryComponentDefinition(id: DataType) {
 export const getQuestionaryComponentDefinitions = () => registry;
 
 export function createQuestionTemplateRelationForm(
-  props: FormProps<QuestionTemplateRelation>
+  props: QuestionTemplateRelationFormProps
 ): JSX.Element {
-  const dataType = props.field.question.dataType;
+  const dataType = props.questionRel.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 
   return React.createElement(definition.questionTemplateRelationForm(), props);
 }
 
-export function createQuestionTemplateForm(
-  props: FormProps<Question>
-): JSX.Element {
-  const dataType = props.field.dataType;
+export function createQuestionForm(props: QuestionFormProps): JSX.Element {
+  const dataType = props.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 
   return React.createElement(definition.questionForm(), props);
@@ -130,3 +145,11 @@ export function createQuestionaryComponent(
 export const getTemplateFieldIcon = (dataType: DataType) => {
   return getQuestionaryComponentDefinition(dataType).icon;
 };
+
+export const creatableQuestions = registry.filter(
+  (def) => def.creatable === true
+);
+
+export const nonCreatableQuestions = registry.filter(
+  (def) => def.creatable === false
+);

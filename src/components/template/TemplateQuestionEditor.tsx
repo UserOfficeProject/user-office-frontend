@@ -9,6 +9,7 @@ import {
   NotDraggingStyle,
 } from 'react-beautiful-dnd';
 
+import defaultRenderer from 'components/questionary/DefaultQuestionRenderer';
 import {
   getQuestionaryComponentDefinition,
   getTemplateFieldIcon,
@@ -160,8 +161,8 @@ export default function TemplateQuestionEditor(props: {
 
   return (
     <Draggable
-      key={props.data.proposalQuestionId}
-      draggableId={props.data.proposalQuestionId}
+      key={props.data.id}
+      draggableId={props.data.id}
       index={props.index}
       isDragDisabled={questionDefinition.creatable === false}
     >
@@ -198,10 +199,8 @@ export default function TemplateQuestionEditor(props: {
 
           <Grid item xs={10} className={classes.question}>
             {questionDefinition.renderers
-              ? questionDefinition.renderers.questionRenderer({
-                  question: props.data,
-                })
-              : props.data.question}
+              ? questionDefinition.renderers.questionRenderer(props.data)
+              : defaultRenderer.questionRenderer}
           </Grid>
 
           <Grid item xs={12} className={classes.dependencies}>
@@ -214,7 +213,7 @@ export default function TemplateQuestionEditor(props: {
 }
 
 export interface TemplateTopicEditorData {
-  proposalQuestionId: string;
+  id: string;
   question: string;
   naturalKey: string;
   dataType: DataType;

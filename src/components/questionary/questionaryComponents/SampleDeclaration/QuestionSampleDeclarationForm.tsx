@@ -4,26 +4,24 @@ import Link from '@material-ui/core/Link';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Field } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
-import React from 'react';
+import React, { FC } from 'react';
 import * as Yup from 'yup';
 
 import TitledContainer from 'components/common/TitledContainer';
-import { FormComponent } from 'components/questionary/QuestionaryComponentRegistry';
-import { Question, TemplateCategoryId } from 'generated/sdk';
+import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
+import { TemplateCategoryId } from 'generated/sdk';
 import { useTemplates } from 'hooks/template/useTemplates';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
-export const QuestionSampleDeclarationForm: FormComponent<Question> = (
-  props
-) => {
-  const field = props.field;
+export const QuestionSampleDeclarationForm: FC<QuestionFormProps> = (props) => {
+  const field = props.question;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
-  const { templates } = useTemplates(
-    false,
-    TemplateCategoryId.SAMPLE_DECLARATION
-  );
+  const { templates } = useTemplates({
+    isArchived: false,
+    category: TemplateCategoryId.SAMPLE_DECLARATION,
+  });
 
   if (!templates) {
     return null;
@@ -31,9 +29,7 @@ export const QuestionSampleDeclarationForm: FormComponent<Question> = (
 
   return (
     <QuestionFormShell
-      closeMe={props.closeMe}
-      dispatch={props.dispatch}
-      question={props.field}
+      {...props}
       validationSchema={Yup.object().shape({
         naturalKey: naturalKeySchema,
         question: Yup.string().required('Question is required'),

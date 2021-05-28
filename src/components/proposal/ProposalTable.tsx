@@ -15,6 +15,7 @@ import { Call } from 'generated/sdk';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { getProposalStatus } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
+import { tableLocalization } from 'utils/materialLocalization';
 import { timeAgo } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -69,7 +70,8 @@ const ProposalTable = ({
     { title: 'Status', field: 'publicStatus' },
     {
       title: 'Call',
-      render: (rowData: PartialProposalsDataType) => rowData.call?.shortCode,
+      field: 'call.shortCode',
+      emptyValue: '-',
     },
     { title: 'Created', field: 'created' },
   ];
@@ -94,7 +96,11 @@ const ProposalTable = ({
 
     const resultProposal = result.cloneProposal.proposal;
 
-    if (!result.cloneProposal.error && partialProposalsData && resultProposal) {
+    if (
+      !result.cloneProposal.rejection &&
+      partialProposalsData &&
+      resultProposal
+    ) {
       const newClonedProposal = {
         id: resultProposal.id,
         title: resultProposal.title,
@@ -115,7 +121,7 @@ const ProposalTable = ({
   };
 
   return (
-    <>
+    <div data-cy="proposal-table">
       <Dialog
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -131,6 +137,7 @@ const ProposalTable = ({
       </Dialog>
       <MaterialTable
         icons={tableIcons}
+        localization={tableLocalization}
         title={title}
         columns={columns}
         data={partialProposalsData as PartialProposalsDataType[]}
@@ -141,9 +148,12 @@ const ProposalTable = ({
         }}
         actions={[
           (rowData) => {
+            const isCallActive = rowData.call?.isActive ?? true;
+            const readOnly = !isCallActive || rowData.submitted;
+
             return {
-              icon: rowData.submitted ? () => <Visibility /> : () => <Edit />,
-              tooltip: rowData.submitted ? 'View proposal' : 'Edit proposal',
+              icon: readOnly ? () => <Visibility /> : () => <Edit />,
+              tooltip: readOnly ? 'View proposal' : 'Edit proposal',
               onClick: (event, rowData) =>
                 setEditProposalID((rowData as PartialProposalsDataType).id),
             };
@@ -205,7 +215,7 @@ const ProposalTable = ({
           },
         ]}
       />
-    </>
+    </div>
   );
 };
 
