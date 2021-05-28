@@ -23,8 +23,8 @@ export const dateDefinition: QuestionaryComponentDefinition = {
   creatable: true,
   icon: <TodayIcon />,
   renderers: {
-    answerRenderer: DateAnswerRenderer,
     questionRenderer: defaultRenderer.questionRenderer,
+    answerRenderer: DateAnswerRenderer,
   },
   createYupValidationSchema: createDateValidationSchema,
   getYupInitialValue: ({ answer }) => answer.value,
