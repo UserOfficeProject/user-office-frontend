@@ -28,7 +28,7 @@ function Questionary({
   handleReset,
   displayElementFactory,
 }: QuestionaryProps) {
-  const isTabletOrMobile = useMediaQuery('(max-width: 500px)');
+  const isMobile = useMediaQuery('(max-width: 500px)');
 
   const useStyles = makeStyles((theme) => ({
     stepper: {
@@ -53,7 +53,7 @@ function Questionary({
     },
     root: {
       width: '100%',
-      minWidth: isTabletOrMobile ? 'inherit' : '500px', // Giving some minimum width for questionaries with short entries
+      minWidth: isMobile ? 'inherit' : '500px', // Giving some minimum width for questionaries with short entries
     },
   }));
 

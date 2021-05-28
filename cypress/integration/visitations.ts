@@ -104,7 +104,6 @@ context('visitations tests', () => {
     cy.contains(proposalTitle)
       .parent()
       .get("[title='Delete visitation']")
-      .first()
       .click();
 
     cy.contains('OK').click();

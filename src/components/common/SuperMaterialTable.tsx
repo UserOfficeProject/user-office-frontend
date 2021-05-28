@@ -127,8 +127,9 @@ export function SuperMaterialTable<Entry extends EntryID>({
         objectItem.id === objectUpdated.id ? objectUpdated : objectItem
       );
       setData(newObjectsArray);
+      setEditObject(null);
     }
-    setEditObject(null);
+
     if (shouldCloseAfterUpdate) {
       setShow(false);
     }

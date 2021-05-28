@@ -106,31 +106,29 @@ const FormikDropdown: React.FC<
   }
 
   return (
-    <>
-      <Field
-        type="text"
-        name={name}
-        label={label}
-        select
-        margin="normal"
-        component={TextField}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          onChange?.(e);
-          formik.handleChange(e);
-        }}
-        fullWidth
-        required={required}
-        disabled={disabled}
-        InputProps={InputProps}
-        {...props}
-      >
-        {children}
-        {menuItems}
-      </Field>
-    </>
+    <Field
+      type="text"
+      name={name}
+      label={label}
+      select
+      margin="normal"
+      component={TextField}
+      InputLabelProps={{
+        shrink: true,
+      }}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange?.(e);
+        formik.handleChange(e);
+      }}
+      fullWidth
+      required={required}
+      disabled={disabled}
+      InputProps={InputProps}
+      {...props}
+    >
+      {children}
+      {menuItems}
+    </Field>
   );
 };
 
