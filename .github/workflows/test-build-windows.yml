@@ -30,7 +30,6 @@ jobs:
           check_feature() {
             # first param is the branch, everything after is endpoint for curl
             local branch=$1
-            echo $branch
             local found=0
             shift
             for endpoint in $@; do
@@ -66,8 +65,12 @@ jobs:
           )
 
           BE_TAG=develop
-          echo "$BE_TAGS"
-          if [[ $BE_TAGS == 2 ]]; then
+          echo "BE_TAGS: $BE_TAGS"
+          echo "FACTORY_TAGS: $BE_TAGS"
+          echo "SCHEDULER_BE_TAGS: $BE_TAGS"
+          echo "GATEWAY_TAGS: $BE_TAGS"
+          
+          if [[ $BE_TAGS -eq "2" ]]; then
             echo "This should print"
             # BE_TAG="${{ github.head_ref }}"
             BE_TAG=88-run-end-to-end-tests-on-windows
