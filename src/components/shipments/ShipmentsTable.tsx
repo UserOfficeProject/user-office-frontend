@@ -35,6 +35,10 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   }
 
   const columns = [
+    {
+      title: 'Proposal ID',
+      field: 'proposal.shortCode',
+    },
     { title: 'Title', field: 'title' },
     { title: 'Status', field: 'status' },
     {
@@ -75,9 +79,16 @@ const ShipmentsTable = (props: { confirm: WithConfirmType }) => {
   ) => (
     <CreateUpdateShipment
       shipment={editShipment}
-      close={(shipment: ShipmentBasic | null) =>
-        !!editShipment ? onUpdate(shipment) : onCreate(shipment)
-      }
+      close={async () => {
+        /**
+         * Reloading myShipments
+         */
+        const result = await api().getMyShipments();
+
+        if (result.myShipments) {
+          setMyShipments(result.myShipments);
+        }
+      }}
     />
   );
 
