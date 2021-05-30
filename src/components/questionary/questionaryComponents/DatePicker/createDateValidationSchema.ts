@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { QuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import { DateConfig } from 'generated/sdk';
 
-function removeTime(date: Date) {
+function setTimeToMidnight(date: Date) {
   date.setHours(0);
   date.setMinutes(0);
   date.setMilliseconds(0);
@@ -23,7 +23,7 @@ export const createDateValidationSchema: QuestionaryComponentDefinition['createY
         return null;
       }
 
-      return removeTime(value);
+      return setTimeToMidnight(value);
     });
   }
 
@@ -34,7 +34,7 @@ export const createDateValidationSchema: QuestionaryComponentDefinition['createY
   }
 
   if (config.minDate) {
-    const minDate = removeTime(new Date(config.minDate));
+    const minDate = setTimeToMidnight(new Date(config.minDate));
     schema = schema.min(
       minDate,
       `Date must be no earlier than ${moment(minDate).format('yyyy-MM-DD')}`
@@ -42,7 +42,7 @@ export const createDateValidationSchema: QuestionaryComponentDefinition['createY
   }
 
   if (config.maxDate) {
-    const maxDate = removeTime(new Date(config.maxDate));
+    const maxDate = setTimeToMidnight(new Date(config.maxDate));
     schema = schema.max(
       maxDate,
       `Date must be no latter than ${moment(maxDate).format('yyyy-MM-DD')}`
