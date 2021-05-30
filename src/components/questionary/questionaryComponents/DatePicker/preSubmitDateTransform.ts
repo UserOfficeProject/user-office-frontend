@@ -7,6 +7,6 @@ export const preSubmitDateTransform: QuestionaryComponentDefinition['preSubmitTr
 ) => {
   return {
     ...answer,
-    value: moment(answer.value).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+    value: moment(answer.value).format('YYYY-MM-DDTHH:mm:ss.SSS'), // ISO time format without timezone
   };
 };
