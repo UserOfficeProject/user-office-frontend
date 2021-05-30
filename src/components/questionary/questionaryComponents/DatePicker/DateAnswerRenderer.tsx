@@ -5,6 +5,9 @@ import { AnswerRenderer } from 'components/questionary/QuestionaryComponentRegis
 import { DateConfig } from 'generated/sdk';
 
 const DateAnswerRenderer: AnswerRenderer = ({ config, value }) => {
+  if (!value) {
+    return <span>Left blank</span>;
+  }
   const format = (config as DateConfig).includeTime
     ? 'dd-mmm-yyyy HH:MM'
     : 'dd-mmm-yyyy';
