@@ -392,8 +392,6 @@ context('Template tests', () => {
     cy.get(`#${textId}`).clear().type(textAnswer);
     cy.contains(`${textAnswer.length}/${minimumCharacters}`);
     cy.get(`[data-cy='${dateId}.value'] button`).click();
-    cy.wait(300);
-    cy.get(`[data-cy='${dateId}.value'] button`).click();
     cy.contains('15').click();
     cy.get(`[data-cy='${timeId}.value'] input`)
       .clear()
