@@ -393,8 +393,8 @@ context('Template tests', () => {
     cy.contains(`${textAnswer.length}/${minimumCharacters}`);
     cy.get(`[data-cy='${dateId}.value'] button`).click();
     cy.wait(300);
-    cy.get(`[data-cy='${dateId}.value'] button`).click({ force: true });
-    cy.contains('15').click({ force: true });
+    cy.get(`[data-cy='${dateId}.value'] button`).click();
+    cy.contains('15').click();
     cy.get(`[data-cy='${timeId}.value'] input`)
       .clear()
       .type('2022-02-20 20:00');
