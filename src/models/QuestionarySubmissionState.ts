@@ -9,7 +9,6 @@ import {
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
-import { QuestionaryStepFragment } from './../generated/sdk';
 import { ProposalSubsetSubmission } from './ProposalSubmissionState';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleWithQuestionary } from './Sample';
@@ -24,7 +23,7 @@ export type Event =
   | { type: 'GO_STEP_FORWARD' }
   | { type: 'CLEAN_DIRTY_STATE' }
   | { type: 'GO_TO_STEP'; stepIndex: number }
-  | { type: 'STEPS_LOADED'; steps: QuestionaryStepFragment[]; index?: number }
+  | { type: 'STEPS_LOADED'; steps: QuestionaryStep[]; stepIndex?: number }
   | { type: 'STEP_ANSWERED'; step: QuestionaryStep }
   | { type: 'SAMPLE_CREATED'; sample: SampleWithQuestionary }
   | { type: 'SAMPLE_UPDATED'; sample: Partial<SampleWithQuestionary> }
@@ -142,8 +141,8 @@ export function QuestionarySubmissionModel<
         case 'STEPS_LOADED': {
           draftState.steps = action.steps;
           const stepIndex =
-            action.index !== undefined
-              ? action.index
+            action.stepIndex !== undefined
+              ? action.stepIndex
               : getInitialStepIndex(draftState);
           draftState.stepIndex = stepIndex;
           draftState.isDirty = false;

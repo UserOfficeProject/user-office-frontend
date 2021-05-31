@@ -170,6 +170,7 @@ export default function ShipmentContainer(props: {
             dispatch({
               type: 'STEPS_LOADED',
               steps: data.shipment.questionary.steps,
+              stepIndex: state.stepIndex,
             });
           }
         });

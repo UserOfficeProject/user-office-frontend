@@ -146,6 +146,7 @@ export function SampleDeclarationContainer(props: {
             dispatch({
               type: 'STEPS_LOADED',
               steps: data.sample.questionary.steps,
+              stepIndex: state.stepIndex,
             });
           }
         });

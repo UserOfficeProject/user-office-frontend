@@ -171,7 +171,7 @@ export default function VisitationContainer(props: VisitationContainerProps) {
             dispatch({
               type: 'STEPS_LOADED',
               steps: data.visitation.questionary.steps,
-              index: state.stepIndex,
+              stepIndex: state.stepIndex,
             });
           }
         });

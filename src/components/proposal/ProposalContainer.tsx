@@ -185,6 +185,7 @@ export default function ProposalContainer(props: {
             dispatch({
               type: 'STEPS_LOADED',
               steps: data.proposal.questionary.steps,
+              stepIndex: state.stepIndex,
             });
           }
         });
@@ -250,7 +251,6 @@ export default function ProposalContainer(props: {
         dispatch({
           type: 'STEPS_LOADED',
           steps: props.proposal.questionary.steps,
-          index: 0,
         });
       }
     }
