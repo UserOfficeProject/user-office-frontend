@@ -139,7 +139,7 @@ jobs:
               image: traefik:windowsservercore-1809
               command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
               ports:
-                - "8081:80" # The HTTP port
+                - "80:80" # The HTTP port
               volumes:
                 - type: npipe
                   source: \\\\.\\pipe\\docker_engine
@@ -169,8 +169,14 @@ jobs:
 
           docker-compose -f 'docker-compose.all.yml' -f 'user-office-backend/docker-compose.e2e.win.yml' -f 'user-office-scheduler-backend/docker-compose.e2e.win.yml' -f 'user-office-gateway/docker-compose.e2e.win.yml' up -d 
 
+          docker log user-office-frontend_backend_1
+          docker log user-office-frontend_proxy_1
+          docker log user-office-frontend_db_1
+          docker log user-office-frontend_scheduler-db_1
+          docker log user-office-frontend_scheduler-backend_1
+          docker log user-office-frontend_gateway_1
 
-          export SCHEMA_URL=http://localhost:8081/graphql
+          export SCHEMA_URL=http://localhost:80/graphql
 
 
           while true; do
