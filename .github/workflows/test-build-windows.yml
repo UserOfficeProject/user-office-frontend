@@ -172,6 +172,8 @@ jobs:
 
           export SCHEMA_URL=http://localhost:80/graphql
 
+          docker container logs user-office-frontend_backend_1
+
           while true; do
             STATUS=$(curl \
               -o /dev/stderr \
@@ -186,6 +188,7 @@ jobs:
 
             >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
             docker ps
+            docker container ls -a
             sleep 10
           done;
 
