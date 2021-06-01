@@ -139,7 +139,8 @@ jobs:
               image: traefik:windowsservercore-1809
               command: --api.insecure=true --providers.docker.endpoint=npipe:////./pipe/docker_engine
               ports:
-                - "80:80" # The HTTP port
+                - "8081:80" 
+                - "8082:8080" 
               volumes:
                 - type: npipe
                   source: \\\\.\\pipe\\docker_engine
