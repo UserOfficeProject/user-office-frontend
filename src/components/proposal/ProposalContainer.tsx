@@ -39,7 +39,7 @@ const proposalReducer = (
   switch (action.type) {
     case 'PROPOSAL_CREATED':
     case 'PROPOSAL_LOADED':
-      const proposal: ProposalSubsetSubmission = action.proposal;
+      const proposal = action.proposal;
       draftState.isDirty = false;
       draftState.questionaryId = proposal.questionaryId;
       draftState.proposal = proposal;
