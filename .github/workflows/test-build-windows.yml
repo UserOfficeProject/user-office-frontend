@@ -185,6 +185,7 @@ jobs:
             fi
 
             >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
+            docker ps
             sleep 10
           done;
 
