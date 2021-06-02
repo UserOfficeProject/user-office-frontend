@@ -138,6 +138,7 @@ export interface QuestionaryComponentDefinition {
    * can use to specify search criteria for the dataType
    */
   readonly searchCriteriaComponent?: FC<SearchCriteriaInputProps>;
+  readonly preSubmitTransform?: (answer: Answer) => Answer;
 }
 
 const registry = [

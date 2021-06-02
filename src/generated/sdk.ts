@@ -274,6 +274,7 @@ export type DateConfig = {
   minDate: Maybe<Scalars['String']>;
   maxDate: Maybe<Scalars['String']>;
   defaultDate: Maybe<Scalars['String']>;
+  includeTime: Scalars['Boolean'];
 };
 
 
@@ -453,7 +454,8 @@ export type Feature = {
 
 export enum FeatureId {
   SHIPPING = 'SHIPPING',
-  SCHEDULER = 'SCHEDULER'
+  SCHEDULER = 'SCHEDULER',
+  EXTERNAL_AUTH = 'EXTERNAL_AUTH'
 }
 
 export type FieldCondition = {
@@ -613,7 +615,7 @@ export type Mutation = {
   removeAssignedInstrumentFromCall: CallResponseWrap;
   changeProposalsStatus: SuccessResponseWrap;
   assignProposalsToInstrument: SuccessResponseWrap;
-  removeProposalFromInstrument: SuccessResponseWrap;
+  removeProposalsFromInstrument: SuccessResponseWrap;
   assignScientistsToInstrument: SuccessResponseWrap;
   removeScientistFromInstrument: SuccessResponseWrap;
   createInstrument: InstrumentResponseWrap;
@@ -790,9 +792,8 @@ export type MutationAssignProposalsToInstrumentArgs = {
 };
 
 
-export type MutationRemoveProposalFromInstrumentArgs = {
-  proposalId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
+export type MutationRemoveProposalsFromInstrumentArgs = {
+  proposalIds: Array<Scalars['Int']>;
 };
 
 
@@ -1881,6 +1882,7 @@ export type Query = {
   sepProposal: Maybe<SepProposal>;
   sepProposalsByInstrument: Maybe<Array<SepProposal>>;
   seps: Maybe<SePsQueryResult>;
+  settings: Array<Settings>;
   shipment: Maybe<Shipment>;
   version: Scalars['String'];
   factoryVersion: Scalars['String'];
@@ -2583,6 +2585,17 @@ export type SepMeetingDecisionResponseWrap = {
   rejection: Maybe<Rejection>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
 };
+
+export type Settings = {
+  __typename?: 'Settings';
+  id: SettingsId;
+  settingsValue: Scalars['String'];
+  description: Scalars['String'];
+};
+
+export enum SettingsId {
+  EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL'
+}
 
 export type Shipment = {
   __typename?: 'Shipment';
@@ -3654,6 +3667,17 @@ export type GetPageContentQuery = (
   & Pick<Query, 'getPageContent'>
 );
 
+export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSettingsQuery = (
+  { __typename?: 'Query' }
+  & { settings: Array<(
+    { __typename?: 'Settings' }
+    & Pick<Settings, 'id' | 'settingsValue' | 'description'>
+  )> }
+);
+
 export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4051,15 +4075,14 @@ export type GetUserInstrumentsQuery = (
   )> }
 );
 
-export type RemoveProposalFromInstrumentMutationVariables = Exact<{
-  proposalId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
+export type RemoveProposalsFromInstrumentMutationVariables = Exact<{
+  proposalIds: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
-export type RemoveProposalFromInstrumentMutation = (
+export type RemoveProposalsFromInstrumentMutation = (
   { __typename?: 'Mutation' }
-  & { removeProposalFromInstrument: (
+  & { removeProposalsFromInstrument: (
     { __typename?: 'SuccessResponseWrap' }
     & Pick<SuccessResponseWrap, 'isSuccess'>
     & { rejection: Maybe<(
@@ -4934,6 +4957,13 @@ export type UserWithReviewsQuery = (
       & { proposal: Maybe<(
         { __typename?: 'Proposal' }
         & Pick<Proposal, 'id' | 'title' | 'shortCode'>
+        & { call: Maybe<(
+          { __typename?: 'Call' }
+          & Pick<Call, 'shortCode'>
+        )>, instrument: Maybe<(
+          { __typename?: 'Instrument' }
+          & Pick<Instrument, 'shortCode'>
+        )> }
       )> }
     )> }
   )> }
@@ -5776,7 +5806,7 @@ type FieldConfigBooleanConfigFragment = (
 
 type FieldConfigDateConfigFragment = (
   { __typename?: 'DateConfig' }
-  & Pick<DateConfig, 'small_label' | 'required' | 'tooltip' | 'minDate' | 'maxDate' | 'defaultDate'>
+  & Pick<DateConfig, 'small_label' | 'required' | 'tooltip' | 'minDate' | 'maxDate' | 'defaultDate' | 'includeTime'>
 );
 
 type FieldConfigEmbellishmentConfigFragment = (
@@ -7017,6 +7047,7 @@ export const FieldConfigFragmentDoc = gql`
     minDate
     maxDate
     defaultDate
+    includeTime
   }
   ... on EmbellishmentConfig {
     html
@@ -7843,6 +7874,15 @@ export const GetPageContentDocument = gql`
   getPageContent(id: $id)
 }
     `;
+export const GetSettingsDocument = gql`
+    query getSettings {
+  settings {
+    id
+    settingsValue
+    description
+  }
+}
+    `;
 export const GetUnitsDocument = gql`
     query getUnits {
   units {
@@ -8096,12 +8136,9 @@ export const GetUserInstrumentsDocument = gql`
   }
 }
     ${BasicUserDetailsFragmentDoc}`;
-export const RemoveProposalFromInstrumentDocument = gql`
-    mutation removeProposalFromInstrument($proposalId: Int!, $instrumentId: Int!) {
-  removeProposalFromInstrument(
-    proposalId: $proposalId
-    instrumentId: $instrumentId
-  ) {
+export const RemoveProposalsFromInstrumentDocument = gql`
+    mutation removeProposalsFromInstrument($proposalIds: [Int!]!) {
+  removeProposalsFromInstrument(proposalIds: $proposalIds) {
     rejection {
       ...rejection
     }
@@ -8760,6 +8797,12 @@ export const UserWithReviewsDocument = gql`
         id
         title
         shortCode
+        call {
+          shortCode
+        }
+        instrument {
+          shortCode
+        }
       }
     }
   }
@@ -10127,6 +10170,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getPageContent(variables: GetPageContentQueryVariables): Promise<GetPageContentQuery> {
       return withWrapper(() => client.request<GetPageContentQuery>(print(GetPageContentDocument), variables));
     },
+    getSettings(variables?: GetSettingsQueryVariables): Promise<GetSettingsQuery> {
+      return withWrapper(() => client.request<GetSettingsQuery>(print(GetSettingsDocument), variables));
+    },
     getUnits(variables?: GetUnitsQueryVariables): Promise<GetUnitsQuery> {
       return withWrapper(() => client.request<GetUnitsQuery>(print(GetUnitsDocument), variables));
     },
@@ -10184,8 +10230,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getUserInstruments(variables?: GetUserInstrumentsQueryVariables): Promise<GetUserInstrumentsQuery> {
       return withWrapper(() => client.request<GetUserInstrumentsQuery>(print(GetUserInstrumentsDocument), variables));
     },
-    removeProposalFromInstrument(variables: RemoveProposalFromInstrumentMutationVariables): Promise<RemoveProposalFromInstrumentMutation> {
-      return withWrapper(() => client.request<RemoveProposalFromInstrumentMutation>(print(RemoveProposalFromInstrumentDocument), variables));
+    removeProposalsFromInstrument(variables: RemoveProposalsFromInstrumentMutationVariables): Promise<RemoveProposalsFromInstrumentMutation> {
+      return withWrapper(() => client.request<RemoveProposalsFromInstrumentMutation>(print(RemoveProposalsFromInstrumentDocument), variables));
     },
     removeScientistFromInstrument(variables: RemoveScientistFromInstrumentMutationVariables): Promise<RemoveScientistFromInstrumentMutation> {
       return withWrapper(() => client.request<RemoveScientistFromInstrumentMutation>(print(RemoveScientistFromInstrumentDocument), variables));
