@@ -211,6 +211,8 @@ jobs:
           cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
 
           npm run generate:local:windows
+      
+          ls
 
           sed -i 's/\r$//' ./src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
           PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
