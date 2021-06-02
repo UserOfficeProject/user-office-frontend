@@ -206,13 +206,13 @@ jobs:
           #Temporally skipping as I can't get it working this hoping a minute is ok
           sleep 60
 
-          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          sed -i 's/\r$//' ./src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
           GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
           cp src/generated/sdk.ts /tmp/sdk_git_tracked.ts
 
           npm run generate:local:windows
 
-          sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
+          sed -i 's/\r$//' ./src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
           PIPELINE_GENERATED_SUM=$(sha256sum src/generated/sdk.ts)
           cp src/generated/sdk.ts /tmp/sdk_pipeline_generated.ts
 
