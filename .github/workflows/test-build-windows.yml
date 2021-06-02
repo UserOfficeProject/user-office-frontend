@@ -184,12 +184,6 @@ jobs:
           docker logs user-office-frontend_gateway_1
 
           export SCHEMA_URL=http://localhost:8081/graphql
-
-          count = 0
-          while [$count -lt 4 & $count -lt 3]; do
-            count=$((count += 1))
-            echo "$count"
-          done;
           
           while true; do
             echo "Curl:"
