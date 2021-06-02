@@ -183,25 +183,28 @@ jobs:
           echo "-----Gateway-----"
           docker logs user-office-frontend_gateway_1
 
-          export SCHEMA_URL=http://localhost:8081/graphql
-          
-          while true; do
-            echo "Curl:"
-            echo "$SCHEMA_URL?query=query%7Bversion%7D"
-            STATUS=$(curl \
-              -o /dev/stderr \
-              --silent \
-              --write-out '%{http_code}' \
-              "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
+          # export SCHEMA_URL=http://localhost:8081/graphql
 
-            if [[ "$STATUS" == "200" ]]; then
-              echo "gateway is ready"
-              break
-            fi
+          # while true; do
+          #   echo "Curl:"
+          #   echo "$SCHEMA_URL?query=query%7Bversion%7D"
+          #   STATUS=$(curl \
+          #     -o /dev/stderr \
+          #     --silent \
+          #     --write-out '%{http_code}' \
+          #     "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
 
-            >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
-            sleep 10
-          done;
+          #   if [[ "$STATUS" == "200" ]]; then
+          #     echo "gateway is ready"
+          #     break
+          #   fi
+
+          #   >&2 echo " - gateway is unavailable - sleeping for 10 sec... ($STATUS)"
+          #   sleep 10
+          # done;
+
+          #Temporally skipping as I can't get it working this hoping a minute is ok
+          sleep 60
 
           sed -i 's/\r$//' src/generated/sdk.ts  # make sure we don't fail because of line ending differences (CRLF / LF)
           GIT_TRACKED_SUM=$(sha256sum src/generated/sdk.ts)
