@@ -185,10 +185,16 @@ jobs:
 
           export SCHEMA_URL=http://localhost:4100/graphql
 
+          docker ps
+
           while true; do
             echo "Curl:"
             echo "$SCHEMA_URL?query=query%7Bversion%7D"
-            STATUS=$(curl -o /dev/stderr --silent --write-out '%{http_code}' "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
+            STATUS=$(curl \
+              -o /dev/stderr \
+              --silent \
+              --write-out '%{http_code}' \
+              "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
 
             if [[ "$STATUS" == "200" ]]; then
               echo "gateway is ready"
