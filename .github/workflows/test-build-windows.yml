@@ -183,7 +183,7 @@ jobs:
           echo "-----Gateway-----"
           docker logs user-office-frontend_gateway_1
 
-          # export SCHEMA_URL=http://localhost:8081/graphql
+          export SCHEMA_URL=http://localhost:4100/graphql
 
           # while true; do
           #   echo "Curl:"
