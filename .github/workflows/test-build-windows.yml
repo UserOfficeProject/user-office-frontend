@@ -183,7 +183,7 @@ jobs:
           echo "-----Gateway-----"
           docker logs user-office-frontend_gateway_1
 
-          export SCHEMA_URL=http://localhost:4100/graphql
+          export SCHEMA_URL=http://gateway:4100/graphql
 
           docker ps
 
@@ -191,7 +191,7 @@ jobs:
             echo "Curl:"
             echo "$SCHEMA_URL?query=query%7Bversion%7D"
             STATUS=$(curl \
-              -o /dev/stderr \
+              -o ./ \
               --silent \
               --write-out '%{http_code}' \
               "$SCHEMA_URL?query=query%7Bversion%7D") # ?query=query{version}, without this we would get an error saying GET query missing
@@ -206,7 +206,7 @@ jobs:
           done;
 
           #Temporally skipping as I can't get it working this hoping a minute is ok
-          sleep 60
+          #sleep 60
 
           cd user-office-frontend
 
