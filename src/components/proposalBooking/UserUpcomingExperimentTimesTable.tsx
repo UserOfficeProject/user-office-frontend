@@ -4,9 +4,9 @@ import React from 'react';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { StyledPaper } from 'styles/StyledComponents';
 
-import BeamTimesTable from './BeamTimesTable';
+import ExperimentTimesTable from './ExperimentTimesTable';
 
-export default function UserUpcomingBeamTimesTable() {
+export default function UserUpcomingExperimentTimesTable() {
   const {
     loading,
     proposalScheduledEvents,
@@ -15,7 +15,7 @@ export default function UserUpcomingBeamTimesTable() {
     notDraft: true,
   });
 
-  // if there are no upcoming beam times
+  // if there are no upcoming experiment times
   // just hide the whole table altogether
   if (proposalScheduledEvents.length === 0) {
     return null;
@@ -24,10 +24,10 @@ export default function UserUpcomingBeamTimesTable() {
   return (
     <Grid item xs={12}>
       <StyledPaper margin={[0]}>
-        <BeamTimesTable
+        <ExperimentTimesTable
           isLoading={loading}
           proposalScheduledEvents={proposalScheduledEvents}
-          title="Upcoming beam times"
+          title="Upcoming experiment times"
         />
       </StyledPaper>
     </Grid>

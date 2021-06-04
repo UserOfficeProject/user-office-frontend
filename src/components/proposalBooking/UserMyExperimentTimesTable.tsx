@@ -4,9 +4,9 @@ import React from 'react';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import BeamTimesTable from './BeamTimesTable';
+import ExperimentTimesTable from './ExperimentTimesTable';
 
-export default function UserMyBeamTimesTable() {
+export default function UserMyExperimentTimesTable() {
   const {
     loading,
     proposalScheduledEvents,
@@ -19,10 +19,10 @@ export default function UserMyBeamTimesTable() {
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper margin={[0]}>
-            <BeamTimesTable
+            <ExperimentTimesTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
-              title="My beam times"
+              title="My experiment times"
               options={{
                 search: true,
                 padding: 'default',

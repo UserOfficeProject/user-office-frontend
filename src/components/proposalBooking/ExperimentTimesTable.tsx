@@ -8,19 +8,19 @@ import {
   TZ_LESS_DATE_TIME_LOW_PREC_FORMAT,
 } from 'utils/Time';
 
-type BeamTimesTableProps = {
+type ExperimentTimesTableProps = {
   title: string;
   isLoading: boolean;
   proposalScheduledEvents: ProposalScheduledEvent[];
   options?: Partial<Options>;
 };
 
-export default function BeamTimesTable({
+export default function ExperimentTimesTable({
   title,
   isLoading,
   proposalScheduledEvents,
   options,
-}: BeamTimesTableProps) {
+}: ExperimentTimesTableProps) {
   return (
     <MaterialTable
       icons={tableIcons}

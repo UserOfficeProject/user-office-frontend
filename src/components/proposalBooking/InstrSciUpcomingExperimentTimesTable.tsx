@@ -7,9 +7,9 @@ import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import BeamTimesTable from './BeamTimesTable';
+import ExperimentTimesTable from './ExperimentTimesTable';
 
-export default function InstrSciUpcomingBeamTimesTable() {
+export default function InstrSciUpcomingExperimentTimesTable() {
   const [urlQueryParams] = useQueryParams({
     instrument: NumberParam,
   });
@@ -43,10 +43,10 @@ export default function InstrSciUpcomingBeamTimesTable() {
                 setSelectedInstrumentId(instrumentId);
               }}
             />
-            <BeamTimesTable
+            <ExperimentTimesTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
-              title="Upcoming beam times"
+              title="Upcoming experiment times"
               options={{
                 search: true,
                 padding: 'default',
