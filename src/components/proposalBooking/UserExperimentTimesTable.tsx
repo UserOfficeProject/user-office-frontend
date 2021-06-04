@@ -6,7 +6,7 @@ import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ExperimentTimesTable from './ExperimentTimesTable';
 
-export default function UserMyExperimentTimesTable() {
+export default function UserExperimentTimesTable() {
   const {
     loading,
     proposalScheduledEvents,
@@ -22,7 +22,7 @@ export default function UserMyExperimentTimesTable() {
             <ExperimentTimesTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
-              title="My experiment times"
+              title="Experiment Times"
               options={{
                 search: true,
                 padding: 'default',

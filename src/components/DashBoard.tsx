@@ -34,7 +34,7 @@ import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
 import InstrSciUpcomingExperimentTimesTable from './proposalBooking/InstrSciUpcomingExperimentTimesTable';
-import UserMyExperimentTimesTable from './proposalBooking/UserMyExperimentTimesTable';
+import UserExperimentTimesTable from './proposalBooking/UserExperimentTimesTable';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -305,8 +305,8 @@ const Dashboard: React.FC = () => {
           )}
           {isSchedulerEnabled && (
             <Route
-              path="/MyExperimentTimes"
-              component={UserMyExperimentTimesTable}
+              path="/ExperimentTimes"
+              component={UserExperimentTimesTable}
             />
           )}
           {isSchedulerEnabled && (

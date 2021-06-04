@@ -244,22 +244,22 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         </ListItem>
       </Tooltip>
       {isShipmentFeatureEnabled && (
-        <Tooltip title="My shipments">
+        <Tooltip title="Shipments">
           <ListItem component={NavLink} to="/MyShipments" button>
             <ListItemIcon>
               <LocalShippingIcon />
             </ListItemIcon>
-            <ListItemText primary="My shipments" />
+            <ListItemText primary="Shipments" />
           </ListItem>
         </Tooltip>
       )}
       {isSchedulerEnabled && (
-        <Tooltip title="My Experiment Times">
-          <ListItem component={NavLink} to="/MyExperimentTimes" button>
+        <Tooltip title="Experiment Times">
+          <ListItem component={NavLink} to="/ExperimentTimes" button>
             <ListItemIcon>
               <EventIcon />
             </ListItemIcon>
-            <ListItemText primary="My experiment times" />
+            <ListItemText primary="Experiment Times" />
           </ListItem>
         </Tooltip>
       )}

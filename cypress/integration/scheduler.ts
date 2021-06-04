@@ -218,7 +218,7 @@ context('Scheduler tests', () => {
   it('User should be able to see past and upcoming experiment times', () => {
     cy.login('user');
 
-    cy.contains('My experiment times').click();
+    cy.contains('Experiment Times').click();
     cy.finishedLoading();
 
     cy.contains(upcoming.startsAt);
