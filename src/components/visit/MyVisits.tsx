@@ -3,15 +3,15 @@ import React from 'react';
 
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import VisitationsTable from './VisitationsTable';
+import VisitsTable from './VisitsTable';
 
-function MyShipments() {
+function MyVisits() {
   return (
     <ContentContainer>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <StyledPaper>
-            <VisitationsTable />
+            <VisitsTable />
           </StyledPaper>
         </Grid>
       </Grid>
@@ -19,4 +19,4 @@ function MyShipments() {
   );
 }
 
-export default MyShipments;
+export default MyVisits;

@@ -2,7 +2,7 @@ import faker from 'faker';
 
 faker.seed(1);
 
-context('visitations tests', () => {
+context('visits tests', () => {
   before(() => {
     cy.resetDB();
   });
@@ -13,40 +13,40 @@ context('visitations tests', () => {
 
   const proposalTitle = faker.lorem.words(2);
 
-  const visitationTemplateName = faker.lorem.words(2);
-  const visitationTemplateDescription = faker.lorem.words(3);
+  const visitTemplateName = faker.lorem.words(2);
+  const visitTemplateDescription = faker.lorem.words(3);
 
-  const startDateQuestionTitle = 'Visitation start';
-  const endDateQuestionTitle = 'Visitation end';
+  const startDateQuestionTitle = 'Visit start';
+  const endDateQuestionTitle = 'Visit end';
 
-  it('Should be able to create visitations template', () => {
+  it('Should be able to create visits template', () => {
     cy.login('officer');
 
-    cy.navigateToTemplatesSubmenu('Visitation templates');
+    cy.navigateToTemplatesSubmenu('Visit templates');
 
     cy.get('[data-cy=create-new-button]').click();
 
     cy.get('[data-cy=name] input')
-      .type(visitationTemplateName)
-      .should('have.value', visitationTemplateName);
+      .type(visitTemplateName)
+      .should('have.value', visitTemplateName);
 
-    cy.get('[data-cy=description]').type(visitationTemplateDescription);
+    cy.get('[data-cy=description]').type(visitTemplateDescription);
 
     cy.get('[data-cy=submit]').click();
 
-    cy.contains('New visitation');
+    cy.contains('New visit');
 
     cy.createDateQuestion(startDateQuestionTitle);
     cy.createDateQuestion(endDateQuestionTitle);
 
     cy.visit('/');
 
-    cy.navigateToTemplatesSubmenu('Visitation templates');
+    cy.navigateToTemplatesSubmenu('Visit templates');
 
     cy.get("[title='Mark as active']").click();
   });
 
-  it('Should be able to create visitation', () => {
+  it('Should be able to create visit', () => {
     cy.login('user');
 
     cy.createProposal(proposalTitle);
@@ -55,7 +55,7 @@ context('visitations tests', () => {
 
     cy.contains('OK').click();
 
-    cy.contains('My visitations').click();
+    cy.contains('Visits').click();
 
     cy.contains('Create').click();
 
@@ -63,7 +63,7 @@ context('visitations tests', () => {
 
     cy.contains('Proposal is required');
 
-    cy.get("[id='mui-component-select-visitation_basis.proposalId']")
+    cy.get("[id='mui-component-select-visit_basis.proposalId']")
       .first()
       .click();
 
@@ -96,19 +96,16 @@ context('visitations tests', () => {
     cy.contains(proposalTitle);
   });
 
-  it('Should be able to delete visitation', () => {
+  it('Should be able to delete visit', () => {
     cy.login('user');
 
-    cy.contains('My visitations').click();
+    cy.contains('Visits').click();
 
-    cy.contains(proposalTitle)
-      .parent()
-      .get("[title='Delete visitation']")
-      .click();
+    cy.contains(proposalTitle).parent().get("[title='Delete visit']").click();
 
     cy.contains('OK').click();
 
-    cy.notification({ variant: 'success', text: 'Visitation deleted' });
+    cy.notification({ variant: 'success', text: 'Visit deleted' });
 
     cy.should('not.contain', proposalTitle);
   });

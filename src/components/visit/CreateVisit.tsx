@@ -7,24 +7,21 @@ import {
   ProposalPublicStatus,
   QuestionaryStep,
   TemplateCategoryId,
-  VisitationStatus,
+  VisitStatus,
 } from 'generated/sdk';
-import {
-  VisitationBasic,
-  VisitationExtended,
-} from 'models/VisitationSubmissionState';
+import { VisitBasic, VisitExtended } from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import VisitationContainer from './VisitationContainer';
+import VisitContainer from './VisitContainer';
 
-function createVisitationStub(
+function createVisitStub(
   visitorId: number,
   templateId: number,
   questionarySteps: QuestionaryStep[]
-): VisitationExtended {
+): VisitExtended {
   return {
     id: 0,
-    status: VisitationStatus.DRAFT,
+    status: VisitStatus.DRAFT,
     questionaryId: 0,
     visitorId: visitorId,
     proposalId: 0,
@@ -63,19 +60,19 @@ function createVisitationStub(
   };
 }
 
-interface CreateVisitationProps {
-  onCreate?: (visitation: VisitationBasic) => void;
-  onUpdate?: (visitation: VisitationBasic) => void;
+interface CreateVisitProps {
+  onCreate?: (visit: VisitBasic) => void;
+  onUpdate?: (visit: VisitBasic) => void;
 }
-function CreateVisitation({ onCreate, onUpdate }: CreateVisitationProps) {
+function CreateVisit({ onCreate, onUpdate }: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const [blankVisitation, setBlankVisitation] = useState<VisitationExtended>();
+  const [blankVisit, setBlankVisit] = useState<VisitExtended>();
 
   useEffect(() => {
     api()
       .getActiveTemplateId({
-        templateCategoryId: TemplateCategoryId.VISITATION,
+        templateCategoryId: TemplateCategoryId.VISIT,
       })
       .then(({ activeTemplateId }) => {
         if (activeTemplateId) {
@@ -83,29 +80,29 @@ function CreateVisitation({ onCreate, onUpdate }: CreateVisitationProps) {
             .getBlankQuestionarySteps({ templateId: activeTemplateId })
             .then((result) => {
               if (result.blankQuestionarySteps) {
-                const blankVisitation = createVisitationStub(
+                const blankVisit = createVisitStub(
                   user.id,
                   activeTemplateId,
                   result.blankQuestionarySteps
                 );
-                setBlankVisitation(blankVisitation);
+                setBlankVisit(blankVisit);
               }
             });
         }
       });
-  }, [setBlankVisitation, api, user]);
+  }, [setBlankVisit, api, user]);
 
-  if (!blankVisitation) {
+  if (!blankVisit) {
     return <UOLoader />;
   }
 
   return (
-    <VisitationContainer
-      visitation={blankVisitation}
+    <VisitContainer
+      visit={blankVisit}
       onCreate={onCreate}
       onUpdate={onUpdate}
     />
   );
 }
 
-export default CreateVisitation;
+export default CreateVisit;

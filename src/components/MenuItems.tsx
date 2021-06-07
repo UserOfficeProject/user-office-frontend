@@ -172,11 +172,11 @@ const TemplateMenuListItem = () => {
             />
           </ListItem>
         )}
-        <ListItem component={NavLink} to="/VisitationTemplates" button>
+        <ListItem component={NavLink} to="/VisitTemplates" button>
           <ListItemIcon>
             <FlightTakeoffIcon />
           </ListItemIcon>
-          <ListItemText primary="Visitation" title="Visitation templates" />
+          <ListItemText primary="Visit" title="Visit templates" />
         </ListItem>
       </Collapse>
     </>
@@ -263,12 +263,12 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
           </ListItem>
         </Tooltip>
       )}
-      <Tooltip title="My Visitations">
-        <ListItem component={NavLink} to="/MyVisitations" button>
+      <Tooltip title="My Visits">
+        <ListItem component={NavLink} to="/MyVisits" button>
           <ListItemIcon>
             <EventIcon />
           </ListItemIcon>
-          <ListItemText primary="My visitations" />
+          <ListItemText primary="Visits" />
         </ListItem>
       </Tooltip>
       <Tooltip title="Help">

@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { QuestionaryStep, VisitationStatus } from 'generated/sdk';
+import { QuestionaryStep, VisitStatus } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -16,51 +16,51 @@ import {
   WizardStep,
 } from 'models/QuestionarySubmissionState';
 import {
-  VisitationExtended,
-  VisitationSubmissionState,
-} from 'models/VisitationSubmissionState';
+  VisitExtended,
+  VisitSubmissionState,
+} from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
-import VisitationReview from './VisitationReview';
+import VisitReview from './VisitReview';
 
-export interface VisitationContextType extends QuestionaryContextType {
-  state: VisitationSubmissionState | null;
+export interface VisitContextType extends QuestionaryContextType {
+  state: VisitSubmissionState | null;
 }
 
-const visitationReducer = (
-  state: VisitationSubmissionState,
-  draftState: VisitationSubmissionState,
+const visitReducer = (
+  state: VisitSubmissionState,
+  draftState: VisitSubmissionState,
   action: Event
 ) => {
   switch (action.type) {
-    case 'VISITATION_CREATED':
-    case 'VISITATION_LOADED':
-      const visitation = action.visitation;
+    case 'VISIT_CREATED':
+    case 'VISIT_LOADED':
+      const visit = action.visit;
       draftState.isDirty = false;
-      draftState.questionaryId = visitation.questionaryId;
-      draftState.visitation = visitation;
-      draftState.steps = visitation.questionary.steps;
-      draftState.templateId = visitation.questionary.templateId;
+      draftState.questionaryId = visit.questionaryId;
+      draftState.visit = visit;
+      draftState.steps = visit.questionary.steps;
+      draftState.templateId = visit.questionary.templateId;
       break;
-    case 'VISITATION_MODIFIED':
-      draftState.visitation = {
-        ...draftState.visitation,
-        ...action.visitation,
+    case 'VISIT_MODIFIED':
+      draftState.visit = {
+        ...draftState.visit,
+        ...action.visit,
       };
       draftState.isDirty = true;
       break;
     case 'STEPS_LOADED': {
-      draftState.visitation.questionary.steps = action.steps;
+      draftState.visit.questionary.steps = action.steps;
       break;
     }
     case 'STEP_ANSWERED':
       const updatedStep = action.step;
-      const stepIndex = draftState.visitation.questionary.steps.findIndex(
+      const stepIndex = draftState.visit.questionary.steps.findIndex(
         (step) => step.topic.id === updatedStep.topic.id
       );
-      draftState.visitation.questionary.steps[stepIndex] = updatedStep;
+      draftState.visit.questionary.steps[stepIndex] = updatedStep;
 
       break;
   }
@@ -68,8 +68,8 @@ const visitationReducer = (
   return draftState;
 };
 
-const isVisitationSubmitted = (visitation: { status: VisitationStatus }) =>
-  visitation.status === VisitationStatus.SUBMITTED;
+const isVisitSubmitted = (visit: { status: VisitStatus }) =>
+  visit.status === VisitStatus.SUBMITTED;
 
 const createQuestionaryWizardStep = (
   step: QuestionaryStep,
@@ -78,48 +78,48 @@ const createQuestionaryWizardStep = (
   type: 'QuestionaryStep',
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
-    const visitationState = state as VisitationSubmissionState;
+    const visitState = state as VisitSubmissionState;
     const questionaryStep = state.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
-        isVisitationSubmitted(visitationState.visitation) ||
+        isVisitSubmitted(visitState.visit) ||
         (index > 0 && state.steps[index - 1].isCompleted === false),
     };
   },
 });
 
 const createReviewWizardStep = (): WizardStep => ({
-  type: 'VisitationReview',
+  type: 'VisitReview',
   getMetadata: (state) => {
-    const visitationState = state as VisitationSubmissionState;
+    const visitState = state as VisitSubmissionState;
 
     return {
       title: 'Review',
-      isCompleted: isVisitationSubmitted(visitationState.visitation),
+      isCompleted: isVisitSubmitted(visitState.visit),
       isReadonly: false,
     };
   },
 });
 
-export interface VisitationContainerProps {
-  visitation: VisitationExtended;
-  onCreate?: (visitation: VisitationExtended) => void;
-  onUpdate?: (visitation: VisitationExtended) => void;
+export interface VisitContainerProps {
+  visit: VisitExtended;
+  onCreate?: (visit: VisitExtended) => void;
+  onUpdate?: (visit: VisitExtended) => void;
 }
-export default function VisitationContainer(props: VisitationContainerProps) {
+export default function VisitContainer(props: VisitContainerProps) {
   const { api } = useDataApiWithFeedback();
 
-  const previousInitialVisitation = usePrevious(props.visitation);
+  const previousInitialVisit = usePrevious(props.visit);
 
-  const createVisitationWizardSteps = (): WizardStep[] => {
-    if (!props.visitation) {
+  const createVisitWizardSteps = (): WizardStep[] => {
+    if (!props.visit) {
       return [];
     }
     const wizardSteps: WizardStep[] = [];
-    const questionarySteps = props.visitation.questionary.steps;
+    const questionarySteps = props.visit.questionary.steps;
 
     questionarySteps.forEach((step, index) =>
       wizardSteps.push(createQuestionaryWizardStep(step, index))
@@ -139,8 +139,8 @@ export default function VisitationContainer(props: VisitationContainerProps) {
             topicId={metadata.payload.topicId}
           />
         );
-      case 'VisitationReview':
-        return <VisitationReview />;
+      case 'VisitReview':
+        return <VisitReview />;
 
       default:
         throw new Error(`Unknown step type ${metadata.type}`);
@@ -151,26 +151,26 @@ export default function VisitationContainer(props: VisitationContainerProps) {
    * Returns true if reset was performed, false otherwise
    */
   const handleReset = async (): Promise<boolean> => {
-    const visitationState = state as VisitationSubmissionState;
+    const visitState = state as VisitSubmissionState;
 
-    if (visitationState.visitation.id === 0) {
-      // if visitation is not created yet
+    if (visitState.visit.id === 0) {
+      // if visit is not created yet
       dispatch({
-        type: 'VISITATION_LOADED',
-        visitation: initialState.visitation,
+        type: 'VISIT_LOADED',
+        visit: initialState.visit,
       });
     } else {
       await api()
-        .getVisitation({ visitationId: visitationState.visitation.id }) // or load blankQuestionarySteps if sample is null
+        .getVisit({ visitId: visitState.visit.id }) // or load blankQuestionarySteps if sample is null
         .then((data) => {
-          if (data.visitation && data.visitation.questionary.steps) {
+          if (data.visit && data.visit.questionary.steps) {
             dispatch({
-              type: 'VISITATION_LOADED',
-              visitation: data.visitation,
+              type: 'VISIT_LOADED',
+              visit: data.visit,
             });
             dispatch({
               type: 'STEPS_LOADED',
-              steps: data.visitation.questionary.steps,
+              steps: data.visit.questionary.steps,
               stepIndex: state.stepIndex,
             });
           }
@@ -186,7 +186,7 @@ export default function VisitationContainer(props: VisitationContainerProps) {
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
-      const state = getState() as VisitationSubmissionState;
+      const state = getState() as VisitSubmissionState;
       switch (action.type) {
         case 'BACK_CLICKED': // move this
           if (!state.isDirty || (await handleReset())) {
@@ -198,55 +198,52 @@ export default function VisitationContainer(props: VisitationContainerProps) {
           handleReset();
           break;
 
-        case 'VISITATION_CREATED':
-          props.onCreate?.(state.visitation);
+        case 'VISIT_CREATED':
+          props.onCreate?.(state.visit);
           break;
 
-        case 'VISITATION_MODIFIED':
-          props.onUpdate?.(state.visitation);
+        case 'VISIT_MODIFIED':
+          props.onUpdate?.(state.visit);
           break;
       }
     };
   };
-  const initialState: VisitationSubmissionState = {
-    visitation: props.visitation,
-    templateId: props.visitation.questionary.templateId,
+  const initialState: VisitSubmissionState = {
+    visit: props.visit,
+    templateId: props.visit.questionary.templateId,
     isDirty: false,
-    questionaryId: props.visitation.questionary.questionaryId,
+    questionaryId: props.visit.questionary.questionaryId,
     stepIndex: 0,
-    steps: props.visitation.questionary.steps,
-    wizardSteps: createVisitationWizardSteps(),
+    steps: props.visit.questionary.steps,
+    wizardSteps: createVisitWizardSteps(),
   };
 
-  const {
-    state,
-    dispatch,
-  } = QuestionarySubmissionModel<VisitationSubmissionState>(
+  const { state, dispatch } = QuestionarySubmissionModel<VisitSubmissionState>(
     initialState,
     [handleEvents],
-    visitationReducer
+    visitReducer
   );
 
   useEffect(() => {
     const isComponentMountedForTheFirstTime =
-      previousInitialVisitation === undefined;
+      previousInitialVisit === undefined;
     if (isComponentMountedForTheFirstTime) {
       dispatch({
-        type: 'VISITATION_LOADED',
-        visitation: props.visitation,
+        type: 'VISIT_LOADED',
+        visit: props.visit,
       });
       dispatch({
         type: 'STEPS_LOADED',
-        steps: props.visitation.questionary.steps,
+        steps: props.visit.questionary.steps,
       });
     }
-  }, [previousInitialVisitation, props.visitation, dispatch]);
+  }, [previousInitialVisit, props.visit, dispatch]);
 
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
-        title={'Visitation'}
-        info={state.visitation.status}
+        title={'Visit the facility'}
+        info={state.visit.status}
         handleReset={handleReset}
         displayElementFactory={displayElementFactory}
       />

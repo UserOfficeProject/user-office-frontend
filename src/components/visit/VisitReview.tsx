@@ -11,15 +11,15 @@ import {
 import QuestionaryDetails, {
   TableRowData,
 } from 'components/questionary/QuestionaryDetails';
-import { VisitationStatus } from 'generated/sdk';
+import { VisitStatus } from 'generated/sdk';
 import { useProposalData } from 'hooks/proposal/useProposalData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import { VisitationContextType } from './VisitationContainer';
+import { VisitContextType } from './VisitContainer';
 
-type VisitationReviewProps = {
+type VisitReviewProps = {
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
@@ -31,16 +31,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function VisitationReview({ confirm }: VisitationReviewProps) {
+function VisitReview({ confirm }: VisitReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { state, dispatch } = useContext(
     QuestionaryContext
-  ) as VisitationContextType;
+  ) as VisitContextType;
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const { proposalData } = useProposalData(state.visitation.proposalId);
+  const { proposalData } = useProposalData(state.visit.proposalId);
   const classes = useStyles();
 
   if (!proposalData) {
@@ -48,7 +48,7 @@ function VisitationReview({ confirm }: VisitationReviewProps) {
   }
 
   const additionalDetails: TableRowData[] = [
-    { label: 'Status', value: state.visitation.status },
+    { label: 'Status', value: state.visit.status },
     {
       label: 'Proposal',
       value: (
@@ -61,7 +61,7 @@ function VisitationReview({ confirm }: VisitationReviewProps) {
       label: 'Team',
       value: (
         <ul className={classes.teamMemberList}>
-          {state.visitation.team.map((user) => (
+          {state.visit.team.map((user) => (
             <li key={user.id}>{`${user.firstname} ${user.lastname}`}</li>
           ))}
         </ul>
@@ -69,36 +69,36 @@ function VisitationReview({ confirm }: VisitationReviewProps) {
     },
   ];
 
-  const isSubmitted = state.visitation.status === VisitationStatus.SUBMITTED;
+  const isSubmitted = state.visit.status === VisitStatus.SUBMITTED;
 
   return (
     <div>
       <QuestionaryDetails
-        questionaryId={state.visitation.questionaryId}
+        questionaryId={state.visit.questionaryId}
         additionalDetails={additionalDetails}
-        title="Visitation information"
+        title="Visit information"
       />
       <NavigationFragment isLoading={isExecutingCall}>
         <NavigButton
           onClick={() =>
             confirm(
               async () => {
-                const result = await api().updateVisitation({
-                  visitationId: state.visitation.id,
-                  status: VisitationStatus.SUBMITTED,
+                const result = await api().updateVisit({
+                  visitId: state.visit.id,
+                  status: VisitStatus.SUBMITTED,
                 });
-                if (!result.updateVisitation.visitation) {
+                if (!result.updateVisit.visit) {
                   return;
                 }
                 dispatch({
-                  type: 'VISITATION_MODIFIED',
-                  visitation: result.updateVisitation.visitation,
+                  type: 'VISIT_MODIFIED',
+                  visit: result.updateVisit.visit,
                 });
               },
               {
                 title: 'Confirmation',
                 description:
-                  'I am aware that no further edits can be done after visitation submission.',
+                  'I am aware that no further edits can be done after visit submission.',
               }
             )()
           }
@@ -113,4 +113,4 @@ function VisitationReview({ confirm }: VisitationReviewProps) {
   );
 }
 
-export default withConfirm(VisitationReview);
+export default withConfirm(VisitReview);

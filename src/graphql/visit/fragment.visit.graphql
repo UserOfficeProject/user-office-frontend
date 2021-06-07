@@ -1,4 +1,4 @@
-fragment visitation on Visitation {
+fragment visit on Visit {
   id
   proposalId
   status

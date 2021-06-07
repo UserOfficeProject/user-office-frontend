@@ -8,7 +8,7 @@ import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
-export const QuestionVisitationBasisForm: FC<QuestionFormProps> = (props) => {
+export const QuestionVisitBasisForm: FC<QuestionFormProps> = (props) => {
   const field = props.question;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
 

@@ -1,6 +1,6 @@
-query getMyVisitations {
-  myVisitations {
-    ...visitation
+query getVisits($filter: VisitsFilter) {
+  visits(filter: $filter) {
+    ...visit
     proposal {
       ...proposal
       instrument {

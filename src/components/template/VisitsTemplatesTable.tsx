@@ -11,8 +11,7 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 
-type VisitationTemplateRowDataType = TemplateRowDataType &
-  Record<string, unknown>;
+type VisitTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
 
 const useStyles = makeStyles((theme) => ({
   inactive: {
@@ -20,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type VisitationTemplatesTableProps = {
+type VisitTemplatesTableProps = {
   dataProvider: () => Promise<
     Pick<
       ProposalTemplate,
@@ -30,10 +29,10 @@ type VisitationTemplatesTableProps = {
   confirm: WithConfirmType;
 };
 
-function VisitationTemplatesTable(props: VisitationTemplatesTableProps) {
+function VisitTemplatesTable(props: VisitTemplatesTableProps) {
   const { api } = useDataApiWithFeedback();
   const { activeTemplateId, setActiveTemplateId } = useActiveTemplateId(
-    TemplateCategoryId.VISITATION
+    TemplateCategoryId.VISIT
   );
   const classes = useStyles();
 
@@ -41,17 +40,17 @@ function VisitationTemplatesTable(props: VisitationTemplatesTableProps) {
     return <UOLoader />;
   }
 
-  const columns: Column<VisitationTemplateRowDataType>[] = [
+  const columns: Column<VisitTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# visitations', field: 'questionaryCount' },
+    { title: '# visits', field: 'questionaryCount' },
   ];
 
   return (
     <>
       <TemplatesTable
         columns={columns}
-        templateCategory={TemplateCategoryId.VISITATION}
+        templateCategory={TemplateCategoryId.VISIT}
         isRowRemovable={() => {
           return true;
         }}
@@ -71,7 +70,7 @@ function VisitationTemplatesTable(props: VisitationTemplatesTableProps) {
               const newActiveTemplateId = (data as Pick<Template, 'templateId'>)
                 .templateId;
               await api().setActiveTemplate({
-                templateCategoryId: TemplateCategoryId.VISITATION,
+                templateCategoryId: TemplateCategoryId.VISIT,
                 templateId: newActiveTemplateId,
               });
               setActiveTemplateId(newActiveTemplateId);
@@ -83,4 +82,4 @@ function VisitationTemplatesTable(props: VisitationTemplatesTableProps) {
   );
 }
 
-export default withConfirm(VisitationTemplatesTable);
+export default withConfirm(VisitTemplatesTable);

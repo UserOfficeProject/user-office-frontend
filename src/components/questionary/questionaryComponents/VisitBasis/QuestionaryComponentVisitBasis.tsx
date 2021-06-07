@@ -8,11 +8,11 @@ import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import { VisitationContextType } from 'components/visitation/VisitationContainer';
+import { VisitContextType } from 'components/visit/VisitContainer';
 import { BasicUserDetails } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { VisitationSubmissionState } from 'models/VisitationSubmissionState';
+import { VisitSubmissionState } from 'models/VisitSubmissionState';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
+function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
   const { answer, formikProps } = props;
   const classes = useStyles();
 
@@ -28,7 +28,7 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
 
   const { dispatch, state } = useContext(
     QuestionaryContext
-  ) as VisitationContextType;
+  ) as VisitContextType;
 
   const questionId = answer.question.id;
 
@@ -50,8 +50,8 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
         InputProps={{ 'data-cy': 'proposal-selection' }}
         onChange={(event) => {
           dispatch({
-            type: 'VISITATION_MODIFIED',
-            visitation: {
+            type: 'VISIT_MODIFIED',
+            visit: {
               proposalId: +event.target.value,
             },
           });
@@ -68,54 +68,54 @@ function QuestionaryComponentVisitationBasis(props: BasicComponentProps) {
             team.map((user) => user.id)
           );
           dispatch({
-            type: 'VISITATION_MODIFIED',
-            visitation: { team },
+            type: 'VISIT_MODIFIED',
+            visit: { team },
           });
         }}
-        users={JSON.parse(JSON.stringify(state.visitation.team))}
+        users={JSON.parse(JSON.stringify(state.visit.team))}
       />
     </>
   );
 }
 
-const visitationBasisPreSubmit = () => async ({
+const visitBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,
 }: SubmitActionDependencyContainer) => {
-  const visitation = (state as VisitationSubmissionState).visitation;
-  const { proposalId, team } = visitation;
+  const visit = (state as VisitSubmissionState).visit;
+  const { proposalId, team } = visit;
   let returnValue = state.questionaryId;
-  if (visitation.id > 0) {
-    const result = await api.updateVisitation({
-      visitationId: visitation.id,
-      proposalId: visitation.proposalId,
-      team: visitation.team.map((user) => user.id),
+  if (visit.id > 0) {
+    const result = await api.updateVisit({
+      visitId: visit.id,
+      proposalId: visit.proposalId,
+      team: visit.team.map((user) => user.id),
     });
 
-    if (result.updateVisitation.visitation) {
+    if (result.updateVisit.visit) {
       dispatch({
-        type: 'VISITATION_MODIFIED',
-        visitation: result.updateVisitation.visitation,
+        type: 'VISIT_MODIFIED',
+        visit: result.updateVisit.visit,
       });
     }
   } else {
-    const result = await api.createVisitation({
+    const result = await api.createVisit({
       proposalId: proposalId,
       team: team.map((user) => user.id),
     });
 
-    const newVisitation = result.createVisitation.visitation;
-    if (newVisitation) {
+    const newVisit = result.createVisit.visit;
+    if (newVisit) {
       dispatch({
-        type: 'VISITATION_CREATED',
-        visitation: newVisitation,
+        type: 'VISIT_CREATED',
+        visit: newVisit,
       });
-      returnValue = newVisitation.questionaryId;
+      returnValue = newVisit.questionaryId;
     }
   }
 
   return returnValue;
 };
 
-export { QuestionaryComponentVisitationBasis, visitationBasisPreSubmit };
+export { QuestionaryComponentVisitBasis, visitBasisPreSubmit };

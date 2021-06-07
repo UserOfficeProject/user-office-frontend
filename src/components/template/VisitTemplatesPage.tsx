@@ -5,33 +5,33 @@ import SimpleTabs from 'components/common/TabPanel';
 import { TemplateCategoryId } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-import VisitationsTemplatesTable from './VisitationsTemplatesTable';
+import VisitsTemplatesTable from './VisitsTemplatesTable';
 
-export default function VisitationTemplatesPage() {
+export default function VisitTemplatesPage() {
   const api = useDataApi();
 
   return (
     <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
-        <VisitationsTemplatesTable
+        <VisitsTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
                 filter: {
                   isArchived: false,
-                  category: TemplateCategoryId.VISITATION,
+                  category: TemplateCategoryId.VISIT,
                 },
               })
               .then((data) => data.templates || [])
           }
         />
-        <VisitationsTemplatesTable
+        <VisitsTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
                 filter: {
                   isArchived: true,
-                  category: TemplateCategoryId.VISITATION,
+                  category: TemplateCategoryId.VISIT,
                 },
               })
               .then((data) => data.templates || [])

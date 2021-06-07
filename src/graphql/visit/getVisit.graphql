@@ -1,6 +1,6 @@
-query getVisitation($visitationId: Int!) {
-  visitation(visitationId: $visitationId) {
-    ...visitation
+query getVisit($visitId: Int!) {
+  visit(visitId: $visitId) {
+    ...visit
     questionary {
       ...questionary
     }
