@@ -7,7 +7,7 @@ import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import ExperimentTimesTable from './ExperimentTimesTable';
+import ExperimentsTable from './ExperimentTimesTable';
 
 export default function InstrSciUpcomingExperimentTimesTable() {
   const [urlQueryParams] = useQueryParams({
@@ -43,7 +43,7 @@ export default function InstrSciUpcomingExperimentTimesTable() {
                 setSelectedInstrumentId(instrumentId);
               }}
             />
-            <ExperimentTimesTable
+            <ExperimentsTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
               title="Upcoming experiments"

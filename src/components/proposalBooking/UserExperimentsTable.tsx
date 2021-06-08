@@ -4,7 +4,7 @@ import React from 'react';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import ExperimentTimesTable from './ExperimentTimesTable';
+import ExperimentsTable from './ExperimentTimesTable';
 
 export default function UserExperimentTimesTable() {
   const {
@@ -19,7 +19,7 @@ export default function UserExperimentTimesTable() {
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper margin={[0]}>
-            <ExperimentTimesTable
+            <ExperimentsTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
               title="Experiment Times"

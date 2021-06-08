@@ -15,7 +15,7 @@ type ExperimentTimesTableProps = {
   options?: Partial<Options>;
 };
 
-export default function ExperimentTimesTable({
+export default function ExperimentsTable({
   title,
   isLoading,
   proposalScheduledEvents,

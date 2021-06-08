@@ -4,9 +4,9 @@ import React from 'react';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { StyledPaper } from 'styles/StyledComponents';
 
-import ExperimentTimesTable from './ExperimentTimesTable';
+import ExperimentsTable from './ExperimentTimesTable';
 
-export default function UserUpcomingExperimentTimesTable() {
+export default function UserUpcomingExperimentsTable() {
   const {
     loading,
     proposalScheduledEvents,
@@ -24,7 +24,7 @@ export default function UserUpcomingExperimentTimesTable() {
   return (
     <Grid item xs={12}>
       <StyledPaper margin={[0]}>
-        <ExperimentTimesTable
+        <ExperimentsTable
           isLoading={loading}
           proposalScheduledEvents={proposalScheduledEvents}
           title="Upcoming experiments"
