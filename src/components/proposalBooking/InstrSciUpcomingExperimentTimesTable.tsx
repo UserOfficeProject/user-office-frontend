@@ -46,7 +46,7 @@ export default function InstrSciUpcomingExperimentTimesTable() {
             <ExperimentTimesTable
               isLoading={loading}
               proposalScheduledEvents={proposalScheduledEvents}
-              title="Upcoming experiment times"
+              title="Upcoming experiments"
               options={{
                 search: true,
                 padding: 'default',

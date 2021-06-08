@@ -15,7 +15,7 @@ export default function UserUpcomingExperimentTimesTable() {
     notDraft: true,
   });
 
-  // if there are no upcoming experiment times
+  // if there are no upcoming experiments
   // just hide the whole table altogether
   if (proposalScheduledEvents.length === 0) {
     return null;
@@ -27,7 +27,7 @@ export default function UserUpcomingExperimentTimesTable() {
         <ExperimentTimesTable
           isLoading={loading}
           proposalScheduledEvents={proposalScheduledEvents}
-          title="Upcoming experiment times"
+          title="Upcoming experiments"
         />
       </StyledPaper>
     </Grid>

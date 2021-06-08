@@ -390,7 +390,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
           <ListItemIcon>
             <EventIcon />
           </ListItemIcon>
-          <ListItemText primary="Upcoming experiment times" />
+          <ListItemText primary="Upcoming experiments" />
         </ListItem>
       )}
     </div>
