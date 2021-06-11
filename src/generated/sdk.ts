@@ -335,6 +335,7 @@ export type Equipment = {
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
   events: Array<ScheduledEvent>;
+  equipmentResponsible: Array<User>;
 };
 
 
@@ -362,6 +363,11 @@ export type EquipmentResponseWrap = {
   equipment: Maybe<Equipment>;
 };
 
+export type EquipmentResponsibleInput = {
+  equipmentId: Scalars['ID'];
+  userIds: Array<Scalars['Int']>;
+};
+
 export type EquipmentWithAssignmentStatus = {
   __typename?: 'EquipmentWithAssignmentStatus';
   id: Scalars['ID'];
@@ -373,6 +379,7 @@ export type EquipmentWithAssignmentStatus = {
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
   events: Array<ScheduledEvent>;
+  equipmentResponsible: Array<User>;
   status: EquipmentAssignmentStatus;
 };
 
@@ -719,6 +726,7 @@ export type Mutation = {
   assignToScheduledEvents: Scalars['Boolean'];
   deleteEquipmentAssignment: Scalars['Boolean'];
   confirmEquipmentAssignment: Scalars['Boolean'];
+  addEquipmentResponsible: Scalars['Boolean'];
   bulkUpsertLostTimes: LostTimesResponseWrap;
   createScheduledEvent: ScheduledEventResponseWrap;
   bulkUpsertScheduledEvents: ScheduledEventsResponseWrap;
@@ -1449,6 +1457,11 @@ export type MutationDeleteEquipmentAssignmentArgs = {
 
 export type MutationConfirmEquipmentAssignmentArgs = {
   confirmEquipmentAssignmentInput: ConfirmEquipmentAssignmentInput;
+};
+
+
+export type MutationAddEquipmentResponsibleArgs = {
+  equipmentResponsibleInput: EquipmentResponsibleInput;
 };
 
 
@@ -2902,7 +2915,13 @@ export type UserReviewsArgs = {
 
 
 export type UserProposalsArgs = {
+  filter?: Maybe<UserProposalsFilter>;
+};
+
+export type UserProposalsFilter = {
   instrumentId?: Maybe<Scalars['Int']>;
+  managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
+  finalStatus?: Maybe<ProposalEndStatus>;
 };
 
 export type UserQueryResult = {
@@ -4378,6 +4397,22 @@ export type GetInstrumentScientistProposalsQuery = (
         { __typename?: 'SEP' }
         & Pick<Sep, 'id' | 'code'>
       )> }
+      & ProposalFragment
+    )> }
+  )> }
+);
+
+export type GetMyProposalsQueryVariables = Exact<{
+  filter?: Maybe<UserProposalsFilter>;
+}>;
+
+
+export type GetMyProposalsQuery = (
+  { __typename?: 'Query' }
+  & { me: Maybe<(
+    { __typename?: 'User' }
+    & { proposals: Array<(
+      { __typename?: 'Proposal' }
       & ProposalFragment
     )> }
   )> }
@@ -8395,6 +8430,15 @@ export const GetInstrumentScientistProposalsDocument = gql`
     ${ProposalFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
 ${CoreTechnicalReviewFragmentDoc}`;
+export const GetMyProposalsDocument = gql`
+    query getMyProposals($filter: UserProposalsFilter) {
+  me {
+    proposals(filter: $filter) {
+      ...proposal
+    }
+  }
+}
+    ${ProposalFragmentDoc}`;
 export const GetProposalDocument = gql`
     query getProposal($id: Int!) {
   proposal(id: $id) {
@@ -8584,7 +8628,7 @@ ${RejectionFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
     query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatus!], $instrumentId: Int) {
   me {
-    proposals(instrumentId: $instrumentId) {
+    proposals(filter: {instrumentId: $instrumentId}) {
       id
       title
       shortCode
@@ -10273,6 +10317,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getInstrumentScientistProposals(variables?: GetInstrumentScientistProposalsQueryVariables): Promise<GetInstrumentScientistProposalsQuery> {
       return withWrapper(() => client.request<GetInstrumentScientistProposalsQuery>(print(GetInstrumentScientistProposalsDocument), variables));
+    },
+    getMyProposals(variables?: GetMyProposalsQueryVariables): Promise<GetMyProposalsQuery> {
+      return withWrapper(() => client.request<GetMyProposalsQuery>(print(GetMyProposalsDocument), variables));
     },
     getProposal(variables: GetProposalQueryVariables): Promise<GetProposalQuery> {
       return withWrapper(() => client.request<GetProposalQuery>(print(GetProposalDocument), variables));
