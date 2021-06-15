@@ -17,7 +17,7 @@ import {
 
 import BoxIcon from '../common/icons/BoxIcon';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   completed: {
     color: '#000',
   },
@@ -33,19 +33,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DotBadge = ({ children, ...rest }: BadgeProps) => (
-  <Badge variant="dot" overlap="circle" {...rest}>
-    {children}
-  </Badge>
-);
+function DotBadge({ children, ...rest }: BadgeProps) {
+  return (
+    <Badge variant="dot" overlap="circle" {...rest}>
+      {children}
+    </Badge>
+  );
+}
 
-function ActionButton({
-  children,
-  variant: state,
-}: {
+interface ActionButtonProps {
   children: React.ReactNode;
   variant: 'completed' | 'active' | 'inactive';
-}) {
+}
+function ActionButton({ children, variant: state }: ActionButtonProps) {
   const classes = useStyles();
 
   switch (state) {
@@ -82,11 +82,13 @@ export default function UserUpcomingExperimentsTable() {
           actions={[
             {
               tooltip: 'Define who is coming',
+              // eslint-disable-next-line
               icon: () => (
                 <ActionButton variant="inactive">
                   <GroupIcon />
                 </ActionButton>
               ),
+
               onClick: () => {
                 /* TODO */
               },
@@ -96,6 +98,7 @@ export default function UserUpcomingExperimentsTable() {
 
               return {
                 tooltip: 'Define your own visit',
+                // eslint-disable-next-line
                 icon: () => (
                   <ActionButton variant={variant}>
                     <FlightTakeoffIcon />
@@ -108,6 +111,7 @@ export default function UserUpcomingExperimentsTable() {
             },
             {
               tooltip: 'Finish individual training',
+              // eslint-disable-next-line
               icon: () => (
                 <ActionButton variant="inactive">
                   <SchoolIcon />
@@ -119,6 +123,7 @@ export default function UserUpcomingExperimentsTable() {
             },
             {
               tooltip: 'Finish risk assessment',
+              // eslint-disable-next-line
               icon: () => (
                 <ActionButton variant="inactive">
                   <BoxIcon />
