@@ -1608,6 +1608,7 @@ export type Proposal = {
   questionary: Maybe<Questionary>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
   samples: Maybe<Array<Sample>>;
+  visits: Maybe<Array<Visit>>;
   proposalBooking: Maybe<ProposalBooking>;
 };
 
@@ -2946,7 +2947,6 @@ export type Visit = {
   proposalId: Scalars['Int'];
   status: VisitStatus;
   questionaryId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
   visitorId: Scalars['Int'];
   proposal: Proposal;
   team: Array<BasicUserDetails>;
@@ -2975,6 +2975,7 @@ export enum VisitStatus {
 export type VisitsFilter = {
   visitorId?: Maybe<Scalars['Int']>;
   questionaryId?: Maybe<Scalars['Int']>;
+  proposalId?: Maybe<Scalars['Int']>;
 };
 
 export type AssignProposalToSepMutationVariables = Exact<{
@@ -4598,7 +4599,10 @@ export type GetUserProposalBookingsWithEventsQuery = (
           { __typename?: 'ScheduledEvent' }
           & Pick<ScheduledEvent, 'startsAt' | 'endsAt' | 'bookingType'>
         )> }
-      )> }
+      )>, visits: Maybe<Array<(
+        { __typename?: 'Visit' }
+        & VisitFragment
+      )>> }
     )> }
   )> }
 );
@@ -8608,10 +8612,13 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
           bookingType
         }
       }
+      visits {
+        ...visit
+      }
     }
   }
 }
-    `;
+    ${VisitFragmentDoc}`;
 export const AnswerTopicDocument = gql`
     mutation answerTopic($questionaryId: Int!, $topicId: Int!, $answers: [AnswerInput!]!, $isPartialSave: Boolean) {
   answerTopic(
