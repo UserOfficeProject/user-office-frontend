@@ -1,6 +1,6 @@
-query getSEPProposal($sepId: Int!, $proposalId: Int!) {
-  sepProposal(sepId: $sepId, proposalId: $proposalId) {
-    proposalId
+query getSEPProposal($sepId: Int!, $proposalPK: Int!) {
+  sepProposal(sepId: $sepId, proposalPK: $proposalPK) {
+    proposalPK
     sepId
     sepTimeAllocation
 

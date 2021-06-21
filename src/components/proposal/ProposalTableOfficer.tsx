@@ -29,7 +29,7 @@ import {
   Proposal,
   ProposalsFilter,
   ProposalStatus,
-  ProposalIdWithCallId,
+  ProposalPKWithCallId,
   Sep,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
@@ -58,7 +58,7 @@ type ProposalTableOfficerProps = {
   confirm: WithConfirmType;
 };
 
-type ProposalWithCallInstrumentAndSepId = ProposalIdWithCallId & {
+type ProposalWithCallInstrumentAndSepId = ProposalPKWithCallId & {
   instrumentId: number | null;
   sepId: number | null;
 };
@@ -355,7 +355,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const result = await api(
         'Proposal/s removed from the SEP successfully!'
       ).removeProposalsFromSep({
-        proposalIds: selectedProposals.map(
+        proposalPKs: selectedProposals.map(
           (selectedProposal) => selectedProposal.id
         ),
         sepId: selectedProposals[0].sepId as number,
@@ -417,7 +417,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const result = await api(
         'Proposal/s removed from the instrument successfully!'
       ).removeProposalsFromInstrument({
-        proposalIds: selectedProposals.map(
+        proposalPKs: selectedProposals.map(
           (selectedProposal) => selectedProposal.id
         ),
       });
@@ -608,7 +608,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         reviewItemId={proposalToReview?.id}
       >
         <ProposalReviewContent
-          proposalId={proposalToReview?.id as number}
+          proposalPK={proposalToReview?.id as number}
           tabNames={userOfficerProposalReviewTabs}
         />
       </ProposalReviewModal>

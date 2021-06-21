@@ -76,10 +76,10 @@ const ProposalTable = ({
     { title: 'Created', field: 'created' },
   ];
 
-  const [editProposalID, setEditProposalID] = useState(0);
+  const [editProposalPK, setEditProposalPK] = useState(0);
 
-  if (editProposalID) {
-    return <Redirect push to={`/ProposalEdit/${editProposalID}`} />;
+  if (editProposalPK) {
+    return <Redirect push to={`/ProposalEdit/${editProposalPK}`} />;
   }
 
   const cloneProposalToCall = async (call: Call) => {
@@ -155,7 +155,7 @@ const ProposalTable = ({
               icon: readOnly ? () => <Visibility /> : () => <Edit />,
               tooltip: readOnly ? 'View proposal' : 'Edit proposal',
               onClick: (event, rowData) =>
-                setEditProposalID((rowData as PartialProposalsDataType).id),
+                setEditProposalPK((rowData as PartialProposalsDataType).id),
             };
           },
           {

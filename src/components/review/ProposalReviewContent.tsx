@@ -38,7 +38,7 @@ export type TabNames =
 
 type ProposalReviewContentProps = {
   tabNames: TabNames[];
-  proposalId?: number | null;
+  proposalPK?: number | null;
   reviewId?: number | null;
   sepId?: number | null;
   isInsideModal?: boolean;
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
-  proposalId,
+  proposalPK,
   tabNames,
   reviewId,
   sepId,
@@ -68,7 +68,7 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const { reviewData, setReviewData } = useReviewData(reviewId, sepId);
   const { proposalData, setProposalData, loading } = useProposalData(
-    proposalId || reviewData?.proposal?.id
+    proposalPK || reviewData?.proposal?.id
   );
 
   if (loading) {

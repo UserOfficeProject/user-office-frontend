@@ -60,8 +60,8 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   ) as ShipmentContextType;
 
   const [title, setTitle] = useState(state?.shipment.title);
-  const [proposalId, setProposalId] = useState<number | null>(
-    state?.shipment.proposalId || null
+  const [proposalPK, setProposalPK] = useState<number | null>(
+    state?.shipment.proposalPK || null
   );
   const [sampleIds, setSampleIds] = useState<number[]>(
     state?.shipment.samples.map((sample) => sample.id) || []
@@ -71,7 +71,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const { proposals, loadingProposals } = useUserProposals(
     currentRole as UserRole
   );
-  const { samples, loadingSamples } = useProposalSamples(proposalId);
+  const { samples, loadingSamples } = useProposalSamples(proposalPK);
 
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
@@ -109,12 +109,12 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
           <Select
             labelId="proposal-id"
             onChange={(event) => {
-              const newProposalId = event.target.value as number;
-              setProposalId(newProposalId);
+              const newProposalPK = event.target.value as number;
+              setProposalPK(newProposalPK);
               setSampleIds([]);
-              handleChange({ proposalId: newProposalId });
+              handleChange({ proposalPK: newProposalPK });
             }}
-            value={proposalId || ''}
+            value={proposalPK || ''}
             fullWidth
             data-cy="select-proposal-dropdown"
           >
@@ -124,7 +124,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
               </MenuItem>
             ))}
           </Select>
-          <ProposalErrorLabel>{fieldErrors?.proposalId}</ProposalErrorLabel>
+          <ProposalErrorLabel>{fieldErrors?.proposalPK}</ProposalErrorLabel>
         </FormControl>
       )}
 
@@ -172,7 +172,7 @@ const shipmentBasisPreSubmit = () => async ({
     const result = await api.updateShipment({
       title: title,
       shipmentId: shipment.id,
-      proposalId: shipment.proposalId,
+      proposalPK: shipment.proposalPK,
     });
     if (result.updateShipment.shipment) {
       dispatch({
@@ -183,7 +183,7 @@ const shipmentBasisPreSubmit = () => async ({
   } else {
     const result = await api.createShipment({
       title: title,
-      proposalId: shipment.proposalId,
+      proposalPK: shipment.proposalPK,
     });
     if (result.createShipment.shipment) {
       dispatch({

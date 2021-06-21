@@ -1,14 +1,14 @@
 mutation updateShipment(
   $shipmentId: Int!
   $title: String
-  $proposalId: Int
+  $proposalPK: Int
   $status: ShipmentStatus
 ) {
   updateShipment(
     shipmentId: $shipmentId
     title: $title
     status: $status
-    proposalId: $proposalId
+    proposalPK: $proposalPK
   ) {
     rejection {
       ...rejection

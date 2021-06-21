@@ -1,13 +1,13 @@
 mutation createSample(
   $title: String!
   $templateId: Int!
-  $proposalId: Int!
+  $proposalPK: Int!
   $questionId: String!
 ) {
   createSample(
     title: $title
     templateId: $templateId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
     questionId: $questionId
   ) {
     sample {

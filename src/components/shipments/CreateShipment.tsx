@@ -29,7 +29,7 @@ function createShipmentStub(
     questionaryId: 0,
     created: new Date(),
     creatorId: creator.id,
-    proposalId: 0,
+    proposalPK: 0,
     questionary: {
       questionaryId: 0,
       templateId: templateId,

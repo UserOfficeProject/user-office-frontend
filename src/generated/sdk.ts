@@ -35,7 +35,7 @@ export type AddStatusChangingEventsToConnectionInput = {
 };
 
 export type AddTechnicalReviewInput = {
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   comment?: Maybe<Scalars['String']>;
   publicComment?: Maybe<Scalars['String']>;
   timeAllocation?: Maybe<Scalars['Int']>;
@@ -193,7 +193,7 @@ export type CallsFilter = {
 
 export type ChangeProposalsStatusInput = {
   statusId: Scalars['Int'];
-  proposals: Array<ProposalIdWithCallId>;
+  proposals: Array<ProposalPKWithCallId>;
 };
 
 export type CheckExternalTokenWrap = {
@@ -802,13 +802,13 @@ export type MutationChangeProposalsStatusArgs = {
 
 
 export type MutationAssignProposalsToInstrumentArgs = {
-  proposals: Array<ProposalIdWithCallId>;
+  proposals: Array<ProposalPKWithCallId>;
   instrumentId: Scalars['Int'];
 };
 
 
 export type MutationRemoveProposalsFromInstrumentArgs = {
-  proposalIds: Array<Scalars['Int']>;
+  proposalPKs: Array<Scalars['Int']>;
 };
 
 
@@ -950,7 +950,7 @@ export type MutationAddReviewArgs = {
 
 export type MutationAddUserForReviewArgs = {
   userID: Scalars['Int'];
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepID: Scalars['Int'];
 };
 
@@ -962,14 +962,14 @@ export type MutationSubmitProposalsReviewArgs = {
 
 export type MutationUpdateTechnicalReviewAssigneeArgs = {
   userId: Scalars['Int'];
-  proposalIds: Array<Scalars['Int']>;
+  proposalPKs: Array<Scalars['Int']>;
 };
 
 
 export type MutationCreateSampleArgs = {
   title: Scalars['String'];
   templateId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   questionId: Scalars['String'];
 };
 
@@ -1003,25 +1003,25 @@ export type MutationRemoveMemberFromSepArgs = {
 export type MutationAssignSepReviewersToProposalArgs = {
   memberIds: Array<Scalars['Int']>;
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 };
 
 
 export type MutationRemoveMemberFromSepProposalArgs = {
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 };
 
 
 export type MutationAssignProposalsToSepArgs = {
-  proposals: Array<ProposalIdWithCallId>;
+  proposals: Array<ProposalPKWithCallId>;
   sepId: Scalars['Int'];
 };
 
 
 export type MutationRemoveProposalsFromSepArgs = {
-  proposalIds: Array<Scalars['Int']>;
+  proposalPKs: Array<Scalars['Int']>;
   sepId: Scalars['Int'];
 };
 
@@ -1055,20 +1055,20 @@ export type MutationUpdateSepArgs = {
 
 export type MutationUpdateSepTimeAllocationArgs = {
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepTimeAllocation?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationCreateShipmentArgs = {
   title: Scalars['String'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 };
 
 
 export type MutationUpdateShipmentArgs = {
   shipmentId: Scalars['Int'];
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   status?: Maybe<ShipmentStatus>;
   externalRef?: Maybe<Scalars['String']>;
@@ -1272,7 +1272,7 @@ export type MutationCreateProposalArgs = {
 
 
 export type MutationCreateVisitArgs = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']>>;
 };
 
@@ -1436,7 +1436,7 @@ export type MutationUpdatePasswordArgs = {
 export type MutationUpdateVisitArgs = {
   visitId: Scalars['Int'];
   status?: Maybe<VisitStatus>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
   team?: Maybe<Array<Scalars['Int']>>;
 };
 
@@ -1684,18 +1684,18 @@ export type ProposalEvent = {
   description: Maybe<Scalars['String']>;
 };
 
-export type ProposalIdWithCallId = {
+export type ProposalPKWithCallId = {
   id: Scalars['Int'];
   callId: Scalars['Int'];
 };
 
-export type ProposalIdWithRankOrder = {
-  proposalId: Scalars['Int'];
+export type ProposalPKWithRankOrder = {
+  proposalPK: Scalars['Int'];
   rankOrder: Scalars['Int'];
 };
 
-export type ProposalIdWithReviewId = {
-  proposalId: Scalars['Int'];
+export type ProposalPKWithReviewId = {
+  proposalPK: Scalars['Int'];
   reviewId: Scalars['Int'];
 };
 
@@ -2056,7 +2056,7 @@ export type QueryInstrumentScientistHasInstrumentArgs = {
 
 
 export type QueryInstrumentScientistHasAccessArgs = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   instrumentId: Scalars['Int'];
 };
 
@@ -2072,7 +2072,7 @@ export type QueryProposalArgs = {
 
 
 export type QueryUserHasAccessToProposalArgs = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 };
 
 
@@ -2108,7 +2108,7 @@ export type QueryReviewArgs = {
 
 
 export type QueryProposalReviewsArgs = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 };
 
 
@@ -2149,7 +2149,7 @@ export type QuerySepProposalsArgs = {
 
 
 export type QuerySepProposalArgs = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepId: Scalars['Int'];
 };
 
@@ -2354,7 +2354,7 @@ export type RemoveAssignedInstrumentFromCallInput = {
 };
 
 export type ReorderSepMeetingDecisionProposalsInput = {
-  proposals: Array<ProposalIdWithRankOrder>;
+  proposals: Array<ProposalPKWithRankOrder>;
 };
 
 export type Review = {
@@ -2432,7 +2432,7 @@ export type Sep = {
 
 export type SepAssignment = {
   __typename?: 'SEPAssignment';
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepMemberUserId: Maybe<Scalars['Int']>;
   sepId: Scalars['Int'];
   dateAssigned: Scalars['DateTime'];
@@ -2447,7 +2447,7 @@ export type SepAssignment = {
 
 export type SepProposal = {
   __typename?: 'SEPProposal';
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepId: Scalars['Int'];
   dateAssigned: Scalars['DateTime'];
   sepTimeAllocation: Maybe<Scalars['Int']>;
@@ -2488,7 +2488,7 @@ export type Sample = {
   title: Scalars['String'];
   creatorId: Scalars['Int'];
   questionaryId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   questionId: Scalars['String'];
   safetyStatus: SampleStatus;
   safetyComment: Scalars['String'];
@@ -2522,11 +2522,11 @@ export type SamplesFilter = {
   sampleIds?: Maybe<Array<Scalars['Int']>>;
   status?: Maybe<SampleStatus>;
   questionId?: Maybe<Scalars['String']>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
 };
 
 export type SaveSepMeetingDecisionInput = {
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   commentForUser?: Maybe<Scalars['String']>;
   commentForManagement?: Maybe<Scalars['String']>;
   recommendation?: Maybe<ProposalEndStatus>;
@@ -2595,7 +2595,7 @@ export type SelectionFromOptionsConfig = {
 
 export type SepMeetingDecision = {
   __typename?: 'SepMeetingDecision';
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   recommendation: Maybe<ProposalEndStatus>;
   commentForManagement: Maybe<Scalars['String']>;
   commentForUser: Maybe<Scalars['String']>;
@@ -2625,7 +2625,7 @@ export type Shipment = {
   __typename?: 'Shipment';
   id: Scalars['Int'];
   title: Scalars['String'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   status: ShipmentStatus;
   externalRef: Maybe<Scalars['String']>;
   questionaryId: Scalars['Int'];
@@ -2657,7 +2657,7 @@ export enum ShipmentStatus {
 export type ShipmentsFilter = {
   title?: Maybe<Scalars['String']>;
   creatorId?: Maybe<Scalars['Int']>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
   questionaryIds?: Maybe<Array<Scalars['Int']>>;
   status?: Maybe<ShipmentStatus>;
   externalRef?: Maybe<Scalars['String']>;
@@ -2686,11 +2686,11 @@ export type StatusChangingEvent = {
 };
 
 export type SubmitProposalsReviewInput = {
-  proposals: Array<ProposalIdWithReviewId>;
+  proposals: Array<ProposalPKWithReviewId>;
 };
 
 export type SubmitTechnicalReviewInput = {
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   comment?: Maybe<Scalars['String']>;
   publicComment?: Maybe<Scalars['String']>;
   timeAllocation?: Maybe<Scalars['Int']>;
@@ -2719,7 +2719,7 @@ export type SuccessResponseWrap = {
 export type TechnicalReview = {
   __typename?: 'TechnicalReview';
   id: Scalars['Int'];
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   comment: Maybe<Scalars['String']>;
   publicComment: Maybe<Scalars['String']>;
   timeAllocation: Maybe<Scalars['Int']>;
@@ -2961,7 +2961,7 @@ export enum UserRole {
 export type Visit = {
   __typename?: 'Visit';
   id: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   status: VisitStatus;
   questionaryId: Scalars['Int'];
   visitorId: Scalars['Int'];
@@ -2992,11 +2992,11 @@ export enum VisitStatus {
 export type VisitsFilter = {
   visitorId?: Maybe<Scalars['Int']>;
   questionaryId?: Maybe<Scalars['Int']>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
 };
 
 export type AssignProposalsToSepMutationVariables = Exact<{
-  proposals: Array<ProposalIdWithCallId> | ProposalIdWithCallId;
+  proposals: Array<ProposalPKWithCallId> | ProposalPKWithCallId;
   sepId: Scalars['Int'];
 }>;
 
@@ -3057,7 +3057,7 @@ export type AssignChairOrSecretaryMutation = (
 export type AssignSepReviewersToProposalMutationVariables = Exact<{
   memberIds: Array<Scalars['Int']> | Scalars['Int'];
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 }>;
 
 
@@ -3125,7 +3125,7 @@ export type DeleteSepMutation = (
 
 export type SepMeetingDecisionFragment = (
   { __typename?: 'SepMeetingDecision' }
-  & Pick<SepMeetingDecision, 'proposalId' | 'recommendation' | 'commentForUser' | 'commentForManagement' | 'rankOrder' | 'submitted' | 'submittedBy'>
+  & Pick<SepMeetingDecision, 'proposalPK' | 'recommendation' | 'commentForUser' | 'commentForManagement' | 'rankOrder' | 'submitted' | 'submittedBy'>
 );
 
 export type GetInstrumentsBySepQueryVariables = Exact<{
@@ -3209,7 +3209,7 @@ export type GetSepMembersQuery = (
 
 export type GetSepProposalQueryVariables = Exact<{
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 }>;
 
 
@@ -3217,7 +3217,7 @@ export type GetSepProposalQuery = (
   { __typename?: 'Query' }
   & { sepProposal: Maybe<(
     { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalId' | 'sepId' | 'sepTimeAllocation' | 'instrumentSubmitted'>
+    & Pick<SepProposal, 'proposalPK' | 'sepId' | 'sepTimeAllocation' | 'instrumentSubmitted'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & { proposer: Maybe<(
@@ -3265,7 +3265,7 @@ export type GetSepProposalsQuery = (
   { __typename?: 'Query' }
   & { sepProposals: Maybe<Array<(
     { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalId' | 'dateAssigned' | 'sepId' | 'sepTimeAllocation'>
+    & Pick<SepProposal, 'proposalPK' | 'dateAssigned' | 'sepId' | 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'title' | 'id' | 'shortCode'>
@@ -3371,7 +3371,7 @@ export type GetSePsQuery = (
 );
 
 export type RemoveProposalsFromSepMutationVariables = Exact<{
-  proposalIds: Array<Scalars['Int']> | Scalars['Int'];
+  proposalPKs: Array<Scalars['Int']> | Scalars['Int'];
   sepId: Scalars['Int'];
 }>;
 
@@ -3414,7 +3414,7 @@ export type RemoveMemberFromSepMutation = (
 export type RemoveMemberFromSepProposalMutationVariables = Exact<{
   memberId: Scalars['Int'];
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 }>;
 
 
@@ -3446,7 +3446,7 @@ export type ReorderSepMeetingDecisionProposalsMutation = (
       & RejectionFragment
     )>, sepMeetingDecision: Maybe<(
       { __typename?: 'SepMeetingDecision' }
-      & Pick<SepMeetingDecision, 'proposalId'>
+      & Pick<SepMeetingDecision, 'proposalPK'>
     )> }
   ) }
 );
@@ -3465,7 +3465,7 @@ export type SaveSepMeetingDecisionMutation = (
       & RejectionFragment
     )>, sepMeetingDecision: Maybe<(
       { __typename?: 'SepMeetingDecision' }
-      & Pick<SepMeetingDecision, 'proposalId'>
+      & Pick<SepMeetingDecision, 'proposalPK'>
     )> }
   ) }
 );
@@ -3495,7 +3495,7 @@ export type UpdateSepMutation = (
 
 export type UpdateSepTimeAllocationMutationVariables = Exact<{
   sepId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepTimeAllocation?: Maybe<Scalars['Int']>;
 }>;
 
@@ -3992,7 +3992,7 @@ export type GetEventLogsQuery = (
 );
 
 export type AssignProposalsToInstrumentMutationVariables = Exact<{
-  proposals: Array<ProposalIdWithCallId> | ProposalIdWithCallId;
+  proposals: Array<ProposalPKWithCallId> | ProposalPKWithCallId;
   instrumentId: Scalars['Int'];
 }>;
 
@@ -4109,7 +4109,7 @@ export type GetUserInstrumentsQuery = (
 );
 
 export type RemoveProposalsFromInstrumentMutationVariables = Exact<{
-  proposalIds: Array<Scalars['Int']> | Scalars['Int'];
+  proposalPKs: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
@@ -4234,7 +4234,7 @@ export type AdministrationProposalMutation = (
 );
 
 export type ChangeProposalsStatusMutationVariables = Exact<{
-  proposals: Array<ProposalIdWithCallId> | ProposalIdWithCallId;
+  proposals: Array<ProposalPKWithCallId> | ProposalPKWithCallId;
   statusId: Scalars['Int'];
 }>;
 
@@ -4358,7 +4358,7 @@ export type DeleteProposalMutation = (
 
 export type CoreTechnicalReviewFragment = (
   { __typename?: 'TechnicalReview' }
-  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalID' | 'submitted'>
+  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalPK' | 'submitted'>
 );
 
 export type ProposalFragment = (
@@ -4802,7 +4802,7 @@ export type GetQuestionaryQuery = (
 );
 
 export type AddTechnicalReviewMutationVariables = Exact<{
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   timeAllocation?: Maybe<Scalars['Int']>;
   comment?: Maybe<Scalars['String']>;
   publicComment?: Maybe<Scalars['String']>;
@@ -4828,7 +4828,7 @@ export type AddTechnicalReviewMutation = (
 
 export type AddUserForReviewMutationVariables = Exact<{
   userID: Scalars['Int'];
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   sepID: Scalars['Int'];
 }>;
 
@@ -4848,7 +4848,7 @@ export type AddUserForReviewMutation = (
 );
 
 export type UpdateTechnicalReviewAssigneeMutationVariables = Exact<{
-  proposalIds: Array<Scalars['Int']> | Scalars['Int'];
+  proposalPKs: Array<Scalars['Int']> | Scalars['Int'];
   userId: Scalars['Int'];
 }>;
 
@@ -4873,7 +4873,7 @@ export type CoreReviewFragment = (
 );
 
 export type GetProposalReviewsQueryVariables = Exact<{
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 }>;
 
 
@@ -4928,7 +4928,7 @@ export type RemoveUserForReviewMutation = (
 );
 
 export type SubmitProposalsReviewMutationVariables = Exact<{
-  proposals: Array<ProposalIdWithReviewId> | ProposalIdWithReviewId;
+  proposals: Array<ProposalPKWithReviewId> | ProposalPKWithReviewId;
 }>;
 
 
@@ -4945,7 +4945,7 @@ export type SubmitProposalsReviewMutation = (
 );
 
 export type SubmitTechnicalReviewMutationVariables = Exact<{
-  proposalID: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   timeAllocation?: Maybe<Scalars['Int']>;
   comment?: Maybe<Scalars['String']>;
   publicComment?: Maybe<Scalars['String']>;
@@ -5054,7 +5054,7 @@ export type CloneSampleMutation = (
 export type CreateSampleMutationVariables = Exact<{
   title: Scalars['String'];
   templateId: Scalars['Int'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   questionId: Scalars['String'];
 }>;
 
@@ -5099,7 +5099,7 @@ export type DeleteSampleMutation = (
 
 export type SampleFragment = (
   { __typename?: 'Sample' }
-  & Pick<Sample, 'id' | 'title' | 'creatorId' | 'questionaryId' | 'safetyStatus' | 'safetyComment' | 'created' | 'proposalId' | 'questionId'>
+  & Pick<Sample, 'id' | 'title' | 'creatorId' | 'questionaryId' | 'safetyStatus' | 'safetyComment' | 'created' | 'proposalPK' | 'questionId'>
 );
 
 export type GetSampleQueryVariables = Exact<{
@@ -5519,7 +5519,7 @@ export type AddSamplesToShipmentMutation = (
 
 export type CreateShipmentMutationVariables = Exact<{
   title: Scalars['String'];
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
 }>;
 
 
@@ -5562,7 +5562,7 @@ export type DeleteShipmentMutation = (
 
 export type ShipmentFragment = (
   { __typename?: 'Shipment' }
-  & Pick<Shipment, 'id' | 'title' | 'proposalId' | 'status' | 'externalRef' | 'questionaryId' | 'creatorId' | 'created'>
+  & Pick<Shipment, 'id' | 'title' | 'proposalPK' | 'status' | 'externalRef' | 'questionaryId' | 'creatorId' | 'created'>
   & { proposal: (
     { __typename?: 'Proposal' }
     & Pick<Proposal, 'shortCode'>
@@ -5653,7 +5653,7 @@ export type SubmitShipmentMutation = (
 export type UpdateShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
   status?: Maybe<ShipmentStatus>;
 }>;
 
@@ -6806,7 +6806,7 @@ export type VerifyEmailMutation = (
 );
 
 export type CreateVisitMutationVariables = Exact<{
-  proposalId: Scalars['Int'];
+  proposalPK: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
@@ -6860,7 +6860,7 @@ export type DeleteVisitMutation = (
 
 export type VisitFragment = (
   { __typename?: 'Visit' }
-  & Pick<Visit, 'id' | 'proposalId' | 'status' | 'questionaryId' | 'visitorId'>
+  & Pick<Visit, 'id' | 'proposalPK' | 'status' | 'questionaryId' | 'visitorId'>
 );
 
 export type GetMyVisitsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -6934,7 +6934,7 @@ export type UpdateVisitMutationVariables = Exact<{
   visitId: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   status?: Maybe<VisitStatus>;
-  proposalId?: Maybe<Scalars['Int']>;
+  proposalPK?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -7030,7 +7030,7 @@ export const CoreTechnicalReviewFragmentDoc = gql`
   publicComment
   timeAllocation
   status
-  proposalID
+  proposalPK
   submitted
 }
     `;
@@ -7045,7 +7045,7 @@ export const ProposalStatusFragmentDoc = gql`
     `;
 export const SepMeetingDecisionFragmentDoc = gql`
     fragment sepMeetingDecision on SepMeetingDecision {
-  proposalId
+  proposalPK
   recommendation
   commentForUser
   commentForManagement
@@ -7270,7 +7270,7 @@ export const SampleFragmentDoc = gql`
   safetyStatus
   safetyComment
   created
-  proposalId
+  proposalPK
   questionId
 }
     `;
@@ -7278,7 +7278,7 @@ export const ShipmentFragmentDoc = gql`
     fragment shipment on Shipment {
   id
   title
-  proposalId
+  proposalPK
   status
   externalRef
   questionaryId
@@ -7359,14 +7359,14 @@ export const TemplateStepFragmentDoc = gql`
 export const VisitFragmentDoc = gql`
     fragment visit on Visit {
   id
-  proposalId
+  proposalPK
   status
   questionaryId
   visitorId
 }
     `;
 export const AssignProposalsToSepDocument = gql`
-    mutation assignProposalsToSep($proposals: [ProposalIdWithCallId!]!, $sepId: Int!) {
+    mutation assignProposalsToSep($proposals: [ProposalPKWithCallId!]!, $sepId: Int!) {
   assignProposalsToSep(proposals: $proposals, sepId: $sepId) {
     rejection {
       ...rejection
@@ -7406,11 +7406,11 @@ export const AssignChairOrSecretaryDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const AssignSepReviewersToProposalDocument = gql`
-    mutation assignSepReviewersToProposal($memberIds: [Int!]!, $sepId: Int!, $proposalId: Int!) {
+    mutation assignSepReviewersToProposal($memberIds: [Int!]!, $sepId: Int!, $proposalPK: Int!) {
   assignSepReviewersToProposal(
     memberIds: $memberIds
     sepId: $sepId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
   ) {
     rejection {
       ...rejection
@@ -7535,9 +7535,9 @@ export const GetSepMembersDocument = gql`
 }
     `;
 export const GetSepProposalDocument = gql`
-    query getSEPProposal($sepId: Int!, $proposalId: Int!) {
-  sepProposal(sepId: $sepId, proposalId: $proposalId) {
-    proposalId
+    query getSEPProposal($sepId: Int!, $proposalPK: Int!) {
+  sepProposal(sepId: $sepId, proposalPK: $proposalPK) {
+    proposalPK
     sepId
     sepTimeAllocation
     instrumentSubmitted
@@ -7591,7 +7591,7 @@ ${CoreTechnicalReviewFragmentDoc}`;
 export const GetSepProposalsDocument = gql`
     query getSEPProposals($sepId: Int!, $callId: Int!) {
   sepProposals(sepId: $sepId, callId: $callId) {
-    proposalId
+    proposalPK
     dateAssigned
     sepId
     sepTimeAllocation
@@ -7706,8 +7706,8 @@ export const GetSePsDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const RemoveProposalsFromSepDocument = gql`
-    mutation removeProposalsFromSep($proposalIds: [Int!]!, $sepId: Int!) {
-  removeProposalsFromSep(proposalIds: $proposalIds, sepId: $sepId) {
+    mutation removeProposalsFromSep($proposalPKs: [Int!]!, $sepId: Int!) {
+  removeProposalsFromSep(proposalPKs: $proposalPKs, sepId: $sepId) {
     rejection {
       ...rejection
     }
@@ -7730,11 +7730,11 @@ export const RemoveMemberFromSepDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const RemoveMemberFromSepProposalDocument = gql`
-    mutation removeMemberFromSEPProposal($memberId: Int!, $sepId: Int!, $proposalId: Int!) {
+    mutation removeMemberFromSEPProposal($memberId: Int!, $sepId: Int!, $proposalPK: Int!) {
   removeMemberFromSEPProposal(
     memberId: $memberId
     sepId: $sepId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
   ) {
     rejection {
       ...rejection
@@ -7754,7 +7754,7 @@ export const ReorderSepMeetingDecisionProposalsDocument = gql`
       ...rejection
     }
     sepMeetingDecision {
-      proposalId
+      proposalPK
     }
   }
 }
@@ -7768,7 +7768,7 @@ export const SaveSepMeetingDecisionDocument = gql`
       ...rejection
     }
     sepMeetingDecision {
-      proposalId
+      proposalPK
     }
   }
 }
@@ -7792,10 +7792,10 @@ export const UpdateSepDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateSepTimeAllocationDocument = gql`
-    mutation updateSEPTimeAllocation($sepId: Int!, $proposalId: Int!, $sepTimeAllocation: Int) {
+    mutation updateSEPTimeAllocation($sepId: Int!, $proposalPK: Int!, $sepTimeAllocation: Int) {
   updateSEPTimeAllocation(
     sepId: $sepId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
     sepTimeAllocation: $sepTimeAllocation
   ) {
     rejection {
@@ -8108,7 +8108,7 @@ export const GetEventLogsDocument = gql`
 }
     `;
 export const AssignProposalsToInstrumentDocument = gql`
-    mutation assignProposalsToInstrument($proposals: [ProposalIdWithCallId!]!, $instrumentId: Int!) {
+    mutation assignProposalsToInstrument($proposals: [ProposalPKWithCallId!]!, $instrumentId: Int!) {
   assignProposalsToInstrument(proposals: $proposals, instrumentId: $instrumentId) {
     rejection {
       ...rejection
@@ -8197,8 +8197,8 @@ export const GetUserInstrumentsDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const RemoveProposalsFromInstrumentDocument = gql`
-    mutation removeProposalsFromInstrument($proposalIds: [Int!]!) {
-  removeProposalsFromInstrument(proposalIds: $proposalIds) {
+    mutation removeProposalsFromInstrument($proposalPKs: [Int!]!) {
+  removeProposalsFromInstrument(proposalPKs: $proposalPKs) {
     rejection {
       ...rejection
     }
@@ -8290,7 +8290,7 @@ export const AdministrationProposalDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const ChangeProposalsStatusDocument = gql`
-    mutation changeProposalsStatus($proposals: [ProposalIdWithCallId!]!, $statusId: Int!) {
+    mutation changeProposalsStatus($proposals: [ProposalPKWithCallId!]!, $statusId: Int!) {
   changeProposalsStatus(
     changeProposalsStatusInput: {proposals: $proposals, statusId: $statusId}
   ) {
@@ -8726,9 +8726,9 @@ export const GetQuestionaryDocument = gql`
 }
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
-    mutation addTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
+    mutation addTechnicalReview($proposalPK: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
   addTechnicalReview(
-    addTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
+    addTechnicalReviewInput: {proposalPK: $proposalPK, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
   ) {
     rejection {
       ...rejection
@@ -8740,8 +8740,8 @@ export const AddTechnicalReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const AddUserForReviewDocument = gql`
-    mutation addUserForReview($userID: Int!, $proposalID: Int!, $sepID: Int!) {
-  addUserForReview(userID: $userID, proposalID: $proposalID, sepID: $sepID) {
+    mutation addUserForReview($userID: Int!, $proposalPK: Int!, $sepID: Int!) {
+  addUserForReview(userID: $userID, proposalPK: $proposalPK, sepID: $sepID) {
     rejection {
       ...rejection
     }
@@ -8752,8 +8752,8 @@ export const AddUserForReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateTechnicalReviewAssigneeDocument = gql`
-    mutation updateTechnicalReviewAssignee($proposalIds: [Int!]!, $userId: Int!) {
-  updateTechnicalReviewAssignee(proposalIds: $proposalIds, userId: $userId) {
+    mutation updateTechnicalReviewAssignee($proposalPKs: [Int!]!, $userId: Int!) {
+  updateTechnicalReviewAssignee(proposalPKs: $proposalPKs, userId: $userId) {
     proposals {
       ...proposal
     }
@@ -8765,8 +8765,8 @@ export const UpdateTechnicalReviewAssigneeDocument = gql`
     ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetProposalReviewsDocument = gql`
-    query getProposalReviews($proposalId: Int!) {
-  proposalReviews(proposalId: $proposalId) {
+    query getProposalReviews($proposalPK: Int!) {
+  proposalReviews(proposalPK: $proposalPK) {
     id
     userID
     comment
@@ -8805,7 +8805,7 @@ export const RemoveUserForReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const SubmitProposalsReviewDocument = gql`
-    mutation submitProposalsReview($proposals: [ProposalIdWithReviewId!]!) {
+    mutation submitProposalsReview($proposals: [ProposalPKWithReviewId!]!) {
   submitProposalsReview(submitProposalsReviewInput: {proposals: $proposals}) {
     rejection {
       ...rejection
@@ -8815,9 +8815,9 @@ export const SubmitProposalsReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const SubmitTechnicalReviewDocument = gql`
-    mutation submitTechnicalReview($proposalID: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
+    mutation submitTechnicalReview($proposalPK: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
   submitTechnicalReview(
-    submitTechnicalReviewInput: {proposalID: $proposalID, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
+    submitTechnicalReviewInput: {proposalPK: $proposalPK, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
   ) {
     rejection {
       ...rejection
@@ -8908,11 +8908,11 @@ export const CloneSampleDocument = gql`
 ${QuestionaryFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateSampleDocument = gql`
-    mutation createSample($title: String!, $templateId: Int!, $proposalId: Int!, $questionId: String!) {
+    mutation createSample($title: String!, $templateId: Int!, $proposalPK: Int!, $questionId: String!) {
   createSample(
     title: $title
     templateId: $templateId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
     questionId: $questionId
   ) {
     sample {
@@ -9264,8 +9264,8 @@ export const AddSamplesToShipmentDocument = gql`
 ${ShipmentFragmentDoc}
 ${SampleFragmentDoc}`;
 export const CreateShipmentDocument = gql`
-    mutation createShipment($title: String!, $proposalId: Int!) {
-  createShipment(title: $title, proposalId: $proposalId) {
+    mutation createShipment($title: String!, $proposalPK: Int!) {
+  createShipment(title: $title, proposalPK: $proposalPK) {
     shipment {
       ...shipment
       questionary {
@@ -9349,12 +9349,12 @@ export const SubmitShipmentDocument = gql`
     ${RejectionFragmentDoc}
 ${ShipmentFragmentDoc}`;
 export const UpdateShipmentDocument = gql`
-    mutation updateShipment($shipmentId: Int!, $title: String, $proposalId: Int, $status: ShipmentStatus) {
+    mutation updateShipment($shipmentId: Int!, $title: String, $proposalPK: Int, $status: ShipmentStatus) {
   updateShipment(
     shipmentId: $shipmentId
     title: $title
     status: $status
-    proposalId: $proposalId
+    proposalPK: $proposalPK
   ) {
     rejection {
       ...rejection
@@ -10016,8 +10016,8 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitDocument = gql`
-    mutation createVisit($proposalId: Int!, $team: [Int!]) {
-  createVisit(proposalId: $proposalId, team: $team) {
+    mutation createVisit($proposalPK: Int!, $team: [Int!]) {
+  createVisit(proposalPK: $proposalPK, team: $team) {
     visit {
       ...visit
       questionary {
@@ -10109,10 +10109,10 @@ export const GetVisitsDocument = gql`
     ${VisitFragmentDoc}
 ${ProposalFragmentDoc}`;
 export const UpdateVisitDocument = gql`
-    mutation updateVisit($visitId: Int!, $team: [Int!], $status: VisitStatus, $proposalId: Int) {
+    mutation updateVisit($visitId: Int!, $team: [Int!], $status: VisitStatus, $proposalPK: Int) {
   updateVisit(
     visitId: $visitId
-    proposalId: $proposalId
+    proposalPK: $proposalPK
     team: $team
     status: $status
   ) {

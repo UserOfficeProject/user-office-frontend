@@ -31,7 +31,7 @@ type SEPAssignedReviewersTableProps = {
   sepProposal: SEPProposalType;
   removeAssignedReviewer: (
     assignedReviewer: SepAssignment,
-    proposalId: number
+    proposalPK: number
   ) => Promise<void>;
   updateView: (currentAssignment: SepAssignment) => void;
 };
@@ -107,7 +107,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
                 ): Promise<void> =>
                   removeAssignedReviewer(
                     rowAssignmentsData,
-                    sepProposal.proposalId
+                    sepProposal.proposalPK
                   ),
               }
             : {}
@@ -126,7 +126,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
               setEditReviewID(rowData.review.id);
               setCurrentAssignment({
                 ...rowData,
-                proposalId: sepProposal.proposalId,
+                proposalPK: sepProposal.proposalPK,
               });
               setReviewModalOpen(true);
             },

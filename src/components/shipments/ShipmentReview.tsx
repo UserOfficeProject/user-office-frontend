@@ -42,7 +42,7 @@ function ShipmentReview({ confirm }: ShipmentReviewProps) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const { proposalData } = useProposalData(state.shipment.proposalId);
+  const { proposalData } = useProposalData(state.shipment.proposalPK);
   const downloadShipmentLabel = useDownloadPDFShipmentLabel();
   const classes = useStyles();
 

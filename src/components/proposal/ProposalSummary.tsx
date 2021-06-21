@@ -88,7 +88,7 @@ function ProposalReview({ readonly, confirm }: ProposalSummaryProps) {
                 () => {
                   dispatch({
                     type: 'PROPOSAL_SUBMIT_CLICKED',
-                    proposalId: proposal.id,
+                    proposalPK: proposal.id,
                   });
                 },
                 {
