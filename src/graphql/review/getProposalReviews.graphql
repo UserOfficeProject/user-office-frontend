@@ -1,5 +1,5 @@
-query getProposalReviews($proposalPK: Int!) {
-  proposalReviews(proposalPK: $proposalPK) {
+query getProposalReviews($proposalPk: Int!) {
+  proposalReviews(proposalPk: $proposalPk) {
     id
     userID
     comment

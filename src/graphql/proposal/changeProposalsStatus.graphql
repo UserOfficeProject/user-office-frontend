@@ -1,5 +1,5 @@
 mutation changeProposalsStatus(
-  $proposals: [ProposalPKWithCallId!]!
+  $proposals: [ProposalPkWithCallId!]!
   $statusId: Int!
 ) {
   changeProposalsStatus(

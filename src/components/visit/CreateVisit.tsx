@@ -24,7 +24,7 @@ function createVisitStub(
     status: VisitStatus.DRAFT,
     questionaryId: 0,
     visitorId: visitorId,
-    proposalPK: 0,
+    proposalPk: 0,
     questionary: {
       questionaryId: 0,
       templateId: templateId,

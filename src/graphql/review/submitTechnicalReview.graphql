@@ -1,5 +1,5 @@
 mutation submitTechnicalReview(
-  $proposalPK: Int!
+  $proposalPk: Int!
   $timeAllocation: Int
   $comment: String
   $publicComment: String
@@ -9,7 +9,7 @@ mutation submitTechnicalReview(
 ) {
   submitTechnicalReview(
     submitTechnicalReviewInput: {
-      proposalPK: $proposalPK
+      proposalPk: $proposalPk
       timeAllocation: $timeAllocation
       comment: $comment
       publicComment: $publicComment

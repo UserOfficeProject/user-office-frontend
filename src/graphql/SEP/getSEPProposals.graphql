@@ -1,6 +1,6 @@
 query getSEPProposals($sepId: Int!, $callId: Int!) {
   sepProposals(sepId: $sepId, callId: $callId) {
-    proposalPK
+    proposalPk
     dateAssigned
     sepId
     sepTimeAllocation

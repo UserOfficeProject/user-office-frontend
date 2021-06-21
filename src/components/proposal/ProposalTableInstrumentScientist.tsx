@@ -260,7 +260,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         reviewItemId={urlQueryParams.reviewModal}
       >
         <ProposalReviewContent
-          proposalPK={urlQueryParams.reviewModal as number}
+          proposalPk={urlQueryParams.reviewModal as number}
           tabNames={instrumentScientistProposalReviewTabs}
         />
       </ProposalReviewModal>

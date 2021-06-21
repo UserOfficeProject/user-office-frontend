@@ -8,8 +8,8 @@ import {
 export function useDownloadXLSXProposal() {
   const { prepareDownload } = useContext(DownloadContext);
   const downloadProposalXLSX = useCallback(
-    (proposalPKs: number[], name: string) => {
-      prepareDownload(PREPARE_DOWNLOAD_TYPE.XLSX_PROPOSAL, proposalPKs, name);
+    (proposalPks: number[], name: string) => {
+      prepareDownload(PREPARE_DOWNLOAD_TYPE.XLSX_PROPOSAL, proposalPks, name);
     },
     [prepareDownload]
   );

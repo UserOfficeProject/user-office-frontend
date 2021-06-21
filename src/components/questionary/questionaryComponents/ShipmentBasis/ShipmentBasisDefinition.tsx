@@ -28,7 +28,7 @@ export const shipmentBasisDefinition: QuestionaryComponentDefinition = {
 
     return {
       title: shipmentState.shipment.title,
-      proposalPK: shipmentState.shipment.proposalPK,
+      proposalPk: shipmentState.shipment.proposalPk,
       samples: shipmentState.shipment.samples,
     };
   },

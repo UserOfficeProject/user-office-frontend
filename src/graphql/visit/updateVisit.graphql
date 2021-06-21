@@ -2,11 +2,11 @@ mutation updateVisit(
   $visitId: Int!
   $team: [Int!]
   $status: VisitStatus
-  $proposalPK: Int
+  $proposalPk: Int
 ) {
   updateVisit(
     visitId: $visitId
-    proposalPK: $proposalPK
+    proposalPk: $proposalPk
     team: $team
     status: $status
   ) {

@@ -74,7 +74,7 @@ function AssignTechnicalReview({
                 )
                   .updateTechnicalReviewAssignee({
                     userId: selectedUser,
-                    proposalPKs: [proposal.id],
+                    proposalPks: [proposal.id],
                   })
                   .then((result) => {
                     onProposalUpdated({

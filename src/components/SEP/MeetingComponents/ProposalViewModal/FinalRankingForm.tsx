@@ -54,7 +54,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const initialData = {
-    proposalPK: proposalData.id,
+    proposalPk: proposalData.id,
     commentForUser: proposalData.sepMeetingDecision?.commentForUser ?? '',
     commentForManagement:
       proposalData.sepMeetingDecision?.commentForManagement ?? '',
@@ -80,7 +80,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
       (!isUserOfficer && shouldSubmit) || (isUserOfficer && values.submitted);
 
     const saveSepMeetingDecisionInput = {
-      proposalPK: values.proposalPK,
+      proposalPk: values.proposalPk,
       recommendation:
         ProposalEndStatus[values.recommendation as ProposalEndStatus],
       commentForUser: values.commentForUser,

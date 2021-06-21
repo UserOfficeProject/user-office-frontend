@@ -1,11 +1,11 @@
 mutation updateSEPTimeAllocation(
   $sepId: Int!
-  $proposalPK: Int!
+  $proposalPk: Int!
   $sepTimeAllocation: Int
 ) {
   updateSEPTimeAllocation(
     sepId: $sepId
-    proposalPK: $proposalPK
+    proposalPk: $proposalPk
     sepTimeAllocation: $sepTimeAllocation
   ) {
     rejection {

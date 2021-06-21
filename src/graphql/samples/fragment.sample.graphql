@@ -6,6 +6,6 @@ fragment sample on Sample {
   safetyStatus
   safetyComment
   created
-  proposalPK
+  proposalPk
   questionId
 }

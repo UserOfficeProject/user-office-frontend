@@ -43,18 +43,18 @@ function SampleList(props: {
 }
 
 interface SamplesAnswerRendererProps {
-  proposalPK: number;
+  proposalPk: number;
   answer: Answer;
 }
 
 const SamplesAnswerRenderer = ({
-  proposalPK,
+  proposalPk,
   answer,
 }: SamplesAnswerRendererProps) => {
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
 
   const { samples } = useSamplesWithQuestionaryStatus({
-    proposalPK: proposalPK,
+    proposalPk: proposalPk,
     questionId: answer.question.id,
   });
 

@@ -21,7 +21,7 @@ export function usePersistProposalModel() {
         case 'PROPOSAL_SUBMIT_CLICKED': {
           api('Saved')
             .submitProposal({
-              id: action.proposalPK,
+              id: action.proposalPk,
             })
             .then((result) => {
               const state = getState() as ProposalSubmissionState;

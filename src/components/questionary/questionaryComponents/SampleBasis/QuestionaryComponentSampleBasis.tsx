@@ -83,7 +83,7 @@ const sampleBasisPreSubmit = () => async ({
     const result = await api.createSample({
       title: title,
       templateId: state.templateId,
-      proposalPK: sample.proposalPK,
+      proposalPk: sample.proposalPk,
       questionId: sample.questionId,
     });
 

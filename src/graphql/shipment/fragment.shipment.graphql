@@ -1,7 +1,7 @@
 fragment shipment on Shipment {
   id
   title
-  proposalPK
+  proposalPk
   status
   externalRef
   questionaryId

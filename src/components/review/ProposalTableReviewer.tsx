@@ -13,7 +13,7 @@ import InstrumentFilter from 'components/common/proposalFilters/InstrumentFilter
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
-  ProposalPKWithReviewId,
+  ProposalPkWithReviewId,
   ReviewerFilter,
   ReviewStatus,
   SepAssignment,
@@ -38,7 +38,7 @@ import ReviewStatusFilter, {
 
 type UserWithReview = {
   shortCode: string;
-  proposalPK: number;
+  proposalPk: number;
   title: string;
   grade: number;
   reviewId: number;
@@ -76,7 +76,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
   });
 
   const [selectedProposals, setSelectedProposals] = useState<
-    (ProposalPKWithReviewId & { title: string })[]
+    (ProposalPkWithReviewId & { title: string })[]
   >([]);
 
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
@@ -125,7 +125,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             (review) =>
               ({
                 shortCode: review?.proposal?.shortCode,
-                proposalPK: review?.proposal?.id,
+                proposalPk: review?.proposal?.id,
                 title: review?.proposal?.title,
                 grade: review.grade,
                 reviewId: review.id,
@@ -145,14 +145,14 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
 
       setPreselectedProposalsData((preselectedProposalsData) => {
         const selected: {
-          proposalPK: number;
+          proposalPk: number;
           reviewId: number;
           title: string;
         }[] = [];
         const preselected = preselectedProposalsData.map((proposal) => {
-          if (selection.has(proposal.proposalPK.toString())) {
+          if (selection.has(proposal.proposalPk.toString())) {
             selected.push({
-              proposalPK: proposal.proposalPK,
+              proposalPk: proposal.proposalPk,
               reviewId: proposal.reviewId,
               title: proposal.title,
             });
@@ -161,7 +161,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
           return {
             ...proposal,
             tableData: {
-              checked: selection.has(proposal.proposalPK.toString()),
+              checked: selection.has(proposal.proposalPk.toString()),
             },
           };
         });
@@ -200,7 +200,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       <Tooltip title="Download Proposal">
         <IconButton
           onClick={() =>
-            downloadPDFProposal([rowData.proposalPK], rowData.title)
+            downloadPDFProposal([rowData.proposalPk], rowData.title)
           }
         >
           <GetAppIcon />
@@ -259,7 +259,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     if (selectedProposals?.length) {
       const shouldAddPluralLetter = selectedProposals.length > 1 ? 's' : '';
       const submitProposalReviewsInput = selectedProposals.map((proposal) => ({
-        proposalPK: proposal.proposalPK,
+        proposalPk: proposal.proposalPk,
         reviewId: proposal.reviewId,
       }));
 
@@ -366,7 +366,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             selection:
               selectedItems.length > 0
                 ? selectedItems.map((selectedItem) =>
-                    selectedItem.proposalPK.toString()
+                    selectedItem.proposalPk.toString()
                   )
                 : undefined,
           }));
@@ -382,7 +382,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             tooltip: 'Download proposals',
             onClick: () => {
               downloadPDFProposal(
-                selectedProposals.map((proposal) => proposal.proposalPK),
+                selectedProposals.map((proposal) => proposal.proposalPk),
                 selectedProposals[0].title
               );
             },

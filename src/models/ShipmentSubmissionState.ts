@@ -12,6 +12,6 @@ export interface ShipmentSubmissionState extends QuestionarySubmissionState {
 
 export interface ShipmentBasisFormikData {
   title: string;
-  proposalPK: number;
+  proposalPk: number;
   samples: SampleFragment[];
 }

@@ -8,8 +8,8 @@ import {
 export function useDownloadPDFProposal() {
   const { prepareDownload } = useContext(DownloadContext);
   const downloadProposalPDF = useCallback(
-    (proposalPKs: number[], name: string) => {
-      prepareDownload(PREPARE_DOWNLOAD_TYPE.PDF_PROPOSAL, proposalPKs, name);
+    (proposalPks: number[], name: string) => {
+      prepareDownload(PREPARE_DOWNLOAD_TYPE.PDF_PROPOSAL, proposalPks, name);
     },
     [prepareDownload]
   );

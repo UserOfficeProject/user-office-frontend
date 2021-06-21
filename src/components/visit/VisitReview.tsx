@@ -40,7 +40,7 @@ function VisitReview({ confirm }: VisitReviewProps) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const { proposalData } = useProposalData(state.visit.proposalPK);
+  const { proposalData } = useProposalData(state.visit.proposalPk);
   const classes = useStyles();
 
   if (!proposalData) {

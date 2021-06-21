@@ -3,28 +3,28 @@ import { useEffect, useState } from 'react';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { SampleWithQuestionaryStatus } from 'models/Sample';
 
-export function useProposalSamples(proposalPK: number | null) {
+export function useProposalSamples(proposalPk: number | null) {
   const [samples, setSamples] = useState<SampleWithQuestionaryStatus[]>([]);
 
   const [loadingSamples, setLoadingSamples] = useState(false);
   const api = useDataApi();
 
   useEffect(() => {
-    if (!proposalPK) {
+    if (!proposalPk) {
       setSamples([]);
 
       return;
     }
     setLoadingSamples(true);
     api()
-      .getSamplesWithQuestionaryStatus({ filter: { proposalPK } })
+      .getSamplesWithQuestionaryStatus({ filter: { proposalPk } })
       .then((data) => {
         if (data.samples) {
           setSamples(data.samples);
         }
         setLoadingSamples(false);
       });
-  }, [api, proposalPK]);
+  }, [api, proposalPk]);
 
   return { samples, loadingSamples, setSamples };
 }

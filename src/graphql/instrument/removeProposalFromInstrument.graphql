@@ -1,5 +1,5 @@
-mutation removeProposalsFromInstrument($proposalPKs: [Int!]!) {
-  removeProposalsFromInstrument(proposalPKs: $proposalPKs) {
+mutation removeProposalsFromInstrument($proposalPks: [Int!]!) {
+  removeProposalsFromInstrument(proposalPks: $proposalPks) {
     rejection {
       ...rejection
     }

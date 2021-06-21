@@ -57,7 +57,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     setSEPProposalsData,
   } = useSEPProposalsData(sepId, selectedCallId);
   const { api } = useDataApiWithFeedback();
-  const [proposalPK, setProposalPK] = useState<null | number>(null);
+  const [proposalPk, setProposalPk] = useState<null | number>(null);
   const downloadPDFProposal = useDownloadPDFProposal();
 
   const hasRightToAssignReviewers = useCheckAccess([
@@ -132,28 +132,28 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     proposalToRemove: SEPProposalType
   ): Promise<void> => {
     await api('Assignment removed').removeProposalsFromSep({
-      proposalPKs: [proposalToRemove.proposalPK],
+      proposalPks: [proposalToRemove.proposalPk],
       sepId,
     });
 
     setSEPProposalsData((sepProposalData) =>
       sepProposalData.filter(
         (proposalItem) =>
-          proposalItem.proposalPK !== proposalToRemove.proposalPK
+          proposalItem.proposalPk !== proposalToRemove.proposalPk
       )
     );
   };
 
   const removeAssignedReviewer = async (
     assignedReviewer: SepAssignment,
-    proposalPK: number
+    proposalPk: number
   ): Promise<void> => {
     /**
      * TODO(asztalos): merge `removeMemberFromSEPProposal` and `removeUserForReview` (same goes for creation)
      *                otherwise if one of them fails we may end up with an broken state
      */
     await api('Reviewer removed').removeMemberFromSEPProposal({
-      proposalPK,
+      proposalPk,
       sepId,
       memberId: assignedReviewer.sepMemberUserId as number,
     });
@@ -166,7 +166,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
 
     setSEPProposalsData((sepProposalData) =>
       sepProposalData.map((proposalItem) => {
-        if (proposalItem.proposalPK === proposalPK) {
+        if (proposalItem.proposalPk === proposalPk) {
           const newAssignments =
             proposalItem.assignments?.filter(
               (oldAssignment) =>
@@ -188,9 +188,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   const assignMemberToSEPProposal = async (
     assignedMembers: SepAssignedMember[]
   ) => {
-    setProposalPK(null);
+    setProposalPk(null);
 
-    if (!proposalPK) {
+    if (!proposalPk) {
       return;
     }
 
@@ -198,7 +198,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
       assignSepReviewersToProposal: { rejection },
     } = await api('Members assigned').assignSepReviewersToProposal({
       memberIds: assignedMembers.map(({ id }) => id),
-      proposalPK: proposalPK,
+      proposalPk: proposalPk,
       sepId,
     });
 
@@ -207,7 +207,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     }
 
     const { proposalReviews } = await api().getProposalReviews({
-      proposalPK,
+      proposalPk,
     });
 
     if (!proposalReviews) {
@@ -216,7 +216,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
 
     setSEPProposalsData((sepProposalData) =>
       sepProposalData.map((proposalItem) => {
-        if (proposalItem.proposalPK === proposalPK) {
+        if (proposalItem.proposalPk === proposalPk) {
           const newAssignments: SEPProposalAssignmentType[] = [
             ...(proposalItem.assignments ?? []),
             ...assignedMembers.map(({ role, ...user }) => ({
@@ -247,7 +247,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
 
   const proposalAssignments = initialValues.find(
-    (assignment) => assignment.proposalPK === proposalPK
+    (assignment) => assignment.proposalPk === proposalPk
   )?.assignments;
 
   const updateReviewStatusAndGrade = (
@@ -257,7 +257,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
   ) => {
     const newProposalsData =
       sepProposalData?.map((sepProposalsData) => {
-        if (sepProposalsData.proposalPK === editingProposalData.proposalPK) {
+        if (sepProposalsData.proposalPk === editingProposalData.proposalPk) {
           const editingProposalStatus = (currentAssignment.review as ReviewWithNextProposalStatus)
             .nextProposalStatus
             ? ((currentAssignment.review as ReviewWithNextProposalStatus)
@@ -316,7 +316,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
         }}
       >
         <ProposalReviewContent
-          proposalPK={urlQueryParams.reviewModal}
+          proposalPk={urlQueryParams.reviewModal}
           tabNames={['Proposal information', 'Technical review']}
         />
       </ProposalReviewModal>
@@ -325,8 +325,8 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
         fullWidth
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
-        open={!!proposalPK}
-        onClose={(): void => setProposalPK(null)}
+        open={!!proposalPk}
+        onClose={(): void => setProposalPk(null)}
       >
         <DialogContent>
           <AssignSEPMemberToProposal
@@ -367,13 +367,13 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                 ? [
                     (rowData) => ({
                       icon: AssignmentIndIcon,
-                      onClick: () => setProposalPK(rowData.proposalPK),
+                      onClick: () => setProposalPk(rowData.proposalPk),
                       tooltip: 'Assign SEP Member',
                     }),
                     (rowData) => ({
                       icon: ViewIcon,
                       onClick: () =>
-                        setUrlQueryParams({ reviewModal: rowData.proposalPK }),
+                        setUrlQueryParams({ reviewModal: rowData.proposalPk }),
                       tooltip: 'View Proposal',
                     }),
                     {
@@ -381,7 +381,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                       tooltip: 'Download proposal',
                       onClick: (rowData) => {
                         downloadPDFProposal(
-                          [rowData.proposalPK],
+                          [rowData.proposalPk],
                           rowData.title
                         );
                       },

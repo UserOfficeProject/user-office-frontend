@@ -9,9 +9,9 @@ import { useProposalData } from 'hooks/proposal/useProposalData';
 import ProposalContainer from './ProposalContainer';
 
 export default function ProposalEdit() {
-  const { proposalPK } = useParams<{ proposalPK: string }>();
+  const { proposalPk } = useParams<{ proposalPk: string }>();
 
-  const { proposalData } = useProposalData(+proposalPK);
+  const { proposalData } = useProposalData(+proposalPk);
 
   if (!proposalData) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;

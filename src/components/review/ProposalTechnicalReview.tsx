@@ -89,7 +89,7 @@ const ProposalTechnicalReview = ({
         } successfully!`;
 
     const result = await api(successMessage)[method]({
-      proposalPK: proposal.id,
+      proposalPk: proposal.id,
       timeAllocation: +values.timeAllocation,
       comment: values.comment,
       publicComment: values.publicComment,
@@ -101,7 +101,7 @@ const ProposalTechnicalReview = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(result as any)[method].error) {
       setReview({
-        proposalPK: data?.proposalPK,
+        proposalPk: data?.proposalPk,
         timeAllocation: +values.timeAllocation,
         comment: values.comment,
         publicComment: values.publicComment,
