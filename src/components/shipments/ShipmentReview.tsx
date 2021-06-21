@@ -56,7 +56,7 @@ function ShipmentReview({ confirm }: ShipmentReviewProps) {
     {
       label: 'Proposal',
       value: (
-        <Link href={`/ProposalEdit/${proposalData.id}`}>
+        <Link href={`/ProposalEdit/${proposalData.primaryKey}`}>
           {proposalData.title}
         </Link>
       ),

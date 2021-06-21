@@ -2,7 +2,7 @@ query getSamplesByCallId($callId: Int!) {
   samplesByCallId(callId: $callId) {
     ...sample
     proposal {
-      id
+      primaryKey
       shortCode
     }
   }

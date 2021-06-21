@@ -103,7 +103,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           <IconButton
             data-cy="view-proposal"
             onClick={() => {
-              setUrlQueryParams({ reviewModal: rowData.id });
+              setUrlQueryParams({ reviewModal: rowData.primaryKey });
             }}
             style={iconButtonStyle}
           >
@@ -114,7 +114,9 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         <Tooltip title="Download proposal as pdf">
           <IconButton
             data-cy="download-proposal"
-            onClick={() => downloadPDFProposal([rowData.id], rowData.title)}
+            onClick={() =>
+              downloadPDFProposal([rowData.primaryKey], rowData.title)
+            }
             style={iconButtonStyle}
           >
             <GetAppIcon />
@@ -232,7 +234,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
   const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
 
   const proposalToReview = proposalsData.find(
-    (proposal) => proposal.id === urlQueryParams.reviewModal
+    (proposal) => proposal.primaryKey === urlQueryParams.reviewModal
   );
 
   const instrumentScientistProposalReviewTabs: TabNames[] = [
@@ -248,7 +250,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
           setProposalsData(
             proposalsData.map((proposal) => {
-              if (proposal.id === updatedProposal?.id) {
+              if (proposal.primaryKey === updatedProposal?.primaryKey) {
                 return updatedProposal;
               } else {
                 return proposal;
@@ -316,7 +318,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
             tooltip: 'Download proposals in PDF',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
-                (rowData as Proposal[]).map((row) => row.id),
+                (rowData as Proposal[]).map((row) => row.primaryKey),
                 (rowData as Proposal[])[0].title
               );
             },

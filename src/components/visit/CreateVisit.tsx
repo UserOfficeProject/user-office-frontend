@@ -33,7 +33,7 @@ function createVisitStub(
     },
     team: [],
     proposal: {
-      id: 0,
+      primaryKey: 0,
       title: '',
       abstract: '',
       statusId: 0,

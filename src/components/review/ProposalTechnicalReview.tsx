@@ -89,7 +89,7 @@ const ProposalTechnicalReview = ({
         } successfully!`;
 
     const result = await api(successMessage)[method]({
-      proposalPk: proposal.id,
+      proposalPk: proposal.primaryKey,
       timeAllocation: +values.timeAllocation,
       comment: values.comment,
       publicComment: values.publicComment,

@@ -164,7 +164,7 @@ function QuestionaryComponentSampleDeclaration(
                   );
                 }
 
-                const proposalPk = state.proposal.id;
+                const proposalPk = state.proposal.primaryKey;
                 const questionId = props.answer.question.id;
                 if (proposalPk <= 0 || !questionId) {
                   throw new Error(
@@ -221,7 +221,7 @@ function QuestionaryComponentSampleDeclaration(
                       .getSamplesWithQuestionaryStatus({
                         filter: {
                           questionId: answer.question.id,
-                          proposalPk: state.proposal.id,
+                          proposalPk: state.proposal.primaryKey,
                         },
                       })
                       .then((result) => {

@@ -125,7 +125,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             (review) =>
               ({
                 shortCode: review?.proposal?.shortCode,
-                proposalPk: review?.proposal?.id,
+                proposalPk: review?.proposal?.primaryKey,
                 title: review?.proposal?.title,
                 grade: review.grade,
                 reviewId: review.id,

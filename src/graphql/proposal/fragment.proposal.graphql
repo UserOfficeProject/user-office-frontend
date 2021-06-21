@@ -1,5 +1,5 @@
 fragment proposal on Proposal {
-  id
+  primaryKey
   title
   abstract
   statusId

@@ -217,7 +217,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
               color="inherit"
               onClick={() =>
                 setUrlQueryParams({
-                  sepMeetingModal: rowData.proposal.id,
+                  sepMeetingModal: rowData.proposal.primaryKey,
                 })
               }
             >
@@ -313,7 +313,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const onMeetingSubmitted = (data: SepMeetingDecision) => {
     const newInstrumentProposalsData = instrumentProposalsData.map(
       (proposalData) => {
-        if (proposalData.proposal.id === data.proposalPk) {
+        if (proposalData.proposal.primaryKey === data.proposalPk) {
           return {
             ...proposalData,
             proposal: {
@@ -345,7 +345,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       proposal: {
         ...item.proposal,
         sepMeetingDecision: {
-          proposalPk: item.proposal.id,
+          proposalPk: item.proposal.primaryKey,
           rankOrder: index + 1,
           commentForManagement:
             item.proposal.sepMeetingDecision?.commentForManagement || null,
@@ -398,7 +398,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
 
     const reorderSepMeetingDecisionProposalsInput = tableDataWithRankingsUpdated.map(
       (item) => ({
-        proposalPk: item.proposal.id,
+        proposalPk: item.proposal.primaryKey,
         rankOrder: item.proposal.sepMeetingDecision?.rankOrder,
       })
     );

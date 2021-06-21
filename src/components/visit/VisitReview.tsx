@@ -52,7 +52,7 @@ function VisitReview({ confirm }: VisitReviewProps) {
     {
       label: 'Proposal',
       value: (
-        <Link href={`/ProposalEdit/${proposalData.id}`}>
+        <Link href={`/ProposalEdit/${proposalData.primaryKey}`}>
           {proposalData.title}
         </Link>
       ),

@@ -54,7 +54,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const initialData = {
-    proposalPk: proposalData.id,
+    proposalPk: proposalData.primaryKey,
     commentForUser: proposalData.sepMeetingDecision?.commentForUser ?? '',
     commentForManagement:
       proposalData.sepMeetingDecision?.commentForManagement ?? '',

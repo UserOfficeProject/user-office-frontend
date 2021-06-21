@@ -68,7 +68,7 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const { reviewData, setReviewData } = useReviewData(reviewId, sepId);
   const { proposalData, setProposalData, loading } = useProposalData(
-    proposalPk || reviewData?.proposal?.id
+    proposalPk || reviewData?.proposal?.primaryKey
   );
 
   if (loading) {
@@ -183,7 +183,10 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   );
 
   const EventLogsTab = isUserOfficer && (
-    <EventLogList changedObjectId={proposalData.id} eventType="PROPOSAL" />
+    <EventLogList
+      changedObjectId={proposalData.primaryKey}
+      eventType="PROPOSAL"
+    />
   );
 
   const tabsContent = tabNames.map((tab, index) => {

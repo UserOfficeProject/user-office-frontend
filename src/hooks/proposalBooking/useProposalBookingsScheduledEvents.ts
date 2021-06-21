@@ -10,7 +10,7 @@ export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
   'startsAt' | 'endsAt'
 > & {
-  proposal: Pick<Proposal, 'id' | 'title' | 'shortCode'> & {
+  proposal: Pick<Proposal, 'primaryKey' | 'title' | 'shortCode'> & {
     visits: VisitFragment[] | null;
   };
 };
@@ -57,7 +57,7 @@ export function useProposalBookingsScheduledEvents({
                   startsAt: scheduledEvent.startsAt,
                   endsAt: scheduledEvent.endsAt,
                   proposal: {
-                    id: proposal.id,
+                    primaryKey: proposal.primaryKey,
                     title: proposal.title,
                     shortCode: proposal.shortCode,
                     visits: proposal.visits,

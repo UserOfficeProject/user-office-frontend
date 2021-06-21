@@ -8,7 +8,7 @@ import { timeAgo } from 'utils/Time';
 import ProposalTable from './ProposalTable';
 
 export type PartialProposalsDataType = {
-  id: number;
+  primaryKey: number;
   title: string;
   status: string | null;
   publicStatus: ProposalPublicStatus;
@@ -50,7 +50,7 @@ const ProposalTableUser: React.FC = () => {
             })
             .map((proposal) => {
               return {
-                id: proposal.id,
+                primaryKey: proposal.primaryKey,
                 title: proposal.title,
                 status: getProposalStatus(proposal),
                 publicStatus: proposal.publicStatus,

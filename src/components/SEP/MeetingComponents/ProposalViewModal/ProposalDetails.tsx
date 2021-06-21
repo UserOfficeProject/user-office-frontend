@@ -97,7 +97,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
                 <TableCell>
                   <Button
                     onClick={() =>
-                      downloadPDFProposal([proposal.id], proposal.title)
+                      downloadPDFProposal([proposal.primaryKey], proposal.title)
                     }
                     color="primary"
                   >

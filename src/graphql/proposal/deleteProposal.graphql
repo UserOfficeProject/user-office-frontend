@@ -4,7 +4,7 @@ mutation deleteProposal($id: Int!) {
       ...rejection
     }
     proposal {
-      id
+      primaryKey
     }
   }
 }

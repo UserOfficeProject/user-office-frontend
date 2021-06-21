@@ -13,7 +13,7 @@ mutation updateProposal(
     proposerId: $proposerId
   ) {
     proposal {
-      id
+      primaryKey
       title
       abstract
       proposer {

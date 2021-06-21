@@ -6,7 +6,7 @@ query getSEPProposals($sepId: Int!, $callId: Int!) {
     sepTimeAllocation
     proposal {
       title
-      id
+      primaryKey
       shortCode
       status {
         ...proposalStatus

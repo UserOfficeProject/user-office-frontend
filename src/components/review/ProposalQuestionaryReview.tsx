@@ -42,7 +42,7 @@ export default function ProposalQuestionaryReview(
       questionaryId={data.questionaryId}
       additionalDetails={additionalDetails}
       title="Proposal information"
-      proposalPk={data.id}
+      proposalPk={data.primaryKey}
       {...restProps}
     />
   );

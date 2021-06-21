@@ -119,7 +119,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
             data-cy="select-proposal-dropdown"
           >
             {proposals.map((proposal) => (
-              <MenuItem key={proposal.id} value={proposal.id}>
+              <MenuItem key={proposal.primaryKey} value={proposal.primaryKey}>
                 {proposal.title}
               </MenuItem>
             ))}

@@ -102,7 +102,7 @@ const ProposalTable = ({
       resultProposal
     ) {
       const newClonedProposal = {
-        id: resultProposal.id,
+        primaryKey: resultProposal.primaryKey,
         title: resultProposal.title,
         status: getProposalStatus(resultProposal),
         publicStatus: resultProposal.publicStatus,
@@ -155,14 +155,18 @@ const ProposalTable = ({
               icon: readOnly ? () => <Visibility /> : () => <Edit />,
               tooltip: readOnly ? 'View proposal' : 'Edit proposal',
               onClick: (event, rowData) =>
-                setEditProposalPk((rowData as PartialProposalsDataType).id),
+                setEditProposalPk(
+                  (rowData as PartialProposalsDataType).primaryKey
+                ),
             };
           },
           {
             icon: FileCopy,
             tooltip: 'Clone proposal',
             onClick: (event, rowData) => {
-              setProposalToCloneId((rowData as PartialProposalsDataType).id);
+              setProposalToCloneId(
+                (rowData as PartialProposalsDataType).primaryKey
+              );
               setOpenCallSelection(true);
             },
           },
@@ -171,7 +175,7 @@ const ProposalTable = ({
             tooltip: 'Download proposal',
             onClick: (event, rowData) =>
               downloadPDFProposal(
-                [(rowData as PartialProposalsDataType).id],
+                [(rowData as PartialProposalsDataType).primaryKey],
                 (rowData as PartialProposalsDataType).title
               ),
           },
@@ -193,13 +197,14 @@ const ProposalTable = ({
                   async () => {
                     const deletedProposal = (
                       await api().deleteProposal({
-                        id: (rowData as PartialProposalsDataType).id,
+                        id: (rowData as PartialProposalsDataType).primaryKey,
                       })
                     ).deleteProposal.proposal;
                     if (deletedProposal) {
                       setPartialProposalsData(
                         partialProposalsData?.filter(
-                          (item) => item.id !== deletedProposal?.id
+                          (item) =>
+                            item.primaryKey !== deletedProposal?.primaryKey
                         )
                       );
                     }

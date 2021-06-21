@@ -16,7 +16,7 @@ function createProposalStub(
   proposer: BasicUserDetails
 ): ProposalSubsetSubmission {
   return {
-    id: 0,
+    primaryKey: 0,
     title: '',
     abstract: '',
     callId: callId,

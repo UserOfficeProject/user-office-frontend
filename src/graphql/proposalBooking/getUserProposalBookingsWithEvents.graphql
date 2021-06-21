@@ -5,7 +5,7 @@ query getUserProposalBookingsWithEvents(
 ) {
   me {
     proposals(filter: { instrumentId: $instrumentId }) {
-      id
+      primaryKey
       title
       shortCode
       proposalBooking(filter: { status: $status }) {

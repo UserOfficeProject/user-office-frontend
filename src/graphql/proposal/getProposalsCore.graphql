@@ -1,6 +1,6 @@
 query getProposalsCore($filter: ProposalsFilter) {
   proposalsView(filter: $filter) {
-    id
+    primaryKey
     title
     statusId
     statusName

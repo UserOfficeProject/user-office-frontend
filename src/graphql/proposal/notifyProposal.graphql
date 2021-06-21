@@ -1,7 +1,7 @@
 mutation notifyProposal($id: Int!) {
   notifyProposal(id: $id) {
     proposal {
-      id
+      primaryKey
     }
     rejection {
       ...rejection

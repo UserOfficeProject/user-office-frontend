@@ -48,7 +48,7 @@ function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
         noOptionsText="No proposals"
         items={proposals.map((proposal) => ({
           text: proposal.title,
-          value: proposal.id,
+          value: proposal.primaryKey,
         }))}
         InputProps={{ 'data-cy': 'proposal-selection' }}
         onChange={(event) => {
