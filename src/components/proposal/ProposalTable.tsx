@@ -52,7 +52,7 @@ const ProposalTable = ({
     PartialProposalsDataType[] | undefined
   >([]);
   const [openCallSelection, setOpenCallSelection] = useState(false);
-  const [proposalToCloneId, setProposalToCloneId] = useState<number | null>(
+  const [proposalToClonePk, setProposalToCloneId] = useState<number | null>(
     null
   );
 
@@ -85,13 +85,13 @@ const ProposalTable = ({
   const cloneProposalToCall = async (call: Call) => {
     setProposalToCloneId(null);
 
-    if (!call?.id || !proposalToCloneId) {
+    if (!call?.id || !proposalToClonePk) {
       return;
     }
 
     const result = await api('Proposal cloned successfully').cloneProposal({
       callId: call.id,
-      proposalToCloneId,
+      proposalToClonePk,
     });
 
     const resultProposal = result.cloneProposal.proposal;
@@ -197,7 +197,8 @@ const ProposalTable = ({
                   async () => {
                     const deletedProposal = (
                       await api().deleteProposal({
-                        id: (rowData as PartialProposalsDataType).primaryKey,
+                        proposalPk: (rowData as PartialProposalsDataType)
+                          .primaryKey,
                       })
                     ).deleteProposal.proposal;
                     if (deletedProposal) {

@@ -1,12 +1,12 @@
 mutation updateProposal(
-  $primaryKey: Int!
+  $proposalPk: Int!
   $title: String
   $abstract: String
   $users: [Int!]
   $proposerId: Int
 ) {
   updateProposal(
-    primaryKey: $primaryKey
+    proposalPk: $proposalPk
     title: $title
     abstract: $abstract
     users: $users

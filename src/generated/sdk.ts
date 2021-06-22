@@ -204,7 +204,7 @@ export type CheckExternalTokenWrap = {
 
 export type CloneProposalInput = {
   callId: Scalars['Int'];
-  proposalToCloneId: Scalars['Int'];
+  proposalToClonePk: Scalars['Int'];
 };
 
 export type ConfirmEquipmentAssignmentInput = {
@@ -856,7 +856,7 @@ export type MutationSubmitInstrumentArgs = {
 
 
 export type MutationAdministrationProposalArgs = {
-  primaryKey: Scalars['Int'];
+  proposalPk: Scalars['Int'];
   commentForUser?: Maybe<Scalars['String']>;
   commentForManagement?: Maybe<Scalars['String']>;
   finalStatus?: Maybe<ProposalEndStatus>;
@@ -872,7 +872,7 @@ export type MutationCloneProposalArgs = {
 
 
 export type MutationUpdateProposalArgs = {
-  primaryKey: Scalars['Int'];
+  proposalPk: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   abstract?: Maybe<Scalars['String']>;
   users?: Maybe<Array<Scalars['Int']>>;
@@ -1293,7 +1293,7 @@ export type MutationDeleteInstrumentArgs = {
 
 
 export type MutationDeleteProposalArgs = {
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 };
 
 
@@ -1359,7 +1359,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationNotifyProposalArgs = {
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 };
 
 
@@ -1402,7 +1402,7 @@ export type MutationDeleteProposalWorkflowArgs = {
 
 
 export type MutationSubmitProposalArgs = {
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 };
 
 
@@ -4209,7 +4209,7 @@ export type UpdateInstrumentMutation = (
 );
 
 export type AdministrationProposalMutationVariables = Exact<{
-  primaryKey: Scalars['Int'];
+  proposalPk: Scalars['Int'];
   finalStatus?: Maybe<ProposalEndStatus>;
   statusId?: Maybe<Scalars['Int']>;
   commentForUser?: Maybe<Scalars['String']>;
@@ -4252,7 +4252,7 @@ export type ChangeProposalsStatusMutation = (
 );
 
 export type CloneProposalMutationVariables = Exact<{
-  proposalToCloneId: Scalars['Int'];
+  proposalToClonePk: Scalars['Int'];
   callId: Scalars['Int'];
 }>;
 
@@ -4338,7 +4338,7 @@ export type CreateProposalMutation = (
 );
 
 export type DeleteProposalMutationVariables = Exact<{
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 }>;
 
 
@@ -4547,7 +4547,7 @@ export type GetProposalsCoreQuery = (
 );
 
 export type NotifyProposalMutationVariables = Exact<{
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 }>;
 
 
@@ -4566,7 +4566,7 @@ export type NotifyProposalMutation = (
 );
 
 export type SubmitProposalMutationVariables = Exact<{
-  id: Scalars['Int'];
+  proposalPk: Scalars['Int'];
 }>;
 
 
@@ -4585,7 +4585,7 @@ export type SubmitProposalMutation = (
 );
 
 export type UpdateProposalMutationVariables = Exact<{
-  primaryKey: Scalars['Int'];
+  proposalPk: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   abstract?: Maybe<Scalars['String']>;
   users?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
@@ -8270,9 +8270,9 @@ export const UpdateInstrumentDocument = gql`
     ${BasicUserDetailsFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
-    mutation administrationProposal($primaryKey: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
+    mutation administrationProposal($proposalPk: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
   administrationProposal(
-    primaryKey: $primaryKey
+    proposalPk: $proposalPk
     finalStatus: $finalStatus
     statusId: $statusId
     commentForUser: $commentForUser
@@ -8302,9 +8302,9 @@ export const ChangeProposalsStatusDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CloneProposalDocument = gql`
-    mutation cloneProposal($proposalToCloneId: Int!, $callId: Int!) {
+    mutation cloneProposal($proposalToClonePk: Int!, $callId: Int!) {
   cloneProposal(
-    cloneProposalInput: {proposalToCloneId: $proposalToCloneId, callId: $callId}
+    cloneProposalInput: {proposalToClonePk: $proposalToClonePk, callId: $callId}
   ) {
     proposal {
       ...proposal
@@ -8392,8 +8392,8 @@ ${BasicUserDetailsFragmentDoc}
 ${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteProposalDocument = gql`
-    mutation deleteProposal($id: Int!) {
-  deleteProposal(id: $id) {
+    mutation deleteProposal($proposalPk: Int!) {
+  deleteProposal(proposalPk: $proposalPk) {
     rejection {
       ...rejection
     }
@@ -8597,8 +8597,8 @@ export const GetProposalsCoreDocument = gql`
 }
     `;
 export const NotifyProposalDocument = gql`
-    mutation notifyProposal($id: Int!) {
-  notifyProposal(id: $id) {
+    mutation notifyProposal($proposalPk: Int!) {
+  notifyProposal(proposalPk: $proposalPk) {
     proposal {
       primaryKey
     }
@@ -8609,8 +8609,8 @@ export const NotifyProposalDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const SubmitProposalDocument = gql`
-    mutation submitProposal($id: Int!) {
-  submitProposal(id: $id) {
+    mutation submitProposal($proposalPk: Int!) {
+  submitProposal(proposalPk: $proposalPk) {
     proposal {
       ...proposal
     }
@@ -8622,9 +8622,9 @@ export const SubmitProposalDocument = gql`
     ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const UpdateProposalDocument = gql`
-    mutation updateProposal($primaryKey: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
+    mutation updateProposal($proposalPk: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
   updateProposal(
-    primaryKey: $primaryKey
+    proposalPk: $proposalPk
     title: $title
     abstract: $abstract
     users: $users

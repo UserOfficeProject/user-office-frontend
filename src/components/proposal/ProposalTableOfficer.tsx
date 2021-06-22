@@ -83,7 +83,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     ProposalViewData[]
   >([]);
   const [openCallSelection, setOpenCallSelection] = useState(false);
-  const [proposalToCloneId, setProposalToCloneId] = useState<number | null>(
+  const [proposalToClonePk, setProposalToClonePk] = useState<number | null>(
     null
   );
 
@@ -182,7 +182,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           <IconButton
             data-cy="clone-proposal"
             onClick={() => {
-              setProposalToCloneId(rowData.primaryKey);
+              setProposalToClonePk(rowData.primaryKey);
               setOpenCallSelection(true);
             }}
             style={iconButtonStyle}
@@ -286,7 +286,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       const {
         notifyProposal: { rejection },
       } = await api('Notification sent successfully').notifyProposal({
-        id: proposal.primaryKey,
+        proposalPk: proposal.primaryKey,
       });
 
       if (rejection) {
@@ -306,7 +306,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     selectedProposals.forEach(async (proposal) => {
       const {
         deleteProposal: { rejection },
-      } = await api().deleteProposal({ id: proposal.primaryKey });
+      } = await api().deleteProposal({ proposalPk: proposal.primaryKey });
 
       if (rejection) {
         return;
@@ -452,15 +452,15 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   };
 
   const cloneProposalToCall = async (call: Call) => {
-    setProposalToCloneId(null);
+    setProposalToClonePk(null);
 
-    if (!call?.id || !proposalToCloneId) {
+    if (!call?.id || !proposalToClonePk) {
       return;
     }
 
     const result = await api('Proposal cloned successfully').cloneProposal({
       callId: call.id,
-      proposalToCloneId,
+      proposalToClonePk,
     });
 
     const resultProposal = result.cloneProposal.proposal;

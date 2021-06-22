@@ -143,7 +143,7 @@ const proposalBasisPreSubmit = () => async ({
 
   if (primaryKey > 0) {
     const result = await api.updateProposal({
-      id: primaryKey,
+      proposalPk: primaryKey,
       title: title,
       abstract: abstract,
       users: users.map((user) => user.id),
@@ -163,7 +163,7 @@ const proposalBasisPreSubmit = () => async ({
 
     if (createResult.createProposal.proposal) {
       const updateResult = await api.updateProposal({
-        id: createResult.createProposal.proposal.primaryKey,
+        proposalPk: createResult.createProposal.proposal.primaryKey,
         title: title,
         abstract: abstract,
         users: users.map((user) => user.id),

@@ -19,7 +19,7 @@ import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 export type AdministrationFormData = {
-  primaryKey: number;
+  proposalPk: number;
   commentForUser: string;
   commentForManagement: string;
   finalStatus: ProposalEndStatus;
@@ -81,7 +81,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
         validationSchema={administrationProposalValidationSchema}
         onSubmit={async (values): Promise<void> => {
           const administrationValues = {
-            primaryKey: data.primaryKey,
+            proposalPk: data.primaryKey,
             finalStatus:
               ProposalEndStatus[values.finalStatus as ProposalEndStatus],
             commentForUser: values.commentForUser,
