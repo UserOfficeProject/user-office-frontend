@@ -872,7 +872,7 @@ export type MutationCloneProposalArgs = {
 
 
 export type MutationUpdateProposalArgs = {
-  id: Scalars['Int'];
+  primaryKey: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   abstract?: Maybe<Scalars['String']>;
   users?: Maybe<Array<Scalars['Int']>>;
@@ -4585,7 +4585,7 @@ export type SubmitProposalMutation = (
 );
 
 export type UpdateProposalMutationVariables = Exact<{
-  id: Scalars['Int'];
+  primaryKey: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   abstract?: Maybe<Scalars['String']>;
   users?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
@@ -8622,9 +8622,9 @@ export const SubmitProposalDocument = gql`
     ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const UpdateProposalDocument = gql`
-    mutation updateProposal($id: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
+    mutation updateProposal($primaryKey: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
   updateProposal(
-    id: $id
+    primaryKey: $primaryKey
     title: $title
     abstract: $abstract
     users: $users
