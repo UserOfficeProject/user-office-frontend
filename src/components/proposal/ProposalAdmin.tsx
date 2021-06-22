@@ -40,7 +40,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
 
   const initialValues = {
-    id: data.primaryKey,
+    proposalPk: data.primaryKey,
     finalStatus: data.finalStatus || ProposalEndStatus.UNSET,
     commentForUser: data.commentForUser || '',
     commentForManagement: data.commentForManagement || '',
@@ -70,6 +70,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
       setAdministration(administrationValues);
     }
   };
+  console.log(initialValues);
 
   return (
     <>
