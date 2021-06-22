@@ -2067,7 +2067,7 @@ export type QueryIsNaturalKeyPresentArgs = {
 
 
 export type QueryProposalArgs = {
-  id: Scalars['Int'];
+  primaryKey: Scalars['Int'];
 };
 
 
@@ -4433,7 +4433,7 @@ export type GetMyProposalsQuery = (
 );
 
 export type GetProposalQueryVariables = Exact<{
-  id: Scalars['Int'];
+  primaryKey: Scalars['Int'];
 }>;
 
 
@@ -8460,8 +8460,8 @@ export const GetMyProposalsDocument = gql`
 }
     ${ProposalFragmentDoc}`;
 export const GetProposalDocument = gql`
-    query getProposal($id: Int!) {
-  proposal(id: $id) {
+    query getProposal($primaryKey: Int!) {
+  proposal(primaryKey: $primaryKey) {
     ...proposal
     proposer {
       ...basicUserDetails

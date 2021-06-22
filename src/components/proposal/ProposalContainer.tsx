@@ -175,7 +175,7 @@ export default function ProposalContainer(props: {
       });
     } else {
       await api()
-        .getProposal({ id: proposalState.proposal.primaryKey }) // or load blankQuestionarySteps if sample is null
+        .getProposal({ primaryKey: proposalState.proposal.primaryKey }) // or load blankQuestionarySteps if sample is null
         .then((data) => {
           if (data.proposal && data.proposal.questionary?.steps) {
             dispatch({
