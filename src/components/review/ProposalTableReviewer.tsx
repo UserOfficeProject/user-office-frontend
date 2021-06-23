@@ -37,7 +37,7 @@ import ReviewStatusFilter, {
 } from './ReviewStatusFilter';
 
 type UserWithReview = {
-  shortCode: string;
+  proposalId: string;
   proposalPk: number;
   title: string;
   grade: number;
@@ -124,7 +124,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         ? userData.reviews.map(
             (review) =>
               ({
-                shortCode: review?.proposal?.shortCode,
+                proposalId: review?.proposal?.proposalId,
                 proposalPk: review?.proposal?.primaryKey,
                 title: review?.proposal?.title,
                 grade: review.grade,
@@ -223,7 +223,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       sorting: false,
       render: RowActionButtons,
     },
-    { title: 'Proposal ID', field: 'shortCode' },
+    { title: 'Proposal ID', field: 'proposalId' },
     { title: 'Title', field: 'title' },
     { title: 'Grade', field: 'grade' },
     { title: 'Review status', field: 'status' },
@@ -338,7 +338,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         }}
       />
       <ProposalReviewModal
-        title={`Review proposal: ${proposalToReview?.title} (${proposalToReview?.shortCode})`}
+        title={`Review proposal: ${proposalToReview?.title} (${proposalToReview?.proposalId})`}
         proposalReviewModalOpen={!!urlQueryParams.reviewModal}
         setProposalReviewModalOpen={() => {
           setUrlQueryParams({ reviewModal: undefined });

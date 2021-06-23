@@ -65,7 +65,7 @@ const ProposalTable = ({
   }, [searchQuery]);
 
   const columns = [
-    { title: 'Proposal ID', field: 'shortCode' },
+    { title: 'Proposal ID', field: 'proposalId' },
     { title: 'Title', field: 'title' },
     { title: 'Status', field: 'publicStatus' },
     {
@@ -107,7 +107,7 @@ const ProposalTable = ({
         status: getProposalStatus(resultProposal),
         publicStatus: resultProposal.publicStatus,
         submitted: resultProposal.submitted,
-        shortCode: resultProposal.shortCode,
+        proposalId: resultProposal.proposalId,
         created: timeAgo(resultProposal.created),
         notified: resultProposal.notified,
         proposerId: resultProposal.proposer?.id,

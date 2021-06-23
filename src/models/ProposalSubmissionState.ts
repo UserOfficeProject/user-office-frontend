@@ -12,7 +12,7 @@ export type ProposalSubsetSubmission = Pick<
   | 'status'
   | 'users'
   | 'title'
-  | 'shortCode'
+  | 'proposalId'
   | 'callId'
   | 'questionaryId'
   | 'submitted'

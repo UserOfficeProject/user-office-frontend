@@ -836,7 +836,7 @@ context('Settings tests', () => {
             url: '/graphql',
             body: {
               query:
-                'query { proposalsView(filter: {}) { primaryKey title shortCode}}',
+                'query { proposalsView(filter: {}) { primaryKey title proposalId}}',
             },
             auth: {
               bearer: (accessToken as string).split(' ')[1],
@@ -883,7 +883,7 @@ context('Settings tests', () => {
             url: '/graphql',
             body: {
               query:
-                'query { proposalsView(filter: {}) { primaryKey title shortCode}}',
+                'query { proposalsView(filter: {}) { primaryKey title proposalId}}',
             },
             auth: {
               bearer: removedAccessToken.split(' ')[1],
@@ -917,7 +917,7 @@ context('Settings tests', () => {
         url: '/graphql',
         body: {
           query:
-            'query { proposals(filter: {}) { totalCount proposals { primaryKey title shortCode }}}',
+            'query { proposals(filter: {}) { totalCount proposals { primaryKey title proposalId }}}',
         },
         auth: {
           bearer: removedAccessToken.split(' ')[1],

@@ -8,7 +8,7 @@ export function useUserProposals(role = UserRole.USER) {
     Pick<
       Proposal,
       | 'primaryKey'
-      | 'shortCode'
+      | 'proposalId'
       | 'title'
       | 'publicStatus'
       | 'statusId'
@@ -41,7 +41,7 @@ export function useUserProposals(role = UserRole.USER) {
             setProposals(
               data.proposalsView.map((proposalView) => ({
                 primaryKey: proposalView.primaryKey,
-                shortCode: proposalView.shortCode,
+                proposalId: proposalView.proposalId,
                 title: proposalView.title,
                 notified: proposalView.notified,
                 submitted: proposalView.submitted,

@@ -5,7 +5,7 @@ query getProposalsCore($filter: ProposalsFilter) {
     statusId
     statusName
     statusDescription
-    shortCode
+    proposalId
     rankOrder
     finalStatus
     notified

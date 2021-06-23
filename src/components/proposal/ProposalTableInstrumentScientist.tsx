@@ -134,7 +134,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
       removable: false,
       render: RowActionButtons,
     },
-    { title: 'Proposal ID', field: 'shortCode' },
+    { title: 'Proposal ID', field: 'proposalId' },
     {
       title: 'Title',
       field: 'title',
@@ -245,7 +245,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
   return (
     <>
       <ProposalReviewModal
-        title={`View proposal: ${proposalToReview?.title} (${proposalToReview?.shortCode})`}
+        title={`View proposal: ${proposalToReview?.title} (${proposalToReview?.proposalId})`}
         proposalReviewModalOpen={!!urlQueryParams.reviewModal}
         setProposalReviewModalOpen={(updatedProposal?: Proposal) => {
           setProposalsData(

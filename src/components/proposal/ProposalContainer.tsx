@@ -263,8 +263,8 @@ export default function ProposalContainer(props: {
           <Questionary
             title={state.proposal.title || 'New Proposal'}
             info={
-              state.proposal.shortCode
-                ? `Proposal ID: ${state.proposal.shortCode}`
+              state.proposal.proposalId
+                ? `Proposal ID: ${state.proposal.proposalId}`
                 : 'DRAFT'
             }
             handleReset={handleReset}

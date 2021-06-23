@@ -1593,7 +1593,7 @@ export type Proposal = {
   statusId: Scalars['Int'];
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
-  shortCode: Scalars['String'];
+  proposalId: Scalars['String'];
   finalStatus: Maybe<ProposalEndStatus>;
   callId: Scalars['Int'];
   questionaryId: Scalars['Int'];
@@ -1763,7 +1763,7 @@ export type ProposalView = {
   statusId: Scalars['Int'];
   statusName: Scalars['String'];
   statusDescription: Scalars['String'];
-  shortCode: Scalars['String'];
+  proposalId: Scalars['String'];
   rankOrder: Maybe<Scalars['Int']>;
   finalStatus: Maybe<ProposalEndStatus>;
   notified: Scalars['Boolean'];
@@ -3268,7 +3268,7 @@ export type GetSepProposalsQuery = (
     & Pick<SepProposal, 'proposalPk' | 'dateAssigned' | 'sepId' | 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'title' | 'primaryKey' | 'shortCode'>
+      & Pick<Proposal, 'title' | 'primaryKey' | 'proposalId'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
@@ -3304,7 +3304,7 @@ export type SepProposalsByInstrumentQuery = (
     & Pick<SepProposal, 'sepTimeAllocation'>
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'shortCode'>
+      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
@@ -4308,7 +4308,7 @@ export type CreateProposalMutation = (
     { __typename?: 'ProposalResponseWrap' }
     & { proposal: Maybe<(
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'shortCode' | 'questionaryId'>
+      & Pick<Proposal, 'primaryKey' | 'proposalId' | 'questionaryId'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
@@ -4363,7 +4363,7 @@ export type CoreTechnicalReviewFragment = (
 
 export type ProposalFragment = (
   { __typename?: 'Proposal' }
-  & Pick<Proposal, 'primaryKey' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'shortCode' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted' | 'technicalReviewAssignee'>
+  & Pick<Proposal, 'primaryKey' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'proposalId' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted' | 'technicalReviewAssignee'>
   & { status: Maybe<(
     { __typename?: 'ProposalStatus' }
     & ProposalStatusFragment
@@ -4542,7 +4542,7 @@ export type GetProposalsCoreQuery = (
   { __typename?: 'Query' }
   & { proposalsView: Maybe<Array<(
     { __typename?: 'ProposalView' }
-    & Pick<ProposalView, 'primaryKey' | 'title' | 'statusId' | 'statusName' | 'statusDescription' | 'shortCode' | 'rankOrder' | 'finalStatus' | 'notified' | 'timeAllocation' | 'technicalStatus' | 'instrumentName' | 'callShortCode' | 'sepCode' | 'sepId' | 'reviewAverage' | 'reviewDeviation' | 'instrumentId' | 'callId' | 'submitted' | 'allocationTimeUnit'>
+    & Pick<ProposalView, 'primaryKey' | 'title' | 'statusId' | 'statusName' | 'statusDescription' | 'proposalId' | 'rankOrder' | 'finalStatus' | 'notified' | 'timeAllocation' | 'technicalStatus' | 'instrumentName' | 'callShortCode' | 'sepCode' | 'sepId' | 'reviewAverage' | 'reviewDeviation' | 'instrumentId' | 'callId' | 'submitted' | 'allocationTimeUnit'>
   )>> }
 );
 
@@ -4627,7 +4627,7 @@ export type GetUserProposalBookingsWithEventsQuery = (
     { __typename?: 'User' }
     & { proposals: Array<(
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'shortCode'>
+      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
       & { proposalBooking: Maybe<(
         { __typename?: 'ProposalBooking' }
         & { scheduledEvents: Array<(
@@ -5014,7 +5014,7 @@ export type UserWithReviewsQuery = (
       & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'sepID'>
       & { proposal: Maybe<(
         { __typename?: 'Proposal' }
-        & Pick<Proposal, 'primaryKey' | 'title' | 'shortCode'>
+        & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
         & { call: Maybe<(
           { __typename?: 'Call' }
           & Pick<Call, 'shortCode'>
@@ -5131,7 +5131,7 @@ export type GetSamplesByCallIdQuery = (
     { __typename?: 'Sample' }
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'shortCode'>
+      & Pick<Proposal, 'primaryKey' | 'proposalId'>
     ) }
     & SampleFragment
   )>> }
@@ -5148,7 +5148,7 @@ export type GetSamplesWithProposalDataQuery = (
     { __typename?: 'Sample' }
     & { proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'shortCode'>
+      & Pick<Proposal, 'primaryKey' | 'proposalId'>
     ) }
     & SampleFragment
   )>> }
@@ -5565,7 +5565,7 @@ export type ShipmentFragment = (
   & Pick<Shipment, 'id' | 'title' | 'proposalPk' | 'status' | 'externalRef' | 'questionaryId' | 'creatorId' | 'created'>
   & { proposal: (
     { __typename?: 'Proposal' }
-    & Pick<Proposal, 'shortCode'>
+    & Pick<Proposal, 'proposalId'>
   ) }
 );
 
@@ -6563,7 +6563,7 @@ export type GetUserProposalsQuery = (
     { __typename?: 'User' }
     & { proposals: Array<(
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'shortCode' | 'title' | 'publicStatus' | 'statusId' | 'created' | 'finalStatus' | 'notified' | 'submitted'>
+      & Pick<Proposal, 'primaryKey' | 'proposalId' | 'title' | 'publicStatus' | 'statusId' | 'created' | 'finalStatus' | 'notified' | 'submitted'>
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
@@ -7064,7 +7064,7 @@ export const ProposalFragmentDoc = gql`
     ...proposalStatus
   }
   publicStatus
-  shortCode
+  proposalId
   finalStatus
   commentForUser
   commentForManagement
@@ -7285,7 +7285,7 @@ export const ShipmentFragmentDoc = gql`
   creatorId
   created
   proposal {
-    shortCode
+    proposalId
   }
 }
     `;
@@ -7598,7 +7598,7 @@ export const GetSepProposalsDocument = gql`
     proposal {
       title
       primaryKey
-      shortCode
+      proposalId
       status {
         ...proposalStatus
       }
@@ -7637,7 +7637,7 @@ export const SepProposalsByInstrumentDocument = gql`
     proposal {
       primaryKey
       title
-      shortCode
+      proposalId
       status {
         ...proposalStatus
       }
@@ -8362,7 +8362,7 @@ export const CreateProposalDocument = gql`
       status {
         ...proposalStatus
       }
-      shortCode
+      proposalId
       questionaryId
       questionary {
         ...questionary
@@ -8577,7 +8577,7 @@ export const GetProposalsCoreDocument = gql`
     statusId
     statusName
     statusDescription
-    shortCode
+    proposalId
     rankOrder
     finalStatus
     notified
@@ -8654,7 +8654,7 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
     proposals(filter: {instrumentId: $instrumentId}) {
       primaryKey
       title
-      shortCode
+      proposalId
       proposalBooking(filter: {status: $status}) {
         scheduledEvents(filter: {endsAfter: $endsAfter}) {
           startsAt
@@ -8877,7 +8877,7 @@ export const UserWithReviewsDocument = gql`
       proposal {
         primaryKey
         title
-        shortCode
+        proposalId
         call {
           shortCode
         }
@@ -8961,7 +8961,7 @@ export const GetSamplesByCallIdDocument = gql`
     ...sample
     proposal {
       primaryKey
-      shortCode
+      proposalId
     }
   }
 }
@@ -8972,7 +8972,7 @@ export const GetSamplesWithProposalDataDocument = gql`
     ...sample
     proposal {
       primaryKey
-      shortCode
+      proposalId
     }
   }
 }
@@ -9847,7 +9847,7 @@ export const GetUserProposalsDocument = gql`
   me {
     proposals {
       primaryKey
-      shortCode
+      proposalId
       title
       status {
         ...proposalStatus

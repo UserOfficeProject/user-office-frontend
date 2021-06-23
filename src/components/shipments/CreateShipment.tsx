@@ -37,7 +37,7 @@ function createShipmentStub(
       steps: questionarySteps,
     },
     proposal: {
-      shortCode: '123456',
+      proposalId: '123456',
     },
     samples: [],
   };

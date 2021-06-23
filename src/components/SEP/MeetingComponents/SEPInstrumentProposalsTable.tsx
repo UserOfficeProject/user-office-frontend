@@ -242,7 +242,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     },
     {
       title: 'ID',
-      field: 'proposal.shortCode',
+      field: 'proposal.proposalId',
     },
     { title: 'Status', field: 'proposal.status.name' },
     {

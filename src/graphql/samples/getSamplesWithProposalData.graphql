@@ -3,7 +3,7 @@ query getSamplesWithProposalData($filter: SamplesFilter) {
     ...sample
     proposal {
       primaryKey
-      shortCode
+      proposalId
     }
   }
 }

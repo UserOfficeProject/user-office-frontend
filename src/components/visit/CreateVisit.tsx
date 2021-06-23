@@ -38,7 +38,7 @@ function createVisitStub(
       abstract: '',
       statusId: 0,
       publicStatus: ProposalPublicStatus.UNKNOWN,
-      shortCode: '',
+      proposalId: '',
       finalStatus: ProposalEndStatus.UNSET,
       commentForUser: '',
       commentForManagement: '',

@@ -29,7 +29,7 @@ function createProposalStub(
       steps: questionarySteps,
     },
     questionaryId: 0,
-    shortCode: '',
+    proposalId: '',
     status: {
       id: 1,
       shortCode: 'DRAFT',

@@ -23,7 +23,7 @@ query userWithReviews(
       proposal {
         primaryKey
         title
-        shortCode
+        proposalId
         call {
           shortCode
         }

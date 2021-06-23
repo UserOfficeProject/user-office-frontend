@@ -12,7 +12,7 @@ query sepProposalsByInstrument(
     proposal {
       primaryKey
       title
-      shortCode
+      proposalId
       status {
         ...proposalStatus
       }

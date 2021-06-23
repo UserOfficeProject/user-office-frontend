@@ -8,6 +8,6 @@ fragment shipment on Shipment {
   creatorId
   created
   proposal {
-    shortCode
+    proposalId
   }
 }

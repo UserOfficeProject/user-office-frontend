@@ -15,7 +15,7 @@ export type PartialProposalsDataType = {
   finalStatus?: string;
   notified?: boolean;
   submitted: boolean;
-  shortCode: string;
+  proposalId: string;
   created: string | null;
   call?: Maybe<Pick<Call, 'shortCode' | 'id' | 'isActive'>>;
   proposerId?: number;
@@ -55,7 +55,7 @@ const ProposalTableUser: React.FC = () => {
                 status: getProposalStatus(proposal),
                 publicStatus: proposal.publicStatus,
                 submitted: proposal.submitted,
-                shortCode: proposal.shortCode,
+                proposalId: proposal.proposalId,
                 created: timeAgo(proposal.created),
                 notified: proposal.notified,
                 proposerId: proposal.proposer?.id,

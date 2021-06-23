@@ -73,7 +73,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
     assignments?.map((assignment) => assignment.review?.grade) ?? [];
 
   const SEPProposalColumns = [
-    { title: 'ID', field: 'proposal.shortCode' },
+    { title: 'ID', field: 'proposal.proposalId' },
     {
       title: 'Title',
       field: 'proposal.title',

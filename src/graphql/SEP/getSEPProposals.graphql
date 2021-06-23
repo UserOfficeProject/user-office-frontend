@@ -7,7 +7,7 @@ query getSEPProposals($sepId: Int!, $callId: Int!) {
     proposal {
       title
       primaryKey
-      shortCode
+      proposalId
       status {
         ...proposalStatus
       }

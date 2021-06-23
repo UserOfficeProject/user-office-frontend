@@ -2,7 +2,7 @@ query getUserProposals {
   me {
     proposals {
       primaryKey
-      shortCode
+      proposalId
       title
       status {
         ...proposalStatus

@@ -5,7 +5,7 @@ mutation createProposal($callId: Int!) {
       status {
         ...proposalStatus
       }
-      shortCode
+      proposalId
       questionaryId
       questionary {
         ...questionary
