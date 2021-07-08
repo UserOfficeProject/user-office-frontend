@@ -5,20 +5,36 @@ import {
   Proposal,
   ProposalBookingStatus,
   Instrument,
+  VisitFragment,
+  Questionary,
+  Maybe,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { toTzLessDateTime } from 'utils/Time';
 
-import { VisitFragment } from './../../generated/sdk';
+import {
+  BasicUserDetailsFragment,
+  UserVisitFragment,
+} from './../../generated/sdk';
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
   'startsAt' | 'endsAt'
 > & {
   proposal: Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'> & {
-    visits: VisitFragment[] | null;
+    proposer: BasicUserDetailsFragment | null;
+  } & {
+    users: BasicUserDetailsFragment[];
+  } & {
+    riskAssessmentQuestionary: Maybe<Pick<Questionary, 'questionaryId'>>;
   };
   instrument: Pick<Instrument, 'id' | 'name'> | null;
+} & {
+  visit:
+    | (VisitFragment & {
+        userVisits: UserVisitFragment[];
+      })
+    | null;
 };
 
 export function useProposalBookingsScheduledEvents({
@@ -66,9 +82,13 @@ export function useProposalBookingsScheduledEvents({
                     primaryKey: proposal.primaryKey,
                     title: proposal.title,
                     proposalId: proposal.proposalId,
-                    visits: proposal.visits,
+                    proposer: proposal.proposer,
+                    users: proposal.users,
+                    riskAssessmentQuestionary:
+                      proposal.riskAssessmentQuestionary,
                   },
                   instrument: proposal.instrument,
+                  visit: scheduledEvent.visit,
                 });
               }
             )

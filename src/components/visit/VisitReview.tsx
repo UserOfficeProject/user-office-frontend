@@ -61,7 +61,7 @@ function VisitReview({ confirm }: VisitReviewProps) {
       label: 'Team',
       value: (
         <ul className={classes.teamMemberList}>
-          {state.visit.team.map((user) => (
+          {state.visit.userVisits.map(({ user }) => (
             <li key={user.id}>{`${user.firstname} ${user.lastname}`}</li>
           ))}
         </ul>

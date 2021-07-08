@@ -1,15 +1,24 @@
-mutation createVisit($proposalPk: Int!, $team: [Int!]) {
-  createVisit(proposalPk: $proposalPk, team: $team) {
+mutation createVisit(
+  $proposalPk: Int!
+  $team: [Int!]
+  $scheduledEventId: Int!
+) {
+  createVisit(
+    proposalPk: $proposalPk
+    team: $team
+    scheduledEventId: $scheduledEventId
+  ) {
     visit {
       ...visit
 
       questionary {
         ...questionary
       }
-      team {
-        id
-        firstname
-        lastname
+      userVisits {
+        ...userVisit
+        user {
+          ...basicUserDetails
+        }
       }
       proposal {
         ...proposal

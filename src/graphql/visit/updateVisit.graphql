@@ -16,10 +16,11 @@ mutation updateVisit(
       questionary {
         ...questionary
       }
-      team {
-        id
-        firstname
-        lastname
+      userVisits {
+        ...userVisit
+        user {
+          ...basicUserDetails
+        }
       }
 
       proposal {

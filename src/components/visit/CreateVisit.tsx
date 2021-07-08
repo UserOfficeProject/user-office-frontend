@@ -31,7 +31,7 @@ function createVisitStub(
       created: new Date(),
       steps: questionarySteps,
     },
-    team: [],
+    userVisits: [],
     proposal: {
       primaryKey: 0,
       title: '',

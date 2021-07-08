@@ -8,15 +8,30 @@ query getUserProposalBookingsWithEvents(
       primaryKey
       title
       proposalId
+      proposer {
+        ...basicUserDetails
+      }
+      users {
+        ...basicUserDetails
+      }
       proposalBooking(filter: { status: $status }) {
         scheduledEvents(filter: { endsAfter: $endsAfter }) {
           startsAt
           endsAt
           bookingType
+          visit {
+            ...visit
+            userVisits {
+              ...userVisit
+            }
+          }
         }
       }
       visits {
         ...visit
+      }
+      riskAssessmentQuestionary {
+        questionaryId
       }
       instrument {
         id

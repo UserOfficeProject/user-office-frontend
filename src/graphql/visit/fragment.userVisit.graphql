@@ -1,0 +1,6 @@
+fragment userVisit on UserVisit {
+  userId
+  visitId
+  registrationQuestionaryId
+  trainingExpiryDate
+}
