@@ -17,21 +17,21 @@ import {
 } from 'models/QuestionarySubmissionState';
 import {
   VisitExtended,
-  VisitSubmissionState,
+  VisitSubmissionState as VisitRegistrationSubmissionState,
 } from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
-import VisitReview from './VisitReview';
+import VisitRegistrationReview from './VisitRegistrationReview';
 
-export interface VisitContextType extends QuestionaryContextType {
-  state: VisitSubmissionState | null;
+export interface VisitRegistrationContextType extends QuestionaryContextType {
+  state: VisitRegistrationSubmissionState | null;
 }
 
 const visitReducer = (
-  state: VisitSubmissionState,
-  draftState: VisitSubmissionState,
+  state: VisitRegistrationSubmissionState,
+  draftState: VisitRegistrationSubmissionState,
   action: Event
 ) => {
   switch (action.type) {
@@ -78,7 +78,7 @@ const createQuestionaryWizardStep = (
   type: 'QuestionaryStep',
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
-    const visitState = state as VisitSubmissionState;
+    const visitState = state as VisitRegistrationSubmissionState;
     const questionaryStep = state.steps[payload.questionaryStepIndex];
 
     return {
@@ -94,7 +94,7 @@ const createQuestionaryWizardStep = (
 const createReviewWizardStep = (): WizardStep => ({
   type: 'VisitReview',
   getMetadata: (state) => {
-    const visitState = state as VisitSubmissionState;
+    const visitState = state as VisitRegistrationSubmissionState;
 
     return {
       title: 'Review',
@@ -104,12 +104,14 @@ const createReviewWizardStep = (): WizardStep => ({
   },
 });
 
-export interface VisitContainerProps {
+export interface VisitRegistrationContainerProps {
   visit: VisitExtended;
   onCreate?: (visit: VisitExtended) => void;
   onUpdate?: (visit: VisitExtended) => void;
 }
-export default function VisitContainer(props: VisitContainerProps) {
+export default function VisitRegistrationContainer(
+  props: VisitRegistrationContainerProps
+) {
   const { api } = useDataApiWithFeedback();
 
   const previousInitialVisit = usePrevious(props.visit);
@@ -140,7 +142,7 @@ export default function VisitContainer(props: VisitContainerProps) {
           />
         );
       case 'VisitReview':
-        return <VisitReview />;
+        return <VisitRegistrationReview />;
 
       default:
         throw new Error(`Unknown step type ${metadata.type}`);
@@ -151,7 +153,7 @@ export default function VisitContainer(props: VisitContainerProps) {
    * Returns true if reset was performed, false otherwise
    */
   const handleReset = async (): Promise<boolean> => {
-    const visitState = state as VisitSubmissionState;
+    const visitState = state as VisitRegistrationSubmissionState;
 
     if (visitState.visit.id === 0) {
       // if visit is not created yet
@@ -186,7 +188,7 @@ export default function VisitContainer(props: VisitContainerProps) {
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
-      const state = getState() as VisitSubmissionState;
+      const state = getState() as VisitRegistrationSubmissionState;
       switch (action.type) {
         case 'BACK_CLICKED': // move this
           if (!state.isDirty || (await handleReset())) {
@@ -208,7 +210,7 @@ export default function VisitContainer(props: VisitContainerProps) {
       }
     };
   };
-  const initialState: VisitSubmissionState = {
+  const initialState: VisitRegistrationSubmissionState = {
     visit: props.visit,
     templateId: props.visit.questionary.templateId,
     isDirty: false,
@@ -218,7 +220,10 @@ export default function VisitContainer(props: VisitContainerProps) {
     wizardSteps: createVisitWizardSteps(),
   };
 
-  const { state, dispatch } = QuestionarySubmissionModel<VisitSubmissionState>(
+  const {
+    state,
+    dispatch,
+  } = QuestionarySubmissionModel<VisitRegistrationSubmissionState>(
     initialState,
     [handleEvents],
     visitReducer

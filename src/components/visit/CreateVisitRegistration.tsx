@@ -12,7 +12,7 @@ import {
 import { VisitBasic, VisitExtended } from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import VisitContainer from './VisitContainer';
+import VisitRegistrationContainer from './VisitRegistrationContainer';
 
 function createVisitStub(
   visitorId: number,
@@ -97,7 +97,7 @@ function CreateVisit({ onCreate, onUpdate }: CreateVisitProps) {
   }
 
   return (
-    <VisitContainer
+    <VisitRegistrationContainer
       visit={blankVisit}
       onCreate={onCreate}
       onUpdate={onUpdate}

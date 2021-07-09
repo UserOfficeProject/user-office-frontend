@@ -16,9 +16,9 @@ import { tableLocalization } from 'utils/materialLocalization';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import CreateUpdateVisit from './CreateUpdateVisit';
+import CreateUpdateVisitRegistration from './CreateUpdateVisitRegistration';
 
-const VisitsTable = (props: { confirm: WithConfirmType }) => {
+const VisitsRegistrationTable = (props: { confirm: WithConfirmType }) => {
   const { loadingVisits, visits, setVisits } = useMyVisits();
   const [
     urlQueryParams,
@@ -63,7 +63,7 @@ const VisitsTable = (props: { confirm: WithConfirmType }) => {
     onCreate: (object: VisitBasic, shouldCloseAfterCreation: boolean) => void,
     editVisit: VisitBasic | null
   ) => (
-    <CreateUpdateVisit
+    <CreateUpdateVisitRegistration
       visit={editVisit}
       onCreate={(visit) => onCreate({ ...visit }, false)} // clone the object because it is immutable because of immer
       onUpdate={(visit) => onUpdate({ ...visit }, false)} // clone the object because it is immutable because of immer
@@ -102,4 +102,4 @@ const VisitsTable = (props: { confirm: WithConfirmType }) => {
   );
 };
 
-export default withConfirm(VisitsTable);
+export default withConfirm(VisitsRegistrationTable);

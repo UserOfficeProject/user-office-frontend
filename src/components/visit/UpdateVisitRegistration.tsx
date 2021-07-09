@@ -4,21 +4,24 @@ import UOLoader from 'components/common/UOLoader';
 import { useVisit } from 'hooks/visit/useVisit';
 import { VisitBasic } from 'models/VisitSubmissionState';
 
-import VisitContainer from './VisitContainer';
+import VisitRegistrationContainer from './VisitRegistrationContainer';
 
-interface UpdateVisitProps {
+interface UpdateVisitRegistrationProps {
   visit: VisitBasic;
   onUpdate?: (visit: VisitBasic) => void;
 }
 
-function UpdateVisit({ onUpdate, visit: { id } }: UpdateVisitProps) {
+function UpdateVisitRegistration({
+  onUpdate,
+  visit: { id },
+}: UpdateVisitRegistrationProps) {
   const { visit } = useVisit(id);
 
   if (!visit) {
     return <UOLoader />;
   }
 
-  return <VisitContainer visit={visit} onUpdate={onUpdate} />;
+  return <VisitRegistrationContainer visit={visit} onUpdate={onUpdate} />;
 }
 
-export default UpdateVisit;
+export default UpdateVisitRegistration;

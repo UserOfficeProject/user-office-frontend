@@ -1,18 +1,15 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
 
-import FormikDropdown from 'components/common/FormikDropdown';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import Participants from 'components/proposal/ProposalParticipants';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
-import { VisitContextType } from 'components/visit/VisitContainer';
-import { BasicUserDetails, ProposalEndStatus } from 'generated/sdk';
+import { VisitRegistrationContextType } from 'components/visit/VisitRegistrationContainer';
+import { ProposalEndStatus } from 'generated/sdk';
 import { useMyProposals } from 'hooks/proposal/useMyProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -20,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// TODO display dropdown with all visits and call an endpoint to create a questionary and
+// update visit_has_users with the questionary id
 function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
   const { answer, formikProps } = props;
   const classes = useStyles();
@@ -31,7 +30,7 @@ function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
 
   const { dispatch, state } = useContext(
     QuestionaryContext
-  ) as VisitContextType;
+  ) as VisitRegistrationContextType;
 
   const questionId = answer.question.id;
 
@@ -41,7 +40,7 @@ function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
 
   return (
     <>
-      <FormikDropdown
+      {/* <FormikDropdown
         name={`${questionId}.proposalPk`}
         label="Select proposal"
         loading={loadingProposals}
@@ -76,7 +75,7 @@ function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
           });
         }}
         users={JSON.parse(JSON.stringify(state.visit.team))}
-      />
+      /> */}
     </>
   );
 }
@@ -86,39 +85,38 @@ const visitBasisPreSubmit = () => async ({
   dispatch,
   state,
 }: SubmitActionDependencyContainer) => {
-  const visit = (state as VisitSubmissionState).visit;
-  const { proposalPk, team } = visit;
-  let returnValue = state.questionaryId;
-  if (visit.id > 0) {
-    const result = await api.updateVisit({
-      visitId: visit.id,
-      proposalPk: visit.proposalPk,
-      team: visit.team.map((user) => user.id),
-    });
-
-    if (result.updateVisit.visit) {
-      dispatch({
-        type: 'VISIT_MODIFIED',
-        visit: result.updateVisit.visit,
-      });
-    }
-  } else {
-    const result = await api.createVisit({
-      proposalPk: proposalPk,
-      team: team.map((user) => user.id),
-    });
-
-    const newVisit = result.createVisit.visit;
-    if (newVisit) {
-      dispatch({
-        type: 'VISIT_CREATED',
-        visit: newVisit,
-      });
-      returnValue = newVisit.questionaryId;
-    }
-  }
-
-  return returnValue;
+  // const visit = (state as VisitSubmissionState).visit;
+  // const { proposalPk, team } = visit;
+  // let returnValue = state.questionaryId;
+  // if (visit.id > 0) {
+  //   const result = await api.updateVisit({
+  //     visitId: visit.id,
+  //     proposalPk: visit.proposalPk,
+  //     team: visit.team.map((user) => user.id),
+  //   });
+  //   if (result.updateVisit.visit) {
+  //     dispatch({
+  //       type: 'VISIT_MODIFIED',
+  //       visit: result.updateVisit.visit,
+  //     });
+  //   }
+  // } else {
+  //   const result = await api.createVisit({
+  //     proposalPk: proposalPk,
+  //     team: team.map((user) => user.id),
+  //     scheduledEventId: 0, // TODO fix this to use actual scheduled event id
+  //   });
+  //   const newVisit = result.createVisit.visit;
+  //   if (newVisit) {
+  //     dispatch({
+  //       type: 'VISIT_CREATED',
+  //       visit: newVisit,
+  //     });
+  //     returnValue = newVisit.questionaryId;
+  //   }
+  // }
+  // return returnValue;
+  return 0; // TODO return actual visit ID
 };
 
 export { QuestionaryComponentVisitBasis, visitBasisPreSubmit };

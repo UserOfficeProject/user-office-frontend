@@ -3,7 +3,7 @@ import React from 'react';
 
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 
-import VisitsTable from './VisitsTable';
+import VisitsRegistrationTable from './VisitsRegistrationTable';
 
 function MyVisits() {
   return (
@@ -11,7 +11,7 @@ function MyVisits() {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <StyledPaper>
-            <VisitsTable />
+            <VisitsRegistrationTable />
           </StyledPaper>
         </Grid>
       </Grid>

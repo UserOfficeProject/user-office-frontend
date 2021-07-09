@@ -17,9 +17,9 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import { VisitContextType } from './VisitContainer';
+import { VisitRegistrationContextType } from './VisitRegistrationContainer';
 
-type VisitReviewProps = {
+type VisitRegistrationReviewProps = {
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
@@ -31,11 +31,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function VisitReview({ confirm }: VisitReviewProps) {
+function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { state, dispatch } = useContext(
     QuestionaryContext
-  ) as VisitContextType;
+  ) as VisitRegistrationContextType;
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
@@ -113,4 +113,4 @@ function VisitReview({ confirm }: VisitReviewProps) {
   );
 }
 
-export default withConfirm(VisitReview);
+export default withConfirm(VisitRegistrationReview);
