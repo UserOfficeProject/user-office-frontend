@@ -284,6 +284,12 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
               }
             : {}
         }
+        localization={{
+          body: { emptyDataSourceMessage: 'No Users Found' },
+          toolbar: {
+            nRowsSelected: '{0} Users(s) Selected',
+          },
+        }}
       />
       {props.selection && (
         <ActionButtonContainer>
