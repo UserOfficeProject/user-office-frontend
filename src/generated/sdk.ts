@@ -1276,6 +1276,7 @@ export type MutationCreateVisitArgs = {
   proposalPk: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']>>;
+  teamLeadUserId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1438,8 +1439,9 @@ export type MutationUpdatePasswordArgs = {
 export type MutationUpdateVisitArgs = {
   visitId: Scalars['Int'];
   status?: Maybe<VisitStatus>;
-  proposalPk?: Maybe<Scalars['Int']>;
+  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
   team?: Maybe<Array<Scalars['Int']>>;
+  teamLeadUserId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1685,6 +1687,11 @@ export type ProposalEvent = {
   __typename?: 'ProposalEvent';
   name: Event;
   description: Maybe<Scalars['String']>;
+};
+
+export type ProposalPkAndEventId = {
+  proposalPK: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 };
 
 export type ProposalPkWithCallId = {
@@ -2539,7 +2546,7 @@ export type SaveSepMeetingDecisionInput = {
 
 export type ScheduledEvent = {
   __typename?: 'ScheduledEvent';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   bookingType: ScheduledEventBookingType;
@@ -2969,8 +2976,6 @@ export type UserVisit = {
   registrationQuestionaryId: Maybe<Scalars['Int']>;
   trainingExpiryDate: Maybe<Scalars['DateTime']>;
   user: BasicUserDetails;
-  complementaryQuestions: Array<Question>;
-  questionaryCount: Scalars['Int'];
 };
 
 export type Visit = {
@@ -2980,9 +2985,11 @@ export type Visit = {
   status: VisitStatus;
   questionaryId: Scalars['Int'];
   visitorId: Scalars['Int'];
+  teamLeadUserId: Scalars['Int'];
   proposal: Proposal;
   userVisits: Array<UserVisit>;
   questionary: Questionary;
+  teamLead: BasicUserDetails;
 };
 
 export type VisitBasisConfig = {
@@ -4653,11 +4660,18 @@ export type GetUserProposalBookingsWithEventsQuery = (
         { __typename?: 'ProposalBooking' }
         & { scheduledEvents: Array<(
           { __typename?: 'ScheduledEvent' }
-          & Pick<ScheduledEvent, 'startsAt' | 'endsAt' | 'bookingType'>
+          & Pick<ScheduledEvent, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
           & { visit: Maybe<(
             { __typename?: 'Visit' }
-            & { userVisits: Array<(
+            & { teamLead: (
+              { __typename?: 'BasicUserDetails' }
+              & BasicUserDetailsFragment
+            ), userVisits: Array<(
               { __typename?: 'UserVisit' }
+              & { user: (
+                { __typename?: 'BasicUserDetails' }
+                & BasicUserDetailsFragment
+              ) }
               & UserVisitFragment
             )> }
             & VisitFragment
@@ -6844,6 +6858,7 @@ export type CreateVisitMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   scheduledEventId: Scalars['Int'];
+  teamLeadUserId: Scalars['Int'];
 }>;
 
 
@@ -6853,7 +6868,10 @@ export type CreateVisitMutation = (
     { __typename?: 'VisitResponseWrap' }
     & { visit: Maybe<(
       { __typename?: 'Visit' }
-      & { questionary: (
+      & { teamLead: (
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      ), questionary: (
         { __typename?: 'Questionary' }
         & QuestionaryFragment
       ), userVisits: Array<(
@@ -6981,9 +6999,10 @@ export type GetVisitsQuery = (
 
 export type UpdateVisitMutationVariables = Exact<{
   visitId: Scalars['Int'];
+  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   status?: Maybe<VisitStatus>;
-  proposalPk?: Maybe<Scalars['Int']>;
+  teamLeadUserId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -6993,7 +7012,10 @@ export type UpdateVisitMutation = (
     { __typename?: 'VisitResponseWrap' }
     & { visit: Maybe<(
       { __typename?: 'Visit' }
-      & { questionary: (
+      & { teamLead: (
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      ), questionary: (
         { __typename?: 'Questionary' }
         & QuestionaryFragment
       ), userVisits: Array<(
@@ -8724,13 +8746,20 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
       }
       proposalBooking(filter: {status: $status}) {
         scheduledEvents(filter: {endsAfter: $endsAfter}) {
+          id
           startsAt
           endsAt
           bookingType
           visit {
             ...visit
+            teamLead {
+              ...basicUserDetails
+            }
             userVisits {
               ...userVisit
+              user {
+                ...basicUserDetails
+              }
             }
           }
         }
@@ -10098,14 +10127,18 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitDocument = gql`
-    mutation createVisit($proposalPk: Int!, $team: [Int!], $scheduledEventId: Int!) {
+    mutation createVisit($proposalPk: Int!, $team: [Int!], $scheduledEventId: Int!, $teamLeadUserId: Int!) {
   createVisit(
     proposalPk: $proposalPk
     team: $team
     scheduledEventId: $scheduledEventId
+    teamLeadUserId: $teamLeadUserId
   ) {
     visit {
       ...visit
+      teamLead {
+        ...basicUserDetails
+      }
       questionary {
         ...questionary
       }
@@ -10128,9 +10161,9 @@ export const CreateVisitDocument = gql`
   }
 }
     ${VisitFragmentDoc}
+${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${UserVisitFragmentDoc}
-${BasicUserDetailsFragmentDoc}
 ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteVisitDocument = gql`
@@ -10201,15 +10234,19 @@ export const GetVisitsDocument = gql`
     ${VisitFragmentDoc}
 ${ProposalFragmentDoc}`;
 export const UpdateVisitDocument = gql`
-    mutation updateVisit($visitId: Int!, $team: [Int!], $status: VisitStatus, $proposalPk: Int) {
+    mutation updateVisit($visitId: Int!, $proposalPkAndEventId: ProposalPkAndEventId, $team: [Int!], $status: VisitStatus, $teamLeadUserId: Int) {
   updateVisit(
     visitId: $visitId
-    proposalPk: $proposalPk
+    proposalPkAndEventId: $proposalPkAndEventId
     team: $team
     status: $status
+    teamLeadUserId: $teamLeadUserId
   ) {
     visit {
       ...visit
+      teamLead {
+        ...basicUserDetails
+      }
       questionary {
         ...questionary
       }
@@ -10232,9 +10269,9 @@ export const UpdateVisitDocument = gql`
   }
 }
     ${VisitFragmentDoc}
+${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${UserVisitFragmentDoc}
-${BasicUserDetailsFragmentDoc}
 ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 

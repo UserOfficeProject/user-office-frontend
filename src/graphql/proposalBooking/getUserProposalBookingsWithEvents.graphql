@@ -16,13 +16,20 @@ query getUserProposalBookingsWithEvents(
       }
       proposalBooking(filter: { status: $status }) {
         scheduledEvents(filter: { endsAfter: $endsAfter }) {
+          id
           startsAt
           endsAt
           bookingType
           visit {
             ...visit
+            teamLead {
+              ...basicUserDetails
+            }
             userVisits {
               ...userVisit
+              user {
+                ...basicUserDetails
+              }
             }
           }
         }

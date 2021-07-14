@@ -3,13 +3,14 @@ import GroupIcon from '@material-ui/icons/Group';
 import SchoolIcon from '@material-ui/icons/School';
 import { Action } from 'material-table';
 import moment from 'moment';
-import React, { useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { useHistory } from 'react-router';
 
 import BoxIcon from 'components/common/icons/BoxIcon';
 import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
+import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
 import { UserContext } from 'context/UserContextProvider';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
@@ -56,8 +57,8 @@ const createActionButton = (
 });
 
 interface UseActionButtonsArgs {
-  openModal?: (contents: JSX.Element) => void;
-  closeModal?: () => void;
+  openModal: (contents: ReactNode) => void;
+  closeModal: (updatedEvent: ProposalScheduledEvent) => void;
 }
 export function useActionButtons(args: UseActionButtonsArgs) {
   const history = useHistory();
@@ -82,7 +83,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       <GroupIcon />,
       buttonState,
       () => {
-        //openModal(<CreateUpdateExperimentTeam />
+        openModal(<CreateUpdateVisit event={event} close={closeModal} />);
       }
     );
   };

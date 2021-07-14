@@ -2,14 +2,20 @@ mutation createVisit(
   $proposalPk: Int!
   $team: [Int!]
   $scheduledEventId: Int!
+  $teamLeadUserId: Int!
 ) {
   createVisit(
     proposalPk: $proposalPk
     team: $team
     scheduledEventId: $scheduledEventId
+    teamLeadUserId: $teamLeadUserId
   ) {
     visit {
       ...visit
+
+      teamLead {
+        ...basicUserDetails
+      }
 
       questionary {
         ...questionary

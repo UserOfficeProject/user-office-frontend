@@ -8,6 +8,8 @@ import {
   VisitFragment,
   Questionary,
   Maybe,
+  UserVisit,
+  Visit,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { toTzLessDateTime } from 'utils/Time';
@@ -19,7 +21,7 @@ import {
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
-  'startsAt' | 'endsAt'
+  'startsAt' | 'endsAt' | 'id'
 > & {
   proposal: Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'> & {
     proposer: BasicUserDetailsFragment | null;
@@ -32,8 +34,8 @@ export type ProposalScheduledEvent = Pick<
 } & {
   visit:
     | (VisitFragment & {
-        userVisits: UserVisitFragment[];
-      })
+        userVisits: (UserVisitFragment & Pick<UserVisit, 'user'>)[];
+      } & Pick<Visit, 'teamLead'>)
     | null;
 };
 
@@ -76,6 +78,7 @@ export function useProposalBookingsScheduledEvents({
             proposal.proposalBooking?.scheduledEvents.forEach(
               (scheduledEvent) => {
                 proposalScheduledEvent.push({
+                  id: scheduledEvent.id,
                   startsAt: scheduledEvent.startsAt,
                   endsAt: scheduledEvent.endsAt,
                   proposal: {
@@ -105,5 +108,5 @@ export function useProposalBookingsScheduledEvents({
     };
   }, [onlyUpcoming, notDraft, instrumentId, api]);
 
-  return { loading, proposalScheduledEvents };
+  return { loading, proposalScheduledEvents, setProposalScheduledEvents };
 }

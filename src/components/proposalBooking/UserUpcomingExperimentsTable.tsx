@@ -1,6 +1,8 @@
+import { Dialog, DialogContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import MaterialTable from 'material-table';
-import React from 'react';
+import React, { useState } from 'react';
+import { ReactNode } from 'react';
 
 import { useActionButtons } from 'hooks/proposalBooking/useActionButtons';
 import {
@@ -18,17 +20,29 @@ export default function UserUpcomingExperimentsTable() {
   const {
     loading,
     proposalScheduledEvents,
+    setProposalScheduledEvents,
   } = useProposalBookingsScheduledEvents({
     onlyUpcoming: true,
     notDraft: true,
   });
+
+  const [modalContents, setModalContents] = useState<ReactNode>(null);
 
   const {
     formTeamAction,
     defineVisitAction,
     individualTrainingAction,
     riskAssessmentAction,
-  } = useActionButtons({});
+  } = useActionButtons({
+    openModal: (contents) => setModalContents(contents),
+    closeModal: (updatedEvent) => {
+      const updatedEvents = proposalScheduledEvents.map((event) =>
+        event.visit?.id === updatedEvent?.id ? updatedEvent : event
+      );
+      setProposalScheduledEvents(updatedEvents);
+      setModalContents(null);
+    },
+  });
 
   const columns = [
     { title: 'Proposal title', field: 'proposal.title' },
@@ -83,6 +97,12 @@ export default function UserUpcomingExperimentsTable() {
           }}
         />
       </StyledPaper>
+      <Dialog
+        open={modalContents !== null}
+        onClose={() => setModalContents(null)}
+      >
+        <DialogContent>{modalContents}</DialogContent>
+      </Dialog>
     </Grid>
   );
 }
