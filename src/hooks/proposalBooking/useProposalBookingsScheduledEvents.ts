@@ -23,7 +23,14 @@ export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
   'startsAt' | 'endsAt' | 'id'
 > & {
-  proposal: Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'> & {
+  proposal: Pick<
+    Proposal,
+    | 'primaryKey'
+    | 'title'
+    | 'proposalId'
+    | 'finalStatus'
+    | 'managementDecisionSubmitted'
+  > & {
     proposer: BasicUserDetailsFragment | null;
   } & {
     users: BasicUserDetailsFragment[];
@@ -89,6 +96,9 @@ export function useProposalBookingsScheduledEvents({
                     users: proposal.users,
                     riskAssessmentQuestionary:
                       proposal.riskAssessmentQuestionary,
+                    finalStatus: proposal.finalStatus,
+                    managementDecisionSubmitted:
+                      proposal.managementDecisionSubmitted,
                   },
                   instrument: proposal.instrument,
                   visit: scheduledEvent.visit,

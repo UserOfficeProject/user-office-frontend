@@ -12,6 +12,7 @@ import ActionButton, {
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
 import { UserContext } from 'context/UserContextProvider';
+import { ProposalEndStatus } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
@@ -69,10 +70,17 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     let buttonState: ActionButtonState;
 
     if (isPiOrCoProposer(user, event)) {
-      if (event.visit !== null) {
-        buttonState = 'completed';
+      if (
+        event.proposal.finalStatus === ProposalEndStatus.ACCEPTED &&
+        event.proposal.managementDecisionSubmitted
+      ) {
+        if (event.visit !== null) {
+          buttonState = 'completed';
+        } else {
+          buttonState = 'active';
+        }
       } else {
-        buttonState = 'active';
+        buttonState = 'inactive';
       }
     } else {
       buttonState = 'invisible';

@@ -1275,8 +1275,8 @@ export type MutationCreateProposalArgs = {
 export type MutationCreateVisitArgs = {
   proposalPk: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
-  team?: Maybe<Array<Scalars['Int']>>;
-  teamLeadUserId?: Maybe<Scalars['Int']>;
+  team: Array<Scalars['Int']>;
+  teamLeadUserId: Scalars['Int'];
 };
 
 
@@ -4649,7 +4649,7 @@ export type GetUserProposalBookingsWithEventsQuery = (
     { __typename?: 'User' }
     & { proposals: Array<(
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
+      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId' | 'finalStatus' | 'managementDecisionSubmitted'>
       & { proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
@@ -6856,7 +6856,7 @@ export type VerifyEmailMutation = (
 
 export type CreateVisitMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
-  team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  team: Array<Scalars['Int']> | Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
 }>;
@@ -8738,6 +8738,8 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
       primaryKey
       title
       proposalId
+      finalStatus
+      managementDecisionSubmitted
       proposer {
         ...basicUserDetails
       }
@@ -10127,7 +10129,7 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitDocument = gql`
-    mutation createVisit($proposalPk: Int!, $team: [Int!], $scheduledEventId: Int!, $teamLeadUserId: Int!) {
+    mutation createVisit($proposalPk: Int!, $team: [Int!]!, $scheduledEventId: Int!, $teamLeadUserId: Int!) {
   createVisit(
     proposalPk: $proposalPk
     team: $team

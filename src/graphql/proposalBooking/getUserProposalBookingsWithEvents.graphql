@@ -8,6 +8,8 @@ query getUserProposalBookingsWithEvents(
       primaryKey
       title
       proposalId
+      finalStatus
+      managementDecisionSubmitted
       proposer {
         ...basicUserDetails
       }
