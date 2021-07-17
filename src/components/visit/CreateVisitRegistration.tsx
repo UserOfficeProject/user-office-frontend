@@ -2,72 +2,45 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
+import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import {
-  ProposalEndStatus,
-  ProposalPublicStatus,
-  QuestionaryStep,
-  TemplateCategoryId,
-  VisitStatus,
-} from 'generated/sdk';
-import { VisitBasic, VisitExtended } from 'models/VisitSubmissionState';
+  RegistrationBasic,
+  RegistrationExtended,
+} from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import VisitRegistrationContainer from './VisitRegistrationContainer';
 
-function createVisitStub(
-  visitorId: number,
+function createRegistrationStub(
+  userId: number,
   templateId: number,
-  questionarySteps: QuestionaryStep[]
-): VisitExtended {
+  questionarySteps: QuestionaryStep[],
+  visitId: number
+): RegistrationExtended {
   return {
-    id: 0,
-    status: VisitStatus.DRAFT,
-    questionaryId: 0,
-    visitorId: visitorId,
-    proposalPk: 0,
+    userId: userId,
+    registrationQuestionaryId: 0,
+    isRegistrationSubmitted: false,
+    trainingExpiryDate: null,
+    visitId: visitId,
     questionary: {
       questionaryId: 0,
       templateId: templateId,
       created: new Date(),
       steps: questionarySteps,
     },
-    userVisits: [],
-    proposal: {
-      primaryKey: 0,
-      title: '',
-      abstract: '',
-      statusId: 0,
-      publicStatus: ProposalPublicStatus.UNKNOWN,
-      proposalId: '',
-      finalStatus: ProposalEndStatus.UNSET,
-      commentForUser: '',
-      commentForManagement: '',
-      created: null,
-      updated: null,
-      callId: 0,
-      questionaryId: 0,
-      notified: false,
-      submitted: false,
-      managementTimeAllocation: 0,
-      managementDecisionSubmitted: false,
-      status: null,
-      sepMeetingDecision: null,
-      technicalReviewAssignee: 0,
-      instrument: {
-        name: '',
-      },
-    },
   };
 }
 
 interface CreateVisitProps {
-  onCreate?: (visit: VisitBasic) => void;
-  onUpdate?: (visit: VisitBasic) => void;
+  onCreate?: (visit: RegistrationBasic) => void;
+  onUpdate?: (visit: RegistrationBasic) => void;
+  visitId: number;
 }
-function CreateVisit({ onCreate, onUpdate }: CreateVisitProps) {
+function CreateVisit({ onCreate, onUpdate, visitId }: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const [blankVisit, setBlankVisit] = useState<VisitExtended>();
+  const [blankVisit, setBlankRegistration] = useState<RegistrationExtended>();
 
   useEffect(() => {
     api()
@@ -80,17 +53,18 @@ function CreateVisit({ onCreate, onUpdate }: CreateVisitProps) {
             .getBlankQuestionarySteps({ templateId: activeTemplateId })
             .then((result) => {
               if (result.blankQuestionarySteps) {
-                const blankVisit = createVisitStub(
+                const blankRegistration = createRegistrationStub(
                   user.id,
                   activeTemplateId,
-                  result.blankQuestionarySteps
+                  result.blankQuestionarySteps,
+                  visitId
                 );
-                setBlankVisit(blankVisit);
+                setBlankRegistration(blankRegistration);
               }
             });
         }
       });
-  }, [setBlankVisit, api, user]);
+  }, [setBlankRegistration, api, user]);
 
   if (!blankVisit) {
     return <UOLoader />;
@@ -98,7 +72,7 @@ function CreateVisit({ onCreate, onUpdate }: CreateVisitProps) {
 
   return (
     <VisitRegistrationContainer
-      visit={blankVisit}
+      registration={blankVisit}
       onCreate={onCreate}
       onUpdate={onUpdate}
     />

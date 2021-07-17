@@ -1,27 +1,32 @@
 import React from 'react';
 
 import UOLoader from 'components/common/UOLoader';
-import { useVisit } from 'hooks/visit/useVisit';
-import { VisitBasic } from 'models/VisitSubmissionState';
+import { useVisitRegistration } from 'hooks/visit/useVisitRegistration';
+import { RegistrationBasic } from 'models/VisitSubmissionState';
 
 import VisitRegistrationContainer from './VisitRegistrationContainer';
 
 interface UpdateVisitRegistrationProps {
-  visit: VisitBasic;
-  onUpdate?: (visit: VisitBasic) => void;
+  visitRegistration: RegistrationBasic;
+  onUpdate?: (registration: RegistrationBasic) => void;
 }
 
 function UpdateVisitRegistration({
   onUpdate,
-  visit: { id },
+  visitRegistration,
 }: UpdateVisitRegistrationProps) {
-  const { visit } = useVisit(id);
+  const { registration } = useVisitRegistration(visitRegistration.visitId);
 
-  if (!visit) {
+  if (!registration) {
     return <UOLoader />;
   }
 
-  return <VisitRegistrationContainer visit={visit} onUpdate={onUpdate} />;
+  return (
+    <VisitRegistrationContainer
+      registration={registration}
+      onUpdate={onUpdate}
+    />
+  );
 }
 
 export default UpdateVisitRegistration;

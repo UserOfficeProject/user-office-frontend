@@ -11,6 +11,7 @@ import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
+import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
 import { ProposalEndStatus } from 'generated/sdk';
 import { User } from 'models/User';
@@ -117,7 +118,15 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       <FlightTakeoffIcon />,
       buttonState,
       () => {
-        history.push('/MyVisits');
+        openModal(
+          <CreateUpdateVisitRegistration
+            registration={
+              event.visit!.userVisits.find(
+                (registration) => registration.userId === user.id
+              )!
+            }
+          />
+        );
       }
     );
   };

@@ -1,25 +1,34 @@
 import React from 'react';
 
-import { VisitBasic } from 'models/VisitSubmissionState';
+import { RegistrationBasic } from 'models/VisitSubmissionState';
 
 import CreateVisitRegistration from './CreateVisitRegistration';
 import UpdateVisitRegistration from './UpdateVisitRegistration';
 
 type CreateUpdateVisitRegistrationProps = {
-  onCreate?: (visit: VisitBasic) => void;
-  onUpdate?: (visit: VisitBasic) => void;
-  visit: VisitBasic | null;
+  onCreate?: (registration: RegistrationBasic) => void;
+  onUpdate?: (registration: RegistrationBasic) => void;
+  registration: RegistrationBasic;
 };
 
 function CreateUpdateVisitRegistration({
-  visit,
+  registration,
   onCreate,
   onUpdate,
 }: CreateUpdateVisitRegistrationProps) {
-  return visit ? (
-    <UpdateVisitRegistration visit={visit} onUpdate={onUpdate} />
+  const hasQuestionary = !!registration.registrationQuestionaryId;
+
+  return hasQuestionary ? (
+    <UpdateVisitRegistration
+      visitRegistration={registration}
+      onUpdate={onUpdate}
+    />
   ) : (
-    <CreateVisitRegistration onCreate={onCreate} onUpdate={onUpdate} />
+    <CreateVisitRegistration
+      visitId={registration.visitId}
+      onCreate={onCreate}
+      onUpdate={onUpdate}
+    />
   );
 }
 

@@ -19,10 +19,6 @@ mutation updateVisit(
         ...basicUserDetails
       }
 
-      questionary {
-        ...questionary
-      }
-
       userVisits {
         ...userVisit
         user {

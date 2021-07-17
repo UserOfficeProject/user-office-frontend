@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
@@ -77,6 +77,9 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
     >
       {({ values, isSubmitting, setFieldValue }) => (
         <Form>
+          <Typography variant="h6">
+            {visit ? 'Update the visit' : 'Create new visit'}
+          </Typography>
           <Participants
             title="Add Visitors"
             setUsers={(team: BasicUserDetails[]) => {

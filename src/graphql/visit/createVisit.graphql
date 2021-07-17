@@ -17,9 +17,6 @@ mutation createVisit(
         ...basicUserDetails
       }
 
-      questionary {
-        ...questionary
-      }
       userVisits {
         ...userVisit
         user {

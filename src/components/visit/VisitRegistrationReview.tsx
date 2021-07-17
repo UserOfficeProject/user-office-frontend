@@ -1,8 +1,7 @@
-import { Link, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';
-import UOLoader from 'components/common/UOLoader';
 import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
@@ -11,8 +10,6 @@ import {
 import QuestionaryDetails, {
   TableRowData,
 } from 'components/questionary/QuestionaryDetails';
-import { VisitStatus } from 'generated/sdk';
-import { useProposalData } from 'hooks/proposal/useProposalData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -40,41 +37,16 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const { proposalData } = useProposalData(state.visit.proposalPk);
-  const classes = useStyles();
-
-  if (!proposalData) {
-    return <UOLoader />;
-  }
+  const isSubmitted = state.registration.isRegistrationSubmitted;
 
   const additionalDetails: TableRowData[] = [
-    { label: 'Status', value: state.visit.status },
-    {
-      label: 'Proposal',
-      value: (
-        <Link href={`/ProposalEdit/${proposalData.primaryKey}`}>
-          {proposalData.title}
-        </Link>
-      ),
-    },
-    {
-      label: 'Team',
-      value: (
-        <ul className={classes.teamMemberList}>
-          {state.visit.userVisits.map(({ user }) => (
-            <li key={user.id}>{`${user.firstname} ${user.lastname}`}</li>
-          ))}
-        </ul>
-      ),
-    },
+    { label: 'Status', value: isSubmitted ? 'Submitted' : 'Draft' },
   ];
-
-  const isSubmitted = state.visit.status === VisitStatus.SUBMITTED;
 
   return (
     <div>
       <QuestionaryDetails
-        questionaryId={state.visit.questionaryId}
+        questionaryId={state.registration.registrationQuestionaryId!}
         additionalDetails={additionalDetails}
         title="Visit information"
       />
@@ -83,16 +55,16 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
           onClick={() =>
             confirm(
               async () => {
-                const result = await api().updateVisit({
-                  visitId: state.visit.id,
-                  status: VisitStatus.SUBMITTED,
+                const result = await api().updateVisitRegistration({
+                  visitId: state.registration.visitId,
+                  isRegistrationSubmitted: true,
                 });
-                if (!result.updateVisit.visit) {
+                if (!result.updateVisitRegistration.registration) {
                   return;
                 }
                 dispatch({
                   type: 'VISIT_MODIFIED',
-                  visit: result.updateVisit.visit,
+                  visit: result.updateVisitRegistration.registration,
                 });
               },
               {

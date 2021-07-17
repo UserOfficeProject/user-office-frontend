@@ -1,78 +1,68 @@
-import { Delete } from '@material-ui/icons';
 import React from 'react';
-import { useQueryParams } from 'use-query-params';
 
-import {
-  DefaultQueryParams,
-  UrlQueryParamsType,
-} from 'components/common/SuperMaterialTable';
-import { SuperMaterialTable } from 'components/common/SuperMaterialTable';
-import UOLoader from 'components/common/UOLoader';
-import { VisitStatus } from 'generated/sdk';
-import { useMyVisits } from 'hooks/visit/useMyVisits';
-import { VisitBasic } from 'models/VisitSubmissionState';
-import { tableIcons } from 'utils/materialIcons';
-import { tableLocalization } from 'utils/materialLocalization';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import CreateUpdateVisitRegistration from './CreateUpdateVisitRegistration';
-
 const VisitsRegistrationTable = (props: { confirm: WithConfirmType }) => {
-  const { loadingVisits, visits, setVisits } = useMyVisits();
-  const [
-    urlQueryParams,
-    setUrlQueryParams,
-  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
-  const { api } = useDataApiWithFeedback();
+  // const { loadingVisits, visits, setVisits } = useMyVisits();
+  // const [
+  //   urlQueryParams,
+  //   setUrlQueryParams,
+  // ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
+  // const { api } = useDataApiWithFeedback();
 
-  if (!visits) {
-    return <UOLoader />;
-  }
+  // if (!visits) {
+  //   return <UOLoader />;
+  // }
 
-  const columns = [
-    { title: 'Proposal', field: 'proposal.title' },
-    { title: 'Instrument', field: 'proposal.instrument.name' },
-    { title: 'Visit status', field: 'status' },
-  ];
+  // const columns = [
+  //   { title: 'Proposal', field: 'proposal.title' },
+  //   { title: 'Instrument', field: 'proposal.instrument.name' },
+  //   { title: 'Visit status', field: 'status' },
+  // ];
 
-  const deleteHandler = (visitToDelete: VisitBasic) => {
-    props.confirm(
-      () => {
-        api('Visit deleted')
-          .deleteVisit({
-            visitId: visitToDelete.id,
-          })
-          .then((data) => {
-            if (!data.deleteVisit.rejection) {
-              setVisits(
-                visits.filter((visit) => visit.id !== visitToDelete.id)
-              );
-            }
-          });
-      },
-      {
-        title: 'Are you sure?',
-        description: `Are you sure you want to delete the visit?`,
-      }
-    )();
-  };
+  // const deleteHandler = (visitToDelete: RegistrationBasic) => {
+  //   props.confirm(
+  //     () => {
+  //       api('Visit deleted')
+  //         .deleteVisit({
+  //           visitId: visitToDelete.visitId,
+  //         })
+  //         .then((data) => {
+  //           if (!data.deleteVisit.rejection) {
+  //             setVisits(
+  //               visits.filter((visit) => visit.visitId !== visitToDelete.visitId)
+  //             );
+  //           }
+  //         });
+  //     },
+  //     {
+  //       title: 'Are you sure?',
+  //       description: `Are you sure you want to delete the visit?`,
+  //     }
+  //   )();
+  // };
 
-  const createModal = (
-    onUpdate: (object: VisitBasic, shouldCloseAfterUpdate: boolean) => void,
-    onCreate: (object: VisitBasic, shouldCloseAfterCreation: boolean) => void,
-    editVisit: VisitBasic | null
-  ) => (
-    <CreateUpdateVisitRegistration
-      visit={editVisit}
-      onCreate={(visit) => onCreate({ ...visit }, false)} // clone the object because it is immutable because of immer
-      onUpdate={(visit) => onUpdate({ ...visit }, false)} // clone the object because it is immutable because of immer
-    />
-  );
+  // const createModal = (
+  //   onUpdate: (
+  //     object: RegistrationBasic,
+  //     shouldCloseAfterUpdate: boolean
+  //   ) => void,
+  //   onCreate: (
+  //     object: RegistrationBasic,
+  //     shouldCloseAfterCreation: boolean
+  //   ) => void,
+  //   editVisit: RegistrationBasic
+  // ) => (
+  //   <CreateUpdateVisitRegistration
+  //     registration={editVisit}
+  //     onCreate={(visit) => onCreate({ ...visit }, false)} // clone the object because it is immutable because of immer
+  //     onUpdate={(visit) => onUpdate({ ...visit }, false)} // clone the object because it is immutable because of immer
+  //   />
+  // );
 
   return (
     <div data-cy="visits-table">
-      <SuperMaterialTable
+      {/* <SuperMaterialTable
         setData={setVisits}
         createModal={createModal}
         hasAccess={{ update: true, create: true, remove: true }}
@@ -92,12 +82,12 @@ const VisitsRegistrationTable = (props: { confirm: WithConfirmType }) => {
               icon: Delete,
               tooltip: 'Delete visit',
               onClick: (_event, rowData) =>
-                deleteHandler(rowData as VisitBasic),
+                deleteHandler(rowData as RegistrationBasic),
               disabled: readOnly,
             };
           },
         ]}
-      />
+      /> */}
     </div>
   );
 };

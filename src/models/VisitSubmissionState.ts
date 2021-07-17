@@ -1,11 +1,15 @@
-import { GetVisitQuery } from 'generated/sdk';
-
-import { VisitFragment } from './../generated/sdk';
+import {
+  UserVisitFragment,
+  GetVisitRegistrationQuery,
+} from './../generated/sdk';
 import { QuestionarySubmissionState } from './QuestionarySubmissionState';
 
-export type VisitBasic = VisitFragment;
+export type RegistrationBasic = UserVisitFragment;
 
-export type VisitExtended = Exclude<GetVisitQuery['visit'], null>;
+export type RegistrationExtended = Exclude<
+  GetVisitRegistrationQuery['userVisit'],
+  null
+>;
 export interface VisitSubmissionState extends QuestionarySubmissionState {
-  visit: VisitExtended;
+  registration: RegistrationExtended;
 }
