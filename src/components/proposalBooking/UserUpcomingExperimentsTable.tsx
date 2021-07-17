@@ -37,7 +37,7 @@ export default function UserUpcomingExperimentsTable() {
     openModal: (contents) => setModalContents(contents),
     closeModal: (updatedEvent) => {
       const updatedEvents = proposalScheduledEvents.map((event) =>
-        event.visit?.id === updatedEvent?.id ? updatedEvent : event
+        event?.id === updatedEvent?.id ? updatedEvent : event
       );
       setProposalScheduledEvents(updatedEvents);
       setModalContents(null);

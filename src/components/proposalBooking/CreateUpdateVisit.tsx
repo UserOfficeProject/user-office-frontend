@@ -60,7 +60,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
               }
             });
         } else {
-          api('Visit updated')
+          api('Visit created')
             .createVisit({
               proposalPk: event.proposal.primaryKey,
               scheduledEventId: event.id,
