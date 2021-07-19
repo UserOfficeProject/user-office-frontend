@@ -97,7 +97,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     );
   };
 
-  const defineVisitAction = (event: ProposalScheduledEvent) => {
+  const registerVisitAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
 
     if (event.visit !== null) {
@@ -172,7 +172,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     );
   };
 
-  const riskAssessmentAction = (event: ProposalScheduledEvent) => {
+  const declareShipmentAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
 
     if (isPiOrCoProposer(user, event)) {
@@ -201,8 +201,8 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   return {
     formTeamAction,
-    defineVisitAction,
+    registerVisitAction,
     individualTrainingAction,
-    riskAssessmentAction,
+    declareShipmentAction,
   };
 }

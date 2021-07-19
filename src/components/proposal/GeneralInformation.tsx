@@ -54,6 +54,7 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({
           control={
             <Switch
               checked={isEditable}
+              data-cy="toggle-edit-proposal"
               onChange={() => {
                 setIsEditable(!isEditable);
               }}

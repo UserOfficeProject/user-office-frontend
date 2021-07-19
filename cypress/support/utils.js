@@ -119,6 +119,32 @@ const getTinyMceContent = (tinyMceId) => {
   });
 };
 
+const testActionButton = (tooltip, state) => {
+  switch (state) {
+    case 'completed':
+      cy.get(`[title="${tooltip}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${tooltip}"]`)
+        .find('.MuiBadge-badge')
+        .should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+      break;
+    case 'active':
+      cy.get(`[title="${tooltip}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${tooltip}"]`)
+        .find('.MuiBadge-badge')
+        .should('have.css', 'background-color');
+      break;
+
+    case 'inactive':
+      cy.get(`[title="${tooltip}"]`).find('button').should('be.disabled');
+      break;
+    case 'invisible':
+      cy.get(`[title="${tooltip}"]`).should('not.exist');
+      break;
+  }
+};
+
 Cypress.Commands.add('notification', notification);
 
 Cypress.Commands.add('closeNotification', closeNotification);
@@ -139,3 +165,4 @@ Cypress.Commands.add('presentationMode', presentationMode);
 
 Cypress.Commands.add('setTinyMceContent', setTinyMceContent);
 Cypress.Commands.add('getTinyMceContent', getTinyMceContent);
+Cypress.Commands.add('testActionButton', testActionButton);

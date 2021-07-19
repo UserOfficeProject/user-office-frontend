@@ -30,9 +30,9 @@ export default function UserUpcomingExperimentsTable() {
 
   const {
     formTeamAction,
-    defineVisitAction,
+    registerVisitAction: defineVisitAction,
     individualTrainingAction,
-    riskAssessmentAction,
+    declareShipmentAction: riskAssessmentAction,
   } = useActionButtons({
     openModal: (contents) => setModalContents(contents),
     closeModal: (updatedEvent) => {

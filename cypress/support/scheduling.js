@@ -52,5 +52,5 @@ const activateBooking = (proposalBookingId) => {
   cy.wrap(activateBookingReq);
 };
 
-Cypress.Commands.add('createEvent', createScheduledEvent);
+Cypress.Commands.add('createScheduledEvent', createScheduledEvent);
 Cypress.Commands.add('activateBooking', activateBooking);

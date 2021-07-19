@@ -90,6 +90,19 @@ declare global {
        *    cy.getTinyMceContent('editorId')
        */
       getTinyMceContent: (tinyMceId: string) => Promise<string>;
+
+      /**
+       * Get content from TinyMCE editor fetched by editor id.
+       *
+       * @returns {typeof getTinyMceContent}
+       * @memberof Chainable
+       * @example
+       *    cy.testActionButton('Define your own visit', 'completed')
+       */
+      testActionButton: (
+        tooltip: string,
+        state: 'completed' | 'active' | 'inactive' | 'invisible'
+      ) => Promise<void>;
     }
   }
 

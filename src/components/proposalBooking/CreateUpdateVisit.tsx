@@ -96,6 +96,9 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
             }))}
             label="Specify team leader"
             name="teamLeadUserId"
+            InputProps={{
+              'data-cy': 'team-lead-user-dropdown',
+            }}
           />
 
           <ActionButtonContainer>
@@ -112,6 +115,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
               type="submit"
               variant="contained"
               color="primary"
+              data-cy="create-visit-button"
             >
               {visit ? 'Update' : 'Create'}
             </Button>
