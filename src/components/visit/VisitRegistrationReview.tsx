@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';
@@ -20,13 +19,6 @@ type VisitRegistrationReviewProps = {
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
-
-const useStyles = makeStyles(() => ({
-  teamMemberList: {
-    listStyle: 'none',
-    padding: 0,
-  },
-}));
 
 function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
@@ -64,6 +56,10 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
                 }
                 dispatch({
                   type: 'VISIT_MODIFIED',
+                  visit: result.updateVisitRegistration.registration,
+                });
+                dispatch({
+                  type: 'REGISTRATION_SUBMITTED',
                   visit: result.updateVisitRegistration.registration,
                 });
               },

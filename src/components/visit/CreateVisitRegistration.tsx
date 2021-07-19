@@ -23,6 +23,15 @@ function createRegistrationStub(
     isRegistrationSubmitted: false,
     trainingExpiryDate: null,
     visitId: visitId,
+    user: {
+      firstname: '',
+      lastname: '',
+      id: userId,
+      created: new Date(),
+      organisation: '',
+      placeholder: false,
+      position: '',
+    },
     questionary: {
       questionaryId: 0,
       templateId: templateId,
@@ -35,9 +44,15 @@ function createRegistrationStub(
 interface CreateVisitProps {
   onCreate?: (visit: RegistrationBasic) => void;
   onUpdate?: (visit: RegistrationBasic) => void;
+  onSubmitted?: (visit: RegistrationBasic) => void;
   visitId: number;
 }
-function CreateVisit({ onCreate, onUpdate, visitId }: CreateVisitProps) {
+function CreateVisit({
+  onCreate,
+  onUpdate,
+  onSubmitted,
+  visitId,
+}: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
   const [blankVisit, setBlankRegistration] = useState<RegistrationExtended>();
@@ -64,7 +79,7 @@ function CreateVisit({ onCreate, onUpdate, visitId }: CreateVisitProps) {
             });
         }
       });
-  }, [setBlankRegistration, api, user]);
+  }, [setBlankRegistration, api, user, visitId]);
 
   if (!blankVisit) {
     return <UOLoader />;
@@ -75,6 +90,7 @@ function CreateVisit({ onCreate, onUpdate, visitId }: CreateVisitProps) {
       registration={blankVisit}
       onCreate={onCreate}
       onUpdate={onUpdate}
+      onSubmitted={onSubmitted}
     />
   );
 }

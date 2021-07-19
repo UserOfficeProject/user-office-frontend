@@ -6931,7 +6931,10 @@ export type CreateVisitRegistrationQuestionaryMutation = (
     { __typename?: 'VisitRegistrationResponseWrap' }
     & { registration: Maybe<(
       { __typename?: 'UserVisit' }
-      & { questionary: Maybe<(
+      & { user: (
+        { __typename?: 'BasicUserDetails' }
+        & BasicUserDetailsFragment
+      ), questionary: Maybe<(
         { __typename?: 'Questionary' }
         & QuestionaryFragment
       )> }
@@ -6972,25 +6975,6 @@ export type VisitFragment = (
   & Pick<Visit, 'id' | 'proposalPk' | 'status' | 'visitorId'>
 );
 
-export type GetMyVisitsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetMyVisitsQuery = (
-  { __typename?: 'Query' }
-  & { myVisits: Array<(
-    { __typename?: 'Visit' }
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & { instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'name'>
-      )> }
-      & ProposalFragment
-    ) }
-    & VisitFragment
-  )> }
-);
-
 export type GetVisitQueryVariables = Exact<{
   visitId: Scalars['Int'];
 }>;
@@ -7028,7 +7012,10 @@ export type GetVisitRegistrationQuery = (
   { __typename?: 'Query' }
   & { userVisit: Maybe<(
     { __typename?: 'UserVisit' }
-    & { questionary: Maybe<(
+    & { user: (
+      { __typename?: 'BasicUserDetails' }
+      & BasicUserDetailsFragment
+    ), questionary: Maybe<(
       { __typename?: 'Questionary' }
       & QuestionaryFragment
     )> }
@@ -10247,6 +10234,9 @@ export const CreateVisitRegistrationQuestionaryDocument = gql`
   createVisitRegistrationQuestionary(visitId: $visitId) {
     registration {
       ...userVisit
+      user {
+        ...basicUserDetails
+      }
       questionary {
         ...questionary
       }
@@ -10257,6 +10247,7 @@ export const CreateVisitRegistrationQuestionaryDocument = gql`
   }
 }
     ${UserVisitFragmentDoc}
+${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteVisitDocument = gql`
@@ -10272,20 +10263,6 @@ export const DeleteVisitDocument = gql`
 }
     ${VisitFragmentDoc}
 ${RejectionFragmentDoc}`;
-export const GetMyVisitsDocument = gql`
-    query getMyVisits {
-  myVisits {
-    ...visit
-    proposal {
-      ...proposal
-      instrument {
-        name
-      }
-    }
-  }
-}
-    ${VisitFragmentDoc}
-${ProposalFragmentDoc}`;
 export const GetVisitDocument = gql`
     query getVisit($visitId: Int!) {
   visit(visitId: $visitId) {
@@ -10312,12 +10289,16 @@ export const GetVisitRegistrationDocument = gql`
     query getVisitRegistration($visitId: Int!) {
   userVisit(visitId: $visitId) {
     ...userVisit
+    user {
+      ...basicUserDetails
+    }
     questionary {
       ...questionary
     }
   }
 }
     ${UserVisitFragmentDoc}
+${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}`;
 export const GetVisitsDocument = gql`
     query getVisits($filter: VisitsFilter) {
@@ -10903,9 +10884,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     deleteVisit(variables: DeleteVisitMutationVariables): Promise<DeleteVisitMutation> {
       return withWrapper(() => client.request<DeleteVisitMutation>(print(DeleteVisitDocument), variables));
-    },
-    getMyVisits(variables?: GetMyVisitsQueryVariables): Promise<GetMyVisitsQuery> {
-      return withWrapper(() => client.request<GetMyVisitsQuery>(print(GetMyVisitsDocument), variables));
     },
     getVisit(variables: GetVisitQueryVariables): Promise<GetVisitQuery> {
       return withWrapper(() => client.request<GetVisitQuery>(print(GetVisitDocument), variables));

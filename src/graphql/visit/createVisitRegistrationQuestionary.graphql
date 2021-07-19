@@ -2,6 +2,9 @@ mutation createVisitRegistrationQuestionary($visitId: Int!) {
   createVisitRegistrationQuestionary(visitId: $visitId) {
     registration {
       ...userVisit
+      user {
+        ...basicUserDetails
+      }
       questionary {
         ...questionary
       }

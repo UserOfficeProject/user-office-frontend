@@ -8,16 +8,13 @@ import {
   VisitFragment,
   Questionary,
   Maybe,
-  UserVisit,
   Visit,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+import { RegistrationBasic } from 'models/VisitSubmissionState';
 import { toTzLessDateTime } from 'utils/Time';
 
-import {
-  BasicUserDetailsFragment,
-  UserVisitFragment,
-} from './../../generated/sdk';
+import { BasicUserDetailsFragment } from './../../generated/sdk';
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
@@ -41,7 +38,7 @@ export type ProposalScheduledEvent = Pick<
 } & {
   visit:
     | (VisitFragment & {
-        userVisits: (UserVisitFragment & Pick<UserVisit, 'user'>)[];
+        userVisits: RegistrationBasic[];
       } & Pick<Visit, 'teamLead'>)
     | null;
 };

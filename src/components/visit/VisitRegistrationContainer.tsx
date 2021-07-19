@@ -109,6 +109,7 @@ export interface VisitRegistrationContainerProps {
   registration: RegistrationExtended;
   onCreate?: (registration: RegistrationExtended) => void;
   onUpdate?: (registration: RegistrationExtended) => void;
+  onSubmitted?: (registration: RegistrationExtended) => void;
 }
 export default function VisitRegistrationContainer(
   props: VisitRegistrationContainerProps
@@ -209,6 +210,11 @@ export default function VisitRegistrationContainer(
 
         case 'VISIT_MODIFIED':
           props.onUpdate?.(state.registration);
+          break;
+
+        case 'REGISTRATION_SUBMITTED':
+          console.log(props.onSubmitted);
+          props.onSubmitted?.(state.registration);
           break;
       }
     };

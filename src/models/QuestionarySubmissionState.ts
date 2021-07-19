@@ -38,7 +38,8 @@ export type Event =
   | { type: 'SHIPMENT_MODIFIED'; shipment: Partial<ShipmentExtended> }
   | { type: 'VISIT_CREATED'; visit: RegistrationExtended }
   | { type: 'VISIT_LOADED'; visit: RegistrationExtended }
-  | { type: 'VISIT_MODIFIED'; visit: Partial<RegistrationExtended> };
+  | { type: 'VISIT_MODIFIED'; visit: Partial<RegistrationExtended> }
+  | { type: 'REGISTRATION_SUBMITTED'; visit: Partial<RegistrationExtended> };
 
 export interface WizardStepMetadata {
   title: string;

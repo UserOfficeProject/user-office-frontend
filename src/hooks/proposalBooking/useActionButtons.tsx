@@ -103,7 +103,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     if (event.visit !== null) {
       if (
         event.visit.userVisits.find((userVisit) => userVisit.userId === user.id)
-          ?.registrationQuestionaryId
+          ?.isRegistrationSubmitted
       ) {
         buttonState = 'completed';
       } else {
@@ -125,6 +125,18 @@ export function useActionButtons(args: UseActionButtonsArgs) {
                 (registration) => registration.userId === user.id
               )!
             }
+            onSubmitted={(updatedRegistration) => {
+              const updatedRegistrations = event.visit!.userVisits.map(
+                (registration) =>
+                  registration.userId === updatedRegistration.userId
+                    ? updatedRegistration
+                    : registration
+              );
+              closeModal({
+                ...event,
+                visit: { ...event.visit!, userVisits: updatedRegistrations },
+              });
+            }}
           />
         );
       }

@@ -1,10 +1,20 @@
+import { ExcludeTypeName, ExcludeNull } from 'utils/utilTypes';
+
 import {
-  UserVisitFragment,
   GetVisitRegistrationQuery,
+  GetUserProposalBookingsWithEventsQuery,
 } from './../generated/sdk';
 import { QuestionarySubmissionState } from './QuestionarySubmissionState';
 
-export type RegistrationBasic = UserVisitFragment;
+export type RegistrationBasic = ExcludeTypeName<
+  ExcludeNull<
+    ExcludeNull<
+      ExcludeNull<
+        ExcludeNull<GetUserProposalBookingsWithEventsQuery['me']>['proposals']
+      >[0]['proposalBooking']
+    >['scheduledEvents'][0]['visit']
+  >['userVisits'][0]
+>;
 
 export type RegistrationExtended = Exclude<
   GetVisitRegistrationQuery['userVisit'],

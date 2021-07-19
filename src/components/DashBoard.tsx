@@ -57,7 +57,6 @@ import VisitTemplatesPage from './template/VisitTemplatesPage';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
 import UserPage from './user/UserPage';
-import MyVisits from './visit/MyVisits';
 
 type BottomNavItemProps = {
   /** Content of the information modal. */
@@ -245,7 +244,6 @@ const Dashboard: React.FC = () => {
           {isShipmentEnabled && (
             <Route path="/MyShipments" component={MyShipments} />
           )}
-          <Route path="/MyVisits" component={MyVisits} />
           <Route path="/ProfilePage/:id" component={ProfilePage} />
           {isUserOfficer && (
             <Route path="/PeoplePage/:id" component={UserPage} />

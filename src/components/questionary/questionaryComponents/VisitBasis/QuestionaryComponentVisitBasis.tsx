@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -9,7 +8,7 @@ import { VisitRegistrationContextType } from 'components/visit/VisitRegistration
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { VisitSubmissionState } from 'models/VisitSubmissionState';
 
-function QuestionaryComponentVisitBasis(props: BasicComponentProps) {
+function QuestionaryComponentVisitBasis() {
   const { dispatch, state } = useContext(
     QuestionaryContext
   ) as VisitRegistrationContextType;
