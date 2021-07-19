@@ -3005,7 +3005,7 @@ export type Visit = {
   id: Scalars['Int'];
   proposalPk: Scalars['Int'];
   status: VisitStatus;
-  visitorId: Scalars['Int'];
+  creatorId: Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
   proposal: Proposal;
   userVisits: Array<UserVisit>;
@@ -3038,7 +3038,7 @@ export enum VisitStatus {
 }
 
 export type VisitsFilter = {
-  visitorId?: Maybe<Scalars['Int']>;
+  creator_id?: Maybe<Scalars['Int']>;
   questionaryId?: Maybe<Scalars['Int']>;
   proposalPk?: Maybe<Scalars['Int']>;
 };
@@ -6972,7 +6972,7 @@ export type UserVisitFragment = (
 
 export type VisitFragment = (
   { __typename?: 'Visit' }
-  & Pick<Visit, 'id' | 'proposalPk' | 'status' | 'visitorId'>
+  & Pick<Visit, 'id' | 'proposalPk' | 'status' | 'creatorId'>
 );
 
 export type GetVisitQueryVariables = Exact<{
@@ -7510,7 +7510,7 @@ export const VisitFragmentDoc = gql`
   id
   proposalPk
   status
-  visitorId
+  creatorId
 }
     `;
 export const AssignProposalsToSepDocument = gql`
