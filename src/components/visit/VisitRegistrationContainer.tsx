@@ -35,8 +35,8 @@ const visitReducer = (
   action: Event
 ) => {
   switch (action.type) {
-    case 'VISIT_CREATED':
-    case 'VISIT_LOADED':
+    case 'REGISTRATION_CREATED':
+    case 'REGISTRATION_LOADED':
       const visit = action.visit;
       draftState.isDirty = false;
       draftState.questionaryId = visit.registrationQuestionaryId;
@@ -44,7 +44,7 @@ const visitReducer = (
       draftState.steps = visit.questionary!.steps;
       draftState.templateId = visit.questionary!.templateId;
       break;
-    case 'VISIT_MODIFIED':
+    case 'REGISTRATION_MODIFIED':
       draftState.registration = {
         ...draftState.registration,
         ...action.visit,
@@ -160,7 +160,7 @@ export default function VisitRegistrationContainer(
     if (registrationState.registration.registrationQuestionaryId === 0) {
       // if visit is not created yet
       dispatch({
-        type: 'VISIT_LOADED',
+        type: 'REGISTRATION_LOADED',
         visit: initialState.registration,
       });
     } else {
@@ -171,7 +171,7 @@ export default function VisitRegistrationContainer(
         .then((data) => {
           if (data.userVisit && data.userVisit.questionary!.steps) {
             dispatch({
-              type: 'VISIT_LOADED',
+              type: 'REGISTRATION_LOADED',
               visit: data.userVisit,
             });
             dispatch({
@@ -204,11 +204,11 @@ export default function VisitRegistrationContainer(
           handleReset();
           break;
 
-        case 'VISIT_CREATED':
+        case 'REGISTRATION_CREATED':
           props.onCreate?.(state.registration);
           break;
 
-        case 'VISIT_MODIFIED':
+        case 'REGISTRATION_MODIFIED':
           props.onUpdate?.(state.registration);
           break;
 
@@ -243,7 +243,7 @@ export default function VisitRegistrationContainer(
       previousInitialVisit === undefined;
     if (isComponentMountedForTheFirstTime) {
       dispatch({
-        type: 'VISIT_LOADED',
+        type: 'REGISTRATION_LOADED',
         visit: props.registration,
       });
       dispatch({

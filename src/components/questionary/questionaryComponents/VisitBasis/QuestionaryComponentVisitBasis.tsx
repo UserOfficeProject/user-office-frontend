@@ -42,7 +42,7 @@ const visitBasisPreSubmit = () => async ({
 
   if (newRegistration?.questionary) {
     dispatch({
-      type: 'VISIT_CREATED',
+      type: 'REGISTRATION_CREATED',
       visit: newRegistration,
     });
     returnValue = newRegistration.questionary.questionaryId;

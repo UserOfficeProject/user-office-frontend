@@ -55,7 +55,7 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
                   return;
                 }
                 dispatch({
-                  type: 'VISIT_MODIFIED',
+                  type: 'REGISTRATION_MODIFIED',
                   visit: result.updateVisitRegistration.registration,
                 });
                 dispatch({
