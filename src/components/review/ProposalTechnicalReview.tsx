@@ -3,7 +3,9 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import InfoIcon from '@material-ui/icons/InfoOutlined';
 import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -22,6 +24,7 @@ import {
 } from 'generated/sdk';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 const useStyles = makeStyles((theme) => ({
@@ -116,8 +119,18 @@ const ProposalTechnicalReview = ({
 
   return (
     <>
-      <Typography variant="h6" gutterBottom>
-        Technical Review
+      <Typography variant="h6" component="h2" gutterBottom>
+        Technical Review{' '}
+        {proposal.technicalReview?.reviewer && (
+          <Tooltip
+            data-cy="reviewed-by-info"
+            title={`Reviewed by ${getFullUserName(
+              proposal.technicalReview?.reviewer
+            )}`}
+          >
+            <InfoIcon fontSize="small" />
+          </Tooltip>
+        )}
       </Typography>
       <Formik
         initialValues={initialValues}
@@ -208,9 +221,11 @@ const ProposalTechnicalReview = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
-                  onEditorChange={(content: string) =>
-                    setFieldValue('comment', content)
-                  }
+                  onEditorChange={(content, editor) => {
+                    if (content !== editor.startContent || editor.isDirty()) {
+                      setFieldValue('comment', content);
+                    }
+                  }}
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>
@@ -234,9 +249,11 @@ const ProposalTechnicalReview = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
-                  onEditorChange={(content: string) =>
-                    setFieldValue('publicComment', content)
-                  }
+                  onEditorChange={(content, editor) => {
+                    if (content !== editor.startContent || editor.isDirty()) {
+                      setFieldValue('publicComment', content);
+                    }
+                  }}
                   disabled={shouldDisableForm(isSubmitting)}
                 />
               </Grid>

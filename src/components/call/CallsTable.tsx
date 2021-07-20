@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import dateformat from 'dateformat';
 import React, { useState } from 'react';
 import { useQueryParams } from 'use-query-params';
@@ -79,13 +80,18 @@ const CallsTable: React.FC = () => {
       render: (rowData: Call): string => rowData.referenceNumberFormat || '',
     },
     {
-      title: 'Instruments',
-      field: 'instruments.length',
+      title: 'Proposal Workflow',
+      field: 'proposalWorkflow.name',
       emptyValue: '-',
     },
     {
-      title: 'Proposal Workflow',
-      field: 'proposalWorkflow.name',
+      title: 'Call template',
+      field: 'template.name',
+      emptyValue: '-',
+    },
+    {
+      title: '#instruments',
+      field: 'instruments.length',
       emptyValue: '-',
     },
     {
@@ -234,7 +240,11 @@ const CallsTable: React.FC = () => {
           remove: isUserOfficer,
         }}
         icons={tableIcons}
-        title="Calls"
+        title={
+          <Typography variant="h6" component="h2">
+            Calls
+          </Typography>
+        }
         columns={columns}
         data={calls}
         isLoading={loadingCalls}

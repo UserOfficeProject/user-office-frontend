@@ -170,9 +170,10 @@ export type Call = {
   surveyComment: Scalars['String'];
   proposalWorkflowId: Maybe<Scalars['Int']>;
   allocationTimeUnit: AllocationTimeUnits;
-  templateId: Maybe<Scalars['Int']>;
+  templateId: Scalars['Int'];
   instruments: Array<InstrumentWithAvailabilityTime>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
+  template: Template;
   proposalCount: Scalars['Int'];
   isActive: Scalars['Boolean'];
 };
@@ -484,7 +485,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubtemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubTemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -1779,6 +1780,7 @@ export type ProposalTemplate = {
 
 export type ProposalTemplatesFilter = {
   isArchived?: Maybe<Scalars['Boolean']>;
+  templateIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type ProposalView = {
@@ -2645,12 +2647,25 @@ export type SepMeetingDecisionResponseWrap = {
 export type Settings = {
   __typename?: 'Settings';
   id: SettingsId;
-  settingsValue: Scalars['String'];
-  description: Scalars['String'];
+  settingsValue: Maybe<Scalars['String']>;
+  description: Maybe<Scalars['String']>;
 };
 
 export enum SettingsId {
-  EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL'
+  EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL',
+  PALETTE_PRIMARY_DARK = 'PALETTE_PRIMARY_DARK',
+  PALETTE_PRIMARY_MAIN = 'PALETTE_PRIMARY_MAIN',
+  PALETTE_PRIMARY_LIGHT = 'PALETTE_PRIMARY_LIGHT',
+  PALETTE_PRIMARY_CONTRAST = 'PALETTE_PRIMARY_CONTRAST',
+  PALETTE_SECONDARY_DARK = 'PALETTE_SECONDARY_DARK',
+  PALETTE_SECONDARY_MAIN = 'PALETTE_SECONDARY_MAIN',
+  PALETTE_SECONDARY_LIGHT = 'PALETTE_SECONDARY_LIGHT',
+  PALETTE_SECONDARY_CONTRAST = 'PALETTE_SECONDARY_CONTRAST',
+  PALETTE_ERROR_MAIN = 'PALETTE_ERROR_MAIN',
+  PALETTE_SUCCESS_MAIN = 'PALETTE_SUCCESS_MAIN',
+  PALETTE_WARNING_MAIN = 'PALETTE_WARNING_MAIN',
+  PALETTE_INFO_MAIN = 'PALETTE_INFO_MAIN',
+  HEADER_LOGO_FILENAME = 'HEADER_LOGO_FILENAME'
 }
 
 export type Shipment = {
@@ -2719,6 +2734,17 @@ export type StatusChangingEvent = {
   statusChangingEvent: Scalars['String'];
 };
 
+export type SubTemplateConfig = {
+  __typename?: 'SubTemplateConfig';
+  minEntries: Maybe<Scalars['Int']>;
+  maxEntries: Maybe<Scalars['Int']>;
+  templateId: Maybe<Scalars['Int']>;
+  templateCategory: Scalars['String'];
+  addEntryButtonLabel: Scalars['String'];
+  small_label: Scalars['String'];
+  required: Scalars['Boolean'];
+};
+
 export type SubmitProposalsReviewInput = {
   proposals: Array<ProposalPkWithReviewId>;
 };
@@ -2731,17 +2757,6 @@ export type SubmitTechnicalReviewInput = {
   status?: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
   reviewerId: Scalars['Int'];
-};
-
-export type SubtemplateConfig = {
-  __typename?: 'SubtemplateConfig';
-  minEntries: Maybe<Scalars['Int']>;
-  maxEntries: Maybe<Scalars['Int']>;
-  templateId: Maybe<Scalars['Int']>;
-  templateCategory: Scalars['String'];
-  addEntryButtonLabel: Scalars['String'];
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
 };
 
 export type SuccessResponseWrap = {
@@ -3926,7 +3941,10 @@ export type CallFragment = (
   )>, proposalWorkflow: Maybe<(
     { __typename?: 'ProposalWorkflow' }
     & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-  )> }
+  )>, template: (
+    { __typename?: 'Template' }
+    & Pick<Template, 'templateId' | 'name' | 'isArchived'>
+  ) }
 );
 
 export type GetCallQueryVariables = Exact<{
@@ -4792,8 +4810,8 @@ export type AnswerFragment = (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
   ) | (
-    { __typename?: 'SubtemplateConfig' }
-    & FieldConfigSubtemplateConfigFragment
+    { __typename?: 'SubTemplateConfig' }
+    & FieldConfigSubTemplateConfigFragment
   ) | (
     { __typename?: 'ProposalBasisConfig' }
     & FieldConfigProposalBasisConfigFragment
@@ -5974,9 +5992,9 @@ type FieldConfigSampleBasisConfigFragment = (
   & Pick<SampleBasisConfig, 'titlePlaceholder'>
 );
 
-type FieldConfigSubtemplateConfigFragment = (
-  { __typename?: 'SubtemplateConfig' }
-  & Pick<SubtemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
+type FieldConfigSubTemplateConfigFragment = (
+  { __typename?: 'SubTemplateConfig' }
+  & Pick<SubTemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
 );
 
 type FieldConfigProposalBasisConfigFragment = (
@@ -6009,7 +6027,7 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubtemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6036,8 +6054,8 @@ export type QuestionFragment = (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
   ) | (
-    { __typename?: 'SubtemplateConfig' }
-    & FieldConfigSubtemplateConfigFragment
+    { __typename?: 'SubTemplateConfig' }
+    & FieldConfigSubTemplateConfigFragment
   ) | (
     { __typename?: 'ProposalBasisConfig' }
     & FieldConfigProposalBasisConfigFragment
@@ -6087,8 +6105,8 @@ export type QuestionTemplateRelationFragment = (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
   ) | (
-    { __typename?: 'SubtemplateConfig' }
-    & FieldConfigSubtemplateConfigFragment
+    { __typename?: 'SubTemplateConfig' }
+    & FieldConfigSubTemplateConfigFragment
   ) | (
     { __typename?: 'ProposalBasisConfig' }
     & FieldConfigProposalBasisConfigFragment
@@ -6221,8 +6239,8 @@ export type GetQuestionsQuery = (
       { __typename?: 'SampleBasisConfig' }
       & FieldConfigSampleBasisConfigFragment
     ) | (
-      { __typename?: 'SubtemplateConfig' }
-      & FieldConfigSubtemplateConfigFragment
+      { __typename?: 'SubTemplateConfig' }
+      & FieldConfigSubTemplateConfigFragment
     ) | (
       { __typename?: 'ProposalBasisConfig' }
       & FieldConfigProposalBasisConfigFragment
@@ -6632,7 +6650,7 @@ export type GetUserMeQuery = (
   { __typename?: 'Query' }
   & { me: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid'>
+    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid' | 'emailVerified' | 'placeholder'>
   )> }
 );
 
@@ -7173,6 +7191,11 @@ export const CallFragmentDoc = gql`
     name
     description
   }
+  template {
+    templateId
+    name
+    isArchived
+  }
   proposalCount
 }
     ${BasicUserDetailsFragmentDoc}`;
@@ -7292,7 +7315,7 @@ export const FieldConfigFragmentDoc = gql`
   ... on SampleBasisConfig {
     titlePlaceholder
   }
-  ... on SubtemplateConfig {
+  ... on SubTemplateConfig {
     addEntryButtonLabel
     minEntries
     maxEntries
@@ -10035,6 +10058,8 @@ export const GetUserMeDocument = gql`
     telephone
     telephone_alt
     orcid
+    emailVerified
+    placeholder
   }
 }
     `;

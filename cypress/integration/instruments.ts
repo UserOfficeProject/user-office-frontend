@@ -341,6 +341,16 @@ context('Instrument tests', () => {
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
 
+    cy.get('@dialog').find('[data-cy="timeAllocation"] input').should('exist');
+
+    cy.get('@dialog').contains('Proposal information').click();
+
+    cy.finishedLoading();
+
+    cy.get('@dialog').contains(proposal1.title);
+
+    cy.get('@dialog').contains('Technical review').click();
+
     cy.get('[data-cy="timeAllocation"] input').type('-123').blur();
     cy.contains('Must be greater than or equal to');
 
@@ -417,6 +427,25 @@ context('Instrument tests', () => {
     cy.get('[data-cy="save-technical-review"]').should('be.disabled');
     cy.get('[data-cy="submit-technical-review"]').should('be.disabled');
     cy.get('[data-cy="timeAllocation"] input').should('be.disabled');
+  });
+
+  it('User Officer should be able to see who submitted the technical review', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals');
+
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
+    cy.get('[role="dialog"]').as('dialog');
+    cy.finishedLoading();
+    cy.get('@dialog').contains('Technical review').click();
+
+    cy.get('[data-cy="reviewed-by-info"]').should('exist');
+    cy.get('[data-cy="reviewed-by-info"]')
+      .invoke('attr', 'title')
+      .should('eq', 'Reviewed by Carl Carlsson');
   });
 
   it('User Officer should be able to re-open submitted technical review', () => {
