@@ -7,7 +7,11 @@ declare global {
        * @returns {typeof defineExperimentTeam}
        * @memberof Chainable
        * @example
-       *    cy.defineExperimentTeam('')
+       * cy.defineExperimentTeam({
+       *    proposalTitle: proposalTitle,
+       *    users: ['Carlsson'],
+       *    teamLead: 'Carlsson',
+       * });
        */
       defineExperimentTeam: (params: {
         proposalTitle: string;
