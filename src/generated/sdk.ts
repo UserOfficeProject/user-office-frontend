@@ -1066,6 +1066,7 @@ export type MutationUpdateSepTimeAllocationArgs = {
 export type MutationCreateShipmentArgs = {
   title: Scalars['String'];
   proposalPk: Scalars['Int'];
+  visitId: Scalars['Int'];
 };
 
 
@@ -2660,6 +2661,7 @@ export type Shipment = {
   status: ShipmentStatus;
   externalRef: Maybe<Scalars['String']>;
   questionaryId: Scalars['Int'];
+  visitId: Scalars['Int'];
   creatorId: Scalars['Int'];
   created: Scalars['DateTime'];
   questionary: Questionary;
@@ -2693,6 +2695,7 @@ export type ShipmentsFilter = {
   status?: Maybe<ShipmentStatus>;
   externalRef?: Maybe<Scalars['String']>;
   shipmentIds?: Maybe<Array<Scalars['Int']>>;
+  visitId?: Maybe<Scalars['Int']>;
 };
 
 export type SimpleLostTimeInput = {
@@ -2999,6 +3002,7 @@ export type Visit = {
   proposal: Proposal;
   registrations: Array<VisitRegistration>;
   teamLead: BasicUserDetails;
+  shipments: Array<Shipment>;
 };
 
 export type VisitBasisConfig = {
@@ -4691,7 +4695,10 @@ export type GetUserProposalBookingsWithEventsQuery = (
             & { teamLead: (
               { __typename?: 'BasicUserDetails' }
               & BasicUserDetailsFragment
-            ), registrations: Array<(
+            ), shipments: Array<(
+              { __typename?: 'Shipment' }
+              & ShipmentFragment
+            )>, registrations: Array<(
               { __typename?: 'VisitRegistration' }
               & { user: (
                 { __typename?: 'BasicUserDetails' }
@@ -5594,6 +5601,7 @@ export type AddSamplesToShipmentMutation = (
 export type CreateShipmentMutationVariables = Exact<{
   title: Scalars['String'];
   proposalPk: Scalars['Int'];
+  visitId: Scalars['Int'];
 }>;
 
 
@@ -5636,7 +5644,7 @@ export type DeleteShipmentMutation = (
 
 export type ShipmentFragment = (
   { __typename?: 'Shipment' }
-  & Pick<Shipment, 'id' | 'title' | 'proposalPk' | 'status' | 'externalRef' | 'questionaryId' | 'creatorId' | 'created'>
+  & Pick<Shipment, 'id' | 'title' | 'proposalPk' | 'status' | 'externalRef' | 'questionaryId' | 'visitId' | 'creatorId' | 'created'>
   & { proposal: (
     { __typename?: 'Proposal' }
     & Pick<Proposal, 'proposalId'>
@@ -6910,7 +6918,10 @@ export type CreateVisitMutation = (
           & Pick<Instrument, 'name'>
         )> }
         & ProposalFragment
-      ) }
+      ), shipments: Array<(
+        { __typename?: 'Shipment' }
+        & ShipmentFragment
+      )> }
       & VisitFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -7075,7 +7086,10 @@ export type UpdateVisitMutation = (
           & Pick<Instrument, 'name'>
         )> }
         & ProposalFragment
-      ) }
+      ), shipments: Array<(
+        { __typename?: 'Shipment' }
+        & ShipmentFragment
+      )> }
       & VisitFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -7421,6 +7435,7 @@ export const ShipmentFragmentDoc = gql`
   status
   externalRef
   questionaryId
+  visitId
   creatorId
   created
   proposal {
@@ -8821,6 +8836,9 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
             teamLead {
               ...basicUserDetails
             }
+            shipments {
+              ...shipment
+            }
             registrations {
               ...visitRegistration
               user {
@@ -8845,6 +8863,7 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}
 ${VisitFragmentDoc}
+${ShipmentFragmentDoc}
 ${VisitRegistrationFragmentDoc}`;
 export const AnswerTopicDocument = gql`
     mutation answerTopic($questionaryId: Int!, $topicId: Int!, $answers: [AnswerInput!]!, $isPartialSave: Boolean) {
@@ -9441,8 +9460,8 @@ export const AddSamplesToShipmentDocument = gql`
 ${ShipmentFragmentDoc}
 ${SampleFragmentDoc}`;
 export const CreateShipmentDocument = gql`
-    mutation createShipment($title: String!, $proposalPk: Int!) {
-  createShipment(title: $title, proposalPk: $proposalPk) {
+    mutation createShipment($title: String!, $proposalPk: Int!, $visitId: Int!) {
+  createShipment(title: $title, proposalPk: $proposalPk, visitId: $visitId) {
     shipment {
       ...shipment
       questionary {
@@ -10217,6 +10236,9 @@ export const CreateVisitDocument = gql`
           name
         }
       }
+      shipments {
+        ...shipment
+      }
     }
     rejection {
       ...rejection
@@ -10227,6 +10249,7 @@ export const CreateVisitDocument = gql`
 ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
+${ShipmentFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateVisitRegistrationQuestionaryDocument = gql`
     mutation createVisitRegistrationQuestionary($visitId: Int!) {
@@ -10339,6 +10362,9 @@ export const UpdateVisitDocument = gql`
           name
         }
       }
+      shipments {
+        ...shipment
+      }
     }
     rejection {
       ...rejection
@@ -10349,6 +10375,7 @@ export const UpdateVisitDocument = gql`
 ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
+${ShipmentFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const UpdateVisitRegistrationDocument = gql`
     mutation updateVisitRegistration($visitId: Int!, $trainingExpiryDate: DateTime, $isRegistrationSubmitted: Boolean) {

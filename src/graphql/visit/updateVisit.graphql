@@ -32,6 +32,10 @@ mutation updateVisit(
           name
         }
       }
+
+      shipments {
+        ...shipment
+      }
     }
 
     rejection {

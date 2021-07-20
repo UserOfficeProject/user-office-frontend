@@ -48,7 +48,7 @@ context('visits tests', () => {
   const formTeamTitle = 'Define who is coming';
   const registerVisitTitle = 'Define your own visit';
   const individualTrainingTitle = 'Finish individual training';
-  const declareShipmentTitle = 'Finish risk assessment';
+  const declareShipmentTitle = 'Declare shipment(s)';
 
   it('Should be able to create visits template', () => {
     cy.login('officer');

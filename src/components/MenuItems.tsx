@@ -194,17 +194,6 @@ const SamplesMenuListItem = () => {
   );
 };
 
-const ShipmentMenuListItem = () => {
-  return (
-    <ListItem component={NavLink} to="/Shipments" button>
-      <ListItemIcon>
-        <LocalShippingIcon />
-      </ListItemIcon>
-      <ListItemText primary="Sample shipments" />
-    </ListItem>
-  );
-};
-
 const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
   const proposalDisabled = callsData.length === 0;
   const multipleCalls = callsData.length > 1;
@@ -328,7 +317,6 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
         <ListItemText primary="Questions" />
       </ListItem>
       <SamplesMenuListItem />
-      {isShipmentFeatureEnabled && <ShipmentMenuListItem />}
       <SettingsMenuListItem />
     </div>
   );

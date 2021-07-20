@@ -29,6 +29,10 @@ mutation createVisit(
           name
         }
       }
+
+      shipments {
+        ...shipment
+      }
     }
 
     rejection {

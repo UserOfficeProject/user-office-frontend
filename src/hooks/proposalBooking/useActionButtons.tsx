@@ -11,6 +11,7 @@ import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
+import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
 import { ProposalEndStatus } from 'generated/sdk';
@@ -55,7 +56,9 @@ const createActionButton = (
   icon: () => <ActionButton variant={state}>{icon}</ActionButton>,
   hidden: state === 'invisible',
   disabled: state === 'inactive',
-  onClick: state == 'completed' || state === 'active' ? onClick : () => {},
+  onClick: ['completed', 'active', 'neutral'].includes(state)
+    ? onClick
+    : () => {},
 });
 
 interface UseActionButtonsArgs {
@@ -178,10 +181,10 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     if (isPiOrCoProposer(user, event)) {
       if (event.visit !== null) {
-        if (event.proposal.riskAssessmentQuestionary) {
+        if (event.visit.shipments.length > 0) {
           buttonState = 'completed';
         } else {
-          buttonState = 'active';
+          buttonState = 'neutral';
         }
       } else {
         buttonState = 'inactive';
@@ -191,11 +194,24 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     }
 
     return createActionButton(
-      'Finish risk assessment',
+      'Declare shipment(s)',
       <BoxIcon />,
       buttonState,
       () => {
-        history.push('/risk-assessment');
+        openModal(
+          <CreateUpdateShipment
+            visit={event.visit!}
+            close={(shipment) => {
+              closeModal({
+                ...event,
+                visit: {
+                  ...event.visit!,
+                  shipments: shipment ? [shipment] : [],
+                },
+              });
+            }}
+          />
+        );
       }
     );
   };

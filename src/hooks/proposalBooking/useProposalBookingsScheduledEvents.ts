@@ -14,7 +14,10 @@ import { useDataApi } from 'hooks/common/useDataApi';
 import { RegistrationBasic } from 'models/VisitSubmissionState';
 import { toTzLessDateTime } from 'utils/Time';
 
-import { BasicUserDetailsFragment } from './../../generated/sdk';
+import {
+  BasicUserDetailsFragment,
+  ShipmentFragment,
+} from './../../generated/sdk';
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEvent,
@@ -39,6 +42,7 @@ export type ProposalScheduledEvent = Pick<
   visit:
     | (VisitFragment & {
         registrations: RegistrationBasic[];
+        shipments: ShipmentFragment[];
       } & Pick<Visit, 'teamLead'>)
     | null;
 };

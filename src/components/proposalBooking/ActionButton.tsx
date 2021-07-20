@@ -8,6 +8,7 @@ export type ActionButtonState =
   | 'completed'
   | 'active'
   | 'inactive'
+  | 'neutral'
   | 'invisible';
 
 interface ActionButtonProps {
@@ -17,6 +18,7 @@ interface ActionButtonProps {
 
 const useStyles = makeStyles(() => ({
   completed: {
+    color: '#000',
     '& .MuiBadge-badge': {
       fontSize: '17px',
       color: '#4ba322',
@@ -29,6 +31,9 @@ const useStyles = makeStyles(() => ({
       background: '#eb1a6c',
       boxShadow: '-1px 1px 0 white',
     },
+  },
+  neutral: {
+    color: '#000',
   },
   inactive: {
     color: '#BBB',
@@ -45,6 +50,8 @@ const ActionButton = ({ children, variant: state }: ActionButtonProps) => {
       return <DotBadge className={classes.active}>{children}</DotBadge>;
     case 'inactive':
       return <DotBadge className={classes.inactive}>{children}</DotBadge>;
+    case 'neutral':
+      return <DotBadge className={classes.neutral}>{children}</DotBadge>;
     case 'invisible':
       return <DotBadge />;
   }
