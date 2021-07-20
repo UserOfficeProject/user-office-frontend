@@ -39,8 +39,6 @@ context('visits tests', () => {
     cy.visit('/');
   });
 
-  const proposalTitle = faker.lorem.words(2);
-
   const visitTemplateName = faker.lorem.words(2);
   const visitTemplateDescription = faker.lorem.words(3);
 

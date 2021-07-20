@@ -7,7 +7,11 @@ declare global {
        * @returns {typeof createScheduledEvent}
        * @memberof Chainable
        * @example
-       *    cy.createEvent(1)
+       * const eventDate = faker.date.future().toISOString().split('T')[0];
+       * cy.createScheduledEvent(1, {
+       *   startsAt: `${eventDate} 10:00`,
+       *   endsAt: `${eventDate} 11:00`,
+       * })
        */
       createScheduledEvent: (
         proposalBookingId: number,
