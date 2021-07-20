@@ -19,6 +19,7 @@ interface ActionButtonProps {
 const useStyles = makeStyles(() => ({
   completed: {
     color: '#000',
+    marginRight: '2px',
     '& .MuiBadge-badge': {
       fontSize: '17px',
       color: '#4ba322',
@@ -27,12 +28,14 @@ const useStyles = makeStyles(() => ({
   },
   active: {
     color: '#000',
+    marginRight: '2px',
     '& .MuiBadge-dot': {
       background: '#eb1a6c',
       boxShadow: '-1px 1px 0 white',
     },
   },
   neutral: {
+    marginRight: '2px',
     color: '#000',
   },
   inactive: {

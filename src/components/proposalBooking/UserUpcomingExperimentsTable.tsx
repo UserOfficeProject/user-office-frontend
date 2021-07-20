@@ -35,12 +35,14 @@ export default function UserUpcomingExperimentsTable() {
     declareShipmentAction: riskAssessmentAction,
   } = useActionButtons({
     openModal: (contents) => setModalContents(contents),
-    closeModal: (updatedEvent) => {
+    closeModal: () => {
+      setModalContents(null);
+    },
+    eventUpdated: (updatedEvent) => {
       const updatedEvents = proposalScheduledEvents.map((event) =>
         event?.id === updatedEvent?.id ? updatedEvent : event
       );
       setProposalScheduledEvents(updatedEvents);
-      setModalContents(null);
     },
   });
 

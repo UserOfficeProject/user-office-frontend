@@ -63,12 +63,13 @@ const createActionButton = (
 
 interface UseActionButtonsArgs {
   openModal: (contents: ReactNode) => void;
-  closeModal: (updatedEvent: ProposalScheduledEvent) => void;
+  closeModal: () => void;
+  eventUpdated: (updatedEvent: ProposalScheduledEvent) => void;
 }
 export function useActionButtons(args: UseActionButtonsArgs) {
   const history = useHistory();
   const { user } = useContext(UserContext);
-  const { openModal, closeModal } = args;
+  const { openModal, closeModal, eventUpdated } = args;
 
   const formTeamAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
@@ -136,10 +137,11 @@ export function useActionButtons(args: UseActionButtonsArgs) {
                     ? updatedRegistration
                     : registration
               );
-              closeModal({
+              eventUpdated({
                 ...event,
                 visit: { ...event.visit!, registrations: updatedRegistrations },
               });
+              closeModal();
             }}
           />
         );
@@ -201,8 +203,8 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         openModal(
           <CreateUpdateShipment
             visit={event.visit!}
-            close={(shipment) => {
-              closeModal({
+            onShipmentSubmitted={(shipment) => {
+              eventUpdated({
                 ...event,
                 visit: {
                   ...event.visit!,

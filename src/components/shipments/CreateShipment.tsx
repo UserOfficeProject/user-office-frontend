@@ -52,9 +52,9 @@ interface CreateShipmentProps {
   visit: VisitFragment & {
     shipments: ShipmentFragment[];
   };
-  close: (shipment: ShipmentBasic | null) => void;
+  onShipmentSubmitted: (shipment: ShipmentBasic) => void;
 }
-function CreateShipment({ visit, close }: CreateShipmentProps) {
+function CreateShipment({ visit, onShipmentSubmitted }: CreateShipmentProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
   const [blankShipment, setBlankShipment] = useState<ShipmentExtended>();
@@ -102,7 +102,7 @@ function CreateShipment({ visit, close }: CreateShipmentProps) {
   return (
     <ShipmentContainer
       shipment={blankShipment}
-      done={(shipment) => close({ ...shipment })} // because of immer immutable object we clone it before sending out
+      onShipmentSubmitted={onShipmentSubmitted}
     />
   );
 }

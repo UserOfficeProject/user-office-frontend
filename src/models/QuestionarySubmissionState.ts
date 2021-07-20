@@ -36,6 +36,7 @@ export type Event =
   | { type: 'SHIPMENT_CREATED'; shipment: ShipmentExtended }
   | { type: 'SHIPMENT_LOADED'; shipment: ShipmentExtended }
   | { type: 'SHIPMENT_MODIFIED'; shipment: Partial<ShipmentExtended> }
+  | { type: 'SHIPMENT_SUBMITTED'; shipment: Partial<ShipmentExtended> }
   | { type: 'REGISTRATION_CREATED'; visit: RegistrationExtended }
   | { type: 'REGISTRATION_LOADED'; visit: RegistrationExtended }
   | { type: 'REGISTRATION_MODIFIED'; visit: Partial<RegistrationExtended> }

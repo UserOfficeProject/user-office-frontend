@@ -7,13 +7,16 @@ import CreateShipment from './CreateShipment';
 import UpdateShipment from './UpdateShipment';
 
 type CreateUpdateShipmentProps = {
-  close: (shipment: ShipmentBasic | null) => void;
+  onShipmentSubmitted: (shipment: ShipmentBasic) => void;
   visit: VisitFragment & {
     shipments: ShipmentBasic[];
   };
 };
 
-function CreateUpdateShipment({ visit, close }: CreateUpdateShipmentProps) {
+function CreateUpdateShipment({
+  visit,
+  onShipmentSubmitted,
+}: CreateUpdateShipmentProps) {
   if (visit.shipments.length > 1) {
     return <span>Multiple shipments per visit is not supported yet</span>;
   }
@@ -21,9 +24,12 @@ function CreateUpdateShipment({ visit, close }: CreateUpdateShipmentProps) {
   const shipment = visit.shipments[0]; // currently only supporting 1 shipment per visit
 
   return shipment ? (
-    <UpdateShipment shipment={shipment} close={close} />
+    <UpdateShipment
+      shipment={shipment}
+      onShipmentSubmitted={onShipmentSubmitted}
+    />
   ) : (
-    <CreateShipment close={close} visit={visit} />
+    <CreateShipment visit={visit} onShipmentSubmitted={onShipmentSubmitted} />
   );
 }
 
