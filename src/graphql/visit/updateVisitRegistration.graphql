@@ -9,7 +9,7 @@ mutation updateVisitRegistration(
     isRegistrationSubmitted: $isRegistrationSubmitted
   ) {
     registration {
-      ...userVisit
+      ...visitRegistration
     }
 
     rejection {

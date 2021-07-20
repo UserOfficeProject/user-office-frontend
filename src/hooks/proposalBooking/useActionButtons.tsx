@@ -28,8 +28,8 @@ const getParticipationRole = (
   } else if (event.proposal.users.map((user) => user.id).includes(user.id)) {
     return 'co-proposer';
   } else if (
-    event.visit?.userVisits
-      .map((userVisit) => userVisit.userId)
+    event.visit?.registrations
+      .map((registration) => registration.userId)
       .includes(user.id)
   ) {
     return 'visitor';
@@ -102,8 +102,9 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     if (event.visit !== null) {
       if (
-        event.visit.userVisits.find((userVisit) => userVisit.userId === user.id)
-          ?.isRegistrationSubmitted
+        event.visit.registrations.find(
+          (registration) => registration.userId === user.id
+        )?.isRegistrationSubmitted
       ) {
         buttonState = 'completed';
       } else {
@@ -121,12 +122,12 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         openModal(
           <CreateUpdateVisitRegistration
             registration={
-              event.visit!.userVisits.find(
+              event.visit!.registrations.find(
                 (registration) => registration.userId === user.id
               )!
             }
             onSubmitted={(updatedRegistration) => {
-              const updatedRegistrations = event.visit!.userVisits.map(
+              const updatedRegistrations = event.visit!.registrations.map(
                 (registration) =>
                   registration.userId === updatedRegistration.userId
                     ? updatedRegistration
@@ -134,7 +135,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
               );
               closeModal({
                 ...event,
-                visit: { ...event.visit!, userVisits: updatedRegistrations },
+                visit: { ...event.visit!, registrations: updatedRegistrations },
               });
             }}
           />
@@ -147,11 +148,11 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     let buttonState: ActionButtonState;
 
     if (event.visit !== null) {
-      const userVisit = event.visit.userVisits.find(
-        (userVisit) => userVisit.userId === user.id
+      const registration = event.visit.registrations.find(
+        (reg) => reg.userId === user.id
       );
       const trainingExpiryDate: Date | null =
-        userVisit?.trainingExpiryDate || null;
+        registration?.trainingExpiryDate || null;
 
       if (moment(trainingExpiryDate) > parseTzLessDateTime(event.startsAt)) {
         buttonState = 'completed';

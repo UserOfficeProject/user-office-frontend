@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { QuestionaryStep, UserVisitFragment } from 'generated/sdk';
+import { QuestionaryStep, VisitRegistrationFragment } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -69,7 +69,7 @@ const visitReducer = (
 };
 
 const isRegistrationSubmitted = (
-  registration: Pick<UserVisitFragment, 'isRegistrationSubmitted'>
+  registration: Pick<VisitRegistrationFragment, 'isRegistrationSubmitted'>
 ) => registration.isRegistrationSubmitted;
 
 const createQuestionaryWizardStep = (
@@ -169,14 +169,17 @@ export default function VisitRegistrationContainer(
           visitId: registrationState.registration.visitId,
         }) // or load blankQuestionarySteps if sample is null
         .then((data) => {
-          if (data.userVisit && data.userVisit.questionary!.steps) {
+          if (
+            data.visitRegistration &&
+            data.visitRegistration.questionary!.steps
+          ) {
             dispatch({
               type: 'REGISTRATION_LOADED',
-              visit: data.userVisit,
+              visit: data.visitRegistration,
             });
             dispatch({
               type: 'STEPS_LOADED',
-              steps: data.userVisit.questionary!.steps,
+              steps: data.visitRegistration.questionary!.steps,
               stepIndex: state.stepIndex,
             });
           }

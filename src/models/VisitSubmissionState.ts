@@ -13,11 +13,11 @@ export type RegistrationBasic = ExcludeTypeName<
         ExcludeNull<GetUserProposalBookingsWithEventsQuery['me']>['proposals']
       >[0]['proposalBooking']
     >['scheduledEvents'][0]['visit']
-  >['userVisits'][0]
+  >['registrations'][0]
 >;
 
 export type RegistrationExtended = Exclude<
-  GetVisitRegistrationQuery['userVisit'],
+  GetVisitRegistrationQuery['visitRegistration'],
   null
 >;
 export interface VisitSubmissionState extends QuestionarySubmissionState {

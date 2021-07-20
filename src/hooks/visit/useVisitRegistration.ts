@@ -6,7 +6,7 @@ import { GetVisitRegistrationQuery } from './../../generated/sdk';
 
 export function useVisitRegistration(visitId: number) {
   const [registration, setRegistration] = useState<
-    GetVisitRegistrationQuery['userVisit'] | null
+    GetVisitRegistrationQuery['visitRegistration'] | null
   >(null);
 
   const api = useDataApi();
@@ -20,8 +20,8 @@ export function useVisitRegistration(visitId: number) {
         if (unmounted) {
           return;
         }
-        if (data.userVisit) {
-          setRegistration(data.userVisit);
+        if (data.visitRegistration) {
+          setRegistration(data.visitRegistration);
         }
       });
 

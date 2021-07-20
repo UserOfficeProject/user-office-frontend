@@ -17,8 +17,8 @@ mutation createVisit(
         ...basicUserDetails
       }
 
-      userVisits {
-        ...userVisit
+      registrations {
+        ...visitRegistration
         user {
           ...basicUserDetails
         }

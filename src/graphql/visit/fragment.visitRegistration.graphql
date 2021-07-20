@@ -1,4 +1,4 @@
-fragment userVisit on UserVisit {
+fragment visitRegistration on VisitRegistration {
   userId
   visitId
   registrationQuestionaryId

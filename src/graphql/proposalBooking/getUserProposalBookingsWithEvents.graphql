@@ -27,8 +27,8 @@ query getUserProposalBookingsWithEvents(
             teamLead {
               ...basicUserDetails
             }
-            userVisits {
-              ...userVisit
+            registrations {
+              ...visitRegistration
               user {
                 ...basicUserDetails
               }

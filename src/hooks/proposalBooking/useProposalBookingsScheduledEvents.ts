@@ -38,7 +38,7 @@ export type ProposalScheduledEvent = Pick<
 } & {
   visit:
     | (VisitFragment & {
-        userVisits: RegistrationBasic[];
+        registrations: RegistrationBasic[];
       } & Pick<Visit, 'teamLead'>)
     | null;
 };

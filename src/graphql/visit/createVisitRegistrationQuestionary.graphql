@@ -1,7 +1,7 @@
 mutation createVisitRegistrationQuestionary($visitId: Int!) {
   createVisitRegistrationQuestionary(visitId: $visitId) {
     registration {
-      ...userVisit
+      ...visitRegistration
       user {
         ...basicUserDetails
       }

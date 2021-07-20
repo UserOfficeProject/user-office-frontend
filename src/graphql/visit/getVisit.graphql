@@ -1,8 +1,8 @@
 query getVisit($visitId: Int!) {
   visit(visitId: $visitId) {
     ...visit
-    userVisits {
-      ...userVisit
+    registrations {
+      ...visitRegistration
       user {
         ...basicUserDetails
       }
