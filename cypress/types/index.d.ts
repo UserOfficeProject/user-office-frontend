@@ -6,4 +6,5 @@ import './template';
 import './user';
 import './utils';
 import './scheduling';
+import './visits';
 import './workflow';

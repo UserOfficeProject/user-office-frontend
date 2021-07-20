@@ -119,28 +119,34 @@ const getTinyMceContent = (tinyMceId) => {
   });
 };
 
-const testActionButton = (tooltip, state) => {
+const testActionButton = (title, state) => {
   switch (state) {
     case 'completed':
-      cy.get(`[title="${tooltip}"]`).should('not.be.disabled');
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
 
-      cy.get(`[title="${tooltip}"]`)
-        .find('.MuiBadge-badge')
-        .should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+      cy.get(`[title="${title}"]`).find('.MuiBadge-badge').contains('✔');
       break;
     case 'active':
-      cy.get(`[title="${tooltip}"]`).should('not.be.disabled');
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
 
-      cy.get(`[title="${tooltip}"]`)
+      cy.get(`[title="${title}"]`)
         .find('.MuiBadge-badge')
-        .should('have.css', 'background-color');
+        .should('have.css', 'background-color', 'rgb(235, 26, 108)');
+      break;
+
+    case 'neutral':
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${title}"]`)
+        .find('.MuiBadge-badge')
+        .should('not.have.css', 'background-color', 'rgb(235, 26, 108)');
       break;
 
     case 'inactive':
-      cy.get(`[title="${tooltip}"]`).find('button').should('be.disabled');
+      cy.get(`[title="${title}"]`).find('button').should('be.disabled');
       break;
     case 'invisible':
-      cy.get(`[title="${tooltip}"]`).should('not.exist');
+      cy.get(`[title="${title}"]`).should('not.exist');
       break;
   }
 };

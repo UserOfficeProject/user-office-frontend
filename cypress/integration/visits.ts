@@ -1,5 +1,4 @@
 import faker from 'faker';
-import { GraphQLClient } from 'graphql-request';
 
 faker.seed(1);
 
@@ -128,7 +127,7 @@ context('visits tests', () => {
     cy.testActionButton(formTeamTitle, 'completed');
     cy.testActionButton(registerVisitTitle, 'active');
     cy.testActionButton(individualTrainingTitle, 'active');
-    cy.testActionButton(declareShipmentTitle, 'active');
+    cy.testActionButton(declareShipmentTitle, 'neutral');
   });
 
   it('Visitor should only see permitted actions', () => {
@@ -149,7 +148,7 @@ context('visits tests', () => {
     cy.testActionButton(formTeamTitle, 'completed');
     cy.testActionButton(registerVisitTitle, 'active');
     cy.testActionButton(individualTrainingTitle, 'active');
-    cy.testActionButton(declareShipmentTitle, 'active');
+    cy.testActionButton(declareShipmentTitle, 'neutral');
 
     cy.get(`[title="${registerVisitTitle}"]`).click();
 
