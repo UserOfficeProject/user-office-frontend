@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import React from 'react';
 
+import CheckBadge from './CheckBadge';
 import DotBadge from './DotBadge';
 
 export type ActionButtonState =
@@ -16,12 +17,17 @@ interface ActionButtonProps {
 
 const useStyles = makeStyles(() => ({
   completed: {
-    color: '#000',
+    '& .MuiBadge-badge': {
+      fontSize: '17px',
+      color: '#4ba322',
+      textShadow: '-1px 2px 0 white',
+    },
   },
   active: {
     color: '#000',
     '& .MuiBadge-dot': {
-      background: 'red',
+      background: '#eb1a6c',
+      boxShadow: '-1px 1px 0 white',
     },
   },
   inactive: {
@@ -34,7 +40,7 @@ const ActionButton = ({ children, variant: state }: ActionButtonProps) => {
 
   switch (state) {
     case 'completed':
-      return <DotBadge className={classes.completed}>{children}</DotBadge>;
+      return <CheckBadge className={classes.completed}>{children}</CheckBadge>;
     case 'active':
       return <DotBadge className={classes.active}>{children}</DotBadge>;
     case 'inactive':
