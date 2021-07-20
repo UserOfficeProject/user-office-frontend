@@ -47,10 +47,10 @@ context('visits tests', () => {
   const startDateQuestionTitle = 'Visit start';
   const endDateQuestionTitle = 'Visit end';
 
-  const formTeamTtl = 'Define who is coming';
-  const registerVisitTtl = 'Define your own visit';
-  const individualTrainingTtl = 'Finish individual training';
-  const declareShipmentTtl = 'Finish risk assessment';
+  const formTeamTitle = 'Define who is coming';
+  const registerVisitTitle = 'Define your own visit';
+  const individualTrainingTitle = 'Finish individual training';
+  const declareShipmentTitle = 'Finish risk assessment';
 
   it('Should be able to create visits template', () => {
     cy.login('officer');
@@ -78,10 +78,10 @@ context('visits tests', () => {
 
     cy.contains(/Upcoming experiments/i).should('exist');
 
-    cy.testActionButton(formTeamTtl, 'active');
-    cy.testActionButton(registerVisitTtl, 'inactive');
-    cy.testActionButton(individualTrainingTtl, 'inactive');
-    cy.testActionButton(declareShipmentTtl, 'inactive');
+    cy.testActionButton(formTeamTitle, 'active');
+    cy.testActionButton(registerVisitTitle, 'inactive');
+    cy.testActionButton(individualTrainingTitle, 'inactive');
+    cy.testActionButton(declareShipmentTitle, 'inactive');
   });
 
   it('Non-visitor should not see upcoming events', () => {
@@ -96,13 +96,13 @@ context('visits tests', () => {
     cy.contains(/Upcoming experiments/i).should('exist');
 
     // test that that actions has correct state
-    cy.testActionButton(formTeamTtl, 'active');
-    cy.testActionButton(registerVisitTtl, 'inactive');
-    cy.testActionButton(individualTrainingTtl, 'inactive');
-    cy.testActionButton(declareShipmentTtl, 'inactive');
+    cy.testActionButton(formTeamTitle, 'active');
+    cy.testActionButton(registerVisitTitle, 'inactive');
+    cy.testActionButton(individualTrainingTitle, 'inactive');
+    cy.testActionButton(declareShipmentTitle, 'inactive');
 
     // create visit
-    cy.get(`[title="${formTeamTtl}"]`).click();
+    cy.get(`[title="${formTeamTitle}"]`).click();
 
     // test error messages
     cy.get('[type="submit"]').click();
@@ -127,10 +127,10 @@ context('visits tests', () => {
     cy.reload();
 
     // test again that that actions has correct state
-    cy.testActionButton(formTeamTtl, 'completed');
-    cy.testActionButton(registerVisitTtl, 'active');
-    cy.testActionButton(individualTrainingTtl, 'active');
-    cy.testActionButton(declareShipmentTtl, 'active');
+    cy.testActionButton(formTeamTitle, 'completed');
+    cy.testActionButton(registerVisitTitle, 'active');
+    cy.testActionButton(individualTrainingTitle, 'active');
+    cy.testActionButton(declareShipmentTitle, 'active');
   });
 
   it('Visitor should only see permitted actions', () => {
@@ -138,22 +138,22 @@ context('visits tests', () => {
 
     cy.contains(/Upcoming experiments/i).should('exist');
 
-    cy.testActionButton(formTeamTtl, 'invisible');
-    cy.testActionButton(registerVisitTtl, 'active');
-    cy.testActionButton(individualTrainingTtl, 'active');
-    cy.testActionButton(declareShipmentTtl, 'invisible');
+    cy.testActionButton(formTeamTitle, 'invisible');
+    cy.testActionButton(registerVisitTitle, 'active');
+    cy.testActionButton(individualTrainingTitle, 'active');
+    cy.testActionButton(declareShipmentTitle, 'invisible');
   });
 
   it('PI should be able to register for a visit', () => {
     cy.login({ email: 'Javon4@hotmail.com', password: 'Test1234!' });
 
     // test if the actions are available after co-proposer defined the team
-    cy.testActionButton(formTeamTtl, 'completed');
-    cy.testActionButton(registerVisitTtl, 'active');
-    cy.testActionButton(individualTrainingTtl, 'active');
-    cy.testActionButton(declareShipmentTtl, 'active');
+    cy.testActionButton(formTeamTitle, 'completed');
+    cy.testActionButton(registerVisitTitle, 'active');
+    cy.testActionButton(individualTrainingTitle, 'active');
+    cy.testActionButton(declareShipmentTitle, 'active');
 
-    cy.get(`[title="${registerVisitTtl}"]`).click();
+    cy.get(`[title="${registerVisitTitle}"]`).click();
 
     cy.contains(startDateQuestionTitle).parent().click().type('2021-07-20');
     cy.contains(endDateQuestionTitle).parent().click().type('2021-07-21');
@@ -166,7 +166,7 @@ context('visits tests', () => {
 
     cy.reload();
 
-    cy.testActionButton(registerVisitTtl, 'completed');
+    cy.testActionButton(registerVisitTitle, 'completed');
   });
 
   // it('should see scheduled proposal', () => {
