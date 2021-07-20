@@ -55,7 +55,10 @@ function CreateVisit({
 }: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const [blankVisit, setBlankRegistration] = useState<RegistrationExtended>();
+  const [
+    blankRegistration,
+    setBlankRegistration,
+  ] = useState<RegistrationExtended>();
 
   useEffect(() => {
     api()
@@ -81,13 +84,13 @@ function CreateVisit({
       });
   }, [setBlankRegistration, api, user, visitId]);
 
-  if (!blankVisit) {
+  if (!blankRegistration) {
     return <UOLoader />;
   }
 
   return (
     <VisitRegistrationContainer
-      registration={blankVisit}
+      registration={blankRegistration}
       onCreate={onCreate}
       onUpdate={onUpdate}
       onSubmitted={onSubmitted}
