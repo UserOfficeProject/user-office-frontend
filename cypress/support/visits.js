@@ -1,6 +1,8 @@
 import faker from 'faker';
 
 const defineExperimentTeam = ({ proposalTitle, users, teamLead }) => {
+  cy.contains(/Upcoming experiments/i).should('exist');
+
   cy.contains(proposalTitle)
     .parent()
     .find('[title="Define who is coming"]')
