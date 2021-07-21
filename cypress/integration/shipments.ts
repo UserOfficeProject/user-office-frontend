@@ -154,6 +154,8 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
+    cy.visit('/');
+
     cy.testActionButton('Declare shipment(s)', 'completed');
   });
 });
