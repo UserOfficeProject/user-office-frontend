@@ -16,7 +16,7 @@ context('visits tests', () => {
     cy.contains('Benjamin').parent().find('[type=checkbox]').click();
     cy.get('[data-cy=assign-selected-users]').click();
     cy.get('[data-cy=co-proposers]').contains('Benjamin'); // make sure Benjamin was added
-    cy.get('[data-cy=save-button]').click();
+    cy.get('[data-cy=save-and-continue-button]').click();
     // allocate time for the test proposal
     cy.get('[role="dialog"]').contains('Admin').click();
     cy.get('#mui-component-select-finalStatus').click();
