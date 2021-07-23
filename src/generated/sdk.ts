@@ -3059,7 +3059,7 @@ export enum VisitStatus {
 }
 
 export type VisitsFilter = {
-  creator_id?: Maybe<Scalars['Int']>;
+  creatorId?: Maybe<Scalars['Int']>;
   proposalPk?: Maybe<Scalars['Int']>;
 };
 
