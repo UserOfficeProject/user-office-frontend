@@ -16,9 +16,8 @@ export type RegistrationBasic = ExcludeTypeName<
   >['registrations'][0]
 >;
 
-export type RegistrationExtended = Exclude<
-  GetVisitRegistrationQuery['visitRegistration'],
-  null
+export type RegistrationExtended = ExcludeNull<
+  GetVisitRegistrationQuery['visitRegistration']
 >;
 export interface VisitSubmissionState extends QuestionarySubmissionState {
   registration: RegistrationExtended;
