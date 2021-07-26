@@ -6,8 +6,8 @@ import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { Proposal, QuestionaryStep } from 'generated/sdk';
+import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
+import { Proposal, QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
 import {
@@ -24,8 +24,6 @@ import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
-
-import ProposalSummary from './ProposalSummary';
 
 export interface ProposalContextType extends QuestionaryContextType {
   state: ProposalSubmissionState | null;
@@ -140,6 +138,8 @@ export default function ProposalContainer(props: {
   const { persistModel: persistProposalModel } = usePersistProposalModel();
   const previousInitialProposal = usePrevious(props.proposal);
 
+  const def = getQuestionaryDefinition(TemplateCategoryId.PROPOSAL_QUESTIONARY);
+
   const createProposalWizardSteps = (): WizardStep[] => {
     const wizardSteps: WizardStep[] = [];
     const questionarySteps = props.proposal.questionary?.steps;
@@ -151,23 +151,6 @@ export default function ProposalContainer(props: {
     wizardSteps.push(createReviewWizardStep());
 
     return wizardSteps;
-  };
-
-  const displayElementFactory = (metadata: WizardStep, isReadonly: boolean) => {
-    switch (metadata.type) {
-      case 'QuestionaryStep':
-        return (
-          <QuestionaryStepView
-            readonly={isReadonly}
-            topicId={metadata.payload.topicId}
-          />
-        );
-      case 'ProposalReview':
-        return <ProposalSummary data={state} readonly={isReadonly} />;
-
-      default:
-        throw new Error(`Unknown step type ${metadata.type}`);
-    }
   };
 
   /**
@@ -276,7 +259,7 @@ export default function ProposalContainer(props: {
                 : 'DRAFT'
             }
             handleReset={handleReset}
-            displayElementFactory={displayElementFactory}
+            displayElementFactory={def.displayElementFactory}
           />
         </StyledPaper>
       </ContentContainer>

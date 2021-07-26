@@ -6,8 +6,12 @@ import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { QuestionaryStep, ShipmentStatus } from 'generated/sdk';
+import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
+import {
+  QuestionaryStep,
+  ShipmentStatus,
+  TemplateCategoryId,
+} from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -23,8 +27,6 @@ import {
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
-
-import ShipmentReview from './ShipmentReview';
 
 export interface ShipmentContextType extends QuestionaryContextType {
   state: ShipmentSubmissionState | null;
@@ -112,6 +114,8 @@ export default function ShipmentContainer(props: {
 
   const previousInitialShipment = usePrevious(props.shipment);
 
+  const def = getQuestionaryDefinition(TemplateCategoryId.SHIPMENT_DECLARATION);
+
   const createShipmentWizardSteps = (): WizardStep[] => {
     const wizardSteps: WizardStep[] = [];
     const questionarySteps = props.shipment.questionary.steps;
@@ -123,23 +127,6 @@ export default function ShipmentContainer(props: {
     wizardSteps.push(createReviewWizardStep());
 
     return wizardSteps;
-  };
-
-  const displayElementFactory = (metadata: WizardStep, isReadonly: boolean) => {
-    switch (metadata.type) {
-      case 'QuestionaryStep':
-        return (
-          <QuestionaryStepView
-            readonly={isReadonly}
-            topicId={metadata.payload.topicId}
-          />
-        );
-      case 'ShipmentReview':
-        return <ShipmentReview />;
-
-      default:
-        throw new Error(`Unknown step type ${metadata.type}`);
-    }
   };
 
   /**
@@ -239,7 +226,7 @@ export default function ShipmentContainer(props: {
         title={state.shipment.title || 'New Shipment'}
         info={state.shipment.status}
         handleReset={handleReset}
-        displayElementFactory={displayElementFactory}
+        displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>
   );

@@ -6,8 +6,12 @@ import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { QuestionaryStep, VisitRegistrationFragment } from 'generated/sdk';
+import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
+import {
+  QuestionaryStep,
+  TemplateCategoryId,
+  VisitRegistrationFragment,
+} from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -22,8 +26,6 @@ import {
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
-
-import VisitRegistrationReview from './VisitRegistrationReview';
 
 export interface VisitRegistrationContextType extends QuestionaryContextType {
   state: VisitRegistrationSubmissionState | null;
@@ -116,6 +118,8 @@ export default function VisitRegistrationContainer(
 ) {
   const { api } = useDataApiWithFeedback();
 
+  const def = getQuestionaryDefinition(TemplateCategoryId.VISIT);
+
   const previousInitialVisit = usePrevious(props.registration);
 
   const createVisitWizardSteps = (): WizardStep[] => {
@@ -132,23 +136,6 @@ export default function VisitRegistrationContainer(
     wizardSteps.push(createReviewWizardStep());
 
     return wizardSteps;
-  };
-
-  const displayElementFactory = (metadata: WizardStep, isReadonly: boolean) => {
-    switch (metadata.type) {
-      case 'QuestionaryStep':
-        return (
-          <QuestionaryStepView
-            readonly={isReadonly}
-            topicId={metadata.payload.topicId}
-          />
-        );
-      case 'VisitReview':
-        return <VisitRegistrationReview />;
-
-      default:
-        throw new Error(`Unknown step type ${metadata.type}`);
-    }
   };
 
   /**
@@ -261,7 +248,7 @@ export default function VisitRegistrationContainer(
       <Questionary
         title={'Visit the facility'}
         handleReset={handleReset}
-        displayElementFactory={displayElementFactory}
+        displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>
   );

@@ -6,8 +6,8 @@ import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import QuestionaryStepView from 'components/questionary/QuestionaryStepView';
-import { QuestionaryStep } from 'generated/sdk';
+import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
+import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -90,6 +90,8 @@ export function SampleDeclarationContainer(props: {
 }) {
   const { api } = useDataApiWithFeedback();
 
+  const def = getQuestionaryDefinition(TemplateCategoryId.SAMPLE_DECLARATION);
+
   const previousInitialSample = usePrevious(props.sample);
 
   const createSampleWizardSteps = (): WizardStep[] => {
@@ -101,26 +103,6 @@ export function SampleDeclarationContainer(props: {
     );
 
     return wizardSteps;
-  };
-
-  const isLastStep = (wizardStep: WizardStep) =>
-    state.wizardSteps[state.wizardSteps.length - 1] === wizardStep;
-
-  const displayElementFactory = (
-    wizardStep: WizardStep,
-    isReadonly: boolean
-  ) => {
-    return (
-      <QuestionaryStepView
-        readonly={isReadonly}
-        topicId={wizardStep.payload.topicId}
-        onStepComplete={() => {
-          if (isLastStep(wizardStep)) {
-            props.sampleEditDone?.();
-          }
-        }}
-      />
-    );
   };
 
   /**
@@ -168,6 +150,10 @@ export function SampleDeclarationContainer(props: {
           break;
         case 'SAMPLE_CREATED':
           props.sampleCreated?.(action.sample);
+          break;
+        case 'SAMPLE_SUBMITTED':
+          console.log('Got the event');
+          props.sampleEditDone?.();
           break;
         case 'BACK_CLICKED':
           if (!state.isDirty || (await handleReset())) {
@@ -217,7 +203,7 @@ export function SampleDeclarationContainer(props: {
       <Questionary
         title={state.sample.title || 'New Sample'}
         handleReset={handleReset}
-        displayElementFactory={displayElementFactory}
+        displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>
   );

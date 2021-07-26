@@ -10,6 +10,7 @@ import {
 } from 'utils/useReducerWithMiddleWares';
 
 import { ProposalSubsetSubmission } from './ProposalSubmissionState';
+import { StepType } from './questionary/StepType';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleWithQuestionary } from './Sample';
 import { ShipmentExtended } from './ShipmentSubmissionState';
@@ -29,6 +30,7 @@ export type Event =
   | { type: 'SAMPLE_UPDATED'; sample: Partial<SampleWithQuestionary> }
   | { type: 'SAMPLE_LOADED'; sample: SampleWithQuestionary }
   | { type: 'SAMPLE_MODIFIED'; sample: Partial<SampleWithQuestionary> }
+  | { type: 'SAMPLE_SUBMITTED'; sample: Partial<SampleWithQuestionary> }
   | { type: 'PROPOSAL_MODIFIED'; proposal: Partial<ProposalSubsetSubmission> }
   | { type: 'PROPOSAL_CREATED'; proposal: ProposalSubsetSubmission }
   | { type: 'PROPOSAL_LOADED'; proposal: ProposalSubsetSubmission }
@@ -49,7 +51,7 @@ export interface WizardStepMetadata {
 }
 
 export interface WizardStep {
-  type: 'QuestionaryStep' | 'ProposalReview' | 'ShipmentReview' | 'VisitReview';
+  type: StepType;
   payload?: any;
   getMetadata: (
     state: QuestionarySubmissionState,
