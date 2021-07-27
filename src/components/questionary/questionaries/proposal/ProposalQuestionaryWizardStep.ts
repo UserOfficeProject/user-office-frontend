@@ -12,10 +12,13 @@ export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {
   isItemWithQuestionaryEditable(state: QuestionarySubmissionState) {
     const { proposal } = state as ProposalSubmissionState;
 
+    const isCallActive = proposal.call?.isActive ?? true;
+
     return (
-      !proposal.submitted ||
-      this.getProposalStatus(proposal) === 'EDITABLE_SUBMITTED' ||
-      this.getProposalStatus(proposal) === 'DRAFT'
+      isCallActive &&
+      (!proposal.submitted ||
+        this.getProposalStatus(proposal) === 'EDITABLE_SUBMITTED' ||
+        this.getProposalStatus(proposal) === 'DRAFT')
     );
   }
 

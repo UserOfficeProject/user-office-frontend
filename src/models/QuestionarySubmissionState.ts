@@ -3,6 +3,7 @@ import produce, { Draft } from 'immer';
 import { Reducer } from 'react';
 
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
+import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { clamp } from 'utils/Math';
 import {
   ReducerMiddleware,
@@ -63,8 +64,7 @@ export abstract class QuestionarySubmissionState {
   constructor(
     public stepIndex: number,
     public isDirty: boolean,
-    public wizardSteps: WizardStep[],
-    public proposal?: ProposalSubsetSubmission
+    public wizardSteps: WizardStep[]
   ) {}
   abstract itemWithQuestionary: { questionary: Questionary };
 
@@ -93,7 +93,10 @@ function getInitialStepIndex(state: QuestionarySubmissionState): number {
     .reverse()
     .find((step) => step.getMetadata(state, step.payload).isCompleted === true);
 
-  if (state.proposal?.status?.shortCode.toString() == 'EDITABLE_SUBMITTED') {
+  if (
+    (state as ProposalSubmissionState).proposal?.status?.shortCode.toString() ==
+    'EDITABLE_SUBMITTED'
+  ) {
     return 0;
   }
   if (!lastFinishedStep) {

@@ -101,10 +101,6 @@ export default function QuestionaryStepView(props: {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const isCallActive = state.proposal?.call?.isActive ?? true;
-
-  const readOnly = !isUserOfficer && (!isCallActive || props.readonly);
-
   const questionaryStep = getStepByTopicId(state.questionary.steps, topicId) as
     | QuestionaryStep
     | undefined;
@@ -236,7 +232,7 @@ export default function QuestionaryStepView(props: {
         } = formikProps;
 
         return (
-          <form className={readOnly ? classes.disabled : undefined}>
+          <form className={props.readonly ? classes.disabled : undefined}>
             <PromptIfDirty isDirty={state.isDirty} />
             {activeFields.map((field) => {
               return (
@@ -261,7 +257,10 @@ export default function QuestionaryStepView(props: {
                 </div>
               );
             })}
-            <NavigationFragment disabled={readOnly} isLoading={isSubmitting}>
+            <NavigationFragment
+              disabled={props.readonly}
+              isLoading={isSubmitting}
+            >
               <NavigButton
                 onClick={backHandler}
                 disabled={state.stepIndex === 0}
