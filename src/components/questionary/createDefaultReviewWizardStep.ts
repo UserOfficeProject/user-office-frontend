@@ -6,6 +6,7 @@ import {
 
 export class DefaultReviewWizardStep implements WizardStep {
   public type: StepType = 'VisitReview';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public payload?: any;
 
   constructor(

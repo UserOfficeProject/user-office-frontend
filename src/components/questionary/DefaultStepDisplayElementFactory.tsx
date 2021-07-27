@@ -6,6 +6,7 @@ import QuestionaryStepView from './QuestionaryStepView';
 
 export class DefaultStepDisplayElementFactory
   implements StepDisplayElementFactory {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(private reviewStep: FC<any>) {}
 
   getDisplayElement(wizardStep: WizardStep, isReadOnly: boolean) {

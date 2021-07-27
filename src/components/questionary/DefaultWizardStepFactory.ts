@@ -44,6 +44,7 @@ export class DefaultWizardStepFactory {
  * */
 export abstract class QuestionaryWizardStep implements WizardStep {
   public type: StepType = 'QuestionaryStep';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public payload?: any;
 
   constructor(private step: QuestionaryStep, private index: number) {
@@ -62,7 +63,7 @@ export abstract class QuestionaryWizardStep implements WizardStep {
     state: QuestionarySubmissionState
   ): boolean;
 
-  getMetadata(state: QuestionarySubmissionState, payload?: any) {
+  getMetadata(state: QuestionarySubmissionState) {
     return {
       title: this.step.topic.title,
       isCompleted: this.step.isCompleted,
@@ -72,12 +73,6 @@ export abstract class QuestionaryWizardStep implements WizardStep {
           state.questionary.steps[this.index - 1].isCompleted === false),
     };
   }
-
-  //   getMetadata(state, payload) {
-  //     const visitState = state as VisitRegistrationSubmissionState;
-  //     const questionaryStep =
-  //       state.questionary.steps[payload.questionaryStepIndex];
-  //   }
 }
 
 export abstract class ReviewWizardStep {}
