@@ -1,6 +1,25 @@
-import { QuestionarySubmissionState } from './QuestionarySubmissionState';
-import { SampleWithQuestionary } from './Sample';
+import { Questionary } from 'generated/sdk';
 
-export interface SampleSubmissionState extends QuestionarySubmissionState {
-  sample: SampleWithQuestionary;
+import {
+  QuestionarySubmissionState,
+  WizardStep,
+} from './QuestionarySubmissionState';
+import { SampleWithQuestionary } from './Sample';
+export class SampleSubmissionState extends QuestionarySubmissionState {
+  constructor(
+    public sample: SampleWithQuestionary,
+    stepIndex: number,
+    isDirty: boolean,
+    wizardSteps: WizardStep[]
+  ) {
+    super(stepIndex, isDirty, wizardSteps);
+  }
+
+  get itemWithQuestionary() {
+    return this.sample;
+  }
+
+  set itemWithQuestionary(item: { questionary: Questionary }) {
+    this.sample = { ...this.sample, ...item };
+  }
 }

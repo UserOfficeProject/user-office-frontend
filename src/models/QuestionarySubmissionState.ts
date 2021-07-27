@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import produce, { Draft } from 'immer';
+import produce, { Draft, immerable } from 'immer';
 import { Reducer } from 'react';
 
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
@@ -59,15 +59,23 @@ export interface WizardStep {
   ) => WizardStepMetadata;
 }
 
-export interface QuestionarySubmissionState {
-  stepIndex: number;
-  isDirty: boolean;
-  wizardSteps: WizardStep[];
-  proposal?: ProposalSubsetSubmission;
+export abstract class QuestionarySubmissionState {
+  [immerable] = true;
+  constructor(
+    public stepIndex: number,
+    public isDirty: boolean,
+    public wizardSteps: WizardStep[],
+    public proposal?: ProposalSubsetSubmission
+  ) {}
+  abstract itemWithQuestionary: { questionary: Questionary };
 
-  setItemWithQuestionary: (item: { questionary: Questionary }) => void;
-  getItemWithQuestionary: () => { questionary: Questionary };
-  getQuestionary(): Questionary;
+  get questionary() {
+    return this.itemWithQuestionary.questionary;
+  }
+
+  set questionary(questionary) {
+    this.itemWithQuestionary.questionary = questionary;
+  }
 }
 
 const clamStepIndex = (stepIndex: number, stepCount: number) => {
@@ -111,7 +119,7 @@ export function QuestionarySubmissionModel<
       switch (action.type) {
         case 'FIELD_CHANGED':
           const field = getFieldById(
-            draftState.getQuestionary().steps,
+            draftState.questionary.steps,
             action.id
           ) as Answer;
           field.value = action.newValue;
@@ -146,7 +154,7 @@ export function QuestionarySubmissionModel<
           break;
 
         case 'STEPS_LOADED': {
-          draftState.getQuestionary().steps = action.steps;
+          draftState.questionary.steps = action.steps;
           const stepIndex =
             action.stepIndex !== undefined
               ? action.stepIndex
@@ -157,10 +165,10 @@ export function QuestionarySubmissionModel<
         }
         case 'STEP_ANSWERED':
           const updatedStep = action.step;
-          const stepIndex = draftState
-            .getQuestionary()
-            .steps.findIndex((step) => step.topic.id === updatedStep.topic.id);
-          draftState.getQuestionary().steps[stepIndex] = updatedStep;
+          const stepIndex = draftState.questionary.steps.findIndex(
+            (step) => step.topic.id === updatedStep.topic.id
+          );
+          draftState.questionary.steps[stepIndex] = updatedStep;
 
           draftState.isDirty = false;
 

@@ -12,7 +12,6 @@ import {
   ShipmentStatus,
   TemplateCategoryId,
 } from 'generated/sdk';
-import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -43,7 +42,7 @@ const shipmentReducer = (
     case 'SHIPMENT_LOADED':
       const shipment: ShipmentExtended = action.shipment;
       draftState.isDirty = false;
-      draftState.setItemWithQuestionary(shipment);
+      draftState.itemWithQuestionary = shipment;
       break;
     case 'SHIPMENT_MODIFIED':
       draftState.shipment = {
@@ -80,17 +79,15 @@ const createQuestionaryWizardStep = (
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
     const shipmentState = state as ShipmentSubmissionState;
-    const questionaryStep = state.getQuestionary().steps[
-      payload.questionaryStepIndex
-    ];
+    const questionaryStep =
+      state.questionary.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
         isShipmentSubmitted(shipmentState.shipment) ||
-        (index > 0 &&
-          state.getQuestionary().steps[index - 1].isCompleted === false),
+        (index > 0 && state.questionary.steps[index - 1].isCompleted === false),
     };
   },
 });
@@ -187,23 +184,12 @@ export default function ShipmentContainer(props: {
       }
     };
   };
-  const initialState: ShipmentSubmissionState = {
-    shipment: props.shipment,
-    isDirty: false,
-    stepIndex: 0,
-    wizardSteps: createShipmentWizardSteps(),
-    getItemWithQuestionary() {
-      return this.shipment;
-    },
-    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
-      this.shipment = { ...this.shipment, ...item };
-    },
-
-    getQuestionary() {
-      return this.shipment.questionary;
-    },
-  };
-
+  const initialState = new ShipmentSubmissionState(
+    props.shipment,
+    0,
+    false,
+    createShipmentWizardSteps()
+  );
   const {
     state,
     dispatch,

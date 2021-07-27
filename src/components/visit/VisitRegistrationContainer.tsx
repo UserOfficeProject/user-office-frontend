@@ -12,7 +12,6 @@ import {
   TemplateCategoryId,
   VisitRegistrationFragment,
 } from 'generated/sdk';
-import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -23,6 +22,7 @@ import {
 import {
   RegistrationExtended,
   VisitSubmissionState as VisitRegistrationSubmissionState,
+  VisitSubmissionState,
 } from 'models/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
@@ -41,7 +41,7 @@ const visitReducer = (
     case 'REGISTRATION_LOADED':
       const visit = action.visit;
       draftState.isDirty = false;
-      draftState.setItemWithQuestionary(visit);
+      draftState.itemWithQuestionary = visit;
       break;
     case 'REGISTRATION_MODIFIED':
       draftState.registration = {
@@ -79,17 +79,15 @@ const createQuestionaryWizardStep = (
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
     const visitState = state as VisitRegistrationSubmissionState;
-    const questionaryStep = state.getQuestionary().steps[
-      payload.questionaryStepIndex
-    ];
+    const questionaryStep =
+      state.questionary.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
         isRegistrationSubmitted(visitState.registration) ||
-        (index > 0 &&
-          state.getQuestionary().steps[index - 1].isCompleted === false),
+        (index > 0 && state.questionary.steps[index - 1].isCompleted === false),
     };
   },
 });
@@ -208,22 +206,12 @@ export default function VisitRegistrationContainer(
       }
     };
   };
-  const initialState: VisitRegistrationSubmissionState = {
-    registration: props.registration,
-    isDirty: false,
-    stepIndex: 0,
-    wizardSteps: createVisitWizardSteps(),
-    getItemWithQuestionary() {
-      return this.registration;
-    },
-    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
-      this.registration = { ...this.registration, ...item };
-    },
-
-    getQuestionary() {
-      return this.registration.questionary;
-    },
-  };
+  const initialState = new VisitSubmissionState(
+    props.registration,
+    0,
+    false,
+    createVisitWizardSteps()
+  );
 
   const {
     state,

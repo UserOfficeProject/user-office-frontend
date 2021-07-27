@@ -8,7 +8,6 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
 import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
-import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -35,7 +34,7 @@ const samplesReducer = (
     case 'SAMPLE_CREATED':
     case 'SAMPLE_LOADED':
       draftState.isDirty = false;
-      draftState.setItemWithQuestionary(action.sample);
+      draftState.itemWithQuestionary = action.sample;
       break;
     case 'SAMPLE_MODIFIED':
       draftState.sample = {
@@ -69,16 +68,14 @@ const createQuestionaryWizardStep = (
   type: 'QuestionaryStep',
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
-    const questionaryStep = state.getQuestionary().steps[
-      payload.questionaryStepIndex
-    ];
+    const questionaryStep =
+      state.questionary.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
-        index > 0 &&
-        state.getQuestionary().steps[index - 1].isCompleted === false,
+        index > 0 && state.questionary.steps[index - 1].isCompleted === false,
     };
   },
 });
@@ -167,22 +164,12 @@ export function SampleDeclarationContainer(props: {
     };
   };
 
-  const initialState: SampleSubmissionState = {
-    sample: props.sample,
-    isDirty: false,
-    stepIndex: 0,
-    wizardSteps: createSampleWizardSteps(),
-    getItemWithQuestionary() {
-      return this.sample;
-    },
-    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
-      this.sample = { ...this.sample, ...item };
-    },
-
-    getQuestionary() {
-      return this.sample.questionary;
-    },
-  };
+  const initialState = new SampleSubmissionState(
+    props.sample,
+    0,
+    false,
+    createSampleWizardSteps()
+  );
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(
     initialState,

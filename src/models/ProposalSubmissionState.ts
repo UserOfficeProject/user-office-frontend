@@ -1,7 +1,10 @@
 import { Proposal, Maybe, Call } from 'generated/sdk';
 
 import { SampleFragment, Questionary } from './../generated/sdk';
-import { QuestionarySubmissionState } from './QuestionarySubmissionState';
+import {
+  QuestionarySubmissionState,
+  WizardStep,
+} from './QuestionarySubmissionState';
 
 export type ProposalSubsetSubmission = Pick<
   Proposal,
@@ -22,6 +25,21 @@ export type ProposalSubsetSubmission = Pick<
   >;
 };
 
-export interface ProposalSubmissionState extends QuestionarySubmissionState {
-  proposal: ProposalSubsetSubmission;
+export class ProposalSubmissionState extends QuestionarySubmissionState {
+  constructor(
+    public proposal: ProposalSubsetSubmission,
+    stepIndex: number,
+    isDirty: boolean,
+    wizardSteps: WizardStep[]
+  ) {
+    super(stepIndex, isDirty, wizardSteps);
+  }
+
+  get itemWithQuestionary() {
+    return this.proposal;
+  }
+
+  set itemWithQuestionary(item: { questionary: Questionary }) {
+    this.proposal = { ...this.proposal, ...item };
+  }
 }

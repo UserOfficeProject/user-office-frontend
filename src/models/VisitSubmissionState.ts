@@ -3,8 +3,12 @@ import { ExcludeTypeName, ExcludeNull } from 'utils/utilTypes';
 import {
   GetVisitRegistrationQuery,
   GetUserProposalBookingsWithEventsQuery,
+  Questionary,
 } from './../generated/sdk';
-import { QuestionarySubmissionState } from './QuestionarySubmissionState';
+import {
+  QuestionarySubmissionState,
+  WizardStep,
+} from './QuestionarySubmissionState';
 
 export type RegistrationBasic = ExcludeTypeName<
   ExcludeNull<
@@ -19,6 +23,21 @@ export type RegistrationBasic = ExcludeTypeName<
 export type RegistrationExtended = ExcludeNull<
   GetVisitRegistrationQuery['visitRegistration']
 >;
-export interface VisitSubmissionState extends QuestionarySubmissionState {
-  registration: RegistrationExtended;
+export class VisitSubmissionState extends QuestionarySubmissionState {
+  constructor(
+    public registration: RegistrationExtended,
+    stepIndex: number,
+    isDirty: boolean,
+    wizardSteps: WizardStep[]
+  ) {
+    super(stepIndex, isDirty, wizardSteps);
+  }
+
+  get itemWithQuestionary() {
+    return this.registration;
+  }
+
+  set itemWithQuestionary(item: { questionary: Questionary }) {
+    this.registration = { ...this.registration, ...item };
+  }
 }

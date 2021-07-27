@@ -7,12 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import {
-  Proposal,
-  QuestionaryStep,
-  TemplateCategoryId,
-  Questionary as QuestionarySdk,
-} from 'generated/sdk';
+import { Proposal, QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
 import {
@@ -44,13 +39,13 @@ const proposalReducer = (
     case 'PROPOSAL_LOADED':
       const proposal = action.proposal;
       draftState.isDirty = false;
-      draftState.setItemWithQuestionary(proposal);
+      draftState.itemWithQuestionary = proposal;
       break;
     case 'PROPOSAL_MODIFIED':
-      draftState.setItemWithQuestionary({
-        ...draftState.getItemWithQuestionary(),
+      draftState.itemWithQuestionary = {
+        ...draftState.itemWithQuestionary,
         ...action.proposal,
-      });
+      };
       draftState.isDirty = true;
       break;
     case 'STEPS_LOADED': {
@@ -105,9 +100,8 @@ const createQuestionaryWizardStep = (
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
     const proposalState = state as ProposalSubmissionState;
-    const questionaryStep = state.getQuestionary().steps[
-      payload.questionaryStepIndex
-    ];
+    const questionaryStep =
+      state.questionary.steps[payload.questionaryStepIndex];
 
     return {
       title: questionaryStep.topic.title,
@@ -121,9 +115,8 @@ const createReviewWizardStep = (): WizardStep => ({
   type: 'ProposalReview',
   getMetadata: (state) => {
     const proposalState = state as ProposalSubmissionState;
-    const lastProposalStep = proposalState.getQuestionary().steps[
-      state.getQuestionary().steps.length - 1
-    ];
+    const lastProposalStep =
+      proposalState.questionary.steps[state.questionary.steps.length - 1];
 
     return {
       title: 'Review',
@@ -217,22 +210,12 @@ export default function ProposalContainer(props: {
       }
     };
   };
-  const initialState: ProposalSubmissionState = {
-    proposal: props.proposal,
-    isDirty: false,
-    stepIndex: 0,
-    wizardSteps: createProposalWizardSteps(),
-    getItemWithQuestionary() {
-      return this.proposal;
-    },
-    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
-      this.proposal = { ...this.proposal, ...item };
-    },
-
-    getQuestionary() {
-      return this.proposal.questionary;
-    },
-  };
+  const initialState = new ProposalSubmissionState(
+    props.proposal,
+    0,
+    false,
+    createProposalWizardSteps()
+  );
 
   const {
     state,
