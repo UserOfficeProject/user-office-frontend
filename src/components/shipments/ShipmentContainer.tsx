@@ -12,6 +12,7 @@ import {
   ShipmentStatus,
   TemplateCategoryId,
 } from 'generated/sdk';
+import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -42,10 +43,7 @@ const shipmentReducer = (
     case 'SHIPMENT_LOADED':
       const shipment: ShipmentExtended = action.shipment;
       draftState.isDirty = false;
-      draftState.questionaryId = shipment.questionaryId;
-      draftState.shipment = shipment;
-      draftState.steps = shipment.questionary.steps;
-      draftState.templateId = shipment.questionary.templateId;
+      draftState.setItemWithQuestionary(shipment);
       break;
     case 'SHIPMENT_MODIFIED':
       draftState.shipment = {
@@ -82,14 +80,17 @@ const createQuestionaryWizardStep = (
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
     const shipmentState = state as ShipmentSubmissionState;
-    const questionaryStep = state.steps[payload.questionaryStepIndex];
+    const questionaryStep = state.getQuestionary().steps[
+      payload.questionaryStepIndex
+    ];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
         isShipmentSubmitted(shipmentState.shipment) ||
-        (index > 0 && state.steps[index - 1].isCompleted === false),
+        (index > 0 &&
+          state.getQuestionary().steps[index - 1].isCompleted === false),
     };
   },
 });
@@ -188,12 +189,19 @@ export default function ShipmentContainer(props: {
   };
   const initialState: ShipmentSubmissionState = {
     shipment: props.shipment,
-    templateId: props.shipment.questionary.templateId,
     isDirty: false,
-    questionaryId: props.shipment.questionary.questionaryId,
     stepIndex: 0,
-    steps: props.shipment.questionary.steps,
     wizardSteps: createShipmentWizardSteps(),
+    getItemWithQuestionary() {
+      return this.shipment;
+    },
+    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
+      this.shipment = { ...this.shipment, ...item };
+    },
+
+    getQuestionary() {
+      return this.shipment.questionary;
+    },
   };
 
   const {

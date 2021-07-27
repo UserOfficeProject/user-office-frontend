@@ -105,9 +105,10 @@ export default function QuestionaryStepView(props: {
 
   const readOnly = !isUserOfficer && (!isCallActive || props.readonly);
 
-  const questionaryStep = getStepByTopicId(state.steps, topicId) as
-    | QuestionaryStep
-    | undefined;
+  const questionaryStep = getStepByTopicId(
+    state.getQuestionary().steps,
+    topicId
+  ) as QuestionaryStep | undefined;
 
   if (!questionaryStep) {
     throw new Error(
@@ -116,7 +117,10 @@ export default function QuestionaryStepView(props: {
   }
 
   const activeFields = questionaryStep.fields.filter((field) => {
-    return areDependenciesSatisfied(state.steps, field.question.id);
+    return areDependenciesSatisfied(
+      state.getQuestionary().steps,
+      field.question.id
+    );
   });
 
   const { initialValues, validationSchema } = createFormikConfigObjects(
@@ -170,7 +174,7 @@ export default function QuestionaryStepView(props: {
             async (f) => await f({ state, dispatch, api: api() })
           )
         )
-      ).pop() || state.questionaryId; // TODO obtain newly created questionary ID some other way
+      ).pop() || state.getQuestionary().questionaryId; // TODO obtain newly created questionary ID some other way
 
     if (!questionaryId) {
       return false;

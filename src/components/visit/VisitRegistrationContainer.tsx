@@ -12,6 +12,7 @@ import {
   TemplateCategoryId,
   VisitRegistrationFragment,
 } from 'generated/sdk';
+import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -26,7 +27,6 @@ import {
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
-
 export interface VisitRegistrationContextType extends QuestionaryContextType {
   state: VisitRegistrationSubmissionState | null;
 }
@@ -41,10 +41,7 @@ const visitReducer = (
     case 'REGISTRATION_LOADED':
       const visit = action.visit;
       draftState.isDirty = false;
-      draftState.questionaryId = visit.registrationQuestionaryId;
-      draftState.registration = visit;
-      draftState.steps = visit.questionary!.steps;
-      draftState.templateId = visit.questionary!.templateId;
+      draftState.setItemWithQuestionary(visit);
       break;
     case 'REGISTRATION_MODIFIED':
       draftState.registration = {
@@ -82,14 +79,17 @@ const createQuestionaryWizardStep = (
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
     const visitState = state as VisitRegistrationSubmissionState;
-    const questionaryStep = state.steps[payload.questionaryStepIndex];
+    const questionaryStep = state.getQuestionary().steps[
+      payload.questionaryStepIndex
+    ];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
       isReadonly:
         isRegistrationSubmitted(visitState.registration) ||
-        (index > 0 && state.steps[index - 1].isCompleted === false),
+        (index > 0 &&
+          state.getQuestionary().steps[index - 1].isCompleted === false),
     };
   },
 });
@@ -203,7 +203,6 @@ export default function VisitRegistrationContainer(
           break;
 
         case 'REGISTRATION_SUBMITTED':
-          console.log(props.onSubmitted);
           props.onSubmitted?.(state.registration);
           break;
       }
@@ -211,12 +210,19 @@ export default function VisitRegistrationContainer(
   };
   const initialState: VisitRegistrationSubmissionState = {
     registration: props.registration,
-    templateId: props.registration.questionary!.templateId,
     isDirty: false,
-    questionaryId: props.registration.questionary!.questionaryId,
     stepIndex: 0,
-    steps: props.registration.questionary!.steps,
     wizardSteps: createVisitWizardSteps(),
+    getItemWithQuestionary() {
+      return this.registration;
+    },
+    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
+      this.registration = { ...this.registration, ...item };
+    },
+
+    getQuestionary() {
+      return this.registration.questionary;
+    },
   };
 
   const {

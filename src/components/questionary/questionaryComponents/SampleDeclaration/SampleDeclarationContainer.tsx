@@ -8,6 +8,7 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
 import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
+import { Questionary as QuestionarySdk } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -33,12 +34,8 @@ const samplesReducer = (
   switch (action.type) {
     case 'SAMPLE_CREATED':
     case 'SAMPLE_LOADED':
-      const sample = action.sample;
       draftState.isDirty = false;
-      draftState.questionaryId = sample.questionaryId;
-      draftState.sample = sample;
-      draftState.steps = sample.questionary.steps;
-      draftState.templateId = sample.questionary.templateId;
+      draftState.setItemWithQuestionary(action.sample);
       break;
     case 'SAMPLE_MODIFIED':
       draftState.sample = {
@@ -72,12 +69,16 @@ const createQuestionaryWizardStep = (
   type: 'QuestionaryStep',
   payload: { topicId: step.topic.id, questionaryStepIndex: index },
   getMetadata: (state, payload) => {
-    const questionaryStep = state.steps[payload.questionaryStepIndex];
+    const questionaryStep = state.getQuestionary().steps[
+      payload.questionaryStepIndex
+    ];
 
     return {
       title: questionaryStep.topic.title,
       isCompleted: questionaryStep.isCompleted,
-      isReadonly: index > 0 && state.steps[index - 1].isCompleted === false,
+      isReadonly:
+        index > 0 &&
+        state.getQuestionary().steps[index - 1].isCompleted === false,
     };
   },
 });
@@ -152,7 +153,6 @@ export function SampleDeclarationContainer(props: {
           props.sampleCreated?.(action.sample);
           break;
         case 'SAMPLE_SUBMITTED':
-          console.log('Got the event');
           props.sampleEditDone?.();
           break;
         case 'BACK_CLICKED':
@@ -169,12 +169,19 @@ export function SampleDeclarationContainer(props: {
 
   const initialState: SampleSubmissionState = {
     sample: props.sample,
-    templateId: props.sample.questionary.templateId,
     isDirty: false,
-    questionaryId: props.sample.questionary.questionaryId,
     stepIndex: 0,
-    steps: props.sample.questionary.steps,
     wizardSteps: createSampleWizardSteps(),
+    getItemWithQuestionary() {
+      return this.sample;
+    },
+    setItemWithQuestionary(item: { questionary: QuestionarySdk }) {
+      this.sample = { ...this.sample, ...item };
+    },
+
+    getQuestionary() {
+      return this.sample.questionary;
+    },
   };
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(

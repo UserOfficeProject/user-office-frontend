@@ -35,7 +35,6 @@ const SampleQuestionaryStepView = ({
         readonly={isReadonly}
         topicId={topicId}
         onStepComplete={() => {
-          console.log('Step complet');
           if (isLastStep(wizardStep)) {
             dispatch({ type: 'SAMPLE_SUBMITTED', sample: state.sample });
           }
