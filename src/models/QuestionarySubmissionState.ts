@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import produce, { Draft, immerable } from 'immer';
+import produce, { Draft } from 'immer';
 import { Reducer } from 'react';
 
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
@@ -60,7 +60,6 @@ export interface WizardStep {
 }
 
 export abstract class QuestionarySubmissionState {
-  [immerable] = true;
   constructor(
     public stepIndex: number,
     public isDirty: boolean,

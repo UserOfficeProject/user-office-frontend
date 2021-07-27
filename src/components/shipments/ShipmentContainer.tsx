@@ -51,10 +51,7 @@ const shipmentReducer = (
       };
       draftState.isDirty = true;
       break;
-    case 'STEPS_LOADED': {
-      draftState.shipment.questionary.steps = action.steps;
-      break;
-    }
+
     case 'STEP_ANSWERED':
       const updatedStep = action.step;
       const stepIndex = draftState.shipment.questionary.steps.findIndex(

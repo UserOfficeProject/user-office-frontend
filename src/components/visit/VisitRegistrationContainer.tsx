@@ -50,10 +50,6 @@ const visitReducer = (
       };
       draftState.isDirty = true;
       break;
-    case 'STEPS_LOADED': {
-      draftState.registration.questionary!.steps = action.steps;
-      break;
-    }
     case 'STEP_ANSWERED':
       const updatedStep = action.step;
       const stepIndex = draftState.registration.questionary!.steps.findIndex(

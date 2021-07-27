@@ -1,3 +1,5 @@
+import { immerable } from 'immer';
+
 import { Questionary } from 'generated/sdk';
 
 import {
@@ -6,6 +8,7 @@ import {
 } from './QuestionarySubmissionState';
 import { SampleWithQuestionary } from './Sample';
 export class SampleSubmissionState extends QuestionarySubmissionState {
+  [immerable] = true;
   constructor(
     public sample: SampleWithQuestionary,
     stepIndex: number,

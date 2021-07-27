@@ -43,11 +43,6 @@ const samplesReducer = (
       };
       draftState.isDirty = true;
       break;
-
-    case 'STEPS_LOADED': {
-      draftState.sample.questionary.steps = action.steps;
-      break;
-    }
     case 'STEP_ANSWERED':
       const updatedStep = action.step;
       const stepIndex = draftState.sample.questionary.steps.findIndex(

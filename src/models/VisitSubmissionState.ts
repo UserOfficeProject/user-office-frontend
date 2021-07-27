@@ -1,3 +1,5 @@
+import { immerable } from 'immer';
+
 import { ExcludeTypeName, ExcludeNull } from 'utils/utilTypes';
 
 import {
@@ -24,6 +26,7 @@ export type RegistrationExtended = ExcludeNull<
   GetVisitRegistrationQuery['visitRegistration']
 >;
 export class VisitSubmissionState extends QuestionarySubmissionState {
+  [immerable] = true;
   constructor(
     public registration: RegistrationExtended,
     stepIndex: number,

@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { Proposal, QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
+import { TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
 import {
@@ -18,7 +18,6 @@ import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-  WizardStep,
 } from 'models/QuestionarySubmissionState';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -48,12 +47,6 @@ const proposalReducer = (
       };
       draftState.isDirty = true;
       break;
-    case 'STEPS_LOADED': {
-      if (draftState.proposal.questionary) {
-        draftState.proposal.questionary.steps = action.steps;
-      }
-      break;
-    }
     case 'STEP_ANSWERED':
       const updatedStep = action.step;
       if (draftState.proposal.questionary) {
@@ -69,65 +62,6 @@ const proposalReducer = (
   return draftState;
 };
 
-const isProposalSubmitted = (proposal: Pick<Proposal, 'submitted'>) =>
-  proposal.submitted;
-
-function getProposalStatus(proposal: ProposalSubsetSubmission) {
-  if (proposal.status != null) {
-    return proposal.status?.shortCode.toString();
-  } else {
-    return 'Proposal Status is null';
-  }
-}
-
-function isReadOnly(proposalToCheck: ProposalSubsetSubmission) {
-  if (
-    !proposalToCheck.submitted ||
-    getProposalStatus(proposalToCheck) === 'EDITABLE_SUBMITTED' ||
-    getProposalStatus(proposalToCheck) === 'DRAFT'
-  ) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-const createQuestionaryWizardStep = (
-  step: QuestionaryStep,
-  index: number
-): WizardStep => ({
-  type: 'QuestionaryStep',
-  payload: { topicId: step.topic.id, questionaryStepIndex: index },
-  getMetadata: (state, payload) => {
-    const proposalState = state as ProposalSubmissionState;
-    const questionaryStep =
-      state.questionary.steps[payload.questionaryStepIndex];
-
-    return {
-      title: questionaryStep.topic.title,
-      isCompleted: questionaryStep.isCompleted,
-      isReadonly: isReadOnly(proposalState.proposal),
-    };
-  },
-});
-
-const createReviewWizardStep = (): WizardStep => ({
-  type: 'ProposalReview',
-  getMetadata: (state) => {
-    const proposalState = state as ProposalSubmissionState;
-    const lastProposalStep =
-      proposalState.questionary.steps[state.questionary.steps.length - 1];
-
-    return {
-      title: 'Review',
-      isCompleted: isProposalSubmitted(proposalState.proposal),
-      isReadonly:
-        isReadOnly(proposalState.proposal) &&
-        lastProposalStep.isCompleted === true,
-    };
-  },
-});
-
 export default function ProposalContainer(props: {
   proposal: ProposalSubsetSubmission;
   proposalCreated?: (proposal: ProposalSubsetSubmission) => void;
@@ -138,19 +72,6 @@ export default function ProposalContainer(props: {
   const previousInitialProposal = usePrevious(props.proposal);
 
   const def = getQuestionaryDefinition(TemplateCategoryId.PROPOSAL_QUESTIONARY);
-
-  const createProposalWizardSteps = (): WizardStep[] => {
-    const wizardSteps: WizardStep[] = [];
-    const questionarySteps = props.proposal.questionary?.steps;
-
-    questionarySteps?.forEach((step, index) =>
-      wizardSteps.push(createQuestionaryWizardStep(step, index))
-    );
-
-    wizardSteps.push(createReviewWizardStep());
-
-    return wizardSteps;
-  };
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -214,7 +135,7 @@ export default function ProposalContainer(props: {
     props.proposal,
     0,
     false,
-    createProposalWizardSteps()
+    def.wizardStepFactory.getWizardSteps(props.proposal.questionary.steps)
   );
 
   const {

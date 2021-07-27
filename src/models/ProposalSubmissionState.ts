@@ -1,3 +1,5 @@
+import { immerable } from 'immer';
+
 import { Proposal, Maybe, Call } from 'generated/sdk';
 
 import { SampleFragment, Questionary } from './../generated/sdk';
@@ -26,6 +28,7 @@ export type ProposalSubsetSubmission = Pick<
 };
 
 export class ProposalSubmissionState extends QuestionarySubmissionState {
+  [immerable] = true;
   constructor(
     public proposal: ProposalSubsetSubmission,
     stepIndex: number,

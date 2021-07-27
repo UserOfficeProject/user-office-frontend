@@ -6,6 +6,7 @@ import { proposalQuestionaryDefinition } from './questionaries/proposal/Proposal
 import { sampleQuestionaryDefinition } from './questionaries/sample/SampleQuestionaryDefinition';
 import { shipmentQuestionaryDefinition } from './questionaries/shipment/ShipmentQuestionaryDefinition';
 import { visitRegistrationQuestionaryDefinition } from './questionaries/visitRegistration/VisitRegistrationQuestionaryDefinition';
+import { WizardStepFactory } from './WizardStepFactory';
 
 export interface QuestionaryDefinition {
   /**
@@ -17,6 +18,11 @@ export interface QuestionaryDefinition {
    * displayElementFactory
    */
   readonly displayElementFactory: StepDisplayElementFactory;
+
+  /**
+   * WizardStepFactory
+   */
+  readonly wizardStepFactory: WizardStepFactory;
 }
 
 const registry = [
