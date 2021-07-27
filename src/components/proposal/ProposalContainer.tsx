@@ -47,16 +47,6 @@ const proposalReducer = (
       };
       draftState.isDirty = true;
       break;
-    case 'STEP_ANSWERED':
-      const updatedStep = action.step;
-      if (draftState.proposal.questionary) {
-        const stepIndex = draftState.proposal.questionary.steps.findIndex(
-          (step) => step.topic.id === updatedStep.topic.id
-        );
-        draftState.proposal.questionary.steps[stepIndex] = updatedStep;
-      }
-
-      break;
   }
 
   return draftState;
