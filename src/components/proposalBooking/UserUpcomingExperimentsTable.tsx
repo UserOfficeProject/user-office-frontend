@@ -39,6 +39,7 @@ export default function UserUpcomingExperimentsTable() {
       setModalContents(null);
     },
     eventUpdated: (updatedEvent) => {
+      console.log('event Updatd');
       const updatedEvents = proposalScheduledEvents.map((event) =>
         event?.id === updatedEvent?.id ? updatedEvent : event
       );
