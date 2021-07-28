@@ -7,17 +7,12 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import {
-  QuestionaryStep,
-  ShipmentStatus,
-  TemplateCategoryId,
-} from 'generated/sdk';
+import { ShipmentStatus, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-  WizardStep,
 } from 'models/QuestionarySubmissionState';
 import {
   ShipmentBasic,
@@ -59,39 +54,6 @@ const shipmentReducer = (
 const isShipmentSubmitted = (shipment: { status: ShipmentStatus }) =>
   shipment.status === ShipmentStatus.SUBMITTED;
 
-const createQuestionaryWizardStep = (
-  step: QuestionaryStep,
-  index: number
-): WizardStep => ({
-  type: 'QuestionaryStep',
-  payload: { topicId: step.topic.id, questionaryStepIndex: index },
-  getMetadata: (state, payload) => {
-    const shipmentState = state as ShipmentSubmissionState;
-    const questionaryStep =
-      state.questionary.steps[payload.questionaryStepIndex];
-
-    return {
-      title: questionaryStep.topic.title,
-      isCompleted: questionaryStep.isCompleted,
-      isReadonly:
-        isShipmentSubmitted(shipmentState.shipment) ||
-        (index > 0 && state.questionary.steps[index - 1].isCompleted === false),
-    };
-  },
-});
-
-const createReviewWizardStep = (): WizardStep => ({
-  type: 'ShipmentReview',
-  getMetadata: (state) => {
-    const shipmentState = state as ShipmentSubmissionState;
-
-    return {
-      title: 'Review',
-      isCompleted: isShipmentSubmitted(shipmentState.shipment),
-      isReadonly: false,
-    };
-  },
-});
 export default function ShipmentContainer(props: {
   shipment: ShipmentExtended;
   onShipmentSubmitted?: (shipment: ShipmentBasic) => void;
@@ -101,19 +63,6 @@ export default function ShipmentContainer(props: {
   const previousInitialShipment = usePrevious(props.shipment);
 
   const def = getQuestionaryDefinition(TemplateCategoryId.SHIPMENT_DECLARATION);
-
-  const createShipmentWizardSteps = (): WizardStep[] => {
-    const wizardSteps: WizardStep[] = [];
-    const questionarySteps = props.shipment.questionary.steps;
-
-    questionarySteps.forEach((step, index) =>
-      wizardSteps.push(createQuestionaryWizardStep(step, index))
-    );
-
-    wizardSteps.push(createReviewWizardStep());
-
-    return wizardSteps;
-  };
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -176,7 +125,7 @@ export default function ShipmentContainer(props: {
     props.shipment,
     0,
     false,
-    createShipmentWizardSteps()
+    def.wizardStepFactory.getWizardSteps(props.shipment.questionary.steps)
   );
   const {
     state,

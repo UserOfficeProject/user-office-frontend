@@ -6,7 +6,7 @@ import { TemplateCategoryId } from 'generated/sdk';
 import { VisitSubmissionState } from 'models/VisitSubmissionState';
 
 import { QuestionaryDefinition } from '../../QuestionaryRegistry';
-import { ProposalQuestionaryWizardStep } from '../proposal/ProposalQuestionaryWizardStep';
+import { VisitRegistrationWizardStep } from './VisitRegistrationWizardStep';
 
 export const visitRegistrationQuestionaryDefinition: QuestionaryDefinition = {
   categoryId: TemplateCategoryId.VISIT,
@@ -16,7 +16,7 @@ export const visitRegistrationQuestionaryDefinition: QuestionaryDefinition = {
   ),
 
   wizardStepFactory: new DefaultWizardStepFactory(
-    ProposalQuestionaryWizardStep,
+    VisitRegistrationWizardStep,
     new DefaultReviewWizardStep(
       (state) =>
         (state as VisitSubmissionState).registration.isRegistrationSubmitted

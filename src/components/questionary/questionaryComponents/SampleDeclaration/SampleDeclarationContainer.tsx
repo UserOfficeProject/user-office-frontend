@@ -7,13 +7,12 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
+import { TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-  WizardStep,
 } from 'models/QuestionarySubmissionState';
 import { SampleWithQuestionary } from 'models/Sample';
 import { SampleSubmissionState } from 'models/SampleSubmissionState';
@@ -48,25 +47,6 @@ const samplesReducer = (
   return draftState;
 };
 
-const createQuestionaryWizardStep = (
-  step: QuestionaryStep,
-  index: number
-): WizardStep => ({
-  type: 'QuestionaryStep',
-  payload: { topicId: step.topic.id, questionaryStepIndex: index },
-  getMetadata: (state, payload) => {
-    const questionaryStep =
-      state.questionary.steps[payload.questionaryStepIndex];
-
-    return {
-      title: questionaryStep.topic.title,
-      isCompleted: questionaryStep.isCompleted,
-      isReadonly:
-        index > 0 && state.questionary.steps[index - 1].isCompleted === false,
-    };
-  },
-});
-
 export function SampleDeclarationContainer(props: {
   sample: SampleWithQuestionary;
   sampleCreated?: (sample: SampleWithQuestionary) => void;
@@ -78,17 +58,6 @@ export function SampleDeclarationContainer(props: {
   const def = getQuestionaryDefinition(TemplateCategoryId.SAMPLE_DECLARATION);
 
   const previousInitialSample = usePrevious(props.sample);
-
-  const createSampleWizardSteps = (): WizardStep[] => {
-    const wizardSteps: WizardStep[] = [];
-    const questionarySteps = props.sample.questionary.steps;
-
-    questionarySteps.forEach((step, index) =>
-      wizardSteps.push(createQuestionaryWizardStep(step, index))
-    );
-
-    return wizardSteps;
-  };
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -155,7 +124,7 @@ export function SampleDeclarationContainer(props: {
     props.sample,
     0,
     false,
-    createSampleWizardSteps()
+    def.wizardStepFactory.getWizardSteps(props.sample.questionary.steps)
   );
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(

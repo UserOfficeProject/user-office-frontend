@@ -5,13 +5,14 @@ import ShipmentReview from 'components/shipments/ShipmentReview';
 import { ShipmentStatus, TemplateCategoryId } from 'generated/sdk';
 
 import { QuestionaryDefinition } from '../../QuestionaryRegistry';
-import { ProposalQuestionaryWizardStep } from '../proposal/ProposalQuestionaryWizardStep';
 import { ShipmentSubmissionState } from './../../../../models/ShipmentSubmissionState';
+import { ShipmentQuestionaryWizardStep } from './ShipmentQuestionaryWizardStep';
+
 export const shipmentQuestionaryDefinition: QuestionaryDefinition = {
   categoryId: TemplateCategoryId.SHIPMENT_DECLARATION,
   displayElementFactory: new DefaultStepDisplayElementFactory(ShipmentReview),
   wizardStepFactory: new DefaultWizardStepFactory(
-    ProposalQuestionaryWizardStep,
+    ShipmentQuestionaryWizardStep,
     new DefaultReviewWizardStep((state) => {
       return (
         (state as ShipmentSubmissionState).shipment.status ===

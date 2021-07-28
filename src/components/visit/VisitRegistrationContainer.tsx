@@ -7,17 +7,12 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import {
-  QuestionaryStep,
-  TemplateCategoryId,
-  VisitRegistrationFragment,
-} from 'generated/sdk';
+import { TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-  WizardStep,
 } from 'models/QuestionarySubmissionState';
 import {
   RegistrationExtended,
@@ -55,44 +50,6 @@ const visitReducer = (
   return draftState;
 };
 
-const isRegistrationSubmitted = (
-  registration: Pick<VisitRegistrationFragment, 'isRegistrationSubmitted'>
-) => registration.isRegistrationSubmitted;
-
-const createQuestionaryWizardStep = (
-  step: QuestionaryStep,
-  index: number
-): WizardStep => ({
-  type: 'QuestionaryStep',
-  payload: { topicId: step.topic.id, questionaryStepIndex: index },
-  getMetadata: (state, payload) => {
-    const visitState = state as VisitRegistrationSubmissionState;
-    const questionaryStep =
-      state.questionary.steps[payload.questionaryStepIndex];
-
-    return {
-      title: questionaryStep.topic.title,
-      isCompleted: questionaryStep.isCompleted,
-      isReadonly:
-        isRegistrationSubmitted(visitState.registration) ||
-        (index > 0 && state.questionary.steps[index - 1].isCompleted === false),
-    };
-  },
-});
-
-const createReviewWizardStep = (): WizardStep => ({
-  type: 'VisitReview',
-  getMetadata: (state) => {
-    const visitState = state as VisitRegistrationSubmissionState;
-
-    return {
-      title: 'Review',
-      isCompleted: isRegistrationSubmitted(visitState.registration),
-      isReadonly: false,
-    };
-  },
-});
-
 export interface VisitRegistrationContainerProps {
   registration: RegistrationExtended;
   onCreate?: (registration: RegistrationExtended) => void;
@@ -107,22 +64,6 @@ export default function VisitRegistrationContainer(
   const def = getQuestionaryDefinition(TemplateCategoryId.VISIT);
 
   const previousInitialVisit = usePrevious(props.registration);
-
-  const createVisitWizardSteps = (): WizardStep[] => {
-    if (!props.registration) {
-      return [];
-    }
-    const wizardSteps: WizardStep[] = [];
-    const questionarySteps = props.registration.questionary!.steps;
-
-    questionarySteps.forEach((step, index) =>
-      wizardSteps.push(createQuestionaryWizardStep(step, index))
-    );
-
-    wizardSteps.push(createReviewWizardStep());
-
-    return wizardSteps;
-  };
 
   /**
    * Returns true if reset was performed, false otherwise
@@ -198,7 +139,7 @@ export default function VisitRegistrationContainer(
     props.registration,
     0,
     false,
-    createVisitWizardSteps()
+    def.wizardStepFactory.getWizardSteps(props.registration.questionary.steps)
   );
 
   const {
