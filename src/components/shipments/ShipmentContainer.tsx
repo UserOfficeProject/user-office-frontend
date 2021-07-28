@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { ShipmentStatus, TemplateCategoryId } from 'generated/sdk';
+import { TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -50,9 +50,6 @@ const shipmentReducer = (
 
   return draftState;
 };
-
-const isShipmentSubmitted = (shipment: { status: ShipmentStatus }) =>
-  shipment.status === ShipmentStatus.SUBMITTED;
 
 export default function ShipmentContainer(props: {
   shipment: ShipmentExtended;
