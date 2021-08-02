@@ -138,17 +138,14 @@ context('visits tests', () => {
     cy.testActionButton(formTeamTitle, 'invisible');
     cy.testActionButton(registerVisitTitle, 'active');
     cy.testActionButton(individualTrainingTitle, 'active');
-    cy.testActionButton(declareShipmentTitle, 'invisible');
+    cy.testActionButton(declareShipmentTitle, 'neutral');
   });
 
-  it('PI should be able to register for a visit', () => {
-    cy.login({ email: 'Javon4@hotmail.com', password: 'Test1234!' });
+  it('Visitor should be able to register for a visit', () => {
+    cy.login({ email: 'david@teleworm.us', password: 'Test1234!' });
 
     // test if the actions are available after co-proposer defined the team
-    cy.testActionButton(formTeamTitle, 'completed');
     cy.testActionButton(registerVisitTitle, 'active');
-    cy.testActionButton(individualTrainingTitle, 'active');
-    cy.testActionButton(declareShipmentTitle, 'neutral');
 
     cy.get(`[title="${registerVisitTitle}"]`).click();
 
@@ -164,5 +161,25 @@ context('visits tests', () => {
     cy.reload();
 
     cy.testActionButton(registerVisitTitle, 'completed');
+  });
+
+  it('User should not see register for visit or training button if he is not a visitor', () => {
+    cy.login({ email: 'Javon4@hotmail.com', password: 'Test1234!' });
+
+    cy.contains(/Upcoming experiments/i).should('exist');
+
+    cy.testActionButton(registerVisitTitle, 'active');
+    cy.testActionButton(individualTrainingTitle, 'active');
+
+    cy.get(`[title="${formTeamTitle}"]`).click();
+
+    cy.contains('Carlsson').parent().find('[title=Delete]').click();
+
+    cy.get('[title="Save"]').click();
+
+    cy.get('[data-cy=create-visit-button]').click();
+
+    cy.testActionButton(registerVisitTitle, 'invisible');
+    cy.testActionButton(individualTrainingTitle, 'invisible');
   });
 });

@@ -96,7 +96,15 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       <GroupIcon />,
       buttonState,
       () => {
-        openModal(<CreateUpdateVisit event={event} close={closeModal} />);
+        openModal(
+          <CreateUpdateVisit
+            event={event}
+            close={(updatedEvent) => {
+              eventUpdated(updatedEvent);
+              closeModal();
+            }}
+          />
+        );
       }
     );
   };
@@ -105,14 +113,17 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     let buttonState: ActionButtonState;
 
     if (event.visit !== null) {
-      if (
-        event.visit.registrations.find(
-          (registration) => registration.userId === user.id
-        )?.isRegistrationSubmitted
-      ) {
-        buttonState = 'completed';
+      const registration = event.visit.registrations.find(
+        (registration) => registration.userId === user.id
+      );
+      if (!registration) {
+        buttonState = 'invisible';
       } else {
-        buttonState = 'active';
+        if (registration.isRegistrationSubmitted) {
+          buttonState = 'completed';
+        } else {
+          buttonState = 'active';
+        }
       }
     } else {
       buttonState = 'inactive';
@@ -156,13 +167,17 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       const registration = event.visit.registrations.find(
         (reg) => reg.userId === user.id
       );
-      const trainingExpiryDate: Date | null =
-        registration?.trainingExpiryDate || null;
+      if (registration) {
+        const trainingExpiryDate: Date | null =
+          registration.trainingExpiryDate || null;
 
-      if (moment(trainingExpiryDate) > parseTzLessDateTime(event.startsAt)) {
-        buttonState = 'completed';
+        if (moment(trainingExpiryDate) > parseTzLessDateTime(event.startsAt)) {
+          buttonState = 'completed';
+        } else {
+          buttonState = 'active';
+        }
       } else {
-        buttonState = 'active';
+        buttonState = 'invisible';
       }
     } else {
       buttonState = 'inactive';
@@ -181,18 +196,14 @@ export function useActionButtons(args: UseActionButtonsArgs) {
   const declareShipmentAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
 
-    if (isPiOrCoProposer(user, event)) {
-      if (event.visit !== null) {
-        if (event.visit.shipments.length > 0) {
-          buttonState = 'completed';
-        } else {
-          buttonState = 'neutral';
-        }
+    if (event.visit !== null) {
+      if (event.visit.shipments.length > 0) {
+        buttonState = 'completed';
       } else {
-        buttonState = 'inactive';
+        buttonState = 'neutral';
       }
     } else {
-      buttonState = 'invisible';
+      buttonState = 'inactive';
     }
 
     return createActionButton(
