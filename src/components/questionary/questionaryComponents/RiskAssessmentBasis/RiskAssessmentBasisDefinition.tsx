@@ -1,6 +1,6 @@
-import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import React from 'react';
 
+import RiskAssessmentIcon from 'components/common/icons/RiskAssessmentIcon';
 import { DataType } from 'generated/sdk';
 import { RiskAssessmentSubmissionState } from 'models/RiskAssessmentSubmissionState';
 
@@ -19,7 +19,7 @@ export const riskAssessmentBasisDefinition: QuestionaryComponentDefinition = {
     QuestionTemplateRelationRiskAssessmentBasisForm,
   readonly: true,
   creatable: false,
-  icon: <FlightTakeoffIcon />,
+  icon: <RiskAssessmentIcon />,
   createYupValidationSchema: createRiskAssessmentBasisValidationSchema,
   getYupInitialValue: ({ state }) => {
     const riskAssessmentState = state as RiskAssessmentSubmissionState;
