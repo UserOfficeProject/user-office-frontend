@@ -7,9 +7,10 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 import withMarkTemplateAsActiveAction from './withMarkTemplateAsActiveAction';
 
-type VisitTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
+type RiskAssessmentTemplateRowDataType = TemplateRowDataType &
+  Record<string, unknown>;
 
-type VisitTemplatesTableProps = {
+type RiskAssessmentTemplatesTableProps = {
   dataProvider: () => Promise<
     Pick<
       Template,
@@ -19,11 +20,13 @@ type VisitTemplatesTableProps = {
   confirm: WithConfirmType;
 };
 
-function VisitTemplatesTable(props: VisitTemplatesTableProps) {
-  const columns: Column<VisitTemplateRowDataType>[] = [
+function RiskAssessmentTemplatesTable(
+  props: RiskAssessmentTemplatesTableProps
+) {
+  const columns: Column<RiskAssessmentTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# visits', field: 'questionaryCount' },
+    { title: '# Risk assessments', field: 'questionaryCount' },
   ];
 
   const Table = withMarkTemplateAsActiveAction(TemplatesTable);
@@ -32,7 +35,7 @@ function VisitTemplatesTable(props: VisitTemplatesTableProps) {
     <>
       <Table
         columns={columns}
-        templateCategory={TemplateCategoryId.VISIT}
+        templateCategory={TemplateCategoryId.RISK_ASSESSMENT}
         isRowRemovable={() => {
           return true;
         }}
@@ -43,4 +46,4 @@ function VisitTemplatesTable(props: VisitTemplatesTableProps) {
   );
 }
 
-export default withConfirm(VisitTemplatesTable);
+export default withConfirm(RiskAssessmentTemplatesTable);
