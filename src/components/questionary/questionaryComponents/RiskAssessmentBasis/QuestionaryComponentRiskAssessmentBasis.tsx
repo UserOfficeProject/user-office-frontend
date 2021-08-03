@@ -53,5 +53,5 @@ const riskAssessmentBasisPreSubmit = () => async ({
 
 export {
   QuestionaryComponentRiskAssessmentBasis,
-  riskAssessmentBasisPreSubmit as riskassessmentBasisPreSubmit,
+  riskAssessmentBasisPreSubmit,
 };

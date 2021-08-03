@@ -1,11 +1,14 @@
 import { QuestionaryWizardStep } from 'components/questionary/DefaultWizardStepFactory';
+import { RiskAssessmentStatus } from 'generated/sdk';
 import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
+import { RiskAssessmentSubmissionState } from 'models/RiskAssessmentSubmissionState';
 
-export class VisitRegistrationWizardStep extends QuestionaryWizardStep {
+export class RiskAssessmentWizardStep extends QuestionaryWizardStep {
   isItemWithQuestionaryEditable(state: QuestionarySubmissionState): boolean {
-    const registrationState = state as VisitSubmissionState;
+    const registrationState = state as RiskAssessmentSubmissionState;
 
-    return registrationState.registration.isRegistrationSubmitted === false;
+    return (
+      registrationState.riskAssessment.status !== RiskAssessmentStatus.SUBMITTED
+    );
   }
 }

@@ -165,7 +165,7 @@ export default function RiskAssessmentContainer(
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
-        title={'RiskAssessment the facility'}
+        title={'Risk assessment for the experiment'}
         handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />

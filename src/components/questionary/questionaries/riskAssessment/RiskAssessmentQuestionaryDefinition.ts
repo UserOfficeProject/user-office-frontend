@@ -1,25 +1,26 @@
-import { DefaultReviewWizardStep } from 'components/questionary/createDefaultReviewWizardStep';
+import { DefaultReviewWizardStep } from 'components/questionary/DefaultReviewWizardStep';
 import { DefaultStepDisplayElementFactory } from 'components/questionary/DefaultStepDisplayElementFactory';
 import { DefaultWizardStepFactory } from 'components/questionary/DefaultWizardStepFactory';
-import VisitRegistrationReview from 'components/visit/VisitRegistrationReview';
-import { TemplateCategoryId } from 'generated/sdk';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
+import RiskAssessmentReview from 'components/riskAssessment/RiskAssessmentReview';
+import { RiskAssessmentStatus, TemplateCategoryId } from 'generated/sdk';
+import { RiskAssessmentSubmissionState } from 'models/RiskAssessmentSubmissionState';
 
 import { QuestionaryDefinition } from '../../QuestionaryRegistry';
-import { VisitRegistrationWizardStep } from './RiskAssessmentWizardStep';
+import { RiskAssessmentWizardStep } from './RiskAssessmentWizardStep';
 
 export const riskAssessmentQuestionaryDefinition: QuestionaryDefinition = {
   categoryId: TemplateCategoryId.RISK_ASSESSMENT,
 
   displayElementFactory: new DefaultStepDisplayElementFactory(
-    VisitRegistrationReview
+    RiskAssessmentReview
   ),
 
   wizardStepFactory: new DefaultWizardStepFactory(
-    VisitRegistrationWizardStep,
+    RiskAssessmentWizardStep,
     new DefaultReviewWizardStep(
       (state) =>
-        (state as VisitSubmissionState).registration.isRegistrationSubmitted
+        (state as RiskAssessmentSubmissionState).riskAssessment.status ===
+        RiskAssessmentStatus.SUBMITTED
     )
   ),
 };
