@@ -487,7 +487,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubTemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubTemplateConfig | ProposalBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig | RiskAssessmentBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -2480,6 +2480,13 @@ export type RiskAssessment = {
   questionaryId: Scalars['Int'];
   status: RiskAssessmentStatus;
   questionary: Questionary;
+};
+
+export type RiskAssessmentBasisConfig = {
+  __typename?: 'RiskAssessmentBasisConfig';
+  small_label: Scalars['String'];
+  required: Scalars['Boolean'];
+  tooltip: Scalars['String'];
 };
 
 export type RiskAssessmentResponseWrap = {
@@ -4882,6 +4889,9 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'RiskAssessmentBasisConfig' }
+    & FieldConfigRiskAssessmentBasisConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -6149,7 +6159,9 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+type FieldConfigRiskAssessmentBasisConfigFragment = { __typename?: 'RiskAssessmentBasisConfig' };
+
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment | FieldConfigRiskAssessmentBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6196,6 +6208,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'RiskAssessmentBasisConfig' }
+    & FieldConfigRiskAssessmentBasisConfigFragment
   ) }
 );
 
@@ -6247,6 +6262,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'RiskAssessmentBasisConfig' }
+    & FieldConfigRiskAssessmentBasisConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -6381,6 +6399,9 @@ export type GetQuestionsQuery = (
     ) | (
       { __typename?: 'VisitBasisConfig' }
       & FieldConfigVisitBasisConfigFragment
+    ) | (
+      { __typename?: 'RiskAssessmentBasisConfig' }
+      & FieldConfigRiskAssessmentBasisConfigFragment
     ), answers: Array<(
       { __typename?: 'AnswerBasic' }
       & Pick<AnswerBasic, 'questionaryId'>
