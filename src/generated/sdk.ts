@@ -6159,7 +6159,10 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-type FieldConfigRiskAssessmentBasisConfigFragment = { __typename?: 'RiskAssessmentBasisConfig' };
+type FieldConfigRiskAssessmentBasisConfigFragment = (
+  { __typename?: 'RiskAssessmentBasisConfig' }
+  & Pick<RiskAssessmentBasisConfig, 'small_label' | 'required' | 'tooltip'>
+);
 
 export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment | FieldConfigRiskAssessmentBasisConfigFragment;
 
@@ -7501,6 +7504,11 @@ export const FieldConfigFragmentDoc = gql`
     max
   }
   ... on VisitBasisConfig {
+    small_label
+    required
+    tooltip
+  }
+  ... on RiskAssessmentBasisConfig {
     small_label
     required
     tooltip
