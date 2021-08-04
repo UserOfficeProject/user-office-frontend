@@ -1,4 +1,4 @@
-import { DefaultReviewWizardStep } from 'components/questionary/DefaultReviewWizardStep';
+import { DefaultReviewWizardStep } from 'components/questionary/createDefaultReviewWizardStep';
 import { DefaultStepDisplayElementFactory } from 'components/questionary/DefaultStepDisplayElementFactory';
 import { DefaultWizardStepFactory } from 'components/questionary/DefaultWizardStepFactory';
 import VisitRegistrationReview from 'components/visit/VisitRegistrationReview';
