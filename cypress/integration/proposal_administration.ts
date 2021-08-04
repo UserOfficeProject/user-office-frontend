@@ -11,7 +11,7 @@ context('Proposal administration tests', () => {
 
   const proposalName1 = faker.lorem.words(3);
   const proposalName2 = faker.lorem.words(3);
-  const proposalFixedName = '0000. A first title alphabetically';
+  const proposalFixedName = '0000. Alphabetically first title';
 
   const textUser = faker.lorem.words(5);
   const textManager = faker.lorem.words(5);
