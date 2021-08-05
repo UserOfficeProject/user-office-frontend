@@ -6,7 +6,7 @@ import {
   QuestionarySubmissionState,
   WizardStep,
 } from '../QuestionarySubmissionState';
-import { SampleWithQuestionary } from './Sample';
+import { SampleWithQuestionary } from './SampleWithQuestionary';
 export class SampleSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(

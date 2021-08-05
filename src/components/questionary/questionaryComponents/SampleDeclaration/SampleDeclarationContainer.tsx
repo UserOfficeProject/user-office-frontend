@@ -14,8 +14,8 @@ import {
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
 } from 'models/questionary/QuestionarySubmissionState';
-import { SampleWithQuestionary } from 'models/questionary/sample/Sample';
 import { SampleSubmissionState } from 'models/questionary/sample/SampleSubmissionState';
+import { SampleWithQuestionary } from 'models/questionary/sample/SampleWithQuestionary';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';

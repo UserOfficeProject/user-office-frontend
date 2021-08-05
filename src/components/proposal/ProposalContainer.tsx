@@ -10,10 +10,8 @@ import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegi
 import { TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel';
-import {
-  ProposalSubmissionState,
-  ProposalSubsetSubmission,
-} from 'models/questionary/proposal/ProposalSubmissionState';
+import { ProposalSubmissionState } from 'models/questionary/proposal/ProposalSubmissionState';
+import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 import {
   QuestionarySubmissionState,
   QuestionarySubmissionModel,
@@ -53,9 +51,9 @@ const proposalReducer = (
 };
 
 export default function ProposalContainer(props: {
-  proposal: ProposalSubsetSubmission;
-  proposalCreated?: (proposal: ProposalSubsetSubmission) => void;
-  proposalUpdated?: (proposal: ProposalSubsetSubmission) => void;
+  proposal: ProposalWithQuestionary;
+  proposalCreated?: (proposal: ProposalWithQuestionary) => void;
+  proposalUpdated?: (proposal: ProposalWithQuestionary) => void;
 }) {
   const { api } = useDataApiWithFeedback();
   const { persistModel: persistProposalModel } = usePersistProposalModel();

@@ -43,7 +43,7 @@ const riskAssessmentBasisPreSubmit = () => async ({
   if (newRiskAssessment) {
     dispatch({
       type: 'RISK_ASSESSMENT_CREATED',
-      riskAssessment: newRiskAssessment,
+      assessment: newRiskAssessment,
     });
     returnValue = newRiskAssessment.questionary.questionaryId;
   }

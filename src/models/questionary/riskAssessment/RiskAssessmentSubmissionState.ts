@@ -1,24 +1,12 @@
 import { immerable } from 'immer';
 
-import {
-  RiskAssessmentFragment,
-  GetRiskAssessmentQuery,
-  Questionary,
-} from 'generated/sdk';
+import { Questionary } from 'generated/sdk';
 
 import {
   QuestionarySubmissionState,
   WizardStep,
 } from '../QuestionarySubmissionState';
-
-export type RiskAssessmentCore = RiskAssessmentFragment;
-
-export type RiskAssessmentWithQuestionary = Exclude<
-  GetRiskAssessmentQuery['riskAssessment'],
-  null
->;
-
-// TODO make all XCore and XWithQuestionary follow the same naming convention and file structure
+import { RiskAssessmentWithQuestionary } from './RiskAssessmentWithQuestionary';
 
 export class RiskAssessmentSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;

@@ -6,12 +6,12 @@ import {
   QuestionarySubmissionState,
   WizardStep,
 } from '../QuestionarySubmissionState';
-import { ProposalWithQuestionary } from './ProposalWithQuestionary';
+import { RegistrationWithQuestionary } from './VisitRegistrationWithQuestionary';
 
-export class ProposalSubmissionState extends QuestionarySubmissionState {
+export class VisitRegistrationSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(
-    public proposal: ProposalWithQuestionary,
+    public registration: RegistrationWithQuestionary,
     stepIndex: number,
     isDirty: boolean,
     wizardSteps: WizardStep[]
@@ -20,10 +20,10 @@ export class ProposalSubmissionState extends QuestionarySubmissionState {
   }
 
   get itemWithQuestionary() {
-    return this.proposal;
+    return this.registration;
   }
 
   set itemWithQuestionary(item: { questionary: Questionary }) {
-    this.proposal = { ...this.proposal, ...item };
+    this.registration = { ...this.registration, ...item };
   }
 }
