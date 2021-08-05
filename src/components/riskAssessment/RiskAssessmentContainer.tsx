@@ -13,11 +13,11 @@ import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+} from 'models/questionary/QuestionarySubmissionState';
 import {
   RiskAssessmentSubmissionState,
   RiskAssessmentWithQuestionary,
-} from 'models/RiskAssessmentSubmissionState';
+} from 'models/questionary/riskAssessment/RiskAssessmentSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';

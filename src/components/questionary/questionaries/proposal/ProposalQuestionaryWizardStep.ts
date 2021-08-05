@@ -1,8 +1,10 @@
 import { QuestionaryStep } from 'generated/sdk';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
-import { QuestionarySubmissionState } from 'models/QuestionarySubmissionState';
+import {
+  ProposalSubmissionState,
+  ProposalSubsetSubmission,
+} from 'models/questionary/proposal/ProposalSubmissionState';
+import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmissionState';
 
-import { ProposalSubmissionState } from '../../../../models/ProposalSubmissionState';
 import { QuestionaryWizardStep } from '../../DefaultWizardStepFactory';
 
 export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {

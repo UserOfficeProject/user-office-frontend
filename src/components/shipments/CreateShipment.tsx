@@ -13,7 +13,7 @@ import {
 import {
   ShipmentBasic,
   ShipmentExtended,
-} from 'models/ShipmentSubmissionState';
+} from 'models/questionary/shipment/ShipmentSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import ShipmentContainer from './ShipmentContainer';

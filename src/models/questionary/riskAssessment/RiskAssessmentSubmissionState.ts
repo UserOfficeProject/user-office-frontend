@@ -1,14 +1,15 @@
 import { immerable } from 'immer';
 
 import {
+  RiskAssessmentFragment,
   GetRiskAssessmentQuery,
   Questionary,
-  RiskAssessmentFragment,
-} from './../generated/sdk';
+} from 'generated/sdk';
+
 import {
   QuestionarySubmissionState,
   WizardStep,
-} from './QuestionarySubmissionState';
+} from '../QuestionarySubmissionState';
 
 export type RiskAssessmentCore = RiskAssessmentFragment;
 

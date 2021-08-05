@@ -2,7 +2,7 @@ import React from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import { useRiskAssessment } from 'hooks/riskAssessment/useRiskAssessment';
-import { RiskAssessmentCore } from 'models/RiskAssessmentSubmissionState';
+import { RiskAssessmentCore } from 'models/questionary/riskAssessment/RiskAssessmentSubmissionState';
 
 import RiskAssessmentContainer from './RiskAssessmentContainer';
 

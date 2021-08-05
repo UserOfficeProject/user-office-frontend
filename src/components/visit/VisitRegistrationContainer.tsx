@@ -13,12 +13,12 @@ import {
   Event,
   QuestionarySubmissionModel,
   QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+} from 'models/questionary/QuestionarySubmissionState';
 import {
   RegistrationExtended,
   VisitSubmissionState as VisitRegistrationSubmissionState,
   VisitSubmissionState,
-} from 'models/VisitSubmissionState';
+} from 'models/questionary/visit/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';

@@ -5,7 +5,7 @@ import UOLoader from 'components/common/UOLoader';
 import ProposalQuestionaryDetails from 'components/proposal/ProposalQuestionaryDetails';
 import { TableRowData } from 'components/questionary/QuestionaryDetails';
 import { BasicUserDetails } from 'generated/sdk';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
+import { ProposalSubsetSubmission } from 'models/questionary/proposal/ProposalSubmissionState';
 import { getFullUserName } from 'utils/user';
 
 export default function ProposalQuestionaryReview(

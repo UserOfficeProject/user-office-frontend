@@ -8,7 +8,7 @@ import InputDialog from 'components/common/InputDialog';
 import SampleDetails from 'components/sample/SampleDetails';
 import { Answer } from 'generated/sdk';
 import { useSamplesWithQuestionaryStatus } from 'hooks/sample/useSamplesWithQuestionaryStatus';
-import { SampleWithQuestionaryStatus } from 'models/Sample';
+import { SampleWithQuestionaryStatus } from 'models/questionary/sample/Sample';
 
 const useStyles = makeStyles((theme) => ({
   list: {

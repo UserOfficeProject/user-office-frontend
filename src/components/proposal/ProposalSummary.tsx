@@ -14,7 +14,7 @@ import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryRevi
 import { UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
+import { ProposalSubsetSubmission } from 'models/questionary/proposal/ProposalSubmissionState';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { ProposalContextType } from './ProposalContainer';

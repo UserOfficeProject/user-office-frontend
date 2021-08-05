@@ -5,7 +5,7 @@ import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
 import { BasicUserDetails, QuestionaryStep } from 'generated/sdk';
 import { useBlankQuestionaryStepsData } from 'hooks/questionary/useBlankQuestionaryStepsData';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
+import { ProposalSubsetSubmission } from 'models/questionary/proposal/ProposalSubmissionState';
 
 import ProposalContainer from './ProposalContainer';
 

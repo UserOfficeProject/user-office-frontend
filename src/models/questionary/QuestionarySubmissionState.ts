@@ -3,23 +3,25 @@ import produce, { Draft } from 'immer';
 import { Reducer } from 'react';
 
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
-import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
 import { clamp } from 'utils/Math';
 import {
   ReducerMiddleware,
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
-import { ProposalSubsetSubmission } from './ProposalSubmissionState';
-import { StepType } from './questionary/StepType';
+import {
+  ProposalSubsetSubmission,
+  ProposalSubmissionState,
+} from './proposal/ProposalSubmissionState';
 import { getFieldById } from './QuestionaryFunctions';
 import {
   RiskAssessmentWithQuestionary,
   RiskAssessmentCore,
-} from './RiskAssessmentSubmissionState';
-import { SampleWithQuestionary } from './Sample';
-import { ShipmentExtended } from './ShipmentSubmissionState';
-import { RegistrationExtended } from './VisitSubmissionState';
+} from './riskAssessment/RiskAssessmentSubmissionState';
+import { SampleWithQuestionary } from './sample/Sample';
+import { ShipmentExtended } from './shipment/ShipmentSubmissionState';
+import { StepType } from './StepType';
+import { RegistrationExtended } from './visit/VisitSubmissionState';
 
 export type Event =
   | { type: 'FIELD_CHANGED'; id: string; newValue: any }

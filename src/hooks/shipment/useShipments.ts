@@ -2,7 +2,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 
 import { ShipmentsFilter } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { ShipmentBasic } from 'models/ShipmentSubmissionState';
+import { ShipmentBasic } from 'models/questionary/shipment/ShipmentSubmissionState';
 
 export function useShipments(filter?: ShipmentsFilter) {
   const api = useDataApi();

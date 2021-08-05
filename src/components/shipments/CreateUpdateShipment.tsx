@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { VisitFragment } from 'generated/sdk';
-import { ShipmentBasic } from 'models/ShipmentSubmissionState';
+import { ShipmentBasic } from 'models/questionary/shipment/ShipmentSubmissionState';
 
 import CreateShipment from './CreateShipment';
 import UpdateShipment from './UpdateShipment';

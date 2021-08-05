@@ -2,7 +2,7 @@ import React from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import { useShipment } from 'hooks/shipment/useShipment';
-import { ShipmentBasic } from 'models/ShipmentSubmissionState';
+import { ShipmentBasic } from 'models/questionary/shipment/ShipmentSubmissionState';
 
 import ShipmentContainer from './ShipmentContainer';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useDataApi } from 'hooks/common/useDataApi';
-import { SampleWithQuestionaryStatus } from 'models/Sample';
+import { SampleWithQuestionaryStatus } from 'models/questionary/sample/Sample';
 
 export function useProposalSamples(proposalPk: number | null) {
   const [samples, setSamples] = useState<SampleWithQuestionaryStatus[]>([]);

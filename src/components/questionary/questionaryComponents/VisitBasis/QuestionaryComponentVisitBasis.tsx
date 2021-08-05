@@ -6,7 +6,7 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import { VisitRegistrationContextType } from 'components/visit/VisitRegistrationContainer';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
+import { VisitSubmissionState } from 'models/questionary/visit/VisitSubmissionState';
 
 function QuestionaryComponentVisitBasis() {
   const { dispatch, state } = useContext(

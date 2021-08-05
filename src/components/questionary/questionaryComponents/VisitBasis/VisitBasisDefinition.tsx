@@ -2,7 +2,7 @@ import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import React from 'react';
 
 import { DataType } from 'generated/sdk';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
+import { VisitSubmissionState } from 'models/questionary/visit/VisitSubmissionState';
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import { createVisitBasisValidationSchema } from './createVisitBasisValidationSchema';

@@ -1,12 +1,17 @@
 import { immerable } from 'immer';
 
-import { Proposal, Maybe, Call } from 'generated/sdk';
+import {
+  Proposal,
+  Maybe,
+  Call,
+  Questionary,
+  SampleFragment,
+} from 'generated/sdk';
 
-import { SampleFragment, Questionary } from './../generated/sdk';
 import {
   QuestionarySubmissionState,
   WizardStep,
-} from './QuestionarySubmissionState';
+} from '../QuestionarySubmissionState';
 
 export type ProposalSubsetSubmission = Pick<
   Proposal,

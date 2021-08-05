@@ -8,7 +8,7 @@ import { useCheckAccess } from 'components/common/Can';
 import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
 import { UserRole } from 'generated/sdk';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
+import { ProposalSubsetSubmission } from 'models/questionary/proposal/ProposalSubmissionState';
 
 import ProposalContainer from './ProposalContainer';
 

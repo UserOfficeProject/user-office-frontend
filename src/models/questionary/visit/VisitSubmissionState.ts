@@ -1,16 +1,16 @@
 import { immerable } from 'immer';
 
+import {
+  GetUserProposalBookingsWithEventsQuery,
+  GetVisitRegistrationQuery,
+  Questionary,
+} from 'generated/sdk';
 import { ExcludeTypeName, ExcludeNull } from 'utils/utilTypes';
 
 import {
-  GetVisitRegistrationQuery,
-  GetUserProposalBookingsWithEventsQuery,
-  Questionary,
-} from './../generated/sdk';
-import {
   QuestionarySubmissionState,
   WizardStep,
-} from './QuestionarySubmissionState';
+} from '../QuestionarySubmissionState';
 
 export type RegistrationBasic = ExcludeTypeName<
   ExcludeNull<

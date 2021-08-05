@@ -2,7 +2,7 @@ import React from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import { useVisitRegistration } from 'hooks/visit/useVisitRegistration';
-import { RegistrationBasic } from 'models/VisitSubmissionState';
+import { RegistrationBasic } from 'models/questionary/visit/VisitSubmissionState';
 
 import VisitRegistrationContainer from './VisitRegistrationContainer';
 

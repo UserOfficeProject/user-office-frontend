@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { SamplesFilter } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-import { SampleWithQuestionaryStatus } from '../../models/Sample';
+import { SampleWithQuestionaryStatus } from '../../models/questionary/sample/Sample';
 
 export function useSamplesWithQuestionaryStatus(filter?: SamplesFilter) {
   const [samples, setSamples] = useState<SampleWithQuestionaryStatus[]>([]);

@@ -6,7 +6,7 @@ import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import {
   RegistrationBasic,
   RegistrationExtended,
-} from 'models/VisitSubmissionState';
+} from 'models/questionary/visit/VisitSubmissionState';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import VisitRegistrationContainer from './VisitRegistrationContainer';

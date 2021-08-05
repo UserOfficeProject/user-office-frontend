@@ -3,7 +3,7 @@ import { DefaultStepDisplayElementFactory } from 'components/questionary/Default
 import { DefaultWizardStepFactory } from 'components/questionary/DefaultWizardStepFactory';
 import VisitRegistrationReview from 'components/visit/VisitRegistrationReview';
 import { TemplateCategoryId } from 'generated/sdk';
-import { VisitSubmissionState } from 'models/VisitSubmissionState';
+import { VisitSubmissionState } from 'models/questionary/visit/VisitSubmissionState';
 
 import { QuestionaryDefinition } from '../../QuestionaryRegistry';
 import { VisitRegistrationWizardStep } from './VisitRegistrationWizardStep';

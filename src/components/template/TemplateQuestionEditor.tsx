@@ -21,7 +21,7 @@ import {
   FieldDependency,
   TemplateCategoryId,
 } from 'generated/sdk';
-import { Event, EventType } from 'models/QuestionaryEditorModel';
+import { Event, EventType } from 'models/questionary/QuestionaryEditorModel';
 
 export default function TemplateQuestionEditor(props: {
   data: TemplateTopicEditorData;

@@ -5,7 +5,7 @@ import { Questionary } from 'generated/sdk';
 import {
   QuestionarySubmissionState,
   WizardStep,
-} from './QuestionarySubmissionState';
+} from '../QuestionarySubmissionState';
 import { SampleWithQuestionary } from './Sample';
 export class SampleSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;

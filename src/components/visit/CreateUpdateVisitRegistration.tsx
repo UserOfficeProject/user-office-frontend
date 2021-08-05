@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RegistrationBasic } from 'models/VisitSubmissionState';
+import { RegistrationBasic } from 'models/questionary/visit/VisitSubmissionState';
 
 import CreateVisitRegistration from './CreateVisitRegistration';
 import UpdateVisitRegistration from './UpdateVisitRegistration';

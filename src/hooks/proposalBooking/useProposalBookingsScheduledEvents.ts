@@ -11,7 +11,7 @@ import {
   VisitFragment,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { RegistrationBasic } from 'models/VisitSubmissionState';
+import { RegistrationBasic } from 'models/questionary/visit/VisitSubmissionState';
 import { toTzLessDateTime } from 'utils/Time';
 
 import {

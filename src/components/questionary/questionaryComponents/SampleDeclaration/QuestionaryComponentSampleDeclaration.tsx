@@ -19,7 +19,7 @@ import {
 import {
   SampleWithQuestionaryStatus,
   SampleWithQuestionary,
-} from 'models/Sample';
+} from 'models/questionary/sample/Sample';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 

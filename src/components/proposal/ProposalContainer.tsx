@@ -13,12 +13,12 @@ import { usePersistProposalModel } from 'hooks/proposal/usePersistProposalModel'
 import {
   ProposalSubmissionState,
   ProposalSubsetSubmission,
-} from 'models/ProposalSubmissionState';
+} from 'models/questionary/proposal/ProposalSubmissionState';
 import {
-  Event,
-  QuestionarySubmissionModel,
   QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+  QuestionarySubmissionModel,
+  Event,
+} from 'models/questionary/QuestionarySubmissionState';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';

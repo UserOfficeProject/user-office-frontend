@@ -6,7 +6,7 @@ import {
 } from 'components/questionary/QuestionaryContext';
 import { RiskAssessmentContextType } from 'components/riskAssessment/RiskAssessmentContainer';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { RiskAssessmentSubmissionState } from 'models/RiskAssessmentSubmissionState';
+import { RiskAssessmentSubmissionState } from 'models/questionary/riskAssessment/RiskAssessmentSubmissionState';
 
 function QuestionaryComponentRiskAssessmentBasis() {
   const { dispatch, state } = useContext(

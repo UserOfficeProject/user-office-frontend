@@ -1,12 +1,16 @@
 import { immerable } from 'immer';
 
-import { GetShipmentQuery, Questionary, ShipmentFragment } from 'generated/sdk';
+import {
+  GetShipmentQuery,
+  Questionary,
+  SampleFragment,
+  ShipmentFragment,
+} from 'generated/sdk';
 
-import { SampleFragment } from './../generated/sdk';
 import {
   QuestionarySubmissionState,
   WizardStep,
-} from './QuestionarySubmissionState';
+} from '../QuestionarySubmissionState';
 
 export type ShipmentBasic = ShipmentFragment;
 
