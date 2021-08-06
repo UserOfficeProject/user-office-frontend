@@ -32,17 +32,15 @@ function RiskAssessmentTemplatesTable(
   const Table = withMarkTemplateAsActiveAction(TemplatesTable);
 
   return (
-    <>
-      <Table
-        columns={columns}
-        templateCategory={TemplateCategoryId.RISK_ASSESSMENT}
-        isRowRemovable={() => {
-          return true;
-        }}
-        dataProvider={props.dataProvider}
-        confirm={props.confirm}
-      />
-    </>
+    <Table
+      columns={columns}
+      templateCategory={TemplateCategoryId.RISK_ASSESSMENT}
+      isRowRemovable={() => {
+        return true;
+      }}
+      dataProvider={props.dataProvider}
+      confirm={props.confirm}
+    />
   );
 }
 
