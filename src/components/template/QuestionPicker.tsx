@@ -117,7 +117,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
   });
 
   const getItems = () => {
-    return template.complementaryQuestions.map((question, index) => (
+    return template.complementaryQuestions!.map((question, index) => (
       <TemplateQuestionEditor
         index={index}
         data={new QuestionItemAdapter(question)}

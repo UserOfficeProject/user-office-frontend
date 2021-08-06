@@ -125,7 +125,7 @@ export default function ProposalContainer(props: {
     props.proposal,
     0,
     false,
-    def.wizardStepFactory.getWizardSteps(props.proposal.questionary.steps)
+    def.wizardStepFactory.getWizardSteps(props.proposal.questionary!.steps!)
   );
 
   const {
@@ -148,7 +148,7 @@ export default function ProposalContainer(props: {
       if (props.proposal.questionary) {
         dispatch({
           type: 'STEPS_LOADED',
-          steps: props.proposal.questionary.steps,
+          steps: props.proposal.questionary.steps!,
         });
       }
     }

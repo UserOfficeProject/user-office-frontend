@@ -139,7 +139,7 @@ export default function VisitRegistrationContainer(
     props.registration,
     0,
     false,
-    def.wizardStepFactory.getWizardSteps(props.registration.questionary.steps)
+    def.wizardStepFactory.getWizardSteps(props.registration.questionary!.steps!)
   );
 
   const {
@@ -161,7 +161,7 @@ export default function VisitRegistrationContainer(
       });
       dispatch({
         type: 'STEPS_LOADED',
-        steps: props.registration.questionary!.steps,
+        steps: props.registration.questionary!.steps!,
       });
     }
   }, [previousInitialVisit, props.registration, dispatch]);

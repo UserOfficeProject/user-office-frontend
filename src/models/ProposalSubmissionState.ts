@@ -3,6 +3,7 @@ import { immerable } from 'immer';
 import { Proposal, Maybe, Call } from 'generated/sdk';
 
 import { SampleFragment, Questionary } from './../generated/sdk';
+import { QuestionaryObject } from './QuestionaryEditorModel';
 import {
   QuestionarySubmissionState,
   WizardStep,
@@ -23,7 +24,9 @@ export type ProposalSubsetSubmission = Pick<
   | 'submitted'
 > & { call?: Maybe<Pick<Call, 'isActive'>> } & {
   samples: Maybe<
-    (SampleFragment & { questionary: Pick<Questionary, 'isCompleted'> })[]
+    (SampleFragment & {
+      questionary: Maybe<Pick<Questionary, 'isCompleted'>>;
+    })[]
   >;
 };
 
@@ -42,7 +45,7 @@ export class ProposalSubmissionState extends QuestionarySubmissionState {
     return this.proposal;
   }
 
-  set itemWithQuestionary(item: { questionary: Questionary }) {
+  set itemWithQuestionary(item: QuestionaryObject) {
     this.proposal = { ...this.proposal, ...item };
   }
 }

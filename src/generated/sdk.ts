@@ -1634,7 +1634,7 @@ export type Proposal = {
   instrument: Maybe<Instrument>;
   sep: Maybe<Sep>;
   call: Maybe<Call>;
-  questionary: Questionary;
+  questionary: Maybe<Questionary>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
   samples: Maybe<Array<Sample>>;
   visits: Maybe<Array<Visit>>;
@@ -1773,9 +1773,9 @@ export type ProposalTemplate = {
   name: Scalars['String'];
   description: Maybe<Scalars['String']>;
   isArchived: Scalars['Boolean'];
-  steps: Array<TemplateStep>;
-  complementaryQuestions: Array<Question>;
-  questionaryCount: Scalars['Int'];
+  steps: Maybe<Array<TemplateStep>>;
+  complementaryQuestions: Maybe<Array<Question>>;
+  questionaryCount: Maybe<Scalars['Int']>;
   callCount: Scalars['Int'];
 };
 
@@ -1814,7 +1814,7 @@ export type ProposalWorkflow = {
   id: Scalars['Int'];
   name: Scalars['String'];
   description: Scalars['String'];
-  proposalWorkflowConnectionGroups: Array<ProposalWorkflowConnectionGroup>;
+  proposalWorkflowConnectionGroups: Maybe<Array<ProposalWorkflowConnectionGroup>>;
 };
 
 export type ProposalWorkflowConnection = {
@@ -1884,7 +1884,7 @@ export type Query = {
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
   shipments: Maybe<Array<Shipment>>;
-  questions: Array<QuestionWithUsage>;
+  questions: Maybe<Array<QuestionWithUsage>>;
   templates: Maybe<Array<Template>>;
   visits: Array<Visit>;
   myVisits: Array<Visit>;
@@ -2345,8 +2345,8 @@ export type Questionary = {
   questionaryId: Scalars['Int'];
   templateId: Scalars['Int'];
   created: Scalars['DateTime'];
-  steps: Array<QuestionaryStep>;
-  isCompleted: Scalars['Boolean'];
+  steps: Maybe<Array<QuestionaryStep>>;
+  isCompleted: Maybe<Scalars['Boolean']>;
 };
 
 export type QuestionaryResponseWrap = {
@@ -2527,8 +2527,8 @@ export type Sample = {
   safetyStatus: SampleStatus;
   safetyComment: Scalars['String'];
   created: Scalars['DateTime'];
-  questionary: Questionary;
-  proposal: Proposal;
+  questionary: Maybe<Questionary>;
+  proposal: Maybe<Proposal>;
 };
 
 export type SampleBasisConfig = {
@@ -2801,9 +2801,9 @@ export type Template = {
   name: Scalars['String'];
   description: Maybe<Scalars['String']>;
   isArchived: Scalars['Boolean'];
-  steps: Array<TemplateStep>;
-  complementaryQuestions: Array<Question>;
-  questionaryCount: Scalars['Int'];
+  steps: Maybe<Array<TemplateStep>>;
+  complementaryQuestions: Maybe<Array<Question>>;
+  questionaryCount: Maybe<Scalars['Int']>;
 };
 
 export type TemplateCategory = {
@@ -3017,10 +3017,10 @@ export type Visit = {
   status: VisitStatus;
   creatorId: Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
-  proposal: Proposal;
-  registrations: Array<VisitRegistration>;
-  teamLead: BasicUserDetails;
-  shipments: Array<Shipment>;
+  proposal: Maybe<Proposal>;
+  registrations: Maybe<Array<VisitRegistration>>;
+  teamLead: Maybe<BasicUserDetails>;
+  shipments: Maybe<Array<Shipment>>;
 };
 
 export type VisitBasisConfig = {
@@ -3037,8 +3037,8 @@ export type VisitRegistration = {
   registrationQuestionaryId: Maybe<Scalars['Int']>;
   isRegistrationSubmitted: Scalars['Boolean'];
   trainingExpiryDate: Maybe<Scalars['DateTime']>;
-  user: BasicUserDetails;
-  questionary: Questionary;
+  user: Maybe<BasicUserDetails>;
+  questionary: Maybe<Questionary>;
 };
 
 export type VisitRegistrationResponseWrap = {
@@ -3062,6 +3062,7 @@ export enum VisitStatus {
 export type VisitsFilter = {
   creatorId?: Maybe<Scalars['Int']>;
   proposalPk?: Maybe<Scalars['Int']>;
+  scheduledEventId?: Maybe<Scalars['Int']>;
 };
 
 export type AssignProposalsToSepMutationVariables = Exact<{
@@ -3295,10 +3296,10 @@ export type GetSepProposalQuery = (
       )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      )>, questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & QuestionaryFragment
-      ), technicalReview: Maybe<(
+      )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
         & { reviewer: Maybe<(
           { __typename?: 'BasicUserDetails' }
@@ -4341,11 +4342,11 @@ export type CloneProposalsMutation = (
       )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      )>, questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ), technicalReview: Maybe<(
+      )>, technicalReview: Maybe<(
         { __typename?: 'TechnicalReview' }
         & CoreTechnicalReviewFragment
       )>, reviews: Maybe<Array<(
@@ -4385,11 +4386,11 @@ export type CreateProposalMutation = (
       & { status: Maybe<(
         { __typename?: 'ProposalStatus' }
         & ProposalStatusFragment
-      )>, questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ), proposer: Maybe<(
+      )>, proposer: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
       )>, users: Array<(
@@ -4397,10 +4398,10 @@ export type CreateProposalMutation = (
         & BasicUserDetailsFragment
       )>, samples: Maybe<Array<(
         { __typename?: 'Sample' }
-        & { questionary: (
+        & { questionary: Maybe<(
           { __typename?: 'Questionary' }
           & Pick<Questionary, 'isCompleted'>
-        ) }
+        )> }
         & SampleFragment
       )>> }
     )>, rejection: Maybe<(
@@ -4520,11 +4521,11 @@ export type GetProposalQuery = (
     )>, users: Array<(
       { __typename?: 'BasicUserDetails' }
       & BasicUserDetailsFragment
-    )>, questionary: (
+    )>, questionary: Maybe<(
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
-    ), technicalReview: Maybe<(
+    )>, technicalReview: Maybe<(
       { __typename?: 'TechnicalReview' }
       & { reviewer: Maybe<(
         { __typename?: 'BasicUserDetails' }
@@ -4549,10 +4550,10 @@ export type GetProposalQuery = (
       & Pick<Sep, 'id' | 'code'>
     )>, samples: Maybe<Array<(
       { __typename?: 'Sample' }
-      & { questionary: (
+      & { questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
-      ) }
+      )> }
       & SampleFragment
     )>> }
     & ProposalFragment
@@ -4714,20 +4715,20 @@ export type GetUserProposalBookingsWithEventsQuery = (
           & Pick<ScheduledEvent, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
           & { visit: Maybe<(
             { __typename?: 'Visit' }
-            & { teamLead: (
+            & { teamLead: Maybe<(
               { __typename?: 'BasicUserDetails' }
               & BasicUserDetailsFragment
-            ), shipments: Array<(
+            )>, shipments: Maybe<Array<(
               { __typename?: 'Shipment' }
               & ShipmentFragment
-            )>, registrations: Array<(
+            )>>, registrations: Maybe<Array<(
               { __typename?: 'VisitRegistration' }
-              & { user: (
+              & { user: Maybe<(
                 { __typename?: 'BasicUserDetails' }
                 & BasicUserDetailsFragment
-              ) }
+              )> }
               & VisitRegistrationFragment
-            )> }
+            )>> }
             & VisitFragment
           )> }
         )> }
@@ -4848,10 +4849,10 @@ export type AnswerFragment = (
 export type QuestionaryFragment = (
   { __typename?: 'Questionary' }
   & Pick<Questionary, 'questionaryId' | 'templateId' | 'created'>
-  & { steps: Array<(
+  & { steps: Maybe<Array<(
     { __typename?: 'QuestionaryStep' }
     & QuestionaryStepFragment
-  )> }
+  )>> }
 );
 
 export type QuestionaryStepFragment = (
@@ -5142,11 +5143,11 @@ export type CloneSampleMutation = (
     { __typename?: 'SampleResponseWrap' }
     & { sample: Maybe<(
       { __typename?: 'Sample' }
-      & { questionary: (
+      & { questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ) }
+      )> }
       & SampleFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -5169,11 +5170,11 @@ export type CreateSampleMutation = (
     { __typename?: 'SampleResponseWrap' }
     & { sample: Maybe<(
       { __typename?: 'Sample' }
-      & { questionary: (
+      & { questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ) }
+      )> }
       & SampleFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -5215,11 +5216,11 @@ export type GetSampleQuery = (
   { __typename?: 'Query' }
   & { sample: Maybe<(
     { __typename?: 'Sample' }
-    & { questionary: (
+    & { questionary: Maybe<(
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
-    ) }
+    )> }
     & SampleFragment
   )> }
 );
@@ -5233,10 +5234,10 @@ export type GetSamplesByCallIdQuery = (
   { __typename?: 'Query' }
   & { samplesByCallId: Maybe<Array<(
     { __typename?: 'Sample' }
-    & { proposal: (
+    & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'primaryKey' | 'proposalId'>
-    ) }
+    )> }
     & SampleFragment
   )>> }
 );
@@ -5250,10 +5251,10 @@ export type GetSamplesWithProposalDataQuery = (
   { __typename?: 'Query' }
   & { samples: Maybe<Array<(
     { __typename?: 'Sample' }
-    & { proposal: (
+    & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & Pick<Proposal, 'primaryKey' | 'proposalId'>
-    ) }
+    )> }
     & SampleFragment
   )>> }
 );
@@ -5267,10 +5268,10 @@ export type GetSamplesWithQuestionaryStatusQuery = (
   { __typename?: 'Query' }
   & { samples: Maybe<Array<(
     { __typename?: 'Sample' }
-    & { questionary: (
+    & { questionary: Maybe<(
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
-    ) }
+    )> }
     & SampleFragment
   )>> }
 );
@@ -5376,7 +5377,7 @@ export type CreateProposalWorkflowMutation = (
     & { proposalWorkflow: Maybe<(
       { __typename?: 'ProposalWorkflow' }
       & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-      & { proposalWorkflowConnectionGroups: Array<(
+      & { proposalWorkflowConnectionGroups: Maybe<Array<(
         { __typename?: 'ProposalWorkflowConnectionGroup' }
         & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
         & { connections: Array<(
@@ -5390,7 +5391,7 @@ export type CreateProposalWorkflowMutation = (
             & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
           )>> }
         )> }
-      )> }
+      )>> }
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
       & RejectionFragment
@@ -5492,7 +5493,7 @@ export type GetProposalWorkflowQuery = (
   & { proposalWorkflow: Maybe<(
     { __typename?: 'ProposalWorkflow' }
     & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-    & { proposalWorkflowConnectionGroups: Array<(
+    & { proposalWorkflowConnectionGroups: Maybe<Array<(
       { __typename?: 'ProposalWorkflowConnectionGroup' }
       & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
       & { connections: Array<(
@@ -5506,7 +5507,7 @@ export type GetProposalWorkflowQuery = (
           & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
         )>> }
       )> }
-    )> }
+    )>> }
   )> }
 );
 
@@ -5575,7 +5576,7 @@ export type UpdateProposalWorkflowMutation = (
     & { proposalWorkflow: Maybe<(
       { __typename?: 'ProposalWorkflow' }
       & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-      & { proposalWorkflowConnectionGroups: Array<(
+      & { proposalWorkflowConnectionGroups: Maybe<Array<(
         { __typename?: 'ProposalWorkflowConnectionGroup' }
         & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
         & { connections: Array<(
@@ -5589,7 +5590,7 @@ export type UpdateProposalWorkflowMutation = (
             & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
           )>> }
         )> }
-      )> }
+      )>> }
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
       & RejectionFragment
@@ -6146,7 +6147,7 @@ export type QuestionTemplateRelationFragment = (
 export type TemplateFragment = (
   { __typename?: 'Template' }
   & Pick<Template, 'isArchived' | 'questionaryCount' | 'templateId' | 'categoryId' | 'name' | 'description'>
-  & { steps: Array<(
+  & { steps: Maybe<Array<(
     { __typename?: 'TemplateStep' }
     & { topic: (
       { __typename?: 'Topic' }
@@ -6155,10 +6156,10 @@ export type TemplateFragment = (
       { __typename?: 'QuestionTemplateRelation' }
       & QuestionTemplateRelationFragment
     )> }
-  )>, complementaryQuestions: Array<(
+  )>>, complementaryQuestions: Maybe<Array<(
     { __typename?: 'Question' }
     & QuestionFragment
-  )> }
+  )>> }
 );
 
 export type TemplateMetadataFragment = (
@@ -6222,7 +6223,7 @@ export type GetQuestionsQueryVariables = Exact<{
 
 export type GetQuestionsQuery = (
   { __typename?: 'Query' }
-  & { questions: Array<(
+  & { questions: Maybe<Array<(
     { __typename?: 'QuestionWithUsage' }
     & Pick<QuestionWithUsage, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
     & { config: (
@@ -6274,7 +6275,7 @@ export type GetQuestionsQuery = (
       { __typename?: 'Template' }
       & Pick<Template, 'templateId'>
     )> }
-  )> }
+  )>> }
 );
 
 export type GetTemplateQueryVariables = Exact<{
@@ -6927,27 +6928,27 @@ export type CreateVisitMutation = (
     { __typename?: 'VisitResponseWrap' }
     & { visit: Maybe<(
       { __typename?: 'Visit' }
-      & { teamLead: (
+      & { teamLead: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), registrations: Array<(
+      )>, registrations: Maybe<Array<(
         { __typename?: 'VisitRegistration' }
-        & { user: (
+        & { user: Maybe<(
           { __typename?: 'BasicUserDetails' }
           & BasicUserDetailsFragment
-        ) }
+        )> }
         & VisitRegistrationFragment
-      )>, proposal: (
+      )>>, proposal: Maybe<(
         { __typename?: 'Proposal' }
         & { instrument: Maybe<(
           { __typename?: 'Instrument' }
           & Pick<Instrument, 'name'>
         )> }
         & ProposalFragment
-      ), shipments: Array<(
+      )>, shipments: Maybe<Array<(
         { __typename?: 'Shipment' }
         & ShipmentFragment
-      )> }
+      )>> }
       & VisitFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -6967,14 +6968,14 @@ export type CreateVisitRegistrationQuestionaryMutation = (
     { __typename?: 'VisitRegistrationResponseWrap' }
     & { registration: Maybe<(
       { __typename?: 'VisitRegistration' }
-      & { user: (
+      & { user: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), questionary: (
+      )>, questionary: Maybe<(
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ) }
+      )> }
       & VisitRegistrationFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -7021,21 +7022,21 @@ export type GetVisitQuery = (
   { __typename?: 'Query' }
   & { visit: Maybe<(
     { __typename?: 'Visit' }
-    & { registrations: Array<(
+    & { registrations: Maybe<Array<(
       { __typename?: 'VisitRegistration' }
-      & { user: (
+      & { user: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ) }
+      )> }
       & VisitRegistrationFragment
-    )>, proposal: (
+    )>>, proposal: Maybe<(
       { __typename?: 'Proposal' }
       & { instrument: Maybe<(
         { __typename?: 'Instrument' }
         & Pick<Instrument, 'name'>
       )> }
       & ProposalFragment
-    ) }
+    )> }
     & VisitFragment
   )> }
 );
@@ -7049,14 +7050,14 @@ export type GetVisitRegistrationQuery = (
   { __typename?: 'Query' }
   & { visitRegistration: Maybe<(
     { __typename?: 'VisitRegistration' }
-    & { user: (
+    & { user: Maybe<(
       { __typename?: 'BasicUserDetails' }
       & BasicUserDetailsFragment
-    ), questionary: (
+    )>, questionary: Maybe<(
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
-    ) }
+    )> }
     & VisitRegistrationFragment
   )> }
 );
@@ -7070,14 +7071,14 @@ export type GetVisitsQuery = (
   { __typename?: 'Query' }
   & { visits: Array<(
     { __typename?: 'Visit' }
-    & { proposal: (
+    & { proposal: Maybe<(
       { __typename?: 'Proposal' }
       & { instrument: Maybe<(
         { __typename?: 'Instrument' }
         & Pick<Instrument, 'name'>
       )> }
       & ProposalFragment
-    ) }
+    )> }
     & VisitFragment
   )> }
 );
@@ -7097,27 +7098,27 @@ export type UpdateVisitMutation = (
     { __typename?: 'VisitResponseWrap' }
     & { visit: Maybe<(
       { __typename?: 'Visit' }
-      & { teamLead: (
+      & { teamLead: Maybe<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      ), registrations: Array<(
+      )>, registrations: Maybe<Array<(
         { __typename?: 'VisitRegistration' }
-        & { user: (
+        & { user: Maybe<(
           { __typename?: 'BasicUserDetails' }
           & BasicUserDetailsFragment
-        ) }
+        )> }
         & VisitRegistrationFragment
-      )>, proposal: (
+      )>>, proposal: Maybe<(
         { __typename?: 'Proposal' }
         & { instrument: Maybe<(
           { __typename?: 'Instrument' }
           & Pick<Instrument, 'name'>
         )> }
         & ProposalFragment
-      ), shipments: Array<(
+      )>, shipments: Maybe<Array<(
         { __typename?: 'Shipment' }
         & ShipmentFragment
-      )> }
+      )>> }
       & VisitFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }

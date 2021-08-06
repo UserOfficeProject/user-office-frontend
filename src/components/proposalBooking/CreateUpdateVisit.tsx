@@ -24,7 +24,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
 
   const initialValues = {
     team: visit?.registrations.map((registration) => registration.user) || [],
-    teamLeadUserId: visit?.teamLead.id,
+    teamLeadUserId: visit?.teamLead!.id,
   };
 
   return (
@@ -51,12 +51,15 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
           api('Visit updated')
             .updateVisit({
               visitId: visit.id,
-              team: values.team.map((user) => user.id),
+              team: values.team.map((user) => user!.id),
               teamLeadUserId: values.teamLeadUserId,
             })
             .then(({ updateVisit }) => {
               if (updateVisit.visit) {
-                close({ ...event, visit: updateVisit.visit });
+                close({
+                  ...event,
+                  visit: updateVisit.visit,
+                } as ProposalScheduledEvent);
               }
             });
         } else {
@@ -64,12 +67,15 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
             .createVisit({
               proposalPk: event.proposal.primaryKey,
               scheduledEventId: event.id,
-              team: values.team?.map((user) => user.id),
+              team: values.team?.map((user) => user!.id),
               teamLeadUserId: values.teamLeadUserId as number,
             })
             .then(({ createVisit }) => {
               if (createVisit.visit) {
-                close({ ...event, visit: createVisit.visit });
+                close({
+                  ...event,
+                  visit: createVisit.visit,
+                } as ProposalScheduledEvent);
               }
             });
         }
@@ -85,14 +91,14 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
             setUsers={(team: BasicUserDetails[]) => {
               setFieldValue('team', team);
             }}
-            users={values.team || []}
+            users={(values.team as any) || []}
           />
           <ErrorMessage name="team" />
 
           <FormikDropdown
             items={values.team.map((user) => ({
               text: getFullUserName(user),
-              value: user.id,
+              value: user!.id,
             }))}
             label="Specify team leader"
             name="teamLeadUserId"

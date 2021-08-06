@@ -1,7 +1,6 @@
 import { immerable } from 'immer';
 
-import { Questionary } from 'generated/sdk';
-
+import { QuestionaryObject } from './QuestionaryEditorModel';
 import {
   QuestionarySubmissionState,
   WizardStep,
@@ -22,7 +21,7 @@ export class SampleSubmissionState extends QuestionarySubmissionState {
     return this.sample;
   }
 
-  set itemWithQuestionary(item: { questionary: Questionary }) {
+  set itemWithQuestionary(item: QuestionaryObject) {
     this.sample = { ...this.sample, ...item };
   }
 }

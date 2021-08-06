@@ -13,6 +13,7 @@ import {
 import { useDataApi } from 'hooks/common/useDataApi';
 import { RegistrationBasic } from 'models/VisitSubmissionState';
 import { toTzLessDateTime } from 'utils/Time';
+import { ExcludeNull } from 'utils/utilTypes';
 
 import {
   BasicUserDetailsFragment,
@@ -40,7 +41,7 @@ export type ProposalScheduledEvent = Pick<
   instrument: Pick<Instrument, 'id' | 'name'> | null;
 } & {
   visit:
-    | (VisitFragment & {
+    | (ExcludeNull<VisitFragment> & {
         registrations: RegistrationBasic[];
         shipments: ShipmentFragment[];
       } & Pick<Visit, 'teamLead'>)
@@ -102,7 +103,7 @@ export function useProposalBookingsScheduledEvents({
                       proposal.managementDecisionSubmitted,
                   },
                   instrument: proposal.instrument,
-                  visit: scheduledEvent.visit,
+                  visit: scheduledEvent.visit as any,
                 });
               }
             )

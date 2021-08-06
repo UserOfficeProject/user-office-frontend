@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { TemplateCategoryId } from 'generated/sdk';
+import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -74,14 +74,14 @@ export function SampleDeclarationContainer(props: {
       await api()
         .getSample({ sampleId: sampleState.sample.id }) // or load blankQuestionarySteps if sample is null
         .then((data) => {
-          if (data.sample && data.sample.questionary.steps) {
+          if (data.sample && data.sample.questionary!.steps) {
             dispatch({
               type: 'SAMPLE_LOADED',
               sample: data.sample,
             });
             dispatch({
               type: 'STEPS_LOADED',
-              steps: data.sample.questionary.steps,
+              steps: data.sample.questionary!.steps,
               stepIndex: state.stepIndex,
             });
           }
@@ -124,7 +124,7 @@ export function SampleDeclarationContainer(props: {
     props.sample,
     0,
     false,
-    def.wizardStepFactory.getWizardSteps(props.sample.questionary.steps)
+    def.wizardStepFactory.getWizardSteps(props.sample.questionary!.steps!)
   );
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(
@@ -143,7 +143,7 @@ export function SampleDeclarationContainer(props: {
       });
       dispatch({
         type: 'STEPS_LOADED',
-        steps: props.sample.questionary.steps,
+        steps: props.sample.questionary!.steps as QuestionaryStep[],
       });
     }
   }, [previousInitialSample, props.sample, dispatch]);

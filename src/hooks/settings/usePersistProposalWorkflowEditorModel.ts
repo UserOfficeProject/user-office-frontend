@@ -158,7 +158,7 @@ export function usePersistProposalWorkflowEditorModel() {
             payload: action.payload,
           });
 
-          const groupToRemoveFrom = state.proposalWorkflowConnectionGroups.find(
+          const groupToRemoveFrom = state.proposalWorkflowConnectionGroups!.find(
             (proposalWorkflowConnectionGroup) =>
               proposalWorkflowConnectionGroup.groupId ===
               action.payload.source.droppableId

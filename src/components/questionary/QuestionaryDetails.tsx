@@ -55,7 +55,7 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
     return <span>Failed to load questionary details</span>;
   }
 
-  const allQuestions = getAllFields(questionary.steps) as Answer[];
+  const allQuestions = getAllFields(questionary.steps!) as Answer[];
   const displayableQuestions = allQuestions.filter((field) => {
     const definition = getQuestionaryComponentDefinition(
       field.question.dataType
@@ -64,7 +64,7 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
     return (
       (!definition.readonly ||
         field.question.dataType === DataType.SAMPLE_DECLARATION) &&
-      areDependenciesSatisfied(questionary.steps, field.question.id)
+      areDependenciesSatisfied(questionary.steps!, field.question.id)
     );
   });
 

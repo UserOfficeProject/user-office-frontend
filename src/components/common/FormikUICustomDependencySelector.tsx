@@ -87,7 +87,7 @@ const FormikUICustomDependencySelector = ({
 
   useEffect(() => {
     if (dependencyId) {
-      const depField = getFieldById(template.steps, dependencyId);
+      const depField = getFieldById(template.steps!, dependencyId);
       if (!depField) {
         return;
       }
@@ -124,7 +124,7 @@ const FormikUICustomDependencySelector = ({
   const { steps } = template;
 
   const allAvailableFields = useMemo(() => {
-    const allFields = getAllFields(steps);
+    const allFields = getAllFields(steps!);
 
     const hasCircularDependency = (
       currentQuestionId: string,

@@ -86,7 +86,7 @@ export default function TemplateEditor() {
 
         case EventType.OPEN_QUESTIONREL_EDITOR:
           const templateRelation = getFieldById(
-            getState().steps,
+            getState().steps!,
             action.payload.questionId
           );
           if (!templateRelation) {
@@ -155,7 +155,7 @@ export default function TemplateEditor() {
         dragSource.droppableId !== 'questionPicker';
 
       if (isDraggingFromQuestionDrawerToTopic) {
-        const questionId = state.complementaryQuestions[dragSource.index].id;
+        const questionId = state.complementaryQuestions![dragSource.index].id;
         const topicId = dragDestination.droppableId
           ? +dragDestination.droppableId
           : undefined;
@@ -176,7 +176,7 @@ export default function TemplateEditor() {
       } else if (isDraggingFromTopicToQuestionDrawer) {
         const topicId = parseInt(dragSource.droppableId);
         const step = getQuestionaryStepByTopicId(
-          state.steps,
+          state.steps!,
           topicId
         ) as QuestionaryStep;
         const question = step.fields[dragSource.index].question;
@@ -223,7 +223,7 @@ export default function TemplateEditor() {
 
   const progressJsx = isLoading ? <LinearProgress /> : null;
   const newTopicFallbackButton =
-    state.steps.length === 0 ? (
+    state.steps?.length === 0 ? (
       <Button
         variant="outlined"
         color="primary"
@@ -241,7 +241,7 @@ export default function TemplateEditor() {
     ) : null;
 
   const enableReorderTopicsToggle =
-    state.steps.length > 1 ? (
+    state.steps!.length > 1 ? (
       <FormGroup
         row
         style={{ justifyContent: 'flex-end', paddingBottom: '25px' }}
@@ -274,7 +274,7 @@ export default function TemplateEditor() {
                 style={getTopicListStyle(snapshot.isDraggingOver)}
                 className="tinyScroll"
               >
-                {state.steps.map((step, index) => {
+                {state.steps!.map((step, index) => {
                   const questionPicker =
                     step.topic.id === questionPickerTopicId ? (
                       <QuestionPicker

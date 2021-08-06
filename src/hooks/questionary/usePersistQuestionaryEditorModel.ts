@@ -148,10 +148,10 @@ export function usePersistQuestionaryEditorModel() {
           const extendedTopicId = parseInt(
             action.payload.destination.droppableId
           );
-          const reducedTopic = state.steps.find(
+          const reducedTopic = state.steps!.find(
             (step) => step.topic.id === reducedTopicId
           );
-          const extendedTopic = state.steps.find(
+          const extendedTopic = state.steps!.find(
             (step) => step.topic.id === extendedTopicId
           );
 
@@ -180,7 +180,7 @@ export function usePersistQuestionaryEditorModel() {
           const sourceIndex = action.payload.source.index;
           const destinationIndex = action.payload.destination.index;
 
-          const stepToUpdate = state.steps[sourceIndex];
+          const stepToUpdate = state.steps![sourceIndex];
           const sortOrder = destinationIndex;
 
           executeAndMonitorCall(async () => {
@@ -236,11 +236,11 @@ export function usePersistQuestionaryEditorModel() {
           let sortOrder = 0;
 
           if (!isFirstStep) {
-            const stepIndex = state.steps.findIndex(
+            const stepIndex = state.steps!.findIndex(
               (stepItem) => stepItem.topic.id === topicId
             );
 
-            const previousStep = state.steps[stepIndex];
+            const previousStep = state.steps![stepIndex];
 
             sortOrder = previousStep.topic.sortOrder + 1;
           }

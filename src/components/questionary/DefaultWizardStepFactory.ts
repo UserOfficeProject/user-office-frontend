@@ -70,7 +70,7 @@ export abstract class QuestionaryWizardStep implements WizardStep {
       isReadonly:
         !this.isItemWithQuestionaryEditable(state) ||
         (this.index > 0 &&
-          state.questionary.steps[this.index - 1].isCompleted === false),
+          state.questionary!.steps![this.index - 1].isCompleted === false),
     };
   }
 }

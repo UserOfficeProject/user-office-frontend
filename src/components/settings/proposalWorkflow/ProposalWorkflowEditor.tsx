@@ -50,7 +50,7 @@ const ProposalWorkflowEditor: React.FC = () => {
 
   const proposalWorkflowConnectionsPartOfWorkflow: ProposalWorkflowConnection[] = [];
 
-  state.proposalWorkflowConnectionGroups.forEach(
+  state.proposalWorkflowConnectionGroups!.forEach(
     (proposalWorkflowConnectionGroup) =>
       proposalWorkflowConnectionsPartOfWorkflow.push(
         ...proposalWorkflowConnectionGroup.connections
@@ -63,7 +63,7 @@ const ProposalWorkflowEditor: React.FC = () => {
     destinationIndex: number,
     currentDroppableGroup: ProposalWorkflowConnectionGroup
   ) => {
-    const parentDroppableGroup = state.proposalWorkflowConnectionGroups.find(
+    const parentDroppableGroup = state.proposalWorkflowConnectionGroups!.find(
       (proposalWorkflowConnectionGroup) =>
         proposalWorkflowConnectionGroup.groupId ===
         currentDroppableGroup.parentGroupId
@@ -92,7 +92,7 @@ const ProposalWorkflowEditor: React.FC = () => {
   ): ProposalStatus[] => {
     const isLastInTheCurrentGroup =
       destination.index === currentDroppableGroup.connections.length;
-    const childGroups = state.proposalWorkflowConnectionGroups.filter(
+    const childGroups = state.proposalWorkflowConnectionGroups!.filter(
       (proposalWorkflowConnectionGroup) =>
         proposalWorkflowConnectionGroup.parentGroupId ===
         currentDroppableGroup.groupId
@@ -134,7 +134,7 @@ const ProposalWorkflowEditor: React.FC = () => {
       destination?.droppableId === 'proposalStatusPicker';
 
     if (isDragAndDropFromStatusPickerToWorkflowEditor) {
-      const currentDroppableGroup = state.proposalWorkflowConnectionGroups.find(
+      const currentDroppableGroup = state.proposalWorkflowConnectionGroups!.find(
         (proposalWorkflowConnectionGroup) =>
           proposalWorkflowConnectionGroup.groupId === destination.droppableId
       );
@@ -244,7 +244,7 @@ const ProposalWorkflowEditor: React.FC = () => {
               <ProposalWorkflowConnectionsEditor
                 dispatch={dispatch}
                 proposalWorkflowStatusConnectionGroups={
-                  state.proposalWorkflowConnectionGroups
+                  state.proposalWorkflowConnectionGroups!
                 }
               />
             </Grid>

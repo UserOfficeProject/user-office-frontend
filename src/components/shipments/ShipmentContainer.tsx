@@ -122,7 +122,7 @@ export default function ShipmentContainer(props: {
     props.shipment,
     0,
     false,
-    def.wizardStepFactory.getWizardSteps(props.shipment.questionary.steps)
+    def.wizardStepFactory.getWizardSteps(props.shipment.questionary.steps!)
   );
   const {
     state,
@@ -143,7 +143,7 @@ export default function ShipmentContainer(props: {
       });
       dispatch({
         type: 'STEPS_LOADED',
-        steps: props.shipment.questionary.steps,
+        steps: props.shipment.questionary.steps!,
       });
     }
   }, [previousInitialShipment, props.shipment, dispatch]);

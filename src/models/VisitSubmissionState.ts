@@ -5,8 +5,8 @@ import { ExcludeTypeName, ExcludeNull } from 'utils/utilTypes';
 import {
   GetVisitRegistrationQuery,
   GetUserProposalBookingsWithEventsQuery,
-  Questionary,
 } from './../generated/sdk';
+import { QuestionaryObject } from './QuestionaryEditorModel';
 import {
   QuestionarySubmissionState,
   WizardStep,
@@ -16,10 +16,12 @@ export type RegistrationBasic = ExcludeTypeName<
   ExcludeNull<
     ExcludeNull<
       ExcludeNull<
-        ExcludeNull<GetUserProposalBookingsWithEventsQuery['me']>['proposals']
-      >[0]['proposalBooking']
-    >['scheduledEvents'][0]['visit']
-  >['registrations'][0]
+        ExcludeNull<
+          ExcludeNull<GetUserProposalBookingsWithEventsQuery['me']>['proposals']
+        >[0]['proposalBooking']
+      >['scheduledEvents'][0]['visit']
+    >['registrations']
+  >[0]
 >;
 
 export type RegistrationExtended = ExcludeNull<
@@ -40,7 +42,7 @@ export class VisitSubmissionState extends QuestionarySubmissionState {
     return this.registration;
   }
 
-  set itemWithQuestionary(item: { questionary: Questionary }) {
+  set itemWithQuestionary(item: QuestionaryObject) {
     this.registration = { ...this.registration, ...item };
   }
 }

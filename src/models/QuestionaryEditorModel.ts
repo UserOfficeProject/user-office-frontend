@@ -4,7 +4,9 @@ import { Reducer, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import {
+  Maybe,
   Question,
+  Questionary,
   Template,
   TemplateCategoryId,
   TemplateStep,
@@ -52,6 +54,8 @@ export interface Event {
   payload: any;
 }
 
+export type QuestionaryObject = { questionary: Maybe<Questionary> };
+
 export default function QuestionaryEditorModel(
   middlewares?: Array<ReducerMiddleware<Template, Event>>
 ) {
@@ -77,13 +81,13 @@ export default function QuestionaryEditorModel(
             return draft;
           }
 
-          const from = draft.steps.find((step) => {
+          const from = draft.steps!.find((step) => {
             return (
               step.topic.id.toString() === action.payload.source.droppableId
             );
           }) as TemplateStep;
 
-          const to = draft.steps.find((step) => {
+          const to = draft.steps!.find((step) => {
             return (
               step.topic.id.toString() ===
               action.payload.destination.droppableId
@@ -103,7 +107,7 @@ export default function QuestionaryEditorModel(
           return draft;
         }
         case EventType.UPDATE_TOPIC_TITLE_REQUESTED:
-          const topicById = getTopicById(draft.steps, action.payload.topicId);
+          const topicById = getTopicById(draft.steps!, action.payload.topicId);
           if (topicById) {
             topicById.topic.title = action.payload.title;
           }
@@ -112,21 +116,21 @@ export default function QuestionaryEditorModel(
 
         case EventType.DELETE_TOPIC_REQUESTED: {
           const stepToDelete = getQuestionaryStepByTopicId(
-            draft.steps,
+            draft.steps!,
             action.payload
           ) as TemplateStep;
           if (!stepToDelete) {
             return;
           }
-          const stepIdx = draft.steps.indexOf(stepToDelete);
-          draft.steps.splice(stepIdx, 1);
+          const stepIdx = draft.steps!.indexOf(stepToDelete);
+          draft.steps!.splice(stepIdx, 1);
 
           return draft;
         }
         case EventType.QUESTION_DELETED: {
           const questionId = action.payload;
-          draft.complementaryQuestions.splice(
-            draft.complementaryQuestions.findIndex(
+          draft.complementaryQuestions!.splice(
+            draft.complementaryQuestions!.findIndex(
               (question) => question.id === questionId
             ),
             1
@@ -140,7 +144,7 @@ export default function QuestionaryEditorModel(
         case EventType.QUESTION_REL_DELETED:
           return { ...action.payload };
         case EventType.QUESTION_CREATED:
-          draft.complementaryQuestions.unshift(action.payload);
+          draft.complementaryQuestions!.unshift(action.payload);
 
           return draft;
         case EventType.QUESTION_REL_CREATED:
@@ -148,9 +152,9 @@ export default function QuestionaryEditorModel(
         case EventType.QUESTION_UPDATED: {
           const newQuestion = action.payload as Question;
           const curQuestion =
-            draft.complementaryQuestions.find(
+            draft.complementaryQuestions!.find(
               (curQuestion) => curQuestion.id === newQuestion.id
-            ) || getFieldById(draft.steps, newQuestion.id)?.question;
+            ) || getFieldById(draft.steps!, newQuestion.id)?.question;
           if (newQuestion && curQuestion) {
             Object.assign(curQuestion, newQuestion);
           }

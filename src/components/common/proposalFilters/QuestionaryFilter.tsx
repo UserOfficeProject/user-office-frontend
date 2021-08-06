@@ -49,8 +49,8 @@ const extractSearchableQuestionsFromTemplate = (
     return [];
   }
 
-  return template.steps
-    .reduce(
+  return template
+    .steps!.reduce(
       (questions, step) => questions.concat(step.fields),
       new Array<QuestionTemplateRelation>()
     ) // create array of questions from template
