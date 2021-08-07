@@ -29,17 +29,15 @@ function VisitTemplatesTable(props: VisitTemplatesTableProps) {
   const Table = withMarkTemplateAsActiveAction(TemplatesTable);
 
   return (
-    <>
-      <Table
-        columns={columns}
-        templateCategory={TemplateCategoryId.VISIT}
-        isRowRemovable={() => {
-          return true;
-        }}
-        dataProvider={props.dataProvider}
-        confirm={props.confirm}
-      />
-    </>
+    <Table
+      columns={columns}
+      templateCategory={TemplateCategoryId.VISIT}
+      isRowRemovable={() => {
+        return true;
+      }}
+      dataProvider={props.dataProvider}
+      confirm={props.confirm}
+    />
   );
 }
 

@@ -2711,6 +2711,7 @@ export enum SettingsId {
   PROFILE_PAGE_LINK = 'PROFILE_PAGE_LINK',
   PALETTE_PRIMARY_DARK = 'PALETTE_PRIMARY_DARK',
   PALETTE_PRIMARY_MAIN = 'PALETTE_PRIMARY_MAIN',
+  PALETTE_PRIMARY_ACCENT = 'PALETTE_PRIMARY_ACCENT',
   PALETTE_PRIMARY_LIGHT = 'PALETTE_PRIMARY_LIGHT',
   PALETTE_PRIMARY_CONTRAST = 'PALETTE_PRIMARY_CONTRAST',
   PALETTE_SECONDARY_DARK = 'PALETTE_SECONDARY_DARK',
@@ -3116,6 +3117,7 @@ export enum VisitStatus {
 export type VisitsFilter = {
   creatorId?: Maybe<Scalars['Int']>;
   proposalPk?: Maybe<Scalars['Int']>;
+  scheduledEventId?: Maybe<Scalars['Int']>;
 };
 
 export type AssignProposalsToSepMutationVariables = Exact<{
