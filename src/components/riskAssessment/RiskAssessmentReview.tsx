@@ -38,7 +38,7 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
   ];
 
   return (
-    <div>
+    <>
       <QuestionaryDetails
         questionaryId={state.riskAssessment.questionary.questionaryId}
         additionalDetails={additionalDetails}
@@ -80,7 +80,7 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
           {isSubmitted ? '✔ Submitted' : 'Submit'}
         </NavigButton>
       </NavigationFragment>
-    </div>
+    </>
   );
 }
 
