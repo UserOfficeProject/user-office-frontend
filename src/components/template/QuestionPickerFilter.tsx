@@ -35,7 +35,7 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
     dataType: 'all',
     searchText: '',
   });
-  const [debounceTimeout, setDebounceTimer] = useState<ReturnType<
+  const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
   const classes = useStyles();
@@ -68,7 +68,7 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
             if (debounceTimeout) {
               clearTimeout(debounceTimeout);
             }
-            setDebounceTimer(
+            setDebounceTimeout(
               setTimeout(() => {
                 onChange?.(newFilter);
               }, 500)
