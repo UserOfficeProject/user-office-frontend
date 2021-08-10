@@ -7,7 +7,7 @@ import {
   Select,
   TextField,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { getQuestionaryComponentDefinitions } from 'components/questionary/QuestionaryComponentRegistry';
 import { DataType } from 'generated/sdk';
@@ -15,26 +15,40 @@ import { DataType } from 'generated/sdk';
 import { QuestionFilter } from './QuestionPicker';
 
 interface QuestionPickerProps {
-  onChange: (filter: QuestionFilter) => void;
+  onChange?: (filter: QuestionFilter) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     padding: theme.spacing(2),
+    paddingBottom: 0,
     marginBottom: theme.spacing(2),
   },
   formItem: {
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
 }));
+
 function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
   const [filter, setFilter] = useState<QuestionFilter>({
-    dataType: null,
+    dataType: 'all',
     searchText: '',
   });
+  const [debounceTimeout, setDebounceTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const classes = useStyles();
   const questionDefs = getQuestionaryComponentDefinitions();
+
+  useEffect(() => {
+    console.log('mounting');
+
+    return () => {
+      console.log('unmounting');
+      onChange?.({ searchText: '', dataType: 'all' });
+    };
+  }, [onChange]);
 
   return (
     <Paper
@@ -42,7 +56,7 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
       elevation={1}
       className={classes.container}
     >
-      <FormControl fullWidth>
+      <FormControl fullWidth className={classes.formItem}>
         <TextField
           label="Question text"
           data-cy="search-text"
@@ -50,12 +64,25 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
           InputLabelProps={{
             shrink: true,
           }}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            const newFilter = {
+              ...filter,
+              searchText: event.target.value,
+            };
+            setFilter(newFilter);
+            if (debounceTimeout) {
+              clearTimeout(debounceTimeout);
+            }
+            setDebounceTimer(
+              setTimeout(() => {
+                onChange?.(newFilter);
+              }, 500)
+            );
+          }}
         />
       </FormControl>
-      <FormControl fullWidth>
-        <InputLabel shrink htmlFor="operator">
-          Compare
-        </InputLabel>
+      <FormControl fullWidth className={classes.formItem}>
+        <InputLabel shrink>Question type</InputLabel>
         <Select
           label="DataType"
           fullWidth
@@ -65,12 +92,14 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
               dataType: event.target.value as DataType,
             };
             setFilter(newFilter);
-            onChange(newFilter);
+            onChange?.(newFilter);
           }}
           value={filter.dataType}
           data-cy="data-type"
-          defaultValue={null}
         >
+          <MenuItem key={'all'} value={'all'} selected>
+            All
+          </MenuItem>
           {questionDefs.map((definition) => (
             <MenuItem key={definition.dataType} value={definition.dataType}>
               {definition.name}
