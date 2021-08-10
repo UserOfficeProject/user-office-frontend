@@ -277,6 +277,7 @@ export const QuestionPicker = (props: QuestionPickerProps) => {
             ref={provided.innerRef}
             style={getListStyle(snapshot.isDraggingOver)}
             className={`${classes.itemContainer} tinyScroll`}
+            data-cy="question-list"
           >
             {getItems()}
             {provided.placeholder}

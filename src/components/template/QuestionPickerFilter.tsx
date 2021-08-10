@@ -42,12 +42,7 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
   const questionDefs = getQuestionaryComponentDefinitions();
 
   useEffect(() => {
-    console.log('mounting');
-
-    return () => {
-      console.log('unmounting');
-      onChange?.({ searchText: '', dataType: 'all' });
-    };
+    return () => onChange?.({ searchText: '', dataType: 'all' });
   }, [onChange]);
 
   return (
