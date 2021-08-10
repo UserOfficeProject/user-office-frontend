@@ -37,11 +37,12 @@ function QuestionPickerFilter({ onChange }: QuestionPickerProps) {
   });
   const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<
     typeof setTimeout
-  > | null>(null);
+  > | null>(null); // timeout for searching only when keystrokes stop
   const classes = useStyles();
   const questionDefs = getQuestionaryComponentDefinitions();
 
   useEffect(() => {
+    // clear filter when the component is removed
     return () => onChange?.({ searchText: '', dataType: 'all' });
   }, [onChange]);
 
