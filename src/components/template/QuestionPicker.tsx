@@ -31,7 +31,7 @@ import {
   TemplateCategoryId,
   Topic,
 } from 'generated/sdk';
-import { Event, EventType } from 'models/QuestionaryEditorModel';
+import { Event, EventType } from 'models/questionary/QuestionaryEditorModel';
 
 import QuestionPickerFilter from './QuestionPickerFilter';
 import TemplateQuestionEditor, {
