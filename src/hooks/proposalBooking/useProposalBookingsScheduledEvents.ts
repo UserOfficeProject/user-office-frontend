@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
 import {
-  ScheduledEvent,
+  Instrument,
+  Maybe,
   Proposal,
   ProposalBookingStatus,
-  Instrument,
-  VisitFragment,
-  Questionary,
-  Maybe,
+  RiskAssessmentFragment,
+  ScheduledEvent,
   Visit,
+  VisitFragment,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { RegistrationBasic } from 'models/VisitSubmissionState';
@@ -36,7 +36,7 @@ export type ProposalScheduledEvent = Pick<
   } & {
     users: BasicUserDetailsFragment[];
   } & {
-    riskAssessmentQuestionary: Maybe<Pick<Questionary, 'questionaryId'>>;
+    riskAssessment: Maybe<RiskAssessmentFragment>;
   };
   instrument: Pick<Instrument, 'id' | 'name'> | null;
 } & {
@@ -96,8 +96,7 @@ export function useProposalBookingsScheduledEvents({
                     proposalId: proposal.proposalId,
                     proposer: proposal.proposer,
                     users: proposal.users,
-                    riskAssessmentQuestionary:
-                      proposal.riskAssessmentQuestionary,
+                    riskAssessment: proposal.riskAssessment,
                     finalStatus: proposal.finalStatus,
                     managementDecisionSubmitted:
                       proposal.managementDecisionSubmitted,
