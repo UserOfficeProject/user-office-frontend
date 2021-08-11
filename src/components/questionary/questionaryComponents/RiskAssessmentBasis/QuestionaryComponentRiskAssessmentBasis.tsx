@@ -28,7 +28,7 @@ const riskAssessmentBasisPreSubmit = () => async ({
   const riskAssessment = (state as RiskAssessmentSubmissionState)
     .riskAssessment;
 
-  let returnValue = state.questionary.questionaryId;
+  let returnValue = state.questionary!.questionaryId;
   if (riskAssessment.questionary.questionaryId) {
     // Already has questionary
     return riskAssessment.questionary.questionaryId;

@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { TemplateCategoryId } from 'generated/sdk';
+import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import {
   Event,
@@ -135,7 +135,9 @@ export default function RiskAssessmentContainer(
     props.riskAssessment,
     0,
     false,
-    def.wizardStepFactory.getWizardSteps(props.riskAssessment.questionary.steps)
+    def.wizardStepFactory.getWizardSteps(
+      props.riskAssessment.questionary.steps as QuestionaryStep[]
+    )
   );
 
   const {
@@ -157,7 +159,7 @@ export default function RiskAssessmentContainer(
       });
       dispatch({
         type: 'STEPS_LOADED',
-        steps: props.riskAssessment.questionary!.steps,
+        steps: props.riskAssessment.questionary!.steps!,
       });
     }
   }, [previousInitialRiskAssessment, props.riskAssessment, dispatch]);
