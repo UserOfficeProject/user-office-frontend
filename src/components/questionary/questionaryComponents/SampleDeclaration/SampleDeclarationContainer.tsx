@@ -47,12 +47,19 @@ const samplesReducer = (
   return draftState;
 };
 
-export function SampleDeclarationContainer(props: {
-  sample: SampleWithQuestionary;
+export interface SampleDeclarationContainerCallbacks {
   sampleCreated?: (sample: SampleWithQuestionary) => void;
   sampleUpdated?: (sample: SampleWithQuestionary) => void;
   sampleEditDone?: () => void;
-}) {
+}
+interface SampleDeclarationContainerProps
+  extends SampleDeclarationContainerCallbacks {
+  sample: SampleWithQuestionary;
+}
+
+export function SampleDeclarationContainer(
+  props: SampleDeclarationContainerProps
+) {
   const { api } = useDataApiWithFeedback();
 
   const def = getQuestionaryDefinition(TemplateCategoryId.SAMPLE_DECLARATION);

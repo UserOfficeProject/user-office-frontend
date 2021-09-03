@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { QuestionaryStep } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-export function useBlankQuestionaryStepsData(templateId: number) {
+export function useBlankQuestionaryStepsData(templateId: number | undefined) {
   const [questionarySteps, setQuestionarySteps] = useState<
     QuestionaryStep[] | null
   >(null);
@@ -12,12 +12,14 @@ export function useBlankQuestionaryStepsData(templateId: number) {
   const api = useDataApi();
 
   useEffect(() => {
-    api()
-      .getBlankQuestionarySteps({ templateId })
-      .then((data) => {
-        setQuestionarySteps(data.blankQuestionarySteps);
-        setLoading(false);
-      });
+    if (templateId) {
+      api()
+        .getBlankQuestionarySteps({ templateId })
+        .then((data) => {
+          setQuestionarySteps(data.blankQuestionarySteps);
+          setLoading(false);
+        });
+    }
   }, [templateId, api]);
 
   return { loading, questionarySteps };

@@ -1,4 +1,12 @@
-import { FormControl, InputLabel, Select } from '@material-ui/core';
+import {
+  Dialog,
+  DialogContent,
+  FormControl,
+  InputLabel,
+  Link,
+  makeStyles,
+  Select,
+} from '@material-ui/core';
 import { useContext } from 'react';
 import React, { useState } from 'react';
 
@@ -12,15 +20,25 @@ import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActi
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
 import { RiskAssessmentSubmissionState } from 'models/questionary/riskAssessment/RiskAssessmentSubmissionState';
 
+import AddMoreSamples from './AddMoreSamples';
+
+const useStyles = makeStyles(() => ({
+  addMoreSamplesButton: {
+    cursor: 'pointer',
+  },
+}));
+
 function QuestionaryComponentRiskAssessmentBasis() {
   const { dispatch, state } = useContext(
     QuestionaryContext
   ) as RiskAssessmentContextType;
 
+  const [showAddMoreSamples, setShowAddMoreSamples] = useState(false);
+  const classes = useStyles();
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
-  const { samples, loadingSamples } = useProposalSamples(
+  const { samples, setSamples, loadingSamples } = useProposalSamples(
     state.riskAssessment.proposalPk
   );
 
@@ -62,8 +80,25 @@ function QuestionaryComponentRiskAssessmentBasis() {
               </MultiMenuItem>
             ))}
           </Select>
+          <Link
+            align="right"
+            onClick={() => setShowAddMoreSamples(true)}
+            className={classes.addMoreSamplesButton}
+            data-cy="add-more-samples-btn"
+          >
+            Add more samples
+          </Link>
         </FormControl>
       )}
+      <Dialog open={showAddMoreSamples} maxWidth="sm" fullWidth>
+        <DialogContent>
+          <AddMoreSamples
+            proposalPk={state.riskAssessment.proposalPk}
+            sampleCreated={(newSample) => setSamples([newSample, ...samples])}
+            sampleEditDone={() => setShowAddMoreSamples(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
