@@ -77,6 +77,7 @@ function EditProposalSamples({
                 variant="contained"
                 color="primary"
                 onClick={() => samplesUpdated()}
+                data-cy="close-edit-proposal-samples"
               >
                 Close
               </Button>
