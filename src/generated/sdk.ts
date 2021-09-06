@@ -19,6 +19,10 @@ export type Scalars = {
   TzLessDateTime: string;
 };
 
+export type ActivateScheduledEventInput = {
+  id: Scalars['Int'];
+};
+
 export type AddProposalWorkflowStatusInput = {
   proposalWorkflowId: Scalars['Int'];
   sortOrder: Scalars['Int'];
@@ -94,9 +98,9 @@ export type AssignChairOrSecretaryToSepInput = {
 };
 
 export type AssignEquipmentsToScheduledEventInput = {
-  scheduledEventId: Scalars['ID'];
-  proposalBookingId: Scalars['ID'];
-  equipmentIds: Array<Scalars['ID']>;
+  scheduledEventId: Scalars['Int'];
+  proposalBookingId: Scalars['Int'];
+  equipmentIds: Array<Scalars['Int']>;
 };
 
 export type AssignInstrumentsToCallInput = {
@@ -141,12 +145,12 @@ export type BooleanConfig = {
 };
 
 export type BulkUpsertLostTimesInput = {
-  proposalBookingId: Scalars['ID'];
+  proposalBookingId: Scalars['Int'];
   lostTimes: Array<SimpleLostTimeInput>;
 };
 
 export type BulkUpsertScheduledEventsInput = {
-  proposalBookingId: Scalars['ID'];
+  proposalBookingId: Scalars['Int'];
   scheduledEvents: Array<SimpleScheduledEventInput>;
 };
 
@@ -209,8 +213,8 @@ export type CloneProposalsInput = {
 };
 
 export type ConfirmEquipmentAssignmentInput = {
-  scheduledEventId: Scalars['ID'];
-  equipmentId: Scalars['ID'];
+  scheduledEventId: Scalars['Int'];
+  equipmentId: Scalars['Int'];
   newStatus: EquipmentAssignmentStatus;
 };
 
@@ -298,9 +302,9 @@ export type DeleteApiAccessTokenInput = {
 };
 
 export type DeleteEquipmentAssignmentInput = {
-  scheduledEventId: Scalars['ID'];
-  proposalBookingId: Scalars['ID'];
-  equipmentId: Scalars['ID'];
+  scheduledEventId: Scalars['Int'];
+  proposalBookingId: Scalars['Int'];
+  equipmentId: Scalars['Int'];
 };
 
 export type DeleteProposalWorkflowStatusInput = {
@@ -335,7 +339,7 @@ export type Entry = {
 
 export type Equipment = {
   __typename?: 'Equipment';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -373,13 +377,13 @@ export type EquipmentResponseWrap = {
 };
 
 export type EquipmentResponsibleInput = {
-  equipmentId: Scalars['ID'];
+  equipmentId: Scalars['Int'];
   userIds: Array<Scalars['Int']>;
 };
 
 export type EquipmentWithAssignmentStatus = {
   __typename?: 'EquipmentWithAssignmentStatus';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   owner: Maybe<User>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -526,6 +530,11 @@ export type FileUploadConfig = {
   max_files: Scalars['Int'];
 };
 
+export type FinalizeScheduledEventInput = {
+  id: Scalars['Int'];
+  action: ProposalBookingFinalizeAction;
+};
+
 export type HealthStats = {
   __typename?: 'HealthStats';
   message: Scalars['String'];
@@ -599,8 +608,9 @@ export type IntervalConfig = {
 
 export type LostTime = {
   __typename?: 'LostTime';
-  id: Scalars['ID'];
-  proposalBookingId: Scalars['ID'];
+  id: Scalars['Int'];
+  proposalBookingId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   startsAt: Scalars['TzLessDateTime'];
@@ -746,6 +756,9 @@ export type Mutation = {
   bulkUpsertLostTimes: LostTimesResponseWrap;
   createScheduledEvent: ScheduledEventResponseWrap;
   bulkUpsertScheduledEvents: ScheduledEventsResponseWrap;
+  updateScheduledEvent: ScheduledEventResponseWrap;
+  activateScheduledEvent: ScheduledEventResponseWrap;
+  finalizeScheduledEvent: ScheduledEventResponseWrap;
   finalizeProposalBooking: ProposalBookingResponseWrap;
   activateProposalBooking: ProposalBookingResponseWrap;
   resetSchedulerDb: Scalars['String'];
@@ -977,12 +990,14 @@ export type MutationUpdateTechnicalReviewAssigneeArgs = {
 
 export type MutationCreateRiskAssessmentArgs = {
   proposalPk: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 };
 
 
 export type MutationUpdateRiskAssessmentArgs = {
   riskAssessmentId: Scalars['Int'];
   status?: Maybe<RiskAssessmentStatus>;
+  sampleIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 
@@ -1489,7 +1504,7 @@ export type MutationCreateEquipmentArgs = {
 
 export type MutationUpdateEquipmentArgs = {
   updateEquipmentInput: EquipmentInput;
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
@@ -1528,14 +1543,29 @@ export type MutationBulkUpsertScheduledEventsArgs = {
 };
 
 
+export type MutationUpdateScheduledEventArgs = {
+  updateScheduledEvent: UpdateScheduledEventInput;
+};
+
+
+export type MutationActivateScheduledEventArgs = {
+  activateScheduledEvent: ActivateScheduledEventInput;
+};
+
+
+export type MutationFinalizeScheduledEventArgs = {
+  finalizeScheduledEvent: FinalizeScheduledEventInput;
+};
+
+
 export type MutationFinalizeProposalBookingArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   action: ProposalBookingFinalizeAction;
 };
 
 
 export type MutationActivateProposalBookingArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
@@ -1548,7 +1578,7 @@ export type NewScheduledEventInput = {
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
   description?: Maybe<Scalars['String']>;
-  instrumentId: Scalars['ID'];
+  instrumentId: Scalars['Int'];
 };
 
 export type NextProposalStatus = {
@@ -1674,7 +1704,7 @@ export type ProposalBasisConfig = {
 
 export type ProposalBooking = {
   __typename?: 'ProposalBooking';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   call: Maybe<Call>;
   proposal: Maybe<Proposal>;
   createdAt: Scalars['DateTime'];
@@ -2287,18 +2317,18 @@ export type QueryScheduledEventsArgs = {
 
 
 export type QueryScheduledEventArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
 export type QueryProposalBookingScheduledEventsArgs = {
-  proposalBookingId: Scalars['ID'];
+  proposalBookingId: Scalars['Int'];
 };
 
 
 export type QueryProposalBookingScheduledEventArgs = {
-  scheduledEventId: Scalars['ID'];
-  proposalBookingId: Scalars['ID'];
+  scheduledEventId: Scalars['Int'];
+  proposalBookingId: Scalars['Int'];
 };
 
 
@@ -2308,27 +2338,28 @@ export type QueryEquipmentsArgs = {
 
 
 export type QueryAvailableEquipmentsArgs = {
-  scheduledEventId: Scalars['ID'];
+  scheduledEventId: Scalars['Int'];
 };
 
 
 export type QueryEquipmentArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
 export type QueryProposalBookingLostTimesArgs = {
-  proposalBookingId: Scalars['ID'];
+  scheduledEventId?: Maybe<Scalars['Int']>;
+  proposalBookingId: Scalars['Int'];
 };
 
 
 export type QueryInstrumentProposalBookingsArgs = {
-  instrumentId: Scalars['ID'];
+  instrumentId: Scalars['Int'];
 };
 
 
 export type QueryProposalBookingArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 export type Question = {
@@ -2494,10 +2525,12 @@ export type RiskAssessment = {
   __typename?: 'RiskAssessment';
   riskAssessmentId: Scalars['Int'];
   proposalPk: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
   creatorUserId: Scalars['Int'];
   questionaryId: Scalars['Int'];
   status: RiskAssessmentStatus;
   questionary: Questionary;
+  samples: Array<Sample>;
 };
 
 export type RiskAssessmentBasisConfig = {
@@ -2653,6 +2686,7 @@ export type ScheduledEvent = {
   description: Maybe<Scalars['String']>;
   instrument: Maybe<Instrument>;
   equipmentId: Maybe<Scalars['Int']>;
+  status: ProposalBookingStatus;
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
   proposalBooking: Maybe<ProposalBooking>;
@@ -2670,7 +2704,7 @@ export enum ScheduledEventBookingType {
 export type ScheduledEventFilter = {
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
-  instrumentId?: Maybe<Scalars['ID']>;
+  instrumentId?: Maybe<Scalars['Int']>;
 };
 
 export type ScheduledEventResponseWrap = {
@@ -2789,14 +2823,15 @@ export type ShipmentsFilter = {
 };
 
 export type SimpleLostTimeInput = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
   newlyCreated?: Maybe<Scalars['Boolean']>;
+  scheduledEventId?: Maybe<Scalars['Int']>;
 };
 
 export type SimpleScheduledEventInput = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
   newlyCreated?: Maybe<Scalars['Boolean']>;
@@ -3009,6 +3044,12 @@ export type UpdateProposalWorkflowInput = {
   id: Scalars['Int'];
   name: Scalars['String'];
   description: Scalars['String'];
+};
+
+export type UpdateScheduledEventInput = {
+  scheduledEventId: Scalars['Int'];
+  startsAt: Scalars['TzLessDateTime'];
+  endsAt: Scalars['TzLessDateTime'];
 };
 
 export type User = {
@@ -5210,6 +5251,7 @@ export type UserWithReviewsQuery = (
 
 export type CreateRiskAssessmentMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 }>;
 
 
@@ -5223,7 +5265,10 @@ export type CreateRiskAssessmentMutation = (
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ) }
+      ), samples: Array<(
+        { __typename?: 'Sample' }
+        & SampleFragment
+      )> }
       & RiskAssessmentFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -5234,7 +5279,7 @@ export type CreateRiskAssessmentMutation = (
 
 export type RiskAssessmentFragment = (
   { __typename?: 'RiskAssessment' }
-  & Pick<RiskAssessment, 'riskAssessmentId' | 'proposalPk' | 'status'>
+  & Pick<RiskAssessment, 'riskAssessmentId' | 'proposalPk' | 'scheduledEventId' | 'status'>
 );
 
 export type GetRiskAssessmentQueryVariables = Exact<{
@@ -5250,7 +5295,10 @@ export type GetRiskAssessmentQuery = (
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
-    ) }
+    ), samples: Array<(
+      { __typename?: 'Sample' }
+      & SampleFragment
+    )> }
     & RiskAssessmentFragment
   ) }
 );
@@ -5258,6 +5306,7 @@ export type GetRiskAssessmentQuery = (
 export type UpdateRiskAssessmentMutationVariables = Exact<{
   riskAssessmentId: Scalars['Int'];
   status?: Maybe<RiskAssessmentStatus>;
+  sampleIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
@@ -5267,6 +5316,10 @@ export type UpdateRiskAssessmentMutation = (
     { __typename?: 'RiskAssessmentResponseWrap' }
     & { riskAssessment: Maybe<(
       { __typename?: 'RiskAssessment' }
+      & { samples: Array<(
+        { __typename?: 'Sample' }
+        & SampleFragment
+      )> }
       & RiskAssessmentFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -7650,6 +7703,7 @@ export const RiskAssessmentFragmentDoc = gql`
     fragment riskAssessment on RiskAssessment {
   riskAssessmentId
   proposalPk
+  scheduledEventId
   status
 }
     `;
@@ -9328,13 +9382,19 @@ export const UserWithReviewsDocument = gql`
 }
     `;
 export const CreateRiskAssessmentDocument = gql`
-    mutation createRiskAssessment($proposalPk: Int!) {
-  createRiskAssessment(proposalPk: $proposalPk) {
+    mutation createRiskAssessment($proposalPk: Int!, $scheduledEventId: Int!) {
+  createRiskAssessment(
+    proposalPk: $proposalPk
+    scheduledEventId: $scheduledEventId
+  ) {
     riskAssessment {
       ...riskAssessment
       questionary {
         ...questionary
         isCompleted
+      }
+      samples {
+        ...sample
       }
     }
     rejection {
@@ -9344,6 +9404,7 @@ export const CreateRiskAssessmentDocument = gql`
 }
     ${RiskAssessmentFragmentDoc}
 ${QuestionaryFragmentDoc}
+${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetRiskAssessmentDocument = gql`
     query getRiskAssessment($riskAssessmentId: Int!) {
@@ -9353,15 +9414,26 @@ export const GetRiskAssessmentDocument = gql`
       ...questionary
       isCompleted
     }
+    samples {
+      ...sample
+    }
   }
 }
     ${RiskAssessmentFragmentDoc}
-${QuestionaryFragmentDoc}`;
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}`;
 export const UpdateRiskAssessmentDocument = gql`
-    mutation updateRiskAssessment($riskAssessmentId: Int!, $status: RiskAssessmentStatus) {
-  updateRiskAssessment(riskAssessmentId: $riskAssessmentId, status: $status) {
+    mutation updateRiskAssessment($riskAssessmentId: Int!, $status: RiskAssessmentStatus, $sampleIds: [Int!]) {
+  updateRiskAssessment(
+    riskAssessmentId: $riskAssessmentId
+    status: $status
+    sampleIds: $sampleIds
+  ) {
     riskAssessment {
       ...riskAssessment
+      samples {
+        ...sample
+      }
     }
     rejection {
       ...rejection
@@ -9369,6 +9441,7 @@ export const UpdateRiskAssessmentDocument = gql`
   }
 }
     ${RiskAssessmentFragmentDoc}
+${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CloneSampleDocument = gql`
     mutation cloneSample($sampleId: Int!) {
