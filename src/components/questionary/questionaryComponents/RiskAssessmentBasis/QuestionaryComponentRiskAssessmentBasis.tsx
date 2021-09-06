@@ -54,6 +54,22 @@ function QuestionaryComponentRiskAssessmentBasis() {
     state?.riskAssessment.samples.map((sample) => sample.id) || []
   );
 
+  const handleClose = () => {
+    // reload samples
+    api()
+      .getSamplesWithQuestionaryStatus({
+        filter: { proposalPk: state.riskAssessment.proposalPk },
+      })
+      .then((data) => {
+        if (data.samples) {
+          setSamples(data.samples);
+        }
+      });
+
+    // close popup
+    setProposal(null);
+  };
+
   return (
     <>
       {!loadingSamples && (
@@ -104,28 +120,10 @@ function QuestionaryComponentRiskAssessmentBasis() {
           </Link>
         </FormControl>
       )}
-      <Dialog
-        open={proposal !== null}
-        maxWidth="sm"
-        onClose={() => setProposal(null)}
-      >
+      <Dialog open={proposal !== null} maxWidth="sm" onClose={handleClose}>
         <StyledPaper className={classes.container}>
           {proposal && (
-            <EditProposalSamples
-              proposal={proposal}
-              samplesUpdated={() => {
-                api()
-                  .getSamplesWithQuestionaryStatus({
-                    filter: { proposalPk: state.riskAssessment.proposalPk },
-                  })
-                  .then((data) => {
-                    if (data.samples) {
-                      setSamples(data.samples);
-                    }
-                  });
-                setProposal(null);
-              }}
-            />
+            <EditProposalSamples proposal={proposal} onClose={handleClose} />
           )}
         </StyledPaper>
       </Dialog>
