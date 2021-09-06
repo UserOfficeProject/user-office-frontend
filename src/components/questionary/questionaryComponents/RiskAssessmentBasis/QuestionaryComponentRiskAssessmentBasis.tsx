@@ -1,14 +1,12 @@
 import {
   Dialog,
-  DialogContent,
   FormControl,
   InputLabel,
   Link,
   makeStyles,
   Select,
 } from '@material-ui/core';
-import { useContext } from 'react';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import MultiMenuItem from 'components/common/MultiMenuItem';
 import {
@@ -16,25 +14,35 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import { RiskAssessmentContextType } from 'components/riskAssessment/RiskAssessmentContainer';
+import { ProposalData } from 'hooks/proposal/useProposalData';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
 import { RiskAssessmentSubmissionState } from 'models/questionary/riskAssessment/RiskAssessmentSubmissionState';
+import { StyledPaper } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import AddMoreSamples from './AddMoreSamples';
+import EditProposalSamples from './EditProposalSamples';
 
 const useStyles = makeStyles(() => ({
   addMoreSamplesButton: {
     cursor: 'pointer',
   },
+  container: {
+    margin: 0,
+    width: 'auto',
+  },
 }));
 
 function QuestionaryComponentRiskAssessmentBasis() {
+  const classes = useStyles();
+  const { api } = useDataApiWithFeedback();
+
   const { dispatch, state } = useContext(
     QuestionaryContext
   ) as RiskAssessmentContextType;
 
-  const [showAddMoreSamples, setShowAddMoreSamples] = useState(false);
-  const classes = useStyles();
+  const [proposal, setProposal] = useState<ProposalData | null>(null);
+
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
@@ -48,7 +56,7 @@ function QuestionaryComponentRiskAssessmentBasis() {
 
   return (
     <>
-      {!loadingSamples && samples.length > 0 && (
+      {!loadingSamples && (
         <FormControl fullWidth>
           <InputLabel id="sample-ids">Select samples</InputLabel>
           <Select
@@ -82,7 +90,13 @@ function QuestionaryComponentRiskAssessmentBasis() {
           </Select>
           <Link
             align="right"
-            onClick={() => setShowAddMoreSamples(true)}
+            onClick={() =>
+              api()
+                .getProposal({ primaryKey: state.riskAssessment.proposalPk })
+                .then(({ proposal }) => {
+                  proposal && setProposal(proposal);
+                })
+            }
             className={classes.addMoreSamplesButton}
             data-cy="add-more-samples-btn"
           >
@@ -90,14 +104,30 @@ function QuestionaryComponentRiskAssessmentBasis() {
           </Link>
         </FormControl>
       )}
-      <Dialog open={showAddMoreSamples} maxWidth="sm" fullWidth>
-        <DialogContent>
-          <AddMoreSamples
-            proposalPk={state.riskAssessment.proposalPk}
-            sampleCreated={(newSample) => setSamples([newSample, ...samples])}
-            sampleEditDone={() => setShowAddMoreSamples(false)}
-          />
-        </DialogContent>
+      <Dialog
+        open={proposal !== null}
+        maxWidth="sm"
+        onClose={() => setProposal(null)}
+      >
+        <StyledPaper className={classes.container}>
+          {proposal && (
+            <EditProposalSamples
+              proposal={proposal}
+              samplesUpdated={() => {
+                api()
+                  .getSamplesWithQuestionaryStatus({
+                    filter: { proposalPk: state.riskAssessment.proposalPk },
+                  })
+                  .then((data) => {
+                    if (data.samples) {
+                      setSamples(data.samples);
+                    }
+                  });
+                setProposal(null);
+              }}
+            />
+          )}
+        </StyledPaper>
       </Dialog>
     </>
   );
