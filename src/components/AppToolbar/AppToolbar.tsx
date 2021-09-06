@@ -95,6 +95,13 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
     SettingsId.PROFILE_PAGE_LINK
   )?.settingsValue;
 
+  let nameToDisplay; // Use preferred name if it is not null
+  if (!user.preferredname) {
+    nameToDisplay = `${user.firstname} ${user.lastname}`;
+  } else {
+    nameToDisplay = `${user.preferredname} ${user.lastname}`;
+  }
+
   return (
     <AppBar
       position="fixed"
@@ -136,7 +143,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
               rel="noreferrer"
               className={classes.profileLink}
             >
-              {user.firstname} {user.lastname}
+              {nameToDisplay}
             </a>
           ) : (
             <MuiLink
@@ -145,7 +152,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
               to={`/ProfilePage/${user.id}`}
               className={classes.profileLink}
             >
-              {user.firstname} {user.lastname}
+              {nameToDisplay}
             </MuiLink>
           )}
           {roles.length > 1 && ` (${humanReadableActiveRole})`}
