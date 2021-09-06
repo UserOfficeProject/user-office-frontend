@@ -46,6 +46,7 @@ function EditProposalSamples({ proposal, onClose }: EditProposalSamplesProps) {
     state,
     dispatch,
   } = QuestionarySubmissionModel<ProposalSubmissionState>(initialState, []);
+
   const { initialValues } = createFormikConfigObjects(
     sampleAnswers,
     state,
@@ -63,7 +64,6 @@ function EditProposalSamples({ proposal, onClose }: EditProposalSamplesProps) {
             {sampleAnswers.map((answer) => (
               <QuestionaryComponentSampleDeclaration
                 answer={answer}
-                onComplete={() => {}}
                 formikProps={formikProps}
                 key={answer.question.id}
               />
