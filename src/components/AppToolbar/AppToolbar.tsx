@@ -136,7 +136,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
               rel="noreferrer"
               className={classes.profileLink}
             >
-              {user.email}
+              {user.firstname} {user.lastname}
             </a>
           ) : (
             <MuiLink
@@ -145,7 +145,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
               to={`/ProfilePage/${user.id}`}
               className={classes.profileLink}
             >
-              {user.email}
+              {user.firstname} {user.lastname}
             </MuiLink>
           )}
           {roles.length > 1 && ` (${humanReadableActiveRole})`}
