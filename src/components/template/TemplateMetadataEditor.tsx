@@ -14,23 +14,29 @@ import { Template } from 'generated/sdk';
 import { Event, EventType } from 'models/questionary/QuestionaryEditorModel';
 
 const useStyles = makeStyles((theme) => ({
-  templateName: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    paddingBottom: '5px',
-  },
-  templateDescription: {
-    fontSize: '16px',
-    whiteSpace: 'pre-wrap',
-  },
   container: {
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
   },
-  button: {},
+
   label: {
     color: theme.palette.grey[900],
     fontSize: 'small',
+    margin: '5px 0 0 0',
+  },
+  templateName: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    paddingBottom: '10px',
+  },
+  templateDescription: {
+    fontSize: '16px',
+    whiteSpace: 'pre-wrap',
+    paddingBottom: '5px',
+  },
+
+  inputField: {
+    margin: '5px 0 10px 0',
   },
 
   editableField: {
@@ -45,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.grey[600],
       },
     },
+  },
+  buttonContainer: {
+    margin: `${theme.spacing(1)} 0 0 0`,
   },
 }));
 export function TemplateMetadataEditor(props: {
@@ -96,7 +105,7 @@ export function TemplateMetadataEditor(props: {
             component={TextField}
             value={values.name}
             onChange={handleChange}
-            margin="normal"
+            className={classes.inputField}
             fullWidth
             data-cy="name"
           />
@@ -109,24 +118,19 @@ export function TemplateMetadataEditor(props: {
             component={TextField}
             value={values.description}
             onChange={handleChange}
-            margin="normal"
+            className={classes.inputField}
             fullWidth
             data-cy="description"
           />
-          <ActionButtonContainer>
+          <ActionButtonContainer className={classes.buttonContainer}>
             <IconButton
               disabled={isSubmitting}
               onClick={() => setIsEditMode(false)}
-              className={classes.button}
             >
               <Close />
             </IconButton>
 
-            <IconButton
-              disabled={isSubmitting}
-              type="submit"
-              className={classes.button}
-            >
+            <IconButton disabled={isSubmitting} type="submit">
               <Check />
             </IconButton>
           </ActionButtonContainer>
