@@ -61,6 +61,7 @@ const withPrompt = <T extends Record<string, unknown>>(
         <Dialog fullWidth open={!!onPrompt} onClose={handleCancel}>
           <DialogContent>
             <TextFieldWithHandleEnter
+              id="prompt-input"
               label={question}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
