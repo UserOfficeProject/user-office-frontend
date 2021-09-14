@@ -17,6 +17,14 @@ const defaultOptions: Options = {
 
 const TextFieldWithHandleEnter = withHandleEnter(TextField);
 
+/**
+ * withPrompt allows to easily use prompt UI dialog for single string question input.
+ * Usage:
+ * prompt((answer) => console.log(answer), {
+ *   question: 'Enter some text',
+ * })()
+ * @param WrappedComponent
+ */
 const withPrompt = <T extends Record<string, unknown>>(
   WrappedComponent: React.ComponentType<T>
 ) => {
