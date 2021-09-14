@@ -214,6 +214,9 @@ export default function QuestionaryEditorTopic(props: {
         <Form>
           {isEditMode ? (
             <div style={{ display: 'flex' }}>
+              <label htmlFor="title" hidden>
+                Topic title
+              </label>
               <Field
                 name="title"
                 id="title"
