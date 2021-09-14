@@ -6,18 +6,19 @@ interface WithHandleEnterProps {
   onEnter: (value: string) => void;
 }
 /**
- * Returns modified WrapperComponent which will has onEnter callback
- * @param WrappedComponent
+ * Returns modified TextField which will has onEnter callback,
+ * which will be called when RETURN is pressed
+ * @param WrappedTextField
  */
 const withHandleEnter = <P extends TextFieldProps>(
-  WrappedComponent: React.ComponentType<P>
+  WrappedTextField: React.ComponentType<P>
 ): React.FC<P & WithHandleEnterProps> => {
   return function withHandleEnterComponent({
     onEnter,
     ...props
   }: WithHandleEnterProps) {
     return (
-      <WrappedComponent
+      <WrappedTextField
         {...(props as P)}
         onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
           if (event.key.toLowerCase() === 'enter') {

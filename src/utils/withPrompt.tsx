@@ -10,7 +10,7 @@ import { FunctionType } from './utilTypes';
 
 const defaultOptions: Options = {
   question: '',
-  initialAnswer: '',
+  prefilledAnswer: '',
   okBtnLabel: 'OK',
   cancelBtnLabel: 'Cancel',
 };
@@ -33,7 +33,7 @@ const withPrompt = <T extends Record<string, unknown>>(
       null
     );
     const [options, setOptions] = useState(defaultOptions);
-    const [answer, setAnswer] = useState<string>(options.initialAnswer);
+    const [answer, setAnswer] = useState<string>(options.prefilledAnswer);
 
     const { question, okBtnLabel, cancelBtnLabel } = options;
     const handleCancel = useCallback(() => {
@@ -50,7 +50,7 @@ const withPrompt = <T extends Record<string, unknown>>(
       (onPrompt, options: Options) => (): void => {
         setOnPrompt(() => onPrompt);
         setOptions({ ...defaultOptions, ...options });
-        setAnswer(options.initialAnswer);
+        setAnswer(options.prefilledAnswer);
       },
       []
     );
@@ -84,7 +84,7 @@ const withPrompt = <T extends Record<string, unknown>>(
 
 interface Options {
   question: string;
-  initialAnswer: string;
+  prefilledAnswer: string;
   okBtnLabel: string;
   cancelBtnLabel: string;
   dialogProps?: Record<string, unknown>;

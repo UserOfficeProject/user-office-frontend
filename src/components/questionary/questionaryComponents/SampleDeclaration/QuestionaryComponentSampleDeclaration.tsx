@@ -149,7 +149,7 @@ function QuestionaryComponentSampleDeclaration(
               onCloneClick={(item) => {
                 prompt((answer) => copySample(item.id, answer), {
                   question: 'Title',
-                  initialAnswer: `Copy of ${item.label}`,
+                  prefilledAnswer: `Copy of ${item.label}`,
                 })();
               }}
               onAddNewClick={() => {
