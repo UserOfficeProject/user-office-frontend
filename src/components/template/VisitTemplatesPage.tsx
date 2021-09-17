@@ -19,7 +19,7 @@ export default function VisitTemplatesPage() {
               .getTemplates({
                 filter: {
                   isArchived: false,
-                  category: TemplateCategoryId.VISIT,
+                  category: TemplateCategoryId.VISIT_REGISTRATION,
                 },
               })
               .then((data) => data.templates || [])
@@ -31,7 +31,7 @@ export default function VisitTemplatesPage() {
               .getTemplates({
                 filter: {
                   isArchived: true,
-                  category: TemplateCategoryId.VISIT,
+                  category: TemplateCategoryId.VISIT_REGISTRATION,
                 },
               })
               .then((data) => data.templates || [])

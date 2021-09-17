@@ -59,7 +59,7 @@ export default function RiskAssessmentContainer(
 ) {
   const { api } = useDataApiWithFeedback();
 
-  const def = getQuestionaryDefinition(TemplateCategoryId.RISK_ASSESSMENT);
+  const def = getQuestionaryDefinition(TemplateCategoryId.PROPOSAL_ESI);
 
   const previousInitialRiskAssessment = usePrevious(props.riskAssessment);
 

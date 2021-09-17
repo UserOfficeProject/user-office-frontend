@@ -19,7 +19,7 @@ export default function RiskAssessmentPage() {
               .getTemplates({
                 filter: {
                   isArchived: false,
-                  category: TemplateCategoryId.RISK_ASSESSMENT,
+                  category: TemplateCategoryId.PROPOSAL_ESI,
                 },
               })
               .then((data) => data.templates || [])
@@ -31,7 +31,7 @@ export default function RiskAssessmentPage() {
               .getTemplates({
                 filter: {
                   isArchived: true,
-                  category: TemplateCategoryId.VISIT,
+                  category: TemplateCategoryId.VISIT_REGISTRATION,
                 },
               })
               .then((data) => data.templates || [])

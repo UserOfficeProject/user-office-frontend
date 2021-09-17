@@ -58,7 +58,7 @@ function CreateRiskAssessment({
   useEffect(() => {
     api()
       .getActiveTemplateId({
-        templateCategoryId: TemplateCategoryId.RISK_ASSESSMENT,
+        templateCategoryId: TemplateCategoryId.PROPOSAL_ESI,
       })
       .then(({ activeTemplateId }) => {
         if (activeTemplateId) {

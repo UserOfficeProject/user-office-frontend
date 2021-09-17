@@ -151,7 +151,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     });
 
     return createActionButton(
-      'Finish risk assessment',
+      'Finish safety input form',
       <RiskAssessmentIcon />,
       buttonState,
       () => {

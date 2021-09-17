@@ -31,7 +31,7 @@ function VisitTemplatesTable(props: VisitTemplatesTableProps) {
   return (
     <Table
       columns={columns}
-      templateCategory={TemplateCategoryId.VISIT}
+      templateCategory={TemplateCategoryId.VISIT_REGISTRATION}
       isRowRemovable={() => {
         return true;
       }}

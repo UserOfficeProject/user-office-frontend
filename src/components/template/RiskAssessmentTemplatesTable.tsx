@@ -34,7 +34,7 @@ function RiskAssessmentTemplatesTable(
   return (
     <Table
       columns={columns}
-      templateCategory={TemplateCategoryId.RISK_ASSESSMENT}
+      templateCategory={TemplateCategoryId.PROPOSAL_ESI}
       isRowRemovable={() => {
         return true;
       }}

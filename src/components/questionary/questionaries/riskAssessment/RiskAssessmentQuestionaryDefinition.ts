@@ -9,7 +9,7 @@ import { QuestionaryDefinition } from '../../QuestionaryRegistry';
 import { RiskAssessmentWizardStep } from './RiskAssessmentWizardStep';
 
 export const riskAssessmentQuestionaryDefinition: QuestionaryDefinition = {
-  categoryId: TemplateCategoryId.RISK_ASSESSMENT,
+  categoryId: TemplateCategoryId.PROPOSAL_ESI,
 
   displayElementFactory: new DefaultStepDisplayElementFactory(
     RiskAssessmentReview

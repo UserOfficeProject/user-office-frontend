@@ -58,7 +58,7 @@ export default function VisitRegistrationContainer(
 ) {
   const { api } = useDataApiWithFeedback();
 
-  const def = getQuestionaryDefinition(TemplateCategoryId.VISIT);
+  const def = getQuestionaryDefinition(TemplateCategoryId.VISIT_REGISTRATION);
 
   const previousInitialVisit = usePrevious(props.registration);
 

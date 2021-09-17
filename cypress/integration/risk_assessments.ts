@@ -11,7 +11,7 @@ const sampleTitle = /My sample title/i;
 const newSampleTitle = faker.lorem.words(3);
 
 const proposalTitle = 'Test proposal';
-const riskAssessmentButtonTitle = 'Finish risk assessment';
+const riskAssessmentButtonTitle = 'Finish safety input form';
 
 context('visits tests', () => {
   before(() => {

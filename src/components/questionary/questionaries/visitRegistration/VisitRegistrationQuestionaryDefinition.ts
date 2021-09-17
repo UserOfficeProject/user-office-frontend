@@ -9,7 +9,7 @@ import { QuestionaryDefinition } from '../../QuestionaryRegistry';
 import { VisitRegistrationWizardStep } from './VisitRegistrationWizardStep';
 
 export const visitRegistrationQuestionaryDefinition: QuestionaryDefinition = {
-  categoryId: TemplateCategoryId.VISIT,
+  categoryId: TemplateCategoryId.VISIT_REGISTRATION,
 
   displayElementFactory: new DefaultStepDisplayElementFactory(
     VisitRegistrationReview

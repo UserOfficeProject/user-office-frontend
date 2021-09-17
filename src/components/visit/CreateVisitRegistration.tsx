@@ -62,7 +62,7 @@ function CreateVisit({
   useEffect(() => {
     api()
       .getActiveTemplateId({
-        templateCategoryId: TemplateCategoryId.VISIT,
+        templateCategoryId: TemplateCategoryId.VISIT_REGISTRATION,
       })
       .then(({ activeTemplateId }) => {
         if (activeTemplateId) {

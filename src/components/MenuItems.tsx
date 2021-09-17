@@ -193,24 +193,21 @@ const TemplateMenuListItem = () => {
             </ListItem>
           </Tooltip>
         )}
-        <Tooltip title="Visit">
+        <Tooltip title="Visit registration">
           <ListItem component={NavLink} to="/VisitTemplates" button>
             <ListItemIcon>
               <FlightTakeoffIcon />
             </ListItemIcon>
-            <ListItemText primary="Visit" />
+            <ListItemText primary="Visit registration" />
           </ListItem>
         </Tooltip>
         {isRiskAssessmentFeatureEnabled && (
-          <Tooltip title="Risk assessment">
+          <Tooltip title="Experiment safety user input">
             <ListItem component={NavLink} to="/RiskAssessmentTemplates" button>
               <ListItemIcon>
                 <RiskAssessmentIcon />
               </ListItemIcon>
-              <ListItemText
-                primary="Risk assessment"
-                title="Risk assessment templates"
-              />
+              <ListItemText primary="Proposal ESI" title="Proposal ESI" />
             </ListItem>
           </Tooltip>
         )}
