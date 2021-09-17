@@ -6,7 +6,7 @@ interface WithHandleEnterProps {
   onEnter: (value: string) => void;
 }
 /**
- * Returns modified TextField which will has onEnter callback,
+ * Returns modified TextField with onEnter callback,
  * which will be called when RETURN is pressed
  * @param WrappedTextField
  */
