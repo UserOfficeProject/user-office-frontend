@@ -18,13 +18,13 @@ import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmis
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
 import { dateDefinition } from './questionaryComponents/DatePicker/DatePickerDefinition';
 import { embellishmentDefinition } from './questionaryComponents/Embellishment/EmbellishmentDefinition';
+import { esiBasisDefinition } from './questionaryComponents/EsiBasis/EsiBasisDefinition';
 import { fileUploadDefinition } from './questionaryComponents/FileUpload/FileUploadDefinition';
 import { intervalDefinition } from './questionaryComponents/Interval/IntervalDefinition';
 import { multipleChoiceDefinition as multiChoiceDefinition } from './questionaryComponents/MultipleChoice/MultipleChoiceDefinition';
 import { numberInputDefinition } from './questionaryComponents/NumberInput/NumberInputDefinition';
 import { proposalBasisDefinition } from './questionaryComponents/ProposalBasis/ProposalBasisDefinition';
 import { richTextInputDefinition } from './questionaryComponents/RichTextInput/RichTextInputDefinition';
-import { riskAssessmentBasisDefinition } from './questionaryComponents/RiskAssessmentBasis/RiskAssessmentBasisDefinition';
 import { sampleBasisDefinition } from './questionaryComponents/SampleBasis/SampleBasisDefinition';
 import { sampleDeclarationDefinition } from './questionaryComponents/SampleDeclaration/SampleDeclaratonDefinition';
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
@@ -158,7 +158,7 @@ const registry = [
   shipmentBasisDefinition,
   richTextInputDefinition,
   visitBasisDefinition,
-  riskAssessmentBasisDefinition,
+  esiBasisDefinition,
 ];
 
 Object.freeze(registry);

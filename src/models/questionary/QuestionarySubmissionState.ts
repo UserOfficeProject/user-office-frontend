@@ -9,10 +9,10 @@ import {
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
+import { EsiWithQuestionary } from './esi/EsiWithQuestionary';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from './proposal/ProposalWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
-import { RiskAssessmentWithQuestionary as AssessmentWQ } from './riskAssessment/RiskAssessmentWithQuestionary';
 import { SampleWithQuestionary } from './sample/SampleWithQuestionary';
 import { ShipmentWithQuestionary } from './shipment/ShipmentWithQuestionary';
 import { StepType } from './StepType';
@@ -50,10 +50,10 @@ export type Event =
   | { type: 'REGISTRATION_MODIFIED'; visit: Partial<RegistrationWQ> }
   | { type: 'REGISTRATION_SUBMITTED'; visit: Partial<RegistrationWQ> }
   // risk assessment
-  | { type: 'RISK_ASSESSMENT_CREATED'; assessment: AssessmentWQ }
-  | { type: 'RISK_ASSESSMENT_LOADED'; assessment: AssessmentWQ }
-  | { type: 'RISK_ASSESSMENT_MODIFIED'; assessment: Partial<AssessmentWQ> }
-  | { type: 'RISK_ASSESSMENT_SUBMITTED'; assessment: Partial<AssessmentWQ> };
+  | { type: 'ESI_CREATED'; esi: EsiWithQuestionary }
+  | { type: 'ESI_LOADED'; esi: EsiWithQuestionary }
+  | { type: 'ESI_MODIFIED'; esi: Partial<EsiWithQuestionary> }
+  | { type: 'ESI_SUBMITTED'; esi: Partial<EsiWithQuestionary> };
 
 export interface WizardStepMetadata {
   title: string;

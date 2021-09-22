@@ -4,7 +4,7 @@ import { QuestionTemplateRelationFormProps } from 'components/questionary/Questi
 
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationRiskAssessmentBasisForm: FC<QuestionTemplateRelationFormProps> = (
+export const QuestionTemplateRelationEsiBasisForm: FC<QuestionTemplateRelationFormProps> = (
   props
 ) => {
   return (

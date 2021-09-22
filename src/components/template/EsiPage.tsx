@@ -5,15 +5,15 @@ import SimpleTabs from 'components/common/TabPanel';
 import { TemplateCategoryId } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-import RiskAssessmentTemplatesTable from './RiskAssessmentTemplatesTable';
+import EsiTemplatesTable from './EsiTemplatesTable';
 
-export default function RiskAssessmentPage() {
+export default function EsiPage() {
   const api = useDataApi();
 
   return (
     <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
-        <RiskAssessmentTemplatesTable
+        <EsiTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
@@ -25,13 +25,13 @@ export default function RiskAssessmentPage() {
               .then((data) => data.templates || [])
           }
         />
-        <RiskAssessmentTemplatesTable
+        <EsiTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
                 filter: {
                   isArchived: true,
-                  category: TemplateCategoryId.VISIT_REGISTRATION,
+                  category: TemplateCategoryId.PROPOSAL_ESI,
                 },
               })
               .then((data) => data.templates || [])

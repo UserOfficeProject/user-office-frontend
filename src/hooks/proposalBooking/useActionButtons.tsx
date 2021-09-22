@@ -7,21 +7,17 @@ import React, { ReactNode, useContext } from 'react';
 import { useHistory } from 'react-router';
 
 import BoxIcon from 'components/common/icons/BoxIcon';
-import RiskAssessmentIcon from 'components/common/icons/RiskAssessmentIcon';
+import EsiIcon from 'components/common/icons/EsiIcon';
+import CreateEsi from 'components/esi/CreateEsi';
+import UpdateEsi from 'components/esi/UpdateEsi';
 import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
-import CreateRiskAssessment from 'components/riskAssessment/CreateRiskAssessment';
-import UpdateRiskAssessment from 'components/riskAssessment/UpdateRiskAssessment';
 import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
-import {
-  ProposalEndStatus,
-  RiskAssessmentFragment,
-  RiskAssessmentStatus,
-} from 'generated/sdk';
+import { ProposalEndStatus, EsiFragment } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
@@ -116,18 +112,16 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     );
   };
 
-  const finishRiskAssessment = (event: ProposalScheduledEvent) => {
+  const finishEsi = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
 
     if (isPiOrCoProposer(user, event)) {
       if (
         event.proposal.finalStatus === ProposalEndStatus.ACCEPTED &&
-        event.proposal.managementDecisionSubmitted
+        event.proposal.managementDecisionSubmitted &&
+        event.visit // for now visit is required, but once ESI is attached to proposalScheduledEvent, this can be removed
       ) {
-        if (
-          event.proposal.riskAssessment?.status ===
-          RiskAssessmentStatus.SUBMITTED
-        ) {
+        if (event.visit.esi?.isSubmitted) {
           buttonState = 'completed';
         } else {
           buttonState = 'active';
@@ -141,29 +135,26 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     const createNewEventObject = (
       oldEvent: ProposalScheduledEvent,
-      riskAssessment: RiskAssessmentFragment
+      esi: EsiFragment
     ): ProposalScheduledEvent => ({
       ...oldEvent,
-      proposal: {
-        ...oldEvent.proposal,
-        riskAssessment: riskAssessment,
+      visit: {
+        ...oldEvent.visit!,
+        esi: esi,
       },
     });
 
     return createActionButton(
       'Finish safety input form',
-      <RiskAssessmentIcon />,
+      <EsiIcon />,
       buttonState,
       () => {
-        if (event.proposal.riskAssessment) {
+        if (event.visit?.esi) {
           openModal(
-            <UpdateRiskAssessment
-              riskAssessment={event.proposal.riskAssessment}
-              onSubmitted={(submittedRiskAssessment) => {
-                const updatedEvent = createNewEventObject(
-                  event,
-                  submittedRiskAssessment
-                );
+            <UpdateEsi
+              esiId={event.visit?.esi.id}
+              onSubmitted={(submittedEsi) => {
+                const updatedEvent = createNewEventObject(event, submittedEsi);
                 eventUpdated(updatedEvent);
                 closeModal();
               }}
@@ -171,11 +162,10 @@ export function useActionButtons(args: UseActionButtonsArgs) {
           );
         } else {
           openModal(
-            <CreateRiskAssessment
+            <CreateEsi
               proposalPk={event.proposal.primaryKey}
-              scheduledEventId={event.id}
-              onSubmitted={(newRiskAssessment) => {
-                const newEvent = createNewEventObject(event, newRiskAssessment);
+              onSubmitted={(newEsi) => {
+                const newEvent = createNewEventObject(event, newEsi);
                 eventUpdated(newEvent);
                 closeModal();
               }}
@@ -308,7 +298,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   return {
     formTeamAction,
-    finishRiskAssessment,
+    finishEsi,
     registerVisitAction,
     individualTrainingAction,
     declareShipmentAction,

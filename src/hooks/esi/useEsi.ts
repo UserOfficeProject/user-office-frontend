@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { useDataApi } from 'hooks/common/useDataApi';
+import { EsiWithQuestionary } from 'models/questionary/esi/EsiWithQuestionary';
 
-import { RiskAssessment } from './../../generated/sdk';
-
-export function useRiskAssessment(riskAssessmentId: number) {
-  const [riskAssessment, setRiskAssessment] = useState<RiskAssessment | null>(
-    null
-  );
+export function useEsi(esiId: number) {
+  const [esi, setEsi] = useState<EsiWithQuestionary | null>(null);
   const [loading, setLoading] = useState(true);
 
   const api = useDataApi();
@@ -15,16 +12,16 @@ export function useRiskAssessment(riskAssessmentId: number) {
   useEffect(() => {
     let cancelled = false;
 
-    if (riskAssessmentId) {
+    if (esiId) {
       setLoading(true);
       api()
-        .getRiskAssessment({ riskAssessmentId })
+        .getEsi({ esiId })
         .then((data) => {
           if (cancelled) {
             return;
           }
 
-          setRiskAssessment(data.riskAssessment as RiskAssessment);
+          setEsi(data.esi);
           setLoading(false);
         });
     }
@@ -32,7 +29,7 @@ export function useRiskAssessment(riskAssessmentId: number) {
     return () => {
       cancelled = true;
     };
-  }, [riskAssessmentId, api]);
+  }, [esiId, api]);
 
-  return { loading, riskAssessment, setRiskAssessment };
+  return { loading, esi, setEsi };
 }

@@ -10,12 +10,11 @@ import {
 import QuestionaryDetails, {
   TableRowData,
 } from 'components/questionary/QuestionaryDetails';
-import { RiskAssessmentStatus } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import { RiskAssessmentContextType } from './RiskAssessmentContainer';
+import { EsiContextType } from './EsiContainer';
 
 const useStyles = makeStyles(() => ({
   sampleList: {
@@ -24,24 +23,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type RiskAssessmentReviewProps = {
+type EsiReviewProps = {
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
 
-function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
+function EsiReview({ confirm }: EsiReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const classes = useStyles();
 
-  const { state, dispatch } = useContext(
-    QuestionaryContext
-  ) as RiskAssessmentContextType;
+  const { state, dispatch } = useContext(QuestionaryContext) as EsiContextType;
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const isSubmitted =
-    state.riskAssessment.status === RiskAssessmentStatus.SUBMITTED;
+  const isSubmitted = state.esi.isSubmitted;
 
   const additionalDetails: TableRowData[] = [
     { label: 'Status', value: isSubmitted ? 'Submitted' : 'Draft' },
@@ -49,7 +45,7 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
       label: 'Samples',
       value: (
         <ul className={classes.sampleList}>
-          {state.riskAssessment.samples.map((sample) => (
+          {state.esi.samples.map((sample) => (
             <li key={sample.id}>{sample.title}</li>
           ))}
         </ul>
@@ -60,7 +56,7 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
   return (
     <>
       <QuestionaryDetails
-        questionaryId={state.riskAssessment.questionary.questionaryId}
+        questionaryId={state.esi.questionary.questionaryId}
         additionalDetails={additionalDetails}
         title="Risk assessment information"
       />
@@ -69,33 +65,33 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
           onClick={() =>
             confirm(
               async () => {
-                const result = await api().updateRiskAssessment({
-                  riskAssessmentId: state.riskAssessment.riskAssessmentId,
-                  status: RiskAssessmentStatus.SUBMITTED,
+                const result = await api().updateEsi({
+                  esiId: state.esi.id,
+                  isSubmitted: true,
                 });
-                if (!result.updateRiskAssessment.riskAssessment) {
+                if (!result.updateEsi.esi) {
                   return;
                 }
                 dispatch({
-                  type: 'RISK_ASSESSMENT_MODIFIED',
-                  assessment: result.updateRiskAssessment.riskAssessment,
+                  type: 'ESI_MODIFIED',
+                  esi: result.updateEsi.esi,
                 });
                 dispatch({
-                  type: 'RISK_ASSESSMENT_SUBMITTED',
-                  assessment: result.updateRiskAssessment.riskAssessment,
+                  type: 'ESI_SUBMITTED',
+                  esi: result.updateEsi.esi,
                 });
               },
               {
                 title: 'Confirmation',
                 description:
-                  'I am aware that no further edits can be done after riskAssessment submission.',
+                  'I am aware that no further edits can be done after esi submission.',
               }
             )()
           }
           disabled={isSubmitted}
           variant="contained"
           color="primary"
-          data-cy="submit-riskAssessment-button"
+          data-cy="submit-esi-button"
         >
           {isSubmitted ? '✔ Submitted' : 'Submit'}
         </NavigButton>
@@ -104,4 +100,4 @@ function RiskAssessmentReview({ confirm }: RiskAssessmentReviewProps) {
   );
 }
 
-export default withConfirm(RiskAssessmentReview);
+export default withConfirm(EsiReview);

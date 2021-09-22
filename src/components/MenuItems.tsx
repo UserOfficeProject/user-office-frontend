@@ -32,9 +32,9 @@ import { Call, FeatureId, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
 import CommentQuestionIcon from './common/icons/CommentQuestionIcon';
+import EsiIcon from './common/icons/EsiIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
 import ProposalWorkflowIcon from './common/icons/ProposalWorkflowIcon';
-import RiskAssessmentIcon from './common/icons/RiskAssessmentIcon';
 import ScienceIcon from './common/icons/ScienceIcon';
 
 type MenuItemsProps = {
@@ -203,9 +203,9 @@ const TemplateMenuListItem = () => {
         </Tooltip>
         {isRiskAssessmentFeatureEnabled && (
           <Tooltip title="Experiment safety user input">
-            <ListItem component={NavLink} to="/RiskAssessmentTemplates" button>
+            <ListItem component={NavLink} to="/EsiTemplates" button>
               <ListItemIcon>
-                <RiskAssessmentIcon />
+                <EsiIcon />
               </ListItemIcon>
               <ListItemText primary="Proposal ESI" title="Proposal ESI" />
             </ListItem>

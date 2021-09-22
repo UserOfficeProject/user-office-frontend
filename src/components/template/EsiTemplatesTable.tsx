@@ -7,10 +7,9 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
 import withMarkTemplateAsActiveAction from './withMarkTemplateAsActiveAction';
 
-type RiskAssessmentTemplateRowDataType = TemplateRowDataType &
-  Record<string, unknown>;
+type EsiTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
 
-type RiskAssessmentTemplatesTableProps = {
+type EsiTemplatesTableProps = {
   dataProvider: () => Promise<
     Pick<
       Template,
@@ -20,13 +19,11 @@ type RiskAssessmentTemplatesTableProps = {
   confirm: WithConfirmType;
 };
 
-function RiskAssessmentTemplatesTable(
-  props: RiskAssessmentTemplatesTableProps
-) {
-  const columns: Column<RiskAssessmentTemplateRowDataType>[] = [
+function EsiTemplatesTable(props: EsiTemplatesTableProps) {
+  const columns: Column<EsiTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
-    { title: '# Risk assessments', field: 'questionaryCount' },
+    { title: '# Proposal ESIs', field: 'questionaryCount' },
   ];
 
   const Table = withMarkTemplateAsActiveAction(TemplatesTable);
@@ -44,4 +41,4 @@ function RiskAssessmentTemplatesTable(
   );
 }
 
-export default withConfirm(RiskAssessmentTemplatesTable);
+export default withConfirm(EsiTemplatesTable);

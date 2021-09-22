@@ -2,7 +2,7 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import React from 'react';
 
 // NOTE: The icon is taken from: https://materialdesignicons.com/
-const RiskAssessmentIcon: React.FC = (props) => {
+const EsiIcon: React.FC = (props) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -13,4 +13,4 @@ const RiskAssessmentIcon: React.FC = (props) => {
   );
 };
 
-export default RiskAssessmentIcon;
+export default EsiIcon;

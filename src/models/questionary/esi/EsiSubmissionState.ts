@@ -6,12 +6,12 @@ import {
   QuestionarySubmissionState,
   WizardStep,
 } from '../QuestionarySubmissionState';
-import { RiskAssessmentWithQuestionary } from './RiskAssessmentWithQuestionary';
+import { EsiWithQuestionary } from './EsiWithQuestionary';
 
-export class RiskAssessmentSubmissionState extends QuestionarySubmissionState {
+export class EsiSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(
-    public riskAssessment: RiskAssessmentWithQuestionary,
+    public esi: EsiWithQuestionary,
     stepIndex: number,
     isDirty: boolean,
     wizardSteps: WizardStep[]
@@ -20,10 +20,10 @@ export class RiskAssessmentSubmissionState extends QuestionarySubmissionState {
   }
 
   get itemWithQuestionary() {
-    return this.riskAssessment;
+    return this.esi;
   }
 
   set itemWithQuestionary(item: { questionary: Questionary }) {
-    this.riskAssessment = { ...this.riskAssessment, ...item };
+    this.esi = { ...this.esi, ...item };
   }
 }

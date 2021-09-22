@@ -45,9 +45,9 @@ import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
 import UnitTablePage from './settings/unitList/UnitTablePage';
+import EsiPage from './template/EsiPage';
 import ProposalTemplates from './template/ProposalTemplates';
 import QuestionsPage from './template/QuestionsPage';
-import RiskAssessmentPage from './template/RiskAssessmentPage';
 import SampleTemplatesPage from './template/SampleTemplates';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
@@ -260,10 +260,7 @@ const Dashboard: React.FC = () => {
             component={ShipmentTemplatesPage}
           />
           <Route path="/VisitTemplates" component={VisitTemplatesPage} />
-          <Route
-            path="/RiskAssessmentTemplates"
-            component={RiskAssessmentPage}
-          />
+          <Route path="/EsiTemplates" component={EsiPage} />
           <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
