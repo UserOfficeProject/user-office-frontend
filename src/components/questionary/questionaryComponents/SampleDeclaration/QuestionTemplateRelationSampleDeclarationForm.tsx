@@ -4,12 +4,17 @@ import Link from '@material-ui/core/Link';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Field } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
-import { default as React, FC } from 'react';
+import { default as React, FC, useContext } from 'react';
 import * as Yup from 'yup';
 
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
-import { SubTemplateConfig, TemplateCategoryId } from 'generated/sdk';
+import { FeatureContext } from 'context/FeatureContextProvider';
+import {
+  FeatureId,
+  SubTemplateConfig,
+  TemplateCategoryId,
+} from 'generated/sdk';
 import { useTemplates } from 'hooks/template/useTemplates';
 
 import QuestionDependencyList from '../QuestionDependencyList';
@@ -26,6 +31,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateR
     category: TemplateCategoryId.SAMPLE_DECLARATION,
     templateIds: templateId ? [templateId] : null,
   });
+  const { features } = useContext(FeatureContext);
 
   if (!templates) {
     return null;
@@ -113,10 +119,46 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateR
                   </MenuItem>
                 )}
               </Field>
-              <Link href="/SampleDeclarationTemplates/" target="blank">
+              <Link
+                href="/SampleDeclarationTemplates/"
+                target="blank"
+                style={{ textAlign: 'right' }}
+              >
                 View all templates
               </Link>
             </FormControl>
+
+            {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
+              <FormControl fullWidth>
+                <InputLabel htmlFor="config.esiTemplateId">
+                  ESI template name
+                </InputLabel>
+                <Field
+                  name="config.esiTemplateId"
+                  id="config.esiTemplateId"
+                  type="text"
+                  component={Select}
+                  data-cy="esi-template-id"
+                >
+                  {templates.length ? (
+                    templates.map((template) => {
+                      return (
+                        <MenuItem
+                          value={template.templateId}
+                          key={template.templateId}
+                        >
+                          {template.name}
+                        </MenuItem>
+                      );
+                    })
+                  ) : (
+                    <MenuItem value="noTemplates" key="noTemplates" disabled>
+                      No active templates
+                    </MenuItem>
+                  )}
+                </Field>
+              </FormControl>
+            )}
           </TitledContainer>
 
           <TitledContainer label="Dependencies">

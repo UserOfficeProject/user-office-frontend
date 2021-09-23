@@ -56,6 +56,17 @@ fragment fieldConfig on FieldConfig {
     titlePlaceholder
   }
 
+  ... on SampleDeclarationConfig {
+    addEntryButtonLabel
+    minEntries
+    maxEntries
+    templateId
+    esiTemplateId
+    templateCategory
+    required
+    small_label
+  }
+
   ... on SubTemplateConfig {
     addEntryButtonLabel
     minEntries

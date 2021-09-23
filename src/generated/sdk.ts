@@ -516,7 +516,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -2633,6 +2633,18 @@ export type Sample = {
 export type SampleBasisConfig = {
   __typename?: 'SampleBasisConfig';
   titlePlaceholder: Scalars['String'];
+};
+
+export type SampleDeclarationConfig = {
+  __typename?: 'SampleDeclarationConfig';
+  minEntries: Maybe<Scalars['Int']>;
+  maxEntries: Maybe<Scalars['Int']>;
+  templateId: Maybe<Scalars['Int']>;
+  templateCategory: Scalars['String'];
+  addEntryButtonLabel: Scalars['String'];
+  small_label: Scalars['String'];
+  required: Scalars['Boolean'];
+  esiTemplateId: Maybe<Scalars['Int']>;
 };
 
 export type SampleExperimentSafetyInput = {
@@ -5041,6 +5053,9 @@ export type AnswerFragment = (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
   ) | (
+    { __typename?: 'SampleDeclarationConfig' }
+    & FieldConfigSampleDeclarationConfigFragment
+  ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
   ) | (
@@ -6230,6 +6245,11 @@ type FieldConfigSampleBasisConfigFragment = (
   & Pick<SampleBasisConfig, 'titlePlaceholder'>
 );
 
+type FieldConfigSampleDeclarationConfigFragment = (
+  { __typename?: 'SampleDeclarationConfig' }
+  & Pick<SampleDeclarationConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'esiTemplateId' | 'templateCategory' | 'required' | 'small_label'>
+);
+
 type FieldConfigSubTemplateConfigFragment = (
   { __typename?: 'SubTemplateConfig' }
   & Pick<SubTemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
@@ -6270,7 +6290,7 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6296,6 +6316,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
+  ) | (
+    { __typename?: 'SampleDeclarationConfig' }
+    & FieldConfigSampleDeclarationConfigFragment
   ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
@@ -6350,6 +6373,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'SampleBasisConfig' }
     & FieldConfigSampleBasisConfigFragment
+  ) | (
+    { __typename?: 'SampleDeclarationConfig' }
+    & FieldConfigSampleDeclarationConfigFragment
   ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
@@ -6490,6 +6516,9 @@ export type GetQuestionsQuery = (
     ) | (
       { __typename?: 'SampleBasisConfig' }
       & FieldConfigSampleBasisConfigFragment
+    ) | (
+      { __typename?: 'SampleDeclarationConfig' }
+      & FieldConfigSampleDeclarationConfigFragment
     ) | (
       { __typename?: 'SubTemplateConfig' }
       & FieldConfigSubTemplateConfigFragment
@@ -7637,6 +7666,16 @@ export const FieldConfigFragmentDoc = gql`
   }
   ... on SampleBasisConfig {
     titlePlaceholder
+  }
+  ... on SampleDeclarationConfig {
+    addEntryButtonLabel
+    minEntries
+    maxEntries
+    templateId
+    esiTemplateId
+    templateCategory
+    required
+    small_label
   }
   ... on SubTemplateConfig {
     addEntryButtonLabel

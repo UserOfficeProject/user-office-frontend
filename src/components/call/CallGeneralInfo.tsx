@@ -280,7 +280,7 @@ const CallGeneralInfo: React.FC<{
         required
       />
 
-      {features.get(FeatureId.RISK_ASSESSMENT) && (
+      {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
         <FormikDropdown
           name="proposalWorkflowId"
           label="Proposal workflow"
