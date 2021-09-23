@@ -39,7 +39,7 @@ mutation createCall(
       referenceNumberFormat: $referenceNumberFormat
       proposalWorkflowId: $proposalWorkflowId
       templateId: $templateId
-      esiTemplateId: $templateId
+      esiTemplateId: $esiTemplateId
       title: $title
       description: $description
     }

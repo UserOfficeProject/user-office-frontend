@@ -163,7 +163,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         } else {
           openModal(
             <CreateEsi
-              proposalPk={event.proposal.primaryKey}
+              visitId={event.visit!.id}
               onSubmitted={(newEsi) => {
                 const newEvent = createNewEventObject(event, newEsi);
                 eventUpdated(newEvent);

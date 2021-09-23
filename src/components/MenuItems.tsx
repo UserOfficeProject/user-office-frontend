@@ -32,7 +32,6 @@ import { Call, FeatureId, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
 import CommentQuestionIcon from './common/icons/CommentQuestionIcon';
-import EsiIcon from './common/icons/EsiIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
 import ProposalWorkflowIcon from './common/icons/ProposalWorkflowIcon';
 import ScienceIcon from './common/icons/ScienceIcon';
@@ -132,9 +131,6 @@ const TemplateMenuListItem = () => {
   const context = useContext(FeatureContext);
   const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
     ?.isEnabled;
-  const isRiskAssessmentFeatureEnabled = !!context.features.get(
-    FeatureId.RISK_ASSESSMENT
-  )?.isEnabled;
   function toggleExpand() {
     setIsExpanded(!isExpanded);
   }
@@ -201,16 +197,6 @@ const TemplateMenuListItem = () => {
             <ListItemText primary="Visit registration" />
           </ListItem>
         </Tooltip>
-        {isRiskAssessmentFeatureEnabled && (
-          <Tooltip title="Experiment safety user input">
-            <ListItem component={NavLink} to="/EsiTemplates" button>
-              <ListItemIcon>
-                <EsiIcon />
-              </ListItemIcon>
-              <ListItemText primary="Proposal ESI" title="Proposal ESI" />
-            </ListItem>
-          </Tooltip>
-        )}
       </Collapse>
     </>
   );

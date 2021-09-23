@@ -6,6 +6,6 @@ export class EsiWizardStep extends QuestionaryWizardStep {
   isItemWithQuestionaryEditable(state: QuestionarySubmissionState): boolean {
     const registrationState = state as EsiSubmissionState;
 
-    return registrationState.esi.isSubmitted;
+    return registrationState.esi.isSubmitted === false;
   }
 }

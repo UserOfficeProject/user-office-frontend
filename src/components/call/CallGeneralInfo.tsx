@@ -266,33 +266,33 @@ const CallGeneralInfo: React.FC<{
         InputProps={{ 'data-cy': 'call-template' }}
         required
       />
-
-      <FormikDropdown
-        name="esiTemplateId"
-        label="ESI template"
-        loading={loadingTemplates}
-        noOptionsText="No templates"
-        items={templates.map((template) => ({
-          text: template.name,
-          value: template.templateId,
-        }))}
-        InputProps={{ 'data-cy': 'esi-template' }}
-        required
-      />
-
       {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
         <FormikDropdown
-          name="proposalWorkflowId"
-          label="Proposal workflow"
-          loading={loadingProposalWorkflows}
-          noOptionsText="No proposal workflows"
-          items={proposalWorkflows.length > 0 ? proposalWorkflowOptions : []}
-          InputProps={{
-            'data-cy': 'call-workflow',
-          }}
+          name="esiTemplateId"
+          label="ESI template"
+          loading={loadingTemplates}
+          noOptionsText="No templates"
+          items={templates.map((template) => ({
+            text: template.name,
+            value: template.templateId,
+          }))}
+          InputProps={{ 'data-cy': 'esi-template' }}
           required
         />
       )}
+
+      <FormikDropdown
+        name="proposalWorkflowId"
+        label="Proposal workflow"
+        loading={loadingProposalWorkflows}
+        noOptionsText="No proposal workflows"
+        items={proposalWorkflows.length > 0 ? proposalWorkflowOptions : []}
+        InputProps={{
+          'data-cy': 'call-workflow',
+        }}
+        required
+      />
+
       <FormikDropdown
         name="allocationTimeUnit"
         label="Allocation time unit"

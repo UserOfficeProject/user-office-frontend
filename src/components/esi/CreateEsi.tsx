@@ -5,11 +5,13 @@ import { QuestionaryStep } from 'generated/sdk';
 import { useCallData } from 'hooks/call/useCallData';
 import { useProposalData } from 'hooks/proposal/useProposalData';
 import { useBlankQuestionaryStepsData } from 'hooks/questionary/useBlankQuestionaryStepsData';
+import { useVisit } from 'hooks/visit/useVisit';
 import { EsiWithQuestionary } from 'models/questionary/esi/EsiWithQuestionary';
 
 import EsiContainer from './EsiContainer';
 
 function createEsiStub(
+  visitId: number,
   templateId: number,
   questionarySteps: QuestionaryStep[]
 ): EsiWithQuestionary {
@@ -19,7 +21,7 @@ function createEsiStub(
     created: new Date(),
     creatorId: 0,
     questionaryId: 0,
-    visitId: 0,
+    visitId: visitId,
     samples: [],
     questionary: {
       isCompleted: false,
@@ -35,28 +37,33 @@ interface CreateEsiProps {
   onCreate?: (esi: EsiWithQuestionary) => void;
   onUpdate?: (esi: EsiWithQuestionary) => void;
   onSubmitted?: (esi: EsiWithQuestionary) => void;
-  proposalPk: number;
+  visitId: number;
 }
 function CreateEsi({
   onCreate,
   onUpdate,
   onSubmitted,
-  proposalPk,
+  visitId,
 }: CreateEsiProps) {
   const [blankEsi, setBlankEsi] = useState<EsiWithQuestionary>();
-  const { proposalData } = useProposalData(proposalPk);
+  const { visit } = useVisit(visitId);
+  const { proposalData } = useProposalData(visit?.proposalPk);
   const { call } = useCallData(proposalData?.callId);
   const { questionarySteps } = useBlankQuestionaryStepsData(
     call?.esiTemplateId
   );
 
   useEffect(() => {
-    if (!call?.esiTemplateId || !questionarySteps) {
+    if (!call?.esiTemplateId || !questionarySteps || !visitId) {
       return;
     }
-    const blankEsi = createEsiStub(call.esiTemplateId, questionarySteps);
+    const blankEsi = createEsiStub(
+      visitId,
+      call.esiTemplateId,
+      questionarySteps
+    );
     setBlankEsi(blankEsi);
-  }, [setBlankEsi, questionarySteps, call?.esiTemplateId]);
+  }, [setBlankEsi, questionarySteps, call?.esiTemplateId, visitId]);
 
   if (!blankEsi) {
     return <UOLoader />;
