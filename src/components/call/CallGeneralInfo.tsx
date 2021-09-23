@@ -25,12 +25,14 @@ import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   AllocationTimeUnits,
   CreateCallMutationVariables,
+  FeatureId,
   GetProposalTemplatesQuery,
   ProposalWorkflow,
   UpdateCallMutationVariables,
@@ -47,6 +49,8 @@ const CallGeneralInfo: React.FC<{
   loadingTemplates,
   templates,
 }) => {
+  const { features } = useContext(FeatureContext);
+
   const proposalWorkflowOptions = proposalWorkflows.map((proposalWorkflow) => ({
     text: proposalWorkflow.name,
     value: proposalWorkflow.id,
@@ -262,17 +266,33 @@ const CallGeneralInfo: React.FC<{
         InputProps={{ 'data-cy': 'call-template' }}
         required
       />
+
       <FormikDropdown
-        name="proposalWorkflowId"
-        label="Proposal workflow"
-        loading={loadingProposalWorkflows}
-        noOptionsText="No proposal workflows"
-        items={proposalWorkflows.length > 0 ? proposalWorkflowOptions : []}
-        InputProps={{
-          'data-cy': 'call-workflow',
-        }}
+        name="esiTemplateId"
+        label="ESI template"
+        loading={loadingTemplates}
+        noOptionsText="No templates"
+        items={templates.map((template) => ({
+          text: template.name,
+          value: template.templateId,
+        }))}
+        InputProps={{ 'data-cy': 'esi-template' }}
         required
       />
+
+      {features.get(FeatureId.RISK_ASSESSMENT) && (
+        <FormikDropdown
+          name="proposalWorkflowId"
+          label="Proposal workflow"
+          loading={loadingProposalWorkflows}
+          noOptionsText="No proposal workflows"
+          items={proposalWorkflows.length > 0 ? proposalWorkflowOptions : []}
+          InputProps={{
+            'data-cy': 'call-workflow',
+          }}
+          required
+        />
+      )}
       <FormikDropdown
         name="allocationTimeUnit"
         label="Allocation time unit"

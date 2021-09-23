@@ -175,6 +175,7 @@ export type Call = {
   proposalWorkflowId: Maybe<Scalars['Int']>;
   allocationTimeUnit: AllocationTimeUnits;
   templateId: Scalars['Int'];
+  esiTemplateId: Maybe<Scalars['Int']>;
   title: Maybe<Scalars['String']>;
   description: Maybe<Scalars['String']>;
   instruments: Array<InstrumentWithAvailabilityTime>;
@@ -244,6 +245,7 @@ export type CreateCallInput = {
   allocationTimeUnit: AllocationTimeUnits;
   proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
+  esiTemplateId?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 };
@@ -3047,6 +3049,7 @@ export type UpdateCallInput = {
   callReviewEnded?: Maybe<Scalars['Int']>;
   callSEPReviewEnded?: Maybe<Scalars['Int']>;
   templateId: Scalars['Int'];
+  esiTemplateId?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 };
@@ -4030,6 +4033,7 @@ export type CreateCallMutationVariables = Exact<{
   referenceNumberFormat?: Maybe<Scalars['String']>;
   proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
+  esiTemplateId?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 }>;
@@ -4071,7 +4075,7 @@ export type DeleteCallMutation = (
 
 export type CallFragment = (
   { __typename?: 'Call' }
-  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'referenceNumberFormat' | 'proposalWorkflowId' | 'templateId' | 'allocationTimeUnit' | 'proposalCount' | 'title' | 'description'>
+  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'referenceNumberFormat' | 'proposalWorkflowId' | 'templateId' | 'esiTemplateId' | 'allocationTimeUnit' | 'proposalCount' | 'title' | 'description'>
   & { instruments: Array<(
     { __typename?: 'InstrumentWithAvailabilityTime' }
     & Pick<InstrumentWithAvailabilityTime, 'id' | 'name' | 'shortCode' | 'description' | 'availabilityTime' | 'submitted'>
@@ -4166,6 +4170,7 @@ export type UpdateCallMutationVariables = Exact<{
   referenceNumberFormat?: Maybe<Scalars['String']>;
   proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
+  esiTemplateId?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 }>;
@@ -8517,9 +8522,9 @@ export const AssignInstrumentsToCallDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateCallDocument = gql`
-    mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $title: String, $description: String) {
+    mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
   createCall(
-    createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, title: $title, description: $description}
+    createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $templateId, title: $title, description: $description}
   ) {
     rejection {
       ...rejection
@@ -8583,9 +8588,9 @@ export const RemoveAssignedInstrumentFromCallDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateCallDocument = gql`
-    mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $title: String, $description: String) {
+    mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
   updateCall(
-    updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, title: $title, description: $description}
+    updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $esiTemplateId, title: $title, description: $description}
   ) {
     rejection {
       ...rejection
