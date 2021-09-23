@@ -1,13 +1,9 @@
 mutation createTemplate(
-  $categoryId: TemplateCategoryId!
+  $groupId: TemplateGroupId!
   $name: String!
   $description: String
 ) {
-  createTemplate(
-    categoryId: $categoryId
-    name: $name
-    description: $description
-  ) {
+  createTemplate(groupId: $groupId, name: $name, description: $description) {
     template {
       ...templateMetadata
     }

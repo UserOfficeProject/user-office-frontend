@@ -152,13 +152,13 @@ const registry = [
   textInputDefinition,
   sampleDeclarationDefinition,
   proposalBasisDefinition,
+  esiBasisDefinition,
   sampleBasisDefinition,
   intervalDefinition,
   numberInputDefinition,
   shipmentBasisDefinition,
   richTextInputDefinition,
   visitBasisDefinition,
-  esiBasisDefinition,
 ];
 
 Object.freeze(registry);

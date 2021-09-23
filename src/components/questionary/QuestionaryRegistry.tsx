@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { TemplateCategoryId } from 'generated/sdk';
+import { TemplateGroupId } from 'generated/sdk';
 
 import { StepDisplayElementFactory } from './DefaultStepDisplayElementFactory';
 import { esiQuestionaryDefinition } from './questionaries/esi/EsiQuestionaryDefinition';
@@ -13,7 +13,7 @@ export interface QuestionaryDefinition {
   /**
    * The enum value from TemplateCategoryId
    */
-  readonly categoryId: TemplateCategoryId;
+  readonly groupId: TemplateGroupId;
 
   /**
    * displayElementFactory
@@ -37,14 +37,14 @@ const registry = [
 Object.freeze(registry);
 
 const questionaryDefinitionMap = new Map<
-  TemplateCategoryId,
+  TemplateGroupId,
   QuestionaryDefinition
 >();
 registry.forEach((definition) =>
-  questionaryDefinitionMap.set(definition.categoryId, definition)
+  questionaryDefinitionMap.set(definition.groupId, definition)
 );
 
-export function getQuestionaryDefinition(id: TemplateCategoryId) {
+export function getQuestionaryDefinition(id: TemplateGroupId) {
   const definition = questionaryDefinitionMap.get(id);
   if (!definition) {
     throw new Error(`Definition for ${id} was not found`);

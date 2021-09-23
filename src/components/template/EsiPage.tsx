@@ -2,7 +2,7 @@ import Container from '@material-ui/core/Container';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
-import { TemplateCategoryId } from 'generated/sdk';
+import { TemplateGroupId } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 import EsiTemplatesTable from './EsiTemplatesTable';
@@ -19,7 +19,7 @@ export default function EsiPage() {
               .getTemplates({
                 filter: {
                   isArchived: false,
-                  category: TemplateCategoryId.PROPOSAL_ESI,
+                  group: TemplateGroupId.PROPOSAL_ESI,
                 },
               })
               .then((data) => data.templates || [])
@@ -31,7 +31,7 @@ export default function EsiPage() {
               .getTemplates({
                 filter: {
                   isArchived: true,
-                  category: TemplateCategoryId.PROPOSAL_ESI,
+                  group: TemplateGroupId.PROPOSAL_ESI,
                 },
               })
               .then((data) => data.templates || [])

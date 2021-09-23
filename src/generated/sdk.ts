@@ -662,8 +662,6 @@ export type Mutation = {
   updateCall: CallResponseWrap;
   assignInstrumentsToCall: CallResponseWrap;
   removeAssignedInstrumentFromCall: CallResponseWrap;
-  createEsi: EsiResponseWrap;
-  updateEsi: EsiResponseWrap;
   changeProposalsStatus: SuccessResponseWrap;
   assignProposalsToInstrument: SuccessResponseWrap;
   removeProposalsFromInstrument: SuccessResponseWrap;
@@ -673,6 +671,8 @@ export type Mutation = {
   updateInstrument: InstrumentResponseWrap;
   setInstrumentAvailabilityTime: SuccessResponseWrap;
   submitInstrument: SuccessResponseWrap;
+  createEsi: EsiResponseWrap;
+  updateEsi: EsiResponseWrap;
   administrationProposal: ProposalResponseWrap;
   cloneProposals: ProposalsResponseWrap;
   updateProposal: ProposalResponseWrap;
@@ -838,17 +838,6 @@ export type MutationRemoveAssignedInstrumentFromCallArgs = {
 };
 
 
-export type MutationCreateEsiArgs = {
-  visitId: Scalars['Int'];
-};
-
-
-export type MutationUpdateEsiArgs = {
-  esiId: Scalars['Int'];
-  isSubmitted?: Maybe<Scalars['Boolean']>;
-};
-
-
 export type MutationChangeProposalsStatusArgs = {
   changeProposalsStatusInput: ChangeProposalsStatusInput;
 };
@@ -905,6 +894,17 @@ export type MutationSubmitInstrumentArgs = {
   instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
   sepId: Scalars['Int'];
+};
+
+
+export type MutationCreateEsiArgs = {
+  visitId: Scalars['Int'];
+};
+
+
+export type MutationUpdateEsiArgs = {
+  esiId: Scalars['Int'];
+  isSubmitted?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1144,7 +1144,7 @@ export type MutationCreateQuestionTemplateRelationArgs = {
 
 
 export type MutationCreateTemplateArgs = {
-  categoryId: TemplateCategoryId;
+  groupId: TemplateGroupId;
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
 };
@@ -1164,7 +1164,7 @@ export type MutationDeleteQuestionTemplateRelationArgs = {
 
 
 export type MutationSetActiveTemplateArgs = {
-  templateCategoryId: TemplateCategoryId;
+  templateGroupId: TemplateGroupId;
   templateId: Scalars['Int'];
 };
 
@@ -1836,13 +1836,14 @@ export type ProposalStatusResponseWrap = {
 export type ProposalTemplate = {
   __typename?: 'ProposalTemplate';
   templateId: Scalars['Int'];
-  categoryId: TemplateCategoryId;
+  groupId: TemplateGroupId;
   name: Scalars['String'];
   description: Maybe<Scalars['String']>;
   isArchived: Scalars['Boolean'];
   steps: Array<TemplateStep>;
   complementaryQuestions: Array<Question>;
   questionaryCount: Scalars['Int'];
+  group: TemplateGroup;
   callCount: Scalars['Int'];
 };
 
@@ -2078,7 +2079,7 @@ export type QueryVisitsArgs = {
 
 
 export type QueryActiveTemplateIdArgs = {
-  templateCategoryId: TemplateCategoryId;
+  templateGroupId: TemplateGroupId;
 };
 
 
@@ -2902,13 +2903,14 @@ export enum TechnicalReviewStatus {
 export type Template = {
   __typename?: 'Template';
   templateId: Scalars['Int'];
-  categoryId: TemplateCategoryId;
+  groupId: TemplateGroupId;
   name: Scalars['String'];
   description: Maybe<Scalars['String']>;
   isArchived: Scalars['Boolean'];
   steps: Array<TemplateStep>;
   complementaryQuestions: Array<Question>;
   questionaryCount: Scalars['Int'];
+  group: TemplateGroup;
 };
 
 export type TemplateCategory = {
@@ -2921,9 +2923,22 @@ export enum TemplateCategoryId {
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
   SHIPMENT_DECLARATION = 'SHIPMENT_DECLARATION',
-  VISIT_REGISTRATION = 'VISIT_REGISTRATION',
+  VISIT_REGISTRATION = 'VISIT_REGISTRATION'
+}
+
+export type TemplateGroup = {
+  __typename?: 'TemplateGroup';
+  groupId: TemplateGroupId;
+  categoryId: TemplateCategoryId;
+};
+
+export enum TemplateGroupId {
+  PROPOSAL = 'PROPOSAL',
   PROPOSAL_ESI = 'PROPOSAL_ESI',
-  SAMPLE_ESI = 'SAMPLE_ESI'
+  SAMPLE = 'SAMPLE',
+  SAMPLE_ESI = 'SAMPLE_ESI',
+  SHIPMENT = 'SHIPMENT',
+  VISIT_REGISTRATION = 'VISIT_REGISTRATION'
 }
 
 export type TemplateResponseWrap = {
@@ -2940,7 +2955,7 @@ export type TemplateStep = {
 
 export type TemplatesFilter = {
   isArchived?: Maybe<Scalars['Boolean']>;
-  category?: Maybe<TemplateCategoryId>;
+  group?: Maybe<TemplateGroupId>;
   templateIds?: Maybe<Array<Scalars['Int']>>;
 };
 
@@ -5921,7 +5936,7 @@ export type GetShipmentsQuery = (
 );
 
 export type SetActiveTemplateMutationVariables = Exact<{
-  templateCategoryId: TemplateCategoryId;
+  templateGroupId: TemplateGroupId;
   templateId: Scalars['Int'];
 }>;
 
@@ -6003,27 +6018,6 @@ export type CloneTemplateMutation = (
   ) }
 );
 
-export type CreateTemplateMutationVariables = Exact<{
-  categoryId: TemplateCategoryId;
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-}>;
-
-
-export type CreateTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { createTemplate: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateMetadataFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
-
 export type CreateQuestionMutationVariables = Exact<{
   categoryId: TemplateCategoryId;
   dataType: DataType;
@@ -6059,6 +6053,27 @@ export type CreateQuestionTemplateRelationMutation = (
     & { template: Maybe<(
       { __typename?: 'Template' }
       & TemplateFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
+export type CreateTemplateMutationVariables = Exact<{
+  groupId: TemplateGroupId;
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreateTemplateMutation = (
+  { __typename?: 'Mutation' }
+  & { createTemplate: (
+    { __typename?: 'TemplateResponseWrap' }
+    & { template: Maybe<(
+      { __typename?: 'Template' }
+      & TemplateMetadataFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
       & RejectionFragment
@@ -6356,7 +6371,7 @@ export type QuestionTemplateRelationFragment = (
 
 export type TemplateFragment = (
   { __typename?: 'Template' }
-  & Pick<Template, 'isArchived' | 'questionaryCount' | 'templateId' | 'categoryId' | 'name' | 'description'>
+  & Pick<Template, 'isArchived' | 'questionaryCount' | 'templateId' | 'groupId' | 'name' | 'description'>
   & { steps: Array<(
     { __typename?: 'TemplateStep' }
     & { topic: (
@@ -6369,7 +6384,10 @@ export type TemplateFragment = (
   )>, complementaryQuestions: Array<(
     { __typename?: 'Question' }
     & QuestionFragment
-  )> }
+  )>, group: (
+    { __typename?: 'TemplateGroup' }
+    & Pick<TemplateGroup, 'groupId' | 'categoryId'>
+  ) }
 );
 
 export type TemplateMetadataFragment = (
@@ -6394,7 +6412,7 @@ export type TopicFragment = (
 );
 
 export type GetActiveTemplateIdQueryVariables = Exact<{
-  templateCategoryId: TemplateCategoryId;
+  templateGroupId: TemplateGroupId;
 }>;
 
 
@@ -7790,11 +7808,15 @@ export const TemplateFragmentDoc = gql`
   isArchived
   questionaryCount
   templateId
-  categoryId
+  groupId
   name
   description
   complementaryQuestions {
     ...question
+  }
+  group {
+    groupId
+    categoryId
   }
 }
     ${TopicFragmentDoc}
@@ -9895,11 +9917,8 @@ export const GetShipmentsDocument = gql`
 }
     ${ShipmentFragmentDoc}`;
 export const SetActiveTemplateDocument = gql`
-    mutation setActiveTemplate($templateCategoryId: TemplateCategoryId!, $templateId: Int!) {
-  setActiveTemplate(
-    templateId: $templateId
-    templateCategoryId: $templateCategoryId
-  ) {
+    mutation setActiveTemplate($templateGroupId: TemplateGroupId!, $templateId: Int!) {
+  setActiveTemplate(templateId: $templateId, templateGroupId: $templateGroupId) {
     isSuccess
     rejection {
       ...rejection
@@ -9956,19 +9975,6 @@ export const CloneTemplateDocument = gql`
 }
     ${TemplateMetadataFragmentDoc}
 ${RejectionFragmentDoc}`;
-export const CreateTemplateDocument = gql`
-    mutation createTemplate($categoryId: TemplateCategoryId!, $name: String!, $description: String) {
-  createTemplate(categoryId: $categoryId, name: $name, description: $description) {
-    template {
-      ...templateMetadata
-    }
-    rejection {
-      ...rejection
-    }
-  }
-}
-    ${TemplateMetadataFragmentDoc}
-${RejectionFragmentDoc}`;
 export const CreateQuestionDocument = gql`
     mutation createQuestion($categoryId: TemplateCategoryId!, $dataType: DataType!) {
   createQuestion(categoryId: $categoryId, dataType: $dataType) {
@@ -9999,6 +10005,19 @@ export const CreateQuestionTemplateRelationDocument = gql`
   }
 }
     ${TemplateFragmentDoc}
+${RejectionFragmentDoc}`;
+export const CreateTemplateDocument = gql`
+    mutation createTemplate($groupId: TemplateGroupId!, $name: String!, $description: String) {
+  createTemplate(groupId: $groupId, name: $name, description: $description) {
+    template {
+      ...templateMetadata
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${TemplateMetadataFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateTopicDocument = gql`
     mutation createTopic($templateId: Int!, $sortOrder: Int!) {
@@ -10062,8 +10081,8 @@ export const DeleteTopicDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const GetActiveTemplateIdDocument = gql`
-    query getActiveTemplateId($templateCategoryId: TemplateCategoryId!) {
-  activeTemplateId(templateCategoryId: $templateCategoryId)
+    query getActiveTemplateId($templateGroupId: TemplateGroupId!) {
+  activeTemplateId(templateGroupId: $templateGroupId)
 }
     `;
 export const GetIsNaturalKeyPresentDocument = gql`
@@ -11192,14 +11211,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     cloneTemplate(variables: CloneTemplateMutationVariables): Promise<CloneTemplateMutation> {
       return withWrapper(() => client.request<CloneTemplateMutation>(print(CloneTemplateDocument), variables));
     },
-    createTemplate(variables: CreateTemplateMutationVariables): Promise<CreateTemplateMutation> {
-      return withWrapper(() => client.request<CreateTemplateMutation>(print(CreateTemplateDocument), variables));
-    },
     createQuestion(variables: CreateQuestionMutationVariables): Promise<CreateQuestionMutation> {
       return withWrapper(() => client.request<CreateQuestionMutation>(print(CreateQuestionDocument), variables));
     },
     createQuestionTemplateRelation(variables: CreateQuestionTemplateRelationMutationVariables): Promise<CreateQuestionTemplateRelationMutation> {
       return withWrapper(() => client.request<CreateQuestionTemplateRelationMutation>(print(CreateQuestionTemplateRelationDocument), variables));
+    },
+    createTemplate(variables: CreateTemplateMutationVariables): Promise<CreateTemplateMutation> {
+      return withWrapper(() => client.request<CreateTemplateMutation>(print(CreateTemplateDocument), variables));
     },
     createTopic(variables: CreateTopicMutationVariables): Promise<CreateTopicMutation> {
       return withWrapper(() => client.request<CreateTopicMutation>(print(CreateTopicDocument), variables));

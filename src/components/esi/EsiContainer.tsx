@@ -7,7 +7,7 @@ import {
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { TemplateCategoryId } from 'generated/sdk';
+import { TemplateGroupId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { EsiSubmissionState } from 'models/questionary/esi/EsiSubmissionState';
 import { EsiWithQuestionary } from 'models/questionary/esi/EsiWithQuestionary';
@@ -57,7 +57,7 @@ export interface EsiContainerProps {
 export default function EsiContainer(props: EsiContainerProps) {
   const { api } = useDataApiWithFeedback();
 
-  const def = getQuestionaryDefinition(TemplateCategoryId.PROPOSAL_ESI);
+  const def = getQuestionaryDefinition(TemplateGroupId.PROPOSAL_ESI);
 
   const previousInitialEsi = usePrevious(props.esi);
 
