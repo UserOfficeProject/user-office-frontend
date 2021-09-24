@@ -32,6 +32,7 @@ import { Call, FeatureId, UserRole } from 'generated/sdk';
 
 import BoxIcon from './common/icons/BoxIcon';
 import CommentQuestionIcon from './common/icons/CommentQuestionIcon';
+import EsiIcon from './common/icons/EsiIcon';
 import ProposalSettingsIcon from './common/icons/ProposalSettingsIcon';
 import ProposalWorkflowIcon from './common/icons/ProposalWorkflowIcon';
 import ScienceIcon from './common/icons/ScienceIcon';
@@ -122,6 +123,57 @@ const SettingsMenuListItem = () => {
   );
 };
 
+const EsiTemplatesMenuListItem = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <>
+      <Tooltip title="ESI">
+        <ListItem button onClick={() => setIsExpanded(!isExpanded)}>
+          <ListItemIcon>
+            {isExpanded ? (
+              <>
+                <EsiIcon />
+                <ExpandLess fontSize="small" />
+              </>
+            ) : (
+              <>
+                <EsiIcon />
+                <ExpandMore fontSize="small" />
+              </>
+            )}
+          </ListItemIcon>
+          <ListItemText primary="ESI" />
+        </ListItem>
+      </Tooltip>
+
+      <Collapse
+        in={isExpanded}
+        timeout="auto"
+        unmountOnExit
+        style={{ marginLeft: '10px' }}
+      >
+        <Tooltip title="Experiment safety user input">
+          <ListItem component={NavLink} to="/EsiTemplates" button>
+            <ListItemIcon>
+              <DescriptionIcon />
+            </ListItemIcon>
+            <ListItemText primary="Proposal ESI" title="Proposal ESI" />
+          </ListItem>
+        </Tooltip>
+        <Tooltip title="Sample safety user input">
+          <ListItem component={NavLink} to="/SampleEsiTemplates" button>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sample ESI" title="Sample ESI" />
+          </ListItem>
+        </Tooltip>
+      </Collapse>
+    </>
+  );
+};
+
 const TemplateMenuListItem = () => {
   const history = useHistory();
   const shouldExpand =
@@ -131,6 +183,9 @@ const TemplateMenuListItem = () => {
   const context = useContext(FeatureContext);
   const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
     ?.isEnabled;
+  const isRiskAssessmentFeatureEnabled = !!context.features.get(
+    FeatureId.RISK_ASSESSMENT
+  )?.isEnabled;
   function toggleExpand() {
     setIsExpanded(!isExpanded);
   }
@@ -197,6 +252,7 @@ const TemplateMenuListItem = () => {
             <ListItemText primary="Visit registration" />
           </ListItem>
         </Tooltip>
+        {isRiskAssessmentFeatureEnabled && <EsiTemplatesMenuListItem />}
       </Collapse>
     </>
   );
