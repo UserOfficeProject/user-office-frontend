@@ -48,6 +48,7 @@ import UnitTablePage from './settings/unitList/UnitTablePage';
 import EsiPage from './template/EsiPage';
 import ProposalTemplates from './template/ProposalTemplates';
 import QuestionsPage from './template/QuestionsPage';
+import SampleEsiPage from './template/SampleEsiPage';
 import SampleTemplatesPage from './template/SampleTemplates';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
@@ -261,6 +262,7 @@ const Dashboard: React.FC = () => {
           />
           <Route path="/VisitTemplates" component={VisitTemplatesPage} />
           <Route path="/EsiTemplates" component={EsiPage} />
+          <Route path="/SampleEsiTemplates" component={SampleEsiPage} />
           <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
