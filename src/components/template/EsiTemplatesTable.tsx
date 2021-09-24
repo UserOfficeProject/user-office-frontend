@@ -5,8 +5,6 @@ import { Template, TemplateGroupId } from 'generated/sdk';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
-import withMarkTemplateAsActiveAction from './withMarkTemplateAsActiveAction';
-
 type EsiTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
 
 type EsiTemplatesTableProps = {
@@ -26,10 +24,8 @@ function EsiTemplatesTable(props: EsiTemplatesTableProps) {
     { title: '# Proposal ESIs', field: 'questionaryCount' },
   ];
 
-  const Table = withMarkTemplateAsActiveAction(TemplatesTable);
-
   return (
-    <Table
+    <TemplatesTable
       columns={columns}
       templateGroup={TemplateGroupId.PROPOSAL_ESI}
       isRowRemovable={() => {
