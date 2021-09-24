@@ -6,12 +6,12 @@ import {
   QuestionarySubmissionState,
   WizardStep,
 } from '../QuestionarySubmissionState';
-import { EsiWithQuestionary } from './EsiWithQuestionary';
+import { SampleEsiWithQuestionary } from './SampleEsiWithQuestionary';
 
-export class EsiSubmissionState extends QuestionarySubmissionState {
+export class SampleEsiSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(
-    public esi: EsiWithQuestionary,
+    public esi: SampleEsiWithQuestionary,
     stepIndex: number,
     isDirty: boolean,
     wizardSteps: WizardStep[]

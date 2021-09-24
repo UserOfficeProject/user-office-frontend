@@ -9,9 +9,9 @@ import {
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
-import { EsiWithQuestionary } from './esi/EsiWithQuestionary';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from './proposal/ProposalWithQuestionary';
+import { ProposalEsiWithQuestionary } from './proposalEsi/ProposalEsiWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleWithQuestionary } from './sample/SampleWithQuestionary';
 import { ShipmentWithQuestionary } from './shipment/ShipmentWithQuestionary';
@@ -50,10 +50,10 @@ export type Event =
   | { type: 'REGISTRATION_MODIFIED'; visit: Partial<RegistrationWQ> }
   | { type: 'REGISTRATION_SUBMITTED'; visit: Partial<RegistrationWQ> }
   // risk assessment
-  | { type: 'ESI_CREATED'; esi: EsiWithQuestionary }
-  | { type: 'ESI_LOADED'; esi: EsiWithQuestionary }
-  | { type: 'ESI_MODIFIED'; esi: Partial<EsiWithQuestionary> }
-  | { type: 'ESI_SUBMITTED'; esi: Partial<EsiWithQuestionary> };
+  | { type: 'ESI_CREATED'; esi: ProposalEsiWithQuestionary }
+  | { type: 'ESI_LOADED'; esi: ProposalEsiWithQuestionary }
+  | { type: 'ESI_MODIFIED'; esi: Partial<ProposalEsiWithQuestionary> }
+  | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> };
 
 export interface WizardStepMetadata {
   title: string;

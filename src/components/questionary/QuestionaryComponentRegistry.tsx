@@ -18,15 +18,16 @@ import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmis
 import { booleanDefinition } from './questionaryComponents/Boolean/BooleanDefinition';
 import { dateDefinition } from './questionaryComponents/DatePicker/DatePickerDefinition';
 import { embellishmentDefinition } from './questionaryComponents/Embellishment/EmbellishmentDefinition';
-import { esiBasisDefinition } from './questionaryComponents/EsiBasis/EsiBasisDefinition';
 import { fileUploadDefinition } from './questionaryComponents/FileUpload/FileUploadDefinition';
 import { intervalDefinition } from './questionaryComponents/Interval/IntervalDefinition';
 import { multipleChoiceDefinition as multiChoiceDefinition } from './questionaryComponents/MultipleChoice/MultipleChoiceDefinition';
 import { numberInputDefinition } from './questionaryComponents/NumberInput/NumberInputDefinition';
 import { proposalBasisDefinition } from './questionaryComponents/ProposalBasis/ProposalBasisDefinition';
+import { proposalEsiBasisDefinition } from './questionaryComponents/ProposalEsiBasis/ProposalEsiBasisDefinition';
 import { richTextInputDefinition } from './questionaryComponents/RichTextInput/RichTextInputDefinition';
 import { sampleBasisDefinition } from './questionaryComponents/SampleBasis/SampleBasisDefinition';
 import { sampleDeclarationDefinition } from './questionaryComponents/SampleDeclaration/SampleDeclaratonDefinition';
+import { sampleEsiBasisDefinition } from './questionaryComponents/SampleEsiBasis/SampleEsiBasisDefinition';
 import { shipmentBasisDefinition } from './questionaryComponents/ShipmentBasis/ShipmentBasisDefinition';
 import { textInputDefinition } from './questionaryComponents/TextInput/TextInputDefinition';
 import { visitBasisDefinition } from './questionaryComponents/VisitBasis/VisitBasisDefinition';
@@ -152,8 +153,9 @@ const registry = [
   textInputDefinition,
   sampleDeclarationDefinition,
   proposalBasisDefinition,
-  esiBasisDefinition,
+  proposalEsiBasisDefinition,
   sampleBasisDefinition,
+  sampleEsiBasisDefinition,
   intervalDefinition,
   numberInputDefinition,
   shipmentBasisDefinition,

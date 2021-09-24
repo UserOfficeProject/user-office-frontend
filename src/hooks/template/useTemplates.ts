@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { GetTemplatesQuery, TemplateCategoryId } from 'generated/sdk';
+import { GetTemplatesQuery } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-interface TemplatesFilter {
-  isArchived?: boolean;
-  category?: TemplateCategoryId;
-  templateIds?: number[] | null;
-}
+import { TemplatesFilter } from './../../generated/sdk';
+
 export function useTemplates(filter: TemplatesFilter) {
   const [templatesFilter, setTemplatesFilter] = useState(filter);
   const api = useDataApi();

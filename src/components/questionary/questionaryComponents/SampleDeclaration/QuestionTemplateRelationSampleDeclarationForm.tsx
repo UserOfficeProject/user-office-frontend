@@ -10,11 +10,7 @@ import * as Yup from 'yup';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { FeatureContext } from 'context/FeatureContextProvider';
-import {
-  FeatureId,
-  SubTemplateConfig,
-  TemplateCategoryId,
-} from 'generated/sdk';
+import { FeatureId, SubTemplateConfig, TemplateGroupId } from 'generated/sdk';
 import { useTemplates } from 'hooks/template/useTemplates';
 
 import QuestionDependencyList from '../QuestionDependencyList';
@@ -28,7 +24,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateR
     .templateId;
   const { templates } = useTemplates({
     isArchived: false,
-    category: TemplateCategoryId.SAMPLE_DECLARATION,
+    group: TemplateGroupId.SAMPLE,
     templateIds: templateId ? [templateId] : null,
   });
   const { features } = useContext(FeatureContext);

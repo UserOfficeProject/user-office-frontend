@@ -6,15 +6,15 @@ import { useCallData } from 'hooks/call/useCallData';
 import { useProposalData } from 'hooks/proposal/useProposalData';
 import { useBlankQuestionaryStepsData } from 'hooks/questionary/useBlankQuestionaryStepsData';
 import { useVisit } from 'hooks/visit/useVisit';
-import { EsiWithQuestionary } from 'models/questionary/esi/EsiWithQuestionary';
+import { ProposalEsiWithQuestionary } from 'models/questionary/proposalEsi/ProposalEsiWithQuestionary';
 
-import EsiContainer from './EsiContainer';
+import ProposalEsiContainer from './ProposalEsiContainer';
 
 function createEsiStub(
   visitId: number,
   templateId: number,
   questionarySteps: QuestionaryStep[]
-): EsiWithQuestionary {
+): ProposalEsiWithQuestionary {
   return {
     id: 0,
     isSubmitted: false,
@@ -33,19 +33,19 @@ function createEsiStub(
   };
 }
 
-interface CreateEsiProps {
-  onCreate?: (esi: EsiWithQuestionary) => void;
-  onUpdate?: (esi: EsiWithQuestionary) => void;
-  onSubmitted?: (esi: EsiWithQuestionary) => void;
+interface CreateProposalEsiProps {
+  onCreate?: (esi: ProposalEsiWithQuestionary) => void;
+  onUpdate?: (esi: ProposalEsiWithQuestionary) => void;
+  onSubmitted?: (esi: ProposalEsiWithQuestionary) => void;
   visitId: number;
 }
-function CreateEsi({
+function CreateProposalEsi({
   onCreate,
   onUpdate,
   onSubmitted,
   visitId,
-}: CreateEsiProps) {
-  const [blankEsi, setBlankEsi] = useState<EsiWithQuestionary>();
+}: CreateProposalEsiProps) {
+  const [blankEsi, setBlankEsi] = useState<ProposalEsiWithQuestionary>();
   const { visit } = useVisit(visitId);
   const { proposalData } = useProposalData(visit?.proposalPk);
   const { call } = useCallData(proposalData?.callId);
@@ -70,7 +70,7 @@ function CreateEsi({
   }
 
   return (
-    <EsiContainer
+    <ProposalEsiContainer
       esi={blankEsi}
       onCreate={onCreate}
       onUpdate={onUpdate}
@@ -79,4 +79,4 @@ function CreateEsi({
   );
 }
 
-export default CreateEsi;
+export default CreateProposalEsi;

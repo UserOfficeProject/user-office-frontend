@@ -14,7 +14,7 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import { EsiContextType } from './EsiContainer';
+import { ProposalEsiContextType } from './ProposalEsiContainer';
 
 const useStyles = makeStyles(() => ({
   sampleList: {
@@ -23,16 +23,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type EsiReviewProps = {
+type ProposalEsiReviewProps = {
   onComplete?: FunctionType<void>;
   confirm: WithConfirmType;
 };
 
-function EsiReview({ confirm }: EsiReviewProps) {
+function ProposalEsiReview({ confirm }: ProposalEsiReviewProps) {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const classes = useStyles();
 
-  const { state, dispatch } = useContext(QuestionaryContext) as EsiContextType;
+  const { state, dispatch } = useContext(
+    QuestionaryContext
+  ) as ProposalEsiContextType;
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
@@ -100,4 +102,4 @@ function EsiReview({ confirm }: EsiReviewProps) {
   );
 }
 
-export default withConfirm(EsiReview);
+export default withConfirm(ProposalEsiReview);

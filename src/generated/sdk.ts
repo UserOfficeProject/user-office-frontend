@@ -282,7 +282,8 @@ export enum DataType {
   SHIPMENT_BASIS = 'SHIPMENT_BASIS',
   RICH_TEXT_INPUT = 'RICH_TEXT_INPUT',
   VISIT_BASIS = 'VISIT_BASIS',
-  PROPOSAL_ESI_BASIS = 'PROPOSAL_ESI_BASIS'
+  PROPOSAL_ESI_BASIS = 'PROPOSAL_ESI_BASIS',
+  SAMPLE_ESI_BASIS = 'SAMPLE_ESI_BASIS'
 }
 
 export type DateConfig = {
@@ -516,7 +517,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -2645,6 +2646,11 @@ export type SampleDeclarationConfig = {
   small_label: Scalars['String'];
   required: Scalars['Boolean'];
   esiTemplateId: Maybe<Scalars['Int']>;
+};
+
+export type SampleEsiBasisConfig = {
+  __typename?: 'SampleEsiBasisConfig';
+  tooltip: Scalars['String'];
 };
 
 export type SampleExperimentSafetyInput = {
@@ -5056,6 +5062,9 @@ export type AnswerFragment = (
     { __typename?: 'SampleDeclarationConfig' }
     & FieldConfigSampleDeclarationConfigFragment
   ) | (
+    { __typename?: 'SampleEsiBasisConfig' }
+    & FieldConfigSampleEsiBasisConfigFragment
+  ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
   ) | (
@@ -6250,6 +6259,11 @@ type FieldConfigSampleDeclarationConfigFragment = (
   & Pick<SampleDeclarationConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'esiTemplateId' | 'templateCategory' | 'required' | 'small_label'>
 );
 
+type FieldConfigSampleEsiBasisConfigFragment = (
+  { __typename?: 'SampleEsiBasisConfig' }
+  & Pick<SampleEsiBasisConfig, 'tooltip'>
+);
+
 type FieldConfigSubTemplateConfigFragment = (
   { __typename?: 'SubTemplateConfig' }
   & Pick<SubTemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
@@ -6290,7 +6304,7 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6319,6 +6333,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'SampleDeclarationConfig' }
     & FieldConfigSampleDeclarationConfigFragment
+  ) | (
+    { __typename?: 'SampleEsiBasisConfig' }
+    & FieldConfigSampleEsiBasisConfigFragment
   ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
@@ -6376,6 +6393,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'SampleDeclarationConfig' }
     & FieldConfigSampleDeclarationConfigFragment
+  ) | (
+    { __typename?: 'SampleEsiBasisConfig' }
+    & FieldConfigSampleEsiBasisConfigFragment
   ) | (
     { __typename?: 'SubTemplateConfig' }
     & FieldConfigSubTemplateConfigFragment
@@ -6519,6 +6539,9 @@ export type GetQuestionsQuery = (
     ) | (
       { __typename?: 'SampleDeclarationConfig' }
       & FieldConfigSampleDeclarationConfigFragment
+    ) | (
+      { __typename?: 'SampleEsiBasisConfig' }
+      & FieldConfigSampleEsiBasisConfigFragment
     ) | (
       { __typename?: 'SubTemplateConfig' }
       & FieldConfigSubTemplateConfigFragment
@@ -7662,6 +7685,9 @@ export const FieldConfigFragmentDoc = gql`
     tooltip
   }
   ... on ProposalEsiBasisConfig {
+    tooltip
+  }
+  ... on SampleEsiBasisConfig {
     tooltip
   }
   ... on SampleBasisConfig {

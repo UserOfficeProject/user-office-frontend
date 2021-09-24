@@ -1,18 +1,18 @@
 import React from 'react';
 
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { EsiSubmissionState } from 'models/questionary/esi/EsiSubmissionState';
+import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/ProposalEsiSubmissionState';
 
-function QuestionaryComponentEsiBasis() {
+function QuestionaryComponentProposalEsiBasis() {
   return <span>TODO</span>;
 }
 
-const esiBasisPreSubmit = () => async ({
+const proposalEsiBasisPreSubmit = () => async ({
   api,
   dispatch,
   state,
 }: SubmitActionDependencyContainer) => {
-  const esi = (state as EsiSubmissionState).esi;
+  const esi = (state as ProposalEsiSubmissionState).esi;
 
   const esiExists = esi.id > 0;
 
@@ -40,7 +40,4 @@ const esiBasisPreSubmit = () => async ({
   return questionaryId;
 };
 
-export {
-  QuestionaryComponentEsiBasis as QuestionaryComponentEsiBasis,
-  esiBasisPreSubmit,
-};
+export { QuestionaryComponentProposalEsiBasis, proposalEsiBasisPreSubmit };

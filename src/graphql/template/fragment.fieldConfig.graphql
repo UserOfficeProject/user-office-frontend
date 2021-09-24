@@ -52,6 +52,10 @@ fragment fieldConfig on FieldConfig {
     tooltip
   }
 
+  ... on SampleEsiBasisConfig {
+    tooltip
+  }
+
   ... on SampleBasisConfig {
     titlePlaceholder
   }

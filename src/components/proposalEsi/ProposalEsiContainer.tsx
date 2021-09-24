@@ -9,8 +9,8 @@ import {
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
 import { TemplateGroupId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
-import { EsiSubmissionState } from 'models/questionary/esi/EsiSubmissionState';
-import { EsiWithQuestionary } from 'models/questionary/esi/EsiWithQuestionary';
+import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/ProposalEsiSubmissionState';
+import { ProposalEsiWithQuestionary } from 'models/questionary/proposalEsi/ProposalEsiWithQuestionary';
 import {
   Event,
   QuestionarySubmissionModel,
@@ -20,13 +20,13 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
-export interface EsiContextType extends QuestionaryContextType {
-  state: EsiSubmissionState | null;
+export interface ProposalEsiContextType extends QuestionaryContextType {
+  state: ProposalEsiSubmissionState | null;
 }
 
-const esiReducer = (
-  state: EsiSubmissionState,
-  draftState: EsiSubmissionState,
+const proposalEsiReducer = (
+  state: ProposalEsiSubmissionState,
+  draftState: ProposalEsiSubmissionState,
   action: Event
 ) => {
   switch (action.type) {
@@ -48,13 +48,13 @@ const esiReducer = (
   return draftState;
 };
 
-export interface EsiContainerProps {
-  esi: EsiWithQuestionary;
-  onCreate?: (esi: EsiWithQuestionary) => void;
-  onUpdate?: (esi: EsiWithQuestionary) => void;
-  onSubmitted?: (esi: EsiWithQuestionary) => void;
+export interface ProposalEsiContainerProps {
+  esi: ProposalEsiWithQuestionary;
+  onCreate?: (esi: ProposalEsiWithQuestionary) => void;
+  onUpdate?: (esi: ProposalEsiWithQuestionary) => void;
+  onSubmitted?: (esi: ProposalEsiWithQuestionary) => void;
 }
-export default function EsiContainer(props: EsiContainerProps) {
+export default function ProposalEsiContainer(props: ProposalEsiContainerProps) {
   const { api } = useDataApiWithFeedback();
 
   const def = getQuestionaryDefinition(TemplateGroupId.PROPOSAL_ESI);
@@ -65,7 +65,7 @@ export default function EsiContainer(props: EsiContainerProps) {
    * Returns true if reset was performed, false otherwise
    */
   const handleReset = async (): Promise<boolean> => {
-    const esiState = state as EsiSubmissionState;
+    const esiState = state as ProposalEsiSubmissionState;
 
     if (esiState.esi.id === 0) {
       // if esi is not created yet
@@ -102,7 +102,7 @@ export default function EsiContainer(props: EsiContainerProps) {
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
-      const state = getState() as EsiSubmissionState;
+      const state = getState() as ProposalEsiSubmissionState;
       switch (action.type) {
         case 'BACK_CLICKED': // move this
           if (!state.isDirty || (await handleReset())) {
@@ -127,17 +127,20 @@ export default function EsiContainer(props: EsiContainerProps) {
       }
     };
   };
-  const initialState = new EsiSubmissionState(
+  const initialState = new ProposalEsiSubmissionState(
     props.esi,
     0,
     false,
     def.wizardStepFactory.getWizardSteps(props.esi.questionary.steps)
   );
 
-  const { state, dispatch } = QuestionarySubmissionModel<EsiSubmissionState>(
+  const {
+    state,
+    dispatch,
+  } = QuestionarySubmissionModel<ProposalEsiSubmissionState>(
     initialState,
     [handleEvents],
-    esiReducer
+    proposalEsiReducer
   );
 
   useEffect(() => {

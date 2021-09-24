@@ -8,12 +8,12 @@ import { useHistory } from 'react-router';
 
 import BoxIcon from 'components/common/icons/BoxIcon';
 import EsiIcon from 'components/common/icons/EsiIcon';
-import CreateEsi from 'components/esi/CreateEsi';
-import UpdateEsi from 'components/esi/UpdateEsi';
 import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
+import CreateProposalEsi from 'components/proposalEsi/CreateProposalEsi';
+import UpdateProposalEsi from 'components/proposalEsi/UpdateProposalEsi';
 import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
@@ -151,7 +151,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       () => {
         if (event.visit?.esi) {
           openModal(
-            <UpdateEsi
+            <UpdateProposalEsi
               esiId={event.visit?.esi.id}
               onSubmitted={(submittedEsi) => {
                 const updatedEvent = createNewEventObject(event, submittedEsi);
@@ -162,7 +162,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
           );
         } else {
           openModal(
-            <CreateEsi
+            <CreateProposalEsi
               visitId={event.visit!.id}
               onSubmitted={(newEsi) => {
                 const newEvent = createNewEventObject(event, newEsi);

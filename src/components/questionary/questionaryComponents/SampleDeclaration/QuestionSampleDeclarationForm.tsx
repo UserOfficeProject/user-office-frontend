@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { FeatureContext } from 'context/FeatureContextProvider';
-import { FeatureId, TemplateCategoryId } from 'generated/sdk';
+import { FeatureId, TemplateGroupId } from 'generated/sdk';
 import { useTemplates } from 'hooks/template/useTemplates';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
@@ -22,7 +22,7 @@ export const QuestionSampleDeclarationForm: FC<QuestionFormProps> = (props) => {
   const { features } = useContext(FeatureContext);
   const { templates } = useTemplates({
     isArchived: false,
-    category: TemplateCategoryId.SAMPLE_DECLARATION,
+    group: TemplateGroupId.SAMPLE,
   });
 
   if (!templates) {

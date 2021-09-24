@@ -1,5 +1,5 @@
-import { esiBasisPreSubmit } from 'components/questionary/questionaryComponents/EsiBasis/QuestionaryComponentEsiBasis';
 import { proposalBasisPreSubmit } from 'components/questionary/questionaryComponents/ProposalBasis/QuestionaryComponentProposalBasis';
+import { proposalEsiBasisPreSubmit } from 'components/questionary/questionaryComponents/ProposalEsiBasis/QuestionaryComponentProposalEsiBasis';
 import { sampleBasisPreSubmit } from 'components/questionary/questionaryComponents/SampleBasis/QuestionaryComponentSampleBasis';
 import { shipmentBasisPreSubmit } from 'components/questionary/questionaryComponents/ShipmentBasis/QuestionaryComponentShipmentBasis';
 import { visitBasisPreSubmit } from 'components/questionary/questionaryComponents/VisitBasis/QuestionaryComponentVisitBasis';
@@ -31,7 +31,7 @@ export function usePreSubmitActions() {
         case DataType.VISIT_BASIS:
           return visitBasisPreSubmit();
         case DataType.PROPOSAL_ESI_BASIS:
-          return esiBasisPreSubmit();
+          return proposalEsiBasisPreSubmit();
       }
 
       return [];

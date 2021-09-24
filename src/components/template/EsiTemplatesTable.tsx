@@ -5,9 +5,10 @@ import { Template, TemplateGroupId } from 'generated/sdk';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { TemplateRowDataType, TemplatesTable } from './TemplatesTable';
-type EsiTemplateRowDataType = TemplateRowDataType & Record<string, unknown>;
+type ProposalEsiTemplateRowDataType = TemplateRowDataType &
+  Record<string, unknown>;
 
-type EsiTemplatesTableProps = {
+type ProposalEsiTemplatesTableProps = {
   dataProvider: () => Promise<
     Pick<
       Template,
@@ -17,8 +18,8 @@ type EsiTemplatesTableProps = {
   confirm: WithConfirmType;
 };
 
-function EsiTemplatesTable(props: EsiTemplatesTableProps) {
-  const columns: Column<EsiTemplateRowDataType>[] = [
+function ProposalEsiTemplatesTable(props: ProposalEsiTemplatesTableProps) {
+  const columns: Column<ProposalEsiTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
     { title: '# Proposal ESIs', field: 'questionaryCount' },
@@ -37,4 +38,4 @@ function EsiTemplatesTable(props: EsiTemplatesTableProps) {
   );
 }
 
-export default withConfirm(EsiTemplatesTable);
+export default withConfirm(ProposalEsiTemplatesTable);

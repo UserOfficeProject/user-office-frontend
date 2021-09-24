@@ -5,15 +5,15 @@ import SimpleTabs from 'components/common/TabPanel';
 import { TemplateGroupId } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
-import EsiTemplatesTable from './EsiTemplatesTable';
+import ProposalEsiTemplatesTable from './EsiTemplatesTable';
 
-export default function EsiPage() {
+export default function ProposalEsiPage() {
   const api = useDataApi();
 
   return (
     <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
-        <EsiTemplatesTable
+        <ProposalEsiTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
@@ -25,7 +25,7 @@ export default function EsiPage() {
               .then((data) => data.templates || [])
           }
         />
-        <EsiTemplatesTable
+        <ProposalEsiTemplatesTable
           dataProvider={() =>
             api()
               .getTemplates({
