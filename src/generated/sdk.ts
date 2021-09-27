@@ -4225,6 +4225,10 @@ export type CreateEsiMutation = (
         & QuestionaryFragment
       ), samples: Array<(
         { __typename?: 'Sample' }
+        & { questionary: (
+          { __typename?: 'Questionary' }
+          & Pick<Questionary, 'isCompleted'>
+        ) }
         & SampleFragment
       )> }
       & EsiFragment
@@ -4255,6 +4259,10 @@ export type GetEsiQuery = (
       & QuestionaryFragment
     ), samples: Array<(
       { __typename?: 'Sample' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+      ) }
       & SampleFragment
     )> }
     & EsiFragment
@@ -4279,6 +4287,10 @@ export type UpdateEsiMutation = (
         & QuestionaryFragment
       ), samples: Array<(
         { __typename?: 'Sample' }
+        & { questionary: (
+          { __typename?: 'Questionary' }
+          & Pick<Questionary, 'isCompleted'>
+        ) }
         & SampleFragment
       )> }
       & EsiFragment
@@ -8678,6 +8690,9 @@ export const CreateEsiDocument = gql`
       }
       samples {
         ...sample
+        questionary {
+          isCompleted
+        }
       }
     }
     rejection {
@@ -8699,6 +8714,9 @@ export const GetEsiDocument = gql`
     }
     samples {
       ...sample
+      questionary {
+        isCompleted
+      }
     }
   }
 }
@@ -8716,6 +8734,9 @@ export const UpdateEsiDocument = gql`
       }
       samples {
         ...sample
+        questionary {
+          isCompleted
+        }
       }
     }
     rejection {

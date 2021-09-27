@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
+import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
+import { ProposalEsiContextType } from 'components/proposalEsi/ProposalEsiContainer';
+import { QuestionaryContext } from 'components/questionary/QuestionaryContext';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/ProposalEsiSubmissionState';
 
-function QuestionaryComponentProposalEsiBasis() {
-  return <span>TODO</span>;
+import { QuestionnairesList } from '../QuestionnairesList';
+
+function QuestionaryComponentProposalEsiBasis({}: BasicComponentProps) {
+  const { state } = useContext(QuestionaryContext) as ProposalEsiContextType;
+
+  return (
+    <QuestionnairesList
+      data={
+        state?.esi.samples.map((sample) => ({
+          id: sample.id,
+          label: sample.title,
+          isCompleted: sample.questionary.isCompleted,
+        })) ?? []
+      }
+      onEditClick={(item) => {}}
+      onDeleteClick={(item) => {}}
+      onCloneClick={(item) => {}}
+      onAddNewClick={() => {}}
+    />
+  );
 }
 
 const proposalEsiBasisPreSubmit = () => async ({

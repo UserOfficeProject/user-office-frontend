@@ -8,6 +8,9 @@ mutation createEsi($visitId: Int!) {
       }
       samples {
         ...sample
+        questionary {
+          isCompleted
+        }
       }
     }
 

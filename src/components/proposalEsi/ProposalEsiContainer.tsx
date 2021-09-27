@@ -160,7 +160,7 @@ export default function ProposalEsiContainer(props: ProposalEsiContainerProps) {
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
-        title={'User input for Experiment Safety Form (ESF)'}
+        title={'Input for Experiment Safety Form'}
         handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />

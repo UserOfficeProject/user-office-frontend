@@ -10,8 +10,12 @@ import * as Yup from 'yup';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { FeatureContext } from 'context/FeatureContextProvider';
-import { FeatureId, SubTemplateConfig, TemplateGroupId } from 'generated/sdk';
-import { useTemplates } from 'hooks/template/useTemplates';
+import {
+  FeatureId,
+  SampleDeclarationConfig,
+  TemplateGroupId,
+} from 'generated/sdk';
+import { useActiveTemplates } from 'hooks/call/useCallTemplates';
 
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
@@ -20,16 +24,19 @@ import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFo
 export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateRelationFormProps> = (
   props
 ) => {
-  const templateId = (props.questionRel.question.config as SubTemplateConfig)
-    .templateId;
-  const { templates } = useTemplates({
-    isArchived: false,
-    group: TemplateGroupId.SAMPLE,
-    templateIds: templateId ? [templateId] : null,
-  });
+  const config = props.questionRel.config as SampleDeclarationConfig;
+
+  const { templates } = useActiveTemplates(
+    TemplateGroupId.SAMPLE,
+    config.templateId
+  );
+  const { templates: esiTemplates } = useActiveTemplates(
+    TemplateGroupId.SAMPLE_ESI,
+    config.esiTemplateId
+  );
   const { features } = useContext(FeatureContext);
 
-  if (!templates) {
+  if (!templates || !esiTemplates) {
     return null;
   }
 
@@ -136,8 +143,8 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateR
                   component={Select}
                   data-cy="esi-template-id"
                 >
-                  {templates.length ? (
-                    templates.map((template) => {
+                  {esiTemplates.length ? (
+                    esiTemplates.map((template) => {
                       return (
                         <MenuItem
                           value={template.templateId}

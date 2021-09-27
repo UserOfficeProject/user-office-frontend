@@ -12,12 +12,10 @@ import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
-import CreateProposalEsi from 'components/proposalEsi/CreateProposalEsi';
-import UpdateProposalEsi from 'components/proposalEsi/UpdateProposalEsi';
 import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
-import { ProposalEndStatus, EsiFragment } from 'generated/sdk';
+import { ProposalEndStatus } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
@@ -133,44 +131,15 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       buttonState = 'invisible';
     }
 
-    const createNewEventObject = (
-      oldEvent: ProposalScheduledEvent,
-      esi: EsiFragment
-    ): ProposalScheduledEvent => ({
-      ...oldEvent,
-      visit: {
-        ...oldEvent.visit!,
-        esi: esi,
-      },
-    });
-
     return createActionButton(
       'Finish safety input form',
       <EsiIcon />,
       buttonState,
       () => {
         if (event.visit?.esi) {
-          openModal(
-            <UpdateProposalEsi
-              esiId={event.visit?.esi.id}
-              onSubmitted={(submittedEsi) => {
-                const updatedEvent = createNewEventObject(event, submittedEsi);
-                eventUpdated(updatedEvent);
-                closeModal();
-              }}
-            />
-          );
+          history.push(`/UpdateEsi/${event.visit.esi.id}`);
         } else {
-          openModal(
-            <CreateProposalEsi
-              visitId={event.visit!.id}
-              onSubmitted={(newEsi) => {
-                const newEvent = createNewEventObject(event, newEsi);
-                eventUpdated(newEvent);
-                closeModal();
-              }}
-            />
-          );
+          history.push(`/CreateEsi/${event.visit!.id}`);
         }
       }
     );

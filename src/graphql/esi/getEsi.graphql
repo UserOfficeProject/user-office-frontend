@@ -7,6 +7,9 @@ query getEsi($esiId: Int!) {
     }
     samples {
       ...sample
+      questionary {
+        isCompleted
+      }
     }
   }
 }

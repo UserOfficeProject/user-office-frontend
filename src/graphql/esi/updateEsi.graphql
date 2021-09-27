@@ -8,6 +8,9 @@ mutation updateEsi($esiId: Int!, $isSubmitted: Boolean) {
       }
       samples {
         ...sample
+        questionary {
+          isCompleted
+        }
       }
     }
 

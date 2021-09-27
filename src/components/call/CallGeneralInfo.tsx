@@ -33,21 +33,24 @@ import {
   AllocationTimeUnits,
   CreateCallMutationVariables,
   FeatureId,
-  GetProposalTemplatesQuery,
+  GetTemplatesQuery,
   ProposalWorkflow,
   UpdateCallMutationVariables,
 } from 'generated/sdk';
+import { ExcludeNull } from 'utils/utilTypes';
 
 const CallGeneralInfo: React.FC<{
-  templates: Exclude<GetProposalTemplatesQuery['proposalTemplates'], null>;
+  templates: ExcludeNull<GetTemplatesQuery['templates']>;
+  esiTemplates: ExcludeNull<GetTemplatesQuery['templates']>;
   loadingTemplates: boolean;
   proposalWorkflows: ProposalWorkflow[];
   loadingProposalWorkflows: boolean;
 }> = ({
   loadingProposalWorkflows,
   proposalWorkflows,
-  loadingTemplates,
   templates,
+  esiTemplates,
+  loadingTemplates,
 }) => {
   const { features } = useContext(FeatureContext);
 
@@ -272,7 +275,7 @@ const CallGeneralInfo: React.FC<{
           label="ESI template"
           loading={loadingTemplates}
           noOptionsText="No templates"
-          items={templates.map((template) => ({
+          items={esiTemplates.map((template) => ({
             text: template.name,
             value: template.templateId,
           }))}

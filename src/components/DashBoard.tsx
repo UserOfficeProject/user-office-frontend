@@ -36,6 +36,8 @@ import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
 import InstrSciUpcomingExperimentTimesTable from './proposalBooking/InstrSciUpcomingExperimentTimesTable';
 import UserExperimentTimesTable from './proposalBooking/UserExperimentsTable';
+import CreateProposalEsiPage from './proposalEsi/CreateProposalEsiPage';
+import UpdateProposalEsiPage from './proposalEsi/UpdateProposalEsiPage';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -305,6 +307,8 @@ const Dashboard: React.FC = () => {
           {isUserOfficer && (
             <Route path="/Questions" component={QuestionsPage} />
           )}
+          <Route path="/CreateEsi/:visitId" component={CreateProposalEsiPage} />
+          <Route path="/UpdateEsi/:esiId" component={UpdateProposalEsiPage} />
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
             yes={() => <Route component={ProposalPage} />}

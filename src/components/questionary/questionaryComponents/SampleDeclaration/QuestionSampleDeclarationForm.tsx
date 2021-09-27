@@ -10,22 +10,31 @@ import * as Yup from 'yup';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { FeatureContext } from 'context/FeatureContextProvider';
-import { FeatureId, TemplateGroupId } from 'generated/sdk';
-import { useTemplates } from 'hooks/template/useTemplates';
+import {
+  FeatureId,
+  SampleDeclarationConfig,
+  TemplateGroupId,
+} from 'generated/sdk';
+import { useActiveTemplates } from 'hooks/call/useCallTemplates';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionSampleDeclarationForm: FC<QuestionFormProps> = (props) => {
   const field = props.question;
+  const config = field.config as SampleDeclarationConfig;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
   const { features } = useContext(FeatureContext);
-  const { templates } = useTemplates({
-    isArchived: false,
-    group: TemplateGroupId.SAMPLE,
-  });
+  const { templates } = useActiveTemplates(
+    TemplateGroupId.SAMPLE,
+    config.templateId
+  );
+  const { templates: esiTemplates } = useActiveTemplates(
+    TemplateGroupId.SAMPLE_ESI,
+    config.esiTemplateId
+  );
 
-  if (!templates) {
+  if (!templates || !esiTemplates) {
     return null;
   }
 
@@ -114,8 +123,8 @@ export const QuestionSampleDeclarationForm: FC<QuestionFormProps> = (props) => {
                   component={Select}
                   data-cy="esi-template-id"
                 >
-                  {templates.length ? (
-                    templates.map((template) => {
+                  {esiTemplates.length ? (
+                    esiTemplates.map((template) => {
                       return (
                         <MenuItem
                           value={template.templateId}
