@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
-import { QuestionaryStep } from 'generated/sdk';
-import { useCallData } from 'hooks/call/useCallData';
-import { useProposalData } from 'hooks/proposal/useProposalData';
-import { useBlankQuestionaryStepsData } from 'hooks/questionary/useBlankQuestionaryStepsData';
+import { CreateEsiMutation } from 'generated/sdk';
 import { useVisit } from 'hooks/visit/useVisit';
 import { ProposalEsiWithQuestionary } from 'models/questionary/proposalEsi/ProposalEsiWithQuestionary';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import ProposalEsiContainer from './ProposalEsiContainer';
-
-function createEsiStub(
-  visitId: number,
-  templateId: number,
-  questionarySteps: QuestionaryStep[]
-): ProposalEsiWithQuestionary {
-  return {
-    id: 0,
-    isSubmitted: false,
-    created: new Date(),
-    creatorId: 0,
-    questionaryId: 0,
-    visitId: visitId,
-    samples: [],
-    questionary: {
-      isCompleted: false,
-      questionaryId: 0,
-      templateId: templateId,
-      created: new Date(),
-      steps: questionarySteps,
-    },
-  };
-}
 
 interface CreateProposalEsiProps {
   onCreate?: (esi: ProposalEsiWithQuestionary) => void;
@@ -45,33 +20,29 @@ function CreateProposalEsi({
   onSubmitted,
   visitId,
 }: CreateProposalEsiProps) {
-  const [blankEsi, setBlankEsi] = useState<ProposalEsiWithQuestionary>();
+  const { api } = useDataApiWithFeedback();
   const { visit } = useVisit(visitId);
-  const { proposalData } = useProposalData(visit?.proposalPk);
-  const { call } = useCallData(proposalData?.callId);
-  const { questionarySteps } = useBlankQuestionaryStepsData(
-    call?.esiTemplateId
-  );
+  const [esi, setEsi] = useState<CreateEsiMutation['createEsi']['esi']>(null);
 
   useEffect(() => {
-    if (!call?.esiTemplateId || !questionarySteps || !visitId) {
-      return;
+    if (visit) {
+      api()
+        .createEsi({ visitId: visit.id })
+        .then((result) => {
+          if (result.createEsi.esi) {
+            setEsi(result.createEsi.esi);
+          }
+        });
     }
-    const blankEsi = createEsiStub(
-      visitId,
-      call.esiTemplateId,
-      questionarySteps
-    );
-    setBlankEsi(blankEsi);
-  }, [setBlankEsi, questionarySteps, call?.esiTemplateId, visitId]);
+  }, [visit]);
 
-  if (!blankEsi) {
+  if (!esi) {
     return <UOLoader />;
   }
 
   return (
     <ProposalEsiContainer
-      esi={blankEsi}
+      esi={esi}
       onCreate={onCreate}
       onUpdate={onUpdate}
       onSubmitted={onSubmitted}
