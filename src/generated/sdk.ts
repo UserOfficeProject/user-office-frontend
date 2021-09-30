@@ -489,7 +489,8 @@ export type ExperimentSafetyInput = {
   isSubmitted: Scalars['Boolean'];
   created: Scalars['DateTime'];
   questionary: Questionary;
-  samples: Array<Sample>;
+  sampleEsis: Array<SampleExperimentSafetyInput>;
+  visit: Maybe<Visit>;
 };
 
 export type Feature = {
@@ -696,6 +697,9 @@ export type Mutation = {
   addUserForReview: ReviewResponseWrap;
   submitProposalsReview: SuccessResponseWrap;
   updateTechnicalReviewAssignee: ProposalsResponseWrap;
+  createSampleEsi: SampleEsiResponseWrap;
+  deleteSampleEsi: SampleEsiResponseWrap;
+  updateSampleEsi: SampleEsiResponseWrap;
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
@@ -1021,6 +1025,25 @@ export type MutationSubmitProposalsReviewArgs = {
 export type MutationUpdateTechnicalReviewAssigneeArgs = {
   userId: Scalars['Int'];
   proposalPks: Array<Scalars['Int']>;
+};
+
+
+export type MutationCreateSampleEsiArgs = {
+  sampleId: Scalars['Int'];
+  esiId: Scalars['Int'];
+};
+
+
+export type MutationDeleteSampleEsiArgs = {
+  sampleId: Scalars['Int'];
+  esiId: Scalars['Int'];
+};
+
+
+export type MutationUpdateSampleEsiArgs = {
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+  isSubmitted?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1694,6 +1717,7 @@ export type Proposal = {
   managementTimeAllocation: Maybe<Scalars['Int']>;
   managementDecisionSubmitted: Scalars['Boolean'];
   technicalReviewAssignee: Maybe<Scalars['Int']>;
+  referenceNumberSequence: Scalars['Int'];
   users: Array<BasicUserDetails>;
   proposer: Maybe<BasicUserDetails>;
   status: Maybe<ProposalStatus>;
@@ -1957,6 +1981,8 @@ export type Query = {
   callsByInstrumentScientist: Maybe<Array<Call>>;
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
+  sampleEsiBlank: SampleExperimentSafetyInput;
+  sampleEsi: Maybe<SampleExperimentSafetyInput>;
   shipments: Maybe<Array<Shipment>>;
   questions: Array<QuestionWithUsage>;
   templates: Maybe<Array<Template>>;
@@ -1965,6 +1991,7 @@ export type Query = {
   activeTemplateId: Maybe<Scalars['Int']>;
   basicUserDetails: Maybe<BasicUserDetails>;
   basicUserDetailsByEmail: Maybe<BasicUserDetails>;
+  blankQuestionary: Questionary;
   blankQuestionarySteps: Maybe<Array<QuestionaryStep>>;
   call: Maybe<Call>;
   checkEmailExist: Maybe<Scalars['Boolean']>;
@@ -2064,6 +2091,18 @@ export type QueryInstrumentScientistProposalsArgs = {
 };
 
 
+export type QuerySampleEsiBlankArgs = {
+  esiId: Scalars['Int'];
+  questionId: Scalars['String'];
+};
+
+
+export type QuerySampleEsiArgs = {
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+};
+
+
 export type QueryShipmentsArgs = {
   filter?: Maybe<ShipmentsFilter>;
 };
@@ -2097,6 +2136,11 @@ export type QueryBasicUserDetailsArgs = {
 export type QueryBasicUserDetailsByEmailArgs = {
   role?: Maybe<UserRole>;
   email: Scalars['String'];
+};
+
+
+export type QueryBlankQuestionaryArgs = {
+  templateId: Scalars['Int'];
 };
 
 
@@ -2628,7 +2672,6 @@ export type Sample = {
   created: Scalars['DateTime'];
   questionary: Questionary;
   proposal: Proposal;
-  sampleEsi: SampleExperimentSafetyInput;
 };
 
 export type SampleBasisConfig = {
@@ -2653,6 +2696,12 @@ export type SampleEsiBasisConfig = {
   tooltip: Scalars['String'];
 };
 
+export type SampleEsiResponseWrap = {
+  __typename?: 'SampleEsiResponseWrap';
+  rejection: Maybe<Rejection>;
+  esi: Maybe<SampleExperimentSafetyInput>;
+};
+
 export type SampleExperimentSafetyInput = {
   __typename?: 'SampleExperimentSafetyInput';
   esiId: Scalars['Int'];
@@ -2660,6 +2709,7 @@ export type SampleExperimentSafetyInput = {
   questionaryId: Scalars['Int'];
   isSubmitted: Scalars['Boolean'];
   questionary: Questionary;
+  sample: Sample;
 };
 
 export type SampleResponseWrap = {
@@ -4223,13 +4273,27 @@ export type CreateEsiMutation = (
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ), samples: Array<(
-        { __typename?: 'Sample' }
-        & { questionary: (
+      ), sampleEsis: Array<(
+        { __typename?: 'SampleExperimentSafetyInput' }
+        & { sample: (
+          { __typename?: 'Sample' }
+          & SampleFragment
+        ), questionary: (
           { __typename?: 'Questionary' }
           & Pick<Questionary, 'isCompleted'>
         ) }
-        & SampleFragment
+        & SampleEsiFragment
+      )>, visit: Maybe<(
+        { __typename?: 'Visit' }
+        & { proposal: (
+          { __typename?: 'Proposal' }
+          & Pick<Proposal, 'proposalId'>
+          & { samples: Maybe<Array<(
+            { __typename?: 'Sample' }
+            & SampleFragment
+          )>> }
+        ) }
+        & VisitFragment
       )> }
       & EsiFragment
     )>, rejection: Maybe<(
@@ -4257,13 +4321,27 @@ export type GetEsiQuery = (
       { __typename?: 'Questionary' }
       & Pick<Questionary, 'isCompleted'>
       & QuestionaryFragment
-    ), samples: Array<(
-      { __typename?: 'Sample' }
-      & { questionary: (
+    ), sampleEsis: Array<(
+      { __typename?: 'SampleExperimentSafetyInput' }
+      & { sample: (
+        { __typename?: 'Sample' }
+        & SampleFragment
+      ), questionary: (
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
       ) }
-      & SampleFragment
+      & SampleEsiFragment
+    )>, visit: Maybe<(
+      { __typename?: 'Visit' }
+      & { proposal: (
+        { __typename?: 'Proposal' }
+        & Pick<Proposal, 'proposalId'>
+        & { samples: Maybe<Array<(
+          { __typename?: 'Sample' }
+          & SampleFragment
+        )>> }
+      ) }
+      & VisitFragment
     )> }
     & EsiFragment
   )> }
@@ -4285,13 +4363,16 @@ export type UpdateEsiMutation = (
         { __typename?: 'Questionary' }
         & Pick<Questionary, 'isCompleted'>
         & QuestionaryFragment
-      ), samples: Array<(
-        { __typename?: 'Sample' }
-        & { questionary: (
+      ), sampleEsis: Array<(
+        { __typename?: 'SampleExperimentSafetyInput' }
+        & { sample: (
+          { __typename?: 'Sample' }
+          & SampleFragment
+        ), questionary: (
           { __typename?: 'Questionary' }
           & Pick<Questionary, 'isCompleted'>
         ) }
-        & SampleFragment
+        & SampleEsiFragment
       )> }
       & EsiFragment
     )>, rejection: Maybe<(
@@ -5131,6 +5212,20 @@ export type QuestionaryStepFragment = (
   )> }
 );
 
+export type GetBlankQuestionaryQueryVariables = Exact<{
+  templateId: Scalars['Int'];
+}>;
+
+
+export type GetBlankQuestionaryQuery = (
+  { __typename?: 'Query' }
+  & { blankQuestionary: (
+    { __typename?: 'Questionary' }
+    & Pick<Questionary, 'isCompleted'>
+    & QuestionaryFragment
+  ) }
+);
+
 export type GetBlankQuestionaryStepsQueryVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
@@ -5394,6 +5489,110 @@ export type UserWithReviewsQuery = (
       )> }
     )> }
   )> }
+);
+
+export type CreateSampleEsiMutationVariables = Exact<{
+  sampleId: Scalars['Int'];
+  esiId: Scalars['Int'];
+}>;
+
+
+export type CreateSampleEsiMutation = (
+  { __typename?: 'Mutation' }
+  & { createSampleEsi: (
+    { __typename?: 'SampleEsiResponseWrap' }
+    & { esi: Maybe<(
+      { __typename?: 'SampleExperimentSafetyInput' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+        & QuestionaryFragment
+      ), sample: (
+        { __typename?: 'Sample' }
+        & SampleFragment
+      ) }
+      & SampleEsiFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
+export type DeleteSampleEsiMutationVariables = Exact<{
+  sampleId: Scalars['Int'];
+  esiId: Scalars['Int'];
+}>;
+
+
+export type DeleteSampleEsiMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteSampleEsi: (
+    { __typename?: 'SampleEsiResponseWrap' }
+    & { esi: Maybe<(
+      { __typename?: 'SampleExperimentSafetyInput' }
+      & SampleEsiFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
+export type SampleEsiFragment = (
+  { __typename?: 'SampleExperimentSafetyInput' }
+  & Pick<SampleExperimentSafetyInput, 'sampleId' | 'esiId' | 'questionaryId' | 'isSubmitted'>
+);
+
+export type GetSampleEsiQueryVariables = Exact<{
+  sampleId: Scalars['Int'];
+  esiId: Scalars['Int'];
+}>;
+
+
+export type GetSampleEsiQuery = (
+  { __typename?: 'Query' }
+  & { sampleEsi: Maybe<(
+    { __typename?: 'SampleExperimentSafetyInput' }
+    & { questionary: (
+      { __typename?: 'Questionary' }
+      & Pick<Questionary, 'isCompleted'>
+      & QuestionaryFragment
+    ), sample: (
+      { __typename?: 'Sample' }
+      & SampleFragment
+    ) }
+    & SampleEsiFragment
+  )> }
+);
+
+export type UpdateSampleEsiMutationVariables = Exact<{
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+  isSubmitted?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type UpdateSampleEsiMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSampleEsi: (
+    { __typename?: 'SampleEsiResponseWrap' }
+    & { esi: Maybe<(
+      { __typename?: 'SampleExperimentSafetyInput' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+        & QuestionaryFragment
+      ), sample: (
+        { __typename?: 'Sample' }
+        & SampleFragment
+      ) }
+      & SampleEsiFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
 );
 
 export type CloneSampleMutationVariables = Exact<{
@@ -7837,6 +8036,14 @@ export const CoreReviewFragmentDoc = gql`
   sepID
 }
     `;
+export const SampleEsiFragmentDoc = gql`
+    fragment sampleEsi on SampleExperimentSafetyInput {
+  sampleId
+  esiId
+  questionaryId
+  isSubmitted
+}
+    `;
 export const SampleFragmentDoc = gql`
     fragment sample on Sample {
   id
@@ -8688,10 +8895,22 @@ export const CreateEsiDocument = gql`
         isCompleted
         ...questionary
       }
-      samples {
-        ...sample
+      sampleEsis {
+        sample {
+          ...sample
+        }
+        ...sampleEsi
         questionary {
           isCompleted
+        }
+      }
+      visit {
+        ...visit
+        proposal {
+          proposalId
+          samples {
+            ...sample
+          }
         }
       }
     }
@@ -8703,6 +8922,8 @@ export const CreateEsiDocument = gql`
     ${EsiFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
+${SampleEsiFragmentDoc}
+${VisitFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetEsiDocument = gql`
     query getEsi($esiId: Int!) {
@@ -8712,17 +8933,31 @@ export const GetEsiDocument = gql`
       isCompleted
       ...questionary
     }
-    samples {
-      ...sample
+    sampleEsis {
+      sample {
+        ...sample
+      }
+      ...sampleEsi
       questionary {
         isCompleted
+      }
+    }
+    visit {
+      ...visit
+      proposal {
+        proposalId
+        samples {
+          ...sample
+        }
       }
     }
   }
 }
     ${EsiFragmentDoc}
 ${QuestionaryFragmentDoc}
-${SampleFragmentDoc}`;
+${SampleFragmentDoc}
+${SampleEsiFragmentDoc}
+${VisitFragmentDoc}`;
 export const UpdateEsiDocument = gql`
     mutation updateEsi($esiId: Int!, $isSubmitted: Boolean) {
   updateEsi(esiId: $esiId, isSubmitted: $isSubmitted) {
@@ -8732,8 +8967,11 @@ export const UpdateEsiDocument = gql`
         isCompleted
         ...questionary
       }
-      samples {
-        ...sample
+      sampleEsis {
+        sample {
+          ...sample
+        }
+        ...sampleEsi
         questionary {
           isCompleted
         }
@@ -8747,6 +8985,7 @@ export const UpdateEsiDocument = gql`
     ${EsiFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
+${SampleEsiFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetEventLogsDocument = gql`
     query getEventLogs($eventType: String!, $changedObjectId: String!) {
@@ -9395,6 +9634,14 @@ export const CreateQuestionaryDocument = gql`
 }
     ${QuestionaryFragmentDoc}
 ${RejectionFragmentDoc}`;
+export const GetBlankQuestionaryDocument = gql`
+    query getBlankQuestionary($templateId: Int!) {
+  blankQuestionary(templateId: $templateId) {
+    isCompleted
+    ...questionary
+  }
+}
+    ${QuestionaryFragmentDoc}`;
 export const GetBlankQuestionaryStepsDocument = gql`
     query getBlankQuestionarySteps($templateId: Int!) {
   blankQuestionarySteps(templateId: $templateId) {
@@ -9584,6 +9831,79 @@ export const UserWithReviewsDocument = gql`
   }
 }
     `;
+export const CreateSampleEsiDocument = gql`
+    mutation createSampleEsi($sampleId: Int!, $esiId: Int!) {
+  createSampleEsi(sampleId: $sampleId, esiId: $esiId) {
+    esi {
+      ...sampleEsi
+      questionary {
+        isCompleted
+        ...questionary
+      }
+      sample {
+        ...sample
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
+export const DeleteSampleEsiDocument = gql`
+    mutation deleteSampleEsi($sampleId: Int!, $esiId: Int!) {
+  deleteSampleEsi(sampleId: $sampleId, esiId: $esiId) {
+    esi {
+      ...sampleEsi
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${RejectionFragmentDoc}`;
+export const GetSampleEsiDocument = gql`
+    query getSampleEsi($sampleId: Int!, $esiId: Int!) {
+  sampleEsi(sampleId: $sampleId, esiId: $esiId) {
+    ...sampleEsi
+    questionary {
+      isCompleted
+      ...questionary
+    }
+    sample {
+      ...sample
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}`;
+export const UpdateSampleEsiDocument = gql`
+    mutation updateSampleEsi($esiId: Int!, $sampleId: Int!, $isSubmitted: Boolean) {
+  updateSampleEsi(sampleId: $sampleId, esiId: $esiId, isSubmitted: $isSubmitted) {
+    esi {
+      ...sampleEsi
+      questionary {
+        isCompleted
+        ...questionary
+      }
+      sample {
+        ...sample
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CloneSampleDocument = gql`
     mutation cloneSample($sampleId: Int!, $title: String) {
   cloneSample(sampleId: $sampleId, title: $title) {
@@ -11179,6 +11499,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createQuestionary(variables: CreateQuestionaryMutationVariables): Promise<CreateQuestionaryMutation> {
       return withWrapper(() => client.request<CreateQuestionaryMutation>(print(CreateQuestionaryDocument), variables));
     },
+    getBlankQuestionary(variables: GetBlankQuestionaryQueryVariables): Promise<GetBlankQuestionaryQuery> {
+      return withWrapper(() => client.request<GetBlankQuestionaryQuery>(print(GetBlankQuestionaryDocument), variables));
+    },
     getBlankQuestionarySteps(variables: GetBlankQuestionaryStepsQueryVariables): Promise<GetBlankQuestionaryStepsQuery> {
       return withWrapper(() => client.request<GetBlankQuestionaryStepsQuery>(print(GetBlankQuestionaryStepsDocument), variables));
     },
@@ -11217,6 +11540,18 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     userWithReviews(variables?: UserWithReviewsQueryVariables): Promise<UserWithReviewsQuery> {
       return withWrapper(() => client.request<UserWithReviewsQuery>(print(UserWithReviewsDocument), variables));
+    },
+    createSampleEsi(variables: CreateSampleEsiMutationVariables): Promise<CreateSampleEsiMutation> {
+      return withWrapper(() => client.request<CreateSampleEsiMutation>(print(CreateSampleEsiDocument), variables));
+    },
+    deleteSampleEsi(variables: DeleteSampleEsiMutationVariables): Promise<DeleteSampleEsiMutation> {
+      return withWrapper(() => client.request<DeleteSampleEsiMutation>(print(DeleteSampleEsiDocument), variables));
+    },
+    getSampleEsi(variables: GetSampleEsiQueryVariables): Promise<GetSampleEsiQuery> {
+      return withWrapper(() => client.request<GetSampleEsiQuery>(print(GetSampleEsiDocument), variables));
+    },
+    updateSampleEsi(variables: UpdateSampleEsiMutationVariables): Promise<UpdateSampleEsiMutation> {
+      return withWrapper(() => client.request<UpdateSampleEsiMutation>(print(UpdateSampleEsiDocument), variables));
     },
     cloneSample(variables: CloneSampleMutationVariables): Promise<CloneSampleMutation> {
       return withWrapper(() => client.request<CloneSampleMutation>(print(CloneSampleDocument), variables));

@@ -1,5 +1,7 @@
 import { ExcludeNull } from 'utils/utilTypes';
 
-import { GetEsiQuery } from '../../../generated/sdk';
+import { GetSampleEsiQuery } from '../../../generated/sdk';
 
-export type SampleEsiWithQuestionary = ExcludeNull<GetEsiQuery['esi']>;
+export type SampleEsiWithQuestionary = ExcludeNull<
+  GetSampleEsiQuery['sampleEsi']
+>;

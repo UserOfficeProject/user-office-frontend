@@ -6,7 +6,7 @@ import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/Propo
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import { createProposalEsiBasisValidationSchema } from './createProposalEsiValidationSchema';
-import { QuestionaryComponentProposalEsiBasis } from './QuestionaryComponentProposalEsiBasis';
+import QuestionaryComponentProposalEsiBasis from './QuestionaryComponentProposalEsiBasis';
 import { QuestionProposalEsiBasisForm } from './QuestionProposalEsiBasisForm';
 import { QuestionTemplateRelationProposalEsiBasisForm } from './QuestionTemplateRelationProposalEsiBasisForm';
 
@@ -24,6 +24,6 @@ export const proposalEsiBasisDefinition: QuestionaryComponentDefinition = {
   getYupInitialValue: ({ state }) => {
     const esiState = state as ProposalEsiSubmissionState;
 
-    return esiState.esi;
+    return esiState.esi.sampleEsis;
   },
 };

@@ -42,13 +42,15 @@ function ProposalEsiReview({ confirm }: ProposalEsiReviewProps) {
   const isSubmitted = state.esi.isSubmitted;
 
   const additionalDetails: TableRowData[] = [
-    { label: 'Status', value: isSubmitted ? 'Submitted' : 'Draft' },
+    { label: 'Proposal ID', value: state.esi.visit?.proposal.proposalId || '' },
+    { label: 'Visit status', value: state.esi.visit?.status || '' },
+    { label: 'ESI status', value: isSubmitted ? 'Submitted' : 'Draft' },
     {
-      label: 'Samples',
+      label: 'Samples for the experiment',
       value: (
         <ul className={classes.sampleList}>
-          {state.esi.samples.map((sample) => (
-            <li key={sample.id}>{sample.title}</li>
+          {state.esi.sampleEsis.map((esi) => (
+            <li key={esi.esiId}>{esi.sample.title}</li>
           ))}
         </ul>
       ),
@@ -60,7 +62,7 @@ function ProposalEsiReview({ confirm }: ProposalEsiReviewProps) {
       <QuestionaryDetails
         questionaryId={state.esi.questionary.questionaryId}
         additionalDetails={additionalDetails}
-        title="Risk assessment information"
+        title="Experiment safety input"
       />
       <NavigationFragment isLoading={isExecutingCall}>
         <NavigButton

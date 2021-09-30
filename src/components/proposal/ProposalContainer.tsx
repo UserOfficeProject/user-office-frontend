@@ -76,7 +76,7 @@ export default function ProposalContainer(props: {
       await api()
         .getProposal({ primaryKey: proposalState.proposal.primaryKey }) // or load blankQuestionarySteps if sample is null
         .then((data) => {
-          if (data.proposal && data.proposal.questionary?.steps) {
+          if (data.proposal?.questionary?.steps) {
             dispatch({
               type: 'PROPOSAL_LOADED',
               proposal: data.proposal,

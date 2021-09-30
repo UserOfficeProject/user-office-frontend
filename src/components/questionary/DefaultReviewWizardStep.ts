@@ -19,10 +19,13 @@ export class DefaultReviewWizardStep implements WizardStep {
     const lastProposalStep =
       state.questionary.steps[state.questionary.steps.length - 1];
 
+    const isReadOnly =
+      lastProposalStep === undefined || lastProposalStep.isCompleted === false;
+
     return {
       title: 'Review',
       isCompleted: this.isReviewStepCompleted(state),
-      isReadonly: lastProposalStep.isCompleted === false,
+      isReadonly: isReadOnly,
     };
   }
 }

@@ -1,2 +1,2 @@
-import { EsiFragment } from 'generated/sdk';
-export type EsiCore = EsiFragment;
+import { SampleEsiFragment } from './../../../generated/sdk';
+export type SampleEsiCore = SampleEsiFragment;

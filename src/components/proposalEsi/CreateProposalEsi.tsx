@@ -34,7 +34,7 @@ function CreateProposalEsi({
           }
         });
     }
-  }, [visit]);
+  }, [visit, api]);
 
   if (!esi) {
     return <UOLoader />;

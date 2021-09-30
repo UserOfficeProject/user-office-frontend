@@ -1,64 +1,228 @@
-import React, { useContext } from 'react';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import AddBox from '@material-ui/icons/AddBox';
+import CheckIcon from '@material-ui/icons/Check';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import { Field, FieldProps } from 'formik';
+import React, { MouseEvent, useContext, useState } from 'react';
 
+import BoxIcon from 'components/common/icons/BoxIcon';
+import StyledModal from 'components/common/StyledModal';
+import UOLoader from 'components/common/UOLoader';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalEsiContextType } from 'components/proposalEsi/ProposalEsiContainer';
 import { QuestionaryContext } from 'components/questionary/QuestionaryContext';
-import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/ProposalEsiSubmissionState';
+import SampleEsiContainer from 'components/sampleEsi/SampleEsiContainer';
+import { GetSampleEsiQuery } from 'generated/sdk';
+import { SampleEsiWithQuestionary } from 'models/questionary/sampleEsi/SampleEsiWithQuestionary';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import { QuestionnairesList } from '../QuestionnairesList';
-
-function QuestionaryComponentProposalEsiBasis({}: BasicComponentProps) {
+function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
+  const { answer } = props;
+  const answerId = answer.question.id;
   const { state } = useContext(QuestionaryContext) as ProposalEsiContextType;
+  const [selectedSampleEsi, setSelectedSampleEsi] = useState<
+    GetSampleEsiQuery['sampleEsi']
+  >(null);
+  const { api } = useDataApiWithFeedback();
 
   return (
-    <QuestionnairesList
-      data={
-        state?.esi.samples.map((sample) => ({
-          id: sample.id,
-          label: sample.title,
-          isCompleted: sample.questionary.isCompleted,
-        })) ?? []
-      }
-      onEditClick={(item) => {}}
-      onDeleteClick={(item) => {}}
-      onCloneClick={(item) => {}}
-      onAddNewClick={() => {}}
-    />
+    <Field name={answerId}>
+      {({ field, form }: FieldProps<SampleEsiWithQuestionary[]>) => {
+        const declareEsi = (id: number) => {
+          api()
+            .createSampleEsi({
+              esiId: state!.esi.id,
+              sampleId: id,
+            })
+            .then((response) => {
+              if (response.createSampleEsi?.esi) {
+                form.setFieldValue(answerId, [
+                  ...field.value,
+                  response.createSampleEsi.esi,
+                ]);
+                setSelectedSampleEsi(response.createSampleEsi.esi);
+              }
+            });
+        };
+
+        const revokeEsi = (id: number) => {
+          api()
+            .deleteSampleEsi({
+              esiId: state!.esi.id,
+              sampleId: id,
+            })
+            .then((response) => {
+              if (!response.deleteSampleEsi.rejection) {
+                const newValue = field.value.filter(
+                  (esi) => esi.sample.id !== id
+                );
+                form.setFieldValue(answerId, newValue);
+              }
+            });
+        };
+
+        const openEsi = async (id: number) => {
+          await api()
+            .updateSampleEsi({
+              esiId: state!.esi.id,
+              sampleId: id,
+              isSubmitted: false,
+            })
+            .then((response) => {
+              const updatedEsi = response.updateSampleEsi.esi;
+              if (updatedEsi) {
+                setSelectedSampleEsi(updatedEsi);
+                const newValue = field.value.map((esi) =>
+                  esi.sampleId === updatedEsi.sampleId ? updatedEsi : esi
+                );
+                form.setFieldValue(answerId, newValue);
+              }
+            });
+        };
+
+        const allSamples = state?.esi.visit?.proposal.samples;
+        const declaredEsis = field.value;
+
+        return (
+          <div>
+            <label>{answer.question.question}</label>
+            <List dense={true}>
+              {allSamples?.map((sample) => {
+                const esi = declaredEsis.find(
+                  (curEsi) => curEsi.sampleId === sample.id
+                );
+                const hasDeclaredEsi = esi !== undefined;
+                const isDeclarationComplete = esi?.isSubmitted;
+
+                return (
+                  <ListItem key={sample.id}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <BoxIcon
+                          htmlColor={
+                            isDeclarationComplete
+                              ? 'green'
+                              : hasDeclaredEsi
+                              ? 'red'
+                              : 'inherit'
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={sample.title}
+                      secondary={
+                        isDeclarationComplete
+                          ? 'Ready'
+                          : hasDeclaredEsi
+                          ? 'Unfinished declaration'
+                          : ''
+                      }
+                    />
+                    {!hasDeclaredEsi && (
+                      <ListItemIcon>
+                        <IconButton
+                          edge="end"
+                          title="Add"
+                          onClick={(e: MouseEvent) => {
+                            e.stopPropagation();
+                            declareEsi(sample.id);
+                          }}
+                        >
+                          <AddBox />
+                        </IconButton>
+                      </ListItemIcon>
+                    )}
+
+                    {hasDeclaredEsi && (
+                      <ListItemIcon>
+                        <IconButton
+                          edge="end"
+                          title="Remove"
+                          onClick={(e: MouseEvent) => {
+                            e.stopPropagation();
+                            revokeEsi(sample.id);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemIcon>
+                    )}
+                    {hasDeclaredEsi && (
+                      <ListItemIcon>
+                        <IconButton
+                          edge="end"
+                          title="Edit"
+                          onClick={(e: MouseEvent) => {
+                            e.stopPropagation();
+                            openEsi(sample.id);
+                          }}
+                        >
+                          {isDeclarationComplete ? <CheckIcon /> : <EditIcon />}
+                        </IconButton>
+                      </ListItemIcon>
+                    )}
+                  </ListItem>
+                );
+              })}
+            </List>
+            <Divider style={{ marginBottom: '12px' }} />
+            <Typography variant="body1" align={'right'}>
+              {`${field.value.length ?? 0} of
+              ${
+                state?.esi.visit?.proposal.samples?.length ?? 0
+              } samples selected`}
+            </Typography>
+            <StyledModal
+              onClose={() => setSelectedSampleEsi(null)}
+              open={selectedSampleEsi !== null}
+            >
+              {selectedSampleEsi ? (
+                <SampleEsiContainer
+                  esi={selectedSampleEsi}
+                  onUpdate={(updatedSampleEsi) => {
+                    const newValue = field.value.map((sampleEsi) =>
+                      sampleEsi.sampleId === updatedSampleEsi.sampleId
+                        ? updatedSampleEsi
+                        : sampleEsi
+                    );
+
+                    form.setFieldValue(answerId, newValue);
+                  }}
+                  onCreate={(newSample) => {
+                    form.setFieldValue(answerId, [...field.value, newSample]);
+                  }}
+                  onSubmitted={() => {
+                    // refresh all samples
+                    api()
+                      .getEsi({ esiId: state!.esi.id })
+                      .then((result) => {
+                        form.setFieldValue(answerId, result.esi?.sampleEsis);
+                      });
+
+                    setSelectedSampleEsi(null);
+                  }}
+                ></SampleEsiContainer>
+              ) : (
+                <UOLoader />
+              )}
+            </StyledModal>
+          </div>
+        );
+      }}
+    </Field>
   );
 }
 
-const proposalEsiBasisPreSubmit = () => async ({
-  api,
-  dispatch,
-  state,
-}: SubmitActionDependencyContainer) => {
-  const esi = (state as ProposalEsiSubmissionState).esi;
-
-  const esiExists = esi.id > 0;
-
-  let questionaryId: number;
-  if (esiExists) {
-    questionaryId = esi.questionary.questionaryId;
-  } else {
-    // create new item with questionary
-    const result = await api.createEsi({
-      visitId: esi.visitId,
-    });
-    const newEsi = result.createEsi.esi;
-
-    if (newEsi) {
-      dispatch({
-        type: 'ESI_CREATED',
-        esi: newEsi,
-      });
-      questionaryId = newEsi.questionary.questionaryId;
-    } else {
-      return 0; // error
-    }
-  }
-
-  return questionaryId;
-};
-
-export { QuestionaryComponentProposalEsiBasis, proposalEsiBasisPreSubmit };
+export default QuestionaryComponentProposalEsiBasis;

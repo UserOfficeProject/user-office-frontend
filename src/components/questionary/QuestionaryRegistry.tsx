@@ -5,6 +5,7 @@ import { StepDisplayElementFactory } from './DefaultStepDisplayElementFactory';
 import { esiQuestionaryDefinition } from './questionaries/esi/EsiQuestionaryDefinition';
 import { proposalQuestionaryDefinition } from './questionaries/proposal/ProposalQuestionaryDefinition';
 import { sampleQuestionaryDefinition } from './questionaries/sample/SampleQuestionaryDefinition';
+import { sampleEsiQuestionaryDefinition } from './questionaries/sampleEsi/SampleEsiQuestionaryDefinition';
 import { shipmentQuestionaryDefinition } from './questionaries/shipment/ShipmentQuestionaryDefinition';
 import { visitRegistrationQuestionaryDefinition } from './questionaries/visitRegistration/VisitRegistrationQuestionaryDefinition';
 import { WizardStepFactory } from './WizardStepFactory';
@@ -32,6 +33,7 @@ const registry = [
   shipmentQuestionaryDefinition,
   visitRegistrationQuestionaryDefinition,
   esiQuestionaryDefinition,
+  sampleEsiQuestionaryDefinition,
 ];
 
 Object.freeze(registry);

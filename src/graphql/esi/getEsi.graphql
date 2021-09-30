@@ -5,10 +5,22 @@ query getEsi($esiId: Int!) {
       isCompleted
       ...questionary
     }
-    samples {
-      ...sample
+    sampleEsis {
+      sample {
+        ...sample
+      }
+      ...sampleEsi
       questionary {
         isCompleted
+      }
+    }
+    visit {
+      ...visit
+      proposal {
+        proposalId
+        samples {
+          ...sample
+        }
       }
     }
   }

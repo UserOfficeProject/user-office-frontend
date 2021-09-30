@@ -14,6 +14,7 @@ import { ProposalWithQuestionary } from './proposal/ProposalWithQuestionary';
 import { ProposalEsiWithQuestionary } from './proposalEsi/ProposalEsiWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleWithQuestionary } from './sample/SampleWithQuestionary';
+import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
 import { ShipmentWithQuestionary } from './shipment/ShipmentWithQuestionary';
 import { StepType } from './StepType';
 import { RegistrationWithQuestionary as RegistrationWQ } from './visit/VisitRegistrationWithQuestionary';
@@ -49,11 +50,16 @@ export type Event =
   | { type: 'REGISTRATION_LOADED'; visit: RegistrationWQ }
   | { type: 'REGISTRATION_MODIFIED'; visit: Partial<RegistrationWQ> }
   | { type: 'REGISTRATION_SUBMITTED'; visit: Partial<RegistrationWQ> }
-  // risk assessment
+  // esi
   | { type: 'ESI_CREATED'; esi: ProposalEsiWithQuestionary }
   | { type: 'ESI_LOADED'; esi: ProposalEsiWithQuestionary }
   | { type: 'ESI_MODIFIED'; esi: Partial<ProposalEsiWithQuestionary> }
-  | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> };
+  | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> }
+  // sample esi
+  | { type: 'SAMPLE_ESI_CREATED'; esi: SampleEsiWithQuestionary }
+  | { type: 'SAMPLE_ESI_LOADED'; esi: SampleEsiWithQuestionary }
+  | { type: 'SAMPLE_ESI_MODIFIED'; esi: Partial<SampleEsiWithQuestionary> }
+  | { type: 'SAMPLE_ESI_SUBMITTED'; esi: Partial<SampleEsiWithQuestionary> };
 
 export interface WizardStepMetadata {
   title: string;

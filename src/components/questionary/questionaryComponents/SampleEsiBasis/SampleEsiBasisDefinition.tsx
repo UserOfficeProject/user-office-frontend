@@ -6,14 +6,13 @@ import { SampleEsiSubmissionState } from 'models/questionary/sampleEsi/SampleEsi
 
 import { QuestionaryComponentDefinition } from '../../QuestionaryComponentRegistry';
 import { createSampleEsiBasisValidationSchema } from './createSampleEsiValidationSchema';
-import { QuestionaryComponentSampleEsiBasis } from './QuestionaryComponentSampleEsiBasis';
 import { QuestionSampleEsiBasisForm } from './QuestionSampleEsiBasisForm';
 import { QuestionTemplateRelationSampleEsiBasisForm } from './QuestionTemplateRelationSampleEsiBasisForm';
 
 export const sampleEsiBasisDefinition: QuestionaryComponentDefinition = {
   dataType: DataType.SAMPLE_ESI_BASIS,
   name: 'Sample ESI Basis',
-  questionaryComponent: QuestionaryComponentSampleEsiBasis,
+  questionaryComponent: null,
   questionForm: () => QuestionSampleEsiBasisForm,
   questionTemplateRelationForm: () =>
     QuestionTemplateRelationSampleEsiBasisForm,

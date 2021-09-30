@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { FormikProps } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import * as Yup from 'yup';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
@@ -72,8 +72,6 @@ export type GetYupInitialValue = (props: {
   state: QuestionarySubmissionState;
 }) => Answer['value'];
 
-type QuestionaryComponent = (props: BasicComponentProps) => JSX.Element | null;
-
 export interface QuestionaryComponentDefinition {
   /**
    * The enum value from DataType
@@ -88,7 +86,7 @@ export interface QuestionaryComponentDefinition {
   /**
    * The main component that is rendered in the questionary and visible by user
    */
-  readonly questionaryComponent: QuestionaryComponent;
+  readonly questionaryComponent: FC<BasicComponentProps> | null;
 
   /**
    * A form used in administration panel to define a question (more on this below)
@@ -200,11 +198,13 @@ export function createQuestionForm(props: QuestionFormProps): JSX.Element {
 
 export function createQuestionaryComponent(
   props: BasicComponentProps
-): JSX.Element {
+): ReactNode {
   const dataType = props.answer.question.dataType;
   const definition = getQuestionaryComponentDefinition(dataType);
 
-  return React.createElement(definition.questionaryComponent, props);
+  return definition.questionaryComponent
+    ? React.createElement(definition.questionaryComponent, props)
+    : null;
 }
 
 export const getTemplateFieldIcon = (dataType: DataType) => {
