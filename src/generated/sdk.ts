@@ -1717,7 +1717,6 @@ export type Proposal = {
   managementTimeAllocation: Maybe<Scalars['Int']>;
   managementDecisionSubmitted: Scalars['Boolean'];
   technicalReviewAssignee: Maybe<Scalars['Int']>;
-  referenceNumberSequence: Scalars['Int'];
   users: Array<BasicUserDetails>;
   proposer: Maybe<BasicUserDetails>;
   status: Maybe<ProposalStatus>;
