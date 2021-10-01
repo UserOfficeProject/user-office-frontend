@@ -488,9 +488,9 @@ export type ExperimentSafetyInput = {
   questionaryId: Scalars['Int'];
   isSubmitted: Scalars['Boolean'];
   created: Scalars['DateTime'];
-  questionary: Questionary;
   sampleEsis: Array<SampleExperimentSafetyInput>;
   visit: Maybe<Visit>;
+  questionary: Questionary;
 };
 
 export type Feature = {
@@ -1981,7 +1981,6 @@ export type Query = {
   callsByInstrumentScientist: Maybe<Array<Call>>;
   proposals: Maybe<ProposalsQueryResult>;
   instrumentScientistProposals: Maybe<ProposalsQueryResult>;
-  sampleEsiBlank: SampleExperimentSafetyInput;
   sampleEsi: Maybe<SampleExperimentSafetyInput>;
   shipments: Maybe<Array<Shipment>>;
   questions: Array<QuestionWithUsage>;
@@ -2088,12 +2087,6 @@ export type QueryInstrumentScientistProposalsArgs = {
   filter?: Maybe<ProposalsFilter>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QuerySampleEsiBlankArgs = {
-  esiId: Scalars['Int'];
-  questionId: Scalars['String'];
 };
 
 

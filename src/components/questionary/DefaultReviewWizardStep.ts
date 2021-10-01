@@ -18,9 +18,10 @@ export class DefaultReviewWizardStep implements WizardStep {
   getMetadata(state: QuestionarySubmissionState) {
     const lastProposalStep =
       state.questionary.steps[state.questionary.steps.length - 1];
+    const hasLastProposalStep = lastProposalStep !== undefined;
 
     const isReadOnly =
-      lastProposalStep === undefined || lastProposalStep.isCompleted === false;
+      hasLastProposalStep && lastProposalStep.isCompleted === false;
 
     return {
       title: 'Review',
