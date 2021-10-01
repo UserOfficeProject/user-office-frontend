@@ -1,7 +1,6 @@
 import SvgIcon from '@material-ui/core/SvgIcon';
 import React from 'react';
 
-// NOTE: The icon is taken from: https://materialdesignicons.com/
 const EsiIcon: React.FC = (props) => {
   return (
     <SvgIcon {...props}>

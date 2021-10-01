@@ -12,7 +12,7 @@ import { WizardStepFactory } from './WizardStepFactory';
 
 export interface QuestionaryDefinition {
   /**
-   * The enum value from TemplateCategoryId
+   * The enum value from TemplateGroupId
    */
   readonly groupId: TemplateGroupId;
 

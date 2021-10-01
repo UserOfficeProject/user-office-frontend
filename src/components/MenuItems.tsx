@@ -128,7 +128,7 @@ const EsiTemplatesMenuListItem = () => {
 
   return (
     <>
-      <Tooltip title="ESI">
+      <Tooltip title="Experiment Safety Input (ESI)">
         <ListItem button onClick={() => setIsExpanded(!isExpanded)}>
           <ListItemIcon>
             {isExpanded ? (
@@ -153,7 +153,7 @@ const EsiTemplatesMenuListItem = () => {
         unmountOnExit
         style={{ marginLeft: '10px' }}
       >
-        <Tooltip title="Experiment safety user input">
+        <Tooltip title="Experiment Safety Input (Proposal)">
           <ListItem component={NavLink} to="/EsiTemplates" button>
             <ListItemIcon>
               <DescriptionIcon />
@@ -161,7 +161,7 @@ const EsiTemplatesMenuListItem = () => {
             <ListItemText primary="Proposal ESI" title="Proposal ESI" />
           </ListItem>
         </Tooltip>
-        <Tooltip title="Sample safety user input">
+        <Tooltip title="Experiment Safety Input (Sample)">
           <ListItem component={NavLink} to="/SampleEsiTemplates" button>
             <ListItemIcon>
               <InboxIcon />

@@ -115,9 +115,6 @@ export default function SampleEsiContainer(props: SampleEsiContainerProps) {
           handleReset();
           break;
 
-        case 'SAMPLE_ESI_CREATED':
-          break;
-
         case 'SAMPLE_ESI_MODIFIED':
           props.onUpdate?.(state.esi);
           break;

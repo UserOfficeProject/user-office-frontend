@@ -11,7 +11,7 @@ const sampleTitle = /My sample title/i;
 const newSampleTitle = faker.lorem.words(3);
 
 const proposalTitle = 'Test proposal';
-const riskAssessmentButtonTitle = 'Finish safety input form';
+const proposalEsiButtonTitle = 'Finish safety input form';
 
 context('visits tests', () => {
   before(() => {
@@ -59,36 +59,36 @@ context('visits tests', () => {
     cy.visit('/');
   });
 
-  it('Should be able to create risk assessments template', () => {
+  it('Should be able to create proposal ESI template', () => {
     cy.login('officer');
 
-    cy.createTemplate('riskAssessment');
+    cy.createTemplate('proposalEsi');
 
     cy.createTextQuestion(questionTitle);
   });
 
-  it('PI should see risk assessment button ', () => {
+  it('PI should see ESI assessment button ', () => {
     cy.login({ email: 'Javon4@hotmail.com', password: 'Test1234!' });
 
-    cy.testActionButton(riskAssessmentButtonTitle, 'active');
+    cy.testActionButton(proposalEsiButtonTitle, 'active');
   });
 
-  it('Co-proposer should see risk assessment button ', () => {
+  it('Co-proposer should see ESI button ', () => {
     cy.login({ email: 'ben@inbox.com', password: 'Test1234!' });
 
-    cy.testActionButton(riskAssessmentButtonTitle, 'active');
+    cy.testActionButton(proposalEsiButtonTitle, 'active');
   });
 
-  it('Visitor should not see risk assessment button', () => {
+  it('Visitor should not see ESI button', () => {
     cy.login({ email: 'david@teleworm.us', password: 'Test1234!' });
 
-    cy.testActionButton(riskAssessmentButtonTitle, 'invisible');
+    cy.testActionButton(proposalEsiButtonTitle, 'invisible');
   });
 
-  it('Should be able to do risk assessment', () => {
+  it('Should be able to do ESI', () => {
     cy.login('user');
     // select sample from dropdown
-    cy.get(`[title='${riskAssessmentButtonTitle}']`).click();
+    cy.get(`[title='${proposalEsiButtonTitle}']`).click();
     cy.get('[data-cy=samples-dropdown]').click();
     cy.get('[role=listbox]').contains(sampleTitle).click();
     cy.get('body').type('{esc}');
@@ -115,7 +115,7 @@ context('visits tests', () => {
     cy.contains(questionTitle).should('exist');
     cy.contains(answer).should('exist');
 
-    cy.get('[data-cy=submit-riskAssessment-button]').click();
+    cy.get('[data-cy=submit-proposal-esi-button]').click();
 
     cy.get('[data-cy="confirm-ok"]').click();
   });
@@ -123,6 +123,6 @@ context('visits tests', () => {
   it('Co-proposer should see that risk assessment is completed', () => {
     cy.login({ email: 'ben@inbox.com', password: 'Test1234!' });
 
-    cy.testActionButton(riskAssessmentButtonTitle, 'completed');
+    cy.testActionButton(proposalEsiButtonTitle, 'completed');
   });
 });
