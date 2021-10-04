@@ -2,7 +2,7 @@ import faker from 'faker';
 
 context('Samples tests', () => {
   before(() => {
-    cy.resetDB();
+    cy.resetDB(true);
   });
 
   beforeEach(() => {

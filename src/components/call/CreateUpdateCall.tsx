@@ -55,7 +55,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
     ? {
         ...call,
         templateId: call.templateId || 0,
-        esiTemplateId: call.esiTemplateId || 0,
+        esiTemplateId: call.esiTemplateId || undefined,
         proposalWorkflowId: call.proposalWorkflowId || 0,
         referenceNumberFormat: call.referenceNumberFormat || '',
       }
@@ -76,7 +76,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
         surveyComment: '',
         proposalWorkflowId: '',
         templateId: '',
-        esiTemplateId: '',
+        esiTemplateId: undefined,
         allocationTimeUnit: AllocationTimeUnits.DAY,
         title: '',
         description: '',

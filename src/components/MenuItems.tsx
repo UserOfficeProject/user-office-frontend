@@ -124,7 +124,7 @@ const SettingsMenuListItem = () => {
 };
 
 const EsiTemplatesMenuListItem = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   return (
     <>

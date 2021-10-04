@@ -279,7 +279,7 @@ const CallGeneralInfo: React.FC<{
             text: template.name,
             value: template.templateId,
           }))}
-          InputProps={{ 'data-cy': 'esi-template' }}
+          InputProps={{ 'data-cy': 'call-esi-template' }}
           required
         />
       )}

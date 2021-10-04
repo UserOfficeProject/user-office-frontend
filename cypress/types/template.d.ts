@@ -146,7 +146,13 @@ declare global {
        *    cy.createTemplate('proposal')
        */
       createTemplate: (
-        type: 'proposal' | 'sample' | 'shipment' | 'visit' | 'proposalEsi',
+        type:
+          | 'proposal'
+          | 'sample'
+          | 'shipment'
+          | 'visit'
+          | 'proposalEsi'
+          | 'sampleEsi',
         title?: string,
         description?: string
       ) => void;
