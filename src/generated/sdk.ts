@@ -351,6 +351,7 @@ export type Equipment = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
+  description: Maybe<Scalars['String']>;
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
@@ -372,6 +373,7 @@ export enum EquipmentAssignmentStatus {
 
 export type EquipmentInput = {
   name: Scalars['String'];
+  description: Scalars['String'];
   maintenanceStartsAt?: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt?: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
@@ -395,6 +397,7 @@ export type EquipmentWithAssignmentStatus = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
+  description: Maybe<Scalars['String']>;
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
