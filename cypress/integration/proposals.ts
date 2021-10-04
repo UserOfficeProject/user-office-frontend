@@ -14,6 +14,10 @@ context('Proposal tests', () => {
 
   before(() => {
     cy.resetDB();
+    cy.viewport(1920, 1080);
+    cy.login('officer');
+    cy.createTemplate('proposalEsi', 'default esi template');
+    cy.logout();
   });
 
   beforeEach(() => {
@@ -121,6 +125,7 @@ context('Proposal tests', () => {
     const startDate = faker.date.past().toISOString().slice(0, 10);
     const endDate = faker.date.future().toISOString().slice(0, 10);
     const template = 'default template';
+    const esiTemplate = 'default esi template';
 
     cy.login('officer');
 
@@ -131,6 +136,7 @@ context('Proposal tests', () => {
       startDate,
       endDate,
       template,
+      esiTemplate,
       surveyComment,
       cycleComment,
       workflow: proposalWorkflow.name,
