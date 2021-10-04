@@ -42,6 +42,7 @@ function SampleEsiReview() {
               }}
               value={isAffirmChecked}
               checked={isAffirmChecked}
+              data-cy="confirm-sample-correct-cb"
             />
           }
           label={

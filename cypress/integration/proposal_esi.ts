@@ -4,12 +4,6 @@ const coProposerName = 'Benjamin';
 const coProposerEmail = 'ben@inbox.com';
 const visitorEmail = 'david@teleworm.us';
 
-const questionTitle = faker.lorem.words(3);
-const answer = faker.lorem.words(3);
-
-const sampleTitle = /My sample title/i;
-const newSampleTitle = faker.lorem.words(3);
-
 const proposalTitle = 'Test proposal';
 const proposalEsiButtonTitle = 'Finish safety input form';
 
@@ -19,8 +13,10 @@ context('visits tests', () => {
     // reset data and add seeds with test proposal
     cy.resetDB(true);
     cy.resetSchedulerDB(true);
+
     // Add co-proposer
     cy.login('officer');
+
     cy.contains('999999').parent().find('[title="View proposal"]').click();
     cy.get('[data-cy=toggle-edit-proposal]').click();
 
@@ -59,14 +55,6 @@ context('visits tests', () => {
     cy.visit('/');
   });
 
-  it('Should be able to create proposal ESI template', () => {
-    cy.login('officer');
-
-    cy.createTemplate('proposalEsi');
-
-    cy.createTextQuestion(questionTitle);
-  });
-
   it('PI should see ESI assessment button ', () => {
     cy.login({ email: 'Javon4@hotmail.com', password: 'Test1234!' });
 
@@ -85,35 +73,19 @@ context('visits tests', () => {
     cy.testActionButton(proposalEsiButtonTitle, 'invisible');
   });
 
-  it('Should be able to do ESI', () => {
+  it('Should be able to complete ESI', () => {
     cy.login('user');
-    // select sample from dropdown
     cy.get(`[title='${proposalEsiButtonTitle}']`).click();
-    cy.get('[data-cy=samples-dropdown]').click();
-    cy.get('[role=listbox]').contains(sampleTitle).click();
-    cy.get('body').type('{esc}');
-
-    // add new sample and select it from dropdown
-    cy.get('[data-cy=add-more-samples-btn]').click();
-    cy.get('[data-cy=add-button]').click();
-    cy.get('[name=sample_basis]').type(newSampleTitle);
-    cy.get('[data-cy=sample-declaration-modal]')
-      .find('[data-cy=save-and-continue-button]')
-      .click();
-    cy.get('[data-cy=close-edit-proposal-samples]').click();
-    cy.get('[data-cy=samples-dropdown]').click();
-    cy.get('[role=listbox]').contains(newSampleTitle).click();
-    cy.get('body').type('{esc}');
-
-    cy.contains(questionTitle).then(($elem: any) => {
-      cy.get(`#${$elem.attr('for')}`).type(answer);
-    });
+    cy.get('[data-cy=add-sample-btn]').click();
+    cy.get(
+      '[data-cy=sample-esi-modal] [data-cy=save-and-continue-button]'
+    ).click();
+    cy.get('[data-cy=submit-esi-button]').should('be.disabled');
+    cy.get('[data-cy=confirm-sample-correct-cb]').click();
+    cy.get('[data-cy=submit-esi-button]').should('not.be.disabled');
+    cy.get('[data-cy=sample-esi-modal] [data-cy=submit-esi-button]').click();
 
     cy.get('[data-cy=save-and-continue-button]').click();
-
-    cy.notification({ variant: 'success', text: 'Saved' });
-    cy.contains(questionTitle).should('exist');
-    cy.contains(answer).should('exist');
 
     cy.get('[data-cy=submit-proposal-esi-button]').click();
 

@@ -95,7 +95,7 @@ function ProposalEsiReview({ confirm }: ProposalEsiReviewProps) {
           disabled={isSubmitted}
           variant="contained"
           color="primary"
-          data-cy="submit-esi-button"
+          data-cy="submit-proposal-esi-button"
         >
           {isSubmitted ? '✔ Submitted' : 'Submit'}
         </NavigButton>

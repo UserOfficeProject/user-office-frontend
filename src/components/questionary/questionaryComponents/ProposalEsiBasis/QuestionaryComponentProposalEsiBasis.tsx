@@ -135,6 +135,7 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                         <IconButton
                           edge="end"
                           title="Add"
+                          data-cy="add-sample-btn"
                           onClick={(e: MouseEvent) => {
                             e.stopPropagation();
                             declareEsi(sample.id);
@@ -187,6 +188,7 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
             <StyledModal
               onClose={() => setSelectedSampleEsi(null)}
               open={selectedSampleEsi !== null}
+              data-cy="sample-esi-modal"
             >
               {selectedSampleEsi ? (
                 <SampleEsiContainer
