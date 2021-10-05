@@ -3,6 +3,10 @@ import faker from 'faker';
 context('Template tests', () => {
   before(() => {
     cy.resetDB(true);
+    cy.viewport(1920, 1080);
+    cy.login('officer');
+    cy.createTemplate('proposalEsi', 'default esi template');
+    cy.logout();
   });
 
   beforeEach(() => {
@@ -954,6 +958,9 @@ context('Template tests', () => {
     cy.get('[role="presentation"] [role="listbox"] li')
       .contains(proposalWorkflow.name)
       .click();
+
+    cy.get('[data-cy="call-esi-template"]').click();
+    cy.get('[role="presentation"]').contains('default esi template').click();
 
     cy.get('[data-cy="next-step"]').click();
     cy.get('[data-cy="next-step"]').click();
