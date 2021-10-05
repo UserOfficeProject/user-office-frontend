@@ -2,7 +2,7 @@ import faker from 'faker';
 
 context('Template tests', () => {
   before(() => {
-    cy.resetDB();
+    cy.resetDB(true);
   });
 
   beforeEach(() => {
@@ -36,7 +36,7 @@ context('Template tests', () => {
 
   const dateTooltip = faker.lorem.words(2);
 
-  const topic = faker.lorem.words(2);
+  const topic = 'Topic title';
   const title = faker.lorem.words(3);
   const abstract = faker.lorem.words(8);
   const textAnswer = faker.lorem.words(5);
@@ -97,8 +97,6 @@ context('Template tests', () => {
       .find("[title='Edit']")
       .first()
       .click();
-
-    cy.createTopic(topic);
 
     /* Boolean */
 
