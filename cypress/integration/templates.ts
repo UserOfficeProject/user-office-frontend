@@ -3,14 +3,10 @@ import faker from 'faker';
 context('Template tests', () => {
   before(() => {
     cy.resetDB(true);
-    cy.viewport(1920, 1080);
-    cy.login('officer');
-    cy.createTemplate('proposalEsi', 'default esi template');
-    cy.logout();
   });
 
   beforeEach(() => {
-    cy.viewport(1920, 1380);
+    cy.viewport(1920, 1680);
   });
 
   let boolId: string;
@@ -960,7 +956,7 @@ context('Template tests', () => {
       .click();
 
     cy.get('[data-cy="call-esi-template"]').click();
-    cy.get('[role="presentation"]').contains('default esi template').click();
+    cy.get('[role=listbox]').contains('default esi template').click();
 
     cy.get('[data-cy="next-step"]').click();
     cy.get('[data-cy="next-step"]').click();
