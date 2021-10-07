@@ -470,7 +470,12 @@ export enum Event {
   PROPOSAL_CLONED = 'PROPOSAL_CLONED',
   PROPOSAL_STATUS_CHANGED_BY_WORKFLOW = 'PROPOSAL_STATUS_CHANGED_BY_WORKFLOW',
   PROPOSAL_STATUS_CHANGED_BY_USER = 'PROPOSAL_STATUS_CHANGED_BY_USER',
-  TOPIC_ANSWERED = 'TOPIC_ANSWERED'
+  TOPIC_ANSWERED = 'TOPIC_ANSWERED',
+  PROPOSAL_BOOKING_TIME_SLOT_ADDED = 'PROPOSAL_BOOKING_TIME_SLOT_ADDED',
+  PROPOSAL_BOOKING_TIME_SLOTS_REMOVED = 'PROPOSAL_BOOKING_TIME_SLOTS_REMOVED',
+  PROPOSAL_BOOKING_TIME_ACTIVATED = 'PROPOSAL_BOOKING_TIME_ACTIVATED',
+  PROPOSAL_BOOKING_TIME_COMPLETED = 'PROPOSAL_BOOKING_TIME_COMPLETED',
+  PROPOSAL_BOOKING_TIME_UPDATED = 'PROPOSAL_BOOKING_TIME_UPDATED'
 }
 
 export type EventLog = {
@@ -1733,7 +1738,13 @@ export type Proposal = {
   sepMeetingDecision: Maybe<SepMeetingDecision>;
   samples: Maybe<Array<Sample>>;
   visits: Maybe<Array<Visit>>;
+  proposalBookingCore: Maybe<ProposalBookingCore>;
   proposalBooking: Maybe<ProposalBooking>;
+};
+
+
+export type ProposalProposalBookingCoreArgs = {
+  filter?: Maybe<ProposalBookingFilter>;
 };
 
 
@@ -1764,6 +1775,21 @@ export type ProposalBookingScheduledEventsArgs = {
   filter: ProposalBookingScheduledEventFilter;
 };
 
+export type ProposalBookingCore = {
+  __typename?: 'ProposalBookingCore';
+  id: Scalars['Int'];
+  scheduledEvents: Array<ScheduledEventCore>;
+};
+
+
+export type ProposalBookingCoreScheduledEventsArgs = {
+  filter: ProposalBookingScheduledEventFilterCore;
+};
+
+export type ProposalBookingFilter = {
+  status?: Maybe<Array<ProposalBookingStatus>>;
+};
+
 export enum ProposalBookingFinalizeAction {
   COMPLETE = 'COMPLETE',
   RESTART = 'RESTART'
@@ -1779,6 +1805,13 @@ export type ProposalBookingScheduledEventFilter = {
   bookingType?: Maybe<ScheduledEventBookingType>;
   endsAfter?: Maybe<Scalars['TzLessDateTime']>;
   endsBefore?: Maybe<Scalars['TzLessDateTime']>;
+};
+
+export type ProposalBookingScheduledEventFilterCore = {
+  bookingType?: Maybe<ScheduledEventBookingType>;
+  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
+  endsBefore?: Maybe<Scalars['TzLessDateTime']>;
+  status?: Maybe<Array<ProposalBookingStatus>>;
 };
 
 export enum ProposalBookingStatus {
@@ -2757,7 +2790,6 @@ export type ScheduledEvent = {
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
   proposalBooking: Maybe<ProposalBooking>;
-  visit: Maybe<Visit>;
 };
 
 export enum ScheduledEventBookingType {
@@ -2767,6 +2799,15 @@ export enum ScheduledEventBookingType {
   COMMISSIONING = 'COMMISSIONING',
   EQUIPMENT = 'EQUIPMENT'
 }
+
+export type ScheduledEventCore = {
+  __typename?: 'ScheduledEventCore';
+  id: Scalars['Int'];
+  bookingType: ScheduledEventBookingType;
+  startsAt: Scalars['TzLessDateTime'];
+  endsAt: Scalars['TzLessDateTime'];
+  visit: Maybe<Visit>;
+};
 
 export type ScheduledEventFilter = {
   startsAt: Scalars['TzLessDateTime'];
@@ -5039,11 +5080,11 @@ export type GetUserProposalBookingsWithEventsQuery = (
       )>, users: Array<(
         { __typename?: 'BasicUserDetails' }
         & BasicUserDetailsFragment
-      )>, proposalBooking: Maybe<(
-        { __typename?: 'ProposalBooking' }
+      )>, proposalBookingCore: Maybe<(
+        { __typename?: 'ProposalBookingCore' }
         & { scheduledEvents: Array<(
-          { __typename?: 'ScheduledEvent' }
-          & Pick<ScheduledEvent, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
+          { __typename?: 'ScheduledEventCore' }
+          & Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
           & { visit: Maybe<(
             { __typename?: 'Visit' }
             & { teamLead: (
@@ -9558,8 +9599,8 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
       users {
         ...basicUserDetails
       }
-      proposalBooking(filter: {status: $status}) {
-        scheduledEvents(filter: {endsAfter: $endsAfter}) {
+      proposalBookingCore(filter: {status: $status}) {
+        scheduledEvents(filter: {endsAfter: $endsAfter, status: $status}) {
           id
           startsAt
           endsAt

@@ -34,12 +34,6 @@ context('visits tests', () => {
     cy.get('[data-cy="save-admin-decision"]').click();
     cy.closeModal();
     cy.logout();
-    const eventDate = faker.date.future().toISOString().split('T')[0];
-    cy.createScheduledEvent(1, {
-      startsAt: `${eventDate} 10:00`,
-      endsAt: `${eventDate} 11:00`,
-    });
-    cy.activateBooking(1);
 
     cy.login('user');
     cy.defineExperimentTeam({

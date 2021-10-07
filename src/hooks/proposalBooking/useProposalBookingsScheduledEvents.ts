@@ -6,7 +6,7 @@ import {
   Maybe,
   Proposal,
   ProposalBookingStatus,
-  ScheduledEvent,
+  ScheduledEventCore,
   Visit,
   VisitFragment,
 } from 'generated/sdk';
@@ -20,7 +20,7 @@ import {
 } from './../../generated/sdk';
 
 export type ProposalScheduledEvent = Pick<
-  ScheduledEvent,
+  ScheduledEventCore,
   'startsAt' | 'endsAt' | 'id'
 > & {
   proposal: Pick<
@@ -81,7 +81,7 @@ export function useProposalBookingsScheduledEvents({
         if (data.me?.proposals) {
           const proposalScheduledEvent: ProposalScheduledEvent[] = [];
           data.me?.proposals.forEach((proposal) =>
-            proposal.proposalBooking?.scheduledEvents.forEach(
+            proposal.proposalBookingCore?.scheduledEvents.forEach(
               (scheduledEvent) => {
                 proposalScheduledEvent.push({
                   id: scheduledEvent.id,
