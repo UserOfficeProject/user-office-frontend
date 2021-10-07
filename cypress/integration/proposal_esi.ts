@@ -69,7 +69,10 @@ context('visits tests', () => {
 
   it('Should be able to complete ESI', () => {
     cy.login('user');
-    cy.get(`[title='${proposalEsiButtonTitle}']`).click();
+    cy.contains(proposalTitle)
+      .closest('TR')
+      .find(`[title='${proposalEsiButtonTitle}']`)
+      .click();
     cy.get('[data-cy=add-sample-btn]').click();
     cy.get(
       '[data-cy=sample-esi-modal] [data-cy=save-and-continue-button]'
