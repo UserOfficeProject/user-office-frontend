@@ -43,8 +43,7 @@ function ProposalEsiReview({ confirm }: ProposalEsiReviewProps) {
 
   const additionalDetails: TableRowData[] = [
     { label: 'Proposal ID', value: state.esi.visit?.proposal.proposalId || '' },
-    { label: 'Visit status', value: state.esi.visit?.status || '' },
-    { label: 'ESI status', value: isSubmitted ? 'Submitted' : 'Draft' },
+    { label: 'Proposal Title', value: state.esi.visit?.proposal.title || '' },
     {
       label: 'Samples for the experiment',
       value: (

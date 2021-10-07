@@ -4282,7 +4282,7 @@ export type CreateEsiMutation = (
         { __typename?: 'Visit' }
         & { proposal: (
           { __typename?: 'Proposal' }
-          & Pick<Proposal, 'proposalId'>
+          & Pick<Proposal, 'proposalId' | 'title'>
           & { samples: Maybe<Array<(
             { __typename?: 'Sample' }
             & SampleFragment
@@ -4330,7 +4330,7 @@ export type GetEsiQuery = (
       { __typename?: 'Visit' }
       & { proposal: (
         { __typename?: 'Proposal' }
-        & Pick<Proposal, 'proposalId'>
+        & Pick<Proposal, 'proposalId' | 'title'>
         & { samples: Maybe<Array<(
           { __typename?: 'Sample' }
           & SampleFragment
@@ -8903,6 +8903,7 @@ export const CreateEsiDocument = gql`
         ...visit
         proposal {
           proposalId
+          title
           samples {
             ...sample
           }
@@ -8941,6 +8942,7 @@ export const GetEsiDocument = gql`
       ...visit
       proposal {
         proposalId
+        title
         samples {
           ...sample
         }

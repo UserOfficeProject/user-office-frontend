@@ -19,6 +19,7 @@ mutation createEsi($visitId: Int!) {
         ...visit
         proposal {
           proposalId
+          title
           samples {
             ...sample
           }

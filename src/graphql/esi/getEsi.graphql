@@ -18,6 +18,7 @@ query getEsi($esiId: Int!) {
       ...visit
       proposal {
         proposalId
+        title
         samples {
           ...sample
         }
