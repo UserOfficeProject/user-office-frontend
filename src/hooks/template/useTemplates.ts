@@ -24,17 +24,25 @@ export function useTemplates(filter?: TemplatesFilter) {
   }
 
   useEffect(() => {
+    let unmounted = false;
     if (templatesFilter === undefined) {
       return;
     }
     api()
       .getTemplates({ filter: templatesFilter })
       .then((data) => {
+        if (unmounted) {
+          return;
+        }
         if (data.templates) {
           setTemplates(data.templates);
         }
         setLoadingTemplates(false);
       });
+
+    return () => {
+      unmounted = true;
+    };
   }, [api, templatesFilter]);
 
   return { templates, setTemplates, setTemplatesFilter, loadingTemplates };

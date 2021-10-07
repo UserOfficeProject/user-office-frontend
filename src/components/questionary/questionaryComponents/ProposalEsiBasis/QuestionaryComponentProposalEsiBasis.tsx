@@ -95,7 +95,7 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
         const declaredEsis = field.value || [];
 
         return (
-          <div>
+          <>
             <label>{answer.question.question}</label>
             <List dense={true}>
               {allSamples?.map((sample) => {
@@ -220,7 +220,7 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                 <UOLoader />
               )}
             </StyledModal>
-          </div>
+          </>
         );
       }}
     </Field>
