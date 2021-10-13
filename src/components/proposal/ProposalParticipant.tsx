@@ -80,6 +80,7 @@ export default function ProposalParticipant(props: {
           InputProps={{
             readOnly: true,
           }}
+          data-cy="principal-investigator"
           required
         />
 
