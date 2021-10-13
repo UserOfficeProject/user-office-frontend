@@ -4391,7 +4391,7 @@ export type CreateEsiMutation = (
         & SampleEsiFragment
       )>, proposal: (
         { __typename?: 'Proposal' }
-        & Pick<Proposal, 'proposalId' | 'title'>
+        & Pick<Proposal, 'primaryKey' | 'proposalId' | 'title'>
         & { samples: Maybe<Array<(
           { __typename?: 'Sample' }
           & SampleFragment
@@ -4438,7 +4438,7 @@ export type GetEsiQuery = (
       & SampleEsiFragment
     )>, proposal: (
       { __typename?: 'Proposal' }
-      & Pick<Proposal, 'proposalId' | 'title'>
+      & Pick<Proposal, 'primaryKey' | 'proposalId' | 'title'>
       & { samples: Maybe<Array<(
         { __typename?: 'Sample' }
         & SampleFragment
@@ -9187,6 +9187,7 @@ export const CreateEsiDocument = gql`
         }
       }
       proposal {
+        primaryKey
         proposalId
         title
         samples {
@@ -9225,6 +9226,7 @@ export const GetEsiDocument = gql`
       }
     }
     proposal {
+      primaryKey
       proposalId
       title
       samples {

@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Divider,
   IconButton,
   List,
@@ -10,6 +11,7 @@ import {
 } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import AddBox from '@material-ui/icons/AddBox';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import CheckIcon from '@material-ui/icons/Check';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -21,10 +23,19 @@ import StyledModal from 'components/common/StyledModal';
 import UOLoader from 'components/common/UOLoader';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalEsiContextType } from 'components/proposalEsi/ProposalEsiContainer';
-import { QuestionaryContext } from 'components/questionary/QuestionaryContext';
+import {
+  createMissingContextErrorMessage,
+  QuestionaryContext,
+} from 'components/questionary/QuestionaryContext';
 import SampleEsiContainer from 'components/sampleEsi/SampleEsiContainer';
-import { GetSampleEsiQuery } from 'generated/sdk';
+import {
+  DataType,
+  GetSampleEsiQuery,
+  SampleDeclarationConfig,
+} from 'generated/sdk';
+import { getQuestionsByType } from 'models/questionary/QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from 'models/questionary/sampleEsi/SampleEsiWithQuestionary';
+import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
@@ -35,6 +46,10 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
     GetSampleEsiQuery['sampleEsi']
   >(null);
   const { api } = useDataApiWithFeedback();
+
+  if (!state) {
+    throw new Error(createMissingContextErrorMessage());
+  }
 
   return (
     <Field name={answerId}>
@@ -178,7 +193,34 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                 );
               })}
             </List>
-            <Divider style={{ marginBottom: '12px' }} />
+            <ButtonContainer>
+              <Button
+                onClick={async () => {
+                  const sampleQuestions = getQuestionsByType(
+                    state.esi.proposal.questionary.steps,
+                    DataType.SAMPLE_DECLARATION
+                  );
+
+                  const sampleQuestion = sampleQuestions[0];
+
+                  api().createSample({
+                    title: 'New Sample',
+                    templateId: (sampleQuestion.config as SampleDeclarationConfig)
+                      .templateId!,
+                    proposalPk: state.esi.proposal.primaryKey,
+                    questionId: sampleQuestion.question.id,
+                  });
+                }}
+                variant="outlined"
+                data-cy="add-sample-button"
+                size="small"
+                color="primary"
+                startIcon={<AddCircleOutlineIcon />}
+              >
+                Add
+              </Button>
+            </ButtonContainer>
+            <Divider style={{ margin: '12px 0' }} />
             <Typography variant="body1" align={'right'}>
               {`${declaredEsis.length ?? 0} of
               ${state?.esi?.proposal.samples?.length ?? 0} samples selected`}
