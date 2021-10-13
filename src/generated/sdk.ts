@@ -149,6 +149,11 @@ export type BulkUpsertLostTimesInput = {
   lostTimes: Array<SimpleLostTimeInput>;
 };
 
+export type BulkUpsertScheduledEventsInput = {
+  proposalBookingId: Scalars['Int'];
+  scheduledEvents: Array<SimpleScheduledEventInput>;
+};
+
 export type Call = {
   __typename?: 'Call';
   id: Scalars['Int'];
@@ -267,6 +272,7 @@ export enum DataType {
   DATE = 'DATE',
   EMBELLISHMENT = 'EMBELLISHMENT',
   FILE_UPLOAD = 'FILE_UPLOAD',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   SELECTION_FROM_OPTIONS = 'SELECTION_FROM_OPTIONS',
   TEXT_INPUT = 'TEXT_INPUT',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
@@ -277,6 +283,7 @@ export enum DataType {
   SHIPMENT_BASIS = 'SHIPMENT_BASIS',
   RICH_TEXT_INPUT = 'RICH_TEXT_INPUT',
   VISIT_BASIS = 'VISIT_BASIS',
+  GENERIC_TEMPLATE_BASIS = 'GENERIC_TEMPLATE_BASIS',
   PROPOSAL_ESI_BASIS = 'PROPOSAL_ESI_BASIS',
   SAMPLE_ESI_BASIS = 'SAMPLE_ESI_BASIS'
 }
@@ -315,12 +322,6 @@ export type DeleteProposalWorkflowStatusInput = {
   sortOrder: Scalars['Int'];
 };
 
-export type DeleteScheduledEventsInput = {
-  ids: Array<Scalars['Int']>;
-  proposalBookingId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
-};
-
 export enum DependenciesLogicOperator {
   AND = 'AND',
   OR = 'OR'
@@ -352,7 +353,6 @@ export type Equipment = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
@@ -374,7 +374,6 @@ export enum EquipmentAssignmentStatus {
 
 export type EquipmentInput = {
   name: Scalars['String'];
-  description: Scalars['String'];
   maintenanceStartsAt?: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt?: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
@@ -398,7 +397,6 @@ export type EquipmentWithAssignmentStatus = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
   maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
   maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
   autoAccept: Scalars['Boolean'];
@@ -527,7 +525,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig | GenericTemplateBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -569,6 +567,40 @@ export type FileUploadConfig = {
 export type FinalizeScheduledEventInput = {
   id: Scalars['Int'];
   action: ProposalBookingFinalizeAction;
+};
+
+export type GenericTemplate = {
+  __typename?: 'GenericTemplate';
+  id: Scalars['Int'];
+  title: Scalars['String'];
+  creatorId: Scalars['Int'];
+  questionaryId: Scalars['Int'];
+  proposalPk: Scalars['Int'];
+  questionId: Scalars['String'];
+  created: Scalars['DateTime'];
+  questionary: Questionary;
+  proposal: Proposal;
+};
+
+export type GenericTemplateBasisConfig = {
+  __typename?: 'GenericTemplateBasisConfig';
+  titlePlaceholder: Scalars['String'];
+  questionLabel: Scalars['String'];
+};
+
+export type GenericTemplateResponseWrap = {
+  __typename?: 'GenericTemplateResponseWrap';
+  rejection: Maybe<Rejection>;
+  genericTemplate: Maybe<GenericTemplate>;
+};
+
+export type GenericTemplatesFilter = {
+  title?: Maybe<Scalars['String']>;
+  creatorId?: Maybe<Scalars['Int']>;
+  questionaryIds?: Maybe<Array<Scalars['Int']>>;
+  genericTemplateIds?: Maybe<Array<Scalars['Int']>>;
+  questionId?: Maybe<Scalars['String']>;
+  proposalPk?: Maybe<Scalars['Int']>;
 };
 
 export type HealthStats = {
@@ -677,6 +709,7 @@ export type Mutation = {
   updateCall: CallResponseWrap;
   assignInstrumentsToCall: CallResponseWrap;
   removeAssignedInstrumentFromCall: CallResponseWrap;
+  createGenericTemplate: GenericTemplateResponseWrap;
   changeProposalsStatus: SuccessResponseWrap;
   assignProposalsToInstrument: SuccessResponseWrap;
   removeProposalsFromInstrument: SuccessResponseWrap;
@@ -751,11 +784,13 @@ export type Mutation = {
   addTechnicalReview: TechnicalReviewResponseWrap;
   applyPatches: PrepareDbResponseWrap;
   checkExternalToken: CheckExternalTokenWrap;
+  cloneGenericTemplate: GenericTemplateResponseWrap;
   cloneSample: SampleResponseWrap;
   cloneTemplate: TemplateResponseWrap;
   createProposal: ProposalResponseWrap;
   createVisitRegistrationQuestionary: VisitRegistrationResponseWrap;
   deleteCall: CallResponseWrap;
+  deleteGenericTemplate: GenericTemplateResponseWrap;
   deleteInstitution: InstitutionResponseWrap;
   deleteInstrument: InstrumentResponseWrap;
   deleteProposal: ProposalResponseWrap;
@@ -784,6 +819,7 @@ export type Mutation = {
   submitTechnicalReview: TechnicalReviewResponseWrap;
   token: TokenResponseWrap;
   selectRole: TokenResponseWrap;
+  updateGenericTemplate: GenericTemplateResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
   createEquipment: EquipmentResponseWrap;
   updateEquipment: EquipmentResponseWrap;
@@ -793,7 +829,7 @@ export type Mutation = {
   addEquipmentResponsible: Scalars['Boolean'];
   bulkUpsertLostTimes: LostTimesResponseWrap;
   createScheduledEvent: ScheduledEventResponseWrap;
-  deleteScheduledEvents: ScheduledEventsResponseWrap;
+  bulkUpsertScheduledEvents: ScheduledEventsResponseWrap;
   updateScheduledEvent: ScheduledEventResponseWrap;
   activateScheduledEvent: ScheduledEventResponseWrap;
   finalizeScheduledEvent: ScheduledEventResponseWrap;
@@ -853,6 +889,14 @@ export type MutationAssignInstrumentsToCallArgs = {
 
 export type MutationRemoveAssignedInstrumentFromCallArgs = {
   removeAssignedInstrumentFromCallInput: RemoveAssignedInstrumentFromCallInput;
+};
+
+
+export type MutationCreateGenericTemplateArgs = {
+  title: Scalars['String'];
+  templateId: Scalars['Int'];
+  proposalPk: Scalars['Int'];
+  questionId: Scalars['String'];
 };
 
 
@@ -1371,6 +1415,12 @@ export type MutationCheckExternalTokenArgs = {
 };
 
 
+export type MutationCloneGenericTemplateArgs = {
+  title?: Maybe<Scalars['String']>;
+  genericTemplateId: Scalars['Int'];
+};
+
+
 export type MutationCloneSampleArgs = {
   title?: Maybe<Scalars['String']>;
   sampleId: Scalars['Int'];
@@ -1394,6 +1444,11 @@ export type MutationCreateVisitRegistrationQuestionaryArgs = {
 
 export type MutationDeleteCallArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationDeleteGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
 };
 
 
@@ -1542,6 +1597,13 @@ export type MutationSelectRoleArgs = {
 };
 
 
+export type MutationUpdateGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
+  title?: Maybe<Scalars['String']>;
+  safetyComment?: Maybe<Scalars['String']>;
+};
+
+
 export type MutationUpdatePasswordArgs = {
   id: Scalars['Int'];
   password: Scalars['String'];
@@ -1589,8 +1651,8 @@ export type MutationCreateScheduledEventArgs = {
 };
 
 
-export type MutationDeleteScheduledEventsArgs = {
-  deleteScheduledEventsInput: DeleteScheduledEventsInput;
+export type MutationBulkUpsertScheduledEventsArgs = {
+  bulkUpsertScheduledEvents: BulkUpsertScheduledEventsInput;
 };
 
 
@@ -1630,7 +1692,6 @@ export type NewScheduledEventInput = {
   endsAt: Scalars['TzLessDateTime'];
   description?: Maybe<Scalars['String']>;
   instrumentId: Scalars['Int'];
-  proposalBookingId?: Maybe<Scalars['Int']>;
 };
 
 export type NextProposalStatus = {
@@ -1739,6 +1800,7 @@ export type Proposal = {
   questionary: Questionary;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
   samples: Maybe<Array<Sample>>;
+  genericTemplates: Maybe<Array<GenericTemplate>>;
   visits: Maybe<Array<Visit>>;
   proposalBookingCore: Maybe<ProposalBookingCore>;
   proposalBooking: Maybe<ProposalBooking>;
@@ -1766,7 +1828,7 @@ export type ProposalBooking = {
   proposal: Maybe<Proposal>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  status: ProposalBookingStatusCore;
+  status: ProposalBookingStatus;
   allocatedTime: Scalars['Int'];
   instrument: Maybe<Instrument>;
   scheduledEvents: Array<ScheduledEvent>;
@@ -1816,6 +1878,12 @@ export type ProposalBookingScheduledEventFilterCore = {
   status?: Maybe<Array<ProposalBookingStatusCore>>;
 };
 
+export enum ProposalBookingStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED'
+}
+
 export enum ProposalBookingStatusCore {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
@@ -1861,7 +1929,7 @@ export type ProposalPkWithReviewId = {
 };
 
 export type ProposalProposalBookingFilter = {
-  status?: Maybe<Array<ProposalBookingStatusCore>>;
+  status?: Maybe<Array<ProposalBookingStatus>>;
 };
 
 export enum ProposalPublicStatus {
@@ -2035,6 +2103,8 @@ export type Query = {
   eventLogs: Maybe<Array<EventLog>>;
   features: Array<Feature>;
   fileMetadata: Maybe<Array<FileMetadata>>;
+  genericTemplate: Maybe<GenericTemplate>;
+  genericTemplates: Maybe<Array<GenericTemplate>>;
   allAccessTokensAndPermissions: Maybe<Array<PermissionsWithAccessToken>>;
   queriesAndMutations: Maybe<QueriesAndMutations>;
   accessTokenAndPermissions: Maybe<PermissionsWithAccessToken>;
@@ -2202,6 +2272,16 @@ export type QueryEventLogsArgs = {
 
 export type QueryFileMetadataArgs = {
   fileIds: Array<Scalars['String']>;
+};
+
+
+export type QueryGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
+};
+
+
+export type QueryGenericTemplatesArgs = {
+  filter?: Maybe<GenericTemplatesFilter>;
 };
 
 
@@ -2788,7 +2868,7 @@ export type ScheduledEvent = {
   description: Maybe<Scalars['String']>;
   instrument: Maybe<Instrument>;
   equipmentId: Maybe<Scalars['Int']>;
-  status: ProposalBookingStatusCore;
+  status: ProposalBookingStatus;
   equipments: Array<EquipmentWithAssignmentStatus>;
   equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
   proposalBooking: Maybe<ProposalBooking>;
@@ -2826,7 +2906,7 @@ export type ScheduledEventResponseWrap = {
 export type ScheduledEventsResponseWrap = {
   __typename?: 'ScheduledEventsResponseWrap';
   error: Maybe<Scalars['String']>;
-  scheduledEvents: Maybe<Array<ScheduledEvent>>;
+  scheduledEvent: Maybe<Array<ScheduledEvent>>;
 };
 
 export type SchedulerConfig = {
@@ -2940,6 +3020,13 @@ export type SimpleLostTimeInput = {
   scheduledEventId?: Maybe<Scalars['Int']>;
 };
 
+export type SimpleScheduledEventInput = {
+  id: Scalars['Int'];
+  startsAt: Scalars['TzLessDateTime'];
+  endsAt: Scalars['TzLessDateTime'];
+  newlyCreated?: Maybe<Scalars['Boolean']>;
+};
+
 export type StatusChangingEvent = {
   __typename?: 'StatusChangingEvent';
   statusChangingEventId: Scalars['Int'];
@@ -3027,7 +3114,8 @@ export enum TemplateCategoryId {
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
   SHIPMENT_DECLARATION = 'SHIPMENT_DECLARATION',
-  VISIT_REGISTRATION = 'VISIT_REGISTRATION'
+  VISIT_REGISTRATION = 'VISIT_REGISTRATION',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE'
 }
 
 export type TemplateGroup = {
@@ -3042,7 +3130,8 @@ export enum TemplateGroupId {
   SAMPLE = 'SAMPLE',
   SAMPLE_ESI = 'SAMPLE_ESI',
   SHIPMENT = 'SHIPMENT',
-  VISIT_REGISTRATION = 'VISIT_REGISTRATION'
+  VISIT_REGISTRATION = 'VISIT_REGISTRATION',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE'
 }
 
 export type TemplateResponseWrap = {
@@ -5212,6 +5301,9 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'GenericTemplateBasisConfig' }
+    & FieldConfigGenericTemplateBasisConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -6546,7 +6638,9 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+type FieldConfigGenericTemplateBasisConfigFragment = { __typename?: 'GenericTemplateBasisConfig' };
+
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment | FieldConfigGenericTemplateBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6602,6 +6696,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'GenericTemplateBasisConfig' }
+    & FieldConfigGenericTemplateBasisConfigFragment
   ) }
 );
 
@@ -6662,6 +6759,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'VisitBasisConfig' }
     & FieldConfigVisitBasisConfigFragment
+  ) | (
+    { __typename?: 'GenericTemplateBasisConfig' }
+    & FieldConfigGenericTemplateBasisConfigFragment
   ), dependencies: Array<(
     { __typename?: 'FieldDependency' }
     & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
@@ -6808,6 +6908,9 @@ export type GetQuestionsQuery = (
     ) | (
       { __typename?: 'VisitBasisConfig' }
       & FieldConfigVisitBasisConfigFragment
+    ) | (
+      { __typename?: 'GenericTemplateBasisConfig' }
+      & FieldConfigGenericTemplateBasisConfigFragment
     ), answers: Array<(
       { __typename?: 'AnswerBasic' }
       & Pick<AnswerBasic, 'questionaryId'>
