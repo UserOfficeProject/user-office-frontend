@@ -54,7 +54,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
   const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const initialData = {
-    proposalId: proposalData.id,
+    proposalPk: proposalData.primaryKey,
     commentForUser: proposalData.sepMeetingDecision?.commentForUser ?? '',
     commentForManagement:
       proposalData.sepMeetingDecision?.commentForManagement ?? '',
@@ -80,7 +80,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
       (!isUserOfficer && shouldSubmit) || (isUserOfficer && values.submitted);
 
     const saveSepMeetingDecisionInput = {
-      proposalId: values.proposalId,
+      proposalPk: values.proposalPk,
       recommendation:
         ProposalEndStatus[values.recommendation as ProposalEndStatus],
       commentForUser: values.commentForUser,
@@ -176,9 +176,19 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       toolbar: 'bold italic',
                       branding: false,
                     }}
-                    onEditorChange={(content: string) =>
-                      setFieldValue('commentForUser', content)
-                    }
+                    onEditorChange={(content, editor) => {
+                      const normalizedContent = content.replace(
+                        /(?:\r\n|\r|\n)/g,
+                        ''
+                      );
+
+                      if (
+                        normalizedContent !== editor.startContent ||
+                        editor.isDirty()
+                      ) {
+                        setFieldValue('commentForUser', content);
+                      }
+                    }}
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
@@ -223,9 +233,19 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       toolbar: 'bold italic',
                       branding: false,
                     }}
-                    onEditorChange={(content: string) =>
-                      setFieldValue('commentForManagement', content)
-                    }
+                    onEditorChange={(content, editor) => {
+                      const normalizedContent = content.replace(
+                        /(?:\r\n|\r|\n)/g,
+                        ''
+                      );
+
+                      if (
+                        normalizedContent !== editor.startContent ||
+                        editor.isDirty()
+                      ) {
+                        setFieldValue('commentForManagement', content);
+                      }
+                    }}
                     disabled={
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }

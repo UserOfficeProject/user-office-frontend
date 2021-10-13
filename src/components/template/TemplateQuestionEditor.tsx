@@ -21,7 +21,56 @@ import {
   FieldDependency,
   TemplateCategoryId,
 } from 'generated/sdk';
-import { Event, EventType } from 'models/QuestionaryEditorModel';
+import { Event, EventType } from 'models/questionary/QuestionaryEditorModel';
+
+const useStyles = makeStyles((theme) => ({
+  icon: {
+    color: theme.palette.grey[400],
+    justifyItems: 'flex-end',
+    justifyContent: 'flex-end',
+    display: 'flex',
+  },
+  question: {
+    color: '#000',
+    fontSize: '15px',
+    padding: '6px 0',
+  },
+  questionId: {
+    fontSize: '12px',
+    fontWeight: 'bold',
+    color: theme.palette.grey[800],
+  },
+  dependencies: {
+    fontSize: '12px',
+    color: theme.palette.grey[900],
+    display: 'flex',
+    padding: '10px 0 5px 0',
+    '& div': {
+      marginLeft: 'auto',
+      alignItems: 'center',
+      display: 'flex',
+      cursor: 'pointer',
+    },
+    '& ul': {
+      display: 'inline-block',
+      padding: '0',
+      margin: '0',
+      '& li': {
+        display: 'inline',
+        marginLeft: '3px',
+        listStyle: 'none',
+        '&:hover': {
+          transitionDuration: '300ms',
+          textDecoration: 'underline',
+          color: theme.palette.primary.main,
+        },
+      },
+    },
+  },
+  lockIcon: {
+    fontSize: '17px',
+  },
+}));
 
 export default function TemplateQuestionEditor(props: {
   data: TemplateTopicEditorData;
@@ -31,54 +80,7 @@ export default function TemplateQuestionEditor(props: {
   isHighlighted?: boolean;
 }) {
   const theme = useTheme();
-  const classes = makeStyles((theme) => ({
-    icon: {
-      color: theme.palette.grey[400],
-      justifyItems: 'flex-end',
-      justifyContent: 'flex-end',
-      display: 'flex',
-    },
-    question: {
-      color: '#000',
-      fontSize: '15px',
-      padding: '6px 0',
-    },
-    questionId: {
-      fontSize: '12px',
-      fontWeight: 'bold',
-      color: theme.palette.grey[400],
-    },
-    dependencies: {
-      fontSize: '12px',
-      color: theme.palette.grey[400],
-      display: 'flex',
-      padding: '10px 0 5px 0',
-      '& div': {
-        marginLeft: 'auto',
-        alignItems: 'center',
-        display: 'flex',
-        cursor: 'pointer',
-      },
-      '& ul': {
-        display: 'inline-block',
-        padding: '0',
-        margin: '0',
-        '& li': {
-          display: 'inline',
-          marginLeft: '3px',
-          listStyle: 'none',
-          '&:hover': {
-            transitionDuration: '300ms',
-            textDecoration: 'underline',
-            color: theme.palette.primary.main,
-          },
-        },
-      },
-    },
-    lockIcon: {
-      fontSize: '17px',
-    },
-  }))();
+  const classes = useStyles();
 
   const [isHover, setIsHover] = useState<boolean>(false);
 
@@ -94,7 +96,8 @@ export default function TemplateQuestionEditor(props: {
       : 'inherit',
     outlineOffset: '-1px',
     transitionDuration: '300ms',
-    margin: '0',
+    margin: '0 0 1px 0',
+    borderTop: '1px solid white',
     backgroundColor: isDragging
       ? theme.palette.grey[200]
       : isHover

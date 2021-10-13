@@ -89,8 +89,8 @@ export default function SignInSide() {
     if (data.login && !data.login.rejection) {
       handleLogin(data.login.token);
     } else {
-      if (data.login) {
-        setErrorMessage(data.login.rejection?.reason as string);
+      if (data.login.rejection) {
+        setErrorMessage(data.login.rejection.reason);
         setFailed(true);
       }
     }
@@ -137,6 +137,7 @@ export default function SignInSide() {
               <Field
                 name="email"
                 label="Email"
+                id="email-input"
                 type="text"
                 component={TextField}
                 margin="normal"
@@ -147,6 +148,7 @@ export default function SignInSide() {
               <Field
                 name="password"
                 label="Password"
+                id="Password-input"
                 type="password"
                 component={TextField}
                 margin="normal"

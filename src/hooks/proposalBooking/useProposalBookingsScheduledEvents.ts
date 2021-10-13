@@ -1,14 +1,48 @@
 import { useEffect, useState } from 'react';
 
-import { ScheduledEvent, Proposal, ProposalBookingStatus } from 'generated/sdk';
+import {
+  EsiFragment,
+  Instrument,
+  Maybe,
+  Proposal,
+  ProposalBookingStatusCore,
+  ScheduledEventCore,
+  Visit,
+  VisitFragment,
+} from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
+import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
 import { toTzLessDateTime } from 'utils/Time';
 
+import {
+  BasicUserDetailsFragment,
+  ShipmentFragment,
+} from './../../generated/sdk';
+
 export type ProposalScheduledEvent = Pick<
-  ScheduledEvent,
-  'startsAt' | 'endsAt'
+  ScheduledEventCore,
+  'startsAt' | 'endsAt' | 'id'
 > & {
-  proposal: Pick<Proposal, 'id' | 'title' | 'shortCode'>;
+  proposal: Pick<
+    Proposal,
+    | 'primaryKey'
+    | 'title'
+    | 'proposalId'
+    | 'finalStatus'
+    | 'managementDecisionSubmitted'
+  > & {
+    proposer: BasicUserDetailsFragment | null;
+  } & {
+    users: BasicUserDetailsFragment[];
+  };
+  instrument: Pick<Instrument, 'id' | 'name'> | null;
+} & {
+  visit:
+    | (VisitFragment & {
+        registrations: VisitRegistrationCore[];
+        shipments: ShipmentFragment[];
+      } & Pick<Visit, 'teamLead'> & { esi: Maybe<EsiFragment> })
+    | null;
 };
 
 export function useProposalBookingsScheduledEvents({
@@ -35,7 +69,10 @@ export function useProposalBookingsScheduledEvents({
       .getUserProposalBookingsWithEvents({
         ...(onlyUpcoming ? { endsAfter: toTzLessDateTime(new Date()) } : null),
         status: notDraft
-          ? [ProposalBookingStatus.BOOKED, ProposalBookingStatus.CLOSED]
+          ? [
+              ProposalBookingStatusCore.ACTIVE,
+              ProposalBookingStatusCore.COMPLETED,
+            ]
           : null,
         instrumentId,
       })
@@ -47,16 +84,24 @@ export function useProposalBookingsScheduledEvents({
         if (data.me?.proposals) {
           const proposalScheduledEvent: ProposalScheduledEvent[] = [];
           data.me?.proposals.forEach((proposal) =>
-            proposal.proposalBooking?.scheduledEvents.forEach(
+            proposal.proposalBookingCore?.scheduledEvents.forEach(
               (scheduledEvent) => {
                 proposalScheduledEvent.push({
+                  id: scheduledEvent.id,
                   startsAt: scheduledEvent.startsAt,
                   endsAt: scheduledEvent.endsAt,
                   proposal: {
-                    id: proposal.id,
+                    primaryKey: proposal.primaryKey,
                     title: proposal.title,
-                    shortCode: proposal.shortCode,
+                    proposalId: proposal.proposalId,
+                    proposer: proposal.proposer,
+                    users: proposal.users,
+                    finalStatus: proposal.finalStatus,
+                    managementDecisionSubmitted:
+                      proposal.managementDecisionSubmitted,
                   },
+                  instrument: proposal.instrument,
+                  visit: scheduledEvent.visit,
                 });
               }
             )
@@ -73,5 +118,5 @@ export function useProposalBookingsScheduledEvents({
     };
   }, [onlyUpcoming, notDraft, instrumentId, api]);
 
-  return { loading, proposalScheduledEvents };
+  return { loading, proposalScheduledEvents, setProposalScheduledEvents };
 }

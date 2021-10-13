@@ -1,5 +1,6 @@
 import { Button, Link, makeStyles, Paper, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
 import React, { Fragment, useContext, useState } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -16,10 +17,11 @@ import { UserContext } from 'context/UserContextProvider';
 import {
   CoreTechnicalReviewFragment,
   Proposal,
+  Review,
   TechnicalReview,
   UserRole,
 } from 'generated/sdk';
-import { useProposalData } from 'hooks/proposal/useProposalData';
+import { ProposalData, useProposalData } from 'hooks/proposal/useProposalData';
 import { useReviewData } from 'hooks/review/useReviewData';
 
 import AssignTechnicalReview from './AssignTechnicalReview';
@@ -37,7 +39,7 @@ export type TabNames =
 
 type ProposalReviewContentProps = {
   tabNames: TabNames[];
-  proposalId?: number | null;
+  proposalPk?: number | null;
   reviewId?: number | null;
   sepId?: number | null;
   isInsideModal?: boolean;
@@ -52,10 +54,14 @@ const useStyles = makeStyles((theme) => ({
   showReassignLink: {
     cursor: 'pointer',
   },
+  reassignContainerDisabled: {
+    pointerEvents: 'none',
+    opacity: '0.5',
+  },
 }));
 
 const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
-  proposalId,
+  proposalPk,
   tabNames,
   reviewId,
   sepId,
@@ -67,7 +73,7 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const { reviewData, setReviewData } = useReviewData(reviewId, sepId);
   const { proposalData, setProposalData, loading } = useProposalData(
-    proposalId || reviewData?.proposal?.id
+    proposalPk || reviewData?.proposal?.primaryKey
   );
 
   if (loading) {
@@ -86,51 +92,57 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   const ProposalInformationTab = (
     <GeneralInformation
       data={proposalData}
-      onProposalChanged={(newProposal): void => setProposalData(newProposal)}
+      onProposalChanged={(newProposal): void =>
+        setProposalData({
+          ...proposalData,
+          ...newProposal,
+          call: proposalData.call,
+        })
+      }
     />
   );
 
-  const assignAnotherReviewerView = (proposal: Proposal) => {
-    if (proposal.technicalReview?.submitted) {
-      return null;
-    }
-
-    return (
-      <Paper elevation={1} className={classes.reassignContainer}>
-        <Typography variant="h6" gutterBottom>
-          Assign to someone else?
-        </Typography>
-        If you think there is a better candidate to do the review for the
-        proposal, you can re-assign it to someone else
-        <div>
-          {showReassign ? (
-            <AssignTechnicalReview
-              proposal={proposal}
-              onProposalUpdated={(updatedProposal) => {
-                setProposalData(updatedProposal);
-                setShowReassign(false);
-              }}
-            />
-          ) : (
-            <Link
-              onClick={() => setShowReassign(true)}
-              className={classes.showReassignLink}
-              data-cy="re-assign"
-            >
-              Re-assign...
-            </Link>
-          )}
-        </div>
-      </Paper>
-    );
-  };
+  const assignAnotherReviewerView = (proposal: ProposalData) => (
+    <Paper
+      elevation={1}
+      className={clsx(
+        classes.reassignContainer,
+        proposal.technicalReview?.submitted && classes.reassignContainerDisabled
+      )}
+    >
+      <Typography variant="h6" component="h2" gutterBottom>
+        Assign to someone else?
+      </Typography>
+      If you think there is a better candidate to do the review for the
+      proposal, you can re-assign it to someone else
+      <div>
+        {showReassign ? (
+          <AssignTechnicalReview
+            proposal={proposal}
+            onProposalUpdated={(updatedProposal) => {
+              setProposalData(updatedProposal);
+              setShowReassign(false);
+            }}
+          />
+        ) : (
+          <Link
+            onClick={() => setShowReassign(true)}
+            className={classes.showReassignLink}
+            data-cy="re-assign"
+          >
+            Re-assign...
+          </Link>
+        )}
+      </div>
+    </Paper>
+  );
 
   const TechnicalReviewTab =
     isUserOfficer || proposalData.technicalReviewAssignee === user.id ? (
       <>
         {assignAnotherReviewerView(proposalData)}
         <ProposalTechnicalReview
-          id={proposalData.id}
+          proposal={proposalData as Proposal}
           data={proposalData.technicalReview}
           setReview={(data: CoreTechnicalReviewFragment | null | undefined) =>
             setProposalData({
@@ -144,7 +156,9 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
         />
       </>
     ) : (
-      <TechnicalReviewInformation data={proposalData.technicalReview} />
+      <TechnicalReviewInformation
+        data={proposalData.technicalReview as TechnicalReview}
+      />
     );
 
   const GradeTab = (
@@ -157,9 +171,10 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
 
   const AllProposalReviewsTab = isUserOfficer && (
     <>
-      <ExternalReviews reviews={proposalData.reviews} />
+      <ExternalReviews reviews={proposalData.reviews as Review[]} />
       <SEPMeetingDecision
         sepMeetingDecision={proposalData.sepMeetingDecision}
+        sep={proposalData.sep}
       />
     </>
   );
@@ -174,7 +189,10 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   );
 
   const EventLogsTab = isUserOfficer && (
-    <EventLogList changedObjectId={proposalData.id} eventType="PROPOSAL" />
+    <EventLogList
+      changedObjectId={proposalData.primaryKey}
+      eventType="PROPOSAL"
+    />
   );
 
   const tabsContent = tabNames.map((tab, index) => {

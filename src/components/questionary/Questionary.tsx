@@ -4,8 +4,8 @@ import React, { useContext, useRef, useEffect } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
-import { EventType, WizardStep } from 'models/QuestionarySubmissionState';
 
+import { StepDisplayElementFactory } from './DefaultStepDisplayElementFactory';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -15,10 +15,7 @@ import { QuestionaryStepButton } from './QuestionaryStepButton';
 interface QuestionaryProps {
   title: string;
   info?: string;
-  displayElementFactory: (
-    metadata: WizardStep,
-    isReadonly: boolean
-  ) => React.ReactNode;
+  displayElementFactory: StepDisplayElementFactory;
   handleReset: () => Promise<boolean>;
 }
 
@@ -28,7 +25,7 @@ function Questionary({
   handleReset,
   displayElementFactory,
 }: QuestionaryProps) {
-  const isTabletOrMobile = useMediaQuery('(max-width: 1224px)');
+  const isMobile = useMediaQuery('(max-width: 500px)');
 
   const useStyles = makeStyles((theme) => ({
     stepper: {
@@ -52,15 +49,15 @@ function Questionary({
       textAlign: 'right',
     },
     root: {
-      width: 'inherit',
-      minWidth: isTabletOrMobile ? 'inherit' : '500px', // Giving some minimum width for questionaries with short entries
+      width: '100%',
+      minWidth: isMobile ? 'inherit' : '500px', // Giving some minimum width for questionaries with short entries
     },
   }));
 
   const classes = useStyles();
   const { state, dispatch } = useContext(QuestionaryContext);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-  const titleRef = useRef<HTMLElement | null>(null);
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
   const activeStep = state?.stepIndex;
 
   useEffect(() => {
@@ -84,6 +81,7 @@ function Questionary({
         nonLinear
         activeStep={state.stepIndex}
         className={classes.stepper}
+        data-cy="questionary-stepper"
       >
         {state.wizardSteps.map((wizardStep, index) => {
           const stepMetadata = wizardStep.getMetadata(
@@ -98,8 +96,8 @@ function Questionary({
                   if (!state.isDirty) {
                     await handleReset();
                     dispatch({
-                      type: EventType.GO_TO_STEP,
-                      payload: { stepIndex: index },
+                      type: 'GO_TO_STEP',
+                      stepIndex: index,
                     });
                   } else {
                     if (
@@ -109,8 +107,8 @@ function Questionary({
                     ) {
                       await handleReset();
                       dispatch({
-                        type: EventType.GO_TO_STEP,
-                        payload: { stepIndex: index },
+                        type: 'GO_TO_STEP',
+                        stepIndex: index,
                       });
                     }
                   }
@@ -136,7 +134,7 @@ function Questionary({
       return null;
     }
 
-    return displayElementFactory(
+    return displayElementFactory.getDisplayElement(
       currentStep,
       stepMetadata.isReadonly && !isUserOfficer
     );
@@ -146,6 +144,7 @@ function Questionary({
     <div className={classes.root}>
       <Typography
         variant="h4"
+        component="h2"
         className={classes.header}
         ref={titleRef}
         data-cy="questionary-title"

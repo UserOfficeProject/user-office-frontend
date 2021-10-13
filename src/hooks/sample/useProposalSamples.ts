@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react';
 
 import { useDataApi } from 'hooks/common/useDataApi';
-import { SampleWithQuestionaryStatus } from 'models/Sample';
+import { SampleCore } from 'models/questionary/sample/SampleCore';
 
-export function useProposalSamples(proposalId: number | null) {
-  const [samples, setSamples] = useState<SampleWithQuestionaryStatus[]>([]);
+export function useProposalSamples(proposalPk: number | null) {
+  const [samples, setSamples] = useState<SampleCore[]>([]);
 
   const [loadingSamples, setLoadingSamples] = useState(false);
   const api = useDataApi();
 
   useEffect(() => {
-    if (!proposalId) {
+    if (!proposalPk) {
       setSamples([]);
 
       return;
     }
     setLoadingSamples(true);
     api()
-      .getSamplesWithQuestionaryStatus({ filter: { proposalId } })
+      .getSamplesWithQuestionaryStatus({ filter: { proposalPk } })
       .then((data) => {
         if (data.samples) {
           setSamples(data.samples);
         }
         setLoadingSamples(false);
       });
-  }, [api, proposalId]);
+  }, [api, proposalPk]);
 
   return { samples, loadingSamples, setSamples };
 }

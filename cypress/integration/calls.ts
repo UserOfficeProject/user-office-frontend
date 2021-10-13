@@ -3,6 +3,10 @@ import faker from 'faker';
 context('Calls tests', () => {
   before(() => {
     cy.resetDB();
+    cy.viewport(1920, 1080);
+    cy.login('officer');
+    cy.createTemplate('proposalEsi', 'default esi template');
+    cy.logout();
   });
 
   beforeEach(() => {
@@ -13,6 +17,8 @@ context('Calls tests', () => {
     shortCode: faker.random.alphaNumeric(15),
     startDate: faker.date.past().toISOString().slice(0, 10),
     endDate: faker.date.future().toISOString().slice(0, 10),
+    template: 'default template',
+    esiTemplate: 'default esi template',
   };
 
   const updatedCall = {
@@ -56,6 +62,11 @@ context('Calls tests', () => {
 
     cy.login('officer');
 
+    cy.createProposalWorkflow(
+      proposalWorkflow.name,
+      proposalWorkflow.description
+    );
+
     cy.contains('Proposals');
 
     cy.contains('Calls').click();
@@ -85,6 +96,15 @@ context('Calls tests', () => {
       .clear()
       .type(endDate)
       .should('have.value', endDate);
+
+    cy.get('[data-cy="call-template"]').click();
+    cy.get('[role="presentation"]').contains('default template').click();
+
+    cy.get('[data-cy="call-esi-template"]').click();
+    cy.get('[role="presentation"]').contains('default esi template').click();
+
+    cy.get('[data-cy="call-workflow"]').click();
+    cy.get('[role="presentation"]').contains(proposalWorkflow.name).click();
 
     cy.get('[data-cy="next-step"]').click();
 
@@ -153,7 +173,7 @@ context('Calls tests', () => {
   });
 
   it('A user-officer should be able to create a call', () => {
-    const { shortCode, startDate, endDate } = newCall;
+    const { shortCode, startDate, endDate, template, esiTemplate } = newCall;
 
     cy.login('officer');
 
@@ -163,6 +183,9 @@ context('Calls tests', () => {
       shortCode,
       startDate,
       endDate,
+      template,
+      esiTemplate,
+      workflow: proposalWorkflow.name,
     });
 
     cy.contains(shortCode)
@@ -174,6 +197,7 @@ context('Calls tests', () => {
 
   it('A user-officer should be able to edit a call', () => {
     const { shortCode, startDate, endDate } = updatedCall;
+    const refNumFormat = '211{digits:5}';
 
     cy.login('officer');
 
@@ -198,9 +222,9 @@ context('Calls tests', () => {
       .type(endDate)
       .should('have.value', endDate);
 
-    cy.get('[data-cy=reference-number-format] input').type(
-      faker.random.word().split(' ')[0]
-    );
+    cy.get('[data-cy=reference-number-format] input').type(refNumFormat, {
+      parseSpecialCharSequences: false,
+    });
 
     cy.get('[data-cy="next-step"]').click();
 
@@ -351,20 +375,12 @@ context('Calls tests', () => {
     cy.login('officer');
 
     cy.contains('Settings').click();
-    cy.contains('Proposal workflows').click();
-
-    cy.contains('Create').click();
-    cy.get('#name').type(proposalWorkflow.name);
-    cy.get('#description').type(proposalWorkflow.description);
-    cy.get('[data-cy="submit"]').click();
-
-    cy.notification({ variant: 'success', text: 'created successfully' });
 
     cy.contains('Calls').click();
 
     cy.contains(updatedCall.shortCode).parent().find('[title="Edit"]').click();
 
-    cy.get('#mui-component-select-proposalWorkflowId').click();
+    cy.get('#proposalWorkflowId-input').click();
 
     cy.contains('Loading...').should('not.exist');
 
@@ -381,30 +397,6 @@ context('Calls tests', () => {
     cy.notification({ variant: 'success', text: 'Call updated successfully!' });
 
     cy.contains(updatedCall.shortCode).parent().contains(proposalWorkflow.name);
-  });
-
-  it('A user-officer should be able to remove proposal workflow from a call', () => {
-    cy.login('officer');
-
-    cy.contains('Calls').click();
-
-    cy.contains(updatedCall.shortCode).parent().find('[title="Edit"]').click();
-
-    cy.contains('Loading...').should('not.exist');
-
-    cy.get('[data-cy="call-workflow"] [data-cy="clear-selection"]').click();
-
-    cy.get('[data-cy="next-step"]').click();
-
-    cy.get('[data-cy="next-step"]').click();
-
-    cy.get('[data-cy="submit"]').click();
-
-    cy.notification({ variant: 'success', text: 'Call updated successfully!' });
-
-    cy.contains(updatedCall.shortCode)
-      .parent()
-      .should('not.contain.text', proposalWorkflow.name);
   });
 
   it('User officer can filter calls by their status', () => {

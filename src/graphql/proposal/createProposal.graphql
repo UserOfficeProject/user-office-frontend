@@ -1,14 +1,15 @@
 mutation createProposal($callId: Int!) {
   createProposal(callId: $callId) {
     proposal {
-      id
+      primaryKey
       status {
         ...proposalStatus
       }
-      shortCode
+      proposalId
       questionaryId
       questionary {
         ...questionary
+        isCompleted
       }
       proposer {
         ...basicUserDetails
@@ -18,6 +19,15 @@ mutation createProposal($callId: Int!) {
       }
       samples {
         ...sample
+        questionary {
+          isCompleted
+        }
+      }
+      genericTemplates {
+        ...genericTemplate
+        questionary {
+          isCompleted
+        }
       }
     }
     rejection {

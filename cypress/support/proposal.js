@@ -12,7 +12,8 @@ const createProposal = (
   cy.contains('New Proposal').click();
 
   if (call) {
-    cy.contains(call).click();
+    cy.get('body').click(0, 0); // fix for flaky test where item can't be clicked if tooltip is visible
+    cy.get('[data-cy=call-list]').contains(call).click();
   }
 
   cy.get('[data-cy=title] input').type(title).should('have.value', title);
@@ -24,7 +25,13 @@ const createProposal = (
 
   if (proposer) {
     cy.get('[data-cy=edit-proposer-button]').click();
-    cy.contains(proposer).parent().find("[title='Select user']").click();
+    cy.get('[role="presentation"]').as('modal');
+
+    cy.get('@modal')
+      .contains(proposer)
+      .parent()
+      .find("[title='Select user']")
+      .click();
   }
 
   cy.contains('Save and continue').click();
@@ -49,10 +56,10 @@ const changeProposalStatus = (statusName = 'DRAFT', proposalTitle) => {
   cy.get('@dialog').contains('Change proposal/s status');
 
   cy.get('@dialog')
-    .find('#mui-component-select-selectedStatusId')
+    .find('#selectedStatusId-input')
     .should('not.have.class', 'Mui-disabled');
 
-  cy.get('@dialog').find('#mui-component-select-selectedStatusId').click();
+  cy.get('@dialog').find('#selectedStatusId-input').click();
 
   cy.get('[role="listbox"]').contains(statusName).click();
 
@@ -70,5 +77,25 @@ const changeProposalStatus = (statusName = 'DRAFT', proposalTitle) => {
   });
 };
 
+const allocateProposalTime = ({
+  proposalTitle,
+  timeToAllocate,
+  submitManagementDecision,
+}) => {
+  cy.contains(proposalTitle).parent().find('[title="View proposal"]').click();
+  cy.get('[role="dialog"]').contains('Admin').click();
+  cy.get('#finalStatus-input').click();
+  cy.get('[role="listbox"]').contains('Accepted').click();
+  cy.get('[data-cy="managementTimeAllocation"] input').type(
+    timeToAllocate.toString()
+  );
+  cy.get('[data-cy="is-management-decision-submitted"]').click();
+  if (submitManagementDecision) {
+    cy.get('[data-cy="save-admin-decision"]').click();
+  }
+  cy.closeModal();
+};
+
 Cypress.Commands.add('createProposal', createProposal);
 Cypress.Commands.add('changeProposalStatus', changeProposalStatus);
+Cypress.Commands.add('allocateProposalTime', allocateProposalTime);

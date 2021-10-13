@@ -2,15 +2,16 @@ import { Button, makeStyles, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
 
-import { Proposal, UserRole } from 'generated/sdk';
+import { UserRole } from 'generated/sdk';
+import { ProposalData } from 'hooks/proposal/useProposalData';
 import { useUsersData } from 'hooks/user/useUsersData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { getFullUserName } from 'utils/user';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 type AssignTechnicalReviewProps = {
-  proposal: Proposal;
-  onProposalUpdated: (proposal: Proposal) => void;
+  proposal: ProposalData;
+  onProposalUpdated: (proposal: ProposalData) => void;
   confirm: WithConfirmType;
 };
 
@@ -62,6 +63,7 @@ function AssignTechnicalReview({
         value={userIdToUser(selectedUser)}
         disableClearable
         data-cy="user-list"
+        disabled={proposal.technicalReview?.submitted}
       />
       <Button
         onClick={() => {
@@ -73,7 +75,7 @@ function AssignTechnicalReview({
                 )
                   .updateTechnicalReviewAssignee({
                     userId: selectedUser,
-                    proposalIds: [proposal.id],
+                    proposalPks: [proposal.primaryKey],
                   })
                   .then((result) => {
                     onProposalUpdated({
@@ -95,6 +97,7 @@ function AssignTechnicalReview({
         variant="contained"
         color="primary"
         className={classes.submitButton}
+        disabled={proposal.technicalReview?.submitted}
       >
         Assign
       </Button>

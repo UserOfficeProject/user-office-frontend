@@ -21,9 +21,15 @@ query userWithReviews(
       status
       sepID
       proposal {
-        id
+        primaryKey
         title
-        shortCode
+        proposalId
+        call {
+          shortCode
+        }
+        instrument {
+          shortCode
+        }
       }
     }
   }

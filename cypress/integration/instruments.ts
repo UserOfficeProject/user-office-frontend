@@ -25,11 +25,18 @@ context('Instrument tests', () => {
     abstract: faker.random.words(5),
   };
 
+  const proposalWorkflow = {
+    name: faker.random.words(2),
+    description: faker.random.words(5),
+  };
+
   const call2 = {
     shortCode: faker.random.alphaNumeric(10),
     startDate: faker.date.past().toISOString().slice(0, 10),
     endDate: faker.date.future().toISOString().slice(0, 10),
     template: 'default template',
+    esiTemplate: 'default esi template',
+    workflow: proposalWorkflow.name,
   };
 
   const scientist1 = 'Carlsson';
@@ -37,6 +44,10 @@ context('Instrument tests', () => {
 
   before(() => {
     cy.resetDB();
+    cy.viewport(1920, 1080);
+    cy.login('officer');
+    cy.createTemplate('proposalEsi', 'default esi template');
+    cy.logout();
   });
 
   beforeEach(() => {
@@ -96,11 +107,14 @@ context('Instrument tests', () => {
   it('User Officer should be able to assign proposal to existing instrument', () => {
     cy.login('officer');
 
-    cy.contains('Calls').click();
+    cy.createProposalWorkflow(
+      proposalWorkflow.name,
+      proposalWorkflow.description
+    );
 
     cy.createCall(call2);
 
-    cy.navigateToTemplatesSubmenu('Proposal templates');
+    cy.navigateToTemplatesSubmenu('Proposal');
 
     cy.contains('default template').parent().get("[title='Edit']").click();
 
@@ -149,63 +163,45 @@ context('Instrument tests', () => {
 
     cy.finishedLoading();
 
-    cy.get('tbody [type="checkbox"]').first().check();
+    cy.contains(proposal1.title).parent().find('[type="checkbox"]').check();
 
-    cy.get('[title="Remove assigned instrument"]').first().click();
+    cy.get('[data-cy="assign-remove-instrument"]').click();
 
-    cy.get('[data-cy="confirm-ok"]').click();
+    cy.contains('Loading...').should('not.exist');
 
-    cy.notification({
-      variant: 'success',
-      text: 'Proposal removed from the instrument successfully!',
-    });
+    cy.get('[data-cy="clear-selection"]').click();
 
-    cy.get('[data-cy="assign-proposals-to-instrument"]').first().click();
+    cy.get('[data-cy="remove-instrument-alert"]').should('exist');
 
-    cy.get("[id='mui-component-select-selectedInstrumentId']").should(
-      'not.have.class',
-      'Mui-disabled'
-    );
+    cy.get('[data-cy="submit-assign-remove-instrument"]').click();
 
-    cy.get("[id='mui-component-select-selectedInstrumentId']").first().click();
-
-    cy.get("[id='menu-selectedInstrumentId'] li").first().click();
-
-    cy.contains('Assign to Instrument').click();
+    cy.get('[data-cy="proposals-instrument-assignment"]').should('not.exist');
 
     cy.notification({
       variant: 'success',
-      text: 'Proposal/s assigned to the selected instrument',
+      text: 'Proposal/s removed from the instrument successfully!',
     });
 
-    cy.get('[title="Remove assigned instrument"]').first().click();
+    cy.assignInstrumentToProposal(proposal1.title, instrument1.name);
 
-    cy.get('[data-cy="confirm-ok"]').click();
+    cy.contains(proposal1.title).parent().find('[type="checkbox"]').check();
+
+    cy.get('[data-cy="assign-remove-instrument"]').click();
+
+    cy.contains('Loading...').should('not.exist');
+
+    cy.get('[data-cy="clear-selection"]').click();
+
+    cy.get('[data-cy="remove-instrument-alert"]').should('exist');
+
+    cy.get('[data-cy="submit-assign-remove-instrument"]').click();
 
     cy.notification({
       variant: 'success',
-      text: 'Proposal removed from the instrument successfully!',
+      text: 'Proposal/s removed from the instrument successfully!',
     });
 
-    cy.get('[data-cy="assign-proposals-to-instrument"]').first().click();
-
-    cy.get("[id='mui-component-select-selectedInstrumentId']").should(
-      'not.have.class',
-      'Mui-disabled'
-    );
-
-    cy.get("[id='mui-component-select-selectedInstrumentId']").first().click();
-
-    cy.get("[id='menu-selectedInstrumentId'] li").first().click();
-
-    cy.contains('Assign to Instrument').click();
-
-    cy.notification({
-      variant: 'success',
-      text: 'Proposal/s assigned to the selected instrument',
-    });
-
-    cy.get('[title="Remove assigned instrument"]').should('exist');
+    cy.assignInstrumentToProposal(proposal1.title, instrument1.name);
   });
 
   it('User Officer should be able to assign scientist to instrument and instrument scientist should be able to see instruments he is assigned to', () => {
@@ -359,6 +355,16 @@ context('Instrument tests', () => {
     cy.finishedLoading();
     cy.get('@dialog').contains('Technical review').click();
 
+    cy.get('@dialog').find('[data-cy="timeAllocation"] input').should('exist');
+
+    cy.get('@dialog').contains('Proposal information').click();
+
+    cy.finishedLoading();
+
+    cy.get('@dialog').contains(proposal1.title);
+
+    cy.get('@dialog').contains('Technical review').click();
+
     cy.get('[data-cy="timeAllocation"] input').type('-123').blur();
     cy.contains('Must be greater than or equal to');
 
@@ -437,6 +443,25 @@ context('Instrument tests', () => {
     cy.get('[data-cy="timeAllocation"] input').should('be.disabled');
   });
 
+  it('User Officer should be able to see who submitted the technical review', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals');
+
+    cy.contains(proposal1.title)
+      .parent()
+      .find('[data-cy="view-proposal"]')
+      .click();
+    cy.get('[role="dialog"]').as('dialog');
+    cy.finishedLoading();
+    cy.get('@dialog').contains('Technical review').click();
+
+    cy.get('[data-cy="reviewed-by-info"]').should('exist');
+    cy.get('[data-cy="reviewed-by-info"]')
+      .invoke('attr', 'title')
+      .should('eq', 'Reviewed by Carl Carlsson');
+  });
+
   it('User Officer should be able to re-open submitted technical review', () => {
     cy.login('officer');
 
@@ -490,17 +515,23 @@ context('Instrument tests', () => {
 
     cy.contains(proposal1.title)
       .parent()
-      .find('[title="Remove assigned instrument"]')
+      .find('input[type="checkbox"]')
       .click();
 
-    cy.get('[data-cy="confirm-ok"]').click();
+    cy.get('[data-cy="assign-remove-instrument"]').click();
+
+    cy.contains('Loading...').should('not.exist');
+
+    cy.get('[data-cy="clear-selection"]').click();
+
+    cy.get('[data-cy="remove-instrument-alert"]').should('exist');
+
+    cy.get('[data-cy="submit-assign-remove-instrument"]').click();
 
     cy.notification({
       variant: 'success',
-      text: 'Proposal removed from the instrument',
+      text: 'Proposal/s removed from the instrument successfully!',
     });
-
-    cy.get('[title="Remove assigned instrument"]').should('have.length', 1);
   });
 
   it('User Officer should be able to remove assigned scientist from instrument', () => {

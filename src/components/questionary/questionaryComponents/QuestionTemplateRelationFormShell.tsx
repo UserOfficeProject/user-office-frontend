@@ -95,7 +95,7 @@ export const QuestionTemplateRelationFormShell = (
 
   return (
     <div className={classes.container}>
-      <Typography variant="h4" className={classes.heading}>
+      <Typography variant="h4" component="h1" className={classes.heading}>
         {definition.icon}
         {definition.name}
       </Typography>
@@ -108,7 +108,7 @@ export const QuestionTemplateRelationFormShell = (
         }}
         className={classes.naturalKey}
       >
-        {props.questionRel.question.naturalKey}
+        Edit {props.questionRel.question.naturalKey}
       </Link>
       <Formik
         initialValues={props.questionRel}

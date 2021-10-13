@@ -5,6 +5,7 @@ const createCall = ({
   startDate,
   endDate,
   template,
+  esiTemplate,
   workflow,
   surveyComment,
   cycleComment,
@@ -36,15 +37,20 @@ const createCall = ({
 
   if (template) {
     cy.get('[data-cy="call-template"]').click();
-    cy.contains(template).click();
+    cy.get('[role="presentation"]').contains(template).click();
+  }
+
+  if (esiTemplate) {
+    cy.get('[data-cy="call-esi-template"]').click();
+    cy.get('[role="presentation"]').contains(esiTemplate).click();
   }
 
   if (workflow) {
-    cy.get('#mui-component-select-proposalWorkflowId').click();
+    cy.get('#proposalWorkflowId-input').click();
 
     cy.contains('Loading...').should('not.exist');
 
-    cy.contains(workflow).click();
+    cy.get('[role="presentation"]').contains(workflow).click();
   }
 
   cy.get('[data-cy="next-step"]').click();

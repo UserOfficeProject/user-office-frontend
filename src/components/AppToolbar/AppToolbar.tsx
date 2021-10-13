@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import MuiLink from '@material-ui/core/Link';
@@ -11,7 +12,9 @@ import PropTypes from 'prop-types';
 import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
 import { UserContext } from 'context/UserContextProvider';
+import { SettingsId } from 'generated/sdk';
 
 import AccountActionButton from './AccountActionButton';
 
@@ -25,8 +28,17 @@ type AppToolbarProps = {
 };
 
 const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
+  const { settings } = useContext(SettingsContext);
+
   const isTabletOrMobile = useMediaQuery('(max-width: 1224px)');
   const isPortraitMode = useMediaQuery('(orientation: portrait)');
+
+  const logoFilename = settings.get(SettingsId.HEADER_LOGO_FILENAME)
+    ?.settingsValue;
+  let logo;
+  if (logoFilename) {
+    logo = require('images/' + logoFilename).default;
+  }
 
   const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -72,12 +84,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
   }));
   const classes = useStyles();
   const { user, roles, currentRole } = useContext(UserContext);
+  const settingsContext = useContext(SettingsContext);
   const humanReadableActiveRole = useMemo(
     () =>
       roles.find(({ shortCode }) => shortCode.toUpperCase() === currentRole)
         ?.title ?? 'Unknown',
     [roles, currentRole]
   );
+  const externalProfileLink = settingsContext.settings.get(
+    SettingsId.PROFILE_PAGE_LINK
+  )?.settingsValue;
 
   return (
     <AppBar
@@ -95,6 +111,11 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
         >
           <MenuIcon />
         </IconButton>
+        {(!isTabletOrMobile || !isPortraitMode) && logo && (
+          <Link className={'header-logo-container'} to="/">
+            <img src={logo} alt="Organisation logo" className={'header-logo'} />
+          </Link>
+        )}
         {(!isTabletOrMobile || !isPortraitMode) && (
           <Typography
             component="h1"
@@ -103,19 +124,30 @@ const AppToolbar: React.FC<AppToolbarProps> = ({ open, handleDrawerOpen }) => {
             noWrap
             className={classes.title}
           >
-            User Office
+            | User Office
           </Typography>
         )}
         <div className={classes.horizontalSpacing}>
           Logged in as{' '}
-          <MuiLink
-            data-cy="active-user-profile"
-            component={Link}
-            to={`/ProfilePage/${user.id}`}
-            className={classes.profileLink}
-          >
-            {user.email}
-          </MuiLink>
+          {externalProfileLink ? (
+            <a
+              href={externalProfileLink}
+              target="_blank"
+              rel="noreferrer"
+              className={classes.profileLink}
+            >
+              {user.email}
+            </a>
+          ) : (
+            <MuiLink
+              data-cy="active-user-profile"
+              component={Link}
+              to={`/ProfilePage/${user.id}`}
+              className={classes.profileLink}
+            >
+              {user.email}
+            </MuiLink>
+          )}
           {roles.length > 1 && ` (${humanReadableActiveRole})`}
         </div>
         <AccountActionButton />

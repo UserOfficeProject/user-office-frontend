@@ -9,8 +9,7 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { EventType } from 'models/QuestionarySubmissionState';
-import { SampleSubmissionState } from 'models/SampleSubmissionState';
+import { SampleSubmissionState } from 'models/questionary/sample/SampleSubmissionState';
 
 import { SampleContextType } from '../SampleDeclaration/SampleDeclarationContainer';
 
@@ -27,7 +26,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
     QuestionaryContext
   ) as SampleContextType;
 
-  const [title, setTitle] = useState(state?.sample.title);
+  const [title, setTitle] = useState(state?.sample.title || '');
 
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
@@ -37,6 +36,7 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
     <>
       <Field
         name={id}
+        id={`${id}-field`}
         label={props.answer.question.question}
         inputProps={{
           onChange: (event: ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +44,8 @@ function QuestionaryComponentSampleBasis(props: BasicComponentProps) {
           },
           onBlur: () => {
             dispatch({
-              type: EventType.SAMPLE_MODIFIED,
-              payload: { ...state.sample, title: title },
+              type: 'SAMPLE_MODIFIED',
+              sample: { title: title },
             });
           },
         }}
@@ -67,7 +67,7 @@ const sampleBasisPreSubmit = () => async ({
   const sample = (state as SampleSubmissionState).sample;
   const title = sample.title;
 
-  let returnValue = state.questionaryId;
+  let returnValue = state.questionary.questionaryId;
 
   if (sample.id > 0) {
     const result = await api.updateSample({
@@ -76,26 +76,22 @@ const sampleBasisPreSubmit = () => async ({
     });
     if (result.updateSample.sample) {
       dispatch({
-        type: EventType.SAMPLE_UPDATED,
-        payload: {
-          sample: { ...sample, ...result.updateSample.sample },
-        },
+        type: 'SAMPLE_UPDATED',
+        sample: result.updateSample.sample,
       });
     }
   } else {
     const result = await api.createSample({
       title: title,
-      templateId: state.templateId,
-      proposalId: sample.proposalId,
+      templateId: state.questionary.templateId,
+      proposalPk: sample.proposalPk,
       questionId: sample.questionId,
     });
 
     if (result.createSample.sample) {
       dispatch({
-        type: EventType.SAMPLE_CREATED,
-        payload: {
-          sample: result.createSample.sample,
-        },
+        type: 'SAMPLE_CREATED',
+        sample: result.createSample.sample,
       });
       returnValue = result.createSample.sample.questionaryId;
     }

@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import clsx from 'clsx';
+import parse from 'html-react-parser';
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
@@ -33,8 +34,10 @@ import ProposalChooseCall from './proposal/ProposalChooseCall';
 import ProposalCreate from './proposal/ProposalCreate';
 import ProposalEdit from './proposal/ProposalEdit';
 import ProposalPage from './proposal/ProposalPage';
-import InstrSciUpcomingBeamTimesTable from './proposalBooking/InstrSciUpcomingBeamTimesTable';
-import UserMyBeamTimesTable from './proposalBooking/UserMyBeamTimesTable';
+import InstrSciUpcomingExperimentTimesTable from './proposalBooking/InstrSciUpcomingExperimentTimesTable';
+import UserExperimentTimesTable from './proposalBooking/UserExperimentsTable';
+import CreateProposalEsiPage from './proposalEsi/CreateProposalEsiPage';
+import UpdateProposalEsiPage from './proposalEsi/UpdateProposalEsiPage';
 import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
@@ -44,14 +47,15 @@ import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
 import UnitTablePage from './settings/unitList/UnitTablePage';
-import ShipmentCreate from './shipments/CreateUpdateShipment';
-import MyShipments from './shipments/MyShipments';
-import ShipmentsPage from './shipments/ShipmentsPage';
+import ProposalEsiPage from './template/EsiPage';
+import GenericTemplates from './template/GenericTemplates';
 import ProposalTemplates from './template/ProposalTemplates';
 import QuestionsPage from './template/QuestionsPage';
+import SampleEsiPage from './template/SampleEsiPage';
 import SampleTemplatesPage from './template/SampleTemplates';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
+import VisitTemplatesPage from './template/VisitTemplatesPage';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
 import UserPage from './user/UserPage';
@@ -124,7 +128,6 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(9),
     },
   },
-  appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
     height: 'calc(100vh - 64px)',
@@ -156,8 +159,6 @@ const Dashboard: React.FC = () => {
   ]);
 
   const featureContext = useContext(FeatureContext);
-  const isShipmentEnabled = !!featureContext.features.get(FeatureId.SHIPPING)
-    ?.isEnabled;
   const isSchedulerEnabled = featureContext.features.get(FeatureId.SCHEDULER)
     ?.isEnabled;
 
@@ -183,6 +184,7 @@ const Dashboard: React.FC = () => {
 
   const [, privacyPageContent] = useGetPageContent(PageName.PRIVACYPAGE);
   const [, faqPageContent] = useGetPageContent(PageName.HELPPAGE);
+  const [, footerContent] = useGetPageContent(PageName.FOOTERCONTENT);
 
   // TODO: Check who can see what and modify the access control here.
   return (
@@ -226,7 +228,7 @@ const Dashboard: React.FC = () => {
       </Drawer>
       <main className={classes.content}>
         <Switch>
-          <Route path="/ProposalEdit/:proposalID" component={ProposalEdit} />
+          <Route path="/ProposalEdit/:proposalPk" component={ProposalEdit} />
           <Route
             path="/ProposalSelectType"
             component={() => <ProposalChooseCall callsData={calls} />}
@@ -235,12 +237,6 @@ const Dashboard: React.FC = () => {
             path="/ProposalCreate/:callId/:templateId"
             component={ProposalCreate}
           />
-          {isShipmentEnabled && (
-            <Route path="/ShipmentCreate" component={ShipmentCreate} />
-          )}
-          {isShipmentEnabled && (
-            <Route path="/MyShipments" component={MyShipments} />
-          )}
           <Route path="/ProfilePage/:id" component={ProfilePage} />
           {isUserOfficer && (
             <Route path="/PeoplePage/:id" component={UserPage} />
@@ -263,10 +259,14 @@ const Dashboard: React.FC = () => {
             path="/SampleDeclarationTemplates"
             component={SampleTemplatesPage}
           />
+          <Route path="/GenericTemplates" component={GenericTemplates} />
           <Route
             path="/ShipmentDeclarationTemplates"
             component={ShipmentTemplatesPage}
           />
+          <Route path="/VisitTemplates" component={VisitTemplatesPage} />
+          <Route path="/EsiTemplates" component={ProposalEsiPage} />
+          <Route path="/SampleEsiTemplates" component={SampleEsiPage} />
           <Route
             path="/ProposalTableReviewer"
             component={ProposalTableReviewer}
@@ -290,24 +290,27 @@ const Dashboard: React.FC = () => {
           {(isSampleSafetyReviewer || isUserOfficer) && (
             <Route path="/SampleSafety" component={SampleSafetyPage} />
           )}
-          {isUserOfficer && (
-            <Route path="/Shipments" component={ShipmentsPage} />
-          )}
+
           {isUserOfficer && (
             <Route path="/ApiAccessTokens" component={ApiAccessTokensPage} />
           )}
           {isSchedulerEnabled && (
-            <Route path="/MyBeamTimes" component={UserMyBeamTimesTable} />
+            <Route
+              path="/ExperimentTimes"
+              component={UserExperimentTimesTable}
+            />
           )}
           {isSchedulerEnabled && (
             <Route
-              path="/UpcomingBeamTimes"
-              component={InstrSciUpcomingBeamTimesTable}
+              path="/UpcomingExperimentTimes"
+              component={InstrSciUpcomingExperimentTimesTable}
             />
           )}
           {isUserOfficer && (
             <Route path="/Questions" component={QuestionsPage} />
           )}
+          <Route path="/CreateEsi/:visitId" component={CreateProposalEsiPage} />
+          <Route path="/UpdateEsi/:esiId" component={UpdateProposalEsiPage} />
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
             yes={() => <Route component={ProposalPage} />}
@@ -345,6 +348,7 @@ const Dashboard: React.FC = () => {
             )}
           />
         </Switch>
+        {parse(footerContent)}
         <BottomNavigation className={classes.bottomNavigation}>
           <BottomNavItem
             text={privacyPageContent}

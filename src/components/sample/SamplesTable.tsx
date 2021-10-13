@@ -1,8 +1,12 @@
-import MaterialTable, { MaterialTableProps, Column } from 'material-table';
+import MaterialTable, {
+  MaterialTableProps,
+  Column,
+} from '@material-table/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { DecodedValueMap, SetQuery, QueryParamConfig } from 'use-query-params';
 
-import { SampleWithProposalData } from 'models/Sample';
+import { SampleWithProposalData } from 'models/questionary/sample/SampleWithProposalData';
 import { tableIcons } from 'utils/materialIcons';
 
 const defaultColumns: Column<SampleWithProposalData>[] = [
@@ -27,7 +31,11 @@ const SamplesTable = (
     <MaterialTable
       columns={props.columns ? props.columns : defaultColumns}
       icons={tableIcons}
-      title="Samples"
+      title={
+        <Typography variant="h6" component="h2">
+          Samples
+        </Typography>
+      }
       onSearchChange={(searchText) => {
         props.setUrlQueryParams({
           search: searchText ? searchText : undefined,

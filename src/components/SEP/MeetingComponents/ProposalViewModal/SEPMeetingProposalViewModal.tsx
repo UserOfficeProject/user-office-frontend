@@ -4,7 +4,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { Theme } from '@material-ui/core/styles';
 import createStyles from '@material-ui/core/styles/createStyles';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -48,7 +48,7 @@ const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
 
 type SEPMeetingProposalViewModalProps = {
   proposalViewModalOpen: boolean;
-  proposalId?: number | null;
+  proposalPk?: number | null;
   sepId: number;
   meetingSubmitted: (data: SepMeetingDecision) => void;
   setProposalViewModalOpen: (isOpen: boolean) => void;
@@ -56,7 +56,7 @@ type SEPMeetingProposalViewModalProps = {
 
 const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = ({
   proposalViewModalOpen,
-  proposalId,
+  proposalPk,
   sepId,
   meetingSubmitted,
   setProposalViewModalOpen,
@@ -71,7 +71,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
 
   const { SEPProposalData, loading, setSEPProposalData } = useSEPProposalData(
     sepId,
-    proposalId
+    proposalPk
   );
 
   const finalHasWriteAccess = SEPProposalData?.instrumentSubmitted
@@ -146,7 +146,7 @@ const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = 
                           sepTimeAllocation,
                         })
                       }
-                      proposalId={proposalData.id}
+                      proposal={proposalData}
                       sepId={sepId}
                     />
                     <ExternalReviews

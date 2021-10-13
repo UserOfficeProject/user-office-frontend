@@ -5,12 +5,12 @@ import UOLoader from 'components/common/UOLoader';
 import ProposalQuestionaryDetails from 'components/proposal/ProposalQuestionaryDetails';
 import { TableRowData } from 'components/questionary/QuestionaryDetails';
 import { BasicUserDetails } from 'generated/sdk';
-import { ProposalSubsetSubmission } from 'models/ProposalSubmissionState';
+import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 import { getFullUserName } from 'utils/user';
 
 export default function ProposalQuestionaryReview(
   props: {
-    data: ProposalSubsetSubmission;
+    data: ProposalWithQuestionary;
   } & TableProps<FunctionComponent<unknown>>
 ) {
   const { data, ...restProps } = props;
@@ -22,7 +22,7 @@ export default function ProposalQuestionaryReview(
   const users = data.users || [];
 
   const additionalDetails: TableRowData[] = [
-    { label: 'Proposal ID', value: data.shortCode },
+    { label: 'Proposal ID', value: data.proposalId },
     { label: 'Title', value: data.title },
     { label: 'Abstract', value: data.abstract },
     {
@@ -42,7 +42,7 @@ export default function ProposalQuestionaryReview(
       questionaryId={data.questionaryId}
       additionalDetails={additionalDetails}
       title="Proposal information"
-      proposalId={data.id}
+      proposalPk={data.primaryKey}
       {...restProps}
     />
   );

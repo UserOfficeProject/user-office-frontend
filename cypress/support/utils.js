@@ -10,23 +10,17 @@ const KEY_CODES = {
 
 const notification = ({ variant, text }) => {
   let notificationQuerySelector = '';
-  let bgColor = '';
 
   switch (variant) {
     case 'error':
       notificationQuerySelector = '.snackbar-error [role="alert"]';
-      bgColor = 'rgb(211, 47, 47)';
       break;
 
     default:
       notificationQuerySelector = '.snackbar-success [role="alert"]';
-      bgColor = 'rgb(67, 160, 71)';
       break;
   }
-  let notification = cy
-    .get(notificationQuerySelector)
-    .should('exist')
-    .and('have.css', 'background-color', bgColor);
+  let notification = cy.get(notificationQuerySelector).should('exist');
 
   if (text) {
     if (text instanceof RegExp) {
@@ -54,7 +48,14 @@ const closeModal = () => {
 };
 
 const finishedLoading = () => {
-  cy.get('[role="progressbar"]').should('not.exist');
+  cy.get('[role="progressbar"]')
+    .should('not.exist')
+    .get('[data-cy="loading"]')
+    .should('not.exist')
+    .get('[data-cy="UO-loader"]')
+    .should('not.exist')
+    .get('.MuiPaper-root [role="progressbar"]')
+    .should('not.exist');
 };
 
 function presentationMode() {
@@ -119,6 +120,38 @@ const getTinyMceContent = (tinyMceId) => {
   });
 };
 
+const testActionButton = (title, state) => {
+  switch (state) {
+    case 'completed':
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${title}"]`).find('.MuiBadge-badge').contains('✔');
+      break;
+    case 'active':
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${title}"]`)
+        .find('.MuiBadge-badge')
+        .should('have.css', 'background-color', 'rgb(235, 26, 108)');
+      break;
+
+    case 'neutral':
+      cy.get(`[title="${title}"]`).should('not.be.disabled');
+
+      cy.get(`[title="${title}"]`)
+        .find('.MuiBadge-badge')
+        .should('not.have.css', 'background-color', 'rgb(235, 26, 108)');
+      break;
+
+    case 'inactive':
+      cy.get(`[title="${title}"]`).find('button').should('be.disabled');
+      break;
+    case 'invisible':
+      cy.get(`[title="${title}"]`).should('not.exist');
+      break;
+  }
+};
+
 Cypress.Commands.add('notification', notification);
 
 Cypress.Commands.add('closeNotification', closeNotification);
@@ -139,3 +172,4 @@ Cypress.Commands.add('presentationMode', presentationMode);
 
 Cypress.Commands.add('setTinyMceContent', setTinyMceContent);
 Cypress.Commands.add('getTinyMceContent', getTinyMceContent);
+Cypress.Commands.add('testActionButton', testActionButton);

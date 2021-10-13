@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { Theme } from '@material-ui/core/styles';
 import createStyles from '@material-ui/core/styles/createStyles';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import {
@@ -157,5 +157,5 @@ export const Wizard: React.FC<WizardProps> = ({
 
 export const WizardStep: React.FC<{
   title: string;
-  validationSchema: Yup.ObjectSchema;
+  validationSchema: Yup.AnyObjectSchema;
 }> = ({ children }) => <>{children}</>;

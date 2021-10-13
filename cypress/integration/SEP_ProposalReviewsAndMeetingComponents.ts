@@ -200,16 +200,12 @@ context(
 
       cy.get("[title='Assign proposals to SEP']").first().click();
 
-      cy.get("[id='mui-component-select-selectedSEPId']").should(
-        'not.have.class',
-        'Mui-disabled'
-      );
-
-      cy.get("[id='mui-component-select-selectedSEPId']").first().click();
+      cy.get('#selectedSEPId-input').should('not.have.class', 'Mui-disabled');
+      cy.get('#selectedSEPId-input').first().click();
 
       cy.get("[id='menu-selectedSEPId'] li").first().click();
 
-      cy.contains('Assign to SEP').click();
+      cy.get('[data-cy="submit"]').click();
 
       // Manually changing the proposal status to be shown in the SEPs. -------->
       cy.changeProposalStatus('SEP_REVIEW', proposal1.proposalTitle);
@@ -534,7 +530,7 @@ context(
 
       cy.finishedLoading();
 
-      cy.contains(proposal1.proposalTitle).parent().contains('DRAFT');
+      cy.contains(proposal1.proposalTitle).parent().contains('Draft');
 
       cy.contains(proposal1.proposalTitle)
         .parent()
@@ -550,7 +546,7 @@ context(
         text: 'Proposal review submitted successfully!',
       });
 
-      cy.contains(proposal1.proposalTitle).parent().contains('SUBMITTED');
+      cy.contains(proposal1.proposalTitle).parent().contains('Submitted');
     });
 
     it('Officer should get error when trying to delete proposal which has dependencies (like reviews)', () => {
@@ -604,27 +600,7 @@ context(
 
       cy.get('table tbody [type="checkbox"]').first().check();
 
-      cy.get("[title='Assign proposals to instrument']").first().click();
-
-      cy.get("[id='mui-component-select-selectedInstrumentId']").should(
-        'not.have.class',
-        'Mui-disabled'
-      );
-
-      cy.get("[id='mui-component-select-selectedInstrumentId']")
-        .first()
-        .click();
-
-      cy.get("[id='menu-selectedInstrumentId'] li").first().click();
-
-      cy.contains('Assign to Instrument').click();
-
-      cy.notification({
-        variant: 'success',
-        text: 'Proposal/s assigned to the selected instrument',
-      });
-
-      cy.get('[title="Remove assigned instrument"]').should('exist');
+      cy.assignInstrumentToProposal(proposal1.proposalTitle, name);
 
       cy.contains('SEPs').click();
 
@@ -739,37 +715,34 @@ context(
       cy.get('[data-cy="status-filter"]').click();
       cy.get('[role="listbox"] [data-value="1"]').click();
 
+      cy.finishedLoading();
+
       cy.get('table tbody [type="checkbox"]').first().check();
 
       cy.get("[title='Assign proposals to SEP']").first().click();
 
-      cy.get("[id='mui-component-select-selectedSEPId']").should(
-        'not.have.class',
-        'Mui-disabled'
-      );
+      cy.get('#selectedSEPId-input').should('not.have.class', 'Mui-disabled');
 
-      cy.get("[id='mui-component-select-selectedSEPId']").first().click();
+      cy.get('#selectedSEPId-input').first().click();
 
       cy.get("[id='menu-selectedSEPId'] li").first().click();
 
-      cy.contains('Assign to SEP').click();
+      cy.get('[data-cy="submit"]').click();
 
       cy.get('table tbody [type="checkbox"]').first().check();
 
-      cy.get("[title='Assign proposals to instrument']").first().click();
+      cy.get("[title='Assign/Remove instrument']").first().click();
 
-      cy.get("[id='mui-component-select-selectedInstrumentId']").should(
+      cy.get('#selectedInstrumentId-input').should(
         'not.have.class',
         'Mui-disabled'
       );
 
-      cy.get("[id='mui-component-select-selectedInstrumentId']")
-        .first()
-        .click();
+      cy.get('#selectedInstrumentId-input').first().click();
 
       cy.get("[id='menu-selectedInstrumentId'] li").first().click();
 
-      cy.contains('Assign to Instrument').click();
+      cy.get('[data-cy="submit-assign-remove-instrument"]').click();
 
       cy.changeProposalStatus('SEP_REVIEW', proposal2.proposalTitle);
 

@@ -26,8 +26,17 @@ export const QuestionTemplateRelationDateForm: FC<QuestionTemplateRelationFormPr
         <>
           <QuestionExcerpt question={props.questionRel.question} />
           <Field
+            name="config.includeTime"
+            label="Include time"
+            component={FormikUICustomCheckbox}
+            margin="normal"
+            fullWidth
+            inputProps={{ 'data-cy': 'includeTime' }}
+          />
+          <Field
             name="config.tooltip"
             label="Tooltip"
+            id="tooltip-input"
             type="text"
             component={TextField}
             margin="normal"
@@ -48,6 +57,7 @@ export const QuestionTemplateRelationDateForm: FC<QuestionTemplateRelationFormPr
               <Field
                 name="config.minDate"
                 label="Min"
+                id="Min-input"
                 format="yyyy-MM-dd"
                 component={KeyboardDatePicker}
                 margin="normal"
@@ -57,6 +67,7 @@ export const QuestionTemplateRelationDateForm: FC<QuestionTemplateRelationFormPr
               <Field
                 name="config.maxDate"
                 label="Max"
+                id="Max-input"
                 format="yyyy-MM-dd"
                 component={KeyboardDatePicker}
                 margin="normal"
@@ -66,6 +77,7 @@ export const QuestionTemplateRelationDateForm: FC<QuestionTemplateRelationFormPr
               <Field
                 name="config.defaultDate"
                 label="Default"
+                id="Default-input"
                 format="yyyy-MM-dd"
                 component={KeyboardDatePicker}
                 margin="normal"

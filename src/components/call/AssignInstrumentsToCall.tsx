@@ -1,5 +1,6 @@
+import MaterialTable from '@material-table/core';
+import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
@@ -65,7 +66,11 @@ const AssignInstrumentsToCall: React.FC<AssignInstrumentsToCallProps> = ({
     <>
       <MaterialTable
         icons={tableIcons}
-        title={'Instruments'}
+        title={
+          <Typography variant="h6" component="h1">
+            Instruments
+          </Typography>
+        }
         columns={columns}
         data={notAssignedInstruments}
         isLoading={loadingInstruments}
@@ -75,7 +80,15 @@ const AssignInstrumentsToCall: React.FC<AssignInstrumentsToCallProps> = ({
         options={{
           search: true,
           selection: true,
+          headerSelectionProps: {
+            inputProps: { 'aria-label': 'Select All Rows' },
+          },
           debounceInterval: 400,
+          selectionProps: (rowData: InstrumentWithAvailabilityTime) => ({
+            inputProps: {
+              'aria-label': `${rowData.name}-${rowData.shortCode}-select`,
+            },
+          }),
         }}
       />
       <ActionButtonContainer>

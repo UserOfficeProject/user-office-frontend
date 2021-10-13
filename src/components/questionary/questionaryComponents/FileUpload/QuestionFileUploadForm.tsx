@@ -3,6 +3,7 @@ import { TextField } from 'formik-material-ui';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
+import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
@@ -31,6 +32,7 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
         <>
           <Field
             name="naturalKey"
+            id="Key-Input"
             label="Key"
             type="text"
             component={TextField}
@@ -40,6 +42,7 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
           />
           <Field
             name="question"
+            id="Question-Input"
             label="Question"
             type="text"
             component={TextField}
@@ -52,6 +55,7 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
             <Field
               name="config.small_label"
               label="Helper text"
+              id="Helper-Text-Input"
               placeholder="(e.g. only PDF accepted)"
               type="text"
               component={TextField}
@@ -62,6 +66,15 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
           </TitledContainer>
 
           <TitledContainer label="Constraints">
+            <Field
+              name="config.required"
+              label="Is required"
+              id="Is-Required-Input"
+              component={FormikUICustomCheckbox}
+              margin="normal"
+              fullWidth
+              data-cy="required"
+            />
             <Field
               name="config.file_type"
               label="Accepted file types (leave empty for any)"
@@ -81,6 +94,7 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
             />
             <Field
               name="config.max_files"
+              id="Max-number-Input"
               label="Max number of files"
               type="text"
               component={TextField}

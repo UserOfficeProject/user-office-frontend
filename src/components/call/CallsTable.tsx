@@ -1,9 +1,10 @@
+import { Typography } from '@material-ui/core';
 import dateformat from 'dateformat';
 import React, { useState } from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
-import ScienceIconAdd from 'components/common/icons/ScienceIconAdd';
+import ScienceIcon from 'components/common/icons/ScienceIcon';
 import InputDialog from 'components/common/InputDialog';
 import SuperMaterialTable, {
   DefaultQueryParams,
@@ -79,13 +80,18 @@ const CallsTable: React.FC = () => {
       render: (rowData: Call): string => rowData.referenceNumberFormat || '',
     },
     {
-      title: 'Instruments',
-      field: 'instruments.length',
+      title: 'Proposal Workflow',
+      field: 'proposalWorkflow.name',
       emptyValue: '-',
     },
     {
-      title: 'Proposal Workflow',
-      field: 'proposalWorkflow.name',
+      title: 'Call template',
+      field: 'template.name',
+      emptyValue: '-',
+    },
+    {
+      title: '#instruments',
+      field: 'instruments.length',
       emptyValue: '-',
     },
     {
@@ -114,27 +120,6 @@ const CallsTable: React.FC = () => {
     }
   };
 
-  const removeAssignedInstrumentFromCall = (
-    updatedInstruments: InstrumentWithAvailabilityTime[],
-    callToRemoveFromId: number
-  ) => {
-    if (calls) {
-      const callsWithRemovedInstrument = calls.map((callItem) => {
-        if (callItem.id === callToRemoveFromId) {
-          return {
-            ...callItem,
-            instruments: updatedInstruments,
-          };
-        } else {
-          return callItem;
-        }
-      });
-
-      setCalls(callsWithRemovedInstrument);
-      setAssigningInstrumentsCallId(null);
-    }
-  };
-
   const deleteCall = async (id: number | string) => {
     return await api('Call deleted successfully')
       .deleteCall({
@@ -154,33 +139,60 @@ const CallsTable: React.FC = () => {
       });
   };
 
-  const setInstrumentAvailabilityTime = (
-    updatedInstruments: InstrumentWithAvailabilityTime[],
-    updatingCallId: number
-  ) => {
-    if (calls) {
-      const callsWithInstrumentAvailabilityTime = calls.map((callItem) => {
-        if (callItem.id === updatingCallId) {
-          return {
-            ...callItem,
-            instruments: updatedInstruments,
-          };
-        } else {
-          return callItem;
+  const ScienceIconComponent = (): JSX.Element => <ScienceIcon />;
+
+  const AssignedInstruments = React.useCallback(
+    ({ rowData }: Record<'rowData', Call>) => {
+      const removeAssignedInstrumentFromCall = (
+        updatedInstruments: InstrumentWithAvailabilityTime[],
+        callToRemoveFromId: number
+      ) => {
+        if (calls) {
+          const callsWithRemovedInstrument = calls.map((callItem) => {
+            if (callItem.id === callToRemoveFromId) {
+              return {
+                ...callItem,
+                instruments: updatedInstruments,
+              };
+            } else {
+              return callItem;
+            }
+          });
+
+          setCalls(callsWithRemovedInstrument);
+          setAssigningInstrumentsCallId(null);
         }
-      });
+      };
 
-      setCalls(callsWithInstrumentAvailabilityTime);
-    }
-  };
-  const ScienceIconComponent = (): JSX.Element => <ScienceIconAdd />;
+      const setInstrumentAvailabilityTime = (
+        updatedInstruments: InstrumentWithAvailabilityTime[],
+        updatingCallId: number
+      ) => {
+        if (calls) {
+          const callsWithInstrumentAvailabilityTime = calls.map((callItem) => {
+            if (callItem.id === updatingCallId) {
+              return {
+                ...callItem,
+                instruments: updatedInstruments,
+              };
+            } else {
+              return callItem;
+            }
+          });
 
-  const AssignedInstruments = (rowData: Call) => (
-    <AssignedInstrumentsTable
-      call={rowData}
-      removeAssignedInstrumentFromCall={removeAssignedInstrumentFromCall}
-      setInstrumentAvailabilityTime={setInstrumentAvailabilityTime}
-    />
+          setCalls(callsWithInstrumentAvailabilityTime);
+        }
+      };
+
+      return (
+        <AssignedInstrumentsTable
+          call={rowData}
+          removeAssignedInstrumentFromCall={removeAssignedInstrumentFromCall}
+          setInstrumentAvailabilityTime={setInstrumentAvailabilityTime}
+        />
+      );
+    },
+    [calls, setCalls, setAssigningInstrumentsCallId]
   );
 
   const callAssignments = calls.find(
@@ -234,7 +246,11 @@ const CallsTable: React.FC = () => {
           remove: isUserOfficer,
         }}
         icons={tableIcons}
-        title="Calls"
+        title={
+          <Typography variant="h6" component="h2">
+            Calls
+          </Typography>
+        }
         columns={columns}
         data={calls}
         isLoading={loadingCalls}

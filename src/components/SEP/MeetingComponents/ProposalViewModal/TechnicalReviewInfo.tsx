@@ -23,13 +23,14 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
-import { TechnicalReview } from 'generated/sdk';
+import { Proposal, TechnicalReview } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 
 type SEPProposalProps = {
   sepId: number;
-  proposalId: number;
+  proposal: Proposal;
 };
 
 type TechnicalReviewInfoProps = {
@@ -72,6 +73,7 @@ const OverwriteTimeAllocationDialog = ({
 
   const initialValues = {
     ...sepProposalArgs,
+    proposalPk: sepProposalArgs.proposal.primaryKey,
     sepTimeAllocation: timeAllocation,
   };
 
@@ -110,7 +112,7 @@ const OverwriteTimeAllocationDialog = ({
                 id="sepTimeAllocation"
                 type="number"
                 name="sepTimeAllocation"
-                label="Time Allocation(Days)"
+                label={`Time Allocation(${sepProposalArgs.proposal.call?.allocationTimeUnit}s)`}
                 value={values.sepTimeAllocation ?? ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setFieldValue(
@@ -189,7 +191,8 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
                   {technicalReview?.status || '-'}
                 </TableCell>
                 <TableCell width="25%" className={classes.textBold}>
-                  Time allocation
+                  Time allocation(
+                  {sepProposalArgs.proposal.call?.allocationTimeUnit}s)
                   {hasWriteAccess && (
                     <Tooltip title="Edit" className={classes.spacingLeft}>
                       <IconButton
@@ -237,6 +240,12 @@ const TechnicalReviewInfo: React.FC<TechnicalReviewInfoProps> = ({
                   }}
                 />
               </TableRow>
+              <TableRow key="reviewer">
+                <TableCell className={classes.textBold}>Reviewer</TableCell>
+                <TableCell>
+                  {getFullUserName(technicalReview?.reviewer)}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
@@ -250,7 +259,7 @@ TechnicalReviewInfo.propTypes = {
   sepTimeAllocation: PropTypes.number,
   onSepTimeAllocationEdit: PropTypes.func.isRequired,
   sepId: PropTypes.number.isRequired,
-  proposalId: PropTypes.number.isRequired,
+  proposal: PropTypes.any.isRequired,
   hasWriteAccess: PropTypes.bool.isRequired,
 };
 

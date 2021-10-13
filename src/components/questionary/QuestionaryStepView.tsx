@@ -4,21 +4,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Prompt } from 'react-router';
 import * as Yup from 'yup';
 
-import { useCheckAccess } from 'components/common/Can';
 import { ErrorFocus } from 'components/common/ErrorFocus';
 import { NavigButton } from 'components/common/NavigButton';
 import UOLoader from 'components/common/UOLoader';
-import { Answer, QuestionaryStep, Sdk, UserRole } from 'generated/sdk';
+import { Answer, QuestionaryStep, Sdk } from 'generated/sdk';
 import { usePreSubmitActions } from 'hooks/questionary/useSubmitActions';
 import {
   areDependenciesSatisfied,
   getQuestionaryStepByTopicId as getStepByTopicId,
   prepareAnswers,
-} from 'models/QuestionaryFunctions';
-import {
-  EventType,
-  QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+} from 'models/questionary/QuestionaryFunctions';
+import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmissionState';
 import submitFormAsync from 'utils/FormikAsyncFormHandler';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -27,7 +23,6 @@ import {
   createQuestionaryComponent,
   getQuestionaryComponentDefinition,
 } from './QuestionaryComponentRegistry';
-import { PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR } from './questionaryComponents/ProposalBasis/QuestionaryComponentProposalBasis';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
@@ -48,11 +43,10 @@ export const createFormikConfigObjects = (
   state: QuestionarySubmissionState,
   api: () => Sdk
 ): {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  validationSchema: object;
+  validationSchema: Record<string, Yup.AnySchema>;
   initialValues: Record<string, unknown>;
 } => {
-  const validationSchema: Record<string, unknown> = {};
+  const validationSchema: Record<string, Yup.AnySchema> = {};
   const initialValues: Record<string, unknown> = {};
 
   answers.forEach((answer) => {
@@ -70,7 +64,10 @@ export const createFormikConfigObjects = (
     }
   });
 
-  return { initialValues, validationSchema };
+  return {
+    initialValues,
+    validationSchema,
+  };
 };
 
 const PromptIfDirty = ({ isDirty }: { isDirty: boolean }) => {
@@ -97,17 +94,11 @@ export default function QuestionaryStepView(props: {
 
   const { state, dispatch } = useContext(QuestionaryContext);
 
-  const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
   }
 
-  const isCallActive = state.proposal?.call?.isActive ?? true;
-
-  const readOnly = !isUserOfficer && (!isCallActive || props.readonly);
-
-  const questionaryStep = getStepByTopicId(state.steps, topicId) as
+  const questionaryStep = getStepByTopicId(state.questionary.steps, topicId) as
     | QuestionaryStep
     | undefined;
 
@@ -118,7 +109,7 @@ export default function QuestionaryStepView(props: {
   }
 
   const activeFields = questionaryStep.fields.filter((field) => {
-    return areDependenciesSatisfied(state.steps, field.question.id);
+    return areDependenciesSatisfied(state.questionary.steps, field.question.id);
   });
 
   const { initialValues, validationSchema } = createFormikConfigObjects(
@@ -151,7 +142,7 @@ export default function QuestionaryStepView(props: {
         JSON.stringify(initialValues) === JSON.stringify(lastSavedFormValues)
       ) {
         dispatch({
-          type: EventType.CLEAN_DIRTY_STATE,
+          type: 'CLEAN_DIRTY_STATE',
         });
       }
     };
@@ -165,31 +156,17 @@ export default function QuestionaryStepView(props: {
   }, [initialValues, lastSavedFormValues, state.isDirty, dispatch]);
 
   const performSave = async (isPartialSave: boolean): Promise<boolean> => {
-    let result = state.questionaryId; // TODO obtain newly created questionary ID some other way
-
-    try {
-      const saveResults = await Promise.all(
-        preSubmitActions(activeFields).map((f) =>
-          f({ state, dispatch, api: api() })
+    const questionaryId =
+      (
+        await Promise.all(
+          preSubmitActions(activeFields).map(
+            async (f) => await f({ state, dispatch, api: api() })
+          )
         )
-      );
-      const lastResult = saveResults.pop();
+      ).pop() || state.questionary.questionaryId; // TODO obtain newly created questionary ID some other way
 
-      if (lastResult) {
-        result = lastResult; // TODO obtain newly created questionary ID some other way
-      }
-    } catch (err) {
-      // prevent navigation
-      if (err === PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR) {
-        return false;
-      }
-
-      throw err;
-    }
-
-    const questionaryId = state.questionaryId || result;
     if (!questionaryId) {
-      throw new Error('Missing questionaryId');
+      return false;
     }
 
     const answerTopicResult = await api('Saved').answerTopic({
@@ -201,15 +178,12 @@ export default function QuestionaryStepView(props: {
 
     if (answerTopicResult.answerTopic.questionaryStep) {
       dispatch({
-        type: EventType.QUESTIONARY_STEP_ANSWERED,
-        payload: {
-          questionaryStep: answerTopicResult.answerTopic.questionaryStep,
-        },
+        type: 'STEP_ANSWERED',
+        step: answerTopicResult.answerTopic.questionaryStep,
       });
 
       setLastSavedFormValues(initialValues);
     } else if (answerTopicResult.answerTopic.rejection) {
-      // prevent navigation
       return false;
     }
 
@@ -223,14 +197,14 @@ export default function QuestionaryStepView(props: {
           'Changes you recently made in this step will not be saved! Are you sure?'
         )
       ) {
-        dispatch({ type: EventType.BACK_CLICKED });
+        dispatch({ type: 'BACK_CLICKED' });
       }
     } else {
-      dispatch({ type: EventType.BACK_CLICKED });
+      dispatch({ type: 'BACK_CLICKED' });
     }
   };
 
-  const resetHandler = () => dispatch({ type: EventType.RESET_CLICKED });
+  const resetHandler = () => dispatch({ type: 'RESET_CLICKED' });
 
   const saveHandler = () => performSave(true);
 
@@ -255,7 +229,7 @@ export default function QuestionaryStepView(props: {
         } = formikProps;
 
         return (
-          <form className={readOnly ? classes.disabled : undefined}>
+          <form className={props.readonly ? classes.disabled : undefined}>
             <PromptIfDirty isDirty={state.isDirty} />
             {activeFields.map((field) => {
               return (
@@ -269,11 +243,9 @@ export default function QuestionaryStepView(props: {
                     onComplete: (newValue: Answer['value']) => {
                       if (field.value !== newValue) {
                         dispatch({
-                          type: EventType.FIELD_CHANGED,
-                          payload: {
-                            id: field.question.id,
-                            newValue: newValue,
-                          },
+                          type: 'FIELD_CHANGED',
+                          id: field.question.id,
+                          newValue: newValue,
                         });
                         setFieldValue(field.question.id, newValue, true);
                       }
@@ -282,7 +254,10 @@ export default function QuestionaryStepView(props: {
                 </div>
               );
             })}
-            <NavigationFragment disabled={readOnly} isLoading={isSubmitting}>
+            <NavigationFragment
+              disabled={props.readonly}
+              isLoading={isSubmitting}
+            >
               <NavigButton
                 onClick={backHandler}
                 disabled={state.stepIndex === 0}
@@ -313,13 +288,14 @@ export default function QuestionaryStepView(props: {
                     async (isValid: boolean) => {
                       if (isValid) {
                         const goNextStep = await performSave(false);
+
                         if (!goNextStep) {
                           setSubmitting(false);
 
                           return;
                         }
 
-                        dispatch({ type: EventType.GO_STEP_FORWARD });
+                        dispatch({ type: 'GO_STEP_FORWARD' });
                         props.onStepComplete?.(topicId);
                       }
                     }

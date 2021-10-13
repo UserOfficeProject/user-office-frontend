@@ -23,11 +23,10 @@ import { Sample, UserRole } from 'generated/sdk';
 import { useUserProposals } from 'hooks/proposal/useUserProposals';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { useProposalSamples } from 'hooks/sample/useProposalSamples';
-import { EventType } from 'models/QuestionarySubmissionState';
 import {
   ShipmentBasisFormikData,
   ShipmentSubmissionState,
-} from 'models/ShipmentSubmissionState';
+} from 'models/questionary/shipment/ShipmentSubmissionState';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -61,8 +60,8 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   ) as ShipmentContextType;
 
   const [title, setTitle] = useState(state?.shipment.title);
-  const [proposalId, setProposalId] = useState<number | null>(
-    state?.shipment.proposalId || null
+  const [proposalPk, setProposalPk] = useState<number | null>(
+    state?.shipment.proposalPk || null
   );
   const [sampleIds, setSampleIds] = useState<number[]>(
     state?.shipment.samples.map((sample) => sample.id) || []
@@ -72,7 +71,7 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
   const { proposals, loadingProposals } = useUserProposals(
     currentRole as UserRole
   );
-  const { samples, loadingSamples } = useProposalSamples(proposalId);
+  const { samples, loadingSamples } = useProposalSamples(proposalPk);
 
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
@@ -80,13 +79,8 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
 
   const handleChange = (changes: Partial<ShipmentBasisFormikData>) => {
     dispatch({
-      type: EventType.SHIPMENT_MODIFIED,
-      payload: {
-        shipment: {
-          ...state.shipment,
-          ...changes,
-        },
-      },
+      type: 'SHIPMENT_MODIFIED',
+      shipment: changes,
     });
   };
 
@@ -115,22 +109,22 @@ function QuestionaryComponentShipmentBasis(props: BasicComponentProps) {
           <Select
             labelId="proposal-id"
             onChange={(event) => {
-              const newProposalId = event.target.value as number;
-              setProposalId(newProposalId);
+              const newProposalPk = event.target.value as number;
+              setProposalPk(newProposalPk);
               setSampleIds([]);
-              handleChange({ proposalId: newProposalId });
+              handleChange({ proposalPk: newProposalPk });
             }}
-            value={proposalId || ''}
+            value={proposalPk || ''}
             fullWidth
             data-cy="select-proposal-dropdown"
           >
             {proposals.map((proposal) => (
-              <MenuItem key={proposal.id} value={proposal.id}>
+              <MenuItem key={proposal.primaryKey} value={proposal.primaryKey}>
                 {proposal.title}
               </MenuItem>
             ))}
           </Select>
-          <ProposalErrorLabel>{fieldErrors?.proposalId}</ProposalErrorLabel>
+          <ProposalErrorLabel>{fieldErrors?.proposalPk}</ProposalErrorLabel>
         </FormControl>
       )}
 
@@ -173,32 +167,29 @@ const shipmentBasisPreSubmit = () => async ({
   const shipment = (state as ShipmentSubmissionState).shipment;
   const title = shipment.title;
   let shipmentId = shipment.id;
-  let returnValue = state.questionaryId;
+  let returnValue = state.questionary.questionaryId;
   if (shipmentId > 0) {
     const result = await api.updateShipment({
       title: title,
       shipmentId: shipment.id,
-      proposalId: shipment.proposalId,
+      proposalPk: shipment.proposalPk,
     });
     if (result.updateShipment.shipment) {
       dispatch({
-        type: EventType.SHIPMENT_MODIFIED,
-        payload: {
-          shipment: result.updateShipment.shipment,
-        },
+        type: 'SHIPMENT_MODIFIED',
+        shipment: result.updateShipment.shipment,
       });
     }
   } else {
     const result = await api.createShipment({
       title: title,
-      proposalId: shipment.proposalId,
+      proposalPk: shipment.proposalPk,
+      visitId: shipment.visitId,
     });
     if (result.createShipment.shipment) {
       dispatch({
-        type: EventType.SHIPMENT_CREATED,
-        payload: {
-          shipment: result.createShipment.shipment,
-        },
+        type: 'SHIPMENT_CREATED',
+        shipment: result.createShipment.shipment,
       });
       shipmentId = result.createShipment.shipment.id;
       returnValue = result.createShipment.shipment.questionaryId;

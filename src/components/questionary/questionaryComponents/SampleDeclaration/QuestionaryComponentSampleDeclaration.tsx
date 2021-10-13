@@ -14,14 +14,13 @@ import {
   Answer,
   QuestionaryStep,
   SampleStatus,
-  SubtemplateConfig,
+  SubTemplateConfig,
 } from 'generated/sdk';
-import {
-  SampleWithQuestionaryStatus,
-  SampleWithQuestionary,
-} from 'models/Sample';
+import { SampleCore } from 'models/questionary/sample/SampleCore';
+import { SampleWithQuestionary } from 'models/questionary/sample/SampleWithQuestionary';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
+import withPrompt, { WithPromptType } from 'utils/withPrompt';
 
 import {
   QuestionnairesList,
@@ -36,9 +35,7 @@ const useStyles = makeStyles(() => ({
     fontSize: '1rem',
   },
 }));
-const sampleToListRow = (
-  sample: SampleWithQuestionaryStatus
-): QuestionnairesListRow => {
+const sampleToListRow = (sample: SampleCore): QuestionnairesListRow => {
   return {
     id: sample.id,
     label: sample.title,
@@ -49,7 +46,7 @@ const sampleToListRow = (
 function createSampleStub(
   templateId: number,
   questionarySteps: QuestionaryStep[],
-  proposalId: number,
+  proposalPk: number,
   questionId: string
 ): SampleWithQuestionary {
   return {
@@ -68,23 +65,23 @@ function createSampleStub(
     safetyComment: '',
     safetyStatus: SampleStatus.PENDING_EVALUATION,
     title: '',
-    proposalId: proposalId,
+    proposalPk: proposalPk,
   };
 }
 
 type QuestionaryComponentSampleDeclarationProps = {
   answer: Answer;
   formikProps: FormikProps<Record<string, unknown>>;
-  onComplete: (newValue: Answer['value']) => void;
   confirm: WithConfirmType;
+  prompt: WithPromptType;
 };
 
 function QuestionaryComponentSampleDeclaration(
   props: QuestionaryComponentSampleDeclarationProps
 ) {
-  const { answer, confirm } = props;
+  const { answer, confirm, prompt } = props;
   const answerId = answer.question.id;
-  const config = answer.config as SubtemplateConfig;
+  const config = answer.config as SubTemplateConfig;
   const { state } = useContext(QuestionaryContext) as ProposalContextType;
 
   const { api } = useDataApiWithFeedback();
@@ -102,9 +99,9 @@ function QuestionaryComponentSampleDeclaration(
   return (
     <Field name={answerId}>
       {({ field, form }: FieldProps<SampleWithQuestionary[]>) => {
-        const copySample = (id: number) =>
+        const copySample = (id: number, title: string) =>
           api()
-            .cloneSample({ sampleId: id })
+            .cloneSample({ sampleId: id, title: title })
             .then((response) => {
               const clonedSample = response.cloneSample.sample;
               if (clonedSample) {
@@ -150,10 +147,9 @@ function QuestionaryComponentSampleDeclaration(
                 })();
               }}
               onCloneClick={(item) => {
-                confirm(() => copySample(item.id), {
-                  title: 'Copy Sample',
-                  description:
-                    'This action will copy the sample and all data associated with it',
+                prompt((answer) => copySample(item.id, answer), {
+                  question: 'Title',
+                  prefilledAnswer: `Copy of ${item.label}`,
                 })();
               }}
               onAddNewClick={() => {
@@ -164,9 +160,9 @@ function QuestionaryComponentSampleDeclaration(
                   );
                 }
 
-                const proposalId = state.proposal.id;
+                const proposalPk = state.proposal.primaryKey;
                 const questionId = props.answer.question.id;
-                if (proposalId <= 0 || !questionId) {
+                if (proposalPk <= 0 || !questionId) {
                   throw new Error(
                     'Sample Declaration is missing proposal id and/or question id'
                   );
@@ -185,7 +181,7 @@ function QuestionaryComponentSampleDeclaration(
                       const sampleStub = createSampleStub(
                         templateId,
                         blankSteps,
-                        proposalId,
+                        proposalPk,
                         questionId
                       );
                       setSelectedSample(sampleStub);
@@ -221,7 +217,7 @@ function QuestionaryComponentSampleDeclaration(
                       .getSamplesWithQuestionaryStatus({
                         filter: {
                           questionId: answer.question.id,
-                          proposalId: state.proposal.id,
+                          proposalPk: state.proposal.primaryKey,
                         },
                       })
                       .then((result) => {
@@ -242,4 +238,4 @@ function QuestionaryComponentSampleDeclaration(
   );
 }
 
-export default withConfirm(QuestionaryComponentSampleDeclaration);
+export default withConfirm(withPrompt(QuestionaryComponentSampleDeclaration));

@@ -1,11 +1,13 @@
+import { genericTemplateBasisPreSubmit } from 'components/questionary/questionaryComponents/GenericTemplateBasis/QuestionaryComponentGenericTemplateBasis';
 import { proposalBasisPreSubmit } from 'components/questionary/questionaryComponents/ProposalBasis/QuestionaryComponentProposalBasis';
 import { sampleBasisPreSubmit } from 'components/questionary/questionaryComponents/SampleBasis/QuestionaryComponentSampleBasis';
 import { shipmentBasisPreSubmit } from 'components/questionary/questionaryComponents/ShipmentBasis/QuestionaryComponentShipmentBasis';
+import { visitBasisPreSubmit } from 'components/questionary/questionaryComponents/VisitBasis/QuestionaryComponentVisitBasis';
 import { Answer, DataType, Sdk } from 'generated/sdk';
 import {
   Event,
   QuestionarySubmissionState,
-} from 'models/QuestionarySubmissionState';
+} from 'models/questionary/QuestionarySubmissionState';
 
 export type SubmitActionDependencyContainer = {
   state: QuestionarySubmissionState;
@@ -26,6 +28,10 @@ export function usePreSubmitActions() {
           return proposalBasisPreSubmit();
         case DataType.SHIPMENT_BASIS:
           return shipmentBasisPreSubmit();
+        case DataType.VISIT_BASIS:
+          return visitBasisPreSubmit();
+        case DataType.GENERIC_TEMPLATE_BASIS:
+          return genericTemplateBasisPreSubmit();
       }
 
       return [];

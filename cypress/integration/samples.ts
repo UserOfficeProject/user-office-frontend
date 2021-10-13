@@ -2,7 +2,7 @@ import faker from 'faker';
 
 context('Samples tests', () => {
   before(() => {
-    cy.resetDB();
+    cy.resetDB(true);
   });
 
   beforeEach(() => {
@@ -18,6 +18,10 @@ context('Samples tests', () => {
   const sampleTitle = faker.lorem.words(2);
   const proposalTitleUpdated = faker.lorem.words(2);
   const sampleQuestionaryQuestion = faker.lorem.words(2);
+  const proposalWorkflow = {
+    name: faker.random.words(2),
+    description: faker.random.words(5),
+  };
 
   it('Should be able to create proposal template with sample', () => {
     cy.login('officer');
@@ -32,15 +36,7 @@ context('Samples tests', () => {
 
     cy.visit('/');
 
-    cy.navigateToTemplatesSubmenu('Proposal templates');
-
-    cy.get('[data-cy=create-new-button]').click();
-
-    cy.get('[data-cy=name] input')
-      .type(proposalTemplateName)
-      .should('have.value', proposalTemplateName);
-
-    cy.get('[data-cy=submit]').click();
+    cy.createTemplate('proposal', proposalTemplateName);
 
     cy.createTopic('New topic');
 
@@ -55,6 +51,11 @@ context('Samples tests', () => {
   it('Should be possible to change template in a call', () => {
     cy.login('officer');
 
+    cy.createProposalWorkflow(
+      proposalWorkflow.name,
+      proposalWorkflow.description
+    );
+
     cy.contains('Calls').click();
 
     cy.get('[title="Edit"]').click();
@@ -62,6 +63,9 @@ context('Samples tests', () => {
     cy.get('[data-cy=call-template]').click();
 
     cy.contains(proposalTemplateName).click();
+
+    cy.get('[data-cy="call-workflow"]').click();
+    cy.get('[role="presentation"]').contains(proposalWorkflow.name).click();
 
     cy.get('[data-cy="next-step"]').click();
 
@@ -137,20 +141,18 @@ context('Samples tests', () => {
 
     cy.contains('Proposals').click();
 
-    cy.contains(proposalTitle)
-      .parent()
-      .find('[title="Clone proposal"]')
-      .click();
+    cy.contains(proposalTitle).parent().find('input[type="checkbox"]').click();
 
-    cy.get('#mui-component-select-selectedCallId').click();
+    cy.get('[title="Clone proposals to call"]').click();
 
+    cy.get('#selectedCallId-input').click();
     cy.get('[role="presentation"]').contains('call 1').click();
 
     cy.get('[data-cy="submit"]').click();
 
     cy.notification({
       variant: 'success',
-      text: 'Proposal cloned successfully',
+      text: 'Proposal/s cloned successfully',
     });
 
     cy.contains(`Copy of ${proposalTitle}`)
@@ -164,9 +166,10 @@ context('Samples tests', () => {
 
     cy.get('[data-cy=questionnaires-list-item]').contains(sampleTitle).click();
 
-    cy.get('[role=presentation] [data-cy=questionary-title]').contains(
-      sampleTitle
-    );
+    cy.get('[data-cy="sample-declaration-modal"]').should('exist');
+    cy.get(
+      '[data-cy="sample-declaration-modal"] [data-cy=questionary-title]'
+    ).contains(sampleTitle);
   });
 
   it('User should not be able to submit proposal with unfinished sample', () => {
@@ -288,7 +291,12 @@ context('Samples tests', () => {
 
     cy.contains('Sample safety').click();
 
-    cy.get('[data-cy="download-sample"]').first().click();
+    cy.get('[data-cy=samples-table]')
+      .contains(sampleTitle)
+      .first()
+      .closest('tr')
+      .find('[data-cy="download-sample"]')
+      .click();
 
     cy.get('[data-cy="preparing-download-dialog"]').should('exist');
     cy.get('[data-cy="preparing-download-dialog-item"]').contains(sampleTitle);

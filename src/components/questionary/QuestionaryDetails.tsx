@@ -11,7 +11,7 @@ import { useQuestionary } from 'hooks/questionary/useQuestionary';
 import {
   areDependenciesSatisfied,
   getAllFields,
-} from 'models/QuestionaryFunctions';
+} from 'models/questionary/QuestionaryFunctions';
 
 import { getQuestionaryComponentDefinition } from './QuestionaryComponentRegistry';
 
@@ -63,7 +63,8 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
 
     return (
       (!definition.readonly ||
-        field.question.dataType === DataType.SAMPLE_DECLARATION) &&
+        field.question.dataType === DataType.SAMPLE_DECLARATION ||
+        field.question.dataType === DataType.GENERIC_TEMPLATE) &&
       areDependenciesSatisfied(questionary.steps, field.question.id)
     );
   });
@@ -78,7 +79,7 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
   return (
     <>
       {title && (
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" component="h2" gutterBottom>
           {title}
         </Typography>
       )}

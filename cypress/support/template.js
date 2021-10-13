@@ -6,31 +6,39 @@ const navigateToTemplatesSubmenu = (submenuName) => {
 };
 
 const createTopic = (title) => {
-  cy.get('[data-cy=show-more-button]').click();
+  cy.get('[data-cy=show-more-button]').last().click();
 
-  cy.get('[data-cy=add-topic-menu-item]').click();
+  cy.get('[data-cy=add-topic-menu-item]').last().click();
 
   cy.wait(500);
 
-  cy.get('[data-cy=topic-title]').last().click();
+  cy.get('[data-cy="topic-title-edit"]').last().click();
 
-  cy.get('[data-cy=topic-title-input]').last().clear().type(`${title}{enter}`);
+  cy.get('[data-cy=topic-title-input] input')
+    .last()
+    .clear()
+    .type(`${title}{enter}`);
 };
+
+const typeToMenuTitle = new Map();
+typeToMenuTitle.set('proposal', 'Proposal');
+typeToMenuTitle.set('sample', 'Sample declaration');
+typeToMenuTitle.set('genericTemplate', 'Sub Template');
+typeToMenuTitle.set('shipment', 'Shipment declaration templates');
+typeToMenuTitle.set('visit', 'Visit registration');
+typeToMenuTitle.set('proposalEsi', 'Experiment Safety Input (Proposal)');
+typeToMenuTitle.set('sampleEsi', 'Experiment Safety Input (Sample)');
 
 function createTemplate(type, title, description) {
   const templateTitle = title || faker.random.words(2);
   const templateDescription = description || faker.random.words(3);
-
-  const typeToMenuTitle = new Map();
-  typeToMenuTitle.set('proposal', 'Proposal templates');
-  typeToMenuTitle.set('sample', 'Sample declaration templates');
-  typeToMenuTitle.set('shipment', 'Shipment declaration templates');
 
   const menuTitle = typeToMenuTitle.get(type);
   if (!menuTitle) {
     throw new Error(`Type ${type} not supported`);
   }
 
+  cy.log(`${menuTitle}`);
   cy.navigateToTemplatesSubmenu(menuTitle);
 
   cy.get('[data-cy=create-new-button]').click();
@@ -105,14 +113,20 @@ function createTextQuestion(question, options) {
   closeQuestionsMenu();
 }
 
-function createDateQuestion(question) {
+function createDateQuestion(question, options) {
   openQuestionsMenu();
 
   cy.contains('Add Date').click();
 
   cy.get('[data-cy=question]').clear().type(question);
 
-  cy.contains('Is required').click();
+  if (options?.isRequired) {
+    cy.contains('Is required').click();
+  }
+
+  if (options?.includeTime) {
+    cy.contains('Include time').click();
+  }
 
   cy.contains('Save').click();
 
@@ -276,6 +290,48 @@ const createSampleQuestion = (question, templateName, options) => {
   closeQuestionsMenu();
 };
 
+const createGenericTemplateQuestion = (question, templateName, addButtonLabel, options) => {
+  openQuestionsMenu();
+
+  cy.contains('Add Sub Template').click();
+
+  cy.get('[data-cy=question]')
+    .clear()
+    .type(question)
+    .should('have.value', question);
+
+  cy.get('[data-cy=template-id]').click();
+
+  cy.contains(templateName).click();
+
+  if (addButtonLabel) {
+    cy.get('[data-cy="addEntryButtonLabel"]').type(addButtonLabel)
+  }
+
+
+  if (options?.minEntries) {
+    cy.get('[data-cy=min-entries] input')
+      .clear()
+      .type(options.minEntries.toString());
+  }
+
+  if (options?.maxEntries) {
+    cy.get('[data-cy=max-entries] input')
+      .clear()
+      .type(options.maxEntries.toString());
+  }
+
+  cy.contains('Save').click();
+
+  cy.contains(question)
+    .parent()
+    .dragElement([{ direction: 'left', length: 1 }]);
+
+  cy.finishedLoading();
+
+  closeQuestionsMenu();
+};
+
 const createRichTextInput = (question, options) => {
   openQuestionsMenu();
 
@@ -327,3 +383,5 @@ Cypress.Commands.add('createIntervalQuestion', createIntervalQuestion);
 Cypress.Commands.add('createSampleQuestion', createSampleQuestion);
 
 Cypress.Commands.add('createRichTextInput', createRichTextInput);
+
+Cypress.Commands.add('createGenericTemplateQuestion', createGenericTemplateQuestion);

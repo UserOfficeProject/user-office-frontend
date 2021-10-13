@@ -9,27 +9,27 @@ context('Proposal administration tests', () => {
     cy.viewport(1920, 1080);
   });
 
-  const proposalName1 = faker.random.words(3);
-  const proposalName2 = faker.random.words(3);
-  const proposalFixedName = 'Aaaaaaaaa test proposal title';
+  const proposalName1 = faker.lorem.words(3);
+  const proposalName2 = faker.lorem.words(3);
+  const proposalFixedName = '0000. Alphabetically first title';
 
-  const textUser = faker.random.words(5);
-  const textManager = faker.random.words(5);
+  const textUser = faker.lorem.words(5);
+  const textManager = faker.lorem.words(5);
 
   const answerDate = '2030-01-01';
   const answerMultipleChoice = 'One';
-  const answerText = faker.random.words(3);
+  const answerText = faker.lorem.words(3);
   const answerNumberInput = 99.9;
   const answerIntervalMin = 1;
   const answerIntervalMax = 100;
 
-  const textQuestion = faker.random.words(3);
-  const dateQuestion = faker.random.words(3);
-  const boolQuestion = faker.random.words(3);
-  const multipleChoiceQuestion = faker.random.words(3);
-  const numberInputQuestion = faker.random.words(3);
-  const fileUploadQuestion = faker.random.words(3);
-  const intervalQuestion = faker.random.words(3);
+  const textQuestion = faker.lorem.words(3);
+  const dateQuestion = faker.lorem.words(3);
+  const boolQuestion = faker.lorem.words(3);
+  const multipleChoiceQuestion = faker.lorem.words(3);
+  const numberInputQuestion = faker.lorem.words(3);
+  const fileUploadQuestion = faker.lorem.words(3);
+  const intervalQuestion = faker.lorem.words(3);
 
   let textQuestionId: string;
   let dateQuestionId: string;
@@ -54,8 +54,11 @@ context('Proposal administration tests', () => {
     cy.get('[data-cy=view-proposal]').click();
     cy.finishedLoading();
     cy.get('[role="dialog"]').contains('Admin').click();
+    cy.get('#finalStatus-input').should('exist');
+    cy.get('[role="dialog"]').contains('Logs').click();
+    cy.get('[role="dialog"]').contains('Admin').click();
 
-    cy.get('#mui-component-select-finalStatus').click();
+    cy.get('#finalStatus-input').click();
 
     cy.contains('Accepted').click();
 
@@ -75,6 +78,16 @@ context('Proposal administration tests', () => {
 
     cy.setTinyMceContent('commentForUser', textUser);
     cy.setTinyMceContent('commentForManagement', textManager);
+
+    cy.on('window:confirm', (str) => {
+      expect(str).to.equal(
+        'Changes you recently made in this tab will be lost! Are you sure?'
+      );
+
+      return false;
+    });
+
+    cy.contains('Proposal information').click();
 
     cy.get('[data-cy="is-management-decision-submitted"]').click();
 
@@ -264,7 +277,7 @@ context('Proposal administration tests', () => {
   it('Should be able to prepare proposal template', () => {
     cy.login('officer');
 
-    cy.navigateToTemplatesSubmenu('Proposal templates');
+    cy.navigateToTemplatesSubmenu('Proposal');
 
     cy.contains('default template')
       .parent()
@@ -292,7 +305,7 @@ context('Proposal administration tests', () => {
         boolQuestionId = fieldId;
       });
 
-    cy.createDateQuestion(dateQuestion);
+    cy.createDateQuestion(dateQuestion, { isRequired: true });
     cy.contains(dateQuestion)
       .closest('[data-cy=question-container]')
       .find("[data-cy='proposal-question-id']")
@@ -454,7 +467,7 @@ context('Proposal administration tests', () => {
 
     cy.contains(textQuestion).click();
 
-    cy.get('[name=value]').clear().type(faker.random.words(3));
+    cy.get('[name=value]').clear().type(faker.lorem.words(3));
 
     cy.contains('Search').click();
 

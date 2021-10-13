@@ -19,19 +19,21 @@ type ProposalDetailsProps = {
   proposal: Proposal;
 };
 
+const useStyles = makeStyles((theme) => ({
+  heading: {
+    marginTop: theme.spacing(2),
+  },
+  textBold: {
+    fontWeight: 'bold',
+  },
+  table: {
+    minWidth: 500,
+  },
+}));
+
 const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
   const downloadPDFProposal = useDownloadPDFProposal();
-  const classes = makeStyles((theme) => ({
-    heading: {
-      marginTop: theme.spacing(2),
-    },
-    textBold: {
-      fontWeight: 'bold',
-    },
-    table: {
-      minWidth: 500,
-    },
-  }))();
+  const classes = useStyles();
 
   return (
     <div data-cy="SEP-meeting-components-proposal-details">
@@ -46,7 +48,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
                 <TableCell width="25%" className={classes.textBold}>
                   ID
                 </TableCell>
-                <TableCell width="25%">{proposal.shortCode}</TableCell>
+                <TableCell width="25%">{proposal.proposalId}</TableCell>
                 <TableCell width="25%" className={classes.textBold}>
                   Title
                 </TableCell>
@@ -97,7 +99,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
                 <TableCell>
                   <Button
                     onClick={() =>
-                      downloadPDFProposal([proposal.id], proposal.title)
+                      downloadPDFProposal([proposal.primaryKey], proposal.title)
                     }
                     color="primary"
                   >

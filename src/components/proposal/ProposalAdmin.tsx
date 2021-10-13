@@ -12,13 +12,14 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import { Proposal, UserRole } from 'generated/sdk';
+import { UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
+import { ProposalData } from 'hooks/proposal/useProposalData';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 export type AdministrationFormData = {
-  id: number;
+  proposalPk: number;
   commentForUser: string;
   commentForManagement: string;
   finalStatus: ProposalEndStatus;
@@ -27,7 +28,7 @@ export type AdministrationFormData = {
 };
 
 type ProposalAdminProps = {
-  data: Proposal;
+  data: ProposalData;
   setAdministration: (data: AdministrationFormData) => void;
 };
 
@@ -39,7 +40,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
 
   const initialValues = {
-    id: data.id,
+    proposalPk: data.primaryKey,
     finalStatus: data.finalStatus || ProposalEndStatus.UNSET,
     commentForUser: data.commentForUser || '',
     commentForManagement: data.commentForManagement || '',
@@ -72,7 +73,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
 
   return (
     <>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" component="h2" gutterBottom>
         Administration
       </Typography>
       <Formik
@@ -80,7 +81,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
         validationSchema={administrationProposalValidationSchema}
         onSubmit={async (values): Promise<void> => {
           const administrationValues = {
-            id: data.id,
+            proposalPk: data.primaryKey,
             finalStatus:
               ProposalEndStatus[values.finalStatus as ProposalEndStatus],
             commentForUser: values.commentForUser,
@@ -114,7 +115,8 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
               <Grid item xs={6}>
                 <Field
                   name="managementTimeAllocation"
-                  label="Management time allocation(Days)"
+                  label={`Management time allocation(${data.call?.allocationTimeUnit}s)`}
+                  id="time-managemment-input"
                   type="number"
                   component={TextField}
                   margin="normal"
@@ -144,9 +146,19 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
-                  onEditorChange={(content: string) =>
-                    setFieldValue('commentForUser', content)
-                  }
+                  onEditorChange={(content, editor) => {
+                    const normalizedContent = content.replace(
+                      /(?:\r\n|\r|\n)/g,
+                      ''
+                    );
+
+                    if (
+                      normalizedContent !== editor.startContent ||
+                      editor.isDirty()
+                    ) {
+                      setFieldValue('commentForUser', content);
+                    }
+                  }}
                   disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>
@@ -174,9 +186,19 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     toolbar: 'bold italic',
                     branding: false,
                   }}
-                  onEditorChange={(content: string) =>
-                    setFieldValue('commentForManagement', content)
-                  }
+                  onEditorChange={(content, editor) => {
+                    const normalizedContent = content.replace(
+                      /(?:\r\n|\r|\n)/g,
+                      ''
+                    );
+
+                    if (
+                      normalizedContent !== editor.startContent ||
+                      editor.isDirty()
+                    ) {
+                      setFieldValue('commentForManagement', content);
+                    }
+                  }}
                   disabled={!isUserOfficer || isSubmitting}
                 />
               </Grid>

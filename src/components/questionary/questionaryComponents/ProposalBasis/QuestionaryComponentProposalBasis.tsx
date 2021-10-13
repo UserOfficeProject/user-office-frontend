@@ -8,15 +8,14 @@ import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { ProposalContextType } from 'components/proposal/ProposalContainer';
 import ProposalParticipant from 'components/proposal/ProposalParticipant';
-import ProposalParticipants from 'components/proposal/ProposalParticipants';
+import Participants from 'components/proposal/ProposalParticipants';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import { BasicUserDetails } from 'generated/sdk';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
-import { ProposalSubmissionState } from 'models/ProposalSubmissionState';
-import { EventType } from 'models/QuestionarySubmissionState';
+import { ProposalSubmissionState } from 'models/questionary/proposal/ProposalSubmissionState';
 
 const TextFieldNoSubmit = withPreventSubmit(TextField);
 
@@ -63,10 +62,8 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
               setLocalTitle(event.target.value),
             onBlur: () => {
               dispatch({
-                type: EventType.PROPOSAL_MODIFIED,
-                payload: {
-                  proposal: { ...state.proposal, title: localTitle },
-                },
+                type: 'PROPOSAL_MODIFIED',
+                proposal: { title: localTitle },
               });
             },
           }}
@@ -75,6 +72,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
           component={TextField}
           data-cy="title"
           margin="dense"
+          id="title-input"
         />
       </div>
       <div className={classes.container}>
@@ -86,10 +84,8 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
               setLocalAbstract(event.target.value),
             onBlur: () => {
               dispatch({
-                type: EventType.PROPOSAL_MODIFIED,
-                payload: {
-                  proposal: { ...state.proposal, abstract: localAbstract },
-                },
+                type: 'PROPOSAL_MODIFIED',
+                proposal: { abstract: localAbstract },
               });
             },
           }}
@@ -101,20 +97,25 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
           component={TextFieldNoSubmit}
           data-cy="abstract"
           margin="dense"
+          id="abstract-input"
         />
       </div>
       <ProposalParticipant
         userChanged={(user: BasicUserDetails) => {
           formikProps.setFieldValue(`${id}.proposer`, user.id);
           dispatch({
-            type: EventType.PROPOSAL_MODIFIED,
-            payload: { proposal: { ...state.proposal, proposer: user } },
+            type: 'PROPOSAL_MODIFIED',
+            proposal: {
+              proposer: user,
+              users: users.concat(proposer as BasicUserDetails),
+            },
           });
         }}
         className={classes.container}
         userId={proposer?.id}
       />
-      <ProposalParticipants
+      <Participants
+        title="Add Co-Proposers"
         className={classes.container}
         setUsers={(users: BasicUserDetails[]) => {
           formikProps.setFieldValue(
@@ -122,21 +123,20 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
             users.map((user) => user.id)
           );
           dispatch({
-            type: EventType.PROPOSAL_MODIFIED,
-            payload: { proposal: { ...state.proposal, users: users } },
+            type: 'PROPOSAL_MODIFIED',
+            proposal: { users: users },
           });
         }}
+        preserveSelf={true}
         // QuickFix for material table changing immutable state
         // https://github.com/mbrn/material-table/issues/666
         users={JSON.parse(JSON.stringify(users))}
+        principalInvestigator={proposer?.id}
       />
       <ErrorMessage name={`${id}.users`} />
     </div>
   );
 }
-
-export const PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR =
-  'PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR';
 
 const proposalBasisPreSubmit = () => async ({
   api,
@@ -144,13 +144,13 @@ const proposalBasisPreSubmit = () => async ({
   state,
 }: SubmitActionDependencyContainer) => {
   const proposal = (state as ProposalSubmissionState).proposal;
-  const { id, title, abstract, users, proposer, callId } = proposal;
+  const { primaryKey, title, abstract, users, proposer, callId } = proposal;
 
-  let returnValue = state.questionaryId;
+  let returnValue = state.questionary.questionaryId;
 
-  if (id > 0) {
+  if (primaryKey > 0) {
     const result = await api.updateProposal({
-      id: id,
+      proposalPk: primaryKey,
       title: title,
       abstract: abstract,
       users: users.map((user) => user.id),
@@ -159,13 +159,9 @@ const proposalBasisPreSubmit = () => async ({
 
     if (result.updateProposal.proposal) {
       dispatch({
-        type: EventType.PROPOSAL_LOADED,
-        payload: {
-          proposal: { ...proposal, ...result.updateProposal.proposal },
-        },
+        type: 'PROPOSAL_LOADED',
+        proposal: { ...proposal, ...result.updateProposal.proposal },
       });
-    } else if (result.updateProposal.rejection) {
-      throw PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR;
     }
   } else {
     const createResult = await api.createProposal({
@@ -174,25 +170,21 @@ const proposalBasisPreSubmit = () => async ({
 
     if (createResult.createProposal.proposal) {
       const updateResult = await api.updateProposal({
-        id: createResult.createProposal.proposal.id,
+        proposalPk: createResult.createProposal.proposal.primaryKey,
         title: title,
         abstract: abstract,
         users: users.map((user) => user.id),
         proposerId: proposer?.id,
       });
       dispatch({
-        type: EventType.PROPOSAL_CREATED,
-        payload: {
-          proposal: {
-            ...proposal,
-            ...createResult.createProposal.proposal,
-            ...updateResult.updateProposal.proposal,
-          },
+        type: 'PROPOSAL_CREATED',
+        proposal: {
+          ...proposal,
+          ...createResult.createProposal.proposal,
+          ...updateResult.updateProposal.proposal,
         },
       });
       returnValue = createResult.createProposal.proposal.questionaryId;
-    } else if (createResult.createProposal.rejection) {
-      throw PROPOSAL_BASIS_PRE_SUBMIT_MUTATION_ERROR;
     }
   }
 

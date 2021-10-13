@@ -1,3 +1,4 @@
+import MaterialTable from '@material-table/core';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -7,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import Clear from '@material-ui/icons/Clear';
 import Person from '@material-ui/icons/Person';
 import PersonAdd from '@material-ui/icons/PersonAdd';
-import MaterialTable from 'material-table';
 import React, { useState, useContext } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -26,6 +26,11 @@ const useStyles = makeStyles(() => ({
   darkerDisabledTextField: {
     '& .MuiInputBase-root.Mui-disabled': {
       color: 'rgba(0, 0, 0, 0.7) !important',
+    },
+  },
+  defaultTextField: {
+    '& .MuiFormLabel-root': {
+      color: 'black',
     },
   },
 }));
@@ -249,7 +254,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
         userRole={UserRole.SEP_REVIEWER}
       />
       <>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" component="h2" gutterBottom>
           SEP Members
         </Typography>
         <Grid container spacing={3} alignItems="center">
@@ -266,8 +271,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
               required
               disabled
               className={
-                sepData.sepChair ? classes.darkerDisabledTextField : ''
-              }
+                sepData.sepChair
+                  ? classes.darkerDisabledTextField
+                  : classes.defaultTextField
+              } // original behaviour preserved but labels legible by default
               InputProps={{
                 endAdornment: isUserOfficer && (
                   <>
@@ -322,8 +329,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
               required
               disabled
               className={
-                sepData.sepSecretary ? classes.darkerDisabledTextField : ''
-              }
+                sepData.sepSecretary
+                  ? classes.darkerDisabledTextField
+                  : classes.defaultTextField
+              } // original behaviour preserved but labels legible by default
               InputProps={{
                 endAdornment: isUserOfficer && (
                   <>
@@ -370,9 +379,15 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
           <Grid data-cy="sep-reviewers-table" item xs={12}>
             <MaterialTable
               icons={tableIcons}
-              title={'Reviewers'}
+              title={
+                <Typography variant="h6" component="h3" gutterBottom>
+                  Reviewers
+                </Typography>
+              }
               columns={columns}
-              data={SEPReviewersData ?? []}
+              data={(SEPReviewersData ?? []).map((sepReviewer) =>
+                Object.assign(sepReviewer, { id: sepReviewer.userId })
+              )}
               editable={
                 hasAccessRights
                   ? {

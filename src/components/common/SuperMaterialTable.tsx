@@ -1,6 +1,6 @@
+import MaterialTable, { MaterialTableProps } from '@material-table/core';
 import Button from '@material-ui/core/Button';
 import Edit from '@material-ui/icons/Edit';
-import MaterialTable, { MaterialTableProps } from 'material-table';
 import React, { SetStateAction, useState } from 'react';
 import {
   DecodedValueMap,
@@ -36,7 +36,10 @@ export type SortDirectionType = 'asc' | 'desc' | undefined;
 
 interface SuperProps<RowData extends Record<keyof RowData, unknown>> {
   createModal: (
-    onUpdate: (object: RowData | null) => void,
+    onUpdate: (
+      object: RowData | null,
+      shouldCloseAfterUpdate?: boolean
+    ) => void,
     onCreate: (
       object: RowData | null,
       shouldCloseAfterCreation?: boolean
@@ -92,6 +95,12 @@ export function SuperMaterialTable<Entry extends EntryID>({
     });
   }
 
+  if (options?.selection) {
+    options.headerSelectionProps = {
+      inputProps: { 'aria-label': 'Select All Rows' },
+    };
+  }
+
   if (options?.search && urlQueryParams) {
     options.searchText = urlQueryParams.search || undefined;
   }
@@ -115,15 +124,21 @@ export function SuperMaterialTable<Entry extends EntryID>({
     }
   };
 
-  const onUpdated = (objectUpdated: Entry | null) => {
+  const onUpdated = (
+    objectUpdated: Entry | null,
+    shouldCloseAfterUpdate = true
+  ) => {
     if (objectUpdated) {
       const newObjectsArray = data.map((objectItem) =>
         objectItem.id === objectUpdated.id ? objectUpdated : objectItem
       );
       setData(newObjectsArray);
     }
-    setEditObject(null);
-    setShow(false);
+
+    if (shouldCloseAfterUpdate) {
+      setShow(false);
+      setEditObject(null);
+    }
   };
 
   const onDeleted = async (deletedId: number | string) => {
@@ -141,8 +156,14 @@ export function SuperMaterialTable<Entry extends EntryID>({
 
   const EditIcon = (): JSX.Element => <Edit />;
   let localActions: (
-    | import('material-table').Action<Entry>
-    | ((rowData: Entry) => import('material-table').Action<Entry>)
+    | import('@material-table/core').Action<Entry>
+    | ((rowData: Entry) => import('@material-table/core').Action<Entry>)
+    | {
+        action: (
+          rowData: Entry
+        ) => import('@material-table/core').Action<Entry>;
+        position: string;
+      }
   )[] = [];
   if (actions) {
     localActions = actions;

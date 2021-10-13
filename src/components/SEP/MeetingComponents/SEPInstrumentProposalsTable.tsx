@@ -1,3 +1,4 @@
+import MaterialTable, { MTableBodyRow } from '@material-table/core';
 import IconButton from '@material-ui/core/IconButton';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
@@ -6,7 +7,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DragHandle from '@material-ui/icons/DragHandle';
 import Visibility from '@material-ui/icons/Visibility';
 import clsx from 'clsx';
-import MaterialTable, { MTableBodyRow } from 'material-table';
 import PropTypes from 'prop-types';
 import React, { useContext, DragEvent, useState, useEffect } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
@@ -217,7 +217,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
               color="inherit"
               onClick={() =>
                 setUrlQueryParams({
-                  sepMeetingModal: rowData.proposal.id,
+                  sepMeetingModal: rowData.proposal.primaryKey,
                 })
               }
             >
@@ -242,7 +242,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     },
     {
       title: 'ID',
-      field: 'proposal.shortCode',
+      field: 'proposal.proposalId',
     },
     { title: 'Status', field: 'proposal.status.name' },
     {
@@ -313,7 +313,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
   const onMeetingSubmitted = (data: SepMeetingDecision) => {
     const newInstrumentProposalsData = instrumentProposalsData.map(
       (proposalData) => {
-        if (proposalData.proposal.id === data.proposalId) {
+        if (proposalData.proposal.primaryKey === data.proposalPk) {
           return {
             ...proposalData,
             proposal: {
@@ -345,7 +345,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       proposal: {
         ...item.proposal,
         sepMeetingDecision: {
-          proposalId: item.proposal.id,
+          proposalPk: item.proposal.primaryKey,
           rankOrder: index + 1,
           commentForManagement:
             item.proposal.sepMeetingDecision?.commentForManagement || null,
@@ -398,7 +398,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
 
     const reorderSepMeetingDecisionProposalsInput = tableDataWithRankingsUpdated.map(
       (item) => ({
-        proposalId: item.proposal.id,
+        proposalPk: item.proposal.primaryKey,
         rankOrder: item.proposal.sepMeetingDecision?.rankOrder,
       })
     );
@@ -459,7 +459,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
           setUrlQueryParams({ sepMeetingModal: undefined });
           refreshInstrumentProposalsData();
         }}
-        proposalId={urlQueryParams.sepMeetingModal}
+        proposalPk={urlQueryParams.sepMeetingModal}
         meetingSubmitted={onMeetingSubmitted}
         sepId={sepId}
       />
@@ -467,7 +467,9 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
         icons={tableIcons}
         columns={assignmentColumns}
         title={'Assigned reviewers'}
-        data={sortedProposalsWithAverageScore}
+        data={sortedProposalsWithAverageScore.map((proposal) =>
+          Object.assign(proposal, { id: proposal.proposalPk })
+        )}
         isLoading={loadingInstrumentProposals || savingOrder}
         components={{
           Row: RowDraggableComponent,

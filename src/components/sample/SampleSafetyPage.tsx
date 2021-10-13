@@ -19,7 +19,7 @@ import CallFilter from 'components/common/proposalFilters/CallFilter';
 import { Maybe, SampleStatus } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { useDownloadPDFSample } from 'hooks/sample/useDownloadPDFSample';
-import { SampleWithProposalData } from 'models/Sample';
+import { SampleWithProposalData } from 'models/questionary/sample/SampleWithProposalData';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
@@ -221,7 +221,7 @@ function SampleSafetyPage() {
     },
     {
       title: 'Proposal ID',
-      field: 'proposal.shortCode',
+      field: 'proposal.proposalId',
     },
     { title: 'Title', field: 'title' },
     { title: 'Status', field: 'safetyStatus' },
@@ -249,7 +249,12 @@ function SampleSafetyPage() {
                 urlQueryParams={urlQueryParams}
                 setUrlQueryParams={setUrlQueryParams}
                 columns={columns}
-                options={{ selection: true }}
+                options={{
+                  selection: true,
+                  headerSelectionProps: {
+                    inputProps: { 'aria-label': 'Select All Rows' },
+                  },
+                }}
                 actions={[
                   {
                     icon: GetAppIcon,

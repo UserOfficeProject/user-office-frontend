@@ -34,9 +34,15 @@ declare global {
        * @returns {typeof createDateQuestion}
        * @memberof Chainable
        * @example
-       *    cy.createDateQuestion('Is dangerous')
+       *    cy.createDateQuestion('Specify visit time', {includeTime:true})
        */
-      createDateQuestion: (title: string) => void;
+      createDateQuestion: (
+        title: string,
+        options?: {
+          includeTime?: boolean;
+          isRequired?: boolean;
+        }
+      ) => void;
 
       /**
        * Creates multiple choice question. You have to be in edit template view to call this method
@@ -109,6 +115,21 @@ declare global {
       ) => void;
 
       /**
+       * Creates generic template question
+       *
+       * @returns {typeof createGenericTemplateQuestion}
+       * @memberof Chainable
+       * @example
+       *    cy.createGenericTemplateQuestion('Provide deatails of any grants', 'deafult generic template', 'Add grant' {minEntries:0, maxEntries:5})
+       */
+       createGenericTemplateQuestion: (
+        question: string,
+        template: string,
+        addButtonLabel: string,
+        options?: { minEntries?: number; maxEntries?: number }
+      ) => void;
+
+      /**
        * Creates rich text input question
        *
        * @returns {typeof createRichTextInput}
@@ -140,7 +161,14 @@ declare global {
        *    cy.createTemplate('proposal')
        */
       createTemplate: (
-        type: string,
+        type:
+          | 'proposal'
+          | 'sample'
+          | 'shipment'
+          | 'visit'
+          | 'proposalEsi'
+          | 'sampleEsi'
+          | 'genericTemplate',
         title?: string,
         description?: string
       ) => void;

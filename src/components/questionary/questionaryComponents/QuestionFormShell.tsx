@@ -9,7 +9,7 @@ import {
   getQuestionaryComponentDefinition,
   QuestionFormProps,
 } from 'components/questionary/QuestionaryComponentRegistry';
-import { Question } from 'models/Question';
+import { Question } from 'models/questionary/Question';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +70,7 @@ export const QuestionFormShell = (
 
   return (
     <div className={classes.container}>
-      <Typography variant="h4" className={classes.heading}>
+      <Typography variant="h4" component="h1" className={classes.heading}>
         {definition.icon}
         {definition.name}
       </Typography>
