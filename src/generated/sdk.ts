@@ -494,14 +494,14 @@ export type EventLog = {
 export type ExperimentSafetyInput = {
   __typename?: 'ExperimentSafetyInput';
   id: Scalars['Int'];
-  visitId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
   creatorId: Scalars['Int'];
   questionaryId: Scalars['Int'];
   isSubmitted: Scalars['Boolean'];
   created: Scalars['DateTime'];
   sampleEsis: Array<SampleExperimentSafetyInput>;
-  visit: Maybe<Visit>;
   questionary: Questionary;
+  proposal: Proposal;
 };
 
 export type Feature = {
@@ -723,7 +723,6 @@ export type Mutation = {
   updateInstrument: InstrumentResponseWrap;
   setInstrumentAvailabilityTime: SuccessResponseWrap;
   submitInstrument: SuccessResponseWrap;
-  createEsi: EsiResponseWrap;
   updateEsi: EsiResponseWrap;
   administrationProposal: ProposalResponseWrap;
   cloneProposals: ProposalsResponseWrap;
@@ -791,6 +790,7 @@ export type Mutation = {
   cloneGenericTemplate: GenericTemplateResponseWrap;
   cloneSample: SampleResponseWrap;
   cloneTemplate: TemplateResponseWrap;
+  createEsi: EsiResponseWrap;
   createProposal: ProposalResponseWrap;
   createVisitRegistrationQuestionary: VisitRegistrationResponseWrap;
   deleteCall: CallResponseWrap;
@@ -960,11 +960,6 @@ export type MutationSubmitInstrumentArgs = {
   instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
   sepId: Scalars['Int'];
-};
-
-
-export type MutationCreateEsiArgs = {
-  visitId: Scalars['Int'];
 };
 
 
@@ -1375,7 +1370,6 @@ export type MutationSetUserNotPlaceholderArgs = {
 
 
 export type MutationCreateVisitArgs = {
-  proposalPk: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   team: Array<Scalars['Int']>;
   teamLeadUserId: Scalars['Int'];
@@ -1385,7 +1379,6 @@ export type MutationCreateVisitArgs = {
 export type MutationUpdateVisitArgs = {
   visitId: Scalars['Int'];
   status?: Maybe<VisitStatus>;
-  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
   team?: Maybe<Array<Scalars['Int']>>;
   teamLeadUserId?: Maybe<Scalars['Int']>;
 };
@@ -1433,6 +1426,11 @@ export type MutationCloneSampleArgs = {
 
 export type MutationCloneTemplateArgs = {
   templateId: Scalars['Int'];
+};
+
+
+export type MutationCreateEsiArgs = {
+  scheduledEventId: Scalars['Int'];
 };
 
 
@@ -1905,11 +1903,6 @@ export type ProposalEvent = {
   __typename?: 'ProposalEvent';
   name: Event;
   description: Maybe<Scalars['String']>;
-};
-
-export type ProposalPkAndEventId = {
-  proposalPK: Scalars['Int'];
-  scheduledEventId: Scalars['Int'];
 };
 
 export type ProposalPkWithCallId = {
@@ -2888,6 +2881,7 @@ export type ScheduledEventCore = {
   startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
   visit: Maybe<Visit>;
+  esi: Maybe<ExperimentSafetyInput>;
 };
 
 export type ScheduledEventFilter = {
@@ -3333,12 +3327,12 @@ export type Visit = {
   status: VisitStatus;
   creatorId: Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
   proposal: Proposal;
   registrations: Array<VisitRegistration>;
   teamLead: BasicUserDetails;
   shipments: Array<Shipment>;
   samples: Array<Sample>;
-  esi: Maybe<ExperimentSafetyInput>;
 };
 
 export type VisitBasisConfig = {
@@ -4371,7 +4365,7 @@ export type UpdateCallMutation = (
 );
 
 export type CreateEsiMutationVariables = Exact<{
-  visitId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 }>;
 
 
@@ -4395,18 +4389,17 @@ export type CreateEsiMutation = (
           & Pick<Questionary, 'isCompleted'>
         ) }
         & SampleEsiFragment
-      )>, visit: Maybe<(
-        { __typename?: 'Visit' }
-        & { proposal: (
-          { __typename?: 'Proposal' }
-          & Pick<Proposal, 'proposalId' | 'title'>
-          & { samples: Maybe<Array<(
-            { __typename?: 'Sample' }
-            & SampleFragment
-          )>> }
+      )>, proposal: (
+        { __typename?: 'Proposal' }
+        & Pick<Proposal, 'proposalId' | 'title'>
+        & { samples: Maybe<Array<(
+          { __typename?: 'Sample' }
+          & SampleFragment
+        )>>, questionary: (
+          { __typename?: 'Questionary' }
+          & QuestionaryFragment
         ) }
-        & VisitFragment
-      )> }
+      ) }
       & EsiFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -4417,7 +4410,7 @@ export type CreateEsiMutation = (
 
 export type EsiFragment = (
   { __typename?: 'ExperimentSafetyInput' }
-  & Pick<ExperimentSafetyInput, 'id' | 'visitId' | 'creatorId' | 'questionaryId' | 'isSubmitted' | 'created'>
+  & Pick<ExperimentSafetyInput, 'id' | 'creatorId' | 'questionaryId' | 'isSubmitted' | 'created'>
 );
 
 export type GetEsiQueryVariables = Exact<{
@@ -4443,18 +4436,17 @@ export type GetEsiQuery = (
         & Pick<Questionary, 'isCompleted'>
       ) }
       & SampleEsiFragment
-    )>, visit: Maybe<(
-      { __typename?: 'Visit' }
-      & { proposal: (
-        { __typename?: 'Proposal' }
-        & Pick<Proposal, 'proposalId' | 'title'>
-        & { samples: Maybe<Array<(
-          { __typename?: 'Sample' }
-          & SampleFragment
-        )>> }
+    )>, proposal: (
+      { __typename?: 'Proposal' }
+      & Pick<Proposal, 'proposalId' | 'title'>
+      & { samples: Maybe<Array<(
+        { __typename?: 'Sample' }
+        & SampleFragment
+      )>>, questionary: (
+        { __typename?: 'Questionary' }
+        & QuestionaryFragment
       ) }
-      & VisitFragment
-    )> }
+    ) }
     & EsiFragment
   )> }
 );
@@ -5338,11 +5330,11 @@ export type GetUserProposalBookingsWithEventsQuery = (
                 & BasicUserDetailsFragment
               ) }
               & VisitRegistrationFragment
-            )>, esi: Maybe<(
-              { __typename?: 'ExperimentSafetyInput' }
-              & EsiFragment
             )> }
             & VisitFragment
+          )>, esi: Maybe<(
+            { __typename?: 'ExperimentSafetyInput' }
+            & EsiFragment
           )> }
         )> }
       )>, visits: Maybe<Array<(
@@ -7784,9 +7776,6 @@ export type CreateVisitMutation = (
       ), shipments: Array<(
         { __typename?: 'Shipment' }
         & ShipmentFragment
-      )>, esi: Maybe<(
-        { __typename?: 'ExperimentSafetyInput' }
-        & EsiFragment
       )> }
       & VisitFragment
     )>, rejection: Maybe<(
@@ -7843,15 +7832,7 @@ export type GetVisitQuery = (
         & Pick<Instrument, 'name'>
       )> }
       & ProposalFragment
-    ), esi: Maybe<(
-      { __typename?: 'ExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & EsiFragment
-    )> }
+    ) }
     & VisitFragment
   )> }
 );
@@ -7879,7 +7860,6 @@ export type GetVisitsQuery = (
 
 export type UpdateVisitMutationVariables = Exact<{
   visitId: Scalars['Int'];
-  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
   team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   status?: Maybe<VisitStatus>;
   teamLeadUserId?: Maybe<Scalars['Int']>;
@@ -7912,9 +7892,6 @@ export type UpdateVisitMutation = (
       ), shipments: Array<(
         { __typename?: 'Shipment' }
         & ShipmentFragment
-      )>, esi: Maybe<(
-        { __typename?: 'ExperimentSafetyInput' }
-        & EsiFragment
       )> }
       & VisitFragment
     )>, rejection: Maybe<(
@@ -8066,7 +8043,6 @@ export const CallFragmentDoc = gql`
 export const EsiFragmentDoc = gql`
     fragment esi on ExperimentSafetyInput {
   id
-  visitId
   creatorId
   questionaryId
   isSubmitted
@@ -9193,8 +9169,8 @@ export const UpdateCallDocument = gql`
     ${RejectionFragmentDoc}
 ${CallFragmentDoc}`;
 export const CreateEsiDocument = gql`
-    mutation createEsi($visitId: Int!) {
-  createEsi(visitId: $visitId) {
+    mutation createEsi($scheduledEventId: Int!) {
+  createEsi(scheduledEventId: $scheduledEventId) {
     esi {
       ...esi
       questionary {
@@ -9210,14 +9186,14 @@ export const CreateEsiDocument = gql`
           isCompleted
         }
       }
-      visit {
-        ...visit
-        proposal {
-          proposalId
-          title
-          samples {
-            ...sample
-          }
+      proposal {
+        proposalId
+        title
+        samples {
+          ...sample
+        }
+        questionary {
+          ...questionary
         }
       }
     }
@@ -9230,7 +9206,6 @@ export const CreateEsiDocument = gql`
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
 ${SampleEsiFragmentDoc}
-${VisitFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetEsiDocument = gql`
     query getEsi($esiId: Int!) {
@@ -9249,14 +9224,14 @@ export const GetEsiDocument = gql`
         isCompleted
       }
     }
-    visit {
-      ...visit
-      proposal {
-        proposalId
-        title
-        samples {
-          ...sample
-        }
+    proposal {
+      proposalId
+      title
+      samples {
+        ...sample
+      }
+      questionary {
+        ...questionary
       }
     }
   }
@@ -9264,8 +9239,7 @@ export const GetEsiDocument = gql`
     ${EsiFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
-${SampleEsiFragmentDoc}
-${VisitFragmentDoc}`;
+${SampleEsiFragmentDoc}`;
 export const UpdateEsiDocument = gql`
     mutation updateEsi($esiId: Int!, $isSubmitted: Boolean) {
   updateEsi(esiId: $esiId, isSubmitted: $isSubmitted) {
@@ -10003,9 +9977,9 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
                 ...basicUserDetails
               }
             }
-            esi {
-              ...esi
-            }
+          }
+          esi {
+            ...esi
           }
         }
       }
@@ -11481,9 +11455,8 @@ export const VerifyEmailDocument = gql`
 export const CreateVisitDocument = gql`
     mutation createVisit($proposalPk: Int!, $team: [Int!]!, $scheduledEventId: Int!, $teamLeadUserId: Int!) {
   createVisit(
-    proposalPk: $proposalPk
-    team: $team
     scheduledEventId: $scheduledEventId
+    team: $team
     teamLeadUserId: $teamLeadUserId
   ) {
     visit {
@@ -11506,9 +11479,6 @@ export const CreateVisitDocument = gql`
       shipments {
         ...shipment
       }
-      esi {
-        ...esi
-      }
     }
     rejection {
       ...rejection
@@ -11520,7 +11490,6 @@ ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
 ${ShipmentFragmentDoc}
-${EsiFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteVisitDocument = gql`
     mutation deleteVisit($visitId: Int!) {
@@ -11551,21 +11520,12 @@ export const GetVisitDocument = gql`
         name
       }
     }
-    esi {
-      ...esi
-      questionary {
-        isCompleted
-        ...questionary
-      }
-    }
   }
 }
     ${VisitFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
-${ProposalFragmentDoc}
-${EsiFragmentDoc}
-${QuestionaryFragmentDoc}`;
+${ProposalFragmentDoc}`;
 export const GetVisitsDocument = gql`
     query getVisits($filter: VisitsFilter) {
   visits(filter: $filter) {
@@ -11581,10 +11541,9 @@ export const GetVisitsDocument = gql`
     ${VisitFragmentDoc}
 ${ProposalFragmentDoc}`;
 export const UpdateVisitDocument = gql`
-    mutation updateVisit($visitId: Int!, $proposalPkAndEventId: ProposalPkAndEventId, $team: [Int!], $status: VisitStatus, $teamLeadUserId: Int) {
+    mutation updateVisit($visitId: Int!, $team: [Int!], $status: VisitStatus, $teamLeadUserId: Int) {
   updateVisit(
     visitId: $visitId
-    proposalPkAndEventId: $proposalPkAndEventId
     team: $team
     status: $status
     teamLeadUserId: $teamLeadUserId
@@ -11609,9 +11568,6 @@ export const UpdateVisitDocument = gql`
       shipments {
         ...shipment
       }
-      esi {
-        ...esi
-      }
     }
     rejection {
       ...rejection
@@ -11623,7 +11579,6 @@ ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
 ${ShipmentFragmentDoc}
-${EsiFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateVisitRegistrationQuestionaryDocument = gql`
     mutation createVisitRegistrationQuestionary($visitId: Int!) {
