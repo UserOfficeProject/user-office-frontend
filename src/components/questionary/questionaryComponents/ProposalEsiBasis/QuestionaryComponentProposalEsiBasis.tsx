@@ -42,9 +42,8 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
   const { answer } = props;
   const answerId = answer.question.id;
   const { state } = useContext(QuestionaryContext) as ProposalEsiContextType;
-  const [selectedSampleEsi, setSelectedSampleEsi] = useState<
-    GetSampleEsiQuery['sampleEsi']
-  >(null);
+  const [selectedSampleEsi, setSelectedSampleEsi] =
+    useState<GetSampleEsiQuery['sampleEsi']>(null);
   const { api } = useDataApiWithFeedback();
 
   if (!state) {
@@ -205,8 +204,9 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
 
                   api().createSample({
                     title: 'New Sample',
-                    templateId: (sampleQuestion.config as SampleDeclarationConfig)
-                      .templateId!,
+                    templateId: (
+                      sampleQuestion.config as SampleDeclarationConfig
+                    ).templateId!,
                     proposalPk: state.esi.proposal.primaryKey,
                     questionId: sampleQuestion.question.id,
                   });
