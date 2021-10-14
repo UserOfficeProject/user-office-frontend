@@ -17,12 +17,9 @@ import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
   const field = props.question;
-  //const config = field.config as GenericTemplateConfig;
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
-  const { templates } = useActiveTemplates(
-    TemplateGroupId.GENERIC_TEMPLATE
-    //config.templateId
-  );
+
+  const { templates } = useActiveTemplates(TemplateGroupId.GENERIC_TEMPLATE);
 
   if (!templates) {
     return null;
