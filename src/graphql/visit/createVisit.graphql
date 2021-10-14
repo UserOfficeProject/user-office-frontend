@@ -1,7 +1,6 @@
 mutation createVisit(
-  $proposalPk: Int!
-  $team: [Int!]!
   $scheduledEventId: Int!
+  $team: [Int!]!
   $teamLeadUserId: Int!
 ) {
   createVisit(

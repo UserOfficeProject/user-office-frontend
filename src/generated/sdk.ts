@@ -7743,9 +7743,8 @@ export type VerifyEmailMutation = (
 );
 
 export type CreateVisitMutationVariables = Exact<{
-  proposalPk: Scalars['Int'];
-  team: Array<Scalars['Int']> | Scalars['Int'];
   scheduledEventId: Scalars['Int'];
+  team: Array<Scalars['Int']> | Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
 }>;
 
@@ -11455,7 +11454,7 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitDocument = gql`
-    mutation createVisit($proposalPk: Int!, $team: [Int!]!, $scheduledEventId: Int!, $teamLeadUserId: Int!) {
+    mutation createVisit($scheduledEventId: Int!, $team: [Int!]!, $teamLeadUserId: Int!) {
   createVisit(
     scheduledEventId: $scheduledEventId
     team: $team
