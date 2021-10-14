@@ -13,6 +13,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import AddBox from '@material-ui/icons/AddBox';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Field, FieldProps } from 'formik';
@@ -37,11 +38,19 @@ import { getQuestionsByType } from 'models/questionary/QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from 'models/questionary/sampleEsi/SampleEsiWithQuestionary';
 import { ButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
+import withPrompt, { WithPromptType } from 'utils/withPrompt';
 
-function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
-  const { answer } = props;
+function QuestionaryComponentProposalEsiBasis(
+  props: BasicComponentProps & { prompt: WithPromptType } & {
+    confirm: WithConfirmType;
+  }
+) {
+  const { answer, prompt, confirm } = props;
   const answerId = answer.question.id;
-  const { state } = useContext(QuestionaryContext) as ProposalEsiContextType;
+  const { state, dispatch } = useContext(
+    QuestionaryContext
+  ) as ProposalEsiContextType;
   const [selectedSampleEsi, setSelectedSampleEsi] =
     useState<GetSampleEsiQuery['sampleEsi']>(null);
   const { api } = useDataApiWithFeedback();
@@ -53,11 +62,11 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
   return (
     <Field name={answerId}>
       {({ field, form }: FieldProps<SampleEsiWithQuestionary[]>) => {
-        const declareEsi = (id: number) => {
+        const declareEsi = (sampleId: number) => {
           api()
             .createSampleEsi({
               esiId: state!.esi.id,
-              sampleId: id,
+              sampleId: sampleId,
             })
             .then((response) => {
               if (response.createSampleEsi?.esi) {
@@ -105,13 +114,54 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
             });
         };
 
+        const addNewSample = async (title: string) => {
+          const sampleQuestions = getQuestionsByType(
+            state.esi.proposal.questionary.steps,
+            DataType.SAMPLE_DECLARATION
+          );
+
+          const sampleQuestion = sampleQuestions[0];
+
+          const result = await api().createSample({
+            title: title,
+            templateId: (sampleQuestion.config as SampleDeclarationConfig)
+              .templateId!,
+            proposalPk: state.esi.proposal.primaryKey,
+            questionId: sampleQuestion.question.id,
+            isPostProposalSubmission: true,
+          });
+
+          const sample = result.createSample.sample;
+
+          if (sample !== null) {
+            dispatch({ type: 'ESI_SAMPLE_CREATED', sample: sample });
+            declareEsi(sample.id);
+          }
+        };
+
+        const deleteSample = async (sampleId: number) => {
+          await api()
+            .deleteSample({
+              sampleId: sampleId,
+            })
+            .then((response) => {
+              const deletedSample = response.deleteSample.sample;
+              if (deletedSample) {
+                dispatch({
+                  type: 'ESI_SAMPLE_DELETED',
+                  sampleId: deletedSample.id,
+                });
+              }
+            });
+        };
+
         const allSamples = state?.esi?.proposal.samples;
         const declaredEsis = field.value || [];
 
         return (
           <>
             <label>{answer.question.question}</label>
-            <List dense={true}>
+            <List dense={true} data-cy="sample-esi-list">
               {allSamples?.map((sample) => {
                 const esi = declaredEsis.find(
                   (curEsi) => curEsi.sampleId === sample.id
@@ -149,7 +199,7 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                         <IconButton
                           edge="end"
                           title="Add"
-                          data-cy="add-sample-btn"
+                          data-cy="add-esi-btn"
                           onClick={(e: MouseEvent) => {
                             e.stopPropagation();
                             declareEsi(sample.id);
@@ -164,16 +214,26 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                       <ListItemIcon>
                         <IconButton
                           edge="end"
-                          title="Remove"
+                          title="Remove ESI"
+                          data-cy="delete-esi-btn"
                           onClick={(e: MouseEvent) => {
                             e.stopPropagation();
-                            revokeEsi(sample.id);
+                            confirm(
+                              async () => {
+                                revokeEsi(sample.id);
+                              },
+                              {
+                                title: 'Are you sure',
+                                description: `Are you sure you want to delete ESI for "${sample.title}"`,
+                              }
+                            )();
                           }}
                         >
-                          <DeleteIcon />
+                          <CloseIcon />
                         </IconButton>
                       </ListItemIcon>
                     )}
+
                     {hasDeclaredEsi && (
                       <ListItemIcon>
                         <IconButton
@@ -188,36 +248,51 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
                         </IconButton>
                       </ListItemIcon>
                     )}
+
+                    {!hasDeclaredEsi && sample.isPostProposalSubmission && (
+                      <ListItemIcon>
+                        <IconButton
+                          edge="end"
+                          title="Delete sample"
+                          data-cy="delete-sample-btn"
+                          onClick={(e: MouseEvent) => {
+                            e.stopPropagation();
+                            confirm(
+                              async () => {
+                                deleteSample(sample.id);
+                              },
+                              {
+                                title: 'Are you sure',
+                                description: `Are you sure you want to delete sample "${sample.title}"`,
+                              }
+                            )();
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemIcon>
+                    )}
                   </ListItem>
                 );
               })}
             </List>
             <ButtonContainer>
               <Button
-                onClick={async () => {
-                  const sampleQuestions = getQuestionsByType(
-                    state.esi.proposal.questionary.steps,
-                    DataType.SAMPLE_DECLARATION
-                  );
-
-                  const sampleQuestion = sampleQuestions[0];
-
-                  api().createSample({
-                    title: 'New Sample',
-                    templateId: (
-                      sampleQuestion.config as SampleDeclarationConfig
-                    ).templateId!,
-                    proposalPk: state.esi.proposal.primaryKey,
-                    questionId: sampleQuestion.question.id,
-                  });
-                }}
+                onClick={() =>
+                  prompt(
+                    async (title) => {
+                      addNewSample(title);
+                    },
+                    { question: 'Name of the sample' }
+                  )()
+                }
                 variant="outlined"
-                data-cy="add-sample-button"
+                data-cy="add-sample-btn"
                 size="small"
                 color="primary"
                 startIcon={<AddCircleOutlineIcon />}
               >
-                Add
+                Add sample
               </Button>
             </ButtonContainer>
             <Divider style={{ margin: '12px 0' }} />
@@ -242,9 +317,6 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
 
                     form.setFieldValue(answerId, newValue);
                   }}
-                  onCreate={(newSample) => {
-                    form.setFieldValue(answerId, [...field.value, newSample]);
-                  }}
                   onSubmitted={() => {
                     // refresh all samples
                     api()
@@ -267,4 +339,4 @@ function QuestionaryComponentProposalEsiBasis(props: BasicComponentProps) {
   );
 }
 
-export default QuestionaryComponentProposalEsiBasis;
+export default withConfirm(withPrompt(QuestionaryComponentProposalEsiBasis));

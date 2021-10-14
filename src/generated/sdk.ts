@@ -1104,6 +1104,7 @@ export type MutationCreateSampleArgs = {
   templateId: Scalars['Int'];
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
+  isPostProposalSubmission?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -2769,6 +2770,7 @@ export type Sample = {
   questionaryId: Scalars['Int'];
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
+  isPostProposalSubmission: Scalars['Boolean'];
   safetyStatus: SampleStatus;
   safetyComment: Scalars['String'];
   created: Scalars['DateTime'];
@@ -5894,6 +5896,7 @@ export type CreateSampleMutationVariables = Exact<{
   templateId: Scalars['Int'];
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
+  isPostProposalSubmission?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -5937,7 +5940,7 @@ export type DeleteSampleMutation = (
 
 export type SampleFragment = (
   { __typename?: 'Sample' }
-  & Pick<Sample, 'id' | 'title' | 'creatorId' | 'questionaryId' | 'safetyStatus' | 'safetyComment' | 'created' | 'proposalPk' | 'questionId'>
+  & Pick<Sample, 'id' | 'title' | 'creatorId' | 'questionaryId' | 'safetyStatus' | 'safetyComment' | 'isPostProposalSubmission' | 'created' | 'proposalPk' | 'questionId'>
 );
 
 export type GetSampleQueryVariables = Exact<{
@@ -8333,6 +8336,7 @@ export const SampleFragmentDoc = gql`
   questionaryId
   safetyStatus
   safetyComment
+  isPostProposalSubmission
   created
   proposalPk
   questionId
@@ -10320,12 +10324,13 @@ export const CloneSampleDocument = gql`
 ${QuestionaryFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateSampleDocument = gql`
-    mutation createSample($title: String!, $templateId: Int!, $proposalPk: Int!, $questionId: String!) {
+    mutation createSample($title: String!, $templateId: Int!, $proposalPk: Int!, $questionId: String!, $isPostProposalSubmission: Boolean) {
   createSample(
     title: $title
     templateId: $templateId
     proposalPk: $proposalPk
     questionId: $questionId
+    isPostProposalSubmission: $isPostProposalSubmission
   ) {
     sample {
       ...sample
