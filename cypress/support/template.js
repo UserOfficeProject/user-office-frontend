@@ -1,5 +1,3 @@
-import faker from 'faker';
-
 const navigateToTemplatesSubmenu = (submenuName) => {
   cy.contains('Templates').click();
   cy.get(`[title='${submenuName}']`).first().click();
@@ -30,8 +28,8 @@ typeToMenuTitle.set('proposalEsi', 'Experiment Safety Input (Proposal)');
 typeToMenuTitle.set('sampleEsi', 'Experiment Safety Input (Sample)');
 
 function createTemplate(type, title, description) {
-  const templateTitle = title || faker.random.words(2);
-  const templateDescription = description || faker.random.words(3);
+  const templateTitle = title || 'Template title';
+  const templateDescription = description || 'Template description';
 
   const menuTitle = typeToMenuTitle.get(type);
   if (!menuTitle) {
@@ -146,11 +144,15 @@ function createMultipleChoiceQuestion(question, options) {
 
   cy.get('[data-cy=question]').clear().type(question);
 
-  cy.contains('Radio').click();
+  if(type === undefined || type === 'dropdown') {
+    cy.contains('Radio').click();
+  
+    cy.contains('Dropdown').click();
+  }
 
-  cy.contains('Dropdown').click();
-
-  cy.contains('Is multiple select').click();
+  if(options.isMultipleSelect === true) {
+    cy.contains('Is multiple select').click();
+  }
 
   cy.contains('Items').click();
 

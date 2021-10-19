@@ -63,14 +63,6 @@ context('Template tests', () => {
   const numberQuestion2 = {title: faker.lorem.words(3)}
   const numberQuestion3 = {title: faker.lorem.words(3)}
 
-  const templateSampleDeclaration = {
-    title:faker.lorem.words(2),
-    description: faker.lorem.words(5),
-    topic: {
-      title: faker.lorem.word(2)
-    }
-  }
-  
   const templateSearch = {
     title: faker.lorem.words(2),
     description: faker.lorem.words(3)
@@ -83,7 +75,20 @@ context('Template tests', () => {
 
   const templateDependencies = {
     title: faker.lorem.words(2),
-    description: faker.lorem.words(3)
+    description: faker.lorem.words(3),
+    questions: {
+      selectQuestion: {
+        title: faker.lorem.words(2),
+        answer1: faker.lorem.words(2),
+        answer2: faker.lorem.words(2),
+      },
+      booleanQuestion: {
+        title: faker.lorem.words(2)
+      },
+      textQuestion: {
+        title: faker.lorem.words(2)
+      }
+    }
   }
 
   const proposalWorkflow = {
@@ -91,38 +96,6 @@ context('Template tests', () => {
     description: faker.random.words(5),
   };
 
-  it('User officer should be able to create sample declaration template', () => {
-    cy.login('officer');
-
-    cy.navigateToTemplatesSubmenu('Sample declaration');
-
-    cy.get('[data-cy="create-new-button"]').click();
-
-    cy.get('[data-cy="name"]').type(templateSampleDeclaration.title);
-
-    cy.get('[data-cy="description"]').type(templateSampleDeclaration.description);
-
-    cy.get('[data-cy="submit"]').click();
-
-    cy.contains(templateSampleDeclaration.title);
-
-    cy.get('[data-cy="topic-title-edit"]').click();
-
-    cy.get('[data-cy=topic-title-input] input')
-      .clear()
-      .type(`${templateSampleDeclaration.topic.title}{enter}`);
-
-    /* Add Text Input */
-    cy.createTextQuestion(textQuestion.title);
-
-    cy.contains(textQuestion.title)
-      .closest('[data-cy=question-container]')
-      .find("[data-cy='proposal-question-id']")
-      .invoke('html')
-      .then((fieldId) => {
-        textId = fieldId;
-      });
-  });
 
   it('User officer can modify proposal template', () => {
     cy.login('officer');
@@ -254,6 +227,7 @@ context('Template tests', () => {
       option1: multipleChoiceQuestion.answers[0],
       option2: multipleChoiceQuestion.answers[1],
       option3: multipleChoiceQuestion.answers[2],
+      isMultipleSelect: true
     });
 
     cy.contains(multipleChoiceQuestion.title)
@@ -498,7 +472,7 @@ context('Template tests', () => {
     cy.contains('Yes').click();
   });
 
-  it('User can create proposal', () => {
+  it('User can create proposal with template', () => {
     cy.login('user');
 
     cy.createProposal(proposal.title, proposal.abstract);
@@ -834,26 +808,7 @@ context('Template tests', () => {
     });
   });
 
-  it('Officer can save proposal column selection', () => {
-    cy.login('officer');
 
-    cy.contains('Proposals').click();
-
-    cy.get("[title='Show Columns']").first().click();
-    cy.get('.MuiPopover-paper').contains('Call').click();
-    cy.get('.MuiPopover-paper').contains('SEP').click();
-
-    cy.get('body').click();
-
-    cy.contains('Calls').click();
-
-    cy.finishedLoading();
-
-    cy.contains('Proposals').click();
-
-    cy.contains('Call');
-    cy.contains('SEP');
-  });
 
   it('Officer can delete proposal', () => {
     cy.login('officer');
@@ -876,16 +831,16 @@ context('Template tests', () => {
       .click();
 
     cy.contains(textQuestion.title).click();
-    cy.get("[data-cy='delete']").click();
+    cy.get("[data-cy='remove-from-template']").click();
 
     cy.contains(booleanQuestion).click();
-    cy.get("[data-cy='delete']").click();
+    cy.get("[data-cy='remove-from-template']").click();
 
     cy.contains(dateQuestion.title).click();
-    cy.get("[data-cy='delete']").click();
+    cy.get("[data-cy='remove-from-template']").click();
 
     cy.contains(fileQuestion).click();
-    cy.get("[data-cy='delete']").click();
+    cy.get("[data-cy='remove-from-template']").click();
   });
 
   it('User officer can add multiple choice question as a dependency', () => {
@@ -896,81 +851,27 @@ context('Template tests', () => {
       proposalWorkflow.description
     );
 
-    cy.navigateToTemplatesSubmenu('Proposal');
+    cy.createTemplate('proposal', templateDependencies.title, templateDependencies.description);
 
-    cy.get('[data-cy="create-new-button"]').click();
+    cy.createMultipleChoiceQuestion(templateDependencies.questions.selectQuestion.title, 
+    {option1:templateDependencies.questions.selectQuestion.answer1, option2:templateDependencies.questions.selectQuestion.answer2});
 
-    cy.get('[data-cy="name"]').type(templateDependencies.title);
+    cy.createBooleanQuestion(templateDependencies.questions.booleanQuestion.title)
 
-    cy.get('[data-cy="description"]').type(templateDependencies.description);
-
-    cy.get('[data-cy="submit"]').click();
-
-    cy.get('[data-cy=show-more-button]').click();
-
-    cy.contains('Add question').click();
-
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
-
-    cy.contains('Add Multiple choice').click();
-
-    cy.get('[data-cy="question"]').clear().type('Multichoice question');
-
-    cy.contains('Items').click();
-
-    cy.get('[data-cy=add-answer-button]').closest('button').click();
-    cy.get('input[placeholder="Answer"]').type('Answer 1');
-    cy.get('[title="Save"]').click();
-
-    cy.get('[data-cy=add-answer-button]').closest('button').click();
-    cy.get('input[placeholder="Answer"]').type('Answer 2');
-    cy.get('[title="Save"]').click();
-
-    cy.contains('Save').click();
-
-    cy.finishedLoading();
-
-    cy.contains('Multichoice question')
-      .parent()
-      .dragElement([
-        { direction: 'left', length: 1 },
-        { direction: 'down', length: 1 },
-      ]);
-
-    cy.get('[data-cy=questionPicker] [data-cy=show-more-button]')
-      .last()
-      .click();
-
-    cy.contains('Add Boolean').click();
-
-    cy.get('[data-cy=question]').clear().type('Boolean question');
-
-    cy.contains('Save').click();
-
-    cy.contains('Boolean question')
-      .parent()
-      .dragElement([
-        { direction: 'left', length: 1 },
-        { direction: 'down', length: 2 },
-      ]);
-
-    cy.finishedLoading();
-
-    cy.contains('Boolean question').click();
+    cy.contains(templateDependencies.questions.booleanQuestion.title).click();
 
     cy.get('[data-cy="add-dependency-button"]').click();
 
     cy.get('[id="dependency-id"]').click();
 
-    cy.get('[role="presentation"]').contains('Multichoice question').click();
+    cy.get('[role="presentation"]').contains(templateDependencies.questions.selectQuestion.title).click();
 
     cy.get('[id="dependencyValue"]').click();
 
-    cy.contains('Answer 1').click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer1).click();
 
     cy.get('[data-cy="submit"]').click();
+
 
     cy.contains('Calls').click();
     cy.get('[title="Edit"]').first().click();
@@ -999,26 +900,21 @@ context('Template tests', () => {
 
     cy.contains('New Proposal').click();
 
-    cy.contains('Multichoice question');
+    // Dependee is NOT visible
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
 
-    cy.get('main form').should('not.contain.text', 'Boolean question');
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer1).click();
+    
+    // Dependee is visible
+    cy.get('main form').should('contain.text', templateDependencies.questions.booleanQuestion.title);
 
-    cy.contains('Answer 1').click();
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer2).click();
 
-    cy.on('window:confirm', (str) => {
-      expect(str).to.equal(
-        'Changes you recently made in this step will not be saved! Are you sure?'
-      );
+    // Dependee is NOT visible again
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
 
-      return false;
-    });
-
-    cy.contains('Dashboard').click();
-
-    cy.contains('Boolean question').click();
-
-    cy.contains('Answer 2').click();
-    cy.get('main form').should('not.contain.text', 'Boolean question');
   });
 
   it('User officer can add multiple dependencies on a question', () => {
@@ -1031,46 +927,25 @@ context('Template tests', () => {
     .find("[title='Edit']")
     .click();
 
-    cy.get('[data-cy=show-more-button]').click();
+    cy.createTextQuestion(templateDependencies.questions.textQuestion.title)
 
-    cy.contains('Add question').click();
-
-    cy.get('[data-cy=questionPicker] [data-cy="proposal-question-id"]')
-      .first()
-      .click();
-
-    cy.get('[data-cy="question"]')
-      .clear()
-      .type('Question with multiple dependencies');
-
-    cy.get('[data-cy="submit"]').click();
-
-    cy.contains('Question with multiple dependencies')
-      .parent()
-      .dragElement([
-        { direction: 'left', length: 1 },
-        { direction: 'down', length: 3 },
-      ]);
-
-    cy.finishedLoading();
-
-    cy.contains('Question with multiple dependencies').click();
+    cy.contains(templateDependencies.questions.textQuestion.title).click();
 
     cy.get('[data-cy="add-dependency-button"]').click();
 
     cy.get('[id="dependency-id"]').click();
 
-    cy.get('[role="presentation"]').contains('Multichoice question').click();
+    cy.get('[role="presentation"]').contains(templateDependencies.questions.selectQuestion.title).click();
 
     cy.get('[id="dependencyValue"]').click();
 
-    cy.contains('Answer 1').click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer1).click();
 
     cy.get('[data-cy="add-dependency-button"]').click();
 
     cy.get('[id="dependency-id"]').last().click();
 
-    cy.get('[role="presentation"]').contains('Boolean question').click();
+    cy.get('[role="presentation"]').contains(templateDependencies.questions.booleanQuestion.title).click();
 
     cy.get('[id="dependencyValue"]').last().click();
 
@@ -1084,36 +959,39 @@ context('Template tests', () => {
 
     cy.contains('New Proposal').click();
 
-    cy.contains('Multichoice question');
-
-    cy.get('main form').should('not.contain.text', 'Boolean question');
+    // Both questions hidden
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
     cy.get('main form').should(
       'not.contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
 
-    cy.contains('Answer 1').click();
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer1).click();
 
-    cy.on('window:confirm', (str) => {
-      expect(str).to.equal(
-        'Changes you recently made in this step will not be saved! Are you sure?'
-      );
+    // One question visible, other is not
+    cy.get('main form').should('contain.text', templateDependencies.questions.booleanQuestion.title);
+    cy.get('main form').should(
+      'not.contain.text',
+      templateDependencies.questions.textQuestion.title
+    );
 
-      return false;
-    });
+    cy.contains(templateDependencies.questions.booleanQuestion.title).click();
 
-    cy.contains('Review').click();
-
-    cy.contains('Boolean question').click();
+    // Other question is also visible
     cy.get('main form').should(
       'contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
-    cy.contains('Answer 2').click();
-    cy.get('main form').should('not.contain.text', 'Boolean question');
+
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer2).click();
+
+    // No question is visible if answer 2 is selected
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
     cy.get('main form').should(
       'not.contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
   });
 
@@ -1124,7 +1002,7 @@ context('Template tests', () => {
 
     cy.get('[title="Edit"]').last().click();
 
-    cy.contains('Question with multiple dependencies').click();
+    cy.contains(templateDependencies.questions.textQuestion.title).click();
 
     cy.get('[data-cy="dependencies-operator"]').click();
 
@@ -1132,7 +1010,7 @@ context('Template tests', () => {
 
     cy.get('[id="dependencyValue"]').first().click();
 
-    cy.contains('Answer 2').click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer2).click();
 
     cy.get('[data-cy="submit"]').click();
 
@@ -1142,35 +1020,37 @@ context('Template tests', () => {
 
     cy.contains('New Proposal').click();
 
-    cy.contains('Multichoice question');
+    cy.contains(templateDependencies.questions.selectQuestion.title);
 
-    cy.get('main form').should('not.contain.text', 'Boolean question');
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
     cy.get('main form').should(
       'not.contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
 
-    cy.contains('Answer 1').click();
-    cy.contains('Boolean question');
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer1).click();
+    cy.contains(templateDependencies.questions.booleanQuestion.title);
     cy.get('main form').should(
       'not.contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
-    cy.contains('Boolean question').click();
+    cy.contains(templateDependencies.questions.booleanQuestion.title).click();
     cy.get('main form').should(
       'contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
-    cy.contains('Boolean question').click();
+    cy.contains(templateDependencies.questions.booleanQuestion.title).click();
     cy.get('main form').should(
       'not.contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
-    cy.contains('Answer 2').click();
-    cy.get('main form').should('not.contain.text', 'Boolean question');
+    cy.contains(templateDependencies.questions.selectQuestion.title).parent().click();
+    cy.contains(templateDependencies.questions.selectQuestion.answer2).click();
+    cy.get('main form').should('not.contain.text', templateDependencies.questions.booleanQuestion.title);
     cy.get('main form').should(
       'contain.text',
-      'Question with multiple dependencies'
+      templateDependencies.questions.textQuestion.title
     );
   });
 
@@ -1185,10 +1065,10 @@ context('Template tests', () => {
       .first()
       .click();
     
-      cy.contains('Boolean question').closest('[data-cy=question-container]').find('[data-cy=dependency-list]').should('exist');
-      cy.contains('Multichoice question').click();
+      cy.contains(templateDependencies.questions.booleanQuestion.title).closest('[data-cy=question-container]').find('[data-cy=dependency-list]').should('exist');
+      cy.contains(templateDependencies.questions.selectQuestion.title).click();
       cy.get('[data-cy=remove-from-template]').click()
-      cy.contains('Boolean question').closest('[data-cy=question-container]').find('[data-cy=dependency-list]').should('not.exist');
+      cy.contains(templateDependencies.questions.booleanQuestion.title).closest('[data-cy=question-container]').find('[data-cy=dependency-list]').should('not.exist');
   })
 
   it('User can add captions after uploading image/* file', () => {
