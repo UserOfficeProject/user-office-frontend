@@ -1,3 +1,5 @@
+import faker from 'faker';
+
 const navigateToTemplatesSubmenu = (submenuName) => {
   cy.contains('Templates').click();
   cy.get(`[title='${submenuName}']`).first().click();
@@ -28,8 +30,8 @@ typeToMenuTitle.set('proposalEsi', 'Experiment Safety Input (Proposal)');
 typeToMenuTitle.set('sampleEsi', 'Experiment Safety Input (Sample)');
 
 function createTemplate(type, title, description) {
-  const templateTitle = title || 'Template title';
-  const templateDescription = description || 'Template description';
+  const templateTitle = title || faker.random.words(2);
+  const templateDescription = description || faker.random.words(3);
 
   const menuTitle = typeToMenuTitle.get(type);
   if (!menuTitle) {
