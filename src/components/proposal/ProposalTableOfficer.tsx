@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import MaterialTable, { Column } from '@material-table/core';
 import { Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,7 +12,6 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import GridOnIcon from '@material-ui/icons/GridOn';
 import GroupWork from '@material-ui/icons/GroupWork';
 import Visibility from '@material-ui/icons/Visibility';
-import MaterialTable, { Column } from 'material-table';
 import React, { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
@@ -72,12 +72,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   confirm,
 }) => {
   const [openAssignment, setOpenAssignment] = useState(false);
-  const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
-    false
-  );
-  const [openChangeProposalStatus, setOpenChangeProposalStatus] = useState(
-    false
-  );
+  const [openInstrumentAssignment, setOpenInstrumentAssignment] =
+    useState(false);
+  const [openChangeProposalStatus, setOpenChangeProposalStatus] =
+    useState(false);
   const [selectedProposals, setSelectedProposals] = useState<
     ProposalWithCallInstrumentAndSepId[]
   >([]);
@@ -92,9 +90,8 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
-  const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
-    proposalFilter
-  );
+  const { loading, setProposalsData, proposalsData } =
+    useProposalsCoreData(proposalFilter);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
@@ -621,7 +618,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           </Typography>
         }
         columns={columns}
-        data={preselectedProposalsData}
+        data={preselectedProposalsData.map((proposal) =>
+          Object.assign(proposal, { id: proposal.primaryKey })
+        )}
         isLoading={loading}
         onSearchChange={(searchText) => {
           setUrlQueryParams({ search: searchText ? searchText : undefined });
@@ -641,6 +640,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           search: true,
           searchText: urlQueryParams.search || undefined,
           selection: true,
+          headerSelectionProps: {
+            inputProps: { 'aria-label': 'Select All Rows' },
+          },
           debounceInterval: 400,
           columnsButton: true,
           selectionProps: (rowdata: any) => ({

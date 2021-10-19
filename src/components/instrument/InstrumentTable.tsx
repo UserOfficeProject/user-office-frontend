@@ -39,10 +39,8 @@ const InstrumentTable: React.FC = () => {
     number | null
   >(null);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-  const [
-    urlQueryParams,
-    setUrlQueryParams,
-  ] = useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
+  const [urlQueryParams, setUrlQueryParams] =
+    useQueryParams<UrlQueryParamsType>(DefaultQueryParams);
 
   const onInstrumentDelete = async (instrumentDeletedId: number | string) => {
     return await api('Instrument removed successfully!')
@@ -96,38 +94,43 @@ const InstrumentTable: React.FC = () => {
     setAssigningInstrumentId(null);
   };
 
-  const removeAssignedScientistFromInstrument = (
-    scientistToRemoveId: number,
-    instrumentToRemoveFromId: number
-  ) => {
-    setInstruments((instruments) =>
-      instruments.map((instrumentItem) => {
-        if (instrumentItem.id === instrumentToRemoveFromId) {
-          const newScientists = instrumentItem.scientists.filter(
-            (scientistItem) => scientistItem.id !== scientistToRemoveId
-          );
-
-          return {
-            ...instrumentItem,
-            scientists: newScientists,
-          };
-        } else {
-          return instrumentItem;
-        }
-      })
-    );
-    setAssigningInstrumentId(null);
-  };
-
   const AssignmentIndIcon = (): JSX.Element => <AssignmentInd />;
 
-  const AssignedScientists = (rowData: Instrument) => (
-    <AssignedScientistsTable
-      instrument={rowData}
-      removeAssignedScientistFromInstrument={
-        removeAssignedScientistFromInstrument
-      }
-    />
+  const AssignedScientists = React.useCallback(
+    ({ rowData }) => {
+      const removeAssignedScientistFromInstrument = (
+        scientistToRemoveId: number,
+        instrumentToRemoveFromId: number
+      ) => {
+        setInstruments((instruments) =>
+          instruments.map((instrumentItem) => {
+            if (instrumentItem.id === instrumentToRemoveFromId) {
+              const newScientists = instrumentItem.scientists.filter(
+                (scientistItem) => scientistItem.id !== scientistToRemoveId
+              );
+
+              return {
+                ...instrumentItem,
+                scientists: newScientists,
+              };
+            } else {
+              return instrumentItem;
+            }
+          })
+        );
+        setAssigningInstrumentId(null);
+      };
+
+      return (
+        <AssignedScientistsTable
+          instrument={rowData}
+          removeAssignedScientistFromInstrument={
+            removeAssignedScientistFromInstrument
+          }
+        />
+      );
+    },
+    [setInstruments, setAssigningInstrumentId]
   );
 
   const createModal = (

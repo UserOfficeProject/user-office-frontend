@@ -1,4 +1,4 @@
-import MaterialTable, { Options } from 'material-table';
+import MaterialTable, { Options } from '@material-table/core';
 import React from 'react';
 
 import { ProposalScheduledEvent } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
@@ -12,7 +12,7 @@ type ExperimentTimesTableProps = {
   title: string;
   isLoading: boolean;
   proposalScheduledEvents: ProposalScheduledEvent[];
-  options?: Partial<Options>;
+  options?: Partial<Options<JSX.Element>>;
 };
 
 export default function ExperimentsTable({
@@ -50,7 +50,6 @@ export default function ExperimentsTable({
       data={proposalScheduledEvents}
       options={{
         search: false,
-        selection: false,
         padding: 'dense',
         emptyRowsWhenPaging: false,
         paging: false,

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import MaterialTable, { Action, MTableToolbar } from '@material-table/core';
 import { IconButton, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
@@ -7,7 +8,6 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-material-ui';
-import MaterialTable, { Action, MTableToolbar } from 'material-table';
 import React, { useState, useEffect } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
@@ -444,6 +444,9 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                     'aria-label': `${rowdata.firstname}-${rowdata.lastname}-${rowdata.organisation}-select`,
                   },
                 }),
+                headerSelectionProps: {
+                  inputProps: { 'aria-label': 'Select All Rows' },
+                },
               }}
               actions={actionArray}
               localization={{
@@ -455,13 +458,13 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                   showColumnsAriaLabel: 'testtest',
                 },
               }}
-              onChangePage={(page) =>
+              onPageChange={(page) =>
                 setQuery({ ...query, offset: page * (query.first as number) })
               }
               onSearchChange={(search) =>
                 setQuery({ ...query, filter: search })
               }
-              onChangeRowsPerPage={(rowsPerPage) =>
+              onRowsPerPageChange={(rowsPerPage) =>
                 setQuery({ ...query, first: rowsPerPage })
               }
               components={{

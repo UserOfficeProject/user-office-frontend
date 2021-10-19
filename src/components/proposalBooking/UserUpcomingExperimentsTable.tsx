@@ -1,6 +1,6 @@
+import MaterialTable from '@material-table/core';
 import { Dialog, DialogContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import MaterialTable from 'material-table';
 import React, { useState } from 'react';
 import { ReactNode } from 'react';
 
@@ -17,20 +17,17 @@ import {
 } from 'utils/Time';
 
 export default function UserUpcomingExperimentsTable() {
-  const {
-    loading,
-    proposalScheduledEvents,
-    setProposalScheduledEvents,
-  } = useProposalBookingsScheduledEvents({
-    onlyUpcoming: true,
-    notDraft: true,
-  });
+  const { loading, proposalScheduledEvents, setProposalScheduledEvents } =
+    useProposalBookingsScheduledEvents({
+      onlyUpcoming: true,
+      notDraft: true,
+    });
 
   const [modalContents, setModalContents] = useState<ReactNode>(null);
 
   const {
     formTeamAction,
-    finishRiskAssessment,
+    finishEsi,
     registerVisitAction,
     individualTrainingAction,
     declareShipmentAction,
@@ -76,12 +73,12 @@ export default function UserUpcomingExperimentsTable() {
   }
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} data-cy="upcoming-experiments">
       <StyledPaper margin={[0]}>
         <MaterialTable
           actions={[
             formTeamAction,
-            finishRiskAssessment,
+            finishEsi,
             registerVisitAction,
             individualTrainingAction,
             declareShipmentAction,
@@ -93,7 +90,6 @@ export default function UserUpcomingExperimentsTable() {
           data={proposalScheduledEvents}
           options={{
             search: false,
-            selection: false,
             padding: 'dense',
             emptyRowsWhenPaging: false,
             paging: false,

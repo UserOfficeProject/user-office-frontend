@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import MaterialTable, { Options, Column } from '@material-table/core';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Email from '@material-ui/icons/Email';
 import makeStyles from '@material-ui/styles/makeStyles';
-import MaterialTable, { Options, Column } from 'material-table';
 import React, { useState, useEffect } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
@@ -50,7 +50,7 @@ type PeopleTableProps<T extends BasicUserDetails = BasicUserDetails> = {
   emailInvite?: boolean;
   showInvitationButtons?: boolean;
   selectedUsers?: number[];
-  mtOptions?: Options;
+  mtOptions?: Options<JSX.Element>;
   columns?: Column<any>[];
   preserveSelf?: boolean;
 };
@@ -287,9 +287,11 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
           }
 
           setSelectedParticipants((selectedParticipants) =>
-            (selectedItem as BasicUserDetails & {
-              tableData: { checked: boolean };
-            }).tableData.checked
+            (
+              selectedItem as BasicUserDetails & {
+                tableData: { checked: boolean };
+              }
+            ).tableData.checked
               ? ([
                   ...selectedParticipants,
                   {
@@ -310,6 +312,9 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
           debounceInterval: 400,
           pageSize: query.first as number,
           selection: props.selection,
+          headerSelectionProps: {
+            inputProps: { 'aria-label': 'Select All Rows' },
+          },
           ...props.mtOptions,
           selectionProps: (rowdata: any) => ({
             inputProps: {
@@ -337,16 +342,16 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
             : {}
         }
         localization={{
-          body: { emptyDataSourceMessage: 'No Users Found' },
+          body: { emptyDataSourceMessage: 'No Users' },
           toolbar: {
             nRowsSelected: '{0} Users(s) Selected',
           },
         }}
-        onChangePage={(page) =>
+        onPageChange={(page) =>
           setQuery({ ...query, offset: page * (query.first as number) })
         }
         onSearchChange={(search) => setQuery({ ...query, filter: search })}
-        onChangeRowsPerPage={(rowsPerPage) =>
+        onRowsPerPageChange={(rowsPerPage) =>
           setQuery({ ...query, first: rowsPerPage })
         }
       />

@@ -6,7 +6,7 @@ import {
   BasicUserDetails,
   QuestionaryStep,
   ShipmentStatus,
-  TemplateCategoryId,
+  TemplateGroupId,
   VisitFragment,
 } from 'generated/sdk';
 import { ShipmentCore } from 'models/questionary/shipment/ShipmentCore';
@@ -58,15 +58,13 @@ function CreateShipment({ visit, onShipmentSubmitted }: CreateShipmentProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
   const [blankShipment, setBlankShipment] = useState<ShipmentWithQuestionary>();
-  const [
-    noActiveShipmentTemplates,
-    setNoActiveShipmentTemplates,
-  ] = useState<boolean>(false);
+  const [noActiveShipmentTemplates, setNoActiveShipmentTemplates] =
+    useState<boolean>(false);
 
   useEffect(() => {
     api()
       .getActiveTemplateId({
-        templateCategoryId: TemplateCategoryId.SHIPMENT_DECLARATION,
+        templateGroupId: TemplateGroupId.SHIPMENT,
       })
       .then((data) => {
         if (data.activeTemplateId) {
