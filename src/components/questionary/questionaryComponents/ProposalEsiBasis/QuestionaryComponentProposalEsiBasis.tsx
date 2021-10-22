@@ -15,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { Field, FieldProps } from 'formik';
 import React, { MouseEvent, useContext, useState } from 'react';
 
+import ErrorMessage from 'components/common/ErrorMessage';
 import BoxIcon from 'components/common/icons/BoxIcon';
 import StyledModal from 'components/common/StyledModal';
 import UOLoader from 'components/common/UOLoader';
@@ -68,7 +69,10 @@ function QuestionaryComponentProposalEsiBasis(
               const sampleEsi = response.createSampleEsi?.esi;
               if (sampleEsi) {
                 form.setFieldValue(answerId, [...field.value, sampleEsi]);
-                dispatch({ type: 'ESI_SAMPLE_ESI_CREATED', esi: sampleEsi });
+                dispatch({
+                  type: 'ESI_SAMPLE_ESI_CREATED',
+                  sampleEsi: sampleEsi,
+                });
                 setSelectedSampleEsi(response.createSampleEsi.esi);
               }
             });
@@ -163,6 +167,10 @@ function QuestionaryComponentProposalEsiBasis(
                 const newValue = field.value.map((esi) =>
                   esi.sampleId === updatedEsi.sampleId ? updatedEsi : esi
                 );
+                dispatch({
+                  type: 'ESI_SAMPLE_ESI_UPDATED',
+                  sampleEsi: updatedEsi,
+                });
                 form.setFieldValue(answerId, newValue);
               }
             });
@@ -261,6 +269,7 @@ function QuestionaryComponentProposalEsiBasis(
                 );
               })}
             </List>
+            <ErrorMessage name={answerId} />
             <ButtonContainer>
               <Button
                 onClick={() =>
@@ -299,7 +308,10 @@ function QuestionaryComponentProposalEsiBasis(
                         ? updatedSampleEsi
                         : sampleEsi
                     );
-
+                    dispatch({
+                      type: 'ESI_SAMPLE_ESI_UPDATED',
+                      sampleEsi: updatedSampleEsi,
+                    });
                     form.setFieldValue(answerId, newValue);
                   }}
                   onSubmitted={() => {

@@ -80,7 +80,8 @@ export type Event =
   | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> }
   | { type: 'ESI_SAMPLE_CREATED'; sample: SampleFragment }
   | { type: 'ESI_SAMPLE_DELETED'; sampleId: number }
-  | { type: 'ESI_SAMPLE_ESI_CREATED'; esi: SampleEsiWithQuestionary }
+  | { type: 'ESI_SAMPLE_ESI_CREATED'; sampleEsi: SampleEsiWithQuestionary }
+  | { type: 'ESI_SAMPLE_ESI_UPDATED'; sampleEsi: SampleEsiWithQuestionary }
   | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number }
   // sample esi
   | { type: 'SAMPLE_ESI_CREATED'; esi: SampleEsiWithQuestionary }

@@ -96,6 +96,8 @@ context('visits tests', () => {
     cy.get('[data-cy=sample-esi-modal]'); // wait until modal is visible
     cy.get('body').type('{esc}')
     cy.get('[data-cy=sample-esi-list]').contains(newSampleTitle).closest('li').contains('Unfinished declaration'); // ESI not finished
+    cy.get('[data-cy=save-and-continue-button]').click();
+    cy.contains('All experiment safety inputs must be completed');
 
     // Resume new sample esi declaration
     cy.get('[data-cy=sample-esi-list]').contains(newSampleTitle).closest('li').find('[data-cy=edit-esi-btn]').click()
@@ -120,6 +122,8 @@ context('visits tests', () => {
 
     cy.get('[data-cy=sample-esi-list]').contains(newSampleTitle).should('not.exist');
     cy.get('[data-cy=save-and-continue-button]').click();
+
+    cy.contains(sampleTitle).should('exist'); // sample should ve visible in the review page
 
     cy.get('[data-cy=submit-proposal-esi-button]').click();
 
