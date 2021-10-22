@@ -49,6 +49,14 @@ const proposalEsiReducer = (
       }
       draftState.esi.proposal.samples.push(action.sample);
       break;
+    case 'ESI_SAMPLE_ESI_CREATED':
+      draftState.esi.sampleEsis.push(action.esi);
+      break;
+    case 'ESI_SAMPLE_ESI_DELETED':
+      draftState.esi.sampleEsis = draftState.esi.sampleEsis.filter(
+        (esi) => esi.sampleId !== action.sampleId
+      );
+      break;
     case 'ESI_SAMPLE_DELETED':
       draftState.esi.proposal.samples = draftState.esi.proposal.samples!.filter(
         (sample) => sample.id !== action.sampleId

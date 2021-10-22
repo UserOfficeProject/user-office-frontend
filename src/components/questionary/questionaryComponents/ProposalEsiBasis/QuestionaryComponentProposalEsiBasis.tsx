@@ -65,28 +65,32 @@ function QuestionaryComponentProposalEsiBasis(
               sampleId: sampleId,
             })
             .then((response) => {
-              if (response.createSampleEsi?.esi) {
-                form.setFieldValue(answerId, [
-                  ...field.value,
-                  response.createSampleEsi.esi,
-                ]);
+              const sampleEsi = response.createSampleEsi?.esi;
+              if (sampleEsi) {
+                form.setFieldValue(answerId, [...field.value, sampleEsi]);
+                dispatch({ type: 'ESI_SAMPLE_ESI_CREATED', esi: sampleEsi });
                 setSelectedSampleEsi(response.createSampleEsi.esi);
               }
             });
         };
 
-        const revokeEsi = (id: number) => {
+        const revokeEsi = (sampleId: number) => {
           api()
             .deleteSampleEsi({
               esiId: state!.esi.id,
-              sampleId: id,
+              sampleId: sampleId,
             })
             .then((response) => {
-              if (!response.deleteSampleEsi.rejection) {
+              const deletedEsi = response.deleteSampleEsi?.esi;
+              if (deletedEsi) {
                 const newValue = field.value.filter(
-                  (esi) => esi.sample.id !== id
+                  (esi) => esi.sampleId !== deletedEsi.sampleId
                 );
                 form.setFieldValue(answerId, newValue);
+                dispatch({
+                  type: 'ESI_SAMPLE_ESI_DELETED',
+                  sampleId: deletedEsi.sampleId,
+                });
               }
             });
         };
