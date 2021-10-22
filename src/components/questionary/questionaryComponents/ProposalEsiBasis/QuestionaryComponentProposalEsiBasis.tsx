@@ -91,25 +91,6 @@ function QuestionaryComponentProposalEsiBasis(
             });
         };
 
-        const openEsi = async (id: number) => {
-          await api()
-            .updateSampleEsi({
-              esiId: state!.esi.id,
-              sampleId: id,
-              isSubmitted: false,
-            })
-            .then((response) => {
-              const updatedEsi = response.updateSampleEsi.esi;
-              if (updatedEsi) {
-                setSelectedSampleEsi(updatedEsi);
-                const newValue = field.value.map((esi) =>
-                  esi.sampleId === updatedEsi.sampleId ? updatedEsi : esi
-                );
-                form.setFieldValue(answerId, newValue);
-              }
-            });
-        };
-
         const addNewSample = async (title: string) => {
           const sampleQuestions = getQuestionsByType(
             state.esi.proposal.questionary.steps,
@@ -164,6 +145,25 @@ function QuestionaryComponentProposalEsiBasis(
           )();
         };
 
+        const handleEditEsiClick = async (id: number) => {
+          await api()
+            .updateSampleEsi({
+              esiId: state!.esi.id,
+              sampleId: id,
+              isSubmitted: false,
+            })
+            .then((response) => {
+              const updatedEsi = response.updateSampleEsi.esi;
+              if (updatedEsi) {
+                setSelectedSampleEsi(updatedEsi);
+                const newValue = field.value.map((esi) =>
+                  esi.sampleId === updatedEsi.sampleId ? updatedEsi : esi
+                );
+                form.setFieldValue(answerId, newValue);
+              }
+            });
+        };
+
         const allSamples = state?.esi?.proposal.samples;
         const declaredEsis = field.value || [];
 
@@ -189,6 +189,7 @@ function QuestionaryComponentProposalEsiBasis(
                             ? declareEsi(sample.id)
                             : handleRevokeEsiClick(sample.id)
                         }
+                        data-cy="select-sample-chk"
                       />
                     </ListItemIcon>
                     <ListItemIcon>
@@ -220,8 +221,9 @@ function QuestionaryComponentProposalEsiBasis(
                           title="Edit"
                           onClick={(e: MouseEvent) => {
                             e.stopPropagation();
-                            openEsi(sample.id);
+                            handleEditEsiClick(sample.id);
                           }}
+                          data-cy="edit-esi-btn"
                         >
                           <EditIcon />
                         </IconButton>
