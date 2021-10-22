@@ -1,19 +1,15 @@
 import {
-  Avatar,
   Button,
+  Checkbox,
   Divider,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   Typography,
 } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import AddBox from '@material-ui/icons/AddBox';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Field, FieldProps } from 'formik';
@@ -155,6 +151,19 @@ function QuestionaryComponentProposalEsiBasis(
             });
         };
 
+        const handleRevokeEsiClick = async (sampleId: number) => {
+          confirm(
+            () => {
+              revokeEsi(sampleId);
+            },
+            {
+              title: 'Are you sure?',
+              description:
+                'Are you sure you want to deselect the sample? The information entered for the ESI will be lost!',
+            }
+          )();
+        };
+
         const allSamples = state?.esi?.proposal.samples;
         const declaredEsis = field.value || [];
 
@@ -171,19 +180,28 @@ function QuestionaryComponentProposalEsiBasis(
 
                 return (
                   <ListItem key={sample.id}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <BoxIcon
-                          htmlColor={
-                            isDeclarationComplete
-                              ? 'green'
-                              : hasDeclaredEsi
-                              ? 'red'
-                              : 'inherit'
-                          }
-                        />
-                      </Avatar>
-                    </ListItemAvatar>
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={hasDeclaredEsi}
+                        onChange={(e) =>
+                          e.target.checked
+                            ? declareEsi(sample.id)
+                            : handleRevokeEsiClick(sample.id)
+                        }
+                      />
+                    </ListItemIcon>
+                    <ListItemIcon>
+                      <BoxIcon
+                        htmlColor={
+                          isDeclarationComplete
+                            ? 'green'
+                            : hasDeclaredEsi
+                            ? 'red'
+                            : 'inherit'
+                        }
+                      />
+                    </ListItemIcon>
                     <ListItemText
                       primary={sample.title}
                       secondary={
@@ -194,45 +212,6 @@ function QuestionaryComponentProposalEsiBasis(
                           : ''
                       }
                     />
-                    {!hasDeclaredEsi && (
-                      <ListItemIcon>
-                        <IconButton
-                          edge="end"
-                          title="Add"
-                          data-cy="add-esi-btn"
-                          onClick={(e: MouseEvent) => {
-                            e.stopPropagation();
-                            declareEsi(sample.id);
-                          }}
-                        >
-                          <AddBox />
-                        </IconButton>
-                      </ListItemIcon>
-                    )}
-
-                    {hasDeclaredEsi && (
-                      <ListItemIcon>
-                        <IconButton
-                          edge="end"
-                          title="Remove ESI"
-                          data-cy="delete-esi-btn"
-                          onClick={(e: MouseEvent) => {
-                            e.stopPropagation();
-                            confirm(
-                              async () => {
-                                revokeEsi(sample.id);
-                              },
-                              {
-                                title: 'Are you sure',
-                                description: `Are you sure you want to delete ESI for "${sample.title}"`,
-                              }
-                            )();
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </ListItemIcon>
-                    )}
 
                     {hasDeclaredEsi && (
                       <ListItemIcon>
@@ -244,12 +223,12 @@ function QuestionaryComponentProposalEsiBasis(
                             openEsi(sample.id);
                           }}
                         >
-                          {isDeclarationComplete ? <CheckIcon /> : <EditIcon />}
+                          <EditIcon />
                         </IconButton>
                       </ListItemIcon>
                     )}
 
-                    {!hasDeclaredEsi && sample.isPostProposalSubmission && (
+                    {sample.isPostProposalSubmission && (
                       <ListItemIcon>
                         <IconButton
                           edge="end"
