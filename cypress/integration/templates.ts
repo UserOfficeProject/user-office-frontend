@@ -31,17 +31,17 @@ context('Template tests', () => {
     abstract: faker.lorem.words(8)
   }
 
-  const booleanQuestion = faker.lorem.words(2);
+  const booleanQuestion = faker.lorem.words(3);
   const dateQuestion = {
-    title: faker.lorem.words(2),
-    tooltip: faker.lorem.words(2)
+    title: faker.lorem.words(3),
+    tooltip: faker.lorem.words(3)
   };
-  const timeQuestion = faker.lorem.words(2);
-  const fileQuestion = faker.lorem.words(2);
-  const intervalQuestion = faker.lorem.words(2);
+  const timeQuestion = faker.lorem.words(3);
+  const fileQuestion = faker.lorem.words(3);
+  const intervalQuestion = faker.lorem.words(3);
   const numberQuestion = faker.lorem.words(3);
   const textQuestion = {
-    title: faker.lorem.words(2),
+    title: faker.lorem.words(3),
     minChars: 1000,
     answer:faker.lorem.words(5),
     newId: faker.lorem.word()
@@ -54,9 +54,9 @@ context('Template tests', () => {
   const multipleChoiceQuestion = {
     title:lorem.words(2),
     answers:  [
-      faker.lorem.words(2),
-      faker.lorem.words(2),
-      faker.lorem.words(2),
+      faker.lorem.words(3),
+      faker.lorem.words(3),
+      faker.lorem.words(3),
     ]
   };
 
@@ -64,35 +64,35 @@ context('Template tests', () => {
   const numberQuestion3 = {title: faker.lorem.words(3)}
 
   const templateSearch = {
-    title: faker.lorem.words(2),
+    title: faker.lorem.words(3),
     description: faker.lorem.words(3)
   }
 
   const templateCircDep = {
-    title: faker.lorem.words(2),
+    title: faker.lorem.words(3),
     description: faker.lorem.words(3)
   }
 
   const templateDependencies = {
-    title: faker.lorem.words(2),
+    title: faker.lorem.words(3),
     description: faker.lorem.words(3),
     questions: {
       selectQuestion: {
-        title: faker.lorem.words(2),
-        answer1: faker.lorem.words(2),
-        answer2: faker.lorem.words(2),
+        title: faker.lorem.words(3),
+        answer1: faker.lorem.words(3),
+        answer2: faker.lorem.words(3),
       },
       booleanQuestion: {
-        title: faker.lorem.words(2)
+        title: faker.lorem.words(3)
       },
       textQuestion: {
-        title: faker.lorem.words(2)
+        title: faker.lorem.words(3)
       }
     }
   }
 
   const proposalWorkflow = {
-    name: faker.random.words(2),
+    name: faker.random.words(3),
     description: faker.random.words(5),
   };
 
