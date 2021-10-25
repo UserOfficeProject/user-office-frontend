@@ -731,6 +731,7 @@ export type Mutation = {
   cloneGenericTemplate: GenericTemplateResponseWrap;
   cloneProposals: ProposalsResponseWrap;
   cloneSample: SampleResponseWrap;
+  cloneSampleEsi: SampleEsiResponseWrap;
   cloneTemplate: TemplateResponseWrap;
   confirmEquipmentAssignment: Scalars['Boolean'];
   createApiAccessToken: ApiAccessTokenResponseWrap;
@@ -998,8 +999,16 @@ export type MutationCloneProposalsArgs = {
 
 
 export type MutationCloneSampleArgs = {
+  isPostProposalSubmission?: Maybe<Scalars['Boolean']>;
   sampleId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationCloneSampleEsiArgs = {
+  esiId: Scalars['Int'];
+  newSampleTitle?: Maybe<Scalars['String']>;
+  sampleId: Scalars['Int'];
 };
 
 
@@ -5762,6 +5771,35 @@ export type UserWithReviewsQuery = (
   )> }
 );
 
+export type CloneSampleEsiMutationVariables = Exact<{
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+  newSampleTitle?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CloneSampleEsiMutation = (
+  { __typename?: 'Mutation' }
+  & { cloneSampleEsi: (
+    { __typename?: 'SampleEsiResponseWrap' }
+    & { esi: Maybe<(
+      { __typename?: 'SampleExperimentSafetyInput' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+        & QuestionaryFragment
+      ), sample: (
+        { __typename?: 'Sample' }
+        & SampleFragment
+      ) }
+      & SampleEsiFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
 export type CreateSampleEsiMutationVariables = Exact<{
   sampleId: Scalars['Int'];
   esiId: Scalars['Int'];
@@ -5869,6 +5907,7 @@ export type UpdateSampleEsiMutation = (
 export type CloneSampleMutationVariables = Exact<{
   sampleId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
+  isPostProposalSubmission?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -10232,6 +10271,32 @@ export const UserWithReviewsDocument = gql`
   }
 }
     `;
+export const CloneSampleEsiDocument = gql`
+    mutation cloneSampleEsi($esiId: Int!, $sampleId: Int!, $newSampleTitle: String) {
+  cloneSampleEsi(
+    esiId: $esiId
+    sampleId: $sampleId
+    newSampleTitle: $newSampleTitle
+  ) {
+    esi {
+      ...sampleEsi
+      questionary {
+        isCompleted
+        ...questionary
+      }
+      sample {
+        ...sample
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateSampleEsiDocument = gql`
     mutation createSampleEsi($sampleId: Int!, $esiId: Int!) {
   createSampleEsi(sampleId: $sampleId, esiId: $esiId) {
@@ -10306,8 +10371,12 @@ ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CloneSampleDocument = gql`
-    mutation cloneSample($sampleId: Int!, $title: String) {
-  cloneSample(sampleId: $sampleId, title: $title) {
+    mutation cloneSample($sampleId: Int!, $title: String, $isPostProposalSubmission: Boolean) {
+  cloneSample(
+    sampleId: $sampleId
+    title: $title
+    isPostProposalSubmission: $isPostProposalSubmission
+  ) {
     sample {
       ...sample
       questionary {
@@ -11944,6 +12013,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     userWithReviews(variables?: UserWithReviewsQueryVariables): Promise<UserWithReviewsQuery> {
       return withWrapper(() => client.request<UserWithReviewsQuery>(print(UserWithReviewsDocument), variables));
+    },
+    cloneSampleEsi(variables: CloneSampleEsiMutationVariables): Promise<CloneSampleEsiMutation> {
+      return withWrapper(() => client.request<CloneSampleEsiMutation>(print(CloneSampleEsiDocument), variables));
     },
     createSampleEsi(variables: CreateSampleEsiMutationVariables): Promise<CreateSampleEsiMutation> {
       return withWrapper(() => client.request<CreateSampleEsiMutation>(print(CreateSampleEsiDocument), variables));
