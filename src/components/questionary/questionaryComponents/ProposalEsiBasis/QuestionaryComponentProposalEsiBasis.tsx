@@ -144,6 +144,10 @@ function QuestionaryComponentProposalEsiBasis(
                   type: 'ESI_SAMPLE_DELETED',
                   sampleId: deletedSample.id,
                 });
+                dispatch({
+                  type: 'ESI_SAMPLE_ESI_DELETED',
+                  sampleId: deletedSample.id,
+                });
                 form.setFieldValue(answerId, newValue);
               }
             });
