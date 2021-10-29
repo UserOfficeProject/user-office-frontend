@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
-import { QuestionaryStep, TemplateCategoryId } from 'generated/sdk';
+import { QuestionaryStep, TemplateGroupId } from 'generated/sdk';
 import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
 import { RegistrationWithQuestionary } from 'models/questionary/visit/VisitRegistrationWithQuestionary';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -54,15 +54,13 @@ function CreateVisit({
 }: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const [
-    blankRegistration,
-    setBlankRegistration,
-  ] = useState<RegistrationWithQuestionary>();
+  const [blankRegistration, setBlankRegistration] =
+    useState<RegistrationWithQuestionary>();
 
   useEffect(() => {
     api()
       .getActiveTemplateId({
-        templateCategoryId: TemplateCategoryId.VISIT,
+        templateGroupId: TemplateGroupId.VISIT_REGISTRATION,
       })
       .then(({ activeTemplateId }) => {
         if (activeTemplateId) {

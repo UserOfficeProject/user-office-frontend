@@ -1,10 +1,10 @@
+import MaterialTable, { Column } from '@material-table/core';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DoneAll from '@material-ui/icons/DoneAll';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import RateReviewIcon from '@material-ui/icons/RateReview';
 import Visibility from '@material-ui/icons/Visibility';
-import MaterialTable, { Column } from 'material-table';
 import React, { useState, useContext, useEffect } from 'react';
 import { useQueryParams, NumberParam } from 'use-query-params';
 
@@ -94,17 +94,13 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     urlQueryParams.instrument || 0
   );
 
-  const {
-    loading,
-    userData,
-    setUserData,
-    setUserWithReviewsFilter,
-  } = useUserWithReviewsData({
-    callId: selectedCallId,
-    instrumentId: selectedInstrumentId,
-    status: getFilterStatus(urlQueryParams.reviewStatus),
-    reviewer: getFilterReviewer(urlQueryParams.reviewer),
-  });
+  const { loading, userData, setUserData, setUserWithReviewsFilter } =
+    useUserWithReviewsData({
+      callId: selectedCallId,
+      instrumentId: selectedInstrumentId,
+      status: getFilterStatus(urlQueryParams.reviewStatus),
+      reviewer: getFilterReviewer(urlQueryParams.reviewer),
+    });
 
   const handleStatusFilterChange = (reviewStatus: ReviewStatus) => {
     setUrlQueryParams((queries) => ({ ...queries, reviewStatus }));
@@ -373,6 +369,9 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         options={{
           search: false,
           selection: true,
+          headerSelectionProps: {
+            inputProps: { 'aria-label': 'Select All Rows' },
+          },
           selectionProps: (rowData: UserWithReview) => ({
             inputProps: {
               'aria-label': `${rowData.title}-select`,

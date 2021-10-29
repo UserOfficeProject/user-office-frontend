@@ -14,6 +14,11 @@ context('Proposal tests', () => {
 
   before(() => {
     cy.resetDB();
+    cy.resetSchedulerDB();
+    cy.viewport(1920, 1080);
+    cy.login('officer');
+    cy.createTemplate('proposalEsi', 'default esi template');
+    cy.logout();
   });
 
   beforeEach(() => {
@@ -25,7 +30,11 @@ context('Proposal tests', () => {
 
     cy.contains('New Proposal').click();
 
-    cy.contains('Carl');
+    cy.get('[data-cy=principal-investigator] input').should(
+      'contain.value',
+      'Carl'
+    );
+
     cy.get('[data-cy=edit-proposer-button]').click();
 
     cy.finishedLoading();
@@ -60,6 +69,27 @@ context('Proposal tests', () => {
     cy.contains('submitted');
 
     cy.get('[title="View proposal"]').should('exist');
+  });
+
+  it('User officer should be able to save proposal column selection', () => {
+    cy.login('officer');
+
+    cy.contains('Proposals').click();
+
+    cy.get("[title='Show Columns']").first().click();
+    cy.get('.MuiPopover-paper').contains('Call').click();
+    cy.get('.MuiPopover-paper').contains('SEP').click();
+
+    cy.get('body').click();
+
+    cy.contains('Calls').click();
+
+    cy.finishedLoading();
+
+    cy.contains('Proposals').click();
+
+    cy.contains('Call');
+    cy.contains('SEP');
   });
 
   it('Should be able to see proposal allocation time unit on the proposal', () => {
@@ -101,8 +131,10 @@ context('Proposal tests', () => {
     cy.get('[role="presentation"]').contains(proposalWorkflow.name).click();
 
     cy.get('[data-cy="allocation-time-unit"]').click();
-
     cy.contains('Hour').click();
+
+    cy.get('[data-cy="call-esi-template"]').click();
+    cy.get('[role="listbox"] [tabindex="0"]').click();
 
     cy.get('[data-cy="next-step"]').click();
     cy.get('[data-cy="next-step"]').click();
@@ -121,6 +153,7 @@ context('Proposal tests', () => {
     const startDate = faker.date.past().toISOString().slice(0, 10);
     const endDate = faker.date.future().toISOString().slice(0, 10);
     const template = 'default template';
+    const esiTemplate = 'default esi template';
 
     cy.login('officer');
 
@@ -131,6 +164,7 @@ context('Proposal tests', () => {
       startDate,
       endDate,
       template,
+      esiTemplate,
       surveyComment,
       cycleComment,
       workflow: proposalWorkflow.name,

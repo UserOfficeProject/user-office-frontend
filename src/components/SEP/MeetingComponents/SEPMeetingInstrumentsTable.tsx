@@ -1,6 +1,6 @@
+import MaterialTable, { Options } from '@material-table/core';
 import { Typography } from '@material-ui/core';
 import DoneAll from '@material-ui/icons/DoneAll';
-import MaterialTable, { Options } from 'material-table';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,7 +16,7 @@ import SEPInstrumentProposalsTable from './SEPInstrumentProposalsTable';
 
 type SEPMeetingInstrumentsTableProps = {
   sepId: number;
-  Toolbar: (data: Options) => JSX.Element;
+  Toolbar: (data: Options<JSX.Element>) => JSX.Element;
   selectedCallId: number;
   confirm: WithConfirmType;
 };
@@ -27,11 +27,8 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
   Toolbar,
   confirm,
 }) => {
-  const {
-    loadingInstruments,
-    instrumentsData,
-    setInstrumentsData,
-  } = useInstrumentsBySEPData(sepId, selectedCallId);
+  const { loadingInstruments, instrumentsData, setInstrumentsData } =
+    useInstrumentsBySEPData(sepId, selectedCallId);
   const { api } = useDataApiWithFeedback();
   const hasAccessRights = useCheckAccess([
     UserRole.USER_OFFICER,
@@ -56,14 +53,17 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
     },
   ];
 
-  const SEPInstrumentProposalsTableComponent = (
-    instrument: InstrumentWithAvailabilityTime
-  ) => (
-    <SEPInstrumentProposalsTable
-      sepId={sepId}
-      sepInstrument={instrument}
-      selectedCallId={selectedCallId}
-    />
+  const SEPInstrumentProposalsTableComponent = React.useCallback(
+    ({ rowData }) => {
+      return (
+        <SEPInstrumentProposalsTable
+          sepId={sepId}
+          sepInstrument={rowData}
+          selectedCallId={selectedCallId}
+        />
+      );
+    },
+    [sepId, selectedCallId]
   );
 
   const submitInstrument = async (
@@ -75,9 +75,10 @@ const SEPMeetingInstrumentsTable: React.FC<SEPMeetingInstrumentsTableProps> = ({
         sepId: sepId,
         callId: selectedCallId,
       });
-      const allProposalsOnInstrumentHaveRankings = response.sepProposalsByInstrument?.every(
-        ({ proposal }) => !!proposal.sepMeetingDecision?.submitted
-      );
+      const allProposalsOnInstrumentHaveRankings =
+        response.sepProposalsByInstrument?.every(
+          ({ proposal }) => !!proposal.sepMeetingDecision?.submitted
+        );
 
       if (allProposalsOnInstrumentHaveRankings) {
         const { submitInstrument } = await api(

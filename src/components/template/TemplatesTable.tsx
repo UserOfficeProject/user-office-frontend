@@ -1,3 +1,7 @@
+import MaterialTable, {
+  Column,
+  MaterialTableProps,
+} from '@material-table/core';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Archive from '@material-ui/icons/Archive';
@@ -5,13 +9,12 @@ import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
 import FileCopy from '@material-ui/icons/FileCopy';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
-import MaterialTable, { Column, MaterialTableProps } from 'material-table';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import InputDialog from 'components/common/InputDialog';
-import { GetTemplatesQuery, Template, TemplateCategoryId } from 'generated/sdk';
+import { GetTemplatesQuery, Template, TemplateGroupId } from 'generated/sdk';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { WithConfirmType } from 'utils/withConfirm';
@@ -25,7 +28,7 @@ export type TemplateRowDataType = Pick<
 
 export interface TemplatesTableProps {
   columns: Column<TemplateRowDataType>[];
-  templateCategory: TemplateCategoryId;
+  templateGroup: TemplateGroupId;
   dataProvider: () => Promise<Exclude<GetTemplatesQuery['templates'], null>>;
   isRowRemovable: (row: TemplateRowDataType) => boolean;
   confirm: WithConfirmType;
@@ -34,7 +37,7 @@ export interface TemplatesTableProps {
 export function TemplatesTable({
   dataProvider,
   columns,
-  templateCategory,
+  templateGroup,
   isRowRemovable,
   confirm,
   actions,
@@ -212,7 +215,7 @@ export function TemplatesTable({
             }
             setShow(false);
           }}
-          categoryId={templateCategory}
+          groupId={templateGroup}
         />
       </InputDialog>
       <MaterialTable
@@ -224,7 +227,9 @@ export function TemplatesTable({
         }
         columns={columns}
         isLoading={loadingTemplates}
-        data={templates}
+        data={templates.map((template) =>
+          Object.assign(template, { id: template.templateId })
+        )}
         actions={[
           {
             icon: EditIconComponent,

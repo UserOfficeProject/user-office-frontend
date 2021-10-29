@@ -1,7 +1,7 @@
 import { StylesProvider } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
-import { ProviderContext, SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from 'notistack';
 import React, { ErrorInfo, useContext } from 'react';
 import { CookiesProvider } from 'react-cookie';
 import {
@@ -87,6 +87,7 @@ const Routes: React.FC<RouteProps> = () => {
       <div className="App">
         <Switch>
           <Route path="/external-auth/:sessionId" component={ExternalAuth} />
+          <Route path="/external-auth/" component={ExternalAuth} />
           <PrivateRoute path="/" component={DashBoard} />
         </Switch>
       </div>
@@ -134,7 +135,7 @@ class App extends React.Component {
     }
   }
 
-  private notistackRef = React.createRef<ProviderContext>();
+  private notistackRef = React.createRef<SnackbarProvider>();
 
   onClickDismiss = (key: string | number | undefined) => () => {
     this.notistackRef.current?.closeSnackbar(key);

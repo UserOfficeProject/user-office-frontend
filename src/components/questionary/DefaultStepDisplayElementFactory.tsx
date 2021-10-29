@@ -5,7 +5,8 @@ import { WizardStep } from 'models/questionary/QuestionarySubmissionState';
 import QuestionaryStepView from './QuestionaryStepView';
 
 export class DefaultStepDisplayElementFactory
-  implements StepDisplayElementFactory {
+  implements StepDisplayElementFactory
+{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(private reviewStep: FC<any>) {}
 
@@ -21,6 +22,7 @@ export class DefaultStepDisplayElementFactory
       case 'VisitReview':
       case 'ShipmentReview':
       case 'ProposalReview':
+      case 'SampleEsiReview':
         return React.createElement(this.reviewStep);
 
       default:
