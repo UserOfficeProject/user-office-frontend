@@ -802,6 +802,8 @@ export type Mutation = {
   removeProposalsFromSep: SepResponseWrap;
   removeScientistFromInstrument: SuccessResponseWrap;
   removeUserForReview: ReviewResponseWrap;
+  reopenProposalBooking: ProposalBookingResponseWrap;
+  reopenScheduledEvent: ScheduledEventResponseWrap;
   reorderSepMeetingDecisionProposals: SepMeetingDecisionResponseWrap;
   resetPassword: BasicUserDetailsResponseWrap;
   resetPasswordEmail: SuccessResponseWrap;
@@ -1400,6 +1402,16 @@ export type MutationRemoveScientistFromInstrumentArgs = {
 export type MutationRemoveUserForReviewArgs = {
   reviewId: Scalars['Int'];
   sepId: Scalars['Int'];
+};
+
+
+export type MutationReopenProposalBookingArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationReopenScheduledEventArgs = {
+  id: Scalars['Int'];
 };
 
 
