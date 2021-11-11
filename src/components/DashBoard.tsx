@@ -159,8 +159,9 @@ const Dashboard: React.FC = () => {
   ]);
 
   const featureContext = useContext(FeatureContext);
-  const isSchedulerEnabled = featureContext.features.get(FeatureId.SCHEDULER)
-    ?.isEnabled;
+  const isSchedulerEnabled = featureContext.features.get(
+    FeatureId.SCHEDULER
+  )?.isEnabled;
 
   const { currentRole } = useContext(UserContext);
   const { calls } = useCallsData({ isActive: true });
@@ -309,7 +310,10 @@ const Dashboard: React.FC = () => {
           {isUserOfficer && (
             <Route path="/Questions" component={QuestionsPage} />
           )}
-          <Route path="/CreateEsi/:visitId" component={CreateProposalEsiPage} />
+          <Route
+            path="/CreateEsi/:scheduledEventId"
+            component={CreateProposalEsiPage}
+          />
           <Route path="/UpdateEsi/:esiId" component={UpdateProposalEsiPage} />
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}

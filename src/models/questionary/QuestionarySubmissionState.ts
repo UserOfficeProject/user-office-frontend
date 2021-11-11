@@ -9,6 +9,7 @@ import {
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
+import { SampleFragment } from './../../generated/sdk';
 import { GenericTemplateWithQuestionary } from './genericTemplate/GenericTemplateWithQuestionary';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from './proposal/ProposalWithQuestionary';
@@ -77,6 +78,11 @@ export type Event =
   | { type: 'ESI_LOADED'; esi: ProposalEsiWithQuestionary }
   | { type: 'ESI_MODIFIED'; esi: Partial<ProposalEsiWithQuestionary> }
   | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> }
+  | { type: 'ESI_SAMPLE_CREATED'; sample: SampleFragment }
+  | { type: 'ESI_SAMPLE_DELETED'; sampleId: number }
+  | { type: 'ESI_SAMPLE_ESI_CREATED'; sampleEsi: SampleEsiWithQuestionary }
+  | { type: 'ESI_SAMPLE_ESI_UPDATED'; sampleEsi: SampleEsiWithQuestionary }
+  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number }
   // sample esi
   | { type: 'SAMPLE_ESI_CREATED'; esi: SampleEsiWithQuestionary }
   | { type: 'SAMPLE_ESI_LOADED'; esi: SampleEsiWithQuestionary }
