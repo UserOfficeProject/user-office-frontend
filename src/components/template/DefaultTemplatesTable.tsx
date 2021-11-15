@@ -1,5 +1,5 @@
 import { Column } from '@material-table/core';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm from 'utils/withConfirm';
@@ -36,12 +36,15 @@ function DefaultTemplatesTable(props: DefaultTemplatesTableProps) {
     },
   ];
 
-  const defaultDataProvider = () =>
-    api()
-      .getTemplates({
-        filter: { group: templateGroup, isArchived },
-      })
-      .then(({ templates }) => templates ?? []);
+  const defaultDataProvider = useCallback(
+    () =>
+      api()
+        .getTemplates({
+          filter: { group: templateGroup, isArchived },
+        })
+        .then(({ templates }) => templates ?? []),
+    [api, isArchived, templateGroup]
+  );
 
   return (
     <TemplatesTable
