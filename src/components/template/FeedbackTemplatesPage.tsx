@@ -3,39 +3,28 @@ import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
 import { TemplateGroupId } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 
-import VisitsTemplatesTable from './VisitsTemplatesTable';
+import DefaultTemplatesTable from './DefaultTemplatesTable';
+import withMarkTemplateAsActiveAction from './withMarkTemplateAsActiveAction';
 
-export default function VisitTemplatesPage() {
-  const api = useDataApi();
+export default function FeedbackTemplatesPage() {
+  const templateGroup = TemplateGroupId.FEEDBACK;
+  const itemCountLabel = '# feedbacks';
+
+  const TableComponent = withMarkTemplateAsActiveAction(DefaultTemplatesTable);
 
   return (
     <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
-        <VisitsTemplatesTable
-          dataProvider={() =>
-            api()
-              .getTemplates({
-                filter: {
-                  isArchived: false,
-                  group: TemplateGroupId.FEEDBACK,
-                },
-              })
-              .then((data) => data.templates || [])
-          }
+        <TableComponent
+          templateGroup={templateGroup}
+          itemCountLabel={itemCountLabel}
+          isArchived={false}
         />
-        <VisitsTemplatesTable
-          dataProvider={() =>
-            api()
-              .getTemplates({
-                filter: {
-                  isArchived: true,
-                  group: TemplateGroupId.FEEDBACK,
-                },
-              })
-              .then((data) => data.templates || [])
-          }
+        <TableComponent
+          templateGroup={templateGroup}
+          itemCountLabel={itemCountLabel}
+          isArchived={true}
         />
       </SimpleTabs>
     </Container>

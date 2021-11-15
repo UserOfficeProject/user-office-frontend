@@ -49,11 +49,11 @@ import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflows
 import UnitTablePage from './settings/unitList/UnitTablePage';
 import ProposalEsiPage from './template/EsiPage';
 import FeedbackTemplatesPage from './template/FeedbackTemplatesPage';
-import GenericTemplates from './template/GenericTemplates';
-import ProposalTemplates from './template/ProposalTemplates';
+import GenericTemplatesPage from './template/GenericTemplatesPage';
+import ProposalTemplatesPage from './template/ProposalTemplatesPage';
 import QuestionsPage from './template/QuestionsPage';
 import SampleEsiPage from './template/SampleEsiPage';
-import SampleTemplatesPage from './template/SampleTemplates';
+import SampleTemplatesPage from './template/SampleTemplatesPage';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import VisitTemplatesPage from './template/VisitTemplatesPage';
@@ -256,12 +256,12 @@ const Dashboard: React.FC = () => {
             path="/QuestionaryEditor/:templateId"
             component={TemplateEditor}
           />
-          <Route path="/ProposalTemplates" component={ProposalTemplates} />
+          <Route path="/ProposalTemplates" component={ProposalTemplatesPage} />
           <Route
             path="/SampleDeclarationTemplates"
             component={SampleTemplatesPage}
           />
-          <Route path="/GenericTemplates" component={GenericTemplates} />
+          <Route path="/GenericTemplates" component={GenericTemplatesPage} />
           <Route
             path="/ShipmentDeclarationTemplates"
             component={ShipmentTemplatesPage}
