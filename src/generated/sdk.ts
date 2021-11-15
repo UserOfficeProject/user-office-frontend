@@ -3157,7 +3157,6 @@ export type TemplateCategory = {
 };
 
 export enum TemplateCategoryId {
-  FEEDBACK = 'FEEDBACK',
   GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
@@ -3172,7 +3171,6 @@ export type TemplateGroup = {
 };
 
 export enum TemplateGroupId {
-  FEEDBACK = 'FEEDBACK',
   GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL = 'PROPOSAL',
   PROPOSAL_ESI = 'PROPOSAL_ESI',
