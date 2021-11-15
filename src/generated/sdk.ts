@@ -834,7 +834,6 @@ export type Mutation = {
   updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateCall: CallResponseWrap;
   updateEquipment: EquipmentResponseWrap;
-  updateEquipmentOwner: Scalars['Boolean'];
   updateEsi: EsiResponseWrap;
   updateGenericTemplate: GenericTemplateResponseWrap;
   updateInstitution: InstitutionResponseWrap;
@@ -1542,11 +1541,6 @@ export type MutationUpdateCallArgs = {
 export type MutationUpdateEquipmentArgs = {
   id: Scalars['Int'];
   updateEquipmentInput: EquipmentInput;
-};
-
-
-export type MutationUpdateEquipmentOwnerArgs = {
-  updateEquipmentOwnerInput: UpdateEquipmentOwnerInput;
 };
 
 
@@ -3157,6 +3151,7 @@ export type TemplateCategory = {
 };
 
 export enum TemplateCategoryId {
+  FEEDBACK = 'FEEDBACK',
   GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
@@ -3171,6 +3166,7 @@ export type TemplateGroup = {
 };
 
 export enum TemplateGroupId {
+  FEEDBACK = 'FEEDBACK',
   GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL = 'PROPOSAL',
   PROPOSAL_ESI = 'PROPOSAL_ESI',
@@ -3286,11 +3282,6 @@ export type UpdateCallInput = {
   surveyComment: Scalars['String'];
   templateId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
-};
-
-export type UpdateEquipmentOwnerInput = {
-  equipmentId: Scalars['Int'];
-  userId: Scalars['Int'];
 };
 
 export type UpdateLostTimeInput = {
@@ -6631,6 +6622,7 @@ export type CloneTemplateMutation = (
     { __typename?: 'TemplateResponseWrap' }
     & { template: Maybe<(
       { __typename?: 'Template' }
+      & Pick<Template, 'questionaryCount'>
       & TemplateMetadataFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -6694,6 +6686,7 @@ export type CreateTemplateMutation = (
     { __typename?: 'TemplateResponseWrap' }
     & { template: Maybe<(
       { __typename?: 'Template' }
+      & Pick<Template, 'questionaryCount'>
       & TemplateMetadataFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -10928,6 +10921,7 @@ export const CloneTemplateDocument = gql`
   cloneTemplate(templateId: $templateId) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection
@@ -10972,6 +10966,7 @@ export const CreateTemplateDocument = gql`
   createTemplate(groupId: $groupId, name: $name, description: $description) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection
