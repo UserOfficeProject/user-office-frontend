@@ -48,7 +48,7 @@ function DefaultTemplatesTable(props: DefaultTemplatesTableProps) {
 
   return (
     <TemplatesTable
-      templateGroup={templateGroup}
+      {...props}
       columns={props.columns ?? defaultColumns}
       isRowRemovable={props.isRowRemovable ?? defaultIsRowRemovable}
       dataProvider={props.dataProvider ?? defaultDataProvider}

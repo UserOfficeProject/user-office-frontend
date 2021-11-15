@@ -235,6 +235,7 @@ const TemplatesTable = ({
           Object.assign(template, { id: template.templateId })
         )}
         actions={[
+          ...customActions,
           {
             icon: EditIconComponent,
             tooltip: 'Edit',
@@ -274,7 +275,6 @@ const TemplatesTable = ({
             },
           },
           (rowData) => getMaintenanceButton(rowData),
-          ...customActions,
         ]}
       />
       <ActionButtonContainer>
