@@ -531,7 +531,7 @@ export type Feedback = {
   createdAt: Scalars['DateTime'];
   creatorId: Scalars['Int'];
   id: Scalars['Int'];
-  questionary: Maybe<Questionary>;
+  questionary: Questionary;
   questionaryId: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   status: FeedbackStatus;
@@ -4648,9 +4648,76 @@ export type GetEventLogsQuery = (
   )>> }
 );
 
+export type CreateFeedbackMutationVariables = Exact<{
+  scheduledEventId: Scalars['Int'];
+}>;
+
+
+export type CreateFeedbackMutation = (
+  { __typename?: 'Mutation' }
+  & { createFeedback: (
+    { __typename?: 'FeedbackResponseWrap' }
+    & { feedback: Maybe<(
+      { __typename?: 'Feedback' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+        & QuestionaryFragment
+      ) }
+      & FeedbackFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
+);
+
 export type FeedbackFragment = (
   { __typename?: 'Feedback' }
   & Pick<Feedback, 'id' | 'scheduledEventId' | 'status' | 'questionaryId' | 'creatorId'>
+);
+
+export type GetFeedbackQueryVariables = Exact<{
+  feedbackId: Scalars['Int'];
+}>;
+
+
+export type GetFeedbackQuery = (
+  { __typename?: 'Query' }
+  & { feedback: Maybe<(
+    { __typename?: 'Feedback' }
+    & { questionary: (
+      { __typename?: 'Questionary' }
+      & Pick<Questionary, 'isCompleted'>
+      & QuestionaryFragment
+    ) }
+    & FeedbackFragment
+  )> }
+);
+
+export type UpdateFeedbackMutationVariables = Exact<{
+  feedbackId: Scalars['Int'];
+  status?: Maybe<FeedbackStatus>;
+}>;
+
+
+export type UpdateFeedbackMutation = (
+  { __typename?: 'Mutation' }
+  & { updateFeedback: (
+    { __typename?: 'FeedbackResponseWrap' }
+    & { feedback: Maybe<(
+      { __typename?: 'Feedback' }
+      & { questionary: (
+        { __typename?: 'Questionary' }
+        & Pick<Questionary, 'isCompleted'>
+        & QuestionaryFragment
+      ) }
+      & FeedbackFragment
+    )>, rejection: Maybe<(
+      { __typename?: 'Rejection' }
+      & RejectionFragment
+    )> }
+  ) }
 );
 
 export type CloneGenericTemplateMutationVariables = Exact<{
@@ -9510,6 +9577,54 @@ export const GetEventLogsDocument = gql`
   }
 }
     `;
+export const CreateFeedbackDocument = gql`
+    mutation createFeedback($scheduledEventId: Int!) {
+  createFeedback(scheduledEventId: $scheduledEventId) {
+    feedback {
+      ...feedback
+      questionary {
+        ...questionary
+        isCompleted
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
+export const GetFeedbackDocument = gql`
+    query getFeedback($feedbackId: Int!) {
+  feedback(feedbackId: $feedbackId) {
+    ...feedback
+    questionary {
+      ...questionary
+      isCompleted
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}`;
+export const UpdateFeedbackDocument = gql`
+    mutation updateFeedback($feedbackId: Int!, $status: FeedbackStatus) {
+  updateFeedback(feedbackId: $feedbackId, status: $status) {
+    feedback {
+      ...feedback
+      questionary {
+        ...questionary
+        isCompleted
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CloneGenericTemplateDocument = gql`
     mutation cloneGenericTemplate($genericTemplateId: Int!, $title: String) {
   cloneGenericTemplate(genericTemplateId: $genericTemplateId, title: $title) {
@@ -12067,6 +12182,15 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getEventLogs(variables: GetEventLogsQueryVariables): Promise<GetEventLogsQuery> {
       return withWrapper(() => client.request<GetEventLogsQuery>(print(GetEventLogsDocument), variables));
+    },
+    createFeedback(variables: CreateFeedbackMutationVariables): Promise<CreateFeedbackMutation> {
+      return withWrapper(() => client.request<CreateFeedbackMutation>(print(CreateFeedbackDocument), variables));
+    },
+    getFeedback(variables: GetFeedbackQueryVariables): Promise<GetFeedbackQuery> {
+      return withWrapper(() => client.request<GetFeedbackQuery>(print(GetFeedbackDocument), variables));
+    },
+    updateFeedback(variables: UpdateFeedbackMutationVariables): Promise<UpdateFeedbackMutation> {
+      return withWrapper(() => client.request<UpdateFeedbackMutation>(print(UpdateFeedbackDocument), variables));
     },
     cloneGenericTemplate(variables: CloneGenericTemplateMutationVariables): Promise<CloneGenericTemplateMutation> {
       return withWrapper(() => client.request<CloneGenericTemplateMutation>(print(CloneGenericTemplateDocument), variables));

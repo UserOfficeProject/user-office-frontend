@@ -23,6 +23,8 @@ import { useCallsData } from 'hooks/call/useCallsData';
 import AppToolbar from './AppToolbar/AppToolbar';
 import CallPage from './call/CallPage';
 import Can, { useCheckAccess } from './common/Can';
+import CreateFeedbackPage from './feedback/CreateFeedbackPage';
+import UpdateFeedbackPage from './feedback/UpdateFeedbackPage';
 import InstitutionPage from './institution/InstitutionPage';
 import InstrumentsPage from './instrument/InstrumentsPage';
 import MenuItems from './menu/MenuItems';
@@ -317,6 +319,14 @@ const Dashboard: React.FC = () => {
             component={CreateProposalEsiPage}
           />
           <Route path="/UpdateEsi/:esiId" component={UpdateProposalEsiPage} />
+          <Route
+            path="/CreateFeedback/:scheduledEventId"
+            component={CreateFeedbackPage}
+          />
+          <Route
+            path="/UpdateFeedback/:feedbackId"
+            component={UpdateFeedbackPage}
+          />
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
             yes={() => <Route component={ProposalPage} />}
