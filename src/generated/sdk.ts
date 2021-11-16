@@ -261,6 +261,7 @@ export enum DataType {
   BOOLEAN = 'BOOLEAN',
   DATE = 'DATE',
   EMBELLISHMENT = 'EMBELLISHMENT',
+  FEEDBACK_BASIS = 'FEEDBACK_BASIS',
   FILE_UPLOAD = 'FILE_UPLOAD',
   GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   GENERIC_TEMPLATE_BASIS = 'GENERIC_TEMPLATE_BASIS',
@@ -525,6 +526,41 @@ export enum FeatureId {
   SHIPPING = 'SHIPPING'
 }
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  createdAt: Scalars['DateTime'];
+  creatorId: Scalars['Int'];
+  id: Scalars['Int'];
+  questionary: Maybe<Questionary>;
+  questionaryId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
+  status: FeedbackStatus;
+  submittedAt: Scalars['DateTime'];
+};
+
+export type FeedbackBasisConfig = {
+  __typename?: 'FeedbackBasisConfig';
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
+};
+
+export type FeedbackResponseWrap = {
+  __typename?: 'FeedbackResponseWrap';
+  feedback: Maybe<Feedback>;
+  rejection: Maybe<Rejection>;
+};
+
+export enum FeedbackStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED'
+}
+
+export type FeedbacksFilter = {
+  creatorId?: Maybe<Scalars['Int']>;
+  scheduledEventId?: Maybe<Scalars['Int']>;
+};
+
 export type FieldCondition = {
   __typename?: 'FieldCondition';
   condition: EvaluatorOperator;
@@ -536,7 +572,7 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | GenericTemplateBasisConfig | IntervalConfig | NumberInputConfig | ProposalBasisConfig | ProposalEsiBasisConfig | RichTextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SelectionFromOptionsConfig | ShipmentBasisConfig | SubTemplateConfig | TextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FeedbackBasisConfig | FileUploadConfig | GenericTemplateBasisConfig | IntervalConfig | NumberInputConfig | ProposalBasisConfig | ProposalEsiBasisConfig | RichTextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SelectionFromOptionsConfig | ShipmentBasisConfig | SubTemplateConfig | TextInputConfig | VisitBasisConfig;
 
 export type FieldDependency = {
   __typename?: 'FieldDependency';
@@ -750,6 +786,7 @@ export type Mutation = {
   createCall: CallResponseWrap;
   createEquipment: EquipmentResponseWrap;
   createEsi: EsiResponseWrap;
+  createFeedback: FeedbackResponseWrap;
   createGenericTemplate: GenericTemplateResponseWrap;
   createInstitution: InstitutionResponseWrap;
   createInstrument: InstrumentResponseWrap;
@@ -774,6 +811,7 @@ export type Mutation = {
   deleteApiAccessToken: SuccessResponseWrap;
   deleteCall: CallResponseWrap;
   deleteEquipmentAssignment: Scalars['Boolean'];
+  deleteFeedback: FeedbackResponseWrap;
   deleteGenericTemplate: GenericTemplateResponseWrap;
   deleteInstitution: InstitutionResponseWrap;
   deleteInstrument: InstrumentResponseWrap;
@@ -836,6 +874,7 @@ export type Mutation = {
   updateEquipment: EquipmentResponseWrap;
   updateEquipmentOwner: Scalars['Boolean'];
   updateEsi: EsiResponseWrap;
+  updateFeedback: FeedbackResponseWrap;
   updateGenericTemplate: GenericTemplateResponseWrap;
   updateInstitution: InstitutionResponseWrap;
   updateInstrument: InstrumentResponseWrap;
@@ -1056,6 +1095,11 @@ export type MutationCreateEsiArgs = {
 };
 
 
+export type MutationCreateFeedbackArgs = {
+  scheduledEventId: Scalars['Int'];
+};
+
+
 export type MutationCreateGenericTemplateArgs = {
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
@@ -1221,6 +1265,11 @@ export type MutationDeleteCallArgs = {
 
 export type MutationDeleteEquipmentAssignmentArgs = {
   deleteEquipmentAssignmentInput: DeleteEquipmentAssignmentInput;
+};
+
+
+export type MutationDeleteFeedbackArgs = {
+  feedbackId: Scalars['Int'];
 };
 
 
@@ -1553,6 +1602,14 @@ export type MutationUpdateEquipmentOwnerArgs = {
 export type MutationUpdateEsiArgs = {
   esiId: Scalars['Int'];
   isSubmitted?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateFeedbackArgs = {
+  feedbackId: Scalars['Int'];
+  status?: Maybe<FeedbackStatus>;
+  team?: Maybe<Array<Scalars['Int']>>;
+  teamLeadUserId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -2153,6 +2210,8 @@ export type Query = {
   eventLogs: Maybe<Array<EventLog>>;
   factoryVersion: Scalars['String'];
   features: Array<Feature>;
+  feedback: Maybe<Feedback>;
+  feedbacks: Array<Feedback>;
   fileMetadata: Maybe<Array<FileMetadata>>;
   genericTemplate: Maybe<GenericTemplate>;
   genericTemplates: Maybe<Array<GenericTemplate>>;
@@ -2304,6 +2363,16 @@ export type QueryEsiArgs = {
 export type QueryEventLogsArgs = {
   changedObjectId: Scalars['String'];
   eventType: Scalars['String'];
+};
+
+
+export type QueryFeedbackArgs = {
+  feedbackId: Scalars['Int'];
+};
+
+
+export type QueryFeedbacksArgs = {
+  filter?: Maybe<FeedbacksFilter>;
 };
 
 
@@ -2940,8 +3009,10 @@ export type ScheduledEventCore = {
   bookingType: ScheduledEventBookingType;
   endsAt: Scalars['TzLessDateTime'];
   esi: Maybe<ExperimentSafetyInput>;
+  feedback: Maybe<Feedback>;
   id: Scalars['Int'];
   startsAt: Scalars['TzLessDateTime'];
+  status: ProposalBookingStatusCore;
   visit: Maybe<Visit>;
 };
 
@@ -4577,6 +4648,11 @@ export type GetEventLogsQuery = (
   )>> }
 );
 
+export type FeedbackFragment = (
+  { __typename?: 'Feedback' }
+  & Pick<Feedback, 'id' | 'scheduledEventId' | 'status' | 'questionaryId' | 'creatorId'>
+);
+
 export type CloneGenericTemplateMutationVariables = Exact<{
   genericTemplateId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
@@ -5387,7 +5463,7 @@ export type GetUserProposalBookingsWithEventsQuery = (
         { __typename?: 'ProposalBookingCore' }
         & { scheduledEvents: Array<(
           { __typename?: 'ScheduledEventCore' }
-          & Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
+          & Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType' | 'status'>
           & { visit: Maybe<(
             { __typename?: 'Visit' }
             & { teamLead: (
@@ -5408,6 +5484,9 @@ export type GetUserProposalBookingsWithEventsQuery = (
           )>, esi: Maybe<(
             { __typename?: 'ExperimentSafetyInput' }
             & EsiFragment
+          )>, feedback: Maybe<(
+            { __typename?: 'Feedback' }
+            & FeedbackFragment
           )> }
         )> }
       )>, visits: Maybe<Array<(
@@ -5478,6 +5557,9 @@ export type AnswerFragment = (
   ) | (
     { __typename?: 'EmbellishmentConfig' }
     & FieldConfigEmbellishmentConfigFragment
+  ) | (
+    { __typename?: 'FeedbackBasisConfig' }
+    & FieldConfigFeedbackBasisConfigFragment
   ) | (
     { __typename?: 'FileUploadConfig' }
     & FieldConfigFileUploadConfigFragment
@@ -6820,6 +6902,11 @@ type FieldConfigEmbellishmentConfigFragment = (
   & Pick<EmbellishmentConfig, 'html' | 'plain' | 'omitFromPdf'>
 );
 
+type FieldConfigFeedbackBasisConfigFragment = (
+  { __typename?: 'FeedbackBasisConfig' }
+  & Pick<FeedbackBasisConfig, 'small_label' | 'required' | 'tooltip'>
+);
+
 type FieldConfigFileUploadConfigFragment = (
   { __typename?: 'FileUploadConfig' }
   & Pick<FileUploadConfig, 'file_type' | 'max_files' | 'small_label' | 'required' | 'tooltip'>
@@ -6895,7 +6982,7 @@ type FieldConfigVisitBasisConfigFragment = (
   & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
 );
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigGenericTemplateBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFeedbackBasisConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigGenericTemplateBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
 
 export type QuestionFragment = (
   { __typename?: 'Question' }
@@ -6909,6 +6996,9 @@ export type QuestionFragment = (
   ) | (
     { __typename?: 'EmbellishmentConfig' }
     & FieldConfigEmbellishmentConfigFragment
+  ) | (
+    { __typename?: 'FeedbackBasisConfig' }
+    & FieldConfigFeedbackBasisConfigFragment
   ) | (
     { __typename?: 'FileUploadConfig' }
     & FieldConfigFileUploadConfigFragment
@@ -6972,6 +7062,9 @@ export type QuestionTemplateRelationFragment = (
   ) | (
     { __typename?: 'EmbellishmentConfig' }
     & FieldConfigEmbellishmentConfigFragment
+  ) | (
+    { __typename?: 'FeedbackBasisConfig' }
+    & FieldConfigFeedbackBasisConfigFragment
   ) | (
     { __typename?: 'FileUploadConfig' }
     & FieldConfigFileUploadConfigFragment
@@ -7121,6 +7214,9 @@ export type GetQuestionsQuery = (
     ) | (
       { __typename?: 'EmbellishmentConfig' }
       & FieldConfigEmbellishmentConfigFragment
+    ) | (
+      { __typename?: 'FeedbackBasisConfig' }
+      & FieldConfigFeedbackBasisConfigFragment
     ) | (
       { __typename?: 'FileUploadConfig' }
       & FieldConfigFileUploadConfigFragment
@@ -8172,6 +8268,15 @@ export const EsiFragmentDoc = gql`
   created
 }
     `;
+export const FeedbackFragmentDoc = gql`
+    fragment feedback on Feedback {
+  id
+  scheduledEventId
+  status
+  questionaryId
+  creatorId
+}
+    `;
 export const GenericTemplateFragmentDoc = gql`
     fragment genericTemplate on GenericTemplate {
   id
@@ -8363,6 +8468,11 @@ export const FieldConfigFragmentDoc = gql`
   ... on GenericTemplateBasisConfig {
     titlePlaceholder
     questionLabel
+  }
+  ... on FeedbackBasisConfig {
+    small_label
+    required
+    tooltip
   }
 }
     `;
@@ -10078,6 +10188,7 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
           startsAt
           endsAt
           bookingType
+          status
           visit {
             ...visit
             teamLead {
@@ -10096,6 +10207,9 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
           esi {
             ...esi
           }
+          feedback {
+            ...feedback
+          }
         }
       }
       visits {
@@ -10112,7 +10226,8 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
 ${VisitFragmentDoc}
 ${ShipmentFragmentDoc}
 ${VisitRegistrationFragmentDoc}
-${EsiFragmentDoc}`;
+${EsiFragmentDoc}
+${FeedbackFragmentDoc}`;
 export const AnswerTopicDocument = gql`
     mutation answerTopic($questionaryId: Int!, $topicId: Int!, $answers: [AnswerInput!]!, $isPartialSave: Boolean) {
   answerTopic(
