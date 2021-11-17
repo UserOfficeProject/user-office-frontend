@@ -10,7 +10,7 @@ import { TemplateGroupId, TemplateMetadataFragment } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 
 const CreateTemplate = (props: {
-  onComplete: (template: TemplateMetadataFragment | null | undefined) => void;
+  onComplete: (template: TemplateMetadataFragment) => void;
   groupId: TemplateGroupId;
 }) => {
   const { onComplete, groupId } = props;
@@ -33,12 +33,13 @@ const CreateTemplate = (props: {
             createTemplate: { template, rejection },
           } = result;
 
-          if (rejection) {
-            enqueueSnackbar(rejection.reason, {
+          if (!template) {
+            enqueueSnackbar(rejection?.reason ?? 'Unknown error', {
               variant: 'error',
             });
+          } else {
+            onComplete(template);
           }
-          onComplete(template);
         }}
         validationSchema={createTemplateValidationSchema}
       >
