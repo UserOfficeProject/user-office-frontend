@@ -535,7 +535,7 @@ export type Feedback = {
   questionaryId: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   status: FeedbackStatus;
-  submittedAt: Scalars['DateTime'];
+  submittedAt: Maybe<Scalars['DateTime']>;
 };
 
 export type FeedbackBasisConfig = {
@@ -1608,8 +1608,6 @@ export type MutationUpdateEsiArgs = {
 export type MutationUpdateFeedbackArgs = {
   feedbackId: Scalars['Int'];
   status?: Maybe<FeedbackStatus>;
-  team?: Maybe<Array<Scalars['Int']>>;
-  teamLeadUserId?: Maybe<Scalars['Int']>;
 };
 
 
