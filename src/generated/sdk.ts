@@ -2027,6 +2027,7 @@ export type ProposalTemplate = {
   group: TemplateGroup;
   groupId: TemplateGroupId;
   isArchived: Scalars['Boolean'];
+  json: Scalars['String'];
   name: Scalars['String'];
   questionaryCount: Scalars['Int'];
   steps: Array<TemplateStep>;
@@ -3144,6 +3145,7 @@ export type Template = {
   group: TemplateGroup;
   groupId: TemplateGroupId;
   isArchived: Scalars['Boolean'];
+  json: Scalars['String'];
   name: Scalars['String'];
   questionaryCount: Scalars['Int'];
   steps: Array<TemplateStep>;
@@ -7198,6 +7200,19 @@ export type GetTemplateCategoriesQuery = (
   )>> }
 );
 
+export type GetTemplateExportQueryVariables = Exact<{
+  templateId: Scalars['Int'];
+}>;
+
+
+export type GetTemplateExportQuery = (
+  { __typename?: 'Query' }
+  & { template: Maybe<(
+    { __typename?: 'Template' }
+    & Pick<Template, 'json'>
+  )> }
+);
+
 export type GetTemplatesQueryVariables = Exact<{
   filter?: Maybe<TemplatesFilter>;
 }>;
@@ -11102,6 +11117,13 @@ export const GetTemplateCategoriesDocument = gql`
   }
 }
     `;
+export const GetTemplateExportDocument = gql`
+    query getTemplateExport($templateId: Int!) {
+  template(templateId: $templateId) {
+    json
+  }
+}
+    `;
 export const GetTemplatesDocument = gql`
     query getTemplates($filter: TemplatesFilter) {
   templates(filter: $filter) {
@@ -12247,6 +12269,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getTemplateCategories(variables?: GetTemplateCategoriesQueryVariables): Promise<GetTemplateCategoriesQuery> {
       return withWrapper(() => client.request<GetTemplateCategoriesQuery>(print(GetTemplateCategoriesDocument), variables));
+    },
+    getTemplateExport(variables: GetTemplateExportQueryVariables): Promise<GetTemplateExportQuery> {
+      return withWrapper(() => client.request<GetTemplateExportQuery>(print(GetTemplateExportDocument), variables));
     },
     getTemplates(variables?: GetTemplatesQueryVariables): Promise<GetTemplatesQuery> {
       return withWrapper(() => client.request<GetTemplatesQuery>(print(GetTemplatesDocument), variables));
