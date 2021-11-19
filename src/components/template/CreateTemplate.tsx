@@ -16,6 +16,7 @@ const CreateTemplate = (props: {
   const { onComplete, groupId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const { api } = useDataApiWithFeedback();
+  const { enqueueSnackbar } = useSnackbar();
 
   return (
     <>
@@ -32,7 +33,6 @@ const CreateTemplate = (props: {
           const {
             createTemplate: { template, rejection },
           } = result;
-
           if (!template) {
             enqueueSnackbar(rejection?.reason ?? 'Unknown error', {
               variant: 'error',
