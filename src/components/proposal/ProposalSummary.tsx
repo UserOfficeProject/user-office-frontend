@@ -79,6 +79,15 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
         return;
       }
       const { call } = await api().getCall({ id: proposal.callId });
+      // proposal.call = {
+      //   ...call,
+      //   isActive: true,
+      //   referenceNumberFormat: '1234',
+      // };
+      //const referenceNumberFormat = call?.referenceNumberFormat;
+      // if (proposal.call) {
+      //   proposal.call?.referenceNumberFormat = referenceNumberFormat;
+      // }
       const workflowId = call?.proposalWorkflowId;
       if (workflowId) {
         const connections = (
