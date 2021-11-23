@@ -799,6 +799,7 @@ export type Mutation = {
   finalizeProposalBooking: ProposalBookingResponseWrap;
   finalizeScheduledEvent: ScheduledEventResponseWrap;
   getTokenForUser: TokenResponseWrap;
+  importProposal: ProposalResponseWrap;
   login: TokenResponseWrap;
   logout: LogoutTokenWrap;
   moveProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
@@ -1349,6 +1350,17 @@ export type MutationFinalizeScheduledEventArgs = {
 
 export type MutationGetTokenForUserArgs = {
   userId: Scalars['Int'];
+};
+
+
+export type MutationImportProposalArgs = {
+  abstract?: Maybe<Scalars['String']>;
+  callId: Scalars['Int'];
+  proposerId?: Maybe<Scalars['Int']>;
+  referenceNumber: Scalars['Int'];
+  submitterId: Scalars['Int'];
+  title?: Maybe<Scalars['String']>;
+  users?: Maybe<Array<Scalars['Int']>>;
 };
 
 
@@ -6645,6 +6657,7 @@ export type CloneTemplateMutation = (
     { __typename?: 'TemplateResponseWrap' }
     & { template: Maybe<(
       { __typename?: 'Template' }
+      & Pick<Template, 'questionaryCount'>
       & TemplateMetadataFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -6708,6 +6721,7 @@ export type CreateTemplateMutation = (
     { __typename?: 'TemplateResponseWrap' }
     & { template: Maybe<(
       { __typename?: 'Template' }
+      & Pick<Template, 'questionaryCount'>
       & TemplateMetadataFragment
     )>, rejection: Maybe<(
       { __typename?: 'Rejection' }
@@ -10945,6 +10959,7 @@ export const CloneTemplateDocument = gql`
   cloneTemplate(templateId: $templateId) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection
@@ -10989,6 +11004,7 @@ export const CreateTemplateDocument = gql`
   createTemplate(groupId: $groupId, name: $name, description: $description) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection

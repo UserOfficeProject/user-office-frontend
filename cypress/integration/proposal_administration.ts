@@ -240,7 +240,7 @@ context('Proposal administration tests', () => {
       officerProposalsTableAsTextBeforeSort = element.text();
     });
 
-    cy.contains('Title').dblclick();
+    cy.contains('Title').click();
 
     cy.get('[data-cy="officer-proposals-table"] table').then((element) => {
       officerProposalsTableAsTextAfterSort = element.text();
@@ -254,6 +254,8 @@ context('Proposal administration tests', () => {
       expect(element.text()).to.be.equal(officerProposalsTableAsTextAfterSort);
       expect(element.text()).not.equal(officerProposalsTableAsTextBeforeSort);
     });
+
+    cy.contains('Title').click();
 
     cy.get(
       '.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionDesc'
@@ -318,7 +320,7 @@ context('Proposal administration tests', () => {
       option1: 'One',
       option2: 'Two',
       option3: 'Three',
-      isMultipleSelect: true
+      isMultipleSelect: true,
     });
     cy.contains(multipleChoiceQuestion)
       .closest('[data-cy=question-container]')
@@ -618,7 +620,7 @@ context('Proposal administration tests', () => {
 
     cy.finishedLoading();
 
-    cy.get('table tbody tr').eq(0).contains(proposalFixedName);
+    cy.get('table tbody tr').eq(1).contains(proposalFixedName);
     cy.contains('Title').dblclick();
     cy.get('table tbody tr').eq(2).contains(proposalFixedName);
 
