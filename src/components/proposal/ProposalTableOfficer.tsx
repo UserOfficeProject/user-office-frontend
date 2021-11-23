@@ -90,12 +90,18 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
-  const { loading, setProposalsData, proposalsData } =
-    useProposalsCoreData(proposalFilter);
+
+  const [query, setQuery] = useState<{ offset: number; first: number }>({
+    first: 20,
+    offset: 0,
+  });
+  const currentPage = query.offset / query.first;
+  const { loading, setProposalsData, proposalsData, totalCount } =
+    useProposalsCoreData(proposalFilter, query.first, query.offset);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
-  }, [proposalsData]);
+  }, [proposalsData, query]);
 
   useEffect(() => {
     if (urlQueryParams.selection.length > 0) {
@@ -629,6 +635,14 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           </Typography>
         }
         columns={columns}
+        totalCount={totalCount}
+        page={currentPage}
+        onPageChange={(page) =>
+          setQuery({ ...query, offset: page * (query.first as number) })
+        }
+        onRowsPerPageChange={(rowsPerPage) =>
+          setQuery({ ...query, first: rowsPerPage })
+        }
         data={preselectedProposalsData.map((proposal) =>
           Object.assign(proposal, { id: proposal.primaryKey })
         )}
@@ -648,6 +662,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           }));
         }}
         options={{
+          pageSize: 20,
           search: true,
           searchText: urlQueryParams.search || undefined,
           selection: true,
