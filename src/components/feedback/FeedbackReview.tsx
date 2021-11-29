@@ -37,7 +37,7 @@ function FeedbackReview({ confirm }: FeedbackReviewProps) {
   ];
 
   return (
-    <div>
+    <>
       <QuestionaryDetails
         questionaryId={state.feedback.questionaryId!}
         additionalDetails={additionalDetails}
@@ -79,7 +79,7 @@ function FeedbackReview({ confirm }: FeedbackReviewProps) {
           {isSubmitted ? '✔ Submitted' : 'Submit'}
         </NavigButton>
       </NavigationFragment>
-    </div>
+    </>
   );
 }
 
