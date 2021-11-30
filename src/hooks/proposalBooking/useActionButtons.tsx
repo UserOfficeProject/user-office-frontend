@@ -15,7 +15,7 @@ import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
 import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
-import { ProposalEndStatus } from 'generated/sdk';
+import { ProposalEndStatus, ShipmentStatus } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
@@ -233,7 +233,11 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     let buttonState: ActionButtonState;
 
     if (event.visit !== null) {
-      if (event.visit.shipments.length > 0) {
+      const isAtLeastOneShipmentSubmitted = event.visit.shipments.some(
+        (shipment) => shipment.status === ShipmentStatus.SUBMITTED
+      );
+
+      if (isAtLeastOneShipmentSubmitted) {
         buttonState = 'completed';
       } else {
         buttonState = 'neutral';
