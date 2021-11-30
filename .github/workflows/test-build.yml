@@ -20,6 +20,8 @@ jobs:
       - name: Resolve required repositories
         id: resolve_rep
         run: |
+          echo $GITHUB_WORKSPACE
+
           # this assumes the result is an array, and .name property is used
           check_feature() {
             # first param is the branch, everything after is endpoint for curl
@@ -115,6 +117,7 @@ jobs:
 
       - name: Download required repositories
         run: |
+          echo $GITHUB_WORKSPACE
           cd "$GITHUB_WORKSPACE/.."
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.BE_TAG }}" https://github.com/UserOfficeProject/user-office-backend.git
           git clone --depth 1 --branch "${{ needs.resolve_dep.outputs.SCHEDULER_BE_TAG }}" https://github.com/UserOfficeProject/user-office-scheduler-backend.git
@@ -122,6 +125,7 @@ jobs:
 
       - name: Setup base docker-compose
         run: |
+          echo $GITHUB_WORKSPACE
           cd "$GITHUB_WORKSPACE/.."
           cat > docker-compose.all.yml << EOF
           version: "3.1"
@@ -137,6 +141,7 @@ jobs:
 
       - name: Run docker-compose, generate and compare SDK
         run: |
+          echo $GITHUB_WORKSPACE
           cd "$GITHUB_WORKSPACE/.."
 
           REPO_DIR_NAME=$(basename $GITHUB_WORKSPACE)
