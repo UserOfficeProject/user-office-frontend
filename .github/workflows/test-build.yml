@@ -158,6 +158,12 @@ jobs:
             -f user-office-backend/docker-compose.e2e.yml \
             -f user-office-scheduler-backend/docker-compose.e2e.yml \
             -f user-office-gateway/docker-compose.e2e.yml \
+            config
+
+          docker-compose -f docker-compose.all.yml \
+            -f user-office-backend/docker-compose.e2e.yml \
+            -f user-office-scheduler-backend/docker-compose.e2e.yml \
+            -f user-office-gateway/docker-compose.e2e.yml \
             up -d
 
           export SCHEMA_URL=http://localhost:80/graphql
@@ -353,6 +359,14 @@ jobs:
           export BUILD_TAG=${{ github.sha }}
 
           export CYPRES_SPEC_PATTERN=${{ matrix.pattern }}
+
+          docker-compose -f docker-compose.all.yml \
+            -f user-office-backend/docker-compose.e2e.yml \
+            -f user-office-factory/docker-compose.e2e.yml \
+            -f user-office-scheduler-backend/docker-compose.e2e.yml \
+            -f user-office-gateway/docker-compose.e2e.yml \
+            -f "$REPO_DIR_NAME/docker-compose.e2e.yml" \
+            config
 
           docker-compose -f docker-compose.all.yml \
             -f user-office-backend/docker-compose.e2e.yml \
