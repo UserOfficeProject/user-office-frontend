@@ -20,8 +20,8 @@ import {
   FeedbackStatus,
   ProposalBookingStatusCore,
   ProposalEndStatus,
+  ShipmentStatus,
 } from 'generated/sdk';
-import { ProposalEndStatus, ShipmentStatus } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
