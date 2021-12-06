@@ -71,7 +71,8 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
         rowsMax={config.multiline ? 16 : undefined}
         maxLen={config.max || undefined}
         margin="dense"
-        data-cy={`${naturalKey}`}
+        data-cy={id}
+        data-natural-key={naturalKey}
       />
     </div>
   );

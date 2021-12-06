@@ -90,7 +90,7 @@ declare global {
       createTextQuestion: (
         title: string,
         options?: {
-          id?: string;
+          key?: string;
           isRequired?: boolean;
           isMultipleLines?: boolean;
           maxCharacters?: number;
@@ -154,7 +154,7 @@ declare global {
        */
       createNumberInputQuestion: (
         title: string,
-        options?: { id?: string; isRequired?: boolean; units?: string[] }
+        options?: { key?: string; isRequired?: boolean; units?: string[] }
       ) => void;
 
       /**

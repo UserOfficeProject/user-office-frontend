@@ -48,10 +48,10 @@ context('Shipments tests', () => {
   });
 
   it('Should be able to create and use shipments template', () => {
-    const WIDTH_ID = 'parcel_width';
-    const HEIGHT_ID = 'parcel_height';
-    const LENGTH_ID = 'parcel_length';
-    const WEIGHT_ID = 'parcel_weight';
+    const WIDTH_KEY = 'parcel_width';
+    const HEIGHT_KEY = 'parcel_height';
+    const LENGTH_KEY = 'parcel_length';
+    const WEIGHT_KEY = 'parcel_weight';
 
     cy.login('officer');
     cy.visit('/');
@@ -68,10 +68,10 @@ context('Shipments tests', () => {
 
     cy.get('[data-cy=submit]').click();
 
-    cy.createNumberInputQuestion('width', { id: WIDTH_ID, isRequired: true });
-    cy.createNumberInputQuestion('height', { id: HEIGHT_ID, isRequired: true });
-    cy.createNumberInputQuestion('length', { id: LENGTH_ID, isRequired: true });
-    cy.createNumberInputQuestion('weight', { id: WEIGHT_ID, isRequired: true });
+    cy.createNumberInputQuestion('width', { key: WIDTH_KEY });
+    cy.createNumberInputQuestion('height', { key: HEIGHT_KEY });
+    cy.createNumberInputQuestion('length', { key: LENGTH_KEY });
+    cy.createNumberInputQuestion('weight', { key: WEIGHT_KEY });
 
     cy.contains('New shipment');
 
@@ -102,10 +102,10 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
-    cy.get(`[data-cy=${WIDTH_ID}]`).clear().type('1').click();
-    cy.get(`[data-cy=${HEIGHT_ID}]`).clear().type('1').click();
-    cy.get(`[data-cy=${LENGTH_ID}]`).clear().type('1').click();
-    cy.get(`[data-cy=${WEIGHT_ID}]`).clear().type('1').click();
+    cy.get(`[data-natural-key=${WIDTH_KEY}]`).clear().type('1').click();
+    cy.get(`[data-natural-key=${HEIGHT_KEY}]`).clear().type('1').click();
+    cy.get(`[data-natural-key=${LENGTH_KEY}]`).clear().type('1').click();
+    cy.get(`[data-natural-key=${WEIGHT_KEY}]`).clear().type('1').click();
 
     cy.get('[data-cy=save-and-continue-button]').click();
 

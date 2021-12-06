@@ -125,7 +125,8 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
             }
             onBlur={() => onComplete(stateValue)}
             value={stateValue.value}
-            data-cy={naturalKey}
+            data-cy={valueFieldId}
+            data-natural-key={naturalKey}
             type="number"
             name={valueFieldId}
             margin="dense"

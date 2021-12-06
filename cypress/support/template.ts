@@ -163,7 +163,7 @@ function createBooleanQuestion(question: string) {
 function createTextQuestion(
   question: string,
   options?: {
-    id?: string;
+    key?: string;
     isRequired?: boolean;
     isMultipleLines?: boolean;
     maxCharacters?: number;
@@ -175,8 +175,8 @@ function createTextQuestion(
 
   cy.get('[data-cy=question]').clear().type(question);
 
-  if (options?.id) {
-    cy.get('[data-cy=natural_key]').clear().type(options.id);
+  if (options?.key) {
+    cy.get('[data-cy=natural_key]').clear().type(options.key);
   }
 
   if (options?.isRequired) {
@@ -315,7 +315,7 @@ function createFileUploadQuestion(question: string) {
 
 function createNumberInputQuestion(
   question: string,
-  options?: { id?: string; isRequired?: boolean; units?: string[] }
+  options?: { key?: string; isRequired?: boolean; units?: string[] }
 ) {
   openQuestionsMenu();
 
@@ -323,8 +323,8 @@ function createNumberInputQuestion(
 
   cy.get('[data-cy=question]').clear().type(question);
 
-  if (options?.id) {
-    cy.get('[data-cy=natural_key]').clear().type(options.id);
+  if (options?.key) {
+    cy.get('[data-cy=natural_key]').clear().type(options.key);
   }
 
   if (options?.units && options.units.length > 0) {
