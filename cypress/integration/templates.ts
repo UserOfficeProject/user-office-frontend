@@ -1657,6 +1657,7 @@ context('Template tests', () => {
       ],
     };
     cy.login('officer');
+    cy.visit('/');
 
     cy.navigateToTemplatesSubmenu('Proposal');
 
