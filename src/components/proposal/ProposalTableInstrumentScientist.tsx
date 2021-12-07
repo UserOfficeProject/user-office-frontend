@@ -321,7 +321,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         actions={[
           {
             icon: GetAppIconComponent,
-            tooltip: 'Download proposals as PDF',
+            tooltip: 'Download proposals',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
                 (rowData as Proposal[]).map((row) => row.primaryKey),
