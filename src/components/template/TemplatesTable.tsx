@@ -10,6 +10,7 @@ import Edit from '@material-ui/icons/Edit';
 import FileCopy from '@material-ui/icons/FileCopy';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import PublishIcon from '@material-ui/icons/Publish';
+import ShareIcon from '@material-ui/icons/Share';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -17,6 +18,7 @@ import { useHistory } from 'react-router';
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import InputDialog from 'components/common/InputDialog';
 import { GetTemplatesQuery, Template, TemplateGroupId } from 'generated/sdk';
+import { downloadBlob } from 'utils/downloadBlob';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -274,6 +276,29 @@ const TemplatesTable = ({
                   cancellationText: 'Cancel',
                 }
               )();
+            },
+          },
+          {
+            icon: ShareIcon,
+            tooltip: 'Export',
+            onClick: (event, data) => {
+              api()
+                .getTemplateExport({
+                  templateId: (data as TemplateRowDataType).templateId,
+                })
+                .then((result) => {
+                  if (!result.template) {
+                    return;
+                  }
+
+                  const blob = new Blob([result.template.json], {
+                    type: 'application/json;charset=utf8',
+                  });
+                  downloadBlob(
+                    blob,
+                    `${(data as TemplateRowDataType).name}.json`
+                  );
+                });
             },
           },
           (rowData) => getMaintenanceButton(rowData),
