@@ -1031,13 +1031,15 @@ context('Template tests', () => {
       cy.contains(textQuestion.title).should('not.exist');
 
       cy.get('[data-cy=search-text] input').clear();
+      cy.get('[data-cy=question-list]')
+        .contains(booleanQuestion)
+        .should('exist'); // this command is here to wait for the list to be clean of the previous search
 
       // searching by categories
 
       // Boolean
       cy.get('[data-cy=data-type]').click();
       cy.get('[role=listbox]').contains('Boolean').click();
-      // NOTE: There is no indicator that something is changed in filtering so sometimes first test attempt fails here. Check for possible solutions.
       cy.get('[data-cy=question-list]')
         .contains(booleanQuestion)
         .should('exist');
