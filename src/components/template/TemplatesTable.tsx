@@ -310,7 +310,9 @@ const TemplatesTable = ({
           type="button"
           variant="contained"
           color="primary"
-          onClick={() => {}}
+          onClick={() => {
+            history.push('/ImportTemplate');
+          }}
           data-cy="import-button"
         >
           Import
