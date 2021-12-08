@@ -91,17 +91,33 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
 
+  const [tableData, setTableData] = useState<ProposalViewData[]>([]);
+  const lazyLoadAmount = 200;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [query, setQuery] = useState<{ offset: number; first: number }>({
-    first: 20,
+    first: lazyLoadAmount,
     offset: 0,
   });
-  const currentPage = query.offset / query.first;
+
   const { loading, setProposalsData, proposalsData, totalCount } =
     useProposalsCoreData(proposalFilter, query.first, query.offset);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
   }, [proposalsData, query]);
+
+  useEffect(() => {
+    let endSlice = rowsPerPage * (currentPage + 1);
+    endSlice = endSlice == 0 ? lazyLoadAmount + 1 : endSlice + 1; // Final page of a loaded section would produce the slice (x, 0) without this
+    setTableData(
+      preselectedProposalsData.slice(
+        (currentPage * rowsPerPage) % lazyLoadAmount,
+        endSlice
+      )
+    );
+  }, [currentPage, rowsPerPage, preselectedProposalsData]);
 
   useEffect(() => {
     if (urlQueryParams.selection.length > 0) {
@@ -637,13 +653,16 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         columns={columns}
         totalCount={totalCount}
         page={currentPage}
-        onPageChange={(page) =>
-          setQuery({ ...query, offset: page * (query.first as number) })
-        }
-        onRowsPerPageChange={(rowsPerPage) =>
-          setQuery({ ...query, first: rowsPerPage })
-        }
-        data={preselectedProposalsData.map((proposal) =>
+        onPageChange={(page, pageSize) => {
+          const newOffset =
+            Math.floor((pageSize * page) / lazyLoadAmount) * lazyLoadAmount;
+          if (page !== currentPage && newOffset != query.offset) {
+            setQuery({ ...query, offset: newOffset });
+          }
+          setCurrentPage(page);
+        }}
+        onRowsPerPageChange={(rowsPerPage) => setRowsPerPage(rowsPerPage)}
+        data={tableData.map((proposal) =>
           Object.assign(proposal, { id: proposal.primaryKey })
         )}
         isLoading={loading}
@@ -662,7 +681,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           }));
         }}
         options={{
-          pageSize: 20,
+          pageSize: rowsPerPage,
           search: true,
           searchText: urlQueryParams.search || undefined,
           selection: true,
