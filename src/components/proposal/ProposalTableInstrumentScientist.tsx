@@ -107,7 +107,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Download proposal as PFD">
+        <Tooltip title="Download proposal as PDF">
           <IconButton
             data-cy="download-proposal"
             onClick={() =>
