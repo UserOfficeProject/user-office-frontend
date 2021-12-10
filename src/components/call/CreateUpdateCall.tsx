@@ -48,6 +48,13 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
   const currentDayEnd = new Date();
   currentDayEnd.setHours(23, 59, 59, 999);
 
+  const currentDayStartTest = call?.startCall;
+
+  const currentDayEndTest = call?.endCall;
+
+  console.log('Test ones:' + currentDayEndTest + currentDayStartTest);
+  console.log('Current ones:' + currentDayEnd + currentDayStart);
+
   const initialValues = call
     ? {
         ...call,

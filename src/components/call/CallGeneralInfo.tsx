@@ -23,7 +23,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';
-import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect } from 'react';
 
@@ -158,8 +158,8 @@ const CallGeneralInfo: React.FC<{
           name="startCall"
           label="Start"
           id="start-call-input"
-          format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          format="yyyy-MM-dd HH:mm"
+          component={KeyboardDateTimePicker}
           margin="normal"
           fullWidth
           required
@@ -170,8 +170,8 @@ const CallGeneralInfo: React.FC<{
           name="endCall"
           label="End"
           id="end-call-input"
-          format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          format="yyyy-MM-dd HH:mm"
+          component={KeyboardDateTimePicker}
           margin="normal"
           fullWidth
           minDate={startCall}
