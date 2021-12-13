@@ -313,7 +313,7 @@ const TemplatesTable = ({
           onClick={() => {
             history.push('/ImportTemplate');
           }}
-          data-cy="import-button"
+          data-cy="import-template-button"
         >
           Import
         </Button>

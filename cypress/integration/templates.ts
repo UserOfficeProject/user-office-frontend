@@ -1075,6 +1075,46 @@ context('Template tests', () => {
       cy.get('[data-cy=search-button]').click();
       cy.get('[data-cy=question-list] div').should('have.length.above', 0);
     });
+
+    it('User officer import template', () => {
+      const fileName = 'template_import.json';
+      const resolvedQuestionTitle = 'General information';
+
+      cy.login('officer');
+      cy.visit('/');
+
+      cy.navigateToTemplatesSubmenu('Proposal');
+
+      cy.get('[data-cy=import-template-button]').click();
+
+      cy.get('input[type="file"]').attachFixture({
+        filePath: fileName,
+        fileName: fileName,
+        mimeType: 'image/png',
+      });
+
+      cy.get("[data-cy='proposal_basis-accordion']")
+        .find('[data-cy=conflict-icon]')
+        .should('exist');
+
+      cy.get("[data-cy='proposal_basis-accordion']").click();
+
+      cy.get("[data-cy='proposal_basis-accordion']")
+        .find("[data-cy='new-question-checkbox']")
+        .click();
+
+      cy.get("[data-cy='proposal_basis-accordion']")
+        .find('[data-cy=conflict-icon]')
+        .should('not.exist');
+
+      cy.get("[data-cy='proposal_basis-accordion']")
+        .find('[data-cy=resolved-icon]')
+        .should('exist');
+
+      cy.get('[data-cy=import-template-button]').click();
+
+      cy.contains(resolvedQuestionTitle).should('exist');
+    });
   });
 
   describe('Proposal templates advanced tests', () => {
@@ -1544,61 +1584,72 @@ context('Template tests', () => {
         .find('[data-cy="image-figure"] input')
         .should('have.value', 'Fig_test');
     });
-  });
-
-  it('should export template in compatible format', () => {
-    const expectedExport = {
-      version: '1.0.0',
-      /* "exportDate":"2021-12-06T10:03:45.159Z",*/ template: {
-        templateId: 1,
-        groupId: 'PROPOSAL',
-        name: 'default template',
-        description: 'original template',
-        isArchived: false,
-      },
-      templateSteps: [
-        {
-          topic: {
-            id: 1,
-            title: 'New proposal',
-            templateId: 1,
-            sortOrder: 0,
-            isEnabled: true,
-          },
-          fields: [
-            {
-              question: {
-                categoryId: 1,
-                id: 'proposal_basis',
-                naturalKey: 'proposal_basis',
-                dataType: 'PROPOSAL_BASIS',
-                question: 'Proposal basic information',
-                config: { tooltip: '', required: false, small_label: '' },
-              },
-              topicId: 1,
-              sortOrder: 0,
-              config: { tooltip: '', required: false, small_label: '' },
-              dependencies: [],
-              dependenciesOperator: 'AND',
-            },
-          ],
+    it('should export template in compatible format', () => {
+      const expectedExport = {
+        version: '1.0.0',
+        /* "exportDate":"2021-12-06T10:03:45.159Z",*/ template: {
+          templateId: 1,
+          groupId: 'PROPOSAL',
+          name: 'default template',
+          description: 'original template',
+          isArchived: false,
         },
-        {
-          topic: {
-            id: 5,
-            title: 'Topic title',
-            templateId: 1,
-            sortOrder: 1,
-            isEnabled: true,
+        templateSteps: [
+          {
+            topic: {
+              id: 1,
+              title: 'New proposal',
+              templateId: 1,
+              sortOrder: 0,
+              isEnabled: true,
+            },
+            fields: [
+              {
+                question: {
+                  categoryId: 1,
+                  id: 'proposal_basis',
+                  naturalKey: 'proposal_basis',
+                  dataType: 'PROPOSAL_BASIS',
+                  question: 'Proposal basic information',
+                  config: { tooltip: '', required: false, small_label: '' },
+                },
+                topicId: 1,
+                sortOrder: 0,
+                config: { tooltip: '', required: false, small_label: '' },
+                dependencies: [],
+                dependenciesOperator: 'AND',
+              },
+            ],
           },
-          fields: [
-            {
-              question: {
-                categoryId: 1,
-                id: 'sample_declaration_question',
-                naturalKey: 'sample_declaration_question',
-                dataType: 'SAMPLE_DECLARATION',
-                question: 'Add samples',
+          {
+            topic: {
+              id: 5,
+              title: 'Topic title',
+              templateId: 1,
+              sortOrder: 1,
+              isEnabled: true,
+            },
+            fields: [
+              {
+                question: {
+                  categoryId: 1,
+                  id: 'sample_declaration_question',
+                  naturalKey: 'sample_declaration_question',
+                  dataType: 'SAMPLE_DECLARATION',
+                  question: 'Add samples',
+                  config: {
+                    addEntryButtonLabel: 'Add',
+                    templateCategory: 'SAMPLE_DECLARATION',
+                    templateId: 4,
+                    esiTemplateId: 3,
+                    small_label: '',
+                    required: false,
+                    minEntries: null,
+                    maxEntries: null,
+                  },
+                },
+                topicId: 5,
+                sortOrder: 0,
                 config: {
                   addEntryButtonLabel: 'Add',
                   templateCategory: 'SAMPLE_DECLARATION',
@@ -1609,71 +1660,59 @@ context('Template tests', () => {
                   minEntries: null,
                   maxEntries: null,
                 },
+                dependencies: [],
+                dependenciesOperator: 'AND',
               },
-              topicId: 5,
-              sortOrder: 0,
-              config: {
-                addEntryButtonLabel: 'Add',
-                templateCategory: 'SAMPLE_DECLARATION',
-                templateId: 4,
-                esiTemplateId: 3,
-                small_label: '',
-                required: false,
-                minEntries: null,
-                maxEntries: null,
-              },
-              dependencies: [],
-              dependenciesOperator: 'AND',
-            },
-          ],
-        },
-      ],
-      questions: [
-        {
-          categoryId: 1,
-          id: 'proposal_basis',
-          naturalKey: 'proposal_basis',
-          dataType: 'PROPOSAL_BASIS',
-          question: 'Proposal basic information',
-          config: { tooltip: '', required: false, small_label: '' },
-        },
-        {
-          categoryId: 1,
-          id: 'sample_declaration_question',
-          naturalKey: 'sample_declaration_question',
-          dataType: 'SAMPLE_DECLARATION',
-          question: 'Add samples',
-          config: {
-            addEntryButtonLabel: 'Add',
-            templateCategory: 'SAMPLE_DECLARATION',
-            templateId: 4,
-            esiTemplateId: 3,
-            small_label: '',
-            required: false,
-            minEntries: null,
-            maxEntries: null,
+            ],
           },
-        },
-      ],
-    };
-    cy.login('officer');
-    cy.visit('/');
+        ],
+        questions: [
+          {
+            categoryId: 1,
+            id: 'proposal_basis',
+            naturalKey: 'proposal_basis',
+            dataType: 'PROPOSAL_BASIS',
+            question: 'Proposal basic information',
+            config: { tooltip: '', required: false, small_label: '' },
+          },
+          {
+            categoryId: 1,
+            id: 'sample_declaration_question',
+            naturalKey: 'sample_declaration_question',
+            dataType: 'SAMPLE_DECLARATION',
+            question: 'Add samples',
+            config: {
+              addEntryButtonLabel: 'Add',
+              templateCategory: 'SAMPLE_DECLARATION',
+              templateId: 4,
+              esiTemplateId: 3,
+              small_label: '',
+              required: false,
+              minEntries: null,
+              maxEntries: null,
+            },
+          },
+        ],
+      };
+      cy.login('officer');
+      cy.visit('/');
 
-    cy.navigateToTemplatesSubmenu('Proposal');
+      cy.navigateToTemplatesSubmenu('Proposal');
 
-    cy.contains(initialDBData.template.name)
-      .closest('TR')
-      .find('[title="Export"]')
-      .click();
+      cy.contains(initialDBData.template.name)
+        .closest('TR')
+        .find('[title="Export"]')
+        .click();
 
-    const downloadsFolder = Cypress.config('downloadsFolder');
+      const downloadsFolder = Cypress.config('downloadsFolder');
 
-    cy.readFile(
-      path.join(downloadsFolder, `${initialDBData.template.name}.json`)
-    ).then((actualExport) => {
-      delete actualExport.exportDate; // remove date from the export, because it is not deterministic
+      cy.readFile(
+        path.join(downloadsFolder, `${initialDBData.template.name}.json`)
+      ).then((actualExport) => {
+        delete actualExport.exportDate; // remove date from the export, because it is not deterministic
 
-      expect(expectedExport).to.deep.equal(actualExport);
+        expect(expectedExport).to.deep.equal(actualExport);
+      });
     });
   });
 });

@@ -1,39 +1,55 @@
-import { Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
-import PublishIcon from '@material-ui/icons/Publish';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 
-const getFileContents = (file: File) => {
-  const reader = new FileReader();
-  reader.readAsText(file);
-  reader.onload = () => {
-    console.log(reader.result);
-  };
+import { TemplateImportWithValidation } from 'generated/sdk';
+import { StyledPaper } from 'styles/StyledComponents';
+import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+
+import { MergeReview } from './MergeReview';
+import { SelectTemplateFile } from './SelectTemplateFile';
+
+export const getFileContents = async (file: File): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+  });
 };
 
 export default function ImportTemplatePage() {
-  const onFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e?.target?.files?.[0];
-    if (file) {
-      console.log(getFileContents(file));
-    }
-  };
+  const { api } = useDataApiWithFeedback();
+  const [validationResult, setValidationResult] =
+    React.useState<TemplateImportWithValidation | null>(null);
 
   return (
     <Container>
-      <h1>Import Template</h1>
-      <label>
-        <input
-          accept="application/json"
-          style={{ display: 'none' }}
-          type="file"
-          multiple={false}
-          onChange={onFileSelected}
-        />
-        <Button variant="outlined" component="span">
-          <PublishIcon /> Attach file
-        </Button>
-      </label>
+      <StyledPaper>
+        <Typography variant="h5" component="h3">
+          Import template
+        </Typography>
+        {validationResult ? (
+          <MergeReview
+            data={validationResult}
+            onBack={() => setValidationResult(null)}
+          />
+        ) : (
+          <SelectTemplateFile
+            onFileSelected={(json) => {
+              api()
+                .validateTemplateImport({ templateAsJson: json })
+                .then(({ validateTemplateImport }) => {
+                  const result = validateTemplateImport.validationResult;
+                  if (result) {
+                    setValidationResult(result);
+                  }
+                });
+            }}
+          />
+        )}
+      </StyledPaper>
     </Container>
   );
 }
