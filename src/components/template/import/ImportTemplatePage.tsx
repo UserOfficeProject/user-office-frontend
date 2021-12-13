@@ -27,7 +27,7 @@ export default function ImportTemplatePage() {
   return (
     <Container>
       <StyledPaper>
-        <Typography variant="h5" component="h3">
+        <Typography variant="h5" component="h5">
           Import template
         </Typography>
         {validationResult ? (

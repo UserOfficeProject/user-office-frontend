@@ -101,6 +101,7 @@ export function ConflictResolver(props: {
     }
   };
 
+  // updating the checkboxes
   useEffect(() => {
     if (existingQuestionCheck) {
       onConflictResolved(
