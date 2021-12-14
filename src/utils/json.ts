@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function deepEqual(a: any, b: any): boolean {
+export function deepEqual<T>(a: T, b: T): boolean {
   if (a === b) {
     return true;
   }
@@ -15,6 +14,9 @@ export function deepEqual(a: any, b: any): boolean {
   }
 
   return props.every(function (prop) {
-    return deepEqual(a[prop], b[prop]);
+    return deepEqual(
+      (a as Record<string, unknown>)[prop],
+      (b as Record<string, unknown>)[prop]
+    );
   });
 }
