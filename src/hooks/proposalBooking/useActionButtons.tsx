@@ -1,4 +1,5 @@
 import { Action } from '@material-table/core';
+import FeedbackIcon from '@material-ui/icons/Feedback';
 import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import GroupIcon from '@material-ui/icons/Group';
 import SchoolIcon from '@material-ui/icons/School';
@@ -15,7 +16,12 @@ import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
 import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
-import { ProposalEndStatus } from 'generated/sdk';
+import {
+  FeedbackStatus,
+  ProposalBookingStatusCore,
+  ProposalEndStatus,
+  ShipmentStatus,
+} from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
 
@@ -45,6 +51,9 @@ const isPiOrCoProposer = (user: User, event: ProposalScheduledEvent) => {
 
   return role === 'PI' || role === 'co-proposer';
 };
+
+const isTeamlead = (user: User, event: ProposalScheduledEvent) =>
+  event.visit && event.visit.teamLead.id === user.id;
 
 const createActionButton = (
   tooltip: string,
@@ -116,8 +125,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     if (isPiOrCoProposer(user, event)) {
       if (
         event.proposal.finalStatus === ProposalEndStatus.ACCEPTED &&
-        event.proposal.managementDecisionSubmitted &&
-        event.visit // for now visit is required, but once ESI is attached to proposalScheduledEvent, this can be removed
+        event.proposal.managementDecisionSubmitted
       ) {
         if (event.esi?.isSubmitted) {
           buttonState = 'completed';
@@ -233,7 +241,11 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     let buttonState: ActionButtonState;
 
     if (event.visit !== null) {
-      if (event.visit.shipments.length > 0) {
+      const isAtLeastOneShipmentSubmitted = event.visit.shipments.some(
+        (shipment) => shipment.status === ShipmentStatus.SUBMITTED
+      );
+
+      if (isAtLeastOneShipmentSubmitted) {
         buttonState = 'completed';
       } else {
         buttonState = 'neutral';
@@ -265,11 +277,43 @@ export function useActionButtons(args: UseActionButtonsArgs) {
     );
   };
 
+  const giveFeedback = (event: ProposalScheduledEvent) => {
+    let buttonState: ActionButtonState;
+
+    if (isTeamlead(user, event)) {
+      if (event.status === ProposalBookingStatusCore.COMPLETED) {
+        if (event.feedback?.status === FeedbackStatus.SUBMITTED) {
+          buttonState = 'completed';
+        } else {
+          buttonState = 'active';
+        }
+      } else {
+        buttonState = 'inactive';
+      }
+    } else {
+      buttonState = 'invisible';
+    }
+
+    return createActionButton(
+      'Provide feedback',
+      <FeedbackIcon />,
+      buttonState,
+      () => {
+        if (event?.feedback) {
+          history.push(`/UpdateFeedback/${event.feedback.id}`);
+        } else {
+          history.push(`/CreateFeedback/${event.id}`);
+        }
+      }
+    );
+  };
+
   return {
     formTeamAction,
     finishEsi,
     registerVisitAction,
     individualTrainingAction,
     declareShipmentAction,
+    giveFeedback,
   };
 }

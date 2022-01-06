@@ -5,6 +5,7 @@ import TextFieldWithCounter from 'components/common/TextFieldWithCounter';
 import withPreventSubmit from 'components/common/withPreventSubmit';
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { TextInputConfig } from 'generated/sdk';
+import isEventFromAutoComplete from 'utils/isEventFromAutoComplete';
 
 const TextFieldNoSubmit = withPreventSubmit(TextFieldWithCounter);
 
@@ -15,7 +16,7 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
     formikProps: { errors, touched },
   } = props;
   const {
-    question: { id },
+    question: { id, naturalKey },
     question,
     value,
   } = answer;
@@ -48,6 +49,9 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
         value={stateValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setStateValue(event.currentTarget.value);
+          if (isEventFromAutoComplete(event)) {
+            onComplete(event.currentTarget.value);
+          }
         }}
         onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
           if (
@@ -71,6 +75,8 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
         rowsMax={config.multiline ? 16 : undefined}
         maxLen={config.max || undefined}
         margin="dense"
+        data-cy={id}
+        data-natural-key={naturalKey}
       />
     </div>
   );

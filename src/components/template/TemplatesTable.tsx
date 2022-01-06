@@ -8,6 +8,9 @@ import Archive from '@material-ui/icons/Archive';
 import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
 import FileCopy from '@material-ui/icons/FileCopy';
+import PostAddIcon from '@material-ui/icons/PostAdd';
+import PublishIcon from '@material-ui/icons/Publish';
+import ShareIcon from '@material-ui/icons/Share';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -15,33 +18,35 @@ import { useHistory } from 'react-router';
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import InputDialog from 'components/common/InputDialog';
 import { GetTemplatesQuery, Template, TemplateGroupId } from 'generated/sdk';
+import { downloadBlob } from 'utils/downloadBlob';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-import { WithConfirmType } from 'utils/withConfirm';
+import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import CreateTemplate from './CreateTemplate';
 
 export type TemplateRowDataType = Pick<
   Template,
-  'templateId' | 'name' | 'description' | 'isArchived'
->;
+  'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'
+> &
+  Record<string, unknown>;
 
 export interface TemplatesTableProps {
   columns: Column<TemplateRowDataType>[];
   templateGroup: TemplateGroupId;
   dataProvider: () => Promise<Exclude<GetTemplatesQuery['templates'], null>>;
   isRowRemovable: (row: TemplateRowDataType) => boolean;
-  confirm: WithConfirmType;
   actions?: MaterialTableProps<TemplateRowDataType>['actions'];
 }
-export function TemplatesTable({
+
+const TemplatesTable = ({
   dataProvider,
   columns,
   templateGroup,
   isRowRemovable,
   confirm,
   actions,
-}: TemplatesTableProps) {
+}: TemplatesTableProps & { confirm: WithConfirmType }) => {
   const [templates, setTemplates] = useState<TemplateRowDataType[]>([]);
   const { api } = useDataApiWithFeedback();
   const history = useHistory();
@@ -207,7 +212,10 @@ export function TemplatesTable({
         <CreateTemplate
           onComplete={(template) => {
             if (template) {
-              setTemplates([...templates, template]);
+              setTemplates([
+                ...templates,
+                { ...template, questionaryCount: 0 },
+              ]);
 
               setTimeout(() => {
                 editTemplate(template.templateId);
@@ -231,6 +239,7 @@ export function TemplatesTable({
           Object.assign(template, { id: template.templateId })
         )}
         actions={[
+          ...customActions,
           {
             icon: EditIconComponent,
             tooltip: 'Edit',
@@ -253,7 +262,7 @@ export function TemplatesTable({
                       const clonedTemplate = result.cloneTemplate.template;
                       if (clonedTemplate) {
                         const newTemplates = [...templates];
-                        newTemplates.push(clonedTemplate);
+                        newTemplates.push({ ...clonedTemplate, callCount: 0 });
                         setTemplates(newTemplates);
                       }
                     });
@@ -269,12 +278,47 @@ export function TemplatesTable({
               )();
             },
           },
+          {
+            icon: ShareIcon,
+            tooltip: 'Export',
+            onClick: (event, data) => {
+              api()
+                .getTemplateExport({
+                  templateId: (data as TemplateRowDataType).templateId,
+                })
+                .then((result) => {
+                  if (!result.template) {
+                    return;
+                  }
+
+                  const blob = new Blob([result.template.json], {
+                    type: 'application/json;charset=utf8',
+                  });
+                  downloadBlob(
+                    blob,
+                    `${(data as TemplateRowDataType).name}.json`
+                  );
+                });
+            },
+          },
           (rowData) => getMaintenanceButton(rowData),
-          ...customActions,
         ]}
       />
       <ActionButtonContainer>
         <Button
+          startIcon={<PublishIcon />}
+          type="button"
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            history.push('/ImportTemplate');
+          }}
+          data-cy="import-template-button"
+        >
+          Import
+        </Button>
+        <Button
+          startIcon={<PostAddIcon />}
           type="button"
           variant="contained"
           color="primary"
@@ -286,4 +330,6 @@ export function TemplatesTable({
       </ActionButtonContainer>
     </>
   );
-}
+};
+
+export default withConfirm(TemplatesTable);

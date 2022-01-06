@@ -23,7 +23,10 @@ import { useCallsData } from 'hooks/call/useCallsData';
 import AppToolbar from './AppToolbar/AppToolbar';
 import CallPage from './call/CallPage';
 import Can, { useCheckAccess } from './common/Can';
+import CreateFeedbackPage from './feedback/CreateFeedbackPage';
+import UpdateFeedbackPage from './feedback/UpdateFeedbackPage';
 import InstitutionPage from './institution/InstitutionPage';
+import MergeInstitutionsPage from './institution/MergeInstitutionPage';
 import InstrumentsPage from './instrument/InstrumentsPage';
 import MenuItems from './menu/MenuItems';
 import HelpPage from './pages/HelpPage';
@@ -48,11 +51,13 @@ import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflow
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
 import UnitTablePage from './settings/unitList/UnitTablePage';
 import ProposalEsiPage from './template/EsiPage';
-import GenericTemplates from './template/GenericTemplates';
-import ProposalTemplates from './template/ProposalTemplates';
+import FeedbackTemplatesPage from './template/FeedbackTemplatesPage';
+import GenericTemplatesPage from './template/GenericTemplatesPage';
+import ImportTemplatePage from './template/import/ImportTemplatePage';
+import ProposalTemplatesPage from './template/ProposalTemplatesPage';
 import QuestionsPage from './template/QuestionsPage';
 import SampleEsiPage from './template/SampleEsiPage';
-import SampleTemplatesPage from './template/SampleTemplates';
+import SampleTemplatesPage from './template/SampleTemplatesPage';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import VisitTemplatesPage from './template/VisitTemplatesPage';
@@ -252,20 +257,25 @@ const Dashboard: React.FC = () => {
           <Route path="/InstrumentPage" component={InstrumentsPage} />
           <Route path="/InstitutionPage" component={InstitutionPage} />
           <Route
+            path="/MergeInstitutionsPage/:institutionId"
+            component={MergeInstitutionsPage}
+          />
+          <Route
             path="/QuestionaryEditor/:templateId"
             component={TemplateEditor}
           />
-          <Route path="/ProposalTemplates" component={ProposalTemplates} />
+          <Route path="/ProposalTemplates" component={ProposalTemplatesPage} />
           <Route
             path="/SampleDeclarationTemplates"
             component={SampleTemplatesPage}
           />
-          <Route path="/GenericTemplates" component={GenericTemplates} />
+          <Route path="/GenericTemplates" component={GenericTemplatesPage} />
           <Route
             path="/ShipmentDeclarationTemplates"
             component={ShipmentTemplatesPage}
           />
           <Route path="/VisitTemplates" component={VisitTemplatesPage} />
+          <Route path="/FeedbackTemplates" component={FeedbackTemplatesPage} />
           <Route path="/EsiTemplates" component={ProposalEsiPage} />
           <Route path="/SampleEsiTemplates" component={SampleEsiPage} />
           <Route
@@ -310,11 +320,22 @@ const Dashboard: React.FC = () => {
           {isUserOfficer && (
             <Route path="/Questions" component={QuestionsPage} />
           )}
+          {isUserOfficer && (
+            <Route path="/ImportTemplate" component={ImportTemplatePage} />
+          )}
           <Route
             path="/CreateEsi/:scheduledEventId"
             component={CreateProposalEsiPage}
           />
           <Route path="/UpdateEsi/:esiId" component={UpdateProposalEsiPage} />
+          <Route
+            path="/CreateFeedback/:scheduledEventId"
+            component={CreateFeedbackPage}
+          />
+          <Route
+            path="/UpdateFeedback/:feedbackId"
+            component={UpdateFeedbackPage}
+          />
           <Can
             allowedRoles={[UserRole.USER_OFFICER]}
             yes={() => <Route component={ProposalPage} />}

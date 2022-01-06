@@ -1,10 +1,13 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
 import MaterialTable, { Column } from '@material-table/core';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Edit from '@material-ui/icons/Edit';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Visibility from '@material-ui/icons/Visibility';
+import {
+  getTranslation,
+  ResourceId,
+} from '@user-office-software/duo-localisation';
 import React, { useContext } from 'react';
 import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
@@ -19,16 +22,13 @@ import { useInstrumentScientistCallsData } from 'hooks/call/useInstrumentScienti
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
-import { useProposalsData } from 'hooks/proposal/useProposalsData';
+import {
+  ProposalViewData,
+  useProposalsCoreData,
+} from 'hooks/proposal/useProposalsCoreData';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
-import {
-  absoluteDifference,
-  average,
-  getGrades,
-  standardDeviation,
-} from 'utils/mathFunctions';
 
 import ProposalFilterBar, {
   questionaryFilterFromUrlQuery,
@@ -49,7 +49,6 @@ const ProposalTableInstrumentScientist: React.FC = () => {
       reviewModal: NumberParam,
       ...DefaultQueryParams,
     });
-
   // NOTE: proposalStatusId has default value 2 because for Instrument Scientist default view should be all proposals in FEASIBILITY_REVIEW status
   const [proposalFilter, setProposalFilter] = React.useState<ProposalsFilter>({
     callId: urlQueryParams.call,
@@ -62,7 +61,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
   const { proposalStatuses, loadingProposalStatuses } =
     useProposalStatusesData();
 
-  const { loading, proposalsData, setProposalsData } = useProposalsData({
+  const { loading, proposalsData, setProposalsData } = useProposalsCoreData({
     proposalStatusId: proposalFilter.proposalStatusId,
     instrumentId: proposalFilter.instrumentId,
     callId: proposalFilter.callId,
@@ -71,20 +70,20 @@ const ProposalTableInstrumentScientist: React.FC = () => {
 
   const downloadPDFProposal = useDownloadPDFProposal();
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
-    Column<Proposal>[] | null
+    Column<ProposalViewData>[] | null
   >('proposalColumnsInstrumentScientist', null);
 
   /**
    * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
    * and selection flag is true they are not working properly.
    */
-  const RowActionButtons = (rowData: Proposal) => {
+  const RowActionButtons = (rowData: ProposalViewData) => {
     const iconButtonStyle = { padding: '7px' };
     const isCurrentUserTechnicalReviewAssignee =
       rowData.technicalReviewAssignee === user.id;
 
     const showView =
-      (rowData.technicalReview && rowData.technicalReview.submitted) ||
+      rowData.technicalReviewSubmitted ||
       isCurrentUserTechnicalReviewAssignee === false;
 
     return (
@@ -107,7 +106,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Download proposal as pdf">
+        <Tooltip title="Download proposal as PDF">
           <IconButton
             data-cy="download-proposal"
             onClick={() =>
@@ -122,7 +121,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     );
   };
 
-  let columns: Column<Proposal>[] = [
+  let columns: Column<ProposalViewData>[] = [
     {
       title: 'Actions',
       cellStyle: { padding: 0, minWidth: 120 },
@@ -139,55 +138,22 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     {
       title: 'Time allocation',
       render: (rowData) =>
-        `${rowData.technicalReview?.timeAllocation}(${rowData.call?.allocationTimeUnit}s)`,
+        `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`,
       hidden: false,
     },
     {
       title: 'Technical status',
-      render: (rowData) =>
-        rowData.technicalReview
-          ? getTranslation(rowData.technicalReview.status as ResourceId)
-          : '',
+      render: (rowData) => rowData.technicalStatus,
     },
     {
       title: 'Submitted',
       render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
     },
-    { title: 'Status', field: 'status.name' },
-    {
-      title: 'Deviation',
-      field: 'deviation',
-      hidden: true,
-      render: (rowData: Proposal): number =>
-        standardDeviation(getGrades(rowData.reviews)),
-      customSort: (a: Proposal, b: Proposal) =>
-        (standardDeviation(getGrades(a.reviews)) || 0) -
-        (standardDeviation(getGrades(b.reviews)) || 0),
-    },
-    {
-      title: 'Absolute Difference',
-      field: 'absolute',
-      hidden: true,
-      render: (rowData: Proposal): number =>
-        absoluteDifference(getGrades(rowData.reviews)),
-      customSort: (a: Proposal, b: Proposal) =>
-        (absoluteDifference(getGrades(a.reviews)) || 0) -
-        (absoluteDifference(getGrades(b.reviews)) || 0),
-    },
-    {
-      title: 'Average Score',
-      field: 'average',
-      hidden: true,
-      render: (rowData: Proposal): number =>
-        average(getGrades(rowData.reviews)),
-      customSort: (a: Proposal, b: Proposal) =>
-        (average(getGrades(a.reviews)) || 0) -
-        (average(getGrades(b.reviews)) || 0),
-    },
+    { title: 'Status', field: 'statusName' },
     {
       title: 'Final Status',
       field: 'finalStatus',
-      render: (rowData: Proposal): string =>
+      render: (rowData: ProposalViewData): string =>
         rowData.finalStatus
           ? getTranslation(rowData.finalStatus as ResourceId)
           : '',
@@ -199,13 +165,13 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     },
     {
       title: 'Call',
-      field: 'call.shortCode',
+      field: 'callShortCode',
       emptyValue: '-',
       hidden: true,
     },
     {
       title: 'SEP',
-      field: 'sep.code',
+      field: 'sepCode',
       emptyValue: '-',
       hidden: true,
     },
@@ -247,7 +213,10 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           setProposalsData(
             proposalsData.map((proposal) => {
               if (proposal.primaryKey === updatedProposal?.primaryKey) {
-                return updatedProposal;
+                return Object.assign(
+                  proposal,
+                  updatedProposal
+                ) as ProposalViewData;
               } else {
                 return proposal;
               }
@@ -289,18 +258,19 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           },
           debounceInterval: 400,
           columnsButton: true,
-          selectionProps: (rowData: Proposal) => ({
+          selectionProps: (rowData: ProposalViewData) => ({
             inputProps: {
               'aria-label': `${rowData.title}-select`,
             },
           }),
+          pageSize: 20,
         }}
         onSearchChange={(searchText) => {
           setUrlQueryParams({ search: searchText ? searchText : undefined });
         }}
         onChangeColumnHidden={(columnChange) => {
           const proposalColumns = columns.map(
-            (proposalColumn: Column<Proposal>) => ({
+            (proposalColumn: Column<ProposalViewData>) => ({
               hidden:
                 proposalColumn.title === columnChange.title
                   ? columnChange.hidden
@@ -321,11 +291,11 @@ const ProposalTableInstrumentScientist: React.FC = () => {
         actions={[
           {
             icon: GetAppIconComponent,
-            tooltip: 'Download proposals in PDF',
+            tooltip: 'Download proposals',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
-                (rowData as Proposal[]).map((row) => row.primaryKey),
-                (rowData as Proposal[])[0].title
+                (rowData as ProposalViewData[]).map((row) => row.primaryKey),
+                (rowData as ProposalViewData[])[0].title
               );
             },
             position: 'toolbarOnSelect',
