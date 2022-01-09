@@ -30,12 +30,6 @@ export type Event =
   | { type: 'GO_TO_STEP'; stepIndex: number }
   | { type: 'STEPS_LOADED'; steps: QuestionaryStep[]; stepIndex?: number }
   | { type: 'STEP_ANSWERED'; step: QuestionaryStep }
-  // sample
-  | { type: 'SAMPLE_CREATED'; sample: SampleWithQuestionary }
-  | { type: 'SAMPLE_LOADED'; sample: SampleWithQuestionary }
-  | { type: 'SAMPLE_UPDATED'; sample: Partial<SampleWithQuestionary> }
-  | { type: 'SAMPLE_MODIFIED'; sample: Partial<SampleWithQuestionary> }
-  | { type: 'SAMPLE_SUBMITTED'; sample: Partial<SampleWithQuestionary> }
   // shipment
   | { type: 'SHIPMENT_CREATED'; shipment: ShipmentWithQuestionary }
   | { type: 'SHIPMENT_LOADED'; shipment: ShipmentWithQuestionary }

@@ -30,15 +30,15 @@ const samplesReducer = (
   action: Event
 ) => {
   switch (action.type) {
-    case 'SAMPLE_CREATED':
-    case 'SAMPLE_LOADED':
+    case 'ITEM_WITH_QUESTIONARY_CREATED':
+    case 'ITEM_WITH_QUESTIONARY_LOADED':
       draftState.isDirty = false;
-      draftState.itemWithQuestionary = action.sample;
+      draftState.itemWithQuestionary = action.itemWithQuestionary;
       break;
-    case 'SAMPLE_MODIFIED':
+    case 'ITEM_WITH_QUESTIONARY_MODIFIED':
       draftState.sample = {
         ...draftState.sample,
-        ...action.sample,
+        ...action.itemWithQuestionary,
       };
       draftState.isDirty = true;
       break;
@@ -67,8 +67,8 @@ export function SampleDeclarationContainer(props: {
     if (sampleState.sample.id === 0) {
       // if sample isn't created yet
       dispatch({
-        type: 'SAMPLE_LOADED',
-        sample: initialState.sample,
+        type: 'ITEM_WITH_QUESTIONARY_LOADED',
+        itemWithQuestionary: initialState.sample,
       });
     } else {
       await api()
@@ -76,8 +76,8 @@ export function SampleDeclarationContainer(props: {
         .then((data) => {
           if (data.sample && data.sample.questionary.steps) {
             dispatch({
-              type: 'SAMPLE_LOADED',
-              sample: data.sample,
+              type: 'ITEM_WITH_QUESTIONARY_LOADED',
+              itemWithQuestionary: data.sample,
             });
             dispatch({
               type: 'STEPS_LOADED',
@@ -99,13 +99,18 @@ export function SampleDeclarationContainer(props: {
       next(action);
       const state = getState() as SampleSubmissionState;
       switch (action.type) {
-        case 'SAMPLE_UPDATED':
-          props.sampleUpdated?.({ ...state.sample, ...action.sample });
+        case 'ITEM_WITH_QUESTIONARY_MODIFIED':
+          props.sampleUpdated?.({
+            ...state.sample,
+            ...action.itemWithQuestionary,
+          });
           break;
-        case 'SAMPLE_CREATED':
-          props.sampleCreated?.(action.sample);
+        case 'ITEM_WITH_QUESTIONARY_CREATED':
+          props.sampleCreated?.(
+            action.itemWithQuestionary as SampleWithQuestionary
+          );
           break;
-        case 'SAMPLE_SUBMITTED':
+        case 'ITEM_WITH_QUESTIONARY_SUBMITTED':
           props.sampleEditDone?.();
           break;
         case 'BACK_CLICKED':
@@ -138,8 +143,8 @@ export function SampleDeclarationContainer(props: {
       previousInitialSample === undefined;
     if (isComponentMountedForTheFirstTime) {
       dispatch({
-        type: 'SAMPLE_LOADED',
-        sample: props.sample,
+        type: 'ITEM_WITH_QUESTIONARY_LOADED',
+        itemWithQuestionary: props.sample,
       });
       dispatch({
         type: 'STEPS_LOADED',
