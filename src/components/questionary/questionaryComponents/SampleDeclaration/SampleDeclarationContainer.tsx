@@ -24,29 +24,6 @@ export interface SampleContextType extends QuestionaryContextType {
   state: SampleSubmissionState | null;
 }
 
-const samplesReducer = (
-  state: SampleSubmissionState,
-  draftState: SampleSubmissionState,
-  action: Event
-) => {
-  switch (action.type) {
-    case 'ITEM_WITH_QUESTIONARY_CREATED':
-    case 'ITEM_WITH_QUESTIONARY_LOADED':
-      draftState.isDirty = false;
-      draftState.itemWithQuestionary = action.itemWithQuestionary;
-      break;
-    case 'ITEM_WITH_QUESTIONARY_MODIFIED':
-      draftState.sample = {
-        ...draftState.sample,
-        ...action.itemWithQuestionary,
-      };
-      draftState.isDirty = true;
-      break;
-  }
-
-  return draftState;
-};
-
 export function SampleDeclarationContainer(props: {
   sample: SampleWithQuestionary;
   sampleCreated?: (sample: SampleWithQuestionary) => void;
@@ -134,8 +111,7 @@ export function SampleDeclarationContainer(props: {
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(
     initialState,
-    [handleEvents],
-    samplesReducer
+    [handleEvents]
   );
 
   useEffect(() => {
