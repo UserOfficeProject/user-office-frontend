@@ -49,7 +49,7 @@ const proposalEsiReducer = (
       }
       draftState.esi.proposal.samples.push(action.sample);
       break;
-    case 'ESI_SAMPLE_ESI_CREATED':
+    case 'ESI_ITEM_WITH_QUESTIONARY_CREATED':
       draftState.esi.sampleEsis.push(action.sampleEsi);
       break;
     case 'ESI_SAMPLE_ESI_UPDATED':
