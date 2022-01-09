@@ -12,12 +12,9 @@ import {
 import { SampleFragment } from './../../generated/sdk';
 import { GenericTemplateWithQuestionary } from './genericTemplate/GenericTemplateWithQuestionary';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
-import { ProposalWithQuestionary } from './proposal/ProposalWithQuestionary';
 import { ProposalEsiWithQuestionary } from './proposalEsi/ProposalEsiWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
-import { SampleWithQuestionary } from './sample/SampleWithQuestionary';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
-import { ShipmentWithQuestionary } from './shipment/ShipmentWithQuestionary';
 import { StepType } from './StepType';
 
 export type Event =
@@ -30,11 +27,6 @@ export type Event =
   | { type: 'GO_TO_STEP'; stepIndex: number }
   | { type: 'STEPS_LOADED'; steps: QuestionaryStep[]; stepIndex?: number }
   | { type: 'STEP_ANSWERED'; step: QuestionaryStep }
-  // shipment
-  | { type: 'SHIPMENT_CREATED'; shipment: ShipmentWithQuestionary }
-  | { type: 'SHIPMENT_LOADED'; shipment: ShipmentWithQuestionary }
-  | { type: 'SHIPMENT_MODIFIED'; shipment: Partial<ShipmentWithQuestionary> }
-  | { type: 'SHIPMENT_SUBMITTED'; shipment: Partial<ShipmentWithQuestionary> }
   // item with questionary
   | {
       type: 'ITEM_WITH_QUESTIONARY_CREATED';
@@ -78,6 +70,7 @@ export type Event =
   | { type: 'ESI_LOADED'; esi: ProposalEsiWithQuestionary }
   | { type: 'ESI_MODIFIED'; esi: Partial<ProposalEsiWithQuestionary> }
   | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> }
+  // sample
   | { type: 'ESI_SAMPLE_CREATED'; sample: SampleFragment }
   | { type: 'ESI_SAMPLE_DELETED'; sampleId: number }
   | {
@@ -85,24 +78,7 @@ export type Event =
       sampleEsi: SampleEsiWithQuestionary;
     }
   | { type: 'ESI_SAMPLE_ESI_UPDATED'; sampleEsi: SampleEsiWithQuestionary }
-  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number }
-  // sample esi
-  | {
-      type: 'ITEM_WITH_QUESTIONARY_CREATED';
-      itemWithQuestionary: SampleEsiWithQuestionary;
-    }
-  | {
-      type: 'ITEM_WITH_QUESTIONARY_LOADED';
-      itemWithQuestionary: SampleEsiWithQuestionary;
-    }
-  | {
-      type: 'ITEM_WITH_QUESTIONARY_MODIFIED';
-      itemWithQuestionary: Partial<SampleEsiWithQuestionary>;
-    }
-  | {
-      type: 'ITEM_WITH_QUESTIONARY_SUBMITTED';
-      itemWithQuestionary: Partial<SampleEsiWithQuestionary>;
-    };
+  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number };
 
 export interface WizardStepMetadata {
   title: string;
