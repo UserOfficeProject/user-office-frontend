@@ -36,11 +36,6 @@ export type Event =
   | { type: 'SAMPLE_UPDATED'; sample: Partial<SampleWithQuestionary> }
   | { type: 'SAMPLE_MODIFIED'; sample: Partial<SampleWithQuestionary> }
   | { type: 'SAMPLE_SUBMITTED'; sample: Partial<SampleWithQuestionary> }
-  // proposal
-  | { type: 'PROPOSAL_CREATED'; proposal: ProposalWithQuestionary }
-  | { type: 'PROPOSAL_LOADED'; proposal: ProposalWithQuestionary }
-  | { type: 'PROPOSAL_MODIFIED'; proposal: Partial<ProposalWithQuestionary> }
-  | { type: 'PROPOSAL_SUBMIT_CLICKED'; proposalPk: number }
   // shipment
   | { type: 'SHIPMENT_CREATED'; shipment: ShipmentWithQuestionary }
   | { type: 'SHIPMENT_LOADED'; shipment: ShipmentWithQuestionary }
