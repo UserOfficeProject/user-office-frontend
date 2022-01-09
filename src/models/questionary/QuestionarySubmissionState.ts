@@ -11,7 +11,6 @@ import {
 
 import { SampleFragment } from './../../generated/sdk';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
-import { ProposalEsiWithQuestionary } from './proposalEsi/ProposalEsiWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
 import { StepType } from './StepType';
@@ -43,11 +42,6 @@ export type Event =
       type: 'ITEM_WITH_QUESTIONARY_SUBMITTED';
       itemWithQuestionary: Record<string, unknown>;
     }
-  // esi
-  | { type: 'ESI_CREATED'; esi: ProposalEsiWithQuestionary }
-  | { type: 'ESI_LOADED'; esi: ProposalEsiWithQuestionary }
-  | { type: 'ESI_MODIFIED'; esi: Partial<ProposalEsiWithQuestionary> }
-  | { type: 'ESI_SUBMITTED'; esi: Partial<ProposalEsiWithQuestionary> }
   // sample
   | { type: 'ESI_SAMPLE_CREATED'; sample: SampleFragment }
   | { type: 'ESI_SAMPLE_DELETED'; sampleId: number }
