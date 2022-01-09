@@ -48,11 +48,23 @@ export type Event =
   | { type: 'SHIPMENT_LOADED'; shipment: ShipmentWithQuestionary }
   | { type: 'SHIPMENT_MODIFIED'; shipment: Partial<ShipmentWithQuestionary> }
   | { type: 'SHIPMENT_SUBMITTED'; shipment: Partial<ShipmentWithQuestionary> }
-  // registration
-  | { type: 'REGISTRATION_CREATED'; visit: RegistrationWQ }
-  | { type: 'REGISTRATION_LOADED'; visit: RegistrationWQ }
-  | { type: 'REGISTRATION_MODIFIED'; visit: Partial<RegistrationWQ> }
-  | { type: 'REGISTRATION_SUBMITTED'; visit: Partial<RegistrationWQ> }
+  // item with questionary
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_CREATED';
+      itemWithQuestionary: RegistrationWQ;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_LOADED';
+      itemWithQuestionary: RegistrationWQ;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_MODIFIED';
+      itemWithQuestionary: Partial<RegistrationWQ>;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_SUBMITTED';
+      itemWithQuestionary: Partial<RegistrationWQ>;
+    }
   // generic template
   | {
       type: 'GENERIC_TEMPLATE_CREATED';
@@ -90,10 +102,22 @@ export type Event =
   | { type: 'SAMPLE_ESI_MODIFIED'; esi: Partial<SampleEsiWithQuestionary> }
   | { type: 'SAMPLE_ESI_SUBMITTED'; esi: Partial<SampleEsiWithQuestionary> }
   // feedback
-  | { type: 'FEEDBACK_CREATED'; feedback: FeedbackWithQuestionary }
-  | { type: 'FEEDBACK_LOADED'; feedback: FeedbackWithQuestionary }
-  | { type: 'FEEDBACK_MODIFIED'; feedback: Partial<FeedbackWithQuestionary> }
-  | { type: 'FEEDBACK_SUBMITTED'; feedback: Partial<FeedbackWithQuestionary> };
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_CREATED';
+      itemWithQuestionary: FeedbackWithQuestionary;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_LOADED';
+      itemWithQuestionary: FeedbackWithQuestionary;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_MODIFIED';
+      itemWithQuestionary: Partial<FeedbackWithQuestionary>;
+    }
+  | {
+      type: 'ITEM_WITH_QUESTIONARY_SUBMITTED';
+      itemWithQuestionary: Partial<FeedbackWithQuestionary>;
+    };
 
 export interface WizardStepMetadata {
   title: string;
@@ -170,6 +194,18 @@ export function QuestionarySubmissionModel<
   function reducer(state: T, action: Event) {
     return produce(state, (draftState) => {
       switch (action.type) {
+        case 'ITEM_WITH_QUESTIONARY_CREATED':
+        case 'ITEM_WITH_QUESTIONARY_LOADED':
+          draftState.isDirty = false;
+          draftState.itemWithQuestionary = action.itemWithQuestionary;
+          break;
+        case 'ITEM_WITH_QUESTIONARY_MODIFIED':
+          draftState.itemWithQuestionary = {
+            ...draftState.itemWithQuestionary,
+            ...action.itemWithQuestionary,
+          };
+          draftState.isDirty = true;
+          break;
         case 'FIELD_CHANGED':
           const field = getFieldById(
             draftState.questionary.steps,
