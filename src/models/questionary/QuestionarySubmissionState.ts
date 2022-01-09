@@ -10,7 +10,6 @@ import {
 } from 'utils/useReducerWithMiddleWares';
 
 import { SampleFragment } from './../../generated/sdk';
-import { GenericTemplateWithQuestionary } from './genericTemplate/GenericTemplateWithQuestionary';
 import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { ProposalEsiWithQuestionary } from './proposalEsi/ProposalEsiWithQuestionary';
 import { getFieldById } from './QuestionaryFunctions';
@@ -43,27 +42,6 @@ export type Event =
   | {
       type: 'ITEM_WITH_QUESTIONARY_SUBMITTED';
       itemWithQuestionary: Record<string, unknown>;
-    }
-  // generic template
-  | {
-      type: 'GENERIC_TEMPLATE_CREATED';
-      genericTemplate: GenericTemplateWithQuestionary;
-    }
-  | {
-      type: 'GENERIC_TEMPLATE_LOADED';
-      genericTemplate: GenericTemplateWithQuestionary;
-    }
-  | {
-      type: 'GENERIC_TEMPLATE_UPDATED';
-      genericTemplate: Partial<GenericTemplateWithQuestionary>;
-    }
-  | {
-      type: 'GENERIC_TEMPLATE_MODIFIED';
-      genericTemplate: Partial<GenericTemplateWithQuestionary>;
-    }
-  | {
-      type: 'GENERIC_TEMPLATE_SUBMITTED';
-      genericTemplate: Partial<GenericTemplateWithQuestionary>;
     }
   // esi
   | { type: 'ESI_CREATED'; esi: ProposalEsiWithQuestionary }
