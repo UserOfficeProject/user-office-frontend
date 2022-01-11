@@ -8,7 +8,7 @@ import { FeedbackWithQuestionary } from './FeedbackWithQuestionary';
 export class FeedbackSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(public feedback: FeedbackWithQuestionary) {
-    super(TemplateGroupId.SAMPLE, feedback);
+    super(TemplateGroupId.FEEDBACK, feedback);
     this.stepIndex = this.getInitialStepIndex();
   }
 

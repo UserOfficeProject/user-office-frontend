@@ -7,7 +7,7 @@ import { GenericTemplateWithQuestionary } from './GenericTemplateWithQuestionary
 export class GenericTemplateSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
   constructor(public genericTemplate: GenericTemplateWithQuestionary) {
-    super(TemplateGroupId.SAMPLE, genericTemplate);
+    super(TemplateGroupId.GENERIC_TEMPLATE, genericTemplate);
     this.stepIndex = this.getInitialStepIndex();
   }
 
