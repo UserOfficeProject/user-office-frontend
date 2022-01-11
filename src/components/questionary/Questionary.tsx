@@ -5,20 +5,19 @@ import React, { useContext, useRef, useEffect } from 'react';
 import { useCheckAccess } from 'components/common/Can';
 import { UserRole } from 'generated/sdk';
 
-import { StepDisplayElementFactory } from './DefaultStepDisplayElementFactory';
 import {
   createMissingContextErrorMessage,
   QuestionaryContext,
 } from './QuestionaryContext';
+import { getQuestionaryDefinition } from './QuestionaryRegistry';
 import { QuestionaryStepButton } from './QuestionaryStepButton';
 
 interface QuestionaryProps {
   title: string;
   info?: JSX.Element | string;
-  displayElementFactory: StepDisplayElementFactory;
 }
 
-function Questionary({ title, info, displayElementFactory }: QuestionaryProps) {
+function Questionary({ title, info }: QuestionaryProps) {
   const isMobile = useMediaQuery('(max-width: 500px)');
 
   const useStyles = makeStyles((theme) => ({
@@ -112,6 +111,10 @@ function Questionary({ title, info, displayElementFactory }: QuestionaryProps) {
     if (!currentStep) {
       return null;
     }
+
+    const { displayElementFactory } = getQuestionaryDefinition(
+      state.templateGroupId
+    );
 
     return displayElementFactory.getDisplayElement(
       currentStep,

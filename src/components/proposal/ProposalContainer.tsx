@@ -1,26 +1,22 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Typography } from '@material-ui/core';
-import { default as React, useEffect } from 'react';
+import { default as React, useState } from 'react';
 
 import Questionary from 'components/questionary/Questionary';
 import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
 import { TemplateGroupId } from 'generated/sdk';
-import { usePrevious } from 'hooks/common/usePrevious';
+import createCustomEventHandlers from 'models/questionary/createCustomEventHandlers';
 import { ProposalSubmissionState } from 'models/questionary/proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 import {
-  QuestionarySubmissionState,
-  QuestionarySubmissionModel,
   Event,
+  QuestionarySubmissionModel,
 } from 'models/questionary/QuestionarySubmissionState';
 import useEventHandlers from 'models/questionary/useEventHandlers';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
-import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
-import { FunctionType } from 'utils/utilTypes';
 
 export interface ProposalContextType extends QuestionaryContextType {
   state: ProposalSubmissionState | null;
@@ -30,17 +26,12 @@ export default function ProposalContainer(props: {
   proposal: ProposalWithQuestionary;
   proposalUpdated?: (proposal: ProposalWithQuestionary) => void;
 }) {
-  const { eventHandlers } = useEventHandlers(TemplateGroupId.PROPOSAL);
-  const previousInitialProposal = usePrevious(props.proposal);
+  const [initialState] = useState(new ProposalSubmissionState(props.proposal));
 
-  const def = getQuestionaryDefinition(TemplateGroupId.PROPOSAL);
+  const eventHandlers = useEventHandlers(TemplateGroupId.PROPOSAL);
 
-  const customEventHandlers = ({
-    getState,
-  }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
-    return (next: FunctionType) => async (action: Event) => {
-      next(action); // first update state/model
-      const state = getState() as ProposalSubmissionState;
+  const customEventHandlers = createCustomEventHandlers(
+    (state: ProposalSubmissionState, action: Event) => {
       switch (action.type) {
         case 'ITEM_WITH_QUESTIONARY_MODIFIED':
           props.proposalUpdated?.({
@@ -49,37 +40,13 @@ export default function ProposalContainer(props: {
           });
           break;
       }
-    };
-  };
-  const initialState = new ProposalSubmissionState(
-    props.proposal,
-    0,
-    false,
-    def.wizardStepFactory.getWizardSteps(props.proposal.questionary.steps)
+    }
   );
 
-  const { state, dispatch } =
-    QuestionarySubmissionModel<ProposalSubmissionState>(initialState, [
-      eventHandlers,
-      customEventHandlers,
-    ]);
-
-  useEffect(() => {
-    const isComponentMountedForTheFirstTime =
-      previousInitialProposal === undefined;
-    if (isComponentMountedForTheFirstTime) {
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: props.proposal,
-      });
-      if (props.proposal.questionary) {
-        dispatch({
-          type: 'STEPS_LOADED',
-          steps: props.proposal.questionary.steps,
-        });
-      }
-    }
-  }, [previousInitialProposal, props.proposal, dispatch]);
+  const { state, dispatch } = QuestionarySubmissionModel(initialState, [
+    eventHandlers,
+    customEventHandlers,
+  ]);
 
   const hasReferenceNumberFormat = !!state.proposal.call?.referenceNumberFormat;
 
@@ -102,7 +69,6 @@ export default function ProposalContainer(props: {
           <Questionary
             title={state.proposal.title || 'New Proposal'}
             info={info}
-            displayElementFactory={def.displayElementFactory}
           />
         </StyledPaper>
       </ContentContainer>

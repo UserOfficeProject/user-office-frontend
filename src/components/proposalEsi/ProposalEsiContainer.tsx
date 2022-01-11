@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { default as React, useEffect } from 'react';
+import { default as React, useState } from 'react';
 
 import Questionary from 'components/questionary/Questionary';
 import {
   QuestionaryContext,
   QuestionaryContextType,
 } from 'components/questionary/QuestionaryContext';
-import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
 import { TemplateGroupId } from 'generated/sdk';
-import { usePrevious } from 'hooks/common/usePrevious';
 import { ProposalEsiSubmissionState } from 'models/questionary/proposalEsi/ProposalEsiSubmissionState';
 import { ProposalEsiWithQuestionary } from 'models/questionary/proposalEsi/ProposalEsiWithQuestionary';
 import {
@@ -62,45 +60,19 @@ export interface ProposalEsiContainerProps {
   esi: ProposalEsiWithQuestionary;
 }
 export default function ProposalEsiContainer(props: ProposalEsiContainerProps) {
-  const { eventHandlers } = useEventHandlers(TemplateGroupId.PROPOSAL_ESI);
-  const def = getQuestionaryDefinition(TemplateGroupId.PROPOSAL_ESI);
+  const [initialState] = useState(new ProposalEsiSubmissionState(props.esi));
 
-  const previousInitialEsi = usePrevious(props.esi);
+  const eventHandlers = useEventHandlers(TemplateGroupId.PROPOSAL_ESI);
 
-  const initialState = new ProposalEsiSubmissionState(
-    props.esi,
-    0,
-    false,
-    def.wizardStepFactory.getWizardSteps(props.esi.questionary.steps)
+  const { state, dispatch } = QuestionarySubmissionModel(
+    initialState,
+    [eventHandlers],
+    proposalEsiReducer
   );
-
-  const { state, dispatch } =
-    QuestionarySubmissionModel<ProposalEsiSubmissionState>(
-      initialState,
-      [eventHandlers],
-      proposalEsiReducer
-    );
-
-  useEffect(() => {
-    const isComponentMountedForTheFirstTime = previousInitialEsi === undefined;
-    if (isComponentMountedForTheFirstTime) {
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: props.esi,
-      });
-      dispatch({
-        type: 'STEPS_LOADED',
-        steps: props.esi.questionary!.steps,
-      });
-    }
-  }, [previousInitialEsi, props.esi, dispatch]);
 
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
-      <Questionary
-        title={'Input for Experiment Safety Form'}
-        displayElementFactory={def.displayElementFactory}
-      />
+      <Questionary title={'Input for Experiment Safety Form'} />
     </QuestionaryContext.Provider>
   );
 }

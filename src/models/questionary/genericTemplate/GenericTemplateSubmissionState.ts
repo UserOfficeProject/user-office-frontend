@@ -1,21 +1,14 @@
 import { immerable } from 'immer';
 
-import { Questionary } from 'generated/sdk';
+import { Questionary, TemplateGroupId } from 'generated/sdk';
 
-import {
-  QuestionarySubmissionState,
-  WizardStep,
-} from '../QuestionarySubmissionState';
+import { QuestionarySubmissionState } from '../QuestionarySubmissionState';
 import { GenericTemplateWithQuestionary } from './GenericTemplateWithQuestionary';
 export class GenericTemplateSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
-  constructor(
-    public genericTemplate: GenericTemplateWithQuestionary,
-    stepIndex: number,
-    isDirty: boolean,
-    wizardSteps: WizardStep[]
-  ) {
-    super(genericTemplate, stepIndex, isDirty, wizardSteps);
+  constructor(public genericTemplate: GenericTemplateWithQuestionary) {
+    super(TemplateGroupId.SAMPLE, genericTemplate);
+    this.stepIndex = this.getInitialStepIndex();
   }
 
   getItemId(): number {

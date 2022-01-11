@@ -8,6 +8,7 @@ import UpdateShipment from './UpdateShipment';
 
 type CreateUpdateShipmentProps = {
   onShipmentSubmitted: (shipment: ShipmentCore) => void;
+  onShipmentCreated: (shipment: ShipmentCore) => void;
   visit: VisitFragment & {
     shipments: ShipmentCore[];
   };
@@ -16,6 +17,7 @@ type CreateUpdateShipmentProps = {
 function CreateUpdateShipment({
   visit,
   onShipmentSubmitted,
+  onShipmentCreated,
 }: CreateUpdateShipmentProps) {
   if (visit.shipments.length > 1) {
     return <span>Multiple shipments per visit is not supported yet</span>;
@@ -29,7 +31,11 @@ function CreateUpdateShipment({
       onShipmentSubmitted={onShipmentSubmitted}
     />
   ) : (
-    <CreateShipment visit={visit} onShipmentSubmitted={onShipmentSubmitted} />
+    <CreateShipment
+      visit={visit}
+      onShipmentSubmitted={onShipmentSubmitted}
+      onShipmentCreated={onShipmentCreated}
+    />
   );
 }
 

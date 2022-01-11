@@ -20,6 +20,7 @@ import {
   FeedbackStatus,
   ProposalBookingStatusCore,
   ProposalEndStatus,
+  ShipmentFragment,
   ShipmentStatus,
 } from 'generated/sdk';
 import { User } from 'models/User';
@@ -254,6 +255,16 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       buttonState = 'inactive';
     }
 
+    const onShipmentUpdated = (shipment: ShipmentFragment) => {
+      eventUpdated({
+        ...event,
+        visit: {
+          ...event.visit!,
+          shipments: shipment ? [shipment] : [],
+        },
+      });
+    };
+
     return createActionButton(
       'Declare shipment(s)',
       <BoxIcon />,
@@ -262,15 +273,8 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         openModal(
           <CreateUpdateShipment
             visit={event.visit!}
-            onShipmentSubmitted={(shipment) => {
-              eventUpdated({
-                ...event,
-                visit: {
-                  ...event.visit!,
-                  shipments: shipment ? [shipment] : [],
-                },
-              });
-            }}
+            onShipmentSubmitted={onShipmentUpdated}
+            onShipmentCreated={onShipmentUpdated}
           />
         );
       }

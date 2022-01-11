@@ -103,5 +103,5 @@ export default function useEventHandlers(templateGroupId: TemplateGroupId) {
     };
   };
 
-  return { eventHandlers };
+  return eventHandlers;
 }
