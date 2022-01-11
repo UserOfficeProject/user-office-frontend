@@ -16,7 +16,11 @@ export class ProposalSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(proposal, stepIndex, isDirty, wizardSteps);
+  }
+
+  getItemId(): number {
+    return this.proposal.primaryKey;
   }
 
   get itemWithQuestionary() {

@@ -17,8 +17,8 @@ import {
   QuestionarySubmissionModel,
   Event,
 } from 'models/questionary/QuestionarySubmissionState';
+import useEventHandlers from 'models/questionary/useEventHandlers';
 import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -28,49 +28,15 @@ export interface ProposalContextType extends QuestionaryContextType {
 
 export default function ProposalContainer(props: {
   proposal: ProposalWithQuestionary;
-  proposalCreated?: (proposal: ProposalWithQuestionary) => void;
   proposalUpdated?: (proposal: ProposalWithQuestionary) => void;
 }) {
-  const { api } = useDataApiWithFeedback();
+  const { eventHandlers } = useEventHandlers(TemplateGroupId.PROPOSAL);
   const previousInitialProposal = usePrevious(props.proposal);
 
   const def = getQuestionaryDefinition(TemplateGroupId.PROPOSAL);
 
-  /**
-   * Returns true if reset was performed, false otherwise
-   */
-  const handleReset = async (): Promise<boolean> => {
-    const proposalState = state as ProposalSubmissionState;
-    if (proposalState.proposal.primaryKey === 0) {
-      // if proposal is not created yet
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: initialState.proposal,
-      });
-    } else {
-      await api()
-        .getProposal({ primaryKey: proposalState.proposal.primaryKey }) // or load blankQuestionarySteps if sample is null
-        .then((data) => {
-          if (data.proposal && data.proposal.questionary?.steps) {
-            dispatch({
-              type: 'ITEM_WITH_QUESTIONARY_LOADED',
-              itemWithQuestionary: data.proposal,
-            });
-            dispatch({
-              type: 'STEPS_LOADED',
-              steps: data.proposal.questionary.steps,
-              stepIndex: state.stepIndex,
-            });
-          }
-        });
-    }
-
-    return true;
-  };
-
-  const handleEvents = ({
+  const customEventHandlers = ({
     getState,
-    dispatch,
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
@@ -81,18 +47,6 @@ export default function ProposalContainer(props: {
             ...state.proposal,
             ...action.itemWithQuestionary,
           });
-          break;
-        case 'ITEM_WITH_QUESTIONARY_CREATED':
-          props.proposalCreated?.(state.proposal);
-          break;
-        case 'BACK_CLICKED':
-          if (!state.isDirty || (await handleReset())) {
-            dispatch({ type: 'GO_STEP_BACK' });
-          }
-          break;
-
-        case 'RESET_CLICKED':
-          handleReset();
           break;
       }
     };
@@ -106,7 +60,8 @@ export default function ProposalContainer(props: {
 
   const { state, dispatch } =
     QuestionarySubmissionModel<ProposalSubmissionState>(initialState, [
-      handleEvents,
+      eventHandlers,
+      customEventHandlers,
     ]);
 
   useEffect(() => {
@@ -147,7 +102,6 @@ export default function ProposalContainer(props: {
           <Questionary
             title={state.proposal.title || 'New Proposal'}
             info={info}
-            handleReset={handleReset}
             displayElementFactory={def.displayElementFactory}
           />
         </StyledPaper>

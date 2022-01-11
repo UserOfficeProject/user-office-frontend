@@ -16,7 +16,7 @@ import {
 } from 'models/questionary/QuestionarySubmissionState';
 import { SampleEsiSubmissionState } from 'models/questionary/sampleEsi/SampleEsiSubmissionState';
 import { SampleEsiWithQuestionary } from 'models/questionary/sampleEsi/SampleEsiWithQuestionary';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import useEventHandlers from 'models/questionary/useEventHandlers';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -30,66 +30,19 @@ export interface SampleEsiContainerProps {
   onSubmitted?: (esi: SampleEsiWithQuestionary) => void;
 }
 export default function SampleEsiContainer(props: SampleEsiContainerProps) {
-  const { api } = useDataApiWithFeedback();
+  const { eventHandlers } = useEventHandlers(TemplateGroupId.SAMPLE_ESI);
 
   const def = getQuestionaryDefinition(TemplateGroupId.SAMPLE_ESI);
 
   const previousInitialEsi = usePrevious(props.esi);
 
-  /**
-   * Returns true if reset was performed, false otherwise
-   */
-  const handleReset = async (): Promise<boolean> => {
-    const esiState = state as SampleEsiSubmissionState;
-
-    if (esiState.esi.esiId === 0) {
-      // if esi is not created yet
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: initialState.esi,
-      });
-    } else {
-      await api()
-        .getSampleEsi({
-          esiId: esiState.esi.esiId,
-          sampleId: esiState.esi.sampleId,
-        }) // or load blankQuestionarySteps if null
-        .then((data) => {
-          if (data.sampleEsi && data.sampleEsi.questionary!.steps) {
-            dispatch({
-              type: 'ITEM_WITH_QUESTIONARY_LOADED',
-              itemWithQuestionary: data.sampleEsi,
-            });
-            dispatch({
-              type: 'STEPS_LOADED',
-              steps: data.sampleEsi.questionary!.steps,
-              stepIndex: state.stepIndex,
-            });
-          }
-        });
-    }
-
-    return true;
-  };
-
-  const handleEvents = ({
+  const customEventHandlers = ({
     getState,
-    dispatch,
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
       const state = getState() as SampleEsiSubmissionState;
       switch (action.type) {
-        case 'BACK_CLICKED': // move this
-          if (!state.isDirty || (await handleReset())) {
-            dispatch({ type: 'GO_STEP_BACK' });
-          }
-          break;
-
-        case 'RESET_CLICKED':
-          handleReset();
-          break;
-
         case 'ITEM_WITH_QUESTIONARY_MODIFIED':
           props.onUpdate?.(state.esi);
           break;
@@ -109,7 +62,8 @@ export default function SampleEsiContainer(props: SampleEsiContainerProps) {
 
   const { state, dispatch } =
     QuestionarySubmissionModel<SampleEsiSubmissionState>(initialState, [
-      handleEvents,
+      eventHandlers,
+      customEventHandlers,
     ]);
 
   useEffect(() => {
@@ -130,7 +84,6 @@ export default function SampleEsiContainer(props: SampleEsiContainerProps) {
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
         title={state.esi.sample.title}
-        handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>

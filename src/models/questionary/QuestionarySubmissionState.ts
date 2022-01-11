@@ -3,6 +3,7 @@ import produce, { Draft } from 'immer';
 import { Reducer } from 'react';
 
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
+import { deepClone } from 'utils/json';
 import { clamp } from 'utils/Math';
 import {
   ReducerMiddleware,
@@ -19,6 +20,7 @@ export type Event =
   | { type: 'FIELD_CHANGED'; id: string; newValue: any }
   | { type: 'BACK_CLICKED' }
   | { type: 'RESET_CLICKED' }
+  | { type: 'GO_TO_STEP_CLICKED'; stepIndex: number }
   | { type: 'GO_STEP_BACK' }
   | { type: 'GO_STEP_FORWARD' }
   | { type: 'CLEAN_DIRTY_STATE' }
@@ -67,13 +69,29 @@ export interface WizardStep {
   ) => WizardStepMetadata;
 }
 
+export interface ItemWithQuestionary {
+  questionary: Questionary;
+}
+
 export abstract class QuestionarySubmissionState {
   constructor(
+    public initItem: ItemWithQuestionary,
     public stepIndex: number,
     public isDirty: boolean,
     public wizardSteps: WizardStep[]
-  ) {}
-  abstract itemWithQuestionary: { questionary: Questionary };
+  ) {
+    this.initItem = deepClone(initItem); // save initial data to restore it if reset is clicked
+  }
+
+  /**
+   * Returns item that has questionary associated with it
+   */
+  abstract itemWithQuestionary: ItemWithQuestionary;
+
+  /**
+   * Unique id of the item
+   */
+  abstract getItemId(): number | [number, number];
 
   get questionary() {
     return this.itemWithQuestionary.questionary;

@@ -16,7 +16,11 @@ export class VisitRegistrationSubmissionState extends QuestionarySubmissionState
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(registration, stepIndex, isDirty, wizardSteps);
+  }
+
+  getItemId(): number {
+    return this.registration.visitId;
   }
 
   get itemWithQuestionary() {

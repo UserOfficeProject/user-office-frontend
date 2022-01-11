@@ -17,7 +17,7 @@ import {
 import { ShipmentCore } from 'models/questionary/shipment/ShipmentCore';
 import { ShipmentSubmissionState } from 'models/questionary/shipment/ShipmentSubmissionState';
 import { ShipmentWithQuestionary } from 'models/questionary/shipment/ShipmentWithQuestionary';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import useEventHandlers from 'models/questionary/useEventHandlers';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -29,63 +29,19 @@ export default function ShipmentContainer(props: {
   shipment: ShipmentWithQuestionary;
   onShipmentSubmitted?: (shipment: ShipmentCore) => void;
 }) {
-  const { api } = useDataApiWithFeedback();
+  const { eventHandlers } = useEventHandlers(TemplateGroupId.SHIPMENT);
 
   const previousInitialShipment = usePrevious(props.shipment);
 
   const def = getQuestionaryDefinition(TemplateGroupId.SHIPMENT);
 
-  /**
-   * Returns true if reset was performed, false otherwise
-   */
-  const handleReset = async (): Promise<boolean> => {
-    const shipmentState = state as ShipmentSubmissionState;
-
-    if (shipmentState.shipment.id === 0) {
-      // if shipment is not created yet
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: initialState.shipment,
-      });
-    } else {
-      await api()
-        .getShipment({ shipmentId: shipmentState.shipment.id }) // or load blankQuestionarySteps if sample is null
-        .then((data) => {
-          if (data.shipment && data.shipment.questionary.steps) {
-            dispatch({
-              type: 'ITEM_WITH_QUESTIONARY_LOADED',
-              itemWithQuestionary: data.shipment,
-            });
-            dispatch({
-              type: 'STEPS_LOADED',
-              steps: data.shipment.questionary.steps,
-              stepIndex: state.stepIndex,
-            });
-          }
-        });
-    }
-
-    return true;
-  };
-
-  const handleEvents = ({
+  const customEventHandlers = ({
     getState,
-    dispatch,
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action); // first update state/model
       const state = getState() as ShipmentSubmissionState;
       switch (action.type) {
-        case 'BACK_CLICKED': // move this
-          if (!state.isDirty || (await handleReset())) {
-            dispatch({ type: 'GO_STEP_BACK' });
-          }
-          break;
-
-        case 'RESET_CLICKED':
-          handleReset();
-          break;
-
         case 'ITEM_WITH_QUESTIONARY_SUBMITTED':
           props.onShipmentSubmitted?.(state.shipment);
           break;
@@ -100,7 +56,8 @@ export default function ShipmentContainer(props: {
   );
   const { state, dispatch } =
     QuestionarySubmissionModel<ShipmentSubmissionState>(initialState, [
-      handleEvents,
+      eventHandlers,
+      customEventHandlers,
     ]);
 
   useEffect(() => {
@@ -123,7 +80,6 @@ export default function ShipmentContainer(props: {
       <Questionary
         title={state.shipment.title || 'New Shipment'}
         info={state.shipment.status}
-        handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>

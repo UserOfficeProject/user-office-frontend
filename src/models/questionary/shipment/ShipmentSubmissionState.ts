@@ -17,9 +17,12 @@ export class ShipmentSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(shipment, stepIndex, isDirty, wizardSteps);
   }
 
+  getItemId(): number {
+    return this.shipment.id;
+  }
   get itemWithQuestionary() {
     return this.shipment;
   }

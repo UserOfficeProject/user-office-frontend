@@ -11,98 +11,21 @@ import { TemplateGroupId } from 'generated/sdk';
 import { usePrevious } from 'hooks/common/usePrevious';
 import { FeedbackSubmissionState } from 'models/questionary/feedback/FeedbackSubmissionState';
 import { FeedbackWithQuestionary } from 'models/questionary/feedback/FeedbackWithQuestionary';
-import {
-  Event,
-  QuestionarySubmissionModel,
-  QuestionarySubmissionState,
-} from 'models/questionary/QuestionarySubmissionState';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
-import { FunctionType } from 'utils/utilTypes';
+import { QuestionarySubmissionModel } from 'models/questionary/QuestionarySubmissionState';
+import useEventHandlers from 'models/questionary/useEventHandlers';
 export interface FeedbackContextType extends QuestionaryContextType {
   state: FeedbackSubmissionState | null;
 }
 
 export interface FeedbackContainerProps {
   feedback: FeedbackWithQuestionary;
-  onCreate?: (feedback: FeedbackWithQuestionary) => void;
-  onUpdate?: (feedback: FeedbackWithQuestionary) => void;
-  onSubmitted?: (feedback: FeedbackWithQuestionary) => void;
 }
 export default function FeedbackContainer(props: FeedbackContainerProps) {
-  const { api } = useDataApiWithFeedback();
-
+  const { eventHandlers } = useEventHandlers(TemplateGroupId.FEEDBACK);
   const def = getQuestionaryDefinition(TemplateGroupId.FEEDBACK);
 
   const previousInitialFeedback = usePrevious(props.feedback);
 
-  /**
-   * Returns true if reset was performed, false otherwise
-   */
-  const handleReset = async (): Promise<boolean> => {
-    const feedbackState = state as FeedbackSubmissionState;
-
-    if (feedbackState.feedback.questionaryId === 0) {
-      // if feedback is not created yet
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: initialState.feedback,
-      });
-    } else {
-      await api()
-        .getFeedback({
-          feedbackId: feedbackState.feedback.id,
-        }) // or load blankQuestionarySteps if sample is null
-        .then((data) => {
-          if (data.feedback && data.feedback.questionary!.steps) {
-            dispatch({
-              type: 'ITEM_WITH_QUESTIONARY_LOADED',
-              itemWithQuestionary: data.feedback,
-            });
-            dispatch({
-              type: 'STEPS_LOADED',
-              steps: data.feedback.questionary!.steps,
-              stepIndex: state.stepIndex,
-            });
-          }
-        });
-    }
-
-    return true;
-  };
-
-  const handleEvents = ({
-    getState,
-    dispatch,
-  }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
-    return (next: FunctionType) => async (action: Event) => {
-      next(action); // first update state/model
-      const state = getState() as FeedbackSubmissionState;
-      switch (action.type) {
-        case 'BACK_CLICKED': // move this
-          if (!state.isDirty || (await handleReset())) {
-            dispatch({ type: 'GO_STEP_BACK' });
-          }
-          break;
-
-        case 'RESET_CLICKED':
-          handleReset();
-          break;
-
-        case 'ITEM_WITH_QUESTIONARY_CREATED':
-          props.onCreate?.(state.feedback);
-          break;
-
-        case 'ITEM_WITH_QUESTIONARY_MODIFIED':
-          props.onUpdate?.(state.feedback);
-          break;
-
-        case 'ITEM_WITH_QUESTIONARY_SUBMITTED':
-          props.onSubmitted?.(state.feedback);
-          break;
-      }
-    };
-  };
   const initialState = new FeedbackSubmissionState(
     props.feedback,
     0,
@@ -112,7 +35,7 @@ export default function FeedbackContainer(props: FeedbackContainerProps) {
 
   const { state, dispatch } =
     QuestionarySubmissionModel<FeedbackSubmissionState>(initialState, [
-      handleEvents,
+      eventHandlers,
     ]);
 
   useEffect(() => {
@@ -134,7 +57,6 @@ export default function FeedbackContainer(props: FeedbackContainerProps) {
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
         title={'Feedback to the facility'}
-        handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>

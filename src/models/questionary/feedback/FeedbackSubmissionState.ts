@@ -16,7 +16,11 @@ export class FeedbackSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(feedback, stepIndex, isDirty, wizardSteps);
+  }
+
+  getItemId(): number {
+    return this.feedback.id;
   }
 
   get itemWithQuestionary() {

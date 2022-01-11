@@ -16,15 +16,9 @@ interface QuestionaryProps {
   title: string;
   info?: JSX.Element | string;
   displayElementFactory: StepDisplayElementFactory;
-  handleReset: () => Promise<boolean>;
 }
 
-function Questionary({
-  title,
-  info,
-  handleReset,
-  displayElementFactory,
-}: QuestionaryProps) {
+function Questionary({ title, info, displayElementFactory }: QuestionaryProps) {
   const isMobile = useMediaQuery('(max-width: 500px)');
 
   const useStyles = makeStyles((theme) => ({
@@ -93,25 +87,10 @@ function Questionary({
             <Step key={index}>
               <QuestionaryStepButton
                 onClick={async () => {
-                  if (!state.isDirty) {
-                    await handleReset();
-                    dispatch({
-                      type: 'GO_TO_STEP',
-                      stepIndex: index,
-                    });
-                  } else {
-                    if (
-                      window.confirm(
-                        'Changes you recently made in this step will not be saved! Are you sure?'
-                      )
-                    ) {
-                      await handleReset();
-                      dispatch({
-                        type: 'GO_TO_STEP',
-                        stepIndex: index,
-                      });
-                    }
-                  }
+                  dispatch({
+                    type: 'GO_TO_STEP_CLICKED',
+                    stepIndex: index,
+                  });
                 }}
                 completed={stepMetadata.isCompleted}
                 readonly={stepMetadata.isReadonly && !isUserOfficer}

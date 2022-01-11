@@ -16,7 +16,7 @@ import {
 } from 'models/questionary/QuestionarySubmissionState';
 import { SampleSubmissionState } from 'models/questionary/sample/SampleSubmissionState';
 import { SampleWithQuestionary } from 'models/questionary/sample/SampleWithQuestionary';
-import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import useEventHandlers from 'models/questionary/useEventHandlers';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -30,47 +30,14 @@ export function SampleDeclarationContainer(props: {
   sampleUpdated?: (sample: SampleWithQuestionary) => void;
   sampleEditDone?: () => void;
 }) {
-  const { api } = useDataApiWithFeedback();
+  const { eventHandlers } = useEventHandlers(TemplateGroupId.SAMPLE);
 
   const def = getQuestionaryDefinition(TemplateGroupId.SAMPLE);
 
   const previousInitialSample = usePrevious(props.sample);
 
-  /**
-   * Returns true if reset was performed, false otherwise
-   */
-  const handleReset = async (): Promise<boolean> => {
-    const sampleState = state as SampleSubmissionState;
-    if (sampleState.sample.id === 0) {
-      // if sample isn't created yet
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_LOADED',
-        itemWithQuestionary: initialState.sample,
-      });
-    } else {
-      await api()
-        .getSample({ sampleId: sampleState.sample.id }) // or load blankQuestionarySteps if sample is null
-        .then((data) => {
-          if (data.sample && data.sample.questionary.steps) {
-            dispatch({
-              type: 'ITEM_WITH_QUESTIONARY_LOADED',
-              itemWithQuestionary: data.sample,
-            });
-            dispatch({
-              type: 'STEPS_LOADED',
-              steps: data.sample.questionary.steps,
-              stepIndex: state.stepIndex,
-            });
-          }
-        });
-    }
-
-    return true;
-  };
-
-  const handleEvents = ({
+  const customEventHandlers = ({
     getState,
-    dispatch,
   }: MiddlewareInputParams<QuestionarySubmissionState, Event>) => {
     return (next: FunctionType) => async (action: Event) => {
       next(action);
@@ -90,14 +57,6 @@ export function SampleDeclarationContainer(props: {
         case 'ITEM_WITH_QUESTIONARY_SUBMITTED':
           props.sampleEditDone?.();
           break;
-        case 'BACK_CLICKED':
-          if (!state.isDirty || (await handleReset())) {
-            dispatch({ type: 'GO_STEP_BACK' });
-          }
-          break;
-        case 'RESET_CLICKED':
-          handleReset();
-          break;
       }
     };
   };
@@ -111,7 +70,7 @@ export function SampleDeclarationContainer(props: {
 
   const { state, dispatch } = QuestionarySubmissionModel<SampleSubmissionState>(
     initialState,
-    [handleEvents]
+    [eventHandlers, customEventHandlers]
   );
 
   useEffect(() => {
@@ -133,7 +92,6 @@ export function SampleDeclarationContainer(props: {
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <Questionary
         title={state.sample.title || 'New Sample'}
-        handleReset={handleReset}
         displayElementFactory={def.displayElementFactory}
       />
     </QuestionaryContext.Provider>

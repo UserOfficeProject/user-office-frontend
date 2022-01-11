@@ -16,9 +16,12 @@ export class SampleEsiSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(esi, stepIndex, isDirty, wizardSteps);
   }
 
+  getItemId(): [number, number] {
+    return [this.esi.esiId, this.esi.sampleId];
+  }
   get itemWithQuestionary() {
     return this.esi;
   }

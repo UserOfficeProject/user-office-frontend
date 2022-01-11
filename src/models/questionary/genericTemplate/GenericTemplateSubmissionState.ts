@@ -15,9 +15,12 @@ export class GenericTemplateSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(genericTemplate, stepIndex, isDirty, wizardSteps);
   }
 
+  getItemId(): number {
+    return this.genericTemplate.id;
+  }
   get itemWithQuestionary() {
     return this.genericTemplate;
   }

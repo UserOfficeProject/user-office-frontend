@@ -15,7 +15,11 @@ export class SampleSubmissionState extends QuestionarySubmissionState {
     isDirty: boolean,
     wizardSteps: WizardStep[]
   ) {
-    super(stepIndex, isDirty, wizardSteps);
+    super(sample, stepIndex, isDirty, wizardSteps);
+  }
+
+  getItemId(): number {
+    return this.sample.id;
   }
 
   get itemWithQuestionary() {
