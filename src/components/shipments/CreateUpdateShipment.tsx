@@ -8,12 +8,14 @@ import UpdateShipment from './UpdateShipment';
 
 type CreateUpdateShipmentProps = {
   onShipmentSubmitted: (shipment: ShipmentCore) => void;
+  onShipmentCreated: (shipment: ShipmentCore) => void;
   event: ProposalScheduledEvent;
 };
 
 function CreateUpdateShipment({
   event,
   onShipmentSubmitted,
+  onShipmentCreated,
 }: CreateUpdateShipmentProps) {
   if (event.shipments.length > 1) {
     return <span>Multiple shipments per visit is not supported yet</span>;
@@ -27,7 +29,11 @@ function CreateUpdateShipment({
       onShipmentSubmitted={onShipmentSubmitted}
     />
   ) : (
-    <CreateShipment event={event} onShipmentSubmitted={onShipmentSubmitted} />
+    <CreateShipment
+      event={event}
+      onShipmentSubmitted={onShipmentSubmitted}
+      onShipmentCreated={onShipmentCreated}
+    />
   );
 }
 
