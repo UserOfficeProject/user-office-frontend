@@ -1,4 +1,4 @@
-fragment scheduledEvent on ScheduledEventCore {
+fragment scheduledEventCore on ScheduledEventCore {
     id
     proposalPk
     bookingType
@@ -6,6 +6,7 @@ fragment scheduledEvent on ScheduledEventCore {
     endsAt
     status
     localContactId
+    isShipmentDeclared
 }
 
 

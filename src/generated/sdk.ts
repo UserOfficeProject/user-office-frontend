@@ -657,6 +657,7 @@ export type Mutation = {
   createSample: SampleResponseWrap;
   updateSample: SampleResponseWrap;
   cloneSample: SampleResponseWrap;
+  updateScheduledEventCore: ScheduledEventResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
   assignReviewersToSEP: SepResponseWrap;
   removeMemberFromSep: SepResponseWrap;
@@ -1061,6 +1062,12 @@ export type MutationCloneSampleArgs = {
   sampleId: Scalars['Int'];
   title?: Maybe<Scalars['String']>;
   isPostProposalSubmission?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateScheduledEventCoreArgs = {
+  scheduledEventId: Scalars['Int'];
+  isShipmentDeclared?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1895,7 +1902,7 @@ export type Query = {
   proposals: Maybe<ProposalsQueryResult>;
   sampleEsi: Maybe<SampleExperimentSafetyInput>;
   samples: Maybe<Array<Sample>>;
-  scheduledEvents: Maybe<Array<ScheduledEventCore>>;
+  scheduledEventsCore: Maybe<Array<ScheduledEventCore>>;
   shipments: Maybe<Array<Shipment>>;
   questions: Array<QuestionWithUsage>;
   templates: Maybe<Array<Template>>;
@@ -2013,7 +2020,7 @@ export type QuerySamplesArgs = {
 };
 
 
-export type QueryScheduledEventsArgs = {
+export type QueryScheduledEventsCoreArgs = {
   endsBefore?: Maybe<Scalars['TzLessDateTime']>;
   endsAfter?: Maybe<Scalars['TzLessDateTime']>;
 };
@@ -2628,12 +2635,18 @@ export type ScheduledEventCore = {
   status: ProposalBookingStatusCore;
   localContactId: Maybe<Scalars['Int']>;
   proposalPk: Maybe<Scalars['Int']>;
+  isShipmentDeclared: Scalars['Boolean'];
   visit: Maybe<Visit>;
   feedback: Maybe<Feedback>;
   feedbackRequests: Array<FeedbackRequest>;
   esi: Maybe<ExperimentSafetyInput>;
   localContact: Maybe<BasicUserDetails>;
   shipments: Array<Shipment>;
+};
+
+export type ScheduledEventResponseWrap = {
+  rejection: Maybe<Rejection>;
+  scheduledEvent: Maybe<ScheduledEventCore>;
 };
 
 export type SelectionFromOptionsConfig = {
@@ -4057,7 +4070,7 @@ export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
 export type GetUserProposalBookingsWithEventsQuery = { me: Maybe<{ proposals: Array<(
       Pick<Proposal, 'primaryKey' | 'title' | 'proposalId' | 'finalStatus' | 'managementDecisionSubmitted'>
       & { proposer: Maybe<BasicUserDetailsFragment>, users: Array<BasicUserDetailsFragment>, proposalBookingCore: Maybe<{ scheduledEvents: Array<(
-          Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType' | 'status'>
+          Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType' | 'status' | 'isShipmentDeclared'>
           & { visit: Maybe<(
             { teamLead: BasicUserDetailsFragment, registrations: Array<(
               { user: BasicUserDetailsFragment }
@@ -4416,14 +4429,22 @@ export type UpdateSampleMutationVariables = Exact<{
 
 export type UpdateSampleMutation = { updateSample: { sample: Maybe<SampleFragment>, rejection: Maybe<RejectionFragment> } };
 
-export type ScheduledEventFragment = Pick<ScheduledEventCore, 'id' | 'proposalPk' | 'bookingType' | 'startsAt' | 'endsAt' | 'status' | 'localContactId'>;
+export type ScheduledEventCoreFragment = Pick<ScheduledEventCore, 'id' | 'proposalPk' | 'bookingType' | 'startsAt' | 'endsAt' | 'status' | 'localContactId' | 'isShipmentDeclared'>;
 
 export type GetScheduledEventCoreQueryVariables = Exact<{
   scheduledEventId: Scalars['Int'];
 }>;
 
 
-export type GetScheduledEventCoreQuery = { scheduledEventCore: Maybe<ScheduledEventFragment> };
+export type GetScheduledEventCoreQuery = { scheduledEventCore: Maybe<ScheduledEventCoreFragment> };
+
+export type UpdateScheduledEventCoreMutationVariables = Exact<{
+  scheduledEventId: Scalars['Int'];
+  isShipmentDeclared?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type UpdateScheduledEventCoreMutation = { updateScheduledEventCore: { scheduledEvent: Maybe<ScheduledEventCoreFragment>, rejection: Maybe<RejectionFragment> } };
 
 export type AddProposalWorkflowStatusMutationVariables = Exact<{
   proposalWorkflowId: Scalars['Int'];
@@ -5741,8 +5762,8 @@ export const SampleFragmentDoc = gql`
   questionId
 }
     `;
-export const ScheduledEventFragmentDoc = gql`
-    fragment scheduledEvent on ScheduledEventCore {
+export const ScheduledEventCoreFragmentDoc = gql`
+    fragment scheduledEventCore on ScheduledEventCore {
   id
   proposalPk
   bookingType
@@ -5750,6 +5771,7 @@ export const ScheduledEventFragmentDoc = gql`
   endsAt
   status
   localContactId
+  isShipmentDeclared
 }
     `;
 export const ShipmentFragmentDoc = gql`
@@ -7401,6 +7423,7 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
           endsAt
           bookingType
           status
+          isShipmentDeclared
           visit {
             ...visit
             teamLead {
@@ -7895,10 +7918,26 @@ ${RejectionFragmentDoc}`;
 export const GetScheduledEventCoreDocument = gql`
     query getScheduledEventCore($scheduledEventId: Int!) {
   scheduledEventCore(scheduledEventId: $scheduledEventId) {
-    ...scheduledEvent
+    ...scheduledEventCore
   }
 }
-    ${ScheduledEventFragmentDoc}`;
+    ${ScheduledEventCoreFragmentDoc}`;
+export const UpdateScheduledEventCoreDocument = gql`
+    mutation updateScheduledEventCore($scheduledEventId: Int!, $isShipmentDeclared: Boolean) {
+  updateScheduledEventCore(
+    scheduledEventId: $scheduledEventId
+    isShipmentDeclared: $isShipmentDeclared
+  ) {
+    scheduledEvent {
+      ...scheduledEventCore
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${ScheduledEventCoreFragmentDoc}
+${RejectionFragmentDoc}`;
 export const AddProposalWorkflowStatusDocument = gql`
     mutation addProposalWorkflowStatus($proposalWorkflowId: Int!, $sortOrder: Int!, $droppableGroupId: String!, $parentDroppableGroupId: String, $proposalStatusId: Int!, $nextProposalStatusId: Int, $prevProposalStatusId: Int) {
   addProposalWorkflowStatus(
@@ -9538,6 +9577,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getScheduledEventCore(variables: GetScheduledEventCoreQueryVariables): Promise<GetScheduledEventCoreQuery> {
       return withWrapper(() => client.request<GetScheduledEventCoreQuery>(print(GetScheduledEventCoreDocument), variables));
+    },
+    updateScheduledEventCore(variables: UpdateScheduledEventCoreMutationVariables): Promise<UpdateScheduledEventCoreMutation> {
+      return withWrapper(() => client.request<UpdateScheduledEventCoreMutation>(print(UpdateScheduledEventCoreDocument), variables));
     },
     addProposalWorkflowStatus(variables: AddProposalWorkflowStatusMutationVariables): Promise<AddProposalWorkflowStatusMutation> {
       return withWrapper(() => client.request<AddProposalWorkflowStatusMutation>(print(AddProposalWorkflowStatusDocument), variables));

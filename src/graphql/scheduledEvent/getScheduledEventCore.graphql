@@ -1,5 +1,5 @@
 query getScheduledEventCore($scheduledEventId: Int!) {
   scheduledEventCore(scheduledEventId: $scheduledEventId) {
-    ...scheduledEvent
+    ...scheduledEventCore
   }
 }

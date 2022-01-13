@@ -22,7 +22,12 @@ import {
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEventCore,
-  'startsAt' | 'endsAt' | 'id' | 'status' | 'localContact'
+  | 'startsAt'
+  | 'endsAt'
+  | 'id'
+  | 'status'
+  | 'localContact'
+  | 'isShipmentDeclared'
 > & {
   proposal: Pick<
     Proposal,
@@ -94,6 +99,7 @@ export function useProposalBookingsScheduledEvents({
                   endsAt: scheduledEvent.endsAt,
                   status: scheduledEvent.status,
                   localContact: scheduledEvent.localContact,
+                  isShipmentDeclared: scheduledEvent.isShipmentDeclared,
                   proposal: {
                     primaryKey: proposal.primaryKey,
                     title: proposal.title,

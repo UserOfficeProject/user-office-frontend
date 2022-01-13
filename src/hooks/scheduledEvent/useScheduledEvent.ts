@@ -30,5 +30,5 @@ export function useScheduledEvent(scheduledEventId: number) {
     };
   }, [api, scheduledEventId]);
 
-  return { scheduledEvent };
+  return { scheduledEvent, setScheduledEvent };
 }

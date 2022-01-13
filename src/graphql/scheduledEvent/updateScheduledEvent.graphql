@@ -1,0 +1,10 @@
+mutation updateScheduledEventCore($scheduledEventId: Int!, $isShipmentDeclared: Boolean) {
+  updateScheduledEventCore(scheduledEventId:$scheduledEventId, isShipmentDeclared:$isShipmentDeclared){
+    scheduledEvent{
+      ...scheduledEventCore
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}

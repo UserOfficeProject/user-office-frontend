@@ -19,7 +19,6 @@ import {
   FeedbackStatus,
   ProposalBookingStatusCore,
   ProposalEndStatus,
-  ShipmentStatus,
 } from 'generated/sdk';
 import { User } from 'models/User';
 import { parseTzLessDateTime } from 'utils/Time';
@@ -243,11 +242,9 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       event.proposal.finalStatus === ProposalEndStatus.ACCEPTED &&
       event.proposal.managementDecisionSubmitted
     ) {
-      const isAtLeastOneShipmentSubmitted = event.shipments.some(
-        (shipment) => shipment.status === ShipmentStatus.SUBMITTED
-      );
+      const isShipmentDeclared = event.isShipmentDeclared;
 
-      if (isAtLeastOneShipmentSubmitted) {
+      if (isShipmentDeclared) {
         buttonState = 'completed';
       } else {
         buttonState = 'neutral';

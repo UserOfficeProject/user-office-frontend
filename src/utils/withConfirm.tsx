@@ -128,4 +128,8 @@ export type WithConfirmType = (
   params: Options
 ) => FunctionType;
 
+export interface WithConfirmProps {
+  confirm: WithConfirmType;
+}
+
 export default withConfirm;
