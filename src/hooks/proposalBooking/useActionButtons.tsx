@@ -13,14 +13,12 @@ import ActionButton, {
   ActionButtonState,
 } from 'components/proposalBooking/ActionButton';
 import CreateUpdateVisit from 'components/proposalBooking/CreateUpdateVisit';
-import CreateUpdateShipment from 'components/shipments/CreateUpdateShipment';
 import CreateUpdateVisitRegistration from 'components/visit/CreateUpdateVisitRegistration';
 import { UserContext } from 'context/UserContextProvider';
 import {
   FeedbackStatus,
   ProposalBookingStatusCore,
   ProposalEndStatus,
-  ShipmentFragment,
   ShipmentStatus,
 } from 'generated/sdk';
 import { User } from 'models/User';
@@ -258,25 +256,12 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       buttonState = 'inactive';
     }
 
-    const onShipmentUpdated = (shipment: ShipmentFragment) => {
-      eventUpdated({
-        ...event,
-        shipments: shipment ? [shipment] : [],
-      });
-    };
-
     return createActionButton(
       'Declare shipment(s)',
       <BoxIcon />,
       buttonState,
       () => {
-        openModal(
-          <CreateUpdateShipment
-            onShipmentSubmitted={onShipmentUpdated}
-            onShipmentCreated={onShipmentUpdated}
-            event={event}
-          />
-        );
+        history.push(`/DeclareShipments/${event.id}`);
       }
     );
   };

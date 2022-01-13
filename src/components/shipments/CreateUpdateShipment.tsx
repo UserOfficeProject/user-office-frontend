@@ -1,28 +1,24 @@
 import React from 'react';
 
-import { ProposalScheduledEvent } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
+import { ShipmentFragment } from 'generated/sdk';
 import { ShipmentCore } from 'models/questionary/shipment/ShipmentCore';
 
 import CreateShipment from './CreateShipment';
 import UpdateShipment from './UpdateShipment';
 
 type CreateUpdateShipmentProps = {
-  onShipmentSubmitted: (shipment: ShipmentCore) => void;
-  onShipmentCreated: (shipment: ShipmentCore) => void;
-  event: ProposalScheduledEvent;
+  onShipmentSubmitted?: (shipment: ShipmentCore) => void;
+  onShipmentCreated?: (shipment: ShipmentCore) => void;
+  scheduledEventId: number;
+  shipment: ShipmentFragment | null;
 };
 
 function CreateUpdateShipment({
-  event,
   onShipmentSubmitted,
   onShipmentCreated,
+  scheduledEventId,
+  shipment,
 }: CreateUpdateShipmentProps) {
-  if (event.shipments.length > 1) {
-    return <span>Multiple shipments per visit is not supported yet</span>;
-  }
-
-  const shipment = event.shipments[0]; // currently only supporting 1 shipment per visit
-
   return shipment ? (
     <UpdateShipment
       shipment={shipment}
@@ -30,7 +26,7 @@ function CreateUpdateShipment({
     />
   ) : (
     <CreateShipment
-      event={event}
+      scheduledEventId={scheduledEventId}
       onShipmentSubmitted={onShipmentSubmitted}
       onShipmentCreated={onShipmentCreated}
     />

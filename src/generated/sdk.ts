@@ -432,6 +432,17 @@ export type FeedbackBasisConfig = {
   tooltip: Scalars['String'];
 };
 
+export type FeedbackRequest = {
+  id: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
+  requestedAt: Scalars['DateTime'];
+};
+
+export type FeedbackRequestWrap = {
+  rejection: Maybe<Rejection>;
+  request: Maybe<FeedbackRequest>;
+};
+
 export type FeedbackResponseWrap = {
   rejection: Maybe<Rejection>;
   feedback: Maybe<Feedback>;
@@ -714,6 +725,7 @@ export type Mutation = {
   notifyProposal: ProposalResponseWrap;
   prepareDB: PrepareDbResponseWrap;
   removeUserForReview: ReviewResponseWrap;
+  requestFeedback: FeedbackRequestWrap;
   resetPasswordEmail: SuccessResponseWrap;
   resetPassword: BasicUserDetailsResponseWrap;
   setPageContent: PageResponseWrap;
@@ -1493,6 +1505,11 @@ export type MutationRemoveUserForReviewArgs = {
 };
 
 
+export type MutationRequestFeedbackArgs = {
+  scheduledEventId: Scalars['Int'];
+};
+
+
 export type MutationResetPasswordEmailArgs = {
   email: Scalars['String'];
 };
@@ -1878,6 +1895,7 @@ export type Query = {
   proposals: Maybe<ProposalsQueryResult>;
   sampleEsi: Maybe<SampleExperimentSafetyInput>;
   samples: Maybe<Array<Sample>>;
+  scheduledEvents: Maybe<Array<ScheduledEventCore>>;
   shipments: Maybe<Array<Shipment>>;
   questions: Array<QuestionWithUsage>;
   templates: Maybe<Array<Template>>;
@@ -1927,6 +1945,7 @@ export type Query = {
   roles: Maybe<Array<Role>>;
   sample: Maybe<Sample>;
   samplesByCallId: Maybe<Array<Sample>>;
+  scheduledEventCore: Maybe<ScheduledEventCore>;
   sep: Maybe<Sep>;
   sepMembers: Maybe<Array<SepReviewer>>;
   sepReviewers: Maybe<Array<SepReviewer>>;
@@ -1991,6 +2010,12 @@ export type QuerySampleEsiArgs = {
 
 export type QuerySamplesArgs = {
   filter?: Maybe<SamplesFilter>;
+};
+
+
+export type QueryScheduledEventsArgs = {
+  endsBefore?: Maybe<Scalars['TzLessDateTime']>;
+  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
 };
 
 
@@ -2188,6 +2213,11 @@ export type QuerySampleArgs = {
 
 export type QuerySamplesByCallIdArgs = {
   callId: Scalars['Int'];
+};
+
+
+export type QueryScheduledEventCoreArgs = {
+  scheduledEventId: Scalars['Int'];
 };
 
 
@@ -2597,8 +2627,10 @@ export type ScheduledEventCore = {
   endsAt: Scalars['TzLessDateTime'];
   status: ProposalBookingStatusCore;
   localContactId: Maybe<Scalars['Int']>;
+  proposalPk: Maybe<Scalars['Int']>;
   visit: Maybe<Visit>;
   feedback: Maybe<Feedback>;
+  feedbackRequests: Array<FeedbackRequest>;
   esi: Maybe<ExperimentSafetyInput>;
   localContact: Maybe<BasicUserDetails>;
   shipments: Array<Shipment>;
@@ -2650,7 +2682,10 @@ export enum SettingsId {
   PALETTE_SUCCESS_MAIN = 'PALETTE_SUCCESS_MAIN',
   PALETTE_WARNING_MAIN = 'PALETTE_WARNING_MAIN',
   PALETTE_INFO_MAIN = 'PALETTE_INFO_MAIN',
-  HEADER_LOGO_FILENAME = 'HEADER_LOGO_FILENAME'
+  HEADER_LOGO_FILENAME = 'HEADER_LOGO_FILENAME',
+  FEEDBACK_MAX_REQUESTS = 'FEEDBACK_MAX_REQUESTS',
+  FEEDBACK_FREQUENCY_DAYS = 'FEEDBACK_FREQUENCY_DAYS',
+  FEEDBACK_EXHAUST_DAYS = 'FEEDBACK_EXHAUST_DAYS'
 }
 
 export type Shipment = {
@@ -4381,6 +4416,15 @@ export type UpdateSampleMutationVariables = Exact<{
 
 export type UpdateSampleMutation = { updateSample: { sample: Maybe<SampleFragment>, rejection: Maybe<RejectionFragment> } };
 
+export type ScheduledEventFragment = Pick<ScheduledEventCore, 'id' | 'proposalPk' | 'bookingType' | 'startsAt' | 'endsAt' | 'status' | 'localContactId'>;
+
+export type GetScheduledEventCoreQueryVariables = Exact<{
+  scheduledEventId: Scalars['Int'];
+}>;
+
+
+export type GetScheduledEventCoreQuery = { scheduledEventCore: Maybe<ScheduledEventFragment> };
+
 export type AddProposalWorkflowStatusMutationVariables = Exact<{
   proposalWorkflowId: Scalars['Int'];
   sortOrder: Scalars['Int'];
@@ -5695,6 +5739,17 @@ export const SampleFragmentDoc = gql`
   created
   proposalPk
   questionId
+}
+    `;
+export const ScheduledEventFragmentDoc = gql`
+    fragment scheduledEvent on ScheduledEventCore {
+  id
+  proposalPk
+  bookingType
+  startsAt
+  endsAt
+  status
+  localContactId
 }
     `;
 export const ShipmentFragmentDoc = gql`
@@ -7837,6 +7892,13 @@ export const UpdateSampleDocument = gql`
 }
     ${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
+export const GetScheduledEventCoreDocument = gql`
+    query getScheduledEventCore($scheduledEventId: Int!) {
+  scheduledEventCore(scheduledEventId: $scheduledEventId) {
+    ...scheduledEvent
+  }
+}
+    ${ScheduledEventFragmentDoc}`;
 export const AddProposalWorkflowStatusDocument = gql`
     mutation addProposalWorkflowStatus($proposalWorkflowId: Int!, $sortOrder: Int!, $droppableGroupId: String!, $parentDroppableGroupId: String, $proposalStatusId: Int!, $nextProposalStatusId: Int, $prevProposalStatusId: Int) {
   addProposalWorkflowStatus(
@@ -9473,6 +9535,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     updateSample(variables: UpdateSampleMutationVariables): Promise<UpdateSampleMutation> {
       return withWrapper(() => client.request<UpdateSampleMutation>(print(UpdateSampleDocument), variables));
+    },
+    getScheduledEventCore(variables: GetScheduledEventCoreQueryVariables): Promise<GetScheduledEventCoreQuery> {
+      return withWrapper(() => client.request<GetScheduledEventCoreQuery>(print(GetScheduledEventCoreDocument), variables));
     },
     addProposalWorkflowStatus(variables: AddProposalWorkflowStatusMutationVariables): Promise<AddProposalWorkflowStatusMutation> {
       return withWrapper(() => client.request<AddProposalWorkflowStatusMutation>(print(AddProposalWorkflowStatusDocument), variables));
