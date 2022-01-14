@@ -1953,6 +1953,7 @@ export type Query = {
   sample: Maybe<Sample>;
   samplesByCallId: Maybe<Array<Sample>>;
   scheduledEventCore: Maybe<ScheduledEventCore>;
+  scheduledEvents: Maybe<Array<ScheduledEventCore>>;
   sep: Maybe<Sep>;
   sepMembers: Maybe<Array<SepReviewer>>;
   sepReviewers: Maybe<Array<SepReviewer>>;
@@ -2225,6 +2226,12 @@ export type QuerySamplesByCallIdArgs = {
 
 export type QueryScheduledEventCoreArgs = {
   scheduledEventId: Scalars['Int'];
+};
+
+
+export type QueryScheduledEventsArgs = {
+  endsBefore?: Maybe<Scalars['TzLessDateTime']>;
+  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
 };
 
 
