@@ -13,6 +13,7 @@ import {
 } from 'utils/useReducerWithMiddleWares';
 
 import { SampleFragment } from './../../generated/sdk';
+import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
 import { StepType } from './StepType';
