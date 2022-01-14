@@ -159,7 +159,7 @@ function DeclareShipments({
         <Button
           color="primary"
           variant="contained"
-          disabled={scheduledEvent.isShipmentDeclared}
+          disabled={scheduledEvent.isShipmentDeclared || shipments.length === 0}
           onClick={onDeclareShipmentClicked}
           data-cy="declare-shipments"
         >
