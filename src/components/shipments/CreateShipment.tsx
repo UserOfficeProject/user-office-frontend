@@ -7,8 +7,8 @@ import {
   QuestionaryStep,
   ShipmentStatus,
   TemplateGroupId,
-  VisitFragment,
 } from 'generated/sdk';
+import { ProposalScheduledEvent } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { ShipmentCore } from 'models/questionary/shipment/ShipmentCore';
 import { ShipmentWithQuestionary } from 'models/questionary/shipment/ShipmentWithQuestionary';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -19,7 +19,7 @@ function createShipmentStub(
   creator: BasicUserDetails,
   questionarySteps: QuestionaryStep[],
   templateId: number,
-  visitId: number,
+  scheduledEventId: number,
   proposalPk: number
 ): ShipmentWithQuestionary {
   return {
@@ -28,7 +28,7 @@ function createShipmentStub(
     status: ShipmentStatus.DRAFT,
     externalRef: '',
     questionaryId: 0,
-    visitId: visitId,
+    scheduledEventId,
     created: new Date(),
     creatorId: creator.id,
     proposalPk: proposalPk,
@@ -47,16 +47,13 @@ function createShipmentStub(
 }
 
 interface CreateShipmentProps {
-  visit: VisitFragment & {
-    // potentially we will have many shipments associated with the visit
-    shipments: ShipmentCore[];
-  };
+  event: ProposalScheduledEvent;
   // for now only one shipment
   onShipmentSubmitted?: (shipment: ShipmentCore) => void;
   onShipmentCreated?: (shipment: ShipmentCore) => void;
 }
 function CreateShipment({
-  visit,
+  event,
   onShipmentSubmitted,
   onShipmentCreated,
 }: CreateShipmentProps) {
@@ -81,8 +78,8 @@ function CreateShipment({
                   user,
                   result.blankQuestionarySteps,
                   data.activeTemplateId!,
-                  visit.id,
-                  visit.proposalPk
+                  event.id,
+                  event.proposal.primaryKey
                 );
                 setBlankShipment(blankShipment);
               }
@@ -92,7 +89,7 @@ function CreateShipment({
           setNoActiveShipmentTemplates(true);
         }
       });
-  }, [setBlankShipment, api, user, visit]);
+  }, [setBlankShipment, api, user, event.id, event.proposal.primaryKey]);
 
   if (noActiveShipmentTemplates) {
     return <div>No active templates found</div>;
