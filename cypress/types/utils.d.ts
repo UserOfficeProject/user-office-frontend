@@ -1,3 +1,8 @@
+import {
+  CreateApiAccessTokenMutation,
+  CreateApiAccessTokenMutationVariables,
+} from '../../src/generated/sdk';
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -61,17 +66,6 @@ declare global {
       ) => Cypress.Chainable<JQuery<HTMLElement>>;
 
       /**
-       * Call this method before your test to have delay between clicks
-       * Excellent for presentation purposes
-       *
-       * @returns {typeof presentationMode}
-       * @memberof Chainable
-       * @example
-       *    cy.presentationMode()
-       */
-      presentationMode: () => void;
-
-      /**
        * Set content in TinyMCE fetched by editor id.
        *
        * @returns {typeof setTinyMceContent}
@@ -89,7 +83,7 @@ declare global {
        * @example
        *    cy.getTinyMceContent('editorId')
        */
-      getTinyMceContent: (tinyMceId: string) => Promise<string>;
+      getTinyMceContent: (tinyMceId: string) => Cypress.Chainable<string>;
 
       /**
        * Tests if action button in experiments table has the right state
@@ -102,12 +96,33 @@ declare global {
       testActionButton: (
         title: string,
         state: 'completed' | 'active' | 'inactive' | 'neutral' | 'invisible'
-      ) => Promise<void>;
+      ) => void;
+
+      /**
+       * Creates new api access token.
+       *
+       * @returns {typeof createApiAccessToken}
+       * @memberof Chainable
+       * @example
+       *    cy.createApiAccessToken(createApiAccessTokenInput: CreateApiAccessTokenMutationVariables)
+       */
+      createApiAccessToken: (
+        createApiAccessTokenInput: CreateApiAccessTokenMutationVariables
+      ) => Cypress.Chainable<CreateApiAccessTokenMutation>;
     }
   }
 
   interface Window {
-    tinyMCE: any;
+    tinyMCE: {
+      editors: Record<
+        string,
+        {
+          setContent: (content: string) => void;
+          fire: (event: string) => void;
+          getContent: () => string;
+        }
+      >;
+    };
   }
 }
 

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { TemplateGroupId } from 'generated/sdk';
+import { Sdk, TemplateGroupId } from 'generated/sdk';
+import { ItemWithQuestionary } from 'models/questionary/QuestionarySubmissionState';
 
 import { StepDisplayElementFactory } from './DefaultStepDisplayElementFactory';
 import { esiQuestionaryDefinition } from './questionaries/esi/EsiQuestionaryDefinition';
+import { feedbackQuestionaryDefinition } from './questionaries/feedback/FeedbackQuestionaryDefinition';
 import { genericTemplateQuestionaryDefinition } from './questionaries/genericTemplate/GenericTemplateQuestionaryDefinition';
 import { proposalQuestionaryDefinition } from './questionaries/proposal/ProposalQuestionaryDefinition';
 import { sampleQuestionaryDefinition } from './questionaries/sample/SampleQuestionaryDefinition';
@@ -26,16 +28,26 @@ export interface QuestionaryDefinition {
    * WizardStepFactory
    */
   readonly wizardStepFactory: WizardStepFactory;
+
+  /**
+   * Get ItemWithQuestionary
+   * @param itemId
+   */
+  getItemWithQuestionary(
+    api: Sdk,
+    itemId: number | [number, number]
+  ): Promise<ItemWithQuestionary | null>;
 }
 
 const registry = [
+  esiQuestionaryDefinition,
+  feedbackQuestionaryDefinition,
+  genericTemplateQuestionaryDefinition,
   proposalQuestionaryDefinition,
+  sampleEsiQuestionaryDefinition,
   sampleQuestionaryDefinition,
   shipmentQuestionaryDefinition,
   visitRegistrationQuestionaryDefinition,
-  genericTemplateQuestionaryDefinition,
-  esiQuestionaryDefinition,
-  sampleEsiQuestionaryDefinition,
 ];
 
 Object.freeze(registry);

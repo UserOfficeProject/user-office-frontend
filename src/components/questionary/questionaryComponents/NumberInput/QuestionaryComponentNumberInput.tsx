@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { NumberInputConfig } from 'generated/sdk';
+import isEventFromAutoComplete from 'utils/isEventFromAutoComplete';
 
 const useStyles = makeStyles((theme) => ({
   unitField: {
@@ -35,7 +36,7 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
     formikProps: { errors, touched },
   } = props;
   const {
-    question: { id, question },
+    question: { id, question, naturalKey },
   } = answer;
   const config = answer.config as NumberInputConfig;
   const fieldError = getIn(errors, id);
@@ -117,15 +118,26 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
           <TextField
             label="Value"
             id={`${id}-value`}
-            onChange={(e) =>
-              setStateValue({
+            onChange={(event) => {
+              const newValue = {
                 ...stateValue,
-                value: getNumberOrDefault(e.target.value, stateValue.value),
-              })
-            }
+                value: getNumberOrDefault(event.target.value, stateValue.value),
+              };
+              setStateValue(newValue);
+              if (isEventFromAutoComplete(event)) {
+                onComplete(newValue);
+              } else {
+                /* Firefox's number spinner arrows don't grant focus
+                (see https://bugzilla.mozilla.org/show_bug.cgi?id=1012818)
+                but we use loss of focus (blur) to update component state.
+                Using blur means we don't update on every keystroke. */
+                event.target.focus();
+              }
+            }}
             onBlur={() => onComplete(stateValue)}
             value={stateValue.value}
             data-cy={valueFieldId}
+            data-natural-key={naturalKey}
             type="number"
             name={valueFieldId}
             margin="dense"
