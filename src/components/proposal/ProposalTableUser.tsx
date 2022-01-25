@@ -14,14 +14,16 @@ import ProposalTable from './ProposalTable';
 export type PartialProposalsDataType = {
   primaryKey: number;
   title: string;
-  status: ProposalStatus | null;
+  status: Maybe<ProposalStatus>;
   publicStatus: ProposalPublicStatus;
   finalStatus?: string;
   notified?: boolean;
   submitted: boolean;
   proposalId: string;
   created: string | null;
-  call?: Maybe<Pick<Call, 'shortCode' | 'id' | 'isActive'>>;
+  call?: Maybe<
+    Pick<Call, 'shortCode' | 'id' | 'isActive' | 'referenceNumberFormat'>
+  >;
   proposerId?: number;
 };
 
@@ -53,13 +55,19 @@ const ProposalTableUser: React.FC = () => {
               );
             })
             .map((proposal) => {
+              const hasReferenceNumberFormat =
+                !!proposal.call?.referenceNumberFormat;
+
               return {
                 primaryKey: proposal.primaryKey,
                 title: proposal.title,
                 status: proposal.status,
                 publicStatus: proposal.publicStatus,
                 submitted: proposal.submitted,
-                proposalId: proposal.proposalId,
+                proposalId:
+                  !proposal.submitted && hasReferenceNumberFormat
+                    ? `* ${proposal.proposalId}`
+                    : proposal.proposalId,
                 created: timeAgo(proposal.created),
                 notified: proposal.notified,
                 proposerId: proposal.proposer?.id,
@@ -71,12 +79,14 @@ const ProposalTableUser: React.FC = () => {
   }, [api]);
 
   return (
-    <ProposalTable
-      title="My proposals"
-      search={false}
-      searchQuery={sendUserProposalRequest}
-      isLoading={loading}
-    />
+    <div>
+      <ProposalTable
+        title="My proposals"
+        search={false}
+        searchQuery={sendUserProposalRequest}
+        isLoading={loading}
+      />
+    </div>
   );
 };
 

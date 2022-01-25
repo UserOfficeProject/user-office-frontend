@@ -54,7 +54,9 @@ type SEPMeetingProposalViewModalProps = {
   setProposalViewModalOpen: (isOpen: boolean) => void;
 };
 
-const SEPMeetingProposalViewModal: React.FC<SEPMeetingProposalViewModalProps> = ({
+const SEPMeetingProposalViewModal: React.FC<
+  SEPMeetingProposalViewModalProps
+> = ({
   proposalViewModalOpen,
   proposalPk,
   sepId,

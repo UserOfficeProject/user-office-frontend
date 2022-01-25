@@ -2,7 +2,6 @@ import MaterialTable, { MTableBodyRow } from '@material-table/core';
 import IconButton from '@material-ui/core/IconButton';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import useTheme from '@material-ui/core/styles/useTheme';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import DragHandle from '@material-ui/icons/DragHandle';
 import Visibility from '@material-ui/icons/Visibility';
@@ -57,11 +56,9 @@ type SEPInstrumentProposalsTableProps = {
   selectedCallId: number;
 };
 
-const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = ({
-  sepInstrument,
-  sepId,
-  selectedCallId,
-}) => {
+const SEPInstrumentProposalsTable: React.FC<
+  SEPInstrumentProposalsTableProps
+> = ({ sepInstrument, sepId, selectedCallId }) => {
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     sepMeetingModal: NumberParam,
   });
@@ -111,10 +108,8 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
     }
   };
 
-  const [
-    sortedProposalsWithAverageScore,
-    setSortedProposalsWithAverageScore,
-  ] = useState<SepProposalWithAverageScoreAndAvailabilityZone[]>([]);
+  const [sortedProposalsWithAverageScore, setSortedProposalsWithAverageScore] =
+    useState<SepProposalWithAverageScoreAndAvailabilityZone[]>([]);
 
   useEffect(() => {
     const sortByRankOrAverageScore = (data: SepProposal[]) => {
@@ -334,7 +329,7 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
 
   const redBackgroundWhenOutOfAvailabilityZone = (
     isInsideAvailabilityZone: boolean
-  ): CSSProperties =>
+  ): React.CSSProperties =>
     isInsideAvailabilityZone
       ? {}
       : { backgroundColor: theme.palette.error.light };
@@ -392,16 +387,14 @@ const SEPInstrumentProposalsTable: React.FC<SEPInstrumentProposalsTableProps> = 
       sortedProposalsWithAverageScore
     );
 
-    const tableDataWithRankingsUpdated = updateAllProposalRankings(
-      newTableData
-    );
+    const tableDataWithRankingsUpdated =
+      updateAllProposalRankings(newTableData);
 
-    const reorderSepMeetingDecisionProposalsInput = tableDataWithRankingsUpdated.map(
-      (item) => ({
+    const reorderSepMeetingDecisionProposalsInput =
+      tableDataWithRankingsUpdated.map((item) => ({
         proposalPk: item.proposal.primaryKey,
         rankOrder: item.proposal.sepMeetingDecision?.rankOrder,
-      })
-    );
+      }));
 
     const result = await api(
       'Reordering of proposals saved successfully!'

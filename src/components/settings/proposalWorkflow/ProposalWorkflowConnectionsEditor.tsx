@@ -33,21 +33,19 @@ type ProposalWorkflowConnectionsEditorProps = {
   dispatch: React.Dispatch<Event>;
 };
 
-type ProposalWorkflowConnectionGroupWithSubGroups = ProposalWorkflowConnectionGroup & {
-  subGroups: ProposalWorkflowConnectionGroupWithSubGroups[];
-};
+type ProposalWorkflowConnectionGroupWithSubGroups =
+  ProposalWorkflowConnectionGroup & {
+    subGroups: ProposalWorkflowConnectionGroupWithSubGroups[];
+  };
 
-const ProposalWorkflowConnectionsEditor: React.FC<ProposalWorkflowConnectionsEditorProps> = ({
-  proposalWorkflowStatusConnectionGroups,
-  dispatch,
-}) => {
+const ProposalWorkflowConnectionsEditor: React.FC<
+  ProposalWorkflowConnectionsEditorProps
+> = ({ proposalWorkflowStatusConnectionGroups, dispatch }) => {
   const theme = useTheme();
   const isExtraLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
   const [openNewRowDialog, setOpenNewRowDialog] = useState(false);
-  const [
-    workflowConnection,
-    setWorkflowConnection,
-  ] = useState<ProposalWorkflowConnection | null>(null);
+  const [workflowConnection, setWorkflowConnection] =
+    useState<ProposalWorkflowConnection | null>(null);
   const classes = makeStyles({
     container: {
       alignItems: 'flex-start',

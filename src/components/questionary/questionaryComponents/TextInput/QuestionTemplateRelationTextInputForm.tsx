@@ -15,9 +15,9 @@ import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationTextInputForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationTextInputForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   return (
     <QuestionTemplateRelationFormShell
       {...props}

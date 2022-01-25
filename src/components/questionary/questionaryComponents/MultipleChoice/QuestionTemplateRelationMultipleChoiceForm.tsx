@@ -14,14 +14,12 @@ import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationMultipleChoiceForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationMultipleChoiceForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   const config = props.questionRel.config as SelectionFromOptionsConfig;
-  const [
-    showIsMultipleSelectCheckbox,
-    setShowIsMultipleSelectCheckbox,
-  ] = useState(config.variant === 'dropdown');
+  const [showIsMultipleSelectCheckbox, setShowIsMultipleSelectCheckbox] =
+    useState(config.variant === 'dropdown');
 
   return (
     <QuestionTemplateRelationFormShell

@@ -24,6 +24,7 @@ function createRegistrationStub(
     user: {
       firstname: '',
       lastname: '',
+      preferredname: '',
       id: userId,
       created: new Date(),
       organisation: '',
@@ -46,18 +47,11 @@ interface CreateVisitProps {
   onSubmitted?: (visit: VisitRegistrationCore) => void;
   visitId: number;
 }
-function CreateVisit({
-  onCreate,
-  onUpdate,
-  onSubmitted,
-  visitId,
-}: CreateVisitProps) {
+function CreateVisit({ onSubmitted, visitId }: CreateVisitProps) {
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const [
-    blankRegistration,
-    setBlankRegistration,
-  ] = useState<RegistrationWithQuestionary>();
+  const [blankRegistration, setBlankRegistration] =
+    useState<RegistrationWithQuestionary>();
 
   useEffect(() => {
     api()
@@ -90,8 +84,6 @@ function CreateVisit({
   return (
     <VisitRegistrationContainer
       registration={blankRegistration}
-      onCreate={onCreate}
-      onUpdate={onUpdate}
       onSubmitted={onSubmitted}
     />
   );

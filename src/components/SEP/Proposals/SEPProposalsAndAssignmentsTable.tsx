@@ -44,19 +44,14 @@ type SEPProposalsAndAssignmentsTableProps = {
   selectedCallId: number;
 };
 
-const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableProps> = ({
-  sepId,
-  selectedCallId,
-  Toolbar,
-}) => {
+const SEPProposalsAndAssignmentsTable: React.FC<
+  SEPProposalsAndAssignmentsTableProps
+> = ({ sepId, selectedCallId, Toolbar }) => {
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     reviewModal: NumberParam,
   });
-  const {
-    loadingSEPProposals,
-    SEPProposalsData,
-    setSEPProposalsData,
-  } = useSEPProposalsData(sepId, selectedCallId);
+  const { loadingSEPProposals, SEPProposalsData, setSEPProposalsData } =
+    useSEPProposalsData(sepId, selectedCallId);
   const { api } = useDataApiWithFeedback();
   const [proposalPk, setProposalPk] = useState<null | number>(null);
   const downloadPDFProposal = useDownloadPDFProposal();
@@ -222,8 +217,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
             if (
               sepProposalsData.proposalPk === editingProposalData.proposalPk
             ) {
-              const editingProposalStatus = (currentAssignment.review as ReviewWithNextProposalStatus)
-                .nextProposalStatus
+              const editingProposalStatus = (
+                currentAssignment.review as ReviewWithNextProposalStatus
+              ).nextProposalStatus
                 ? ((currentAssignment.review as ReviewWithNextProposalStatus)
                     .nextProposalStatus as ProposalStatus)
                 : editingProposalData.proposal.status;
@@ -387,7 +383,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<SEPProposalsAndAssignmentsTableP
                     (rowData) => ({
                       icon: ViewIcon,
                       onClick: () =>
-                        setUrlQueryParams({ reviewModal: rowData.proposalPk }),
+                        setUrlQueryParams({
+                          reviewModal: rowData.proposalPk,
+                        }),
                       tooltip: 'View Proposal',
                     }),
                     {

@@ -1,14 +1,25 @@
+import { makeStyles, TextField } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import EditIcon from '@material-ui/icons/Edit';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { BasicUserDetails, UserRole } from 'generated/sdk';
 import { BasicUserData, useBasicUserData } from 'hooks/user/useUserData';
 
 import ParticipantModal from './ParticipantModal';
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  addButton: {
+    padding: '5px',
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 export default function ProposalParticipant(props: {
   userId?: number;
@@ -19,24 +30,12 @@ export default function ProposalParticipant(props: {
     null
   );
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const { loadBasicUserData } = useBasicUserData();
-
+  const { userData } = useBasicUserData(props.userId);
   useEffect(() => {
-    let unmounted = false;
-    if (props.userId) {
-      loadBasicUserData(props.userId).then((user) => {
-        if (unmounted) {
-          return;
-        }
-        setCurUser(user);
-      });
-    }
+    setCurUser(userData);
+  }, [userData]);
 
-    return () => {
-      // used to avoid unmounted component state update error
-      unmounted = true;
-    };
-  }, [props.userId, loadBasicUserData]);
+  const classes = useStyles();
 
   return (
     <div className={props.className}>
@@ -55,19 +54,30 @@ export default function ProposalParticipant(props: {
         }}
         participant={true}
       />
-      <FormControl margin="dense" fullWidth>
-        <FormLabel component="div">
-          Principal Investigator
-          <Tooltip title="Edit Principal Investigator">
-            <IconButton onClick={() => setIsPickerOpen(true)}>
-              <EditIcon data-cy="edit-proposer-button" />
-            </IconButton>
-          </Tooltip>
-        </FormLabel>
-        <div>
-          {curUser &&
-            `${curUser.firstname} ${curUser.lastname}; ${curUser.organisation}`}
-        </div>
+      <FormControl className={classes.container} margin="dense">
+        <TextField
+          label="Principal Investigator"
+          value={
+            curUser
+              ? `${curUser.firstname} ${curUser.lastname}; ${curUser.organisation}`
+              : ''
+          }
+          InputLabelProps={{ shrink: true }}
+          InputProps={{
+            readOnly: true,
+          }}
+          data-cy="principal-investigator"
+          required
+        />
+
+        <Tooltip title="Edit Principal Investigator">
+          <IconButton
+            onClick={() => setIsPickerOpen(true)}
+            className={classes.addButton}
+          >
+            <EditIcon data-cy="edit-proposer-button" fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </FormControl>
     </div>
   );

@@ -22,13 +22,11 @@ query getUserProposalBookingsWithEvents(
           startsAt
           endsAt
           bookingType
+          status
           visit {
             ...visit
             teamLead {
               ...basicUserDetails
-            }
-            shipments {
-              ...shipment
             }
             registrations {
               ...visitRegistration
@@ -36,9 +34,18 @@ query getUserProposalBookingsWithEvents(
                 ...basicUserDetails
               }
             }
-            esi {
-              ...esi
-            }
+          }
+          esi {
+            ...esi
+          }
+          feedback {
+            ...feedback
+          }
+          shipments {
+            ...shipment
+          }
+          localContact {
+            ...basicUserDetails
           }
         }
       }

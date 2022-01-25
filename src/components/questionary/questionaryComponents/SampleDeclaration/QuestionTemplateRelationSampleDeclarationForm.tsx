@@ -21,9 +21,9 @@ import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationSampleDeclarationForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationSampleDeclarationForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   const config = props.questionRel.config as SampleDeclarationConfig;
 
   const { templates } = useActiveTemplates(

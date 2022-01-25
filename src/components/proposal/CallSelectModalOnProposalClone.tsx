@@ -31,10 +31,9 @@ type CallSelectModalOnProposalsCloneProps = {
   cloneProposalsToCall: (call: Call) => Promise<void>;
 };
 
-const CallSelectModalOnProposalsClone: React.FC<CallSelectModalOnProposalsCloneProps> = ({
-  close,
-  cloneProposalsToCall,
-}) => {
+const CallSelectModalOnProposalsClone: React.FC<
+  CallSelectModalOnProposalsCloneProps
+> = ({ close, cloneProposalsToCall }) => {
   const classes = useStyles();
   const { calls, loadingCalls } = useCallsData({ isActive: true });
 

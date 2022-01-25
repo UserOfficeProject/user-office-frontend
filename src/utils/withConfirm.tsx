@@ -28,9 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const withConfirm = <T extends Record<string, unknown>>(
-  WrappedComponent: React.ComponentType<T>
-) => {
+function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
   return function WithConfirmComponent(props: Omit<T, 'confirm'>): JSX.Element {
     const classes = useStyles();
     const [onConfirm, setOnConfirm] = useState<FunctionType | null>(null);
@@ -94,7 +92,9 @@ const withConfirm = <T extends Record<string, unknown>>(
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleCancel}>{cancellationText}</Button>
+            <Button onClick={handleCancel} data-cy="confirm-cancel">
+              {cancellationText}
+            </Button>
             <Button
               onClick={handleConfirm}
               color="primary"
@@ -108,7 +108,7 @@ const withConfirm = <T extends Record<string, unknown>>(
       </>
     );
   };
-};
+}
 
 interface Options {
   title: string;

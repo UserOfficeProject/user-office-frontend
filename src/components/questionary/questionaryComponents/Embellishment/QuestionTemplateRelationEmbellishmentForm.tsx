@@ -11,9 +11,9 @@ import { QuestionTemplateRelationFormProps } from 'components/questionary/Questi
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationEmbellishmentForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationEmbellishmentForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   return (
     <QuestionTemplateRelationFormShell
       {...props}

@@ -36,7 +36,10 @@ const SampleQuestionaryStepView = ({
         topicId={topicId}
         onStepComplete={() => {
           if (isLastStep(wizardStep)) {
-            dispatch({ type: 'SAMPLE_SUBMITTED', sample: state.sample });
+            dispatch({
+              type: 'ITEM_WITH_QUESTIONARY_SUBMITTED',
+              itemWithQuestionary: state.sample,
+            });
           }
         }}
       />
@@ -45,7 +48,8 @@ const SampleQuestionaryStepView = ({
 };
 
 export class SampleStepDisplayElementFactory
-  implements StepDisplayElementFactory {
+  implements StepDisplayElementFactory
+{
   getDisplayElement(wizardStep: WizardStep, isReadonly: boolean) {
     switch (wizardStep.type) {
       case 'QuestionaryStep':

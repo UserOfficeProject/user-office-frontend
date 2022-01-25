@@ -4,9 +4,9 @@ import { QuestionTemplateRelationFormProps } from 'components/questionary/Questi
 
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
-export const QuestionTemplateRelationProposalEsiBasisForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationProposalEsiBasisForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   return (
     <QuestionTemplateRelationFormShell {...props} validationSchema={null} />
   );

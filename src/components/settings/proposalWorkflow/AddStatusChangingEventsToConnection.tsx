@@ -57,7 +57,9 @@ type AddStatusChangingEventsToConnectionProps = {
   statusName?: string;
 };
 
-const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToConnectionProps> = ({
+const AddStatusChangingEventsToConnection: React.FC<
+  AddStatusChangingEventsToConnectionProps
+> = ({
   statusChangingEvents,
   close,
   addStatusChangingEventsToConnection,
@@ -117,9 +119,10 @@ const AddStatusChangingEventsToConnection: React.FC<AddStatusChangingEventsToCon
                                   if (e.target.checked)
                                     arrayHelpers.push(proposalEvent.name);
                                   else {
-                                    const idx = values.selectedStatusChangingEvents.indexOf(
-                                      proposalEvent.name
-                                    );
+                                    const idx =
+                                      values.selectedStatusChangingEvents.indexOf(
+                                        proposalEvent.name
+                                      );
                                     arrayHelpers.remove(idx);
                                   }
                                 }}

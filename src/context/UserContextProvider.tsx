@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { decode } from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
 import { Role, UserRole } from 'generated/sdk';
+import { useUnauthorizedApi } from 'hooks/common/useDataApi';
 import { dummyUser, User } from 'models/User';
 
 interface UserContextData {
@@ -44,7 +45,7 @@ const initUserData: UserContextData = {
 };
 
 export const getCurrentUser = () =>
-  decode(localStorage.token) as DecodedTokenData | null;
+  jwtDecode(localStorage.token) as DecodedTokenData | null;
 
 const checkLocalStorage = (
   dispatch: React.Dispatch<{
@@ -89,7 +90,9 @@ const reducer = (
         expToken: action.payload.expToken,
       };
     case ActionType.LOGINUSER: {
-      const { user, exp, roles } = decode(action.payload) as DecodedTokenData;
+      const { user, exp, roles } = jwtDecode(
+        action.payload
+      ) as DecodedTokenData;
       localStorage.user = JSON.stringify(user);
       localStorage.token = action.payload;
       localStorage.expToken = exp;
@@ -106,7 +109,7 @@ const reducer = (
       };
     }
     case ActionType.SETTOKEN: {
-      const { currentRole, roles, exp } = decode(
+      const { currentRole, roles, exp } = jwtDecode(
         action.payload
       ) as DecodedTokenData;
       localStorage.token = action.payload;
@@ -146,6 +149,7 @@ const reducer = (
 export const UserContextProvider: React.FC = (props): JSX.Element => {
   const [state, dispatch] = React.useReducer(reducer, initUserData);
   const [, setCookie] = useCookies();
+  const unauthorizedApi = useUnauthorizedApi();
 
   checkLocalStorage(dispatch, state);
   useEffect(() => {
@@ -167,11 +171,15 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
         ...state,
         handleLogin: (data): void =>
           dispatch({ type: ActionType.LOGINUSER, payload: data }),
-        // Using useCallback here as these are used in useDataAPI dependency array
-        handleLogout: useCallback(
-          () => dispatch({ type: ActionType.LOGOFFUSER, payload: null }),
-          []
-        ),
+        handleLogout: () => {
+          if (localStorage.token) {
+            unauthorizedApi().logout({
+              token: localStorage.token,
+            });
+          }
+
+          dispatch({ type: ActionType.LOGOFFUSER, payload: null });
+        },
         handleRole: (role: string): void =>
           dispatch({ type: ActionType.SELECTROLE, payload: role }),
         handleNewToken: useCallback(

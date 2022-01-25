@@ -14,6 +14,8 @@ import crossFetch from 'cross-fetch';
 import { useSnackbar } from 'notistack';
 import React, { useState, useContext, useRef } from 'react';
 
+import { downloadBlob } from 'utils/downloadBlob';
+
 import { UserContext } from './UserContextProvider';
 
 const useStyles = makeStyles((theme) => ({
@@ -106,6 +108,7 @@ export enum PREPARE_DOWNLOAD_TYPE {
   PDF_PROPOSAL,
   PDF_SAMPLE,
   PDF_SHIPMENT_LABEL,
+  PDF_GENERIC_TEMPLATE,
 
   XLSX_PROPOSAL,
   XLSX_SEP,
@@ -137,6 +140,8 @@ function generateLink(
       return '/download/pdf/sample/' + ids;
     case PREPARE_DOWNLOAD_TYPE.PDF_SHIPMENT_LABEL:
       return '/download/pdf/shipment-label/' + ids;
+    case PREPARE_DOWNLOAD_TYPE.PDF_GENERIC_TEMPLATE:
+      return '/download/pdf/generic-template/' + ids;
     case PREPARE_DOWNLOAD_TYPE.XLSX_PROPOSAL:
       return '/download/xlsx/proposal/' + ids;
     case PREPARE_DOWNLOAD_TYPE.XLSX_SEP:
@@ -179,22 +184,9 @@ export const DownloadContextProvider: React.FC = ({ children }) => {
 
   const promptDownload = async (response: Response) => {
     const filename = response.headers.get('x-download-filename') || 'unknown';
-
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
 
-    const element = document.createElement('a');
-    element.setAttribute('href', url);
-    element.setAttribute('download', decodeURIComponent(filename));
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-
-    setTimeout(() => URL.revokeObjectURL(url), 150);
+    downloadBlob(blob, filename);
   };
 
   const prepareDownload = (

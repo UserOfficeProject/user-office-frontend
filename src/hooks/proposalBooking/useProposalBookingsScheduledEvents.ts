@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 
 import {
+  BasicUserDetailsFragment,
   EsiFragment,
+  FeedbackFragment,
   Instrument,
   Maybe,
   Proposal,
   ProposalBookingStatusCore,
   ScheduledEventCore,
+  ShipmentFragment,
   Visit,
   VisitFragment,
 } from 'generated/sdk';
@@ -14,14 +17,9 @@ import { useDataApi } from 'hooks/common/useDataApi';
 import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
 import { toTzLessDateTime } from 'utils/Time';
 
-import {
-  BasicUserDetailsFragment,
-  ShipmentFragment,
-} from './../../generated/sdk';
-
 export type ProposalScheduledEvent = Pick<
   ScheduledEventCore,
-  'startsAt' | 'endsAt' | 'id'
+  'startsAt' | 'endsAt' | 'id' | 'status' | 'localContact'
 > & {
   proposal: Pick<
     Proposal,
@@ -40,9 +38,10 @@ export type ProposalScheduledEvent = Pick<
   visit:
     | (VisitFragment & {
         registrations: VisitRegistrationCore[];
-        shipments: ShipmentFragment[];
-      } & Pick<Visit, 'teamLead'> & { esi: Maybe<EsiFragment> })
+      } & Pick<Visit, 'teamLead'>)
     | null;
+} & { esi: Maybe<EsiFragment> } & { feedback: Maybe<FeedbackFragment> } & {
+  shipments: ShipmentFragment[];
 };
 
 export function useProposalBookingsScheduledEvents({
@@ -90,6 +89,8 @@ export function useProposalBookingsScheduledEvents({
                   id: scheduledEvent.id,
                   startsAt: scheduledEvent.startsAt,
                   endsAt: scheduledEvent.endsAt,
+                  status: scheduledEvent.status,
+                  localContact: scheduledEvent.localContact,
                   proposal: {
                     primaryKey: proposal.primaryKey,
                     title: proposal.title,
@@ -102,6 +103,9 @@ export function useProposalBookingsScheduledEvents({
                   },
                   instrument: proposal.instrument,
                   visit: scheduledEvent.visit,
+                  esi: scheduledEvent.esi,
+                  feedback: scheduledEvent.feedback,
+                  shipments: scheduledEvent.shipments,
                 });
               }
             )

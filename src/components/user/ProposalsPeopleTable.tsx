@@ -8,14 +8,16 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Formik, Field, Form } from 'formik';
 import { TextField } from 'formik-material-ui';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   BasicUserDetails,
   UserRole,
   GetBasicUserDetailsByEmailQuery,
   GetUsersQueryVariables,
+  FeatureId,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { usePrevColabs } from 'hooks/user/usePrevColabs';
@@ -79,7 +81,7 @@ const getUsersTableData = (
       ...user,
       tableData: {
         checked: selectedUsers.some(
-          (selectedUser) => selectedUser.id == user.id
+          (selectedUser) => selectedUser.id === user.id
         ),
       },
     })),
@@ -131,8 +133,9 @@ const useStyles = makeStyles({
 });
 
 const columns = [
-  { title: 'Name', field: 'firstname' },
+  { title: 'Fristname', field: 'firstname' },
   { title: 'Surname', field: 'lastname' },
+  { title: 'Preferred name', field: 'preferredname' },
   { title: 'Organisation', field: 'organisation' },
 ];
 
@@ -188,11 +191,16 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
     userRole: props.userRole ? props.userRole : null,
     refreshData: false,
   });
+
+  const featureContext = useContext(FeatureContext);
+  const isEmailInviteEnabled = !!featureContext.features.get(
+    FeatureId.EMAIL_INVITE
+  )?.isEnabled;
   const { prevColabUsers, loadingUsersData } = usePrevColabs(query);
 
-  const sendRequest = useDataApi();
+  const api = useDataApi();
   const [loading, setLoading] = useState(false);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [sendUserEmail, setSendUserEmail] = useState(false);
   const [selectedParticipants, setSelectedParticipants] = useState<
     BasicUserDetails[]
@@ -267,6 +275,7 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
     });
 
   props.emailInvite &&
+    isEmailInviteEnabled &&
     actionArray.push({
       icon: EmailIcon,
       isFreeAction: true,
@@ -336,6 +345,9 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
   );
 
   const currentPage = (query.offset as number) / (query.first as number);
+  const emailSearchText = isEmailInviteEnabled
+    ? 'Please check the spelling and if the user has registered with us. If not found, the user can be added through email invite.'
+    : 'Please check the spelling and if the user has registered with us or has the correct privacy settings to be found by this search.';
 
   return (
     <Formik
@@ -349,7 +361,7 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
         // If there is an email and it has not already been searched
         if (values.email && !tableEmails.includes(values.email)) {
           setLoading(true);
-          const userDetails = await getUserByEmail(values.email, sendRequest);
+          const userDetails = await getUserByEmail(values.email, api);
 
           if (!userDetails) {
             setDisplayError(true);
@@ -413,8 +425,7 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                 }
               >
                 <AlertTitle>We cannot find that email</AlertTitle>
-                Please check the spelling and if the user has registered with us
-                or has the correct privacy settings to be found by this search.
+                {emailSearchText}
               </Alert>
             )}
           </div>
@@ -444,15 +455,17 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                     'aria-label': `${rowdata.firstname}-${rowdata.lastname}-${rowdata.organisation}-select`,
                   },
                 }),
+                headerSelectionProps: {
+                  inputProps: { 'aria-label': 'Select All Rows' },
+                },
               }}
               actions={actionArray}
               localization={{
                 body: { emptyDataSourceMessage: 'No Previous Collaborators' },
                 toolbar: {
-                  searchPlaceholder: 'Filter',
-                  searchTooltip: 'Filter Users',
+                  searchPlaceholder: 'Filter found users',
+                  searchTooltip: 'Filter found users',
                   nRowsSelected: '{0} Users(s) Selected',
-                  showColumnsAriaLabel: 'testtest',
                 },
               }}
               onPageChange={(page) =>

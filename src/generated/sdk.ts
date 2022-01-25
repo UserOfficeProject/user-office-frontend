@@ -1,7 +1,8 @@
 import { GraphQLClient } from 'graphql-request';
-import { print } from 'graphql';
+import * as Dom from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -15,22 +16,19 @@ export type Scalars = {
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
   IntStringDateBoolArray: any;
-  /** DateTime without timezone in 'yyyy-MM-dd HH:mm:ss' format */
+  /** DateTime without timezone in 'yyyy-MM-DD HH:mm:ss' format */
   TzLessDateTime: string;
-};
-
-export type ActivateScheduledEventInput = {
-  id: Scalars['Int'];
+  _Any: any;
 };
 
 export type AddProposalWorkflowStatusInput = {
+  droppableGroupId: Scalars['String'];
+  nextProposalStatusId?: InputMaybe<Scalars['Int']>;
+  parentDroppableGroupId?: InputMaybe<Scalars['String']>;
+  prevProposalStatusId?: InputMaybe<Scalars['Int']>;
+  proposalStatusId: Scalars['Int'];
   proposalWorkflowId: Scalars['Int'];
   sortOrder: Scalars['Int'];
-  droppableGroupId: Scalars['String'];
-  parentDroppableGroupId?: Maybe<Scalars['String']>;
-  proposalStatusId: Scalars['Int'];
-  nextProposalStatusId?: Maybe<Scalars['Int']>;
-  prevProposalStatusId?: Maybe<Scalars['Int']>;
 };
 
 export type AddStatusChangingEventsToConnectionInput = {
@@ -39,17 +37,16 @@ export type AddStatusChangingEventsToConnectionInput = {
 };
 
 export type AddTechnicalReviewInput = {
+  comment?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  timeAllocation?: Maybe<Scalars['Int']>;
-  status?: Maybe<TechnicalReviewStatus>;
-  submitted?: Maybe<Scalars['Boolean']>;
-  reviewerId?: Maybe<Scalars['Int']>;
+  publicComment?: InputMaybe<Scalars['String']>;
+  reviewerId?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<TechnicalReviewStatus>;
+  submitted?: InputMaybe<Scalars['Boolean']>;
+  timeAllocation?: InputMaybe<Scalars['Int']>;
 };
 
 export type AddUserRoleResponseWrap = {
-  __typename?: 'AddUserRoleResponseWrap';
   rejection: Maybe<Rejection>;
   success: Maybe<Scalars['Boolean']>;
 };
@@ -60,149 +57,124 @@ export enum AllocationTimeUnits {
 }
 
 export type Answer = {
-  __typename?: 'Answer';
-  question: Question;
-  sortOrder: Scalars['Int'];
-  topicId: Scalars['Int'];
+  answerId: Maybe<Scalars['Int']>;
   config: FieldConfig;
   dependencies: Array<FieldDependency>;
   dependenciesOperator: Maybe<DependenciesLogicOperator>;
-  answerId: Maybe<Scalars['Int']>;
+  question: Question;
+  sortOrder: Scalars['Int'];
+  topicId: Scalars['Int'];
   value: Maybe<Scalars['IntStringDateBoolArray']>;
 };
 
 export type AnswerBasic = {
-  __typename?: 'AnswerBasic';
-  answerId: Maybe<Scalars['Int']>;
   answer: Scalars['IntStringDateBoolArray'];
-  questionaryId: Scalars['Int'];
-  questionId: Scalars['String'];
+  answerId: Maybe<Scalars['Int']>;
   createdAt: Scalars['DateTime'];
+  questionId: Scalars['String'];
+  questionaryId: Scalars['Int'];
 };
 
 export type AnswerInput = {
   questionId: Scalars['String'];
-  value?: Maybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type ApiAccessTokenResponseWrap = {
-  __typename?: 'ApiAccessTokenResponseWrap';
-  rejection: Maybe<Rejection>;
   apiAccessToken: Maybe<PermissionsWithAccessToken>;
+  rejection: Maybe<Rejection>;
 };
 
 export type AssignChairOrSecretaryToSepInput = {
-  userId: Scalars['Int'];
   roleId: UserRole;
   sepId: Scalars['Int'];
-};
-
-export type AssignEquipmentsToScheduledEventInput = {
-  scheduledEventId: Scalars['Int'];
-  proposalBookingId: Scalars['Int'];
-  equipmentIds: Array<Scalars['Int']>;
+  userId: Scalars['Int'];
 };
 
 export type AssignInstrumentsToCallInput = {
-  instrumentIds: Array<Scalars['Int']>;
   callId: Scalars['Int'];
+  instrumentIds: Array<Scalars['Int']>;
 };
 
 export type AuthJwtApiTokenPayload = {
-  __typename?: 'AuthJwtApiTokenPayload';
   accessTokenId: Scalars['String'];
 };
 
 export type AuthJwtPayload = {
-  __typename?: 'AuthJwtPayload';
-  user: User;
   currentRole: Role;
   roles: Array<Role>;
+  user: User;
 };
 
 export type BasicUserDetails = {
-  __typename?: 'BasicUserDetails';
-  id: Scalars['Int'];
+  created: Maybe<Scalars['DateTime']>;
   firstname: Scalars['String'];
+  id: Scalars['Int'];
   lastname: Scalars['String'];
   organisation: Scalars['String'];
-  position: Scalars['String'];
   placeholder: Maybe<Scalars['Boolean']>;
-  created: Maybe<Scalars['DateTime']>;
+  position: Scalars['String'];
+  preferredname: Maybe<Scalars['String']>;
 };
 
 export type BasicUserDetailsResponseWrap = {
-  __typename?: 'BasicUserDetailsResponseWrap';
   rejection: Maybe<Rejection>;
   user: Maybe<BasicUserDetails>;
 };
 
 export type BooleanConfig = {
-  __typename?: 'BooleanConfig';
-  small_label: Scalars['String'];
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
 };
 
-export type BulkUpsertLostTimesInput = {
-  proposalBookingId: Scalars['Int'];
-  lostTimes: Array<SimpleLostTimeInput>;
-};
-
 export type Call = {
-  __typename?: 'Call';
+  allocationTimeUnit: AllocationTimeUnits;
+  cycleComment: Scalars['String'];
+  description: Maybe<Scalars['String']>;
+  endCall: Scalars['DateTime'];
+  endCycle: Scalars['DateTime'];
+  endNotify: Scalars['DateTime'];
+  endReview: Scalars['DateTime'];
+  endSEPReview: Maybe<Scalars['DateTime']>;
+  esiTemplateId: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
+  instruments: Array<InstrumentWithAvailabilityTime>;
+  isActive: Scalars['Boolean'];
+  proposalCount: Scalars['Int'];
+  proposalSequence: Maybe<Scalars['Int']>;
+  proposalWorkflow: Maybe<ProposalWorkflow>;
+  proposalWorkflowId: Maybe<Scalars['Int']>;
+  referenceNumberFormat: Maybe<Scalars['String']>;
   shortCode: Scalars['String'];
   startCall: Scalars['DateTime'];
-  endCall: Scalars['DateTime'];
-  startReview: Scalars['DateTime'];
-  endReview: Scalars['DateTime'];
-  startSEPReview: Maybe<Scalars['DateTime']>;
-  endSEPReview: Maybe<Scalars['DateTime']>;
-  startNotify: Scalars['DateTime'];
-  endNotify: Scalars['DateTime'];
   startCycle: Scalars['DateTime'];
-  endCycle: Scalars['DateTime'];
-  referenceNumberFormat: Maybe<Scalars['String']>;
-  proposalSequence: Maybe<Scalars['Int']>;
-  cycleComment: Scalars['String'];
+  startNotify: Scalars['DateTime'];
+  startReview: Scalars['DateTime'];
+  startSEPReview: Maybe<Scalars['DateTime']>;
+  submissionMessage: Maybe<Scalars['String']>;
   surveyComment: Scalars['String'];
-  proposalWorkflowId: Maybe<Scalars['Int']>;
-  allocationTimeUnit: AllocationTimeUnits;
-  templateId: Scalars['Int'];
-  esiTemplateId: Maybe<Scalars['Int']>;
-  title: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  instruments: Array<InstrumentWithAvailabilityTime>;
-  proposalWorkflow: Maybe<ProposalWorkflow>;
   template: Template;
-  proposalCount: Scalars['Int'];
-  isActive: Scalars['Boolean'];
+  templateId: Scalars['Int'];
+  title: Maybe<Scalars['String']>;
 };
 
 export type CallResponseWrap = {
-  __typename?: 'CallResponseWrap';
-  rejection: Maybe<Rejection>;
   call: Maybe<Call>;
+  rejection: Maybe<Rejection>;
 };
 
 export type CallsFilter = {
-  templateIds?: Maybe<Array<Scalars['Int']>>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  isEnded?: Maybe<Scalars['Boolean']>;
-  isReviewEnded?: Maybe<Scalars['Boolean']>;
-  isSEPReviewEnded?: Maybe<Scalars['Boolean']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isEnded?: InputMaybe<Scalars['Boolean']>;
+  isReviewEnded?: InputMaybe<Scalars['Boolean']>;
+  isSEPReviewEnded?: InputMaybe<Scalars['Boolean']>;
+  templateIds?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type ChangeProposalsStatusInput = {
-  statusId: Scalars['Int'];
   proposals: Array<ProposalPkWithCallId>;
-};
-
-export type CheckExternalTokenWrap = {
-  __typename?: 'CheckExternalTokenWrap';
-  rejection: Maybe<Rejection>;
-  token: Maybe<Scalars['String']>;
+  statusId: Scalars['Int'];
 };
 
 export type CloneProposalsInput = {
@@ -210,103 +182,97 @@ export type CloneProposalsInput = {
   proposalsToClonePk: Array<Scalars['Int']>;
 };
 
-export type ConfirmEquipmentAssignmentInput = {
-  scheduledEventId: Scalars['Int'];
-  equipmentId: Scalars['Int'];
-  newStatus: EquipmentAssignmentStatus;
+export type ConflictResolution = {
+  questionId: Scalars['String'];
+  strategy: ConflictResolutionStrategy;
 };
 
+export enum ConflictResolutionStrategy {
+  UNRESOLVED = 'UNRESOLVED',
+  USE_EXISTING = 'USE_EXISTING',
+  USE_NEW = 'USE_NEW'
+}
+
 export type CreateApiAccessTokenInput = {
-  name: Scalars['String'];
   accessPermissions: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type CreateCallInput = {
+  allocationTimeUnit: AllocationTimeUnits;
+  cycleComment: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  endCall: Scalars['DateTime'];
+  endCycle: Scalars['DateTime'];
+  endNotify: Scalars['DateTime'];
+  endReview: Scalars['DateTime'];
+  endSEPReview?: InputMaybe<Scalars['DateTime']>;
+  esiTemplateId?: InputMaybe<Scalars['Int']>;
+  proposalSequence?: InputMaybe<Scalars['Int']>;
+  proposalWorkflowId: Scalars['Int'];
+  referenceNumberFormat?: InputMaybe<Scalars['String']>;
   shortCode: Scalars['String'];
   startCall: Scalars['DateTime'];
-  endCall: Scalars['DateTime'];
-  startReview: Scalars['DateTime'];
-  endReview: Scalars['DateTime'];
-  startSEPReview?: Maybe<Scalars['DateTime']>;
-  endSEPReview?: Maybe<Scalars['DateTime']>;
-  startNotify: Scalars['DateTime'];
-  endNotify: Scalars['DateTime'];
   startCycle: Scalars['DateTime'];
-  endCycle: Scalars['DateTime'];
-  referenceNumberFormat?: Maybe<Scalars['String']>;
-  proposalSequence?: Maybe<Scalars['Int']>;
-  cycleComment: Scalars['String'];
+  startNotify: Scalars['DateTime'];
+  startReview: Scalars['DateTime'];
+  startSEPReview?: InputMaybe<Scalars['DateTime']>;
+  submissionMessage?: InputMaybe<Scalars['String']>;
   surveyComment: Scalars['String'];
-  allocationTimeUnit: AllocationTimeUnits;
-  proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
-  esiTemplateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateProposalStatusInput = {
-  shortCode: Scalars['String'];
-  name: Scalars['String'];
   description: Scalars['String'];
+  name: Scalars['String'];
+  shortCode: Scalars['String'];
 };
 
 export type CreateProposalWorkflowInput = {
-  name: Scalars['String'];
   description: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type CreateUserByEmailInviteResponseWrap = {
-  __typename?: 'CreateUserByEmailInviteResponseWrap';
-  rejection: Maybe<Rejection>;
   id: Maybe<Scalars['Int']>;
+  rejection: Maybe<Rejection>;
 };
 
 export enum DataType {
   BOOLEAN = 'BOOLEAN',
   DATE = 'DATE',
   EMBELLISHMENT = 'EMBELLISHMENT',
+  FEEDBACK_BASIS = 'FEEDBACK_BASIS',
   FILE_UPLOAD = 'FILE_UPLOAD',
-  SELECTION_FROM_OPTIONS = 'SELECTION_FROM_OPTIONS',
-  TEXT_INPUT = 'TEXT_INPUT',
-  SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
-  SAMPLE_BASIS = 'SAMPLE_BASIS',
-  PROPOSAL_BASIS = 'PROPOSAL_BASIS',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
+  GENERIC_TEMPLATE_BASIS = 'GENERIC_TEMPLATE_BASIS',
   INTERVAL = 'INTERVAL',
   NUMBER_INPUT = 'NUMBER_INPUT',
-  SHIPMENT_BASIS = 'SHIPMENT_BASIS',
-  RICH_TEXT_INPUT = 'RICH_TEXT_INPUT',
-  VISIT_BASIS = 'VISIT_BASIS',
+  PROPOSAL_BASIS = 'PROPOSAL_BASIS',
   PROPOSAL_ESI_BASIS = 'PROPOSAL_ESI_BASIS',
-  SAMPLE_ESI_BASIS = 'SAMPLE_ESI_BASIS'
+  RICH_TEXT_INPUT = 'RICH_TEXT_INPUT',
+  SAMPLE_BASIS = 'SAMPLE_BASIS',
+  SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
+  SAMPLE_ESI_BASIS = 'SAMPLE_ESI_BASIS',
+  SELECTION_FROM_OPTIONS = 'SELECTION_FROM_OPTIONS',
+  SHIPMENT_BASIS = 'SHIPMENT_BASIS',
+  TEXT_INPUT = 'TEXT_INPUT',
+  VISIT_BASIS = 'VISIT_BASIS'
 }
 
 export type DateConfig = {
-  __typename?: 'DateConfig';
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
-  tooltip: Scalars['String'];
-  minDate: Maybe<Scalars['String']>;
-  maxDate: Maybe<Scalars['String']>;
   defaultDate: Maybe<Scalars['String']>;
   includeTime: Scalars['Boolean'];
-};
-
-
-export type DbStat = {
-  __typename?: 'DbStat';
-  total: Scalars['Float'];
-  state: Maybe<Scalars['String']>;
+  maxDate: Maybe<Scalars['String']>;
+  minDate: Maybe<Scalars['String']>;
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
 };
 
 export type DeleteApiAccessTokenInput = {
   accessTokenId: Scalars['String'];
-};
-
-export type DeleteEquipmentAssignmentInput = {
-  scheduledEventId: Scalars['Int'];
-  proposalBookingId: Scalars['Int'];
-  equipmentId: Scalars['Int'];
 };
 
 export type DeleteProposalWorkflowStatusInput = {
@@ -315,108 +281,30 @@ export type DeleteProposalWorkflowStatusInput = {
   sortOrder: Scalars['Int'];
 };
 
-export type DeleteScheduledEventsInput = {
-  ids: Array<Scalars['Int']>;
-  proposalBookingId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
-};
-
 export enum DependenciesLogicOperator {
   AND = 'AND',
   OR = 'OR'
 }
 
 export type EmailVerificationResponseWrap = {
-  __typename?: 'EmailVerificationResponseWrap';
   rejection: Maybe<Rejection>;
   success: Maybe<Scalars['Boolean']>;
 };
 
 export type EmbellishmentConfig = {
-  __typename?: 'EmbellishmentConfig';
-  omitFromPdf: Scalars['Boolean'];
   html: Scalars['String'];
+  omitFromPdf: Scalars['Boolean'];
   plain: Scalars['String'];
 };
 
 export type Entry = {
-  __typename?: 'Entry';
   id: Scalars['Int'];
   value: Scalars['String'];
 };
 
-export type Equipment = {
-  __typename?: 'Equipment';
-  id: Scalars['Int'];
-  owner: Maybe<User>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
-  maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
-  maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
-  autoAccept: Scalars['Boolean'];
-  events: Array<ScheduledEvent>;
-  equipmentResponsible: Array<User>;
-};
-
-
-export type EquipmentEventsArgs = {
-  endsAt: Scalars['TzLessDateTime'];
-  startsAt: Scalars['TzLessDateTime'];
-};
-
-export enum EquipmentAssignmentStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED'
-}
-
-export type EquipmentInput = {
-  name: Scalars['String'];
-  description: Scalars['String'];
-  maintenanceStartsAt?: Maybe<Scalars['TzLessDateTime']>;
-  maintenanceEndsAt?: Maybe<Scalars['TzLessDateTime']>;
-  autoAccept: Scalars['Boolean'];
-};
-
-export type EquipmentResponseWrap = {
-  __typename?: 'EquipmentResponseWrap';
-  error: Maybe<Scalars['String']>;
-  equipment: Maybe<Equipment>;
-};
-
-export type EquipmentResponsibleInput = {
-  equipmentId: Scalars['Int'];
-  userIds: Array<Scalars['Int']>;
-};
-
-export type EquipmentWithAssignmentStatus = {
-  __typename?: 'EquipmentWithAssignmentStatus';
-  id: Scalars['Int'];
-  owner: Maybe<User>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
-  maintenanceStartsAt: Maybe<Scalars['TzLessDateTime']>;
-  maintenanceEndsAt: Maybe<Scalars['TzLessDateTime']>;
-  autoAccept: Scalars['Boolean'];
-  events: Array<ScheduledEvent>;
-  equipmentResponsible: Array<User>;
-  status: EquipmentAssignmentStatus;
-};
-
-
-export type EquipmentWithAssignmentStatusEventsArgs = {
-  endsAt: Scalars['TzLessDateTime'];
-  startsAt: Scalars['TzLessDateTime'];
-};
-
 export type EsiResponseWrap = {
-  __typename?: 'EsiResponseWrap';
-  rejection: Maybe<Rejection>;
   esi: Maybe<ExperimentSafetyInput>;
+  rejection: Maybe<Rejection>;
 };
 
 export enum EvaluatorOperator {
@@ -425,99 +313,145 @@ export enum EvaluatorOperator {
 }
 
 export enum Event {
-  PROPOSAL_CREATED = 'PROPOSAL_CREATED',
-  PROPOSAL_UPDATED = 'PROPOSAL_UPDATED',
-  PROPOSAL_SUBMITTED = 'PROPOSAL_SUBMITTED',
-  PROPOSAL_FEASIBLE = 'PROPOSAL_FEASIBLE',
-  PROPOSAL_UNFEASIBLE = 'PROPOSAL_UNFEASIBLE',
-  PROPOSAL_SEP_SELECTED = 'PROPOSAL_SEP_SELECTED',
-  PROPOSAL_INSTRUMENT_SELECTED = 'PROPOSAL_INSTRUMENT_SELECTED',
-  PROPOSAL_FEASIBILITY_REVIEW_UPDATED = 'PROPOSAL_FEASIBILITY_REVIEW_UPDATED',
-  PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED = 'PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED',
-  PROPOSAL_SAMPLE_REVIEW_SUBMITTED = 'PROPOSAL_SAMPLE_REVIEW_SUBMITTED',
-  PROPOSAL_SAMPLE_SAFE = 'PROPOSAL_SAMPLE_SAFE',
-  PROPOSAL_ALL_SEP_REVIEWERS_SELECTED = 'PROPOSAL_ALL_SEP_REVIEWERS_SELECTED',
-  PROPOSAL_SEP_REVIEW_UPDATED = 'PROPOSAL_SEP_REVIEW_UPDATED',
-  PROPOSAL_SEP_REVIEW_SUBMITTED = 'PROPOSAL_SEP_REVIEW_SUBMITTED',
-  PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED = 'PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED',
-  PROPOSAL_SEP_MEETING_SAVED = 'PROPOSAL_SEP_MEETING_SAVED',
-  PROPOSAL_SEP_MEETING_SUBMITTED = 'PROPOSAL_SEP_MEETING_SUBMITTED',
-  PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN = 'PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN',
-  PROPOSAL_SEP_MEETING_REORDER = 'PROPOSAL_SEP_MEETING_REORDER',
-  PROPOSAL_MANAGEMENT_DECISION_UPDATED = 'PROPOSAL_MANAGEMENT_DECISION_UPDATED',
-  PROPOSAL_MANAGEMENT_DECISION_SUBMITTED = 'PROPOSAL_MANAGEMENT_DECISION_SUBMITTED',
-  PROPOSAL_INSTRUMENT_SUBMITTED = 'PROPOSAL_INSTRUMENT_SUBMITTED',
-  PROPOSAL_ACCEPTED = 'PROPOSAL_ACCEPTED',
-  PROPOSAL_RESERVED = 'PROPOSAL_RESERVED',
-  PROPOSAL_REJECTED = 'PROPOSAL_REJECTED',
-  PROPOSAL_STATUS_UPDATED = 'PROPOSAL_STATUS_UPDATED',
   CALL_ENDED = 'CALL_ENDED',
   CALL_REVIEW_ENDED = 'CALL_REVIEW_ENDED',
   CALL_SEP_REVIEW_ENDED = 'CALL_SEP_REVIEW_ENDED',
-  USER_CREATED = 'USER_CREATED',
-  USER_UPDATED = 'USER_UPDATED',
-  USER_ROLE_UPDATED = 'USER_ROLE_UPDATED',
-  USER_DELETED = 'USER_DELETED',
-  USER_PASSWORD_RESET_EMAIL = 'USER_PASSWORD_RESET_EMAIL',
   EMAIL_INVITE = 'EMAIL_INVITE',
-  SEP_CREATED = 'SEP_CREATED',
-  SEP_UPDATED = 'SEP_UPDATED',
-  SEP_MEMBERS_ASSIGNED = 'SEP_MEMBERS_ASSIGNED',
-  SEP_MEMBER_REMOVED = 'SEP_MEMBER_REMOVED',
-  SEP_PROPOSAL_REMOVED = 'SEP_PROPOSAL_REMOVED',
-  SEP_MEMBER_ASSIGNED_TO_PROPOSAL = 'SEP_MEMBER_ASSIGNED_TO_PROPOSAL',
-  SEP_MEMBER_REMOVED_FROM_PROPOSAL = 'SEP_MEMBER_REMOVED_FROM_PROPOSAL',
-  PROPOSAL_NOTIFIED = 'PROPOSAL_NOTIFIED',
-  PROPOSAL_CLONED = 'PROPOSAL_CLONED',
-  PROPOSAL_STATUS_CHANGED_BY_WORKFLOW = 'PROPOSAL_STATUS_CHANGED_BY_WORKFLOW',
-  PROPOSAL_STATUS_CHANGED_BY_USER = 'PROPOSAL_STATUS_CHANGED_BY_USER',
-  TOPIC_ANSWERED = 'TOPIC_ANSWERED',
-  PROPOSAL_BOOKING_TIME_SLOT_ADDED = 'PROPOSAL_BOOKING_TIME_SLOT_ADDED',
-  PROPOSAL_BOOKING_TIME_SLOTS_REMOVED = 'PROPOSAL_BOOKING_TIME_SLOTS_REMOVED',
+  PROPOSAL_ACCEPTED = 'PROPOSAL_ACCEPTED',
+  PROPOSAL_ALL_SEP_REVIEWERS_SELECTED = 'PROPOSAL_ALL_SEP_REVIEWERS_SELECTED',
+  PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED = 'PROPOSAL_ALL_SEP_REVIEWS_SUBMITTED',
   PROPOSAL_BOOKING_TIME_ACTIVATED = 'PROPOSAL_BOOKING_TIME_ACTIVATED',
   PROPOSAL_BOOKING_TIME_COMPLETED = 'PROPOSAL_BOOKING_TIME_COMPLETED',
-  PROPOSAL_BOOKING_TIME_UPDATED = 'PROPOSAL_BOOKING_TIME_UPDATED'
+  PROPOSAL_BOOKING_TIME_REOPENED = 'PROPOSAL_BOOKING_TIME_REOPENED',
+  PROPOSAL_BOOKING_TIME_SLOTS_REMOVED = 'PROPOSAL_BOOKING_TIME_SLOTS_REMOVED',
+  PROPOSAL_BOOKING_TIME_SLOT_ADDED = 'PROPOSAL_BOOKING_TIME_SLOT_ADDED',
+  PROPOSAL_BOOKING_TIME_UPDATED = 'PROPOSAL_BOOKING_TIME_UPDATED',
+  PROPOSAL_CLONED = 'PROPOSAL_CLONED',
+  PROPOSAL_CREATED = 'PROPOSAL_CREATED',
+  PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED = 'PROPOSAL_FEASIBILITY_REVIEW_SUBMITTED',
+  PROPOSAL_FEASIBILITY_REVIEW_UPDATED = 'PROPOSAL_FEASIBILITY_REVIEW_UPDATED',
+  PROPOSAL_FEASIBLE = 'PROPOSAL_FEASIBLE',
+  PROPOSAL_INSTRUMENT_SELECTED = 'PROPOSAL_INSTRUMENT_SELECTED',
+  PROPOSAL_INSTRUMENT_SUBMITTED = 'PROPOSAL_INSTRUMENT_SUBMITTED',
+  PROPOSAL_MANAGEMENT_DECISION_SUBMITTED = 'PROPOSAL_MANAGEMENT_DECISION_SUBMITTED',
+  PROPOSAL_MANAGEMENT_DECISION_UPDATED = 'PROPOSAL_MANAGEMENT_DECISION_UPDATED',
+  PROPOSAL_NOTIFIED = 'PROPOSAL_NOTIFIED',
+  PROPOSAL_REJECTED = 'PROPOSAL_REJECTED',
+  PROPOSAL_RESERVED = 'PROPOSAL_RESERVED',
+  PROPOSAL_SAMPLE_REVIEW_SUBMITTED = 'PROPOSAL_SAMPLE_REVIEW_SUBMITTED',
+  PROPOSAL_SAMPLE_SAFE = 'PROPOSAL_SAMPLE_SAFE',
+  PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN = 'PROPOSAL_SEP_MEETING_RANKING_OVERWRITTEN',
+  PROPOSAL_SEP_MEETING_REORDER = 'PROPOSAL_SEP_MEETING_REORDER',
+  PROPOSAL_SEP_MEETING_SAVED = 'PROPOSAL_SEP_MEETING_SAVED',
+  PROPOSAL_SEP_MEETING_SUBMITTED = 'PROPOSAL_SEP_MEETING_SUBMITTED',
+  PROPOSAL_SEP_REVIEW_SUBMITTED = 'PROPOSAL_SEP_REVIEW_SUBMITTED',
+  PROPOSAL_SEP_REVIEW_UPDATED = 'PROPOSAL_SEP_REVIEW_UPDATED',
+  PROPOSAL_SEP_SELECTED = 'PROPOSAL_SEP_SELECTED',
+  PROPOSAL_STATUS_CHANGED_BY_USER = 'PROPOSAL_STATUS_CHANGED_BY_USER',
+  PROPOSAL_STATUS_CHANGED_BY_WORKFLOW = 'PROPOSAL_STATUS_CHANGED_BY_WORKFLOW',
+  PROPOSAL_STATUS_UPDATED = 'PROPOSAL_STATUS_UPDATED',
+  PROPOSAL_SUBMITTED = 'PROPOSAL_SUBMITTED',
+  PROPOSAL_UNFEASIBLE = 'PROPOSAL_UNFEASIBLE',
+  PROPOSAL_UPDATED = 'PROPOSAL_UPDATED',
+  SEP_CREATED = 'SEP_CREATED',
+  SEP_MEMBERS_ASSIGNED = 'SEP_MEMBERS_ASSIGNED',
+  SEP_MEMBER_ASSIGNED_TO_PROPOSAL = 'SEP_MEMBER_ASSIGNED_TO_PROPOSAL',
+  SEP_MEMBER_REMOVED = 'SEP_MEMBER_REMOVED',
+  SEP_MEMBER_REMOVED_FROM_PROPOSAL = 'SEP_MEMBER_REMOVED_FROM_PROPOSAL',
+  SEP_PROPOSAL_REMOVED = 'SEP_PROPOSAL_REMOVED',
+  SEP_UPDATED = 'SEP_UPDATED',
+  TOPIC_ANSWERED = 'TOPIC_ANSWERED',
+  USER_CREATED = 'USER_CREATED',
+  USER_DELETED = 'USER_DELETED',
+  USER_PASSWORD_RESET_EMAIL = 'USER_PASSWORD_RESET_EMAIL',
+  USER_ROLE_UPDATED = 'USER_ROLE_UPDATED',
+  USER_UPDATED = 'USER_UPDATED'
 }
 
 export type EventLog = {
-  __typename?: 'EventLog';
-  id: Scalars['Int'];
-  eventType: Scalars['String'];
-  rowData: Scalars['String'];
-  eventTStamp: Scalars['DateTime'];
-  changedObjectId: Scalars['String'];
   changedBy: User;
+  changedObjectId: Scalars['String'];
+  eventTStamp: Scalars['DateTime'];
+  eventType: Scalars['String'];
+  id: Scalars['Int'];
+  rowData: Scalars['String'];
 };
 
 export type ExperimentSafetyInput = {
-  __typename?: 'ExperimentSafetyInput';
-  id: Scalars['Int'];
-  visitId: Scalars['Int'];
-  creatorId: Scalars['Int'];
-  questionaryId: Scalars['Int'];
-  isSubmitted: Scalars['Boolean'];
   created: Scalars['DateTime'];
-  sampleEsis: Array<SampleExperimentSafetyInput>;
-  visit: Maybe<Visit>;
+  creatorId: Scalars['Int'];
+  id: Scalars['Int'];
+  isSubmitted: Scalars['Boolean'];
+  proposal: Proposal;
   questionary: Questionary;
+  questionaryId: Scalars['Int'];
+  sampleEsis: Array<SampleExperimentSafetyInput>;
+  scheduledEventId: Scalars['Int'];
+};
+
+export type ExternalTokenLoginWrap = {
+  rejection: Maybe<Rejection>;
+  token: Maybe<Scalars['String']>;
 };
 
 export type Feature = {
-  __typename?: 'Feature';
+  description: Scalars['String'];
   id: FeatureId;
   isEnabled: Scalars['Boolean'];
-  description: Scalars['String'];
 };
 
 export enum FeatureId {
-  SHIPPING = 'SHIPPING',
-  SCHEDULER = 'SCHEDULER',
+  EMAIL_INVITE = 'EMAIL_INVITE',
   EXTERNAL_AUTH = 'EXTERNAL_AUTH',
-  RISK_ASSESSMENT = 'RISK_ASSESSMENT'
+  RISK_ASSESSMENT = 'RISK_ASSESSMENT',
+  SCHEDULER = 'SCHEDULER',
+  SHIPPING = 'SHIPPING'
 }
 
+export type Feedback = {
+  createdAt: Scalars['DateTime'];
+  creatorId: Scalars['Int'];
+  id: Scalars['Int'];
+  questionary: Questionary;
+  questionaryId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
+  status: FeedbackStatus;
+  submittedAt: Maybe<Scalars['DateTime']>;
+};
+
+export type FeedbackBasisConfig = {
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
+};
+
+export type FeedbackRequest = {
+  id: Scalars['Int'];
+  requestedAt: Scalars['DateTime'];
+  scheduledEventId: Scalars['Int'];
+};
+
+export type FeedbackRequestWrap = {
+  rejection: Maybe<Rejection>;
+  request: Maybe<FeedbackRequest>;
+};
+
+export type FeedbackResponseWrap = {
+  feedback: Maybe<Feedback>;
+  rejection: Maybe<Rejection>;
+};
+
+export enum FeedbackStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED'
+}
+
+export type FeedbacksFilter = {
+  creatorId?: InputMaybe<Scalars['Int']>;
+  scheduledEventId?: InputMaybe<Scalars['Int']>;
+};
+
 export type FieldCondition = {
-  __typename?: 'FieldCondition';
   condition: EvaluatorOperator;
   params: Scalars['IntStringDateBoolArray'];
 };
@@ -527,241 +461,206 @@ export type FieldConditionInput = {
   params: Scalars['String'];
 };
 
-export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FileUploadConfig | SelectionFromOptionsConfig | TextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SubTemplateConfig | ProposalBasisConfig | ProposalEsiBasisConfig | IntervalConfig | NumberInputConfig | ShipmentBasisConfig | RichTextInputConfig | VisitBasisConfig;
+export type FieldConfig = BooleanConfig | DateConfig | EmbellishmentConfig | FeedbackBasisConfig | FileUploadConfig | GenericTemplateBasisConfig | IntervalConfig | NumberInputConfig | ProposalBasisConfig | ProposalEsiBasisConfig | RichTextInputConfig | SampleBasisConfig | SampleDeclarationConfig | SampleEsiBasisConfig | SelectionFromOptionsConfig | ShipmentBasisConfig | SubTemplateConfig | TextInputConfig | VisitBasisConfig;
 
 export type FieldDependency = {
-  __typename?: 'FieldDependency';
-  questionId: Scalars['String'];
+  condition: FieldCondition;
   dependencyId: Scalars['String'];
   dependencyNaturalKey: Scalars['String'];
-  condition: FieldCondition;
+  questionId: Scalars['String'];
 };
 
 export type FieldDependencyInput = {
-  dependencyId: Scalars['String'];
   condition: FieldConditionInput;
+  dependencyId: Scalars['String'];
 };
 
 export type Fields = {
-  __typename?: 'Fields';
-  nationalities: Array<Entry>;
   countries: Array<Entry>;
+  nationalities: Array<Entry>;
 };
 
 export type FileMetadata = {
-  __typename?: 'FileMetadata';
-  originalFileName: Scalars['String'];
-  mimeType: Scalars['String'];
-  sizeInBytes: Scalars['Int'];
   createdDate: Scalars['DateTime'];
   fileId: Scalars['String'];
+  mimeType: Scalars['String'];
+  originalFileName: Scalars['String'];
+  sizeInBytes: Scalars['Int'];
 };
 
 export type FileUploadConfig = {
-  __typename?: 'FileUploadConfig';
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
-  tooltip: Scalars['String'];
   file_type: Array<Scalars['String']>;
   max_files: Scalars['Int'];
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
 };
 
-export type FinalizeScheduledEventInput = {
+export type GenericTemplate = {
+  created: Scalars['DateTime'];
+  creatorId: Scalars['Int'];
   id: Scalars['Int'];
-  action: ProposalBookingFinalizeAction;
+  proposal: Proposal;
+  proposalPk: Scalars['Int'];
+  questionId: Scalars['String'];
+  questionary: Questionary;
+  questionaryId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
-export type HealthStats = {
-  __typename?: 'HealthStats';
-  message: Scalars['String'];
-  dbStats: Array<DbStat>;
+export type GenericTemplateBasisConfig = {
+  questionLabel: Scalars['String'];
+  titlePlaceholder: Scalars['String'];
+};
+
+export type GenericTemplateResponseWrap = {
+  genericTemplate: Maybe<GenericTemplate>;
+  rejection: Maybe<Rejection>;
+};
+
+export type GenericTemplatesFilter = {
+  creatorId?: InputMaybe<Scalars['Int']>;
+  genericTemplateIds?: InputMaybe<Array<Scalars['Int']>>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  questionId?: InputMaybe<Scalars['String']>;
+  questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type IndexWithGroupId = {
-  index: Scalars['Int'];
   droppableId: Scalars['String'];
+  index: Scalars['Int'];
 };
 
 export type Institution = {
-  __typename?: 'Institution';
   id: Scalars['Int'];
   name: Scalars['String'];
   verified: Scalars['Boolean'];
 };
 
 export type InstitutionResponseWrap = {
-  __typename?: 'InstitutionResponseWrap';
-  rejection: Maybe<Rejection>;
   institution: Maybe<Institution>;
+  rejection: Maybe<Rejection>;
 };
 
 export type InstitutionsFilter = {
-  isVerified?: Maybe<Scalars['Boolean']>;
+  isVerified?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type Instrument = {
-  __typename?: 'Instrument';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  shortCode: Scalars['String'];
+  beamlineManager: BasicUserDetails;
   description: Scalars['String'];
+  id: Scalars['Int'];
   managerUserId: Scalars['Int'];
+  name: Scalars['String'];
   scientists: Array<BasicUserDetails>;
+  shortCode: Scalars['String'];
 };
 
 export type InstrumentResponseWrap = {
-  __typename?: 'InstrumentResponseWrap';
-  rejection: Maybe<Rejection>;
   instrument: Maybe<Instrument>;
+  rejection: Maybe<Rejection>;
 };
 
 export type InstrumentWithAvailabilityTime = {
-  __typename?: 'InstrumentWithAvailabilityTime';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  shortCode: Scalars['String'];
-  description: Scalars['String'];
-  managerUserId: Scalars['Int'];
-  scientists: Array<BasicUserDetails>;
   availabilityTime: Maybe<Scalars['Int']>;
+  beamlineManager: BasicUserDetails;
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  managerUserId: Scalars['Int'];
+  name: Scalars['String'];
+  scientists: Array<BasicUserDetails>;
+  shortCode: Scalars['String'];
   submitted: Maybe<Scalars['Boolean']>;
 };
 
 export type InstrumentsQueryResult = {
-  __typename?: 'InstrumentsQueryResult';
-  totalCount: Scalars['Int'];
   instruments: Array<Instrument>;
+  totalCount: Scalars['Int'];
 };
 
-
 export type IntervalConfig = {
-  __typename?: 'IntervalConfig';
-  small_label: Scalars['String'];
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
   units: Maybe<Array<Scalars['String']>>;
 };
 
-export type LostTime = {
-  __typename?: 'LostTime';
-  id: Scalars['Int'];
-  proposalBookingId: Scalars['Int'];
-  scheduledEventId: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
-};
-
-export type LostTimesResponseWrap = {
-  __typename?: 'LostTimesResponseWrap';
-  error: Maybe<Scalars['String']>;
-  lostTime: Maybe<Array<LostTime>>;
+export type LogoutTokenWrap = {
+  rejection: Maybe<Rejection>;
+  token: Maybe<Scalars['String']>;
 };
 
 export type MoveProposalWorkflowStatusInput = {
   from: IndexWithGroupId;
-  to: IndexWithGroupId;
   proposalWorkflowId: Scalars['Int'];
+  to: IndexWithGroupId;
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
-  createApiAccessToken: ApiAccessTokenResponseWrap;
-  createInstitution: InstitutionResponseWrap;
-  createUnit: UnitResponseWrap;
-  deleteApiAccessToken: SuccessResponseWrap;
-  updateApiAccessToken: ApiAccessTokenResponseWrap;
-  updateInstitution: InstitutionResponseWrap;
-  createCall: CallResponseWrap;
-  updateCall: CallResponseWrap;
-  assignInstrumentsToCall: CallResponseWrap;
-  removeAssignedInstrumentFromCall: CallResponseWrap;
-  changeProposalsStatus: SuccessResponseWrap;
-  assignProposalsToInstrument: SuccessResponseWrap;
-  removeProposalsFromInstrument: SuccessResponseWrap;
-  assignScientistsToInstrument: SuccessResponseWrap;
-  removeScientistFromInstrument: SuccessResponseWrap;
-  createInstrument: InstrumentResponseWrap;
-  updateInstrument: InstrumentResponseWrap;
-  setInstrumentAvailabilityTime: SuccessResponseWrap;
-  submitInstrument: SuccessResponseWrap;
-  createEsi: EsiResponseWrap;
-  updateEsi: EsiResponseWrap;
-  administrationProposal: ProposalResponseWrap;
-  cloneProposals: ProposalsResponseWrap;
-  updateProposal: ProposalResponseWrap;
+  addClientLog: SuccessResponseWrap;
   addProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
+  addReview: ReviewWithNextStatusResponseWrap;
+  addSamplesToShipment: ShipmentResponseWrap;
   addStatusChangingEventsToConnection: ProposalStatusChangingEventResponseWrap;
+  addTechnicalReview: TechnicalReviewResponseWrap;
+  addUserForReview: ReviewResponseWrap;
+  addUserRole: AddUserRoleResponseWrap;
+  administrationProposal: ProposalResponseWrap;
+  answerTopic: QuestionaryStepResponseWrap;
+  applyPatches: PrepareDbResponseWrap;
+  assignChairOrSecretary: SepResponseWrap;
+  assignInstrumentsToCall: CallResponseWrap;
+  assignProposalsToInstrument: SuccessResponseWrap;
+  assignProposalsToSep: NextProposalStatusResponseWrap;
+  assignReviewersToSEP: SepResponseWrap;
+  assignScientistsToInstrument: SuccessResponseWrap;
+  assignSepReviewersToProposal: SepResponseWrap;
+  changeProposalsStatus: SuccessResponseWrap;
+  cloneGenericTemplate: GenericTemplateResponseWrap;
+  cloneProposals: ProposalsResponseWrap;
+  cloneSample: SampleResponseWrap;
+  cloneSampleEsi: SampleEsiResponseWrap;
+  cloneTemplate: TemplateResponseWrap;
+  createApiAccessToken: ApiAccessTokenResponseWrap;
+  createCall: CallResponseWrap;
+  createEsi: EsiResponseWrap;
+  createFeedback: FeedbackResponseWrap;
+  createGenericTemplate: GenericTemplateResponseWrap;
+  createInstitution: InstitutionResponseWrap;
+  createInstrument: InstrumentResponseWrap;
+  createProposal: ProposalResponseWrap;
   createProposalStatus: ProposalStatusResponseWrap;
   createProposalWorkflow: ProposalWorkflowResponseWrap;
-  deleteProposalWorkflowStatus: SuccessResponseWrap;
-  moveProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
-  updateProposalStatus: ProposalStatusResponseWrap;
-  updateProposalWorkflow: ProposalWorkflowResponseWrap;
-  answerTopic: QuestionaryStepResponseWrap;
-  createQuestionary: QuestionaryResponseWrap;
-  updateAnswer: UpdateAnswerResponseWrap;
-  addReview: ReviewWithNextStatusResponseWrap;
-  addUserForReview: ReviewResponseWrap;
-  submitProposalsReview: SuccessResponseWrap;
-  updateTechnicalReviewAssignee: ProposalsResponseWrap;
-  createSampleEsi: SampleEsiResponseWrap;
-  deleteSampleEsi: SampleEsiResponseWrap;
-  updateSampleEsi: SampleEsiResponseWrap;
-  createSample: SampleResponseWrap;
-  updateSample: SampleResponseWrap;
-  assignChairOrSecretary: SepResponseWrap;
-  assignReviewersToSEP: SepResponseWrap;
-  removeMemberFromSep: SepResponseWrap;
-  assignSepReviewersToProposal: SepResponseWrap;
-  removeMemberFromSEPProposal: SepResponseWrap;
-  assignProposalsToSep: NextProposalStatusResponseWrap;
-  removeProposalsFromSep: SepResponseWrap;
-  createSEP: SepResponseWrap;
-  reorderSepMeetingDecisionProposals: SepMeetingDecisionResponseWrap;
-  saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
-  updateSEP: SepResponseWrap;
-  updateSEPTimeAllocation: SepProposalResponseWrap;
-  createShipment: ShipmentResponseWrap;
-  updateShipment: ShipmentResponseWrap;
   createQuestion: QuestionResponseWrap;
   createQuestionTemplateRelation: TemplateResponseWrap;
+  createQuestionary: QuestionaryResponseWrap;
+  createSEP: SepResponseWrap;
+  createSample: SampleResponseWrap;
+  createSampleEsi: SampleEsiResponseWrap;
+  createShipment: ShipmentResponseWrap;
   createTemplate: TemplateResponseWrap;
   createTopic: TemplateResponseWrap;
-  deleteQuestionTemplateRelation: TemplateResponseWrap;
-  setActiveTemplate: SuccessResponseWrap;
-  updateQuestion: QuestionResponseWrap;
-  updateQuestionTemplateRelation: TemplateResponseWrap;
-  updateQuestionTemplateRelationSettings: TemplateResponseWrap;
-  updateTemplate: TemplateResponseWrap;
-  updateTopic: TemplateResponseWrap;
-  addUserRole: AddUserRoleResponseWrap;
-  createUserByEmailInvite: CreateUserByEmailInviteResponseWrap;
+  createUnit: UnitResponseWrap;
   createUser: UserResponseWrap;
-  updateUser: UserResponseWrap;
-  updateUserRoles: UserResponseWrap;
-  setUserEmailVerified: UserResponseWrap;
-  setUserNotPlaceholder: UserResponseWrap;
+  createUserByEmailInvite: CreateUserByEmailInviteResponseWrap;
   createVisit: VisitResponseWrap;
-  updateVisit: VisitResponseWrap;
-  updateVisitRegistration: VisitRegistrationResponseWrap;
-  addClientLog: SuccessResponseWrap;
-  addSamplesToShipment: ShipmentResponseWrap;
-  addTechnicalReview: TechnicalReviewResponseWrap;
-  applyPatches: PrepareDbResponseWrap;
-  checkExternalToken: CheckExternalTokenWrap;
-  cloneSample: SampleResponseWrap;
-  cloneTemplate: TemplateResponseWrap;
-  createProposal: ProposalResponseWrap;
   createVisitRegistrationQuestionary: VisitRegistrationResponseWrap;
+  deleteApiAccessToken: SuccessResponseWrap;
   deleteCall: CallResponseWrap;
+  deleteFeedback: FeedbackResponseWrap;
+  deleteGenericTemplate: GenericTemplateResponseWrap;
   deleteInstitution: InstitutionResponseWrap;
   deleteInstrument: InstrumentResponseWrap;
   deleteProposal: ProposalResponseWrap;
+  deleteProposalStatus: ProposalStatusResponseWrap;
+  deleteProposalWorkflow: ProposalWorkflowResponseWrap;
+  deleteProposalWorkflowStatus: SuccessResponseWrap;
   deleteQuestion: QuestionResponseWrap;
-  deleteSample: SampleResponseWrap;
+  deleteQuestionTemplateRelation: TemplateResponseWrap;
   deleteSEP: SepResponseWrap;
+  deleteSample: SampleResponseWrap;
+  deleteSampleEsi: SampleEsiResponseWrap;
   deleteShipment: ShipmentResponseWrap;
   deleteTemplate: TemplateResponseWrap;
   deleteTopic: TemplateResponseWrap;
@@ -769,42 +668,239 @@ export type Mutation = {
   deleteUser: UserResponseWrap;
   deleteVisit: VisitResponseWrap;
   emailVerification: EmailVerificationResponseWrap;
+  externalTokenLogin: ExternalTokenLoginWrap;
   getTokenForUser: TokenResponseWrap;
+  importProposal: ProposalResponseWrap;
+  importTemplate: TemplateResponseWrap;
   login: TokenResponseWrap;
+  logout: LogoutTokenWrap;
+  mergeInstitutions: InstitutionResponseWrap;
+  moveProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
   notifyProposal: ProposalResponseWrap;
   prepareDB: PrepareDbResponseWrap;
+  removeAssignedInstrumentFromCall: CallResponseWrap;
+  removeMemberFromSEPProposal: SepResponseWrap;
+  removeMemberFromSep: SepResponseWrap;
+  removeProposalsFromInstrument: SuccessResponseWrap;
+  removeProposalsFromSep: SepResponseWrap;
+  removeScientistFromInstrument: SuccessResponseWrap;
   removeUserForReview: ReviewResponseWrap;
-  resetPasswordEmail: SuccessResponseWrap;
+  reorderSepMeetingDecisionProposals: SepMeetingDecisionResponseWrap;
+  requestFeedback: FeedbackRequestWrap;
   resetPassword: BasicUserDetailsResponseWrap;
+  resetPasswordEmail: SuccessResponseWrap;
+  saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
+  selectRole: TokenResponseWrap;
+  setActiveTemplate: SuccessResponseWrap;
+  setInstrumentAvailabilityTime: SuccessResponseWrap;
   setPageContent: PageResponseWrap;
-  deleteProposalStatus: ProposalStatusResponseWrap;
-  deleteProposalWorkflow: ProposalWorkflowResponseWrap;
+  setUserEmailVerified: UserResponseWrap;
+  setUserNotPlaceholder: UserResponseWrap;
+  submitInstrument: SuccessResponseWrap;
   submitProposal: ProposalResponseWrap;
+  submitProposalsReview: SuccessResponseWrap;
   submitShipment: ShipmentResponseWrap;
   submitTechnicalReview: TechnicalReviewResponseWrap;
   token: TokenResponseWrap;
-  selectRole: TokenResponseWrap;
+  updateAnswer: UpdateAnswerResponseWrap;
+  updateApiAccessToken: ApiAccessTokenResponseWrap;
+  updateCall: CallResponseWrap;
+  updateEsi: EsiResponseWrap;
+  updateFeedback: FeedbackResponseWrap;
+  updateGenericTemplate: GenericTemplateResponseWrap;
+  updateInstitution: InstitutionResponseWrap;
+  updateInstrument: InstrumentResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
-  createEquipment: EquipmentResponseWrap;
-  updateEquipment: EquipmentResponseWrap;
-  assignToScheduledEvents: Scalars['Boolean'];
-  deleteEquipmentAssignment: Scalars['Boolean'];
-  confirmEquipmentAssignment: Scalars['Boolean'];
-  addEquipmentResponsible: Scalars['Boolean'];
-  bulkUpsertLostTimes: LostTimesResponseWrap;
-  createScheduledEvent: ScheduledEventResponseWrap;
-  deleteScheduledEvents: ScheduledEventsResponseWrap;
-  updateScheduledEvent: ScheduledEventResponseWrap;
-  activateScheduledEvent: ScheduledEventResponseWrap;
-  finalizeScheduledEvent: ScheduledEventResponseWrap;
-  finalizeProposalBooking: ProposalBookingResponseWrap;
-  activateProposalBooking: ProposalBookingResponseWrap;
-  resetSchedulerDb: Scalars['String'];
+  updateProposal: ProposalResponseWrap;
+  updateProposalStatus: ProposalStatusResponseWrap;
+  updateProposalWorkflow: ProposalWorkflowResponseWrap;
+  updateQuestion: QuestionResponseWrap;
+  updateQuestionTemplateRelation: TemplateResponseWrap;
+  updateQuestionTemplateRelationSettings: TemplateResponseWrap;
+  updateSEP: SepResponseWrap;
+  updateSEPTimeAllocation: SepProposalResponseWrap;
+  updateSample: SampleResponseWrap;
+  updateSampleEsi: SampleEsiResponseWrap;
+  updateShipment: ShipmentResponseWrap;
+  updateTechnicalReviewAssignee: ProposalsResponseWrap;
+  updateTemplate: TemplateResponseWrap;
+  updateTopic: TemplateResponseWrap;
+  updateUser: UserResponseWrap;
+  updateUserRoles: UserResponseWrap;
+  updateVisit: VisitResponseWrap;
+  updateVisitRegistration: VisitRegistrationResponseWrap;
+  validateTemplateImport: TemplateImportWithValidationWrap;
+};
+
+
+export type MutationAddClientLogArgs = {
+  error: Scalars['String'];
+};
+
+
+export type MutationAddProposalWorkflowStatusArgs = {
+  newProposalWorkflowStatusInput: AddProposalWorkflowStatusInput;
+};
+
+
+export type MutationAddReviewArgs = {
+  comment: Scalars['String'];
+  grade: Scalars['Int'];
+  reviewID: Scalars['Int'];
+  sepID: Scalars['Int'];
+  status: ReviewStatus;
+};
+
+
+export type MutationAddSamplesToShipmentArgs = {
+  sampleIds: Array<Scalars['Int']>;
+  shipmentId: Scalars['Int'];
+};
+
+
+export type MutationAddStatusChangingEventsToConnectionArgs = {
+  addStatusChangingEventsToConnectionInput: AddStatusChangingEventsToConnectionInput;
+};
+
+
+export type MutationAddTechnicalReviewArgs = {
+  addTechnicalReviewInput: AddTechnicalReviewInput;
+};
+
+
+export type MutationAddUserForReviewArgs = {
+  proposalPk: Scalars['Int'];
+  sepID: Scalars['Int'];
+  userID: Scalars['Int'];
+};
+
+
+export type MutationAddUserRoleArgs = {
+  roleID: Scalars['Int'];
+  userID: Scalars['Int'];
+};
+
+
+export type MutationAdministrationProposalArgs = {
+  commentForManagement?: InputMaybe<Scalars['String']>;
+  commentForUser?: InputMaybe<Scalars['String']>;
+  finalStatus?: InputMaybe<ProposalEndStatus>;
+  managementDecisionSubmitted?: InputMaybe<Scalars['Boolean']>;
+  managementTimeAllocation?: InputMaybe<Scalars['Int']>;
+  proposalPk: Scalars['Int'];
+  statusId?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationAnswerTopicArgs = {
+  answers: Array<AnswerInput>;
+  isPartialSave?: InputMaybe<Scalars['Boolean']>;
+  questionaryId: Scalars['Int'];
+  topicId: Scalars['Int'];
+};
+
+
+export type MutationAssignChairOrSecretaryArgs = {
+  assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSepInput;
+};
+
+
+export type MutationAssignInstrumentsToCallArgs = {
+  assignInstrumentsToCallInput: AssignInstrumentsToCallInput;
+};
+
+
+export type MutationAssignProposalsToInstrumentArgs = {
+  instrumentId: Scalars['Int'];
+  proposals: Array<ProposalPkWithCallId>;
+};
+
+
+export type MutationAssignProposalsToSepArgs = {
+  proposals: Array<ProposalPkWithCallId>;
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationAssignReviewersToSepArgs = {
+  memberIds: Array<Scalars['Int']>;
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationAssignScientistsToInstrumentArgs = {
+  instrumentId: Scalars['Int'];
+  scientistIds: Array<Scalars['Int']>;
+};
+
+
+export type MutationAssignSepReviewersToProposalArgs = {
+  memberIds: Array<Scalars['Int']>;
+  proposalPk: Scalars['Int'];
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationChangeProposalsStatusArgs = {
+  changeProposalsStatusInput: ChangeProposalsStatusInput;
+};
+
+
+export type MutationCloneGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationCloneProposalsArgs = {
+  cloneProposalsInput: CloneProposalsInput;
+};
+
+
+export type MutationCloneSampleArgs = {
+  isPostProposalSubmission?: InputMaybe<Scalars['Boolean']>;
+  sampleId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationCloneSampleEsiArgs = {
+  esiId: Scalars['Int'];
+  newSampleTitle?: InputMaybe<Scalars['String']>;
+  sampleId: Scalars['Int'];
+};
+
+
+export type MutationCloneTemplateArgs = {
+  templateId: Scalars['Int'];
 };
 
 
 export type MutationCreateApiAccessTokenArgs = {
   createApiAccessTokenInput: CreateApiAccessTokenInput;
+};
+
+
+export type MutationCreateCallArgs = {
+  createCallInput: CreateCallInput;
+};
+
+
+export type MutationCreateEsiArgs = {
+  scheduledEventId: Scalars['Int'];
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  scheduledEventId: Scalars['Int'];
+};
+
+
+export type MutationCreateGenericTemplateArgs = {
+  proposalPk: Scalars['Int'];
+  questionId: Scalars['String'];
+  templateId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 
@@ -814,150 +910,16 @@ export type MutationCreateInstitutionArgs = {
 };
 
 
-export type MutationCreateUnitArgs = {
-  name: Scalars['String'];
-};
-
-
-export type MutationDeleteApiAccessTokenArgs = {
-  deleteApiAccessTokenInput: DeleteApiAccessTokenInput;
-};
-
-
-export type MutationUpdateApiAccessTokenArgs = {
-  updateApiAccessTokenInput: UpdateApiAccessTokenInput;
-};
-
-
-export type MutationUpdateInstitutionArgs = {
-  id: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
-  verified?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCreateCallArgs = {
-  createCallInput: CreateCallInput;
-};
-
-
-export type MutationUpdateCallArgs = {
-  updateCallInput: UpdateCallInput;
-};
-
-
-export type MutationAssignInstrumentsToCallArgs = {
-  assignInstrumentsToCallInput: AssignInstrumentsToCallInput;
-};
-
-
-export type MutationRemoveAssignedInstrumentFromCallArgs = {
-  removeAssignedInstrumentFromCallInput: RemoveAssignedInstrumentFromCallInput;
-};
-
-
-export type MutationChangeProposalsStatusArgs = {
-  changeProposalsStatusInput: ChangeProposalsStatusInput;
-};
-
-
-export type MutationAssignProposalsToInstrumentArgs = {
-  proposals: Array<ProposalPkWithCallId>;
-  instrumentId: Scalars['Int'];
-};
-
-
-export type MutationRemoveProposalsFromInstrumentArgs = {
-  proposalPks: Array<Scalars['Int']>;
-};
-
-
-export type MutationAssignScientistsToInstrumentArgs = {
-  scientistIds: Array<Scalars['Int']>;
-  instrumentId: Scalars['Int'];
-};
-
-
-export type MutationRemoveScientistFromInstrumentArgs = {
-  scientistId: Scalars['Int'];
-  instrumentId: Scalars['Int'];
-};
-
-
 export type MutationCreateInstrumentArgs = {
-  name: Scalars['String'];
-  shortCode: Scalars['String'];
   description: Scalars['String'];
   managerUserId: Scalars['Int'];
-};
-
-
-export type MutationUpdateInstrumentArgs = {
-  id: Scalars['Int'];
   name: Scalars['String'];
   shortCode: Scalars['String'];
-  description: Scalars['String'];
-  managerUserId: Scalars['Int'];
 };
 
 
-export type MutationSetInstrumentAvailabilityTimeArgs = {
-  instrumentId: Scalars['Int'];
+export type MutationCreateProposalArgs = {
   callId: Scalars['Int'];
-  availabilityTime: Scalars['Int'];
-};
-
-
-export type MutationSubmitInstrumentArgs = {
-  instrumentId: Scalars['Int'];
-  callId: Scalars['Int'];
-  sepId: Scalars['Int'];
-};
-
-
-export type MutationCreateEsiArgs = {
-  visitId: Scalars['Int'];
-};
-
-
-export type MutationUpdateEsiArgs = {
-  esiId: Scalars['Int'];
-  isSubmitted?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationAdministrationProposalArgs = {
-  proposalPk: Scalars['Int'];
-  commentForUser?: Maybe<Scalars['String']>;
-  commentForManagement?: Maybe<Scalars['String']>;
-  finalStatus?: Maybe<ProposalEndStatus>;
-  statusId?: Maybe<Scalars['Int']>;
-  managementTimeAllocation?: Maybe<Scalars['Int']>;
-  managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCloneProposalsArgs = {
-  cloneProposalsInput: CloneProposalsInput;
-};
-
-
-export type MutationUpdateProposalArgs = {
-  proposalPk: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  abstract?: Maybe<Scalars['String']>;
-  users?: Maybe<Array<Scalars['Int']>>;
-  proposerId?: Maybe<Scalars['Int']>;
-};
-
-
-export type MutationAddProposalWorkflowStatusArgs = {
-  newProposalWorkflowStatusInput: AddProposalWorkflowStatusInput;
-};
-
-
-export type MutationAddStatusChangingEventsToConnectionArgs = {
-  addStatusChangingEventsToConnectionInput: AddStatusChangingEventsToConnectionInput;
 };
 
 
@@ -971,31 +933,17 @@ export type MutationCreateProposalWorkflowArgs = {
 };
 
 
-export type MutationDeleteProposalWorkflowStatusArgs = {
-  deleteProposalWorkflowStatusInput: DeleteProposalWorkflowStatusInput;
+export type MutationCreateQuestionArgs = {
+  categoryId: TemplateCategoryId;
+  dataType: DataType;
 };
 
 
-export type MutationMoveProposalWorkflowStatusArgs = {
-  moveProposalWorkflowStatusInput: MoveProposalWorkflowStatusInput;
-};
-
-
-export type MutationUpdateProposalStatusArgs = {
-  updatedProposalStatusInput: UpdateProposalStatusInput;
-};
-
-
-export type MutationUpdateProposalWorkflowArgs = {
-  updatedProposalWorkflowInput: UpdateProposalWorkflowInput;
-};
-
-
-export type MutationAnswerTopicArgs = {
-  questionaryId: Scalars['Int'];
+export type MutationCreateQuestionTemplateRelationArgs = {
+  questionId: Scalars['String'];
+  sortOrder: Scalars['Int'];
+  templateId: Scalars['Int'];
   topicId: Scalars['Int'];
-  answers: Array<AnswerInput>;
-  isPartialSave?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1004,386 +952,90 @@ export type MutationCreateQuestionaryArgs = {
 };
 
 
-export type MutationUpdateAnswerArgs = {
-  questionaryId: Scalars['Int'];
-  answer: AnswerInput;
-};
-
-
-export type MutationAddReviewArgs = {
-  reviewID: Scalars['Int'];
-  comment: Scalars['String'];
-  grade: Scalars['Int'];
-  status: ReviewStatus;
-  sepID: Scalars['Int'];
-};
-
-
-export type MutationAddUserForReviewArgs = {
-  userID: Scalars['Int'];
-  proposalPk: Scalars['Int'];
-  sepID: Scalars['Int'];
-};
-
-
-export type MutationSubmitProposalsReviewArgs = {
-  submitProposalsReviewInput: SubmitProposalsReviewInput;
-};
-
-
-export type MutationUpdateTechnicalReviewAssigneeArgs = {
-  userId: Scalars['Int'];
-  proposalPks: Array<Scalars['Int']>;
-};
-
-
-export type MutationCreateSampleEsiArgs = {
-  sampleId: Scalars['Int'];
-  esiId: Scalars['Int'];
-};
-
-
-export type MutationDeleteSampleEsiArgs = {
-  sampleId: Scalars['Int'];
-  esiId: Scalars['Int'];
-};
-
-
-export type MutationUpdateSampleEsiArgs = {
-  esiId: Scalars['Int'];
-  sampleId: Scalars['Int'];
-  isSubmitted?: Maybe<Scalars['Boolean']>;
+export type MutationCreateSepArgs = {
+  active: Scalars['Boolean'];
+  code: Scalars['String'];
+  description: Scalars['String'];
+  numberRatingsRequired?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationCreateSampleArgs = {
-  title: Scalars['String'];
-  templateId: Scalars['Int'];
+  isPostProposalSubmission?: InputMaybe<Scalars['Boolean']>;
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
+  templateId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 
-export type MutationUpdateSampleArgs = {
+export type MutationCreateSampleEsiArgs = {
+  esiId: Scalars['Int'];
   sampleId: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  safetyComment?: Maybe<Scalars['String']>;
-  safetyStatus?: Maybe<SampleStatus>;
-};
-
-
-export type MutationAssignChairOrSecretaryArgs = {
-  assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSepInput;
-};
-
-
-export type MutationAssignReviewersToSepArgs = {
-  memberIds: Array<Scalars['Int']>;
-  sepId: Scalars['Int'];
-};
-
-
-export type MutationRemoveMemberFromSepArgs = {
-  memberId: Scalars['Int'];
-  sepId: Scalars['Int'];
-  roleId: UserRole;
-};
-
-
-export type MutationAssignSepReviewersToProposalArgs = {
-  memberIds: Array<Scalars['Int']>;
-  sepId: Scalars['Int'];
-  proposalPk: Scalars['Int'];
-};
-
-
-export type MutationRemoveMemberFromSepProposalArgs = {
-  memberId: Scalars['Int'];
-  sepId: Scalars['Int'];
-  proposalPk: Scalars['Int'];
-};
-
-
-export type MutationAssignProposalsToSepArgs = {
-  proposals: Array<ProposalPkWithCallId>;
-  sepId: Scalars['Int'];
-};
-
-
-export type MutationRemoveProposalsFromSepArgs = {
-  proposalPks: Array<Scalars['Int']>;
-  sepId: Scalars['Int'];
-};
-
-
-export type MutationCreateSepArgs = {
-  code: Scalars['String'];
-  description: Scalars['String'];
-  numberRatingsRequired?: Maybe<Scalars['Int']>;
-  active: Scalars['Boolean'];
-};
-
-
-export type MutationReorderSepMeetingDecisionProposalsArgs = {
-  reorderSepMeetingDecisionProposalsInput: ReorderSepMeetingDecisionProposalsInput;
-};
-
-
-export type MutationSaveSepMeetingDecisionArgs = {
-  saveSepMeetingDecisionInput: SaveSepMeetingDecisionInput;
-};
-
-
-export type MutationUpdateSepArgs = {
-  id: Scalars['Int'];
-  code: Scalars['String'];
-  description: Scalars['String'];
-  numberRatingsRequired?: Maybe<Scalars['Int']>;
-  active: Scalars['Boolean'];
-};
-
-
-export type MutationUpdateSepTimeAllocationArgs = {
-  sepId: Scalars['Int'];
-  proposalPk: Scalars['Int'];
-  sepTimeAllocation?: Maybe<Scalars['Int']>;
 };
 
 
 export type MutationCreateShipmentArgs = {
-  title: Scalars['String'];
   proposalPk: Scalars['Int'];
-  visitId: Scalars['Int'];
-};
-
-
-export type MutationUpdateShipmentArgs = {
-  shipmentId: Scalars['Int'];
-  proposalPk?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  status?: Maybe<ShipmentStatus>;
-  externalRef?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationCreateQuestionArgs = {
-  categoryId: TemplateCategoryId;
-  dataType: DataType;
-};
-
-
-export type MutationCreateQuestionTemplateRelationArgs = {
-  templateId: Scalars['Int'];
-  questionId: Scalars['String'];
-  sortOrder: Scalars['Int'];
-  topicId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 
 export type MutationCreateTemplateArgs = {
+  description?: InputMaybe<Scalars['String']>;
   groupId: TemplateGroupId;
   name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationCreateTopicArgs = {
+  sortOrder?: InputMaybe<Scalars['Int']>;
   templateId: Scalars['Int'];
-  sortOrder?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['Int']>;
 };
 
 
-export type MutationDeleteQuestionTemplateRelationArgs = {
-  questionId: Scalars['String'];
-  templateId: Scalars['Int'];
-};
-
-
-export type MutationSetActiveTemplateArgs = {
-  templateGroupId: TemplateGroupId;
-  templateId: Scalars['Int'];
-};
-
-
-export type MutationUpdateQuestionArgs = {
-  id: Scalars['String'];
-  naturalKey?: Maybe<Scalars['String']>;
-  question?: Maybe<Scalars['String']>;
-  config?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateQuestionTemplateRelationArgs = {
-  questionId: Scalars['String'];
-  templateId: Scalars['Int'];
-  topicId?: Maybe<Scalars['Int']>;
-  sortOrder: Scalars['Int'];
-  config?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateQuestionTemplateRelationSettingsArgs = {
-  questionId: Scalars['String'];
-  templateId: Scalars['Int'];
-  config?: Maybe<Scalars['String']>;
-  dependencies: Array<FieldDependencyInput>;
-  dependenciesOperator?: Maybe<DependenciesLogicOperator>;
-};
-
-
-export type MutationUpdateTemplateArgs = {
-  templateId: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  isArchived?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationUpdateTopicArgs = {
-  id: Scalars['Int'];
-  templateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  sortOrder?: Maybe<Scalars['Int']>;
-  isEnabled?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationAddUserRoleArgs = {
-  userID: Scalars['Int'];
-  roleID: Scalars['Int'];
-};
-
-
-export type MutationCreateUserByEmailInviteArgs = {
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
-  email: Scalars['String'];
-  userRole: UserRole;
+export type MutationCreateUnitArgs = {
+  name: Scalars['String'];
 };
 
 
 export type MutationCreateUserArgs = {
-  user_title?: Maybe<Scalars['String']>;
+  birthdate: Scalars['String'];
+  department: Scalars['String'];
+  email: Scalars['String'];
   firstname: Scalars['String'];
-  middlename?: Maybe<Scalars['String']>;
+  gender: Scalars['String'];
   lastname: Scalars['String'];
-  password: Scalars['String'];
-  preferredname?: Maybe<Scalars['String']>;
+  middlename?: InputMaybe<Scalars['String']>;
+  nationality: Scalars['Int'];
   orcid: Scalars['String'];
   orcidHash: Scalars['String'];
-  refreshToken: Scalars['String'];
-  gender: Scalars['String'];
-  nationality: Scalars['Int'];
-  birthdate: Scalars['String'];
   organisation: Scalars['Int'];
-  department: Scalars['String'];
+  otherOrganisation?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
   position: Scalars['String'];
-  email: Scalars['String'];
+  preferredname?: InputMaybe<Scalars['String']>;
+  refreshToken: Scalars['String'];
   telephone: Scalars['String'];
-  telephone_alt?: Maybe<Scalars['String']>;
-  otherOrganisation?: Maybe<Scalars['String']>;
+  telephone_alt?: InputMaybe<Scalars['String']>;
+  user_title?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationUpdateUserArgs = {
-  id: Scalars['Int'];
-  user_title?: Maybe<Scalars['String']>;
-  firstname?: Maybe<Scalars['String']>;
-  middlename?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  preferredname?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
-  nationality?: Maybe<Scalars['Int']>;
-  birthdate?: Maybe<Scalars['String']>;
-  organisation?: Maybe<Scalars['Int']>;
-  department?: Maybe<Scalars['String']>;
-  position?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  telephone?: Maybe<Scalars['String']>;
-  telephone_alt?: Maybe<Scalars['String']>;
-  placeholder?: Maybe<Scalars['String']>;
-  roles?: Maybe<Array<Scalars['Int']>>;
-  orcid?: Maybe<Scalars['String']>;
-  refreshToken?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateUserRolesArgs = {
-  id: Scalars['Int'];
-  roles?: Maybe<Array<Scalars['Int']>>;
-};
-
-
-export type MutationSetUserEmailVerifiedArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationSetUserNotPlaceholderArgs = {
-  id: Scalars['Int'];
+export type MutationCreateUserByEmailInviteArgs = {
+  email: Scalars['String'];
+  firstname: Scalars['String'];
+  lastname: Scalars['String'];
+  userRole: UserRole;
 };
 
 
 export type MutationCreateVisitArgs = {
-  proposalPk: Scalars['Int'];
   scheduledEventId: Scalars['Int'];
   team: Array<Scalars['Int']>;
   teamLeadUserId: Scalars['Int'];
-};
-
-
-export type MutationUpdateVisitArgs = {
-  visitId: Scalars['Int'];
-  status?: Maybe<VisitStatus>;
-  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
-  team?: Maybe<Array<Scalars['Int']>>;
-  teamLeadUserId?: Maybe<Scalars['Int']>;
-};
-
-
-export type MutationUpdateVisitRegistrationArgs = {
-  visitId: Scalars['Int'];
-  trainingExpiryDate?: Maybe<Scalars['DateTime']>;
-  isRegistrationSubmitted?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationAddClientLogArgs = {
-  error: Scalars['String'];
-};
-
-
-export type MutationAddSamplesToShipmentArgs = {
-  shipmentId: Scalars['Int'];
-  sampleIds: Array<Scalars['Int']>;
-};
-
-
-export type MutationAddTechnicalReviewArgs = {
-  addTechnicalReviewInput: AddTechnicalReviewInput;
-};
-
-
-export type MutationCheckExternalTokenArgs = {
-  externalToken: Scalars['String'];
-};
-
-
-export type MutationCloneSampleArgs = {
-  title?: Maybe<Scalars['String']>;
-  sampleId: Scalars['Int'];
-};
-
-
-export type MutationCloneTemplateArgs = {
-  templateId: Scalars['Int'];
-};
-
-
-export type MutationCreateProposalArgs = {
-  callId: Scalars['Int'];
 };
 
 
@@ -1392,8 +1044,23 @@ export type MutationCreateVisitRegistrationQuestionaryArgs = {
 };
 
 
+export type MutationDeleteApiAccessTokenArgs = {
+  deleteApiAccessTokenInput: DeleteApiAccessTokenInput;
+};
+
+
 export type MutationDeleteCallArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationDeleteFeedbackArgs = {
+  feedbackId: Scalars['Int'];
+};
+
+
+export type MutationDeleteGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
 };
 
 
@@ -1412,8 +1079,34 @@ export type MutationDeleteProposalArgs = {
 };
 
 
+export type MutationDeleteProposalStatusArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteProposalWorkflowArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteProposalWorkflowStatusArgs = {
+  deleteProposalWorkflowStatusInput: DeleteProposalWorkflowStatusInput;
+};
+
+
 export type MutationDeleteQuestionArgs = {
   questionId: Scalars['String'];
+};
+
+
+export type MutationDeleteQuestionTemplateRelationArgs = {
+  questionId: Scalars['String'];
+  templateId: Scalars['Int'];
+};
+
+
+export type MutationDeleteSepArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1422,8 +1115,9 @@ export type MutationDeleteSampleArgs = {
 };
 
 
-export type MutationDeleteSepArgs = {
-  id: Scalars['Int'];
+export type MutationDeleteSampleEsiArgs = {
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
 };
 
 
@@ -1462,8 +1156,30 @@ export type MutationEmailVerificationArgs = {
 };
 
 
+export type MutationExternalTokenLoginArgs = {
+  externalToken: Scalars['String'];
+};
+
+
 export type MutationGetTokenForUserArgs = {
   userId: Scalars['Int'];
+};
+
+
+export type MutationImportProposalArgs = {
+  abstract?: InputMaybe<Scalars['String']>;
+  callId: Scalars['Int'];
+  proposerId?: InputMaybe<Scalars['Int']>;
+  referenceNumber: Scalars['Int'];
+  submitterId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
+  users?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+
+export type MutationImportTemplateArgs = {
+  conflictResolutions: Array<ConflictResolution>;
+  templateAsJson: Scalars['String'];
 };
 
 
@@ -1473,19 +1189,88 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLogoutArgs = {
+  token: Scalars['String'];
+};
+
+
+export type MutationMergeInstitutionsArgs = {
+  institutionIdFrom: Scalars['Int'];
+  institutionIdInto: Scalars['Int'];
+  newTitle: Scalars['String'];
+};
+
+
+export type MutationMoveProposalWorkflowStatusArgs = {
+  moveProposalWorkflowStatusInput: MoveProposalWorkflowStatusInput;
+};
+
+
 export type MutationNotifyProposalArgs = {
   proposalPk: Scalars['Int'];
 };
 
 
 export type MutationPrepareDbArgs = {
-  includeSeeds?: Maybe<Scalars['Boolean']>;
+  includeSeeds?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationRemoveAssignedInstrumentFromCallArgs = {
+  removeAssignedInstrumentFromCallInput: RemoveAssignedInstrumentFromCallInput;
+};
+
+
+export type MutationRemoveMemberFromSepProposalArgs = {
+  memberId: Scalars['Int'];
+  proposalPk: Scalars['Int'];
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationRemoveMemberFromSepArgs = {
+  memberId: Scalars['Int'];
+  roleId: UserRole;
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationRemoveProposalsFromInstrumentArgs = {
+  proposalPks: Array<Scalars['Int']>;
+};
+
+
+export type MutationRemoveProposalsFromSepArgs = {
+  proposalPks: Array<Scalars['Int']>;
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationRemoveScientistFromInstrumentArgs = {
+  instrumentId: Scalars['Int'];
+  scientistId: Scalars['Int'];
 };
 
 
 export type MutationRemoveUserForReviewArgs = {
-  sepId: Scalars['Int'];
   reviewId: Scalars['Int'];
+  sepId: Scalars['Int'];
+};
+
+
+export type MutationReorderSepMeetingDecisionProposalsArgs = {
+  reorderSepMeetingDecisionProposalsInput: ReorderSepMeetingDecisionProposalsInput;
+};
+
+
+export type MutationRequestFeedbackArgs = {
+  scheduledEventId: Scalars['Int'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  password: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -1494,30 +1279,60 @@ export type MutationResetPasswordEmailArgs = {
 };
 
 
-export type MutationResetPasswordArgs = {
+export type MutationSaveSepMeetingDecisionArgs = {
+  saveSepMeetingDecisionInput: SaveSepMeetingDecisionInput;
+};
+
+
+export type MutationSelectRoleArgs = {
+  selectedRoleId?: InputMaybe<Scalars['Int']>;
   token: Scalars['String'];
-  password: Scalars['String'];
+};
+
+
+export type MutationSetActiveTemplateArgs = {
+  templateGroupId: TemplateGroupId;
+  templateId: Scalars['Int'];
+};
+
+
+export type MutationSetInstrumentAvailabilityTimeArgs = {
+  availabilityTime: Scalars['Int'];
+  callId: Scalars['Int'];
+  instrumentId: Scalars['Int'];
 };
 
 
 export type MutationSetPageContentArgs = {
-  text: Scalars['String'];
   id: PageName;
+  text: Scalars['String'];
 };
 
 
-export type MutationDeleteProposalStatusArgs = {
+export type MutationSetUserEmailVerifiedArgs = {
   id: Scalars['Int'];
 };
 
 
-export type MutationDeleteProposalWorkflowArgs = {
+export type MutationSetUserNotPlaceholderArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationSubmitInstrumentArgs = {
+  callId: Scalars['Int'];
+  instrumentId: Scalars['Int'];
+  sepId: Scalars['Int'];
 };
 
 
 export type MutationSubmitProposalArgs = {
   proposalPk: Scalars['Int'];
+};
+
+
+export type MutationSubmitProposalsReviewArgs = {
+  submitProposalsReviewInput: SubmitProposalsReviewInput;
 };
 
 
@@ -1536,9 +1351,54 @@ export type MutationTokenArgs = {
 };
 
 
-export type MutationSelectRoleArgs = {
-  token: Scalars['String'];
-  selectedRoleId?: Maybe<Scalars['Int']>;
+export type MutationUpdateAnswerArgs = {
+  answer: AnswerInput;
+  questionaryId: Scalars['Int'];
+};
+
+
+export type MutationUpdateApiAccessTokenArgs = {
+  updateApiAccessTokenInput: UpdateApiAccessTokenInput;
+};
+
+
+export type MutationUpdateCallArgs = {
+  updateCallInput: UpdateCallInput;
+};
+
+
+export type MutationUpdateEsiArgs = {
+  esiId: Scalars['Int'];
+  isSubmitted?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateFeedbackArgs = {
+  feedbackId: Scalars['Int'];
+  status?: InputMaybe<FeedbackStatus>;
+};
+
+
+export type MutationUpdateGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
+  safetyComment?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateInstitutionArgs = {
+  id: Scalars['Int'];
+  name?: InputMaybe<Scalars['String']>;
+  verified?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateInstrumentArgs = {
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  managerUserId: Scalars['Int'];
+  name: Scalars['String'];
+  shortCode: Scalars['String'];
 };
 
 
@@ -1548,123 +1408,191 @@ export type MutationUpdatePasswordArgs = {
 };
 
 
-export type MutationCreateEquipmentArgs = {
-  newEquipmentInput: EquipmentInput;
+export type MutationUpdateProposalArgs = {
+  abstract?: InputMaybe<Scalars['String']>;
+  proposalPk: Scalars['Int'];
+  proposerId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+  users?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 
-export type MutationUpdateEquipmentArgs = {
-  updateEquipmentInput: EquipmentInput;
+export type MutationUpdateProposalStatusArgs = {
+  updatedProposalStatusInput: UpdateProposalStatusInput;
+};
+
+
+export type MutationUpdateProposalWorkflowArgs = {
+  updatedProposalWorkflowInput: UpdateProposalWorkflowInput;
+};
+
+
+export type MutationUpdateQuestionArgs = {
+  config?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  naturalKey?: InputMaybe<Scalars['String']>;
+  question?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateQuestionTemplateRelationArgs = {
+  config?: InputMaybe<Scalars['String']>;
+  questionId: Scalars['String'];
+  sortOrder: Scalars['Int'];
+  templateId: Scalars['Int'];
+  topicId?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateQuestionTemplateRelationSettingsArgs = {
+  config?: InputMaybe<Scalars['String']>;
+  dependencies: Array<FieldDependencyInput>;
+  dependenciesOperator?: InputMaybe<DependenciesLogicOperator>;
+  questionId: Scalars['String'];
+  templateId: Scalars['Int'];
+};
+
+
+export type MutationUpdateSepArgs = {
+  active: Scalars['Boolean'];
+  code: Scalars['String'];
+  description: Scalars['String'];
   id: Scalars['Int'];
+  numberRatingsRequired?: InputMaybe<Scalars['Int']>;
 };
 
 
-export type MutationAssignToScheduledEventsArgs = {
-  assignEquipmentsToScheduledEventInput: AssignEquipmentsToScheduledEventInput;
+export type MutationUpdateSepTimeAllocationArgs = {
+  proposalPk: Scalars['Int'];
+  sepId: Scalars['Int'];
+  sepTimeAllocation?: InputMaybe<Scalars['Int']>;
 };
 
 
-export type MutationDeleteEquipmentAssignmentArgs = {
-  deleteEquipmentAssignmentInput: DeleteEquipmentAssignmentInput;
+export type MutationUpdateSampleArgs = {
+  safetyComment?: InputMaybe<Scalars['String']>;
+  safetyStatus?: InputMaybe<SampleStatus>;
+  sampleId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationConfirmEquipmentAssignmentArgs = {
-  confirmEquipmentAssignmentInput: ConfirmEquipmentAssignmentInput;
+export type MutationUpdateSampleEsiArgs = {
+  esiId: Scalars['Int'];
+  isSubmitted?: InputMaybe<Scalars['Boolean']>;
+  sampleId: Scalars['Int'];
 };
 
 
-export type MutationAddEquipmentResponsibleArgs = {
-  equipmentResponsibleInput: EquipmentResponsibleInput;
+export type MutationUpdateShipmentArgs = {
+  externalRef?: InputMaybe<Scalars['String']>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  shipmentId: Scalars['Int'];
+  status?: InputMaybe<ShipmentStatus>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationBulkUpsertLostTimesArgs = {
-  bulkUpsertLostTimes: BulkUpsertLostTimesInput;
+export type MutationUpdateTechnicalReviewAssigneeArgs = {
+  proposalPks: Array<Scalars['Int']>;
+  userId: Scalars['Int'];
 };
 
 
-export type MutationCreateScheduledEventArgs = {
-  newScheduledEvent: NewScheduledEventInput;
+export type MutationUpdateTemplateArgs = {
+  description?: InputMaybe<Scalars['String']>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  templateId: Scalars['Int'];
 };
 
 
-export type MutationDeleteScheduledEventsArgs = {
-  deleteScheduledEventsInput: DeleteScheduledEventsInput;
-};
-
-
-export type MutationUpdateScheduledEventArgs = {
-  updateScheduledEvent: UpdateScheduledEventInput;
-};
-
-
-export type MutationActivateScheduledEventArgs = {
-  activateScheduledEvent: ActivateScheduledEventInput;
-};
-
-
-export type MutationFinalizeScheduledEventArgs = {
-  finalizeScheduledEvent: FinalizeScheduledEventInput;
-};
-
-
-export type MutationFinalizeProposalBookingArgs = {
+export type MutationUpdateTopicArgs = {
   id: Scalars['Int'];
-  action: ProposalBookingFinalizeAction;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+  sortOrder?: InputMaybe<Scalars['Int']>;
+  templateId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationActivateProposalBookingArgs = {
+export type MutationUpdateUserArgs = {
+  birthdate?: InputMaybe<Scalars['String']>;
+  department?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  firstname?: InputMaybe<Scalars['String']>;
+  gender?: InputMaybe<Scalars['String']>;
   id: Scalars['Int'];
+  lastname?: InputMaybe<Scalars['String']>;
+  middlename?: InputMaybe<Scalars['String']>;
+  nationality?: InputMaybe<Scalars['Int']>;
+  orcid?: InputMaybe<Scalars['String']>;
+  organisation?: InputMaybe<Scalars['Int']>;
+  placeholder?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['String']>;
+  preferredname?: InputMaybe<Scalars['String']>;
+  refreshToken?: InputMaybe<Scalars['String']>;
+  roles?: InputMaybe<Array<Scalars['Int']>>;
+  telephone?: InputMaybe<Scalars['String']>;
+  telephone_alt?: InputMaybe<Scalars['String']>;
+  user_title?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationResetSchedulerDbArgs = {
-  includeSeeds?: Maybe<Scalars['Boolean']>;
+export type MutationUpdateUserRolesArgs = {
+  id: Scalars['Int'];
+  roles?: InputMaybe<Array<Scalars['Int']>>;
 };
 
-export type NewScheduledEventInput = {
-  bookingType: ScheduledEventBookingType;
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
-  description?: Maybe<Scalars['String']>;
-  instrumentId: Scalars['Int'];
-  proposalBookingId?: Maybe<Scalars['Int']>;
+
+export type MutationUpdateVisitArgs = {
+  status?: InputMaybe<VisitStatus>;
+  team?: InputMaybe<Array<Scalars['Int']>>;
+  teamLeadUserId?: InputMaybe<Scalars['Int']>;
+  visitId: Scalars['Int'];
+};
+
+
+export type MutationUpdateVisitRegistrationArgs = {
+  isRegistrationSubmitted?: InputMaybe<Scalars['Boolean']>;
+  trainingExpiryDate?: InputMaybe<Scalars['DateTime']>;
+  visitId: Scalars['Int'];
+};
+
+
+export type MutationValidateTemplateImportArgs = {
+  templateAsJson: Scalars['String'];
 };
 
 export type NextProposalStatus = {
-  __typename?: 'NextProposalStatus';
-  id: Maybe<Scalars['Int']>;
-  shortCode: Maybe<Scalars['String']>;
-  name: Maybe<Scalars['String']>;
   description: Maybe<Scalars['String']>;
+  id: Maybe<Scalars['Int']>;
   isDefault: Maybe<Scalars['Boolean']>;
+  name: Maybe<Scalars['String']>;
+  shortCode: Maybe<Scalars['String']>;
 };
 
 export type NextProposalStatusResponseWrap = {
-  __typename?: 'NextProposalStatusResponseWrap';
-  rejection: Maybe<Rejection>;
   nextProposalStatus: Maybe<NextProposalStatus>;
+  rejection: Maybe<Rejection>;
 };
 
 export type NumberInputConfig = {
-  __typename?: 'NumberInputConfig';
-  small_label: Scalars['String'];
+  numberValueConstraint: Maybe<NumberValueConstraint>;
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
   units: Maybe<Array<Scalars['String']>>;
-  numberValueConstraint: Maybe<NumberValueConstraint>;
 };
 
 export enum NumberValueConstraint {
   NONE = 'NONE',
-  ONLY_POSITIVE = 'ONLY_POSITIVE',
-  ONLY_NEGATIVE = 'ONLY_NEGATIVE'
+  ONLY_NEGATIVE = 'ONLY_NEGATIVE',
+  ONLY_POSITIVE = 'ONLY_POSITIVE'
 }
 
 export type OrcIdInformation = {
-  __typename?: 'OrcIDInformation';
   firstname: Maybe<Scalars['String']>;
   lastname: Maybe<Scalars['String']>;
   orcid: Maybe<Scalars['String']>;
@@ -1674,111 +1602,81 @@ export type OrcIdInformation = {
 };
 
 export type Page = {
-  __typename?: 'Page';
-  id: Scalars['Int'];
   content: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
 };
 
 export enum PageName {
-  HOMEPAGE = 'HOMEPAGE',
-  HELPPAGE = 'HELPPAGE',
-  PRIVACYPAGE = 'PRIVACYPAGE',
   COOKIEPAGE = 'COOKIEPAGE',
-  REVIEWPAGE = 'REVIEWPAGE',
-  FOOTERCONTENT = 'FOOTERCONTENT'
+  FOOTERCONTENT = 'FOOTERCONTENT',
+  HELPPAGE = 'HELPPAGE',
+  HOMEPAGE = 'HOMEPAGE',
+  PRIVACYPAGE = 'PRIVACYPAGE',
+  REVIEWPAGE = 'REVIEWPAGE'
 }
 
 export type PageResponseWrap = {
-  __typename?: 'PageResponseWrap';
-  rejection: Maybe<Rejection>;
   page: Maybe<Page>;
+  rejection: Maybe<Rejection>;
 };
 
 export type PermissionsWithAccessToken = {
-  __typename?: 'PermissionsWithAccessToken';
+  accessPermissions: Scalars['String'];
+  accessToken: Scalars['String'];
   id: Scalars['String'];
   name: Scalars['String'];
-  accessToken: Scalars['String'];
-  accessPermissions: Scalars['String'];
 };
 
 export type PrepareDbResponseWrap = {
-  __typename?: 'PrepareDBResponseWrap';
-  rejection: Maybe<Rejection>;
   log: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
 };
 
 export type Proposal = {
-  __typename?: 'Proposal';
-  primaryKey: Scalars['Int'];
-  title: Scalars['String'];
   abstract: Scalars['String'];
-  statusId: Scalars['Int'];
-  created: Scalars['DateTime'];
-  updated: Scalars['DateTime'];
-  proposalId: Scalars['String'];
-  finalStatus: Maybe<ProposalEndStatus>;
-  callId: Scalars['Int'];
-  questionaryId: Scalars['Int'];
-  commentForUser: Maybe<Scalars['String']>;
-  commentForManagement: Maybe<Scalars['String']>;
-  notified: Scalars['Boolean'];
-  submitted: Scalars['Boolean'];
-  managementTimeAllocation: Maybe<Scalars['Int']>;
-  managementDecisionSubmitted: Scalars['Boolean'];
-  technicalReviewAssignee: Maybe<Scalars['Int']>;
-  users: Array<BasicUserDetails>;
-  proposer: Maybe<BasicUserDetails>;
-  status: Maybe<ProposalStatus>;
-  publicStatus: ProposalPublicStatus;
-  reviews: Maybe<Array<Review>>;
-  technicalReview: Maybe<TechnicalReview>;
-  instrument: Maybe<Instrument>;
-  sep: Maybe<Sep>;
   call: Maybe<Call>;
-  questionary: Questionary;
-  sepMeetingDecision: Maybe<SepMeetingDecision>;
-  samples: Maybe<Array<Sample>>;
-  visits: Maybe<Array<Visit>>;
+  callId: Scalars['Int'];
+  commentForManagement: Maybe<Scalars['String']>;
+  commentForUser: Maybe<Scalars['String']>;
+  created: Scalars['DateTime'];
+  finalStatus: Maybe<ProposalEndStatus>;
+  genericTemplates: Maybe<Array<GenericTemplate>>;
+  instrument: Maybe<Instrument>;
+  managementDecisionSubmitted: Scalars['Boolean'];
+  managementTimeAllocation: Maybe<Scalars['Int']>;
+  notified: Scalars['Boolean'];
+  primaryKey: Scalars['Int'];
   proposalBookingCore: Maybe<ProposalBookingCore>;
-  proposalBooking: Maybe<ProposalBooking>;
+  proposalId: Scalars['String'];
+  proposer: Maybe<BasicUserDetails>;
+  publicStatus: ProposalPublicStatus;
+  questionary: Questionary;
+  questionaryId: Scalars['Int'];
+  reviews: Maybe<Array<Review>>;
+  samples: Maybe<Array<Sample>>;
+  sep: Maybe<Sep>;
+  sepMeetingDecision: Maybe<SepMeetingDecision>;
+  status: Maybe<ProposalStatus>;
+  statusId: Scalars['Int'];
+  submitted: Scalars['Boolean'];
+  technicalReview: Maybe<TechnicalReview>;
+  technicalReviewAssignee: Maybe<Scalars['Int']>;
+  title: Scalars['String'];
+  updated: Scalars['DateTime'];
+  users: Array<BasicUserDetails>;
+  visits: Maybe<Array<Visit>>;
 };
 
 
 export type ProposalProposalBookingCoreArgs = {
-  filter?: Maybe<ProposalBookingFilter>;
-};
-
-
-export type ProposalProposalBookingArgs = {
-  filter?: Maybe<ProposalProposalBookingFilter>;
+  filter?: InputMaybe<ProposalBookingFilter>;
 };
 
 export type ProposalBasisConfig = {
-  __typename?: 'ProposalBasisConfig';
   tooltip: Scalars['String'];
 };
 
-export type ProposalBooking = {
-  __typename?: 'ProposalBooking';
-  id: Scalars['Int'];
-  call: Maybe<Call>;
-  proposal: Maybe<Proposal>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  status: ProposalBookingStatusCore;
-  allocatedTime: Scalars['Int'];
-  instrument: Maybe<Instrument>;
-  scheduledEvents: Array<ScheduledEvent>;
-};
-
-
-export type ProposalBookingScheduledEventsArgs = {
-  filter: ProposalBookingScheduledEventFilter;
-};
-
 export type ProposalBookingCore = {
-  __typename?: 'ProposalBookingCore';
   id: Scalars['Int'];
   scheduledEvents: Array<ScheduledEventCore>;
 };
@@ -1789,65 +1687,41 @@ export type ProposalBookingCoreScheduledEventsArgs = {
 };
 
 export type ProposalBookingFilter = {
-  status?: Maybe<Array<ProposalBookingStatusCore>>;
-};
-
-export enum ProposalBookingFinalizeAction {
-  COMPLETE = 'COMPLETE',
-  RESTART = 'RESTART'
-}
-
-export type ProposalBookingResponseWrap = {
-  __typename?: 'ProposalBookingResponseWrap';
-  error: Maybe<Scalars['String']>;
-  proposalBooking: Maybe<ProposalBooking>;
-};
-
-export type ProposalBookingScheduledEventFilter = {
-  bookingType?: Maybe<ScheduledEventBookingType>;
-  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
-  endsBefore?: Maybe<Scalars['TzLessDateTime']>;
+  status?: InputMaybe<Array<ProposalBookingStatusCore>>;
 };
 
 export type ProposalBookingScheduledEventFilterCore = {
-  bookingType?: Maybe<ScheduledEventBookingType>;
-  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
-  endsBefore?: Maybe<Scalars['TzLessDateTime']>;
-  status?: Maybe<Array<ProposalBookingStatusCore>>;
+  bookingType?: InputMaybe<ScheduledEventBookingType>;
+  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
+  status?: InputMaybe<Array<ProposalBookingStatusCore>>;
 };
 
 export enum ProposalBookingStatusCore {
-  DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED'
+  COMPLETED = 'COMPLETED',
+  DRAFT = 'DRAFT'
 }
 
 export enum ProposalEndStatus {
-  UNSET = 'UNSET',
   ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
   RESERVED = 'RESERVED',
-  REJECTED = 'REJECTED'
+  UNSET = 'UNSET'
 }
 
 export type ProposalEsiBasisConfig = {
-  __typename?: 'ProposalEsiBasisConfig';
   tooltip: Scalars['String'];
 };
 
 export type ProposalEvent = {
-  __typename?: 'ProposalEvent';
-  name: Event;
   description: Maybe<Scalars['String']>;
-};
-
-export type ProposalPkAndEventId = {
-  proposalPK: Scalars['Int'];
-  scheduledEventId: Scalars['Int'];
+  name: Event;
 };
 
 export type ProposalPkWithCallId = {
-  primaryKey: Scalars['Int'];
   callId: Scalars['Int'];
+  primaryKey: Scalars['Int'];
 };
 
 export type ProposalPkWithRankOrder = {
@@ -1860,296 +1734,240 @@ export type ProposalPkWithReviewId = {
   reviewId: Scalars['Int'];
 };
 
-export type ProposalProposalBookingFilter = {
-  status?: Maybe<Array<ProposalBookingStatusCore>>;
-};
-
 export enum ProposalPublicStatus {
-  DRAFT = 'draft',
-  SUBMITTED = 'submitted',
   ACCEPTED = 'accepted',
+  DRAFT = 'draft',
   REJECTED = 'rejected',
-  UNKNOWN = 'unknown',
-  RESERVED = 'reserved'
+  RESERVED = 'reserved',
+  SUBMITTED = 'submitted',
+  UNKNOWN = 'unknown'
 }
 
 export type ProposalResponseWrap = {
-  __typename?: 'ProposalResponseWrap';
-  rejection: Maybe<Rejection>;
   proposal: Maybe<Proposal>;
+  rejection: Maybe<Rejection>;
 };
 
 export type ProposalStatus = {
-  __typename?: 'ProposalStatus';
-  id: Scalars['Int'];
-  shortCode: Scalars['String'];
-  name: Scalars['String'];
   description: Scalars['String'];
+  id: Scalars['Int'];
   isDefault: Scalars['Boolean'];
+  name: Scalars['String'];
+  shortCode: Scalars['String'];
 };
 
 export type ProposalStatusChangingEventResponseWrap = {
-  __typename?: 'ProposalStatusChangingEventResponseWrap';
   rejection: Maybe<Rejection>;
   statusChangingEvents: Maybe<Array<StatusChangingEvent>>;
 };
 
 export type ProposalStatusResponseWrap = {
-  __typename?: 'ProposalStatusResponseWrap';
-  rejection: Maybe<Rejection>;
   proposalStatus: Maybe<ProposalStatus>;
+  rejection: Maybe<Rejection>;
 };
 
 export type ProposalTemplate = {
-  __typename?: 'ProposalTemplate';
-  templateId: Scalars['Int'];
-  groupId: TemplateGroupId;
-  name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
-  isArchived: Scalars['Boolean'];
-  steps: Array<TemplateStep>;
-  complementaryQuestions: Array<Question>;
-  questionaryCount: Scalars['Int'];
-  group: TemplateGroup;
   callCount: Scalars['Int'];
+  complementaryQuestions: Array<Question>;
+  description: Maybe<Scalars['String']>;
+  group: TemplateGroup;
+  groupId: TemplateGroupId;
+  isArchived: Scalars['Boolean'];
+  json: Scalars['String'];
+  name: Scalars['String'];
+  questionaryCount: Scalars['Int'];
+  steps: Array<TemplateStep>;
+  templateId: Scalars['Int'];
 };
 
 export type ProposalTemplatesFilter = {
-  isArchived?: Maybe<Scalars['Boolean']>;
-  templateIds?: Maybe<Array<Scalars['Int']>>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
+  templateIds?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type ProposalView = {
-  __typename?: 'ProposalView';
+  allocationTimeUnit: AllocationTimeUnits;
+  callId: Scalars['Int'];
+  callShortCode: Maybe<Scalars['String']>;
+  finalStatus: Maybe<ProposalEndStatus>;
+  instrumentId: Maybe<Scalars['Int']>;
+  instrumentName: Maybe<Scalars['String']>;
+  managementTimeAllocation: Maybe<Scalars['Int']>;
+  notified: Scalars['Boolean'];
   primaryKey: Scalars['Int'];
-  title: Scalars['String'];
-  statusId: Scalars['Int'];
-  statusName: Scalars['String'];
-  statusDescription: Scalars['String'];
   proposalId: Scalars['String'];
   rankOrder: Maybe<Scalars['Int']>;
-  finalStatus: Maybe<ProposalEndStatus>;
-  notified: Scalars['Boolean'];
-  submitted: Scalars['Boolean'];
-  timeAllocation: Maybe<Scalars['Int']>;
-  technicalStatus: Maybe<TechnicalReviewStatus>;
-  instrumentName: Maybe<Scalars['String']>;
-  callShortCode: Maybe<Scalars['String']>;
-  sepCode: Maybe<Scalars['String']>;
-  sepId: Maybe<Scalars['Int']>;
   reviewAverage: Maybe<Scalars['Float']>;
   reviewDeviation: Maybe<Scalars['Float']>;
-  instrumentId: Maybe<Scalars['Int']>;
-  callId: Scalars['Int'];
-  allocationTimeUnit: AllocationTimeUnits;
+  sepCode: Maybe<Scalars['String']>;
+  sepId: Maybe<Scalars['Int']>;
+  statusDescription: Scalars['String'];
+  statusId: Scalars['Int'];
+  statusName: Scalars['String'];
+  submitted: Scalars['Boolean'];
+  technicalReviewAssignee: Maybe<Scalars['Int']>;
+  technicalReviewSubmitted: Maybe<Scalars['Int']>;
+  technicalStatus: Maybe<TechnicalReviewStatus>;
+  technicalTimeAllocation: Maybe<Scalars['Int']>;
+  title: Scalars['String'];
 };
 
 export type ProposalWorkflow = {
-  __typename?: 'ProposalWorkflow';
+  description: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  description: Scalars['String'];
   proposalWorkflowConnectionGroups: Array<ProposalWorkflowConnectionGroup>;
 };
 
 export type ProposalWorkflowConnection = {
-  __typename?: 'ProposalWorkflowConnection';
+  droppableGroupId: Scalars['String'];
   id: Scalars['Int'];
-  sortOrder: Scalars['Int'];
-  proposalWorkflowId: Scalars['Int'];
-  proposalStatusId: Scalars['Int'];
-  proposalStatus: ProposalStatus;
   nextProposalStatusId: Maybe<Scalars['Int']>;
   prevProposalStatusId: Maybe<Scalars['Int']>;
-  droppableGroupId: Scalars['String'];
+  proposalStatus: ProposalStatus;
+  proposalStatusId: Scalars['Int'];
+  proposalWorkflowId: Scalars['Int'];
+  sortOrder: Scalars['Int'];
   statusChangingEvents: Maybe<Array<StatusChangingEvent>>;
 };
 
 export type ProposalWorkflowConnectionGroup = {
-  __typename?: 'ProposalWorkflowConnectionGroup';
+  connections: Array<ProposalWorkflowConnection>;
   groupId: Scalars['String'];
   parentGroupId: Maybe<Scalars['String']>;
-  connections: Array<ProposalWorkflowConnection>;
 };
 
 export type ProposalWorkflowConnectionResponseWrap = {
-  __typename?: 'ProposalWorkflowConnectionResponseWrap';
-  rejection: Maybe<Rejection>;
   proposalWorkflowConnection: Maybe<ProposalWorkflowConnection>;
+  rejection: Maybe<Rejection>;
 };
 
 export type ProposalWorkflowResponseWrap = {
-  __typename?: 'ProposalWorkflowResponseWrap';
-  rejection: Maybe<Rejection>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
+  rejection: Maybe<Rejection>;
 };
 
 export type ProposalsFilter = {
-  text?: Maybe<Scalars['String']>;
-  questionaryIds?: Maybe<Array<Scalars['Int']>>;
-  callId?: Maybe<Scalars['Int']>;
-  instrumentId?: Maybe<Scalars['Int']>;
-  proposalStatusId?: Maybe<Scalars['Int']>;
-  shortCodes?: Maybe<Array<Scalars['String']>>;
-  questionFilter?: Maybe<QuestionFilterInput>;
+  callId?: InputMaybe<Scalars['Int']>;
+  instrumentId?: InputMaybe<Scalars['Int']>;
+  proposalStatusId?: InputMaybe<Scalars['Int']>;
+  questionFilter?: InputMaybe<QuestionFilterInput>;
+  questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
+  shortCodes?: InputMaybe<Array<Scalars['String']>>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 export type ProposalsQueryResult = {
-  __typename?: 'ProposalsQueryResult';
-  totalCount: Scalars['Int'];
   proposals: Array<Proposal>;
+  totalCount: Scalars['Int'];
 };
 
 export type ProposalsResponseWrap = {
-  __typename?: 'ProposalsResponseWrap';
-  rejection: Maybe<Rejection>;
   proposals: Array<Proposal>;
+  rejection: Maybe<Rejection>;
+};
+
+export type ProposalsViewResult = {
+  proposals: Array<ProposalView>;
+  totalCount: Scalars['Int'];
 };
 
 export type QueriesAndMutations = {
-  __typename?: 'QueriesAndMutations';
-  queries: Array<Scalars['String']>;
   mutations: Array<Scalars['String']>;
+  queries: Array<Scalars['String']>;
 };
 
 export type Query = {
-  __typename?: 'Query';
-  calls: Maybe<Array<Call>>;
-  callsByInstrumentScientist: Maybe<Array<Call>>;
-  proposals: Maybe<ProposalsQueryResult>;
-  instrumentScientistProposals: Maybe<ProposalsQueryResult>;
-  sampleEsi: Maybe<SampleExperimentSafetyInput>;
-  shipments: Maybe<Array<Shipment>>;
-  questions: Array<QuestionWithUsage>;
-  templates: Maybe<Array<Template>>;
-  visits: Array<Visit>;
-  myVisits: Array<Visit>;
+  _entities: Array<Maybe<_Entity>>;
+  _service: _Service;
+  accessTokenAndPermissions: Maybe<PermissionsWithAccessToken>;
   activeTemplateId: Maybe<Scalars['Int']>;
+  allAccessTokensAndPermissions: Maybe<Array<PermissionsWithAccessToken>>;
   basicUserDetails: Maybe<BasicUserDetails>;
   basicUserDetailsByEmail: Maybe<BasicUserDetails>;
   blankQuestionary: Questionary;
   blankQuestionarySteps: Maybe<Array<QuestionaryStep>>;
   call: Maybe<Call>;
+  calls: Maybe<Array<Call>>;
+  callsByInstrumentScientist: Maybe<Array<Call>>;
   checkEmailExist: Maybe<Scalars['Boolean']>;
+  checkToken: TokenResult;
   esi: Maybe<ExperimentSafetyInput>;
   eventLogs: Maybe<Array<EventLog>>;
+  factoryVersion: Scalars['String'];
   features: Array<Feature>;
+  feedback: Maybe<Feedback>;
+  feedbacks: Array<Feedback>;
   fileMetadata: Maybe<Array<FileMetadata>>;
-  allAccessTokensAndPermissions: Maybe<Array<PermissionsWithAccessToken>>;
-  queriesAndMutations: Maybe<QueriesAndMutations>;
-  accessTokenAndPermissions: Maybe<PermissionsWithAccessToken>;
+  genericTemplate: Maybe<GenericTemplate>;
+  genericTemplates: Maybe<Array<GenericTemplate>>;
   getFields: Maybe<Fields>;
   getOrcIDInformation: Maybe<OrcIdInformation>;
   getPageContent: Maybe<Scalars['String']>;
   institutions: Maybe<Array<Institution>>;
   instrument: Maybe<Instrument>;
+  instrumentScientistHasAccess: Maybe<Scalars['Boolean']>;
+  instrumentScientistHasInstrument: Maybe<Scalars['Boolean']>;
+  instrumentScientistProposals: Maybe<ProposalsViewResult>;
   instruments: Maybe<InstrumentsQueryResult>;
   instrumentsBySep: Maybe<Array<InstrumentWithAvailabilityTime>>;
-  userInstruments: Maybe<InstrumentsQueryResult>;
-  instrumentScientistHasInstrument: Maybe<Scalars['Boolean']>;
-  instrumentScientistHasAccess: Maybe<Scalars['Boolean']>;
   isNaturalKeyPresent: Maybe<Scalars['Boolean']>;
+  me: Maybe<User>;
   myShipments: Maybe<Array<Shipment>>;
+  myVisits: Array<Visit>;
+  previousCollaborators: Maybe<UserQueryResult>;
   proposal: Maybe<Proposal>;
-  userHasAccessToProposal: Maybe<Scalars['Boolean']>;
+  proposalEvents: Maybe<Array<ProposalEvent>>;
+  proposalReviews: Maybe<Array<Review>>;
   proposalStatus: Maybe<ProposalStatus>;
   proposalStatuses: Maybe<Array<ProposalStatus>>;
-  proposalsView: Maybe<Array<ProposalView>>;
   proposalTemplates: Maybe<Array<ProposalTemplate>>;
   proposalWorkflow: Maybe<ProposalWorkflow>;
   proposalWorkflows: Maybe<Array<ProposalWorkflow>>;
-  proposalEvents: Maybe<Array<ProposalEvent>>;
+  proposals: Maybe<ProposalsQueryResult>;
+  proposalsView: Maybe<Array<ProposalView>>;
+  queriesAndMutations: Maybe<QueriesAndMutations>;
   questionary: Maybe<Questionary>;
+  questions: Array<QuestionWithUsage>;
   review: Maybe<Review>;
-  proposalReviews: Maybe<Array<Review>>;
   roles: Maybe<Array<Role>>;
   sample: Maybe<Sample>;
-  samplesByCallId: Maybe<Array<Sample>>;
+  sampleEsi: Maybe<SampleExperimentSafetyInput>;
   samples: Maybe<Array<Sample>>;
+  samplesByCallId: Maybe<Array<Sample>>;
+  scheduledEventsCore: Maybe<Array<ScheduledEventCore>>;
   sep: Maybe<Sep>;
   sepMembers: Maybe<Array<SepReviewer>>;
-  sepReviewers: Maybe<Array<SepReviewer>>;
-  sepProposals: Maybe<Array<SepProposal>>;
   sepProposal: Maybe<SepProposal>;
+  sepProposals: Maybe<Array<SepProposal>>;
   sepProposalsByInstrument: Maybe<Array<SepProposal>>;
+  sepReviewers: Maybe<Array<SepReviewer>>;
   seps: Maybe<SePsQueryResult>;
   settings: Array<Settings>;
   shipment: Maybe<Shipment>;
-  version: Scalars['String'];
-  factoryVersion: Scalars['String'];
-  templateCategories: Maybe<Array<TemplateCategory>>;
+  shipments: Maybe<Array<Shipment>>;
   template: Maybe<Template>;
-  checkToken: TokenResult;
+  templateCategories: Maybe<Array<TemplateCategory>>;
+  templates: Maybe<Array<Template>>;
   units: Maybe<Array<Unit>>;
   user: Maybe<User>;
-  me: Maybe<User>;
+  userHasAccessToProposal: Maybe<Scalars['Boolean']>;
+  userInstruments: Maybe<InstrumentsQueryResult>;
   users: Maybe<UserQueryResult>;
-  previousCollaborators: Maybe<UserQueryResult>;
-  visitRegistration: Maybe<VisitRegistration>;
+  version: Scalars['String'];
   visit: Maybe<Visit>;
-  scheduledEvents: Array<ScheduledEvent>;
-  scheduledEvent: Maybe<ScheduledEvent>;
-  proposalBookingScheduledEvents: Array<ScheduledEvent>;
-  proposalBookingScheduledEvent: Maybe<ScheduledEvent>;
-  equipments: Array<Equipment>;
-  availableEquipments: Array<Equipment>;
-  equipment: Maybe<Equipment>;
-  proposalBookingLostTimes: Array<LostTime>;
-  instrumentProposalBookings: Array<ProposalBooking>;
-  proposalBooking: Maybe<ProposalBooking>;
-  healthCheck: HealthStats;
-  schedulerConfig: SchedulerConfig;
-  schedulerVersion: Scalars['String'];
+  visitRegistration: Maybe<VisitRegistration>;
+  visits: Array<Visit>;
 };
 
 
-export type QueryCallsArgs = {
-  filter?: Maybe<CallsFilter>;
+export type Query_EntitiesArgs = {
+  representations: Array<Scalars['_Any']>;
 };
 
 
-export type QueryCallsByInstrumentScientistArgs = {
-  scientistId: Scalars['Int'];
-};
-
-
-export type QueryProposalsArgs = {
-  filter?: Maybe<ProposalsFilter>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryInstrumentScientistProposalsArgs = {
-  filter?: Maybe<ProposalsFilter>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QuerySampleEsiArgs = {
-  esiId: Scalars['Int'];
-  sampleId: Scalars['Int'];
-};
-
-
-export type QueryShipmentsArgs = {
-  filter?: Maybe<ShipmentsFilter>;
-};
-
-
-export type QueryQuestionsArgs = {
-  filter?: Maybe<QuestionsFilter>;
-};
-
-
-export type QueryTemplatesArgs = {
-  filter?: Maybe<TemplatesFilter>;
-};
-
-
-export type QueryVisitsArgs = {
-  filter?: Maybe<VisitsFilter>;
+export type QueryAccessTokenAndPermissionsArgs = {
+  accessTokenId: Scalars['String'];
 };
 
 
@@ -2164,8 +1982,8 @@ export type QueryBasicUserDetailsArgs = {
 
 
 export type QueryBasicUserDetailsByEmailArgs = {
-  role?: Maybe<UserRole>;
   email: Scalars['String'];
+  role?: InputMaybe<UserRole>;
 };
 
 
@@ -2184,8 +2002,23 @@ export type QueryCallArgs = {
 };
 
 
+export type QueryCallsArgs = {
+  filter?: InputMaybe<CallsFilter>;
+};
+
+
+export type QueryCallsByInstrumentScientistArgs = {
+  scientistId: Scalars['Int'];
+};
+
+
 export type QueryCheckEmailExistArgs = {
   email: Scalars['String'];
+};
+
+
+export type QueryCheckTokenArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -2200,13 +2033,28 @@ export type QueryEventLogsArgs = {
 };
 
 
+export type QueryFeedbackArgs = {
+  feedbackId: Scalars['Int'];
+};
+
+
+export type QueryFeedbacksArgs = {
+  filter?: InputMaybe<FeedbacksFilter>;
+};
+
+
 export type QueryFileMetadataArgs = {
   fileIds: Array<Scalars['String']>;
 };
 
 
-export type QueryAccessTokenAndPermissionsArgs = {
-  accessTokenId: Scalars['String'];
+export type QueryGenericTemplateArgs = {
+  genericTemplateId: Scalars['Int'];
+};
+
+
+export type QueryGenericTemplatesArgs = {
+  filter?: InputMaybe<GenericTemplatesFilter>;
 };
 
 
@@ -2221,7 +2069,7 @@ export type QueryGetPageContentArgs = {
 
 
 export type QueryInstitutionsArgs = {
-  filter?: Maybe<InstitutionsFilter>;
+  filter?: InputMaybe<InstitutionsFilter>;
 };
 
 
@@ -2230,8 +2078,26 @@ export type QueryInstrumentArgs = {
 };
 
 
+export type QueryInstrumentScientistHasAccessArgs = {
+  instrumentId: Scalars['Int'];
+  proposalPk: Scalars['Int'];
+};
+
+
+export type QueryInstrumentScientistHasInstrumentArgs = {
+  instrumentId: Scalars['Int'];
+};
+
+
+export type QueryInstrumentScientistProposalsArgs = {
+  filter?: InputMaybe<ProposalsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryInstrumentsArgs = {
-  callIds?: Maybe<Array<Scalars['Int']>>;
+  callIds?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 
@@ -2241,19 +2107,18 @@ export type QueryInstrumentsBySepArgs = {
 };
 
 
-export type QueryInstrumentScientistHasInstrumentArgs = {
-  instrumentId: Scalars['Int'];
-};
-
-
-export type QueryInstrumentScientistHasAccessArgs = {
-  proposalPk: Scalars['Int'];
-  instrumentId: Scalars['Int'];
-};
-
-
 export type QueryIsNaturalKeyPresentArgs = {
   naturalKey: Scalars['String'];
+};
+
+
+export type QueryPreviousCollaboratorsArgs = {
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  userId: Scalars['Int'];
+  userRole?: InputMaybe<UserRole>;
 };
 
 
@@ -2262,7 +2127,7 @@ export type QueryProposalArgs = {
 };
 
 
-export type QueryUserHasAccessToProposalArgs = {
+export type QueryProposalReviewsArgs = {
   proposalPk: Scalars['Int'];
 };
 
@@ -2272,13 +2137,8 @@ export type QueryProposalStatusArgs = {
 };
 
 
-export type QueryProposalsViewArgs = {
-  filter?: Maybe<ProposalsFilter>;
-};
-
-
 export type QueryProposalTemplatesArgs = {
-  filter?: Maybe<ProposalTemplatesFilter>;
+  filter?: InputMaybe<ProposalTemplatesFilter>;
 };
 
 
@@ -2287,19 +2147,31 @@ export type QueryProposalWorkflowArgs = {
 };
 
 
+export type QueryProposalsArgs = {
+  filter?: InputMaybe<ProposalsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryProposalsViewArgs = {
+  filter?: InputMaybe<ProposalsFilter>;
+};
+
+
 export type QueryQuestionaryArgs = {
   questionaryId: Scalars['Int'];
 };
 
 
-export type QueryReviewArgs = {
-  sepId?: Maybe<Scalars['Int']>;
-  reviewId: Scalars['Int'];
+export type QueryQuestionsArgs = {
+  filter?: InputMaybe<QuestionsFilter>;
 };
 
 
-export type QueryProposalReviewsArgs = {
-  proposalPk: Scalars['Int'];
+export type QueryReviewArgs = {
+  reviewId: Scalars['Int'];
+  sepId?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2308,13 +2180,25 @@ export type QuerySampleArgs = {
 };
 
 
+export type QuerySampleEsiArgs = {
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+};
+
+
+export type QuerySamplesArgs = {
+  filter?: InputMaybe<SamplesFilter>;
+};
+
+
 export type QuerySamplesByCallIdArgs = {
   callId: Scalars['Int'];
 };
 
 
-export type QuerySamplesArgs = {
-  filter?: Maybe<SamplesFilter>;
+export type QueryScheduledEventsCoreArgs = {
+  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
 };
 
 
@@ -2328,19 +2212,14 @@ export type QuerySepMembersArgs = {
 };
 
 
-export type QuerySepReviewersArgs = {
+export type QuerySepProposalArgs = {
+  proposalPk: Scalars['Int'];
   sepId: Scalars['Int'];
 };
 
 
 export type QuerySepProposalsArgs = {
   callId: Scalars['Int'];
-  sepId: Scalars['Int'];
-};
-
-
-export type QuerySepProposalArgs = {
-  proposalPk: Scalars['Int'];
   sepId: Scalars['Int'];
 };
 
@@ -2352,11 +2231,16 @@ export type QuerySepProposalsByInstrumentArgs = {
 };
 
 
+export type QuerySepReviewersArgs = {
+  sepId: Scalars['Int'];
+};
+
+
 export type QuerySepsArgs = {
-  active?: Maybe<Scalars['Boolean']>;
-  filter?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2365,13 +2249,18 @@ export type QueryShipmentArgs = {
 };
 
 
+export type QueryShipmentsArgs = {
+  filter?: InputMaybe<ShipmentsFilter>;
+};
+
+
 export type QueryTemplateArgs = {
   templateId: Scalars['Int'];
 };
 
 
-export type QueryCheckTokenArgs = {
-  token: Scalars['String'];
+export type QueryTemplatesArgs = {
+  filter?: InputMaybe<TemplatesFilter>;
 };
 
 
@@ -2380,27 +2269,17 @@ export type QueryUserArgs = {
 };
 
 
+export type QueryUserHasAccessToProposalArgs = {
+  proposalPk: Scalars['Int'];
+};
+
+
 export type QueryUsersArgs = {
-  filter?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  userRole?: Maybe<UserRole>;
-  subtractUsers?: Maybe<Array<Maybe<Scalars['Int']>>>;
-};
-
-
-export type QueryPreviousCollaboratorsArgs = {
-  filter?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  userRole?: Maybe<UserRole>;
-  subtractUsers?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  userId: Scalars['Int'];
-};
-
-
-export type QueryVisitRegistrationArgs = {
-  visitId: Scalars['Int'];
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  userRole?: InputMaybe<UserRole>;
 };
 
 
@@ -2409,155 +2288,118 @@ export type QueryVisitArgs = {
 };
 
 
-export type QueryScheduledEventsArgs = {
-  filter: ScheduledEventFilter;
+export type QueryVisitRegistrationArgs = {
+  visitId: Scalars['Int'];
 };
 
 
-export type QueryScheduledEventArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryProposalBookingScheduledEventsArgs = {
-  proposalBookingId: Scalars['Int'];
-};
-
-
-export type QueryProposalBookingScheduledEventArgs = {
-  scheduledEventId: Scalars['Int'];
-  proposalBookingId: Scalars['Int'];
-};
-
-
-export type QueryEquipmentsArgs = {
-  equipmentIds?: Maybe<Array<Scalars['Int']>>;
-};
-
-
-export type QueryAvailableEquipmentsArgs = {
-  scheduledEventId: Scalars['Int'];
-};
-
-
-export type QueryEquipmentArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryProposalBookingLostTimesArgs = {
-  scheduledEventId?: Maybe<Scalars['Int']>;
-  proposalBookingId: Scalars['Int'];
-};
-
-
-export type QueryInstrumentProposalBookingsArgs = {
-  instrumentId: Scalars['Int'];
-};
-
-
-export type QueryProposalBookingArgs = {
-  id: Scalars['Int'];
+export type QueryVisitsArgs = {
+  filter?: InputMaybe<VisitsFilter>;
 };
 
 export type Question = {
-  __typename?: 'Question';
-  id: Scalars['String'];
   categoryId: TemplateCategoryId;
-  naturalKey: Scalars['String'];
-  dataType: DataType;
-  question: Scalars['String'];
   config: FieldConfig;
+  dataType: DataType;
+  id: Scalars['String'];
+  naturalKey: Scalars['String'];
+  question: Scalars['String'];
 };
 
+export type QuestionComparison = {
+  conflictResolutionStrategy: ConflictResolutionStrategy;
+  existingQuestion: Maybe<Question>;
+  newQuestion: Question;
+  status: QuestionComparisonStatus;
+};
+
+export enum QuestionComparisonStatus {
+  DIFFERENT = 'DIFFERENT',
+  NEW = 'NEW',
+  SAME = 'SAME'
+}
+
 export enum QuestionFilterCompareOperator {
-  GREATER_THAN = 'GREATER_THAN',
-  LESS_THAN = 'LESS_THAN',
   EQUALS = 'EQUALS',
+  EXISTS = 'EXISTS',
+  GREATER_THAN = 'GREATER_THAN',
   INCLUDES = 'INCLUDES',
-  EXISTS = 'EXISTS'
+  LESS_THAN = 'LESS_THAN'
 }
 
 export type QuestionFilterInput = {
-  questionId: Scalars['String'];
-  value: Scalars['String'];
   compareOperator: QuestionFilterCompareOperator;
   dataType: DataType;
+  questionId: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type QuestionResponseWrap = {
-  __typename?: 'QuestionResponseWrap';
-  rejection: Maybe<Rejection>;
   question: Maybe<Question>;
+  rejection: Maybe<Rejection>;
 };
 
 export type QuestionTemplateRelation = {
-  __typename?: 'QuestionTemplateRelation';
-  question: Question;
-  sortOrder: Scalars['Int'];
-  topicId: Scalars['Int'];
   config: FieldConfig;
   dependencies: Array<FieldDependency>;
   dependenciesOperator: Maybe<DependenciesLogicOperator>;
+  question: Question;
+  sortOrder: Scalars['Int'];
+  topicId: Scalars['Int'];
 };
 
 export type QuestionWithUsage = {
-  __typename?: 'QuestionWithUsage';
-  id: Scalars['String'];
-  categoryId: TemplateCategoryId;
-  naturalKey: Scalars['String'];
-  dataType: DataType;
-  question: Scalars['String'];
-  config: FieldConfig;
   answers: Array<AnswerBasic>;
+  categoryId: TemplateCategoryId;
+  config: FieldConfig;
+  dataType: DataType;
+  id: Scalars['String'];
+  naturalKey: Scalars['String'];
+  question: Scalars['String'];
   templates: Array<Template>;
 };
 
 export type Questionary = {
-  __typename?: 'Questionary';
-  questionaryId: Scalars['Int'];
-  templateId: Scalars['Int'];
   created: Scalars['DateTime'];
-  steps: Array<QuestionaryStep>;
   isCompleted: Scalars['Boolean'];
+  questionaryId: Scalars['Int'];
+  steps: Array<QuestionaryStep>;
+  templateId: Scalars['Int'];
 };
 
 export type QuestionaryResponseWrap = {
-  __typename?: 'QuestionaryResponseWrap';
-  rejection: Maybe<Rejection>;
   questionary: Maybe<Questionary>;
+  rejection: Maybe<Rejection>;
 };
 
 export type QuestionaryStep = {
-  __typename?: 'QuestionaryStep';
-  topic: Topic;
-  isCompleted: Scalars['Boolean'];
   fields: Array<Answer>;
+  isCompleted: Scalars['Boolean'];
+  topic: Topic;
 };
 
 export type QuestionaryStepResponseWrap = {
-  __typename?: 'QuestionaryStepResponseWrap';
-  rejection: Maybe<Rejection>;
   questionaryStep: Maybe<QuestionaryStep>;
+  rejection: Maybe<Rejection>;
 };
 
 export type QuestionsFilter = {
-  text?: Maybe<Scalars['String']>;
-  category?: Maybe<TemplateCategoryId>;
-  dataType?: Maybe<Array<DataType>>;
-  excludeDataType?: Maybe<Array<DataType>>;
+  category?: InputMaybe<TemplateCategoryId>;
+  dataType?: InputMaybe<Array<DataType>>;
+  excludeDataType?: InputMaybe<Array<DataType>>;
+  questionIds?: InputMaybe<Array<Scalars['String']>>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 export type Rejection = {
-  __typename?: 'Rejection';
-  reason: Scalars['String'];
   context: Maybe<Scalars['String']>;
   exception: Maybe<Scalars['String']>;
+  reason: Scalars['String'];
 };
 
 export type RemoveAssignedInstrumentFromCallInput = {
-  instrumentId: Scalars['Int'];
   callId: Scalars['Int'];
+  instrumentId: Scalars['Int'];
 };
 
 export type ReorderSepMeetingDecisionProposalsInput = {
@@ -2565,19 +2407,17 @@ export type ReorderSepMeetingDecisionProposalsInput = {
 };
 
 export type Review = {
-  __typename?: 'Review';
-  id: Scalars['Int'];
-  userID: Scalars['Int'];
   comment: Maybe<Scalars['String']>;
   grade: Maybe<Scalars['Int']>;
-  status: ReviewStatus;
-  sepID: Scalars['Int'];
-  reviewer: Maybe<BasicUserDetails>;
+  id: Scalars['Int'];
   proposal: Maybe<Proposal>;
+  reviewer: Maybe<BasicUserDetails>;
+  sepID: Scalars['Int'];
+  status: ReviewStatus;
+  userID: Scalars['Int'];
 };
 
 export type ReviewResponseWrap = {
-  __typename?: 'ReviewResponseWrap';
   rejection: Maybe<Rejection>;
   review: Maybe<Review>;
 };
@@ -2588,330 +2428,273 @@ export enum ReviewStatus {
 }
 
 export type ReviewWithNextProposalStatus = {
-  __typename?: 'ReviewWithNextProposalStatus';
-  id: Scalars['Int'];
-  userID: Scalars['Int'];
   comment: Maybe<Scalars['String']>;
   grade: Maybe<Scalars['Int']>;
-  status: ReviewStatus;
-  sepID: Scalars['Int'];
-  reviewer: Maybe<BasicUserDetails>;
-  proposal: Maybe<Proposal>;
+  id: Scalars['Int'];
   nextProposalStatus: Maybe<NextProposalStatus>;
+  proposal: Maybe<Proposal>;
+  reviewer: Maybe<BasicUserDetails>;
+  sepID: Scalars['Int'];
+  status: ReviewStatus;
+  userID: Scalars['Int'];
 };
 
 export type ReviewWithNextStatusResponseWrap = {
-  __typename?: 'ReviewWithNextStatusResponseWrap';
   rejection: Maybe<Rejection>;
   review: Maybe<ReviewWithNextProposalStatus>;
 };
 
 export enum ReviewerFilter {
-  YOU = 'YOU',
-  ALL = 'ALL'
+  ALL = 'ALL',
+  YOU = 'YOU'
 }
 
 export type RichTextInputConfig = {
-  __typename?: 'RichTextInputConfig';
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
-  tooltip: Scalars['String'];
   max: Maybe<Scalars['Int']>;
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
 };
 
 export type Role = {
-  __typename?: 'Role';
   id: Scalars['Int'];
   shortCode: Scalars['String'];
   title: Scalars['String'];
 };
 
 export type Sep = {
-  __typename?: 'SEP';
-  id: Scalars['Int'];
+  active: Scalars['Boolean'];
   code: Scalars['String'];
   description: Scalars['String'];
+  id: Scalars['Int'];
   numberRatingsRequired: Scalars['Float'];
-  active: Scalars['Boolean'];
   sepChair: Maybe<BasicUserDetails>;
   sepSecretary: Maybe<BasicUserDetails>;
 };
 
 export type SepAssignment = {
-  __typename?: 'SEPAssignment';
-  proposalPk: Scalars['Int'];
-  sepMemberUserId: Maybe<Scalars['Int']>;
-  sepId: Scalars['Int'];
   dateAssigned: Scalars['DateTime'];
-  reassigned: Scalars['Boolean'];
   dateReassigned: Maybe<Scalars['DateTime']>;
   emailSent: Scalars['Boolean'];
   proposal: Proposal;
-  role: Maybe<Role>;
-  user: Maybe<BasicUserDetails>;
+  proposalPk: Scalars['Int'];
+  reassigned: Scalars['Boolean'];
   review: Maybe<Review>;
+  role: Maybe<Role>;
+  sepId: Scalars['Int'];
+  sepMemberUserId: Maybe<Scalars['Int']>;
+  user: Maybe<BasicUserDetails>;
 };
 
 export type SepProposal = {
-  __typename?: 'SEPProposal';
+  assignments: Maybe<Array<SepAssignment>>;
+  dateAssigned: Scalars['DateTime'];
+  instrumentSubmitted: Scalars['Boolean'];
+  proposal: Proposal;
   proposalPk: Scalars['Int'];
   sepId: Scalars['Int'];
-  dateAssigned: Scalars['DateTime'];
   sepTimeAllocation: Maybe<Scalars['Int']>;
-  proposal: Proposal;
-  assignments: Maybe<Array<SepAssignment>>;
-  instrumentSubmitted: Scalars['Boolean'];
 };
 
 export type SepProposalResponseWrap = {
-  __typename?: 'SEPProposalResponseWrap';
   rejection: Maybe<Rejection>;
   sepProposal: Maybe<SepProposal>;
 };
 
 export type SepResponseWrap = {
-  __typename?: 'SEPResponseWrap';
   rejection: Maybe<Rejection>;
   sep: Maybe<Sep>;
 };
 
 export type SepReviewer = {
-  __typename?: 'SEPReviewer';
-  userId: Scalars['Int'];
-  sepId: Scalars['Int'];
   role: Maybe<Role>;
+  sepId: Scalars['Int'];
   user: BasicUserDetails;
+  userId: Scalars['Int'];
 };
 
 export type SePsQueryResult = {
-  __typename?: 'SEPsQueryResult';
-  totalCount: Scalars['Int'];
   seps: Array<Sep>;
+  totalCount: Scalars['Int'];
 };
 
 export type Sample = {
-  __typename?: 'Sample';
-  id: Scalars['Int'];
-  title: Scalars['String'];
+  created: Scalars['DateTime'];
   creatorId: Scalars['Int'];
-  questionaryId: Scalars['Int'];
+  id: Scalars['Int'];
+  isPostProposalSubmission: Scalars['Boolean'];
+  proposal: Proposal;
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
-  safetyStatus: SampleStatus;
-  safetyComment: Scalars['String'];
-  created: Scalars['DateTime'];
   questionary: Questionary;
-  proposal: Proposal;
+  questionaryId: Scalars['Int'];
+  safetyComment: Scalars['String'];
+  safetyStatus: SampleStatus;
+  title: Scalars['String'];
 };
 
 export type SampleBasisConfig = {
-  __typename?: 'SampleBasisConfig';
   titlePlaceholder: Scalars['String'];
 };
 
 export type SampleDeclarationConfig = {
-  __typename?: 'SampleDeclarationConfig';
-  minEntries: Maybe<Scalars['Int']>;
-  maxEntries: Maybe<Scalars['Int']>;
-  templateId: Maybe<Scalars['Int']>;
-  templateCategory: Scalars['String'];
   addEntryButtonLabel: Scalars['String'];
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
   esiTemplateId: Maybe<Scalars['Int']>;
+  maxEntries: Maybe<Scalars['Int']>;
+  minEntries: Maybe<Scalars['Int']>;
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  templateCategory: Scalars['String'];
+  templateId: Maybe<Scalars['Int']>;
 };
 
 export type SampleEsiBasisConfig = {
-  __typename?: 'SampleEsiBasisConfig';
   tooltip: Scalars['String'];
 };
 
 export type SampleEsiResponseWrap = {
-  __typename?: 'SampleEsiResponseWrap';
-  rejection: Maybe<Rejection>;
   esi: Maybe<SampleExperimentSafetyInput>;
+  rejection: Maybe<Rejection>;
 };
 
 export type SampleExperimentSafetyInput = {
-  __typename?: 'SampleExperimentSafetyInput';
   esiId: Scalars['Int'];
-  sampleId: Scalars['Int'];
-  questionaryId: Scalars['Int'];
   isSubmitted: Scalars['Boolean'];
   questionary: Questionary;
+  questionaryId: Scalars['Int'];
   sample: Sample;
+  sampleId: Scalars['Int'];
 };
 
 export type SampleResponseWrap = {
-  __typename?: 'SampleResponseWrap';
   rejection: Maybe<Rejection>;
   sample: Maybe<Sample>;
 };
 
 export enum SampleStatus {
-  PENDING_EVALUATION = 'PENDING_EVALUATION',
-  LOW_RISK = 'LOW_RISK',
   ELEVATED_RISK = 'ELEVATED_RISK',
-  HIGH_RISK = 'HIGH_RISK'
+  HIGH_RISK = 'HIGH_RISK',
+  LOW_RISK = 'LOW_RISK',
+  PENDING_EVALUATION = 'PENDING_EVALUATION'
 }
 
 export type SamplesFilter = {
-  title?: Maybe<Scalars['String']>;
-  creatorId?: Maybe<Scalars['Int']>;
-  questionaryIds?: Maybe<Array<Scalars['Int']>>;
-  sampleIds?: Maybe<Array<Scalars['Int']>>;
-  status?: Maybe<SampleStatus>;
-  questionId?: Maybe<Scalars['String']>;
-  proposalPk?: Maybe<Scalars['Int']>;
-  visitId?: Maybe<Scalars['Int']>;
+  creatorId?: InputMaybe<Scalars['Int']>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  questionId?: InputMaybe<Scalars['String']>;
+  questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
+  sampleIds?: InputMaybe<Array<Scalars['Int']>>;
+  status?: InputMaybe<SampleStatus>;
+  title?: InputMaybe<Scalars['String']>;
+  visitId?: InputMaybe<Scalars['Int']>;
 };
 
 export type SaveSepMeetingDecisionInput = {
+  commentForManagement?: InputMaybe<Scalars['String']>;
+  commentForUser?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
-  commentForUser?: Maybe<Scalars['String']>;
-  commentForManagement?: Maybe<Scalars['String']>;
-  recommendation?: Maybe<ProposalEndStatus>;
-  rankOrder?: Maybe<Scalars['Int']>;
-  submitted?: Maybe<Scalars['Boolean']>;
-};
-
-export type ScheduledEvent = {
-  __typename?: 'ScheduledEvent';
-  id: Scalars['Int'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  bookingType: ScheduledEventBookingType;
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
-  proposalBookingId: Maybe<Scalars['Int']>;
-  scheduledBy: Maybe<User>;
-  description: Maybe<Scalars['String']>;
-  instrument: Maybe<Instrument>;
-  equipmentId: Maybe<Scalars['Int']>;
-  status: ProposalBookingStatusCore;
-  equipments: Array<EquipmentWithAssignmentStatus>;
-  equipmentAssignmentStatus: Maybe<EquipmentAssignmentStatus>;
-  proposalBooking: Maybe<ProposalBooking>;
+  rankOrder?: InputMaybe<Scalars['Int']>;
+  recommendation?: InputMaybe<ProposalEndStatus>;
+  submitted?: InputMaybe<Scalars['Boolean']>;
 };
 
 export enum ScheduledEventBookingType {
-  USER_OPERATIONS = 'USER_OPERATIONS',
+  COMMISSIONING = 'COMMISSIONING',
+  EQUIPMENT = 'EQUIPMENT',
   MAINTENANCE = 'MAINTENANCE',
   SHUTDOWN = 'SHUTDOWN',
-  COMMISSIONING = 'COMMISSIONING',
-  EQUIPMENT = 'EQUIPMENT'
+  USER_OPERATIONS = 'USER_OPERATIONS'
 }
 
 export type ScheduledEventCore = {
-  __typename?: 'ScheduledEventCore';
-  id: Scalars['Int'];
   bookingType: ScheduledEventBookingType;
-  startsAt: Scalars['TzLessDateTime'];
   endsAt: Scalars['TzLessDateTime'];
+  esi: Maybe<ExperimentSafetyInput>;
+  feedback: Maybe<Feedback>;
+  feedbackRequests: Array<FeedbackRequest>;
+  id: Scalars['Int'];
+  localContact: Maybe<BasicUserDetails>;
+  localContactId: Maybe<Scalars['Int']>;
+  shipments: Array<Shipment>;
+  startsAt: Scalars['TzLessDateTime'];
+  status: ProposalBookingStatusCore;
   visit: Maybe<Visit>;
 };
 
-export type ScheduledEventFilter = {
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
-  instrumentId?: Maybe<Scalars['Int']>;
-};
-
-export type ScheduledEventResponseWrap = {
-  __typename?: 'ScheduledEventResponseWrap';
-  error: Maybe<Scalars['String']>;
-  scheduledEvent: Maybe<ScheduledEvent>;
-};
-
-export type ScheduledEventsResponseWrap = {
-  __typename?: 'ScheduledEventsResponseWrap';
-  error: Maybe<Scalars['String']>;
-  scheduledEvents: Maybe<Array<ScheduledEvent>>;
-};
-
-export type SchedulerConfig = {
-  __typename?: 'SchedulerConfig';
-  authRedirect: Scalars['String'];
-};
-
 export type SelectionFromOptionsConfig = {
-  __typename?: 'SelectionFromOptionsConfig';
-  small_label: Scalars['String'];
+  isMultipleSelect: Scalars['Boolean'];
+  options: Array<Scalars['String']>;
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
   variant: Scalars['String'];
-  options: Array<Scalars['String']>;
-  isMultipleSelect: Scalars['Boolean'];
 };
 
 export type SepMeetingDecision = {
-  __typename?: 'SepMeetingDecision';
-  proposalPk: Scalars['Int'];
-  recommendation: Maybe<ProposalEndStatus>;
   commentForManagement: Maybe<Scalars['String']>;
   commentForUser: Maybe<Scalars['String']>;
+  proposalPk: Scalars['Int'];
   rankOrder: Maybe<Scalars['Int']>;
+  recommendation: Maybe<ProposalEndStatus>;
   submitted: Scalars['Boolean'];
   submittedBy: Maybe<Scalars['Int']>;
 };
 
 export type SepMeetingDecisionResponseWrap = {
-  __typename?: 'SepMeetingDecisionResponseWrap';
   rejection: Maybe<Rejection>;
   sepMeetingDecision: Maybe<SepMeetingDecision>;
 };
 
 export type Settings = {
-  __typename?: 'Settings';
+  description: Maybe<Scalars['String']>;
   id: SettingsId;
   settingsValue: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
 };
 
 export enum SettingsId {
   EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL',
-  PROFILE_PAGE_LINK = 'PROFILE_PAGE_LINK',
-  PALETTE_PRIMARY_DARK = 'PALETTE_PRIMARY_DARK',
-  PALETTE_PRIMARY_MAIN = 'PALETTE_PRIMARY_MAIN',
-  PALETTE_PRIMARY_ACCENT = 'PALETTE_PRIMARY_ACCENT',
-  PALETTE_PRIMARY_LIGHT = 'PALETTE_PRIMARY_LIGHT',
-  PALETTE_PRIMARY_CONTRAST = 'PALETTE_PRIMARY_CONTRAST',
-  PALETTE_SECONDARY_DARK = 'PALETTE_SECONDARY_DARK',
-  PALETTE_SECONDARY_MAIN = 'PALETTE_SECONDARY_MAIN',
-  PALETTE_SECONDARY_LIGHT = 'PALETTE_SECONDARY_LIGHT',
-  PALETTE_SECONDARY_CONTRAST = 'PALETTE_SECONDARY_CONTRAST',
+  FEEDBACK_EXHAUST_DAYS = 'FEEDBACK_EXHAUST_DAYS',
+  FEEDBACK_FREQUENCY_DAYS = 'FEEDBACK_FREQUENCY_DAYS',
+  FEEDBACK_MAX_REQUESTS = 'FEEDBACK_MAX_REQUESTS',
+  HEADER_LOGO_FILENAME = 'HEADER_LOGO_FILENAME',
   PALETTE_ERROR_MAIN = 'PALETTE_ERROR_MAIN',
+  PALETTE_INFO_MAIN = 'PALETTE_INFO_MAIN',
+  PALETTE_PRIMARY_ACCENT = 'PALETTE_PRIMARY_ACCENT',
+  PALETTE_PRIMARY_CONTRAST = 'PALETTE_PRIMARY_CONTRAST',
+  PALETTE_PRIMARY_DARK = 'PALETTE_PRIMARY_DARK',
+  PALETTE_PRIMARY_LIGHT = 'PALETTE_PRIMARY_LIGHT',
+  PALETTE_PRIMARY_MAIN = 'PALETTE_PRIMARY_MAIN',
+  PALETTE_SECONDARY_CONTRAST = 'PALETTE_SECONDARY_CONTRAST',
+  PALETTE_SECONDARY_DARK = 'PALETTE_SECONDARY_DARK',
+  PALETTE_SECONDARY_LIGHT = 'PALETTE_SECONDARY_LIGHT',
+  PALETTE_SECONDARY_MAIN = 'PALETTE_SECONDARY_MAIN',
   PALETTE_SUCCESS_MAIN = 'PALETTE_SUCCESS_MAIN',
   PALETTE_WARNING_MAIN = 'PALETTE_WARNING_MAIN',
-  PALETTE_INFO_MAIN = 'PALETTE_INFO_MAIN',
-  HEADER_LOGO_FILENAME = 'HEADER_LOGO_FILENAME'
+  PROFILE_PAGE_LINK = 'PROFILE_PAGE_LINK'
 }
 
 export type Shipment = {
-  __typename?: 'Shipment';
-  id: Scalars['Int'];
-  title: Scalars['String'];
-  proposalPk: Scalars['Int'];
-  status: ShipmentStatus;
-  externalRef: Maybe<Scalars['String']>;
-  questionaryId: Scalars['Int'];
-  visitId: Scalars['Int'];
-  creatorId: Scalars['Int'];
   created: Scalars['DateTime'];
-  questionary: Questionary;
-  samples: Array<Sample>;
+  creatorId: Scalars['Int'];
+  externalRef: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
   proposal: Proposal;
+  proposalPk: Scalars['Int'];
+  questionary: Questionary;
+  questionaryId: Scalars['Int'];
+  samples: Array<Sample>;
+  scheduledEventId: Scalars['Int'];
+  status: ShipmentStatus;
+  title: Scalars['String'];
 };
 
 export type ShipmentBasisConfig = {
-  __typename?: 'ShipmentBasisConfig';
-  small_label: Scalars['String'];
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
 };
 
 export type ShipmentResponseWrap = {
-  __typename?: 'ShipmentResponseWrap';
   rejection: Maybe<Rejection>;
   shipment: Maybe<Shipment>;
 };
@@ -2922,40 +2705,30 @@ export enum ShipmentStatus {
 }
 
 export type ShipmentsFilter = {
-  title?: Maybe<Scalars['String']>;
-  creatorId?: Maybe<Scalars['Int']>;
-  proposalPk?: Maybe<Scalars['Int']>;
-  questionaryIds?: Maybe<Array<Scalars['Int']>>;
-  status?: Maybe<ShipmentStatus>;
-  externalRef?: Maybe<Scalars['String']>;
-  shipmentIds?: Maybe<Array<Scalars['Int']>>;
-  visitId?: Maybe<Scalars['Int']>;
-};
-
-export type SimpleLostTimeInput = {
-  id: Scalars['Int'];
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
-  newlyCreated?: Maybe<Scalars['Boolean']>;
-  scheduledEventId?: Maybe<Scalars['Int']>;
+  creatorId?: InputMaybe<Scalars['Int']>;
+  externalRef?: InputMaybe<Scalars['String']>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
+  scheduledEventId?: InputMaybe<Scalars['Int']>;
+  shipmentIds?: InputMaybe<Array<Scalars['Int']>>;
+  status?: InputMaybe<ShipmentStatus>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type StatusChangingEvent = {
-  __typename?: 'StatusChangingEvent';
-  statusChangingEventId: Scalars['Int'];
   proposalWorkflowConnectionId: Scalars['Int'];
   statusChangingEvent: Scalars['String'];
+  statusChangingEventId: Scalars['Int'];
 };
 
 export type SubTemplateConfig = {
-  __typename?: 'SubTemplateConfig';
-  minEntries: Maybe<Scalars['Int']>;
-  maxEntries: Maybe<Scalars['Int']>;
-  templateId: Maybe<Scalars['Int']>;
-  templateCategory: Scalars['String'];
   addEntryButtonLabel: Scalars['String'];
-  small_label: Scalars['String'];
+  maxEntries: Maybe<Scalars['Int']>;
+  minEntries: Maybe<Scalars['Int']>;
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  templateCategory: Scalars['String'];
+  templateId: Maybe<Scalars['Int']>;
 };
 
 export type SubmitProposalsReviewInput = {
@@ -2963,37 +2736,34 @@ export type SubmitProposalsReviewInput = {
 };
 
 export type SubmitTechnicalReviewInput = {
+  comment?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  timeAllocation?: Maybe<Scalars['Int']>;
-  status?: Maybe<TechnicalReviewStatus>;
-  submitted: Scalars['Boolean'];
+  publicComment?: InputMaybe<Scalars['String']>;
   reviewerId: Scalars['Int'];
+  status?: InputMaybe<TechnicalReviewStatus>;
+  submitted: Scalars['Boolean'];
+  timeAllocation?: InputMaybe<Scalars['Int']>;
 };
 
 export type SuccessResponseWrap = {
-  __typename?: 'SuccessResponseWrap';
-  rejection: Maybe<Rejection>;
   isSuccess: Maybe<Scalars['Boolean']>;
+  rejection: Maybe<Rejection>;
 };
 
 export type TechnicalReview = {
-  __typename?: 'TechnicalReview';
-  id: Scalars['Int'];
-  proposalPk: Scalars['Int'];
   comment: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  proposal: Maybe<Proposal>;
+  proposalPk: Scalars['Int'];
   publicComment: Maybe<Scalars['String']>;
-  timeAllocation: Maybe<Scalars['Int']>;
+  reviewer: Maybe<BasicUserDetails>;
+  reviewerId: Scalars['Int'];
   status: Maybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
-  reviewerId: Scalars['Int'];
-  proposal: Maybe<Proposal>;
-  reviewer: Maybe<BasicUserDetails>;
+  timeAllocation: Maybe<Scalars['Int']>;
 };
 
 export type TechnicalReviewResponseWrap = {
-  __typename?: 'TechnicalReviewResponseWrap';
   rejection: Maybe<Rejection>;
   technicalReview: Maybe<TechnicalReview>;
 };
@@ -3005,25 +2775,26 @@ export enum TechnicalReviewStatus {
 }
 
 export type Template = {
-  __typename?: 'Template';
-  templateId: Scalars['Int'];
-  groupId: TemplateGroupId;
-  name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
-  isArchived: Scalars['Boolean'];
-  steps: Array<TemplateStep>;
   complementaryQuestions: Array<Question>;
-  questionaryCount: Scalars['Int'];
+  description: Maybe<Scalars['String']>;
   group: TemplateGroup;
+  groupId: TemplateGroupId;
+  isArchived: Scalars['Boolean'];
+  json: Scalars['String'];
+  name: Scalars['String'];
+  questionaryCount: Scalars['Int'];
+  steps: Array<TemplateStep>;
+  templateId: Scalars['Int'];
 };
 
 export type TemplateCategory = {
-  __typename?: 'TemplateCategory';
   categoryId: TemplateCategoryId;
   name: Scalars['String'];
 };
 
 export enum TemplateCategoryId {
+  FEEDBACK = 'FEEDBACK',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL_QUESTIONARY = 'PROPOSAL_QUESTIONARY',
   SAMPLE_DECLARATION = 'SAMPLE_DECLARATION',
   SHIPMENT_DECLARATION = 'SHIPMENT_DECLARATION',
@@ -3031,12 +2802,13 @@ export enum TemplateCategoryId {
 }
 
 export type TemplateGroup = {
-  __typename?: 'TemplateGroup';
-  groupId: TemplateGroupId;
   categoryId: TemplateCategoryId;
+  groupId: TemplateGroupId;
 };
 
 export enum TemplateGroupId {
+  FEEDBACK = 'FEEDBACK',
+  GENERIC_TEMPLATE = 'GENERIC_TEMPLATE',
   PROPOSAL = 'PROPOSAL',
   PROPOSAL_ESI = 'PROPOSAL_ESI',
   SAMPLE = 'SAMPLE',
@@ -3045,261 +2817,258 @@ export enum TemplateGroupId {
   VISIT_REGISTRATION = 'VISIT_REGISTRATION'
 }
 
+export type TemplateImportWithValidation = {
+  errors: Array<Scalars['String']>;
+  exportDate: Scalars['DateTime'];
+  isValid: Scalars['Boolean'];
+  json: Scalars['String'];
+  questionComparisons: Array<QuestionComparison>;
+  version: Scalars['String'];
+};
+
+export type TemplateImportWithValidationWrap = {
+  rejection: Maybe<Rejection>;
+  validationResult: Maybe<TemplateImportWithValidation>;
+};
+
 export type TemplateResponseWrap = {
-  __typename?: 'TemplateResponseWrap';
   rejection: Maybe<Rejection>;
   template: Maybe<Template>;
 };
 
 export type TemplateStep = {
-  __typename?: 'TemplateStep';
-  topic: Topic;
   fields: Array<QuestionTemplateRelation>;
+  topic: Topic;
 };
 
 export type TemplatesFilter = {
-  isArchived?: Maybe<Scalars['Boolean']>;
-  group?: Maybe<TemplateGroupId>;
-  templateIds?: Maybe<Array<Scalars['Int']>>;
+  group?: InputMaybe<TemplateGroupId>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
+  templateIds?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type TextInputConfig = {
-  __typename?: 'TextInputConfig';
-  small_label: Scalars['String'];
-  required: Scalars['Boolean'];
-  tooltip: Scalars['String'];
-  min: Maybe<Scalars['Int']>;
+  htmlQuestion: Maybe<Scalars['String']>;
+  isCounterHidden: Scalars['Boolean'];
+  isHtmlQuestion: Scalars['Boolean'];
   max: Maybe<Scalars['Int']>;
+  min: Maybe<Scalars['Int']>;
   multiline: Scalars['Boolean'];
   placeholder: Scalars['String'];
-  htmlQuestion: Maybe<Scalars['String']>;
-  isHtmlQuestion: Scalars['Boolean'];
-  isCounterHidden: Scalars['Boolean'];
+  required: Scalars['Boolean'];
+  small_label: Scalars['String'];
+  tooltip: Scalars['String'];
 };
 
-export type TokenPayloadUnion = AuthJwtPayload | AuthJwtApiTokenPayload;
+export type TokenPayloadUnion = AuthJwtApiTokenPayload | AuthJwtPayload;
 
 export type TokenResponseWrap = {
-  __typename?: 'TokenResponseWrap';
   rejection: Maybe<Rejection>;
   token: Maybe<Scalars['String']>;
 };
 
 export type TokenResult = {
-  __typename?: 'TokenResult';
   isValid: Scalars['Boolean'];
   payload: Maybe<TokenPayloadUnion>;
 };
 
 export type Topic = {
-  __typename?: 'Topic';
   id: Scalars['Int'];
-  title: Scalars['String'];
-  templateId: Scalars['Int'];
-  sortOrder: Scalars['Int'];
   isEnabled: Scalars['Boolean'];
+  sortOrder: Scalars['Int'];
+  templateId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
-
 export type Unit = {
-  __typename?: 'Unit';
   id: Scalars['Int'];
   name: Scalars['String'];
 };
 
 export type UnitResponseWrap = {
-  __typename?: 'UnitResponseWrap';
   rejection: Maybe<Rejection>;
   unit: Maybe<Unit>;
 };
 
 export type UpdateAnswerResponseWrap = {
-  __typename?: 'UpdateAnswerResponseWrap';
-  rejection: Maybe<Rejection>;
   questionId: Maybe<Scalars['String']>;
+  rejection: Maybe<Rejection>;
 };
 
 export type UpdateApiAccessTokenInput = {
+  accessPermissions: Scalars['String'];
   accessTokenId: Scalars['String'];
   name: Scalars['String'];
-  accessPermissions: Scalars['String'];
 };
 
 export type UpdateCallInput = {
+  allocationTimeUnit: AllocationTimeUnits;
+  callEnded?: InputMaybe<Scalars['Int']>;
+  callReviewEnded?: InputMaybe<Scalars['Int']>;
+  callSEPReviewEnded?: InputMaybe<Scalars['Int']>;
+  cycleComment: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  endCall: Scalars['DateTime'];
+  endCycle: Scalars['DateTime'];
+  endNotify: Scalars['DateTime'];
+  endReview: Scalars['DateTime'];
+  endSEPReview?: InputMaybe<Scalars['DateTime']>;
+  esiTemplateId?: InputMaybe<Scalars['Int']>;
   id: Scalars['Int'];
+  proposalSequence?: InputMaybe<Scalars['Int']>;
+  proposalWorkflowId: Scalars['Int'];
+  referenceNumberFormat?: InputMaybe<Scalars['String']>;
   shortCode: Scalars['String'];
   startCall: Scalars['DateTime'];
-  endCall: Scalars['DateTime'];
-  startReview: Scalars['DateTime'];
-  endReview: Scalars['DateTime'];
-  startSEPReview?: Maybe<Scalars['DateTime']>;
-  endSEPReview?: Maybe<Scalars['DateTime']>;
-  startNotify: Scalars['DateTime'];
-  endNotify: Scalars['DateTime'];
   startCycle: Scalars['DateTime'];
-  endCycle: Scalars['DateTime'];
-  referenceNumberFormat?: Maybe<Scalars['String']>;
-  proposalSequence?: Maybe<Scalars['Int']>;
-  cycleComment: Scalars['String'];
+  startNotify: Scalars['DateTime'];
+  startReview: Scalars['DateTime'];
+  startSEPReview?: InputMaybe<Scalars['DateTime']>;
+  submissionMessage?: InputMaybe<Scalars['String']>;
   surveyComment: Scalars['String'];
-  allocationTimeUnit: AllocationTimeUnits;
-  proposalWorkflowId: Scalars['Int'];
-  callEnded?: Maybe<Scalars['Int']>;
-  callReviewEnded?: Maybe<Scalars['Int']>;
-  callSEPReviewEnded?: Maybe<Scalars['Int']>;
   templateId: Scalars['Int'];
-  esiTemplateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateProposalStatusInput = {
-  id: Scalars['Int'];
-  shortCode?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
   description: Scalars['String'];
-  isDefault?: Maybe<Scalars['Boolean']>;
+  id: Scalars['Int'];
+  isDefault?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  shortCode?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateProposalWorkflowInput = {
+  description: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  description: Scalars['String'];
-};
-
-export type UpdateScheduledEventInput = {
-  scheduledEventId: Scalars['Int'];
-  startsAt: Scalars['TzLessDateTime'];
-  endsAt: Scalars['TzLessDateTime'];
 };
 
 export type User = {
-  __typename?: 'User';
-  id: Scalars['Int'];
-  user_title: Scalars['String'];
-  firstname: Scalars['String'];
-  middlename: Maybe<Scalars['String']>;
-  lastname: Scalars['String'];
-  username: Scalars['String'];
-  preferredname: Maybe<Scalars['String']>;
-  orcid: Scalars['String'];
-  refreshToken: Scalars['String'];
-  gender: Scalars['String'];
-  nationality: Maybe<Scalars['Int']>;
   birthdate: Scalars['String'];
-  organisation: Scalars['Int'];
+  created: Scalars['String'];
   department: Scalars['String'];
-  position: Scalars['String'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
+  firstname: Scalars['String'];
+  gender: Scalars['String'];
+  id: Scalars['Int'];
+  instruments: Array<Instrument>;
+  lastname: Scalars['String'];
+  middlename: Maybe<Scalars['String']>;
+  nationality: Maybe<Scalars['Int']>;
+  orcid: Scalars['String'];
+  organisation: Scalars['Int'];
+  placeholder: Scalars['Boolean'];
+  position: Scalars['String'];
+  preferredname: Maybe<Scalars['String']>;
+  proposals: Array<Proposal>;
+  refreshToken: Scalars['String'];
+  reviews: Array<Review>;
+  roles: Array<Role>;
+  seps: Array<Sep>;
   telephone: Scalars['String'];
   telephone_alt: Maybe<Scalars['String']>;
-  placeholder: Scalars['Boolean'];
-  created: Scalars['String'];
   updated: Scalars['String'];
-  roles: Array<Role>;
-  reviews: Array<Review>;
-  proposals: Array<Proposal>;
-  seps: Array<Sep>;
-  instruments: Array<Instrument>;
-};
-
-
-export type UserReviewsArgs = {
-  reviewer?: Maybe<ReviewerFilter>;
-  status?: Maybe<ReviewStatus>;
-  instrumentId?: Maybe<Scalars['Int']>;
-  callId?: Maybe<Scalars['Int']>;
+  user_title: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
 export type UserProposalsArgs = {
-  filter?: Maybe<UserProposalsFilter>;
+  filter?: InputMaybe<UserProposalsFilter>;
+};
+
+
+export type UserReviewsArgs = {
+  callId?: InputMaybe<Scalars['Int']>;
+  instrumentId?: InputMaybe<Scalars['Int']>;
+  reviewer?: InputMaybe<ReviewerFilter>;
+  status?: InputMaybe<ReviewStatus>;
 };
 
 export type UserProposalsFilter = {
-  instrumentId?: Maybe<Scalars['Int']>;
-  managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
-  finalStatus?: Maybe<ProposalEndStatus>;
+  finalStatus?: InputMaybe<ProposalEndStatus>;
+  instrumentId?: InputMaybe<Scalars['Int']>;
+  managementDecisionSubmitted?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UserQueryResult = {
-  __typename?: 'UserQueryResult';
-  users: Array<BasicUserDetails>;
   totalCount: Scalars['Int'];
+  users: Array<BasicUserDetails>;
 };
 
 export type UserResponseWrap = {
-  __typename?: 'UserResponseWrap';
   rejection: Maybe<Rejection>;
   user: Maybe<User>;
 };
 
 export enum UserRole {
-  USER = 'USER',
-  USER_OFFICER = 'USER_OFFICER',
-  SEP_CHAIR = 'SEP_CHAIR',
-  SEP_SECRETARY = 'SEP_SECRETARY',
-  SEP_REVIEWER = 'SEP_REVIEWER',
   INSTRUMENT_SCIENTIST = 'INSTRUMENT_SCIENTIST',
-  SAMPLE_SAFETY_REVIEWER = 'SAMPLE_SAFETY_REVIEWER'
+  SAMPLE_SAFETY_REVIEWER = 'SAMPLE_SAFETY_REVIEWER',
+  SEP_CHAIR = 'SEP_CHAIR',
+  SEP_REVIEWER = 'SEP_REVIEWER',
+  SEP_SECRETARY = 'SEP_SECRETARY',
+  USER = 'USER',
+  USER_OFFICER = 'USER_OFFICER'
 }
 
 export type Visit = {
-  __typename?: 'Visit';
-  id: Scalars['Int'];
-  proposalPk: Scalars['Int'];
-  status: VisitStatus;
   creatorId: Scalars['Int'];
-  teamLeadUserId: Scalars['Int'];
+  id: Scalars['Int'];
   proposal: Proposal;
+  proposalPk: Scalars['Int'];
   registrations: Array<VisitRegistration>;
-  teamLead: BasicUserDetails;
-  shipments: Array<Shipment>;
   samples: Array<Sample>;
-  esi: Maybe<ExperimentSafetyInput>;
+  scheduledEventId: Scalars['Int'];
+  status: VisitStatus;
+  teamLead: BasicUserDetails;
+  teamLeadUserId: Scalars['Int'];
 };
 
 export type VisitBasisConfig = {
-  __typename?: 'VisitBasisConfig';
-  small_label: Scalars['String'];
   required: Scalars['Boolean'];
+  small_label: Scalars['String'];
   tooltip: Scalars['String'];
 };
 
 export type VisitRegistration = {
-  __typename?: 'VisitRegistration';
-  userId: Scalars['Int'];
-  visitId: Scalars['Int'];
-  registrationQuestionaryId: Maybe<Scalars['Int']>;
   isRegistrationSubmitted: Scalars['Boolean'];
+  questionary: Questionary;
+  registrationQuestionaryId: Maybe<Scalars['Int']>;
   trainingExpiryDate: Maybe<Scalars['DateTime']>;
   user: BasicUserDetails;
-  questionary: Questionary;
+  userId: Scalars['Int'];
+  visitId: Scalars['Int'];
 };
 
 export type VisitRegistrationResponseWrap = {
-  __typename?: 'VisitRegistrationResponseWrap';
-  rejection: Maybe<Rejection>;
   registration: Maybe<VisitRegistration>;
+  rejection: Maybe<Rejection>;
 };
 
 export type VisitResponseWrap = {
-  __typename?: 'VisitResponseWrap';
   rejection: Maybe<Rejection>;
   visit: Maybe<Visit>;
 };
 
 export enum VisitStatus {
-  DRAFT = 'DRAFT',
   ACCEPTED = 'ACCEPTED',
+  DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED'
 }
 
 export type VisitsFilter = {
-  creatorId?: Maybe<Scalars['Int']>;
-  proposalPk?: Maybe<Scalars['Int']>;
-  scheduledEventId?: Maybe<Scalars['Int']>;
+  creatorId?: InputMaybe<Scalars['Int']>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  scheduledEventId?: InputMaybe<Scalars['Int']>;
+};
+
+export type _Entity = BasicUserDetails | Call | Instrument | Proposal | User;
+
+export type _Service = {
+  /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
+  sdl: Maybe<Scalars['String']>;
 };
 
 export type AssignProposalsToSepMutationVariables = Exact<{
@@ -3308,19 +3077,7 @@ export type AssignProposalsToSepMutationVariables = Exact<{
 }>;
 
 
-export type AssignProposalsToSepMutation = (
-  { __typename?: 'Mutation' }
-  & { assignProposalsToSep: (
-    { __typename?: 'NextProposalStatusResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, nextProposalStatus: Maybe<(
-      { __typename?: 'NextProposalStatus' }
-      & Pick<NextProposalStatus, 'id' | 'shortCode' | 'name'>
-    )> }
-  ) }
-);
+export type AssignProposalsToSepMutation = { assignProposalsToSep: { rejection: { reason: string, context: string | null, exception: string | null } | null, nextProposalStatus: { id: number | null, shortCode: string | null, name: string | null } | null } };
 
 export type AssignReviewersToSepMutationVariables = Exact<{
   memberIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -3328,38 +3085,14 @@ export type AssignReviewersToSepMutationVariables = Exact<{
 }>;
 
 
-export type AssignReviewersToSepMutation = (
-  { __typename?: 'Mutation' }
-  & { assignReviewersToSEP: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type AssignReviewersToSepMutation = { assignReviewersToSEP: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type AssignChairOrSecretaryMutationVariables = Exact<{
   assignChairOrSecretaryToSEPInput: AssignChairOrSecretaryToSepInput;
 }>;
 
 
-export type AssignChairOrSecretaryMutation = (
-  { __typename?: 'Mutation' }
-  & { assignChairOrSecretary: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type AssignChairOrSecretaryMutation = { assignChairOrSecretary: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type AssignSepReviewersToProposalMutationVariables = Exact<{
   memberIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -3368,19 +3101,7 @@ export type AssignSepReviewersToProposalMutationVariables = Exact<{
 }>;
 
 
-export type AssignSepReviewersToProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { assignSepReviewersToProposal: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type AssignSepReviewersToProposalMutation = { assignSepReviewersToProposal: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type CreateSepMutationVariables = Exact<{
   code: Scalars['String'];
@@ -3390,50 +3111,16 @@ export type CreateSepMutationVariables = Exact<{
 }>;
 
 
-export type CreateSepMutation = (
-  { __typename?: 'Mutation' }
-  & { createSEP: (
-    { __typename?: 'SEPResponseWrap' }
-    & { sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
-      & { sepChair: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, sepSecretary: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateSepMutation = { createSEP: { sep: { id: number, code: string, description: string, numberRatingsRequired: number, active: boolean, sepChair: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, sepSecretary: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteSepMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteSepMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteSEP: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type DeleteSepMutation = { deleteSEP: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
-export type SepMeetingDecisionFragment = (
-  { __typename?: 'SepMeetingDecision' }
-  & Pick<SepMeetingDecision, 'proposalPk' | 'recommendation' | 'commentForUser' | 'commentForManagement' | 'rankOrder' | 'submitted' | 'submittedBy'>
-);
+export type SepMeetingDecisionFragment = { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null };
 
 export type GetInstrumentsBySepQueryVariables = Exact<{
   sepId: Scalars['Int'];
@@ -3441,78 +3128,26 @@ export type GetInstrumentsBySepQueryVariables = Exact<{
 }>;
 
 
-export type GetInstrumentsBySepQuery = (
-  { __typename?: 'Query' }
-  & { instrumentsBySep: Maybe<Array<(
-    { __typename?: 'InstrumentWithAvailabilityTime' }
-    & Pick<InstrumentWithAvailabilityTime, 'id' | 'name' | 'shortCode' | 'description' | 'availabilityTime' | 'submitted'>
-    & { scientists: Array<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-  )>> }
-);
+export type GetInstrumentsBySepQuery = { instrumentsBySep: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }> | null };
 
 export type GetUserSepsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserSepsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & { seps: Array<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
-      & { sepChair: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, sepSecretary: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )> }
-  )> }
-);
+export type GetUserSepsQuery = { me: { seps: Array<{ id: number, code: string, description: string, numberRatingsRequired: number, active: boolean, sepChair: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, sepSecretary: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null }> } | null };
 
 export type GetSepQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetSepQuery = (
-  { __typename?: 'Query' }
-  & { sep: Maybe<(
-    { __typename?: 'SEP' }
-    & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
-    & { sepChair: Maybe<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )>, sepSecretary: Maybe<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-  )> }
-);
+export type GetSepQuery = { sep: { id: number, code: string, description: string, numberRatingsRequired: number, active: boolean, sepChair: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, sepSecretary: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null };
 
 export type GetSepMembersQueryVariables = Exact<{
   sepId: Scalars['Int'];
 }>;
 
 
-export type GetSepMembersQuery = (
-  { __typename?: 'Query' }
-  & { sepMembers: Maybe<Array<(
-    { __typename?: 'SEPReviewer' }
-    & Pick<SepReviewer, 'userId' | 'sepId'>
-    & { role: Maybe<(
-      { __typename?: 'Role' }
-      & Pick<Role, 'id' | 'shortCode' | 'title'>
-    )>, user: (
-      { __typename?: 'BasicUserDetails' }
-      & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position' | 'placeholder' | 'created'>
-    ) }
-  )>> }
-);
+export type GetSepMembersQuery = { sepMembers: Array<{ userId: number, sepId: number, role: { id: number, shortCode: string, title: string } | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> | null };
 
 export type GetSepProposalQueryVariables = Exact<{
   sepId: Scalars['Int'];
@@ -3520,47 +3155,7 @@ export type GetSepProposalQueryVariables = Exact<{
 }>;
 
 
-export type GetSepProposalQuery = (
-  { __typename?: 'Query' }
-  & { sepProposal: Maybe<(
-    { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalPk' | 'sepId' | 'sepTimeAllocation' | 'instrumentSubmitted'>
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, questionary: (
-        { __typename?: 'Questionary' }
-        & QuestionaryFragment
-      ), technicalReview: Maybe<(
-        { __typename?: 'TechnicalReview' }
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & BasicUserDetailsFragment
-        )> }
-        & CoreTechnicalReviewFragment
-      )>, reviews: Maybe<Array<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
-        )> }
-      )>>, instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'id' | 'name' | 'shortCode'>
-      )>, call: Maybe<(
-        { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode' | 'allocationTimeUnit'>
-      )> }
-      & ProposalFragment
-    ) }
-  )> }
-);
+export type GetSepProposalQuery = { sepProposal: { proposalPk: number, sepId: number, sepTimeAllocation: number | null, instrumentSubmitted: boolean, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, allocationTimeUnit: AllocationTimeUnits } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null };
 
 export type GetSepProposalsQueryVariables = Exact<{
   sepId: Scalars['Int'];
@@ -3568,34 +3163,7 @@ export type GetSepProposalsQueryVariables = Exact<{
 }>;
 
 
-export type GetSepProposalsQuery = (
-  { __typename?: 'Query' }
-  & { sepProposals: Maybe<Array<(
-    { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'proposalPk' | 'dateAssigned' | 'sepId' | 'sepTimeAllocation'>
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'title' | 'primaryKey' | 'proposalId'>
-      & { status: Maybe<(
-        { __typename?: 'ProposalStatus' }
-        & ProposalStatusFragment
-      )> }
-    ), assignments: Maybe<Array<(
-      { __typename?: 'SEPAssignment' }
-      & Pick<SepAssignment, 'sepMemberUserId' | 'dateAssigned'>
-      & { user: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, role: Maybe<(
-        { __typename?: 'Role' }
-        & Pick<Role, 'id' | 'shortCode' | 'title'>
-      )>, review: Maybe<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'status' | 'comment' | 'grade' | 'sepID'>
-      )> }
-    )>> }
-  )>> }
-);
+export type GetSepProposalsQuery = { sepProposals: Array<{ proposalPk: number, dateAssigned: any, sepId: number, sepTimeAllocation: number | null, proposal: { title: string, primaryKey: number, proposalId: string, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null }, assignments: Array<{ sepMemberUserId: number | null, dateAssigned: any, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, role: { id: number, shortCode: string, title: string } | null, review: { id: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number } | null }> | null }> | null };
 
 export type SepProposalsByInstrumentQueryVariables = Exact<{
   instrumentId: Scalars['Int'];
@@ -3604,78 +3172,22 @@ export type SepProposalsByInstrumentQueryVariables = Exact<{
 }>;
 
 
-export type SepProposalsByInstrumentQuery = (
-  { __typename?: 'Query' }
-  & { sepProposalsByInstrument: Maybe<Array<(
-    { __typename?: 'SEPProposal' }
-    & Pick<SepProposal, 'sepTimeAllocation'>
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
-      & { status: Maybe<(
-        { __typename?: 'ProposalStatus' }
-        & ProposalStatusFragment
-      )>, sepMeetingDecision: Maybe<(
-        { __typename?: 'SepMeetingDecision' }
-        & SepMeetingDecisionFragment
-      )>, reviews: Maybe<Array<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'comment' | 'grade' | 'status'>
-      )>>, technicalReview: Maybe<(
-        { __typename?: 'TechnicalReview' }
-        & Pick<TechnicalReview, 'publicComment' | 'status' | 'timeAllocation'>
-      )> }
-    ), assignments: Maybe<Array<(
-      { __typename?: 'SEPAssignment' }
-      & Pick<SepAssignment, 'sepMemberUserId'>
-    )>> }
-  )>> }
-);
+export type SepProposalsByInstrumentQuery = { sepProposalsByInstrument: Array<{ sepTimeAllocation: number | null, proposal: { primaryKey: number, title: string, proposalId: string, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null, reviews: Array<{ id: number, comment: string | null, grade: number | null, status: ReviewStatus }> | null, technicalReview: { publicComment: string | null, status: TechnicalReviewStatus | null, timeAllocation: number | null } | null }, assignments: Array<{ sepMemberUserId: number | null }> | null }> | null };
 
 export type GetSepReviewersQueryVariables = Exact<{
   sepId: Scalars['Int'];
 }>;
 
 
-export type GetSepReviewersQuery = (
-  { __typename?: 'Query' }
-  & { sepReviewers: Maybe<Array<(
-    { __typename?: 'SEPReviewer' }
-    & Pick<SepReviewer, 'userId' | 'sepId'>
-    & { role: Maybe<(
-      { __typename?: 'Role' }
-      & Pick<Role, 'id' | 'shortCode' | 'title'>
-    )>, user: (
-      { __typename?: 'BasicUserDetails' }
-      & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position' | 'placeholder' | 'created'>
-    ) }
-  )>> }
-);
+export type GetSepReviewersQuery = { sepReviewers: Array<{ userId: number, sepId: number, role: { id: number, shortCode: string, title: string } | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> | null };
 
 export type GetSePsQueryVariables = Exact<{
   filter: Scalars['String'];
-  active?: Maybe<Scalars['Boolean']>;
+  active?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type GetSePsQuery = (
-  { __typename?: 'Query' }
-  & { seps: Maybe<(
-    { __typename?: 'SEPsQueryResult' }
-    & Pick<SePsQueryResult, 'totalCount'>
-    & { seps: Array<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id' | 'code' | 'description' | 'numberRatingsRequired' | 'active'>
-      & { sepChair: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, sepSecretary: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )> }
-  )> }
-);
+export type GetSePsQuery = { seps: { totalCount: number, seps: Array<{ id: number, code: string, description: string, numberRatingsRequired: number, active: boolean, sepChair: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, sepSecretary: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null }> } | null };
 
 export type RemoveProposalsFromSepMutationVariables = Exact<{
   proposalPks: Array<Scalars['Int']> | Scalars['Int'];
@@ -3683,19 +3195,7 @@ export type RemoveProposalsFromSepMutationVariables = Exact<{
 }>;
 
 
-export type RemoveProposalsFromSepMutation = (
-  { __typename?: 'Mutation' }
-  & { removeProposalsFromSep: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type RemoveProposalsFromSepMutation = { removeProposalsFromSep: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type RemoveMemberFromSepMutationVariables = Exact<{
   memberId: Scalars['Int'];
@@ -3704,19 +3204,7 @@ export type RemoveMemberFromSepMutationVariables = Exact<{
 }>;
 
 
-export type RemoveMemberFromSepMutation = (
-  { __typename?: 'Mutation' }
-  & { removeMemberFromSep: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type RemoveMemberFromSepMutation = { removeMemberFromSep: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type RemoveMemberFromSepProposalMutationVariables = Exact<{
   memberId: Scalars['Int'];
@@ -3725,57 +3213,21 @@ export type RemoveMemberFromSepProposalMutationVariables = Exact<{
 }>;
 
 
-export type RemoveMemberFromSepProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { removeMemberFromSEPProposal: (
-    { __typename?: 'SEPResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )> }
-  ) }
-);
+export type RemoveMemberFromSepProposalMutation = { removeMemberFromSEPProposal: { rejection: { reason: string, context: string | null, exception: string | null } | null, sep: { id: number } | null } };
 
 export type ReorderSepMeetingDecisionProposalsMutationVariables = Exact<{
   reorderSepMeetingDecisionProposalsInput: ReorderSepMeetingDecisionProposalsInput;
 }>;
 
 
-export type ReorderSepMeetingDecisionProposalsMutation = (
-  { __typename?: 'Mutation' }
-  & { reorderSepMeetingDecisionProposals: (
-    { __typename?: 'SepMeetingDecisionResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sepMeetingDecision: Maybe<(
-      { __typename?: 'SepMeetingDecision' }
-      & Pick<SepMeetingDecision, 'proposalPk'>
-    )> }
-  ) }
-);
+export type ReorderSepMeetingDecisionProposalsMutation = { reorderSepMeetingDecisionProposals: { rejection: { reason: string, context: string | null, exception: string | null } | null, sepMeetingDecision: { proposalPk: number } | null } };
 
 export type SaveSepMeetingDecisionMutationVariables = Exact<{
   saveSepMeetingDecisionInput: SaveSepMeetingDecisionInput;
 }>;
 
 
-export type SaveSepMeetingDecisionMutation = (
-  { __typename?: 'Mutation' }
-  & { saveSepMeetingDecision: (
-    { __typename?: 'SepMeetingDecisionResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, sepMeetingDecision: Maybe<(
-      { __typename?: 'SepMeetingDecision' }
-      & Pick<SepMeetingDecision, 'proposalPk'>
-    )> }
-  ) }
-);
+export type SaveSepMeetingDecisionMutation = { saveSepMeetingDecision: { rejection: { reason: string, context: string | null, exception: string | null } | null, sepMeetingDecision: { proposalPk: number } | null } };
 
 export type UpdateSepMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -3786,54 +3238,23 @@ export type UpdateSepMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSepMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSEP: (
-    { __typename?: 'SEPResponseWrap' }
-    & { sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateSepMutation = { updateSEP: { sep: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateSepTimeAllocationMutationVariables = Exact<{
   sepId: Scalars['Int'];
   proposalPk: Scalars['Int'];
-  sepTimeAllocation?: Maybe<Scalars['Int']>;
+  sepTimeAllocation?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type UpdateSepTimeAllocationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSEPTimeAllocation: (
-    { __typename?: 'SEPProposalResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateSepTimeAllocationMutation = { updateSEPTimeAllocation: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AddClientLogMutationVariables = Exact<{
   error: Scalars['String'];
 }>;
 
 
-export type AddClientLogMutation = (
-  { __typename?: 'Mutation' }
-  & { addClientLog: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AddClientLogMutation = { addClientLog: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateApiAccessTokenMutationVariables = Exact<{
   name: Scalars['String'];
@@ -3841,19 +3262,7 @@ export type CreateApiAccessTokenMutationVariables = Exact<{
 }>;
 
 
-export type CreateApiAccessTokenMutation = (
-  { __typename?: 'Mutation' }
-  & { createApiAccessToken: (
-    { __typename?: 'ApiAccessTokenResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, apiAccessToken: Maybe<(
-      { __typename?: 'PermissionsWithAccessToken' }
-      & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
-    )> }
-  ) }
-);
+export type CreateApiAccessTokenMutation = { createApiAccessToken: { rejection: { reason: string, context: string | null, exception: string | null } | null, apiAccessToken: { id: string, name: string, accessToken: string, accessPermissions: string } | null } };
 
 export type CreateInstitutionMutationVariables = Exact<{
   name: Scalars['String'];
@@ -3861,176 +3270,92 @@ export type CreateInstitutionMutationVariables = Exact<{
 }>;
 
 
-export type CreateInstitutionMutation = (
-  { __typename?: 'Mutation' }
-  & { createInstitution: (
-    { __typename?: 'InstitutionResponseWrap' }
-    & { institution: Maybe<(
-      { __typename?: 'Institution' }
-      & Pick<Institution, 'id' | 'name' | 'verified'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateInstitutionMutation = { createInstitution: { institution: { id: number, name: string, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateUnitMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreateUnitMutation = (
-  { __typename?: 'Mutation' }
-  & { createUnit: (
-    { __typename?: 'UnitResponseWrap' }
-    & { unit: Maybe<(
-      { __typename?: 'Unit' }
-      & Pick<Unit, 'id' | 'name'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateUnitMutation = { createUnit: { unit: { id: number, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
 
 
-export type DeleteApiAccessTokenMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteApiAccessToken: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteApiAccessTokenMutation = { deleteApiAccessToken: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteInstitutionMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteInstitutionMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteInstitution: (
-    { __typename?: 'InstitutionResponseWrap' }
-    & { institution: Maybe<(
-      { __typename?: 'Institution' }
-      & Pick<Institution, 'id' | 'verified'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteInstitutionMutation = { deleteInstitution: { institution: { id: number, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteUnitMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteUnitMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteUnit: (
-    { __typename?: 'UnitResponseWrap' }
-    & { unit: Maybe<(
-      { __typename?: 'Unit' }
-      & Pick<Unit, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteUnitMutation = { deleteUnit: { unit: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetAllApiAccessTokensAndPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllApiAccessTokensAndPermissionsQuery = (
-  { __typename?: 'Query' }
-  & { allAccessTokensAndPermissions: Maybe<Array<(
-    { __typename?: 'PermissionsWithAccessToken' }
-    & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
-  )>> }
-);
+export type GetAllApiAccessTokensAndPermissionsQuery = { allAccessTokensAndPermissions: Array<{ id: string, name: string, accessToken: string, accessPermissions: string }> | null };
 
 export type GetAllQueriesAndMutationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllQueriesAndMutationsQuery = (
-  { __typename?: 'Query' }
-  & { queriesAndMutations: Maybe<(
-    { __typename?: 'QueriesAndMutations' }
-    & Pick<QueriesAndMutations, 'queries' | 'mutations'>
-  )> }
-);
+export type GetAllQueriesAndMutationsQuery = { queriesAndMutations: { queries: Array<string>, mutations: Array<string> } | null };
 
 export type GetFeaturesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFeaturesQuery = (
-  { __typename?: 'Query' }
-  & { features: Array<(
-    { __typename?: 'Feature' }
-    & Pick<Feature, 'id' | 'isEnabled' | 'description'>
-  )> }
-);
+export type GetFeaturesQuery = { features: Array<{ id: FeatureId, isEnabled: boolean, description: string }> };
 
 export type GetInstitutionsQueryVariables = Exact<{
-  filter?: Maybe<InstitutionsFilter>;
+  filter?: InputMaybe<InstitutionsFilter>;
 }>;
 
 
-export type GetInstitutionsQuery = (
-  { __typename?: 'Query' }
-  & { institutions: Maybe<Array<(
-    { __typename?: 'Institution' }
-    & Pick<Institution, 'id' | 'name' | 'verified'>
-  )>> }
-);
+export type GetInstitutionsQuery = { institutions: Array<{ id: number, name: string, verified: boolean }> | null };
 
 export type GetPageContentQueryVariables = Exact<{
   id: PageName;
 }>;
 
 
-export type GetPageContentQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'getPageContent'>
-);
+export type GetPageContentQuery = { getPageContent: string | null };
 
 export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSettingsQuery = (
-  { __typename?: 'Query' }
-  & { settings: Array<(
-    { __typename?: 'Settings' }
-    & Pick<Settings, 'id' | 'settingsValue' | 'description'>
-  )> }
-);
+export type GetSettingsQuery = { settings: Array<{ id: SettingsId, settingsValue: string | null, description: string | null }> };
 
 export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUnitsQuery = (
-  { __typename?: 'Query' }
-  & { units: Maybe<Array<(
-    { __typename?: 'Unit' }
-    & Pick<Unit, 'id' | 'name'>
-  )>> }
-);
+export type GetUnitsQuery = { units: Array<{ id: number, name: string }> | null };
 
-export type RejectionFragment = (
-  { __typename?: 'Rejection' }
-  & Pick<Rejection, 'reason' | 'context' | 'exception'>
-);
+export type MergeInstitutionsMutationVariables = Exact<{
+  institutionIdFrom: Scalars['Int'];
+  institutionIdInto: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type MergeInstitutionsMutation = { mergeInstitutions: { institution: { id: number, verified: boolean, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type PrepareDbMutationVariables = Exact<{
+  includeSeeds: Scalars['Boolean'];
+}>;
+
+
+export type PrepareDbMutation = { prepareDB: { log: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type RejectionFragment = { reason: string, context: string | null, exception: string | null };
 
 export type SetPageContentMutationVariables = Exact<{
   id: PageName;
@@ -4038,19 +3363,7 @@ export type SetPageContentMutationVariables = Exact<{
 }>;
 
 
-export type SetPageContentMutation = (
-  { __typename?: 'Mutation' }
-  & { setPageContent: (
-    { __typename?: 'PageResponseWrap' }
-    & { page: Maybe<(
-      { __typename?: 'Page' }
-      & Pick<Page, 'id' | 'content'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SetPageContentMutation = { setPageContent: { page: { id: number, content: string | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
@@ -4059,19 +3372,7 @@ export type UpdateApiAccessTokenMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApiAccessTokenMutation = (
-  { __typename?: 'Mutation' }
-  & { updateApiAccessToken: (
-    { __typename?: 'ApiAccessTokenResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, apiAccessToken: Maybe<(
-      { __typename?: 'PermissionsWithAccessToken' }
-      & Pick<PermissionsWithAccessToken, 'id' | 'name' | 'accessToken' | 'accessPermissions'>
-    )> }
-  ) }
-);
+export type UpdateApiAccessTokenMutation = { updateApiAccessToken: { rejection: { reason: string, context: string | null, exception: string | null } | null, apiAccessToken: { id: string, name: string, accessToken: string, accessPermissions: string } | null } };
 
 export type UpdateInstitutionMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -4080,19 +3381,7 @@ export type UpdateInstitutionMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInstitutionMutation = (
-  { __typename?: 'Mutation' }
-  & { updateInstitution: (
-    { __typename?: 'InstitutionResponseWrap' }
-    & { institution: Maybe<(
-      { __typename?: 'Institution' }
-      & Pick<Institution, 'id' | 'verified' | 'name'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateInstitutionMutation = { updateInstitution: { institution: { id: number, verified: boolean, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AssignInstrumentsToCallMutationVariables = Exact<{
   instrumentIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -4100,19 +3389,7 @@ export type AssignInstrumentsToCallMutationVariables = Exact<{
 }>;
 
 
-export type AssignInstrumentsToCallMutation = (
-  { __typename?: 'Mutation' }
-  & { assignInstrumentsToCall: (
-    { __typename?: 'CallResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & Pick<Call, 'id'>
-    )> }
-  ) }
-);
+export type AssignInstrumentsToCallMutation = { assignInstrumentsToCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
 
 export type CreateCallMutationVariables = Exact<{
   shortCode: Scalars['String'];
@@ -4120,115 +3397,56 @@ export type CreateCallMutationVariables = Exact<{
   endCall: Scalars['DateTime'];
   startReview: Scalars['DateTime'];
   endReview: Scalars['DateTime'];
-  startSEPReview?: Maybe<Scalars['DateTime']>;
-  endSEPReview?: Maybe<Scalars['DateTime']>;
+  startSEPReview?: InputMaybe<Scalars['DateTime']>;
+  endSEPReview?: InputMaybe<Scalars['DateTime']>;
   startNotify: Scalars['DateTime'];
   endNotify: Scalars['DateTime'];
   startCycle: Scalars['DateTime'];
   endCycle: Scalars['DateTime'];
   cycleComment: Scalars['String'];
+  submissionMessage?: InputMaybe<Scalars['String']>;
   surveyComment: Scalars['String'];
   allocationTimeUnit: AllocationTimeUnits;
-  referenceNumberFormat?: Maybe<Scalars['String']>;
+  referenceNumberFormat?: InputMaybe<Scalars['String']>;
   proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
-  esiTemplateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  esiTemplateId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateCallMutation = (
-  { __typename?: 'Mutation' }
-  & { createCall: (
-    { __typename?: 'CallResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & CallFragment
-    )> }
-  ) }
-);
+export type CreateCallMutation = { createCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
 
 export type DeleteCallMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteCallMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteCall: (
-    { __typename?: 'CallResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-      & RejectionFragment
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & Pick<Call, 'id'>
-    )> }
-  ) }
-);
+export type DeleteCallMutation = { deleteCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
 
-export type CallFragment = (
-  { __typename?: 'Call' }
-  & Pick<Call, 'id' | 'shortCode' | 'startCall' | 'endCall' | 'startReview' | 'endReview' | 'startSEPReview' | 'endSEPReview' | 'startNotify' | 'endNotify' | 'startCycle' | 'endCycle' | 'cycleComment' | 'surveyComment' | 'referenceNumberFormat' | 'proposalWorkflowId' | 'templateId' | 'esiTemplateId' | 'allocationTimeUnit' | 'proposalCount' | 'title' | 'description'>
-  & { instruments: Array<(
-    { __typename?: 'InstrumentWithAvailabilityTime' }
-    & Pick<InstrumentWithAvailabilityTime, 'id' | 'name' | 'shortCode' | 'description' | 'availabilityTime' | 'submitted'>
-    & { scientists: Array<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-  )>, proposalWorkflow: Maybe<(
-    { __typename?: 'ProposalWorkflow' }
-    & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-  )>, template: (
-    { __typename?: 'Template' }
-    & Pick<Template, 'templateId' | 'name' | 'isArchived'>
-  ) }
-);
+export type CallFragment = { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } };
 
 export type GetCallQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetCallQuery = (
-  { __typename?: 'Query' }
-  & { call: Maybe<(
-    { __typename?: 'Call' }
-    & CallFragment
-  )> }
-);
+export type GetCallQuery = { call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null };
 
 export type GetCallsQueryVariables = Exact<{
-  filter?: Maybe<CallsFilter>;
+  filter?: InputMaybe<CallsFilter>;
 }>;
 
 
-export type GetCallsQuery = (
-  { __typename?: 'Query' }
-  & { calls: Maybe<Array<(
-    { __typename?: 'Call' }
-    & CallFragment
-  )>> }
-);
+export type GetCallsQuery = { calls: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
 
 export type GetCallsByInstrumentScientistQueryVariables = Exact<{
   scientistId: Scalars['Int'];
 }>;
 
 
-export type GetCallsByInstrumentScientistQuery = (
-  { __typename?: 'Query' }
-  & { callsByInstrumentScientist: Maybe<Array<(
-    { __typename?: 'Call' }
-    & CallFragment
-  )>> }
-);
+export type GetCallsByInstrumentScientistQuery = { callsByInstrumentScientist: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
 
 export type RemoveAssignedInstrumentFromCallMutationVariables = Exact<{
   instrumentId: Scalars['Int'];
@@ -4236,19 +3454,7 @@ export type RemoveAssignedInstrumentFromCallMutationVariables = Exact<{
 }>;
 
 
-export type RemoveAssignedInstrumentFromCallMutation = (
-  { __typename?: 'Mutation' }
-  & { removeAssignedInstrumentFromCall: (
-    { __typename?: 'CallResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & Pick<Call, 'id'>
-    )> }
-  ) }
-);
+export type RemoveAssignedInstrumentFromCallMutation = { removeAssignedInstrumentFromCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
 
 export type UpdateCallMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -4257,161 +3463,50 @@ export type UpdateCallMutationVariables = Exact<{
   endCall: Scalars['DateTime'];
   startReview: Scalars['DateTime'];
   endReview: Scalars['DateTime'];
-  startSEPReview?: Maybe<Scalars['DateTime']>;
-  endSEPReview?: Maybe<Scalars['DateTime']>;
+  startSEPReview?: InputMaybe<Scalars['DateTime']>;
+  endSEPReview?: InputMaybe<Scalars['DateTime']>;
   startNotify: Scalars['DateTime'];
   endNotify: Scalars['DateTime'];
   startCycle: Scalars['DateTime'];
   endCycle: Scalars['DateTime'];
   cycleComment: Scalars['String'];
+  submissionMessage?: InputMaybe<Scalars['String']>;
   surveyComment: Scalars['String'];
   allocationTimeUnit: AllocationTimeUnits;
-  referenceNumberFormat?: Maybe<Scalars['String']>;
+  referenceNumberFormat?: InputMaybe<Scalars['String']>;
   proposalWorkflowId: Scalars['Int'];
   templateId: Scalars['Int'];
-  esiTemplateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  esiTemplateId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateCallMutation = (
-  { __typename?: 'Mutation' }
-  & { updateCall: (
-    { __typename?: 'CallResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & CallFragment
-    )> }
-  ) }
-);
+export type UpdateCallMutation = { updateCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
 
 export type CreateEsiMutationVariables = Exact<{
-  visitId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 }>;
 
 
-export type CreateEsiMutation = (
-  { __typename?: 'Mutation' }
-  & { createEsi: (
-    { __typename?: 'EsiResponseWrap' }
-    & { esi: Maybe<(
-      { __typename?: 'ExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), sampleEsis: Array<(
-        { __typename?: 'SampleExperimentSafetyInput' }
-        & { sample: (
-          { __typename?: 'Sample' }
-          & SampleFragment
-        ), questionary: (
-          { __typename?: 'Questionary' }
-          & Pick<Questionary, 'isCompleted'>
-        ) }
-        & SampleEsiFragment
-      )>, visit: Maybe<(
-        { __typename?: 'Visit' }
-        & { proposal: (
-          { __typename?: 'Proposal' }
-          & Pick<Proposal, 'proposalId' | 'title'>
-          & { samples: Maybe<Array<(
-            { __typename?: 'Sample' }
-            & SampleFragment
-          )>> }
-        ) }
-        & VisitFragment
-      )> }
-      & EsiFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateEsiMutation = { createEsi: { esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sampleEsis: Array<{ sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }, questionary: { isCompleted: boolean } }>, proposal: { primaryKey: number, proposalId: string, title: string, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }> | null, questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type EsiFragment = (
-  { __typename?: 'ExperimentSafetyInput' }
-  & Pick<ExperimentSafetyInput, 'id' | 'visitId' | 'creatorId' | 'questionaryId' | 'isSubmitted' | 'created'>
-);
+export type EsiFragment = { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any };
 
 export type GetEsiQueryVariables = Exact<{
   esiId: Scalars['Int'];
 }>;
 
 
-export type GetEsiQuery = (
-  { __typename?: 'Query' }
-  & { esi: Maybe<(
-    { __typename?: 'ExperimentSafetyInput' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ), sampleEsis: Array<(
-      { __typename?: 'SampleExperimentSafetyInput' }
-      & { sample: (
-        { __typename?: 'Sample' }
-        & SampleFragment
-      ), questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-      ) }
-      & SampleEsiFragment
-    )>, visit: Maybe<(
-      { __typename?: 'Visit' }
-      & { proposal: (
-        { __typename?: 'Proposal' }
-        & Pick<Proposal, 'proposalId' | 'title'>
-        & { samples: Maybe<Array<(
-          { __typename?: 'Sample' }
-          & SampleFragment
-        )>> }
-      ) }
-      & VisitFragment
-    )> }
-    & EsiFragment
-  )> }
-);
+export type GetEsiQuery = { esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sampleEsis: Array<{ sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }, questionary: { isCompleted: boolean } }>, proposal: { primaryKey: number, proposalId: string, title: string, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }> | null, questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } } | null };
 
 export type UpdateEsiMutationVariables = Exact<{
   esiId: Scalars['Int'];
-  isSubmitted?: Maybe<Scalars['Boolean']>;
+  isSubmitted?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateEsiMutation = (
-  { __typename?: 'Mutation' }
-  & { updateEsi: (
-    { __typename?: 'EsiResponseWrap' }
-    & { esi: Maybe<(
-      { __typename?: 'ExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), sampleEsis: Array<(
-        { __typename?: 'SampleExperimentSafetyInput' }
-        & { sample: (
-          { __typename?: 'Sample' }
-          & SampleFragment
-        ), questionary: (
-          { __typename?: 'Questionary' }
-          & Pick<Questionary, 'isCompleted'>
-        ) }
-        & SampleEsiFragment
-      )> }
-      & EsiFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateEsiMutation = { updateEsi: { esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sampleEsis: Array<{ sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }, questionary: { isCompleted: boolean } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetEventLogsQueryVariables = Exact<{
   eventType: Scalars['String'];
@@ -4419,17 +3514,87 @@ export type GetEventLogsQueryVariables = Exact<{
 }>;
 
 
-export type GetEventLogsQuery = (
-  { __typename?: 'Query' }
-  & { eventLogs: Maybe<Array<(
-    { __typename?: 'EventLog' }
-    & Pick<EventLog, 'id' | 'eventType' | 'eventTStamp' | 'rowData' | 'changedObjectId'>
-    & { changedBy: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'firstname' | 'lastname' | 'email'>
-    ) }
-  )>> }
-);
+export type GetEventLogsQuery = { eventLogs: Array<{ id: number, eventType: string, eventTStamp: any, rowData: string, changedObjectId: string, changedBy: { id: number, firstname: string, lastname: string, email: string } }> | null };
+
+export type CreateFeedbackMutationVariables = Exact<{
+  scheduledEventId: Scalars['Int'];
+}>;
+
+
+export type CreateFeedbackMutation = { createFeedback: { feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type FeedbackFragment = { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number };
+
+export type GetFeedbackQueryVariables = Exact<{
+  feedbackId: Scalars['Int'];
+}>;
+
+
+export type GetFeedbackQuery = { feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null };
+
+export type UpdateFeedbackMutationVariables = Exact<{
+  feedbackId: Scalars['Int'];
+  status?: InputMaybe<FeedbackStatus>;
+}>;
+
+
+export type UpdateFeedbackMutation = { updateFeedback: { feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type CloneGenericTemplateMutationVariables = Exact<{
+  genericTemplateId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CloneGenericTemplateMutation = { cloneGenericTemplate: { genericTemplate: { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type CreateGenericTemplateMutationVariables = Exact<{
+  title: Scalars['String'];
+  templateId: Scalars['Int'];
+  proposalPk: Scalars['Int'];
+  questionId: Scalars['String'];
+}>;
+
+
+export type CreateGenericTemplateMutation = { createGenericTemplate: { genericTemplate: { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type DeleteGenericTemplateMutationVariables = Exact<{
+  genericTemplateId: Scalars['Int'];
+}>;
+
+
+export type DeleteGenericTemplateMutation = { deleteGenericTemplate: { genericTemplate: { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type GenericTemplateFragment = { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string };
+
+export type GetGenericTemplateQueryVariables = Exact<{
+  genericTemplateId: Scalars['Int'];
+}>;
+
+
+export type GetGenericTemplateQuery = { genericTemplate: { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null };
+
+export type GetGenericTemplatesWithProposalDataQueryVariables = Exact<{
+  filter?: InputMaybe<GenericTemplatesFilter>;
+}>;
+
+
+export type GetGenericTemplatesWithProposalDataQuery = { genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, proposal: { primaryKey: number, proposalId: string } }> | null };
+
+export type GetGenericTemplatesWithQuestionaryStatusQueryVariables = Exact<{
+  filter?: InputMaybe<GenericTemplatesFilter>;
+}>;
+
+
+export type GetGenericTemplatesWithQuestionaryStatusQuery = { genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null };
+
+export type UpdateGenericTemplateMutationVariables = Exact<{
+  genericTemplateId: Scalars['Int'];
+  title?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateGenericTemplateMutation = { updateGenericTemplate: { genericTemplate: { id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AssignProposalsToInstrumentMutationVariables = Exact<{
   proposals: Array<ProposalPkWithCallId> | ProposalPkWithCallId;
@@ -4437,17 +3602,7 @@ export type AssignProposalsToInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type AssignProposalsToInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { assignProposalsToInstrument: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AssignProposalsToInstrumentMutation = { assignProposalsToInstrument: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AssignScientistsToInstrumentMutationVariables = Exact<{
   scientistIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -4455,17 +3610,7 @@ export type AssignScientistsToInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type AssignScientistsToInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { assignScientistsToInstrument: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AssignScientistsToInstrumentMutation = { assignScientistsToInstrument: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateInstrumentMutationVariables = Exact<{
   name: Scalars['String'];
@@ -4475,95 +3620,35 @@ export type CreateInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type CreateInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { createInstrument: (
-    { __typename?: 'InstrumentResponseWrap' }
-    & { instrument: Maybe<(
-      { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
-      & { scientists: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateInstrumentMutation = { createInstrument: { instrument: { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteInstrumentMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteInstrument: (
-    { __typename?: 'InstrumentResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteInstrumentMutation = { deleteInstrument: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetInstrumentsQueryVariables = Exact<{
-  callIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  callIds?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
-export type GetInstrumentsQuery = (
-  { __typename?: 'Query' }
-  & { instruments: Maybe<(
-    { __typename?: 'InstrumentsQueryResult' }
-    & Pick<InstrumentsQueryResult, 'totalCount'>
-    & { instruments: Array<(
-      { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
-      & { scientists: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )> }
-  )> }
-);
+export type GetInstrumentsQuery = { instruments: { totalCount: number, instruments: Array<{ id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }> } | null };
 
 export type GetUserInstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserInstrumentsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & { instruments: Array<(
-      { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description'>
-      & { scientists: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )> }
-  )> }
-);
+export type GetUserInstrumentsQuery = { me: { instruments: Array<{ id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }> } | null };
+
+export type InstrumentFragment = { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> };
 
 export type RemoveProposalsFromInstrumentMutationVariables = Exact<{
   proposalPks: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
-export type RemoveProposalsFromInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { removeProposalsFromInstrument: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type RemoveProposalsFromInstrumentMutation = { removeProposalsFromInstrument: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type RemoveScientistFromInstrumentMutationVariables = Exact<{
   scientistId: Scalars['Int'];
@@ -4571,17 +3656,7 @@ export type RemoveScientistFromInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type RemoveScientistFromInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { removeScientistFromInstrument: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type RemoveScientistFromInstrumentMutation = { removeScientistFromInstrument: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SetInstrumentAvailabilityTimeMutationVariables = Exact<{
   callId: Scalars['Int'];
@@ -4590,17 +3665,7 @@ export type SetInstrumentAvailabilityTimeMutationVariables = Exact<{
 }>;
 
 
-export type SetInstrumentAvailabilityTimeMutation = (
-  { __typename?: 'Mutation' }
-  & { setInstrumentAvailabilityTime: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SetInstrumentAvailabilityTimeMutation = { setInstrumentAvailabilityTime: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SubmitInstrumentMutationVariables = Exact<{
   callId: Scalars['Int'];
@@ -4609,17 +3674,7 @@ export type SubmitInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type SubmitInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { submitInstrument: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SubmitInstrumentMutation = { submitInstrument: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateInstrumentMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -4630,48 +3685,20 @@ export type UpdateInstrumentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInstrumentMutation = (
-  { __typename?: 'Mutation' }
-  & { updateInstrument: (
-    { __typename?: 'InstrumentResponseWrap' }
-    & { instrument: Maybe<(
-      { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode' | 'description' | 'managerUserId'>
-      & { scientists: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateInstrumentMutation = { updateInstrument: { instrument: { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AdministrationProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
-  finalStatus?: Maybe<ProposalEndStatus>;
-  statusId?: Maybe<Scalars['Int']>;
-  commentForUser?: Maybe<Scalars['String']>;
-  commentForManagement?: Maybe<Scalars['String']>;
-  managementTimeAllocation?: Maybe<Scalars['Int']>;
-  managementDecisionSubmitted?: Maybe<Scalars['Boolean']>;
+  finalStatus?: InputMaybe<ProposalEndStatus>;
+  statusId?: InputMaybe<Scalars['Int']>;
+  commentForUser?: InputMaybe<Scalars['String']>;
+  commentForManagement?: InputMaybe<Scalars['String']>;
+  managementTimeAllocation?: InputMaybe<Scalars['Int']>;
+  managementDecisionSubmitted?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type AdministrationProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { administrationProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AdministrationProposalMutation = { administrationProposal: { proposal: { primaryKey: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type ChangeProposalsStatusMutationVariables = Exact<{
   proposals: Array<ProposalPkWithCallId> | ProposalPkWithCallId;
@@ -4679,17 +3706,7 @@ export type ChangeProposalsStatusMutationVariables = Exact<{
 }>;
 
 
-export type ChangeProposalsStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { changeProposalsStatus: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type ChangeProposalsStatusMutation = { changeProposalsStatus: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CloneProposalsMutationVariables = Exact<{
   proposalsToClonePk: Array<Scalars['Int']> | Scalars['Int'];
@@ -4697,629 +3714,160 @@ export type CloneProposalsMutationVariables = Exact<{
 }>;
 
 
-export type CloneProposalsMutation = (
-  { __typename?: 'Mutation' }
-  & { cloneProposals: (
-    { __typename?: 'ProposalsResponseWrap' }
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), technicalReview: Maybe<(
-        { __typename?: 'TechnicalReview' }
-        & CoreTechnicalReviewFragment
-      )>, reviews: Maybe<Array<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
-        )> }
-      )>>, instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'id' | 'name' | 'shortCode'>
-      )>, call: Maybe<(
-        { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode' | 'isActive'>
-      )> }
-      & ProposalFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CloneProposalsMutation = { cloneProposals: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, referenceNumberFormat: string | null } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateProposalMutationVariables = Exact<{
   callId: Scalars['Int'];
 }>;
 
 
-export type CreateProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { createProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'proposalId' | 'questionaryId'>
-      & { status: Maybe<(
-        { __typename?: 'ProposalStatus' }
-        & ProposalStatusFragment
-      )>, questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, samples: Maybe<Array<(
-        { __typename?: 'Sample' }
-        & { questionary: (
-          { __typename?: 'Questionary' }
-          & Pick<Questionary, 'isCompleted'>
-        ) }
-        & SampleFragment
-      )>> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateProposalMutation = { createProposal: { proposal: { primaryKey: number, proposalId: string, questionaryId: number, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
 }>;
 
 
-export type DeleteProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey'>
-    )> }
-  ) }
-);
+export type DeleteProposalMutation = { deleteProposal: { rejection: { reason: string, context: string | null, exception: string | null } | null, proposal: { primaryKey: number } | null } };
 
-export type CoreTechnicalReviewFragment = (
-  { __typename?: 'TechnicalReview' }
-  & Pick<TechnicalReview, 'id' | 'comment' | 'publicComment' | 'timeAllocation' | 'status' | 'proposalPk' | 'submitted'>
-);
+export type CoreTechnicalReviewFragment = { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean };
 
-export type ProposalFragment = (
-  { __typename?: 'Proposal' }
-  & Pick<Proposal, 'primaryKey' | 'title' | 'abstract' | 'statusId' | 'publicStatus' | 'proposalId' | 'finalStatus' | 'commentForUser' | 'commentForManagement' | 'created' | 'updated' | 'callId' | 'questionaryId' | 'notified' | 'submitted' | 'managementTimeAllocation' | 'managementDecisionSubmitted' | 'technicalReviewAssignee'>
-  & { status: Maybe<(
-    { __typename?: 'ProposalStatus' }
-    & ProposalStatusFragment
-  )>, sepMeetingDecision: Maybe<(
-    { __typename?: 'SepMeetingDecision' }
-    & SepMeetingDecisionFragment
-  )> }
-);
+export type ProposalFragment = { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null };
 
 export type GetInstrumentScientistProposalsQueryVariables = Exact<{
-  filter?: Maybe<ProposalsFilter>;
+  filter?: InputMaybe<ProposalsFilter>;
+  offset?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetInstrumentScientistProposalsQuery = (
-  { __typename?: 'Query' }
-  & { instrumentScientistProposals: Maybe<(
-    { __typename?: 'ProposalsQueryResult' }
-    & Pick<ProposalsQueryResult, 'totalCount'>
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, reviews: Maybe<Array<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
-        )> }
-      )>>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, technicalReview: Maybe<(
-        { __typename?: 'TechnicalReview' }
-        & CoreTechnicalReviewFragment
-      )>, instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'id' | 'name'>
-      )>, call: Maybe<(
-        { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode' | 'allocationTimeUnit'>
-      )>, sep: Maybe<(
-        { __typename?: 'SEP' }
-        & Pick<Sep, 'id' | 'code'>
-      )> }
-      & ProposalFragment
-    )> }
-  )> }
-);
+export type GetInstrumentScientistProposalsQuery = { instrumentScientistProposals: { totalCount: number, proposals: Array<{ primaryKey: number, proposalId: string, title: string, submitted: boolean, finalStatus: ProposalEndStatus | null, technicalReviewAssignee: number | null, technicalStatus: TechnicalReviewStatus | null, statusName: string, technicalReviewSubmitted: number | null, instrumentId: number | null, instrumentName: string | null, allocationTimeUnit: AllocationTimeUnits, callShortCode: string | null, sepCode: string | null }> } | null };
 
 export type GetMyProposalsQueryVariables = Exact<{
-  filter?: Maybe<UserProposalsFilter>;
+  filter?: InputMaybe<UserProposalsFilter>;
 }>;
 
 
-export type GetMyProposalsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & ProposalFragment
-    )> }
-  )> }
-);
+export type GetMyProposalsQuery = { me: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> } | null };
 
 export type GetProposalQueryVariables = Exact<{
   primaryKey: Scalars['Int'];
 }>;
 
 
-export type GetProposalQuery = (
-  { __typename?: 'Query' }
-  & { proposal: Maybe<(
-    { __typename?: 'Proposal' }
-    & { proposer: Maybe<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )>, users: Array<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )>, questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ), technicalReview: Maybe<(
-      { __typename?: 'TechnicalReview' }
-      & { reviewer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-      & CoreTechnicalReviewFragment
-    )>, reviews: Maybe<Array<(
-      { __typename?: 'Review' }
-      & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
-      & { reviewer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
-      )> }
-    )>>, instrument: Maybe<(
-      { __typename?: 'Instrument' }
-      & Pick<Instrument, 'id' | 'name' | 'shortCode'>
-    )>, call: Maybe<(
-      { __typename?: 'Call' }
-      & Pick<Call, 'id' | 'shortCode' | 'isActive' | 'allocationTimeUnit'>
-    )>, sep: Maybe<(
-      { __typename?: 'SEP' }
-      & Pick<Sep, 'id' | 'code'>
-    )>, samples: Maybe<Array<(
-      { __typename?: 'Sample' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-      ) }
-      & SampleFragment
-    )>> }
-    & ProposalFragment
-  )> }
-);
+export type GetProposalQuery = { proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, allocationTimeUnit: AllocationTimeUnits, referenceNumberFormat: string | null } | null, sep: { id: number, code: string } | null, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } | null };
 
 export type GetProposalsQueryVariables = Exact<{
-  filter?: Maybe<ProposalsFilter>;
+  filter?: InputMaybe<ProposalsFilter>;
 }>;
 
 
-export type GetProposalsQuery = (
-  { __typename?: 'Query' }
-  & { proposals: Maybe<(
-    { __typename?: 'ProposalsQueryResult' }
-    & Pick<ProposalsQueryResult, 'totalCount'>
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, reviews: Maybe<Array<(
-        { __typename?: 'Review' }
-        & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'userID' | 'sepID'>
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & Pick<BasicUserDetails, 'firstname' | 'lastname' | 'id'>
-        )> }
-      )>>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, technicalReview: Maybe<(
-        { __typename?: 'TechnicalReview' }
-        & { reviewer: Maybe<(
-          { __typename?: 'BasicUserDetails' }
-          & BasicUserDetailsFragment
-        )> }
-        & CoreTechnicalReviewFragment
-      )>, instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'id' | 'name'>
-      )>, call: Maybe<(
-        { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode'>
-      )>, sep: Maybe<(
-        { __typename?: 'SEP' }
-        & Pick<Sep, 'id' | 'code'>
-      )> }
-      & ProposalFragment
-    )> }
-  )> }
-);
+export type GetProposalsQuery = { proposals: { totalCount: number, proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, instrument: { id: number, name: string } | null, call: { id: number, shortCode: string } | null, sep: { id: number, code: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> } | null };
 
 export type GetProposalsCoreQueryVariables = Exact<{
-  filter?: Maybe<ProposalsFilter>;
+  filter?: InputMaybe<ProposalsFilter>;
 }>;
 
 
-export type GetProposalsCoreQuery = (
-  { __typename?: 'Query' }
-  & { proposalsView: Maybe<Array<(
-    { __typename?: 'ProposalView' }
-    & Pick<ProposalView, 'primaryKey' | 'title' | 'statusId' | 'statusName' | 'statusDescription' | 'proposalId' | 'rankOrder' | 'finalStatus' | 'notified' | 'timeAllocation' | 'technicalStatus' | 'instrumentName' | 'callShortCode' | 'sepCode' | 'sepId' | 'reviewAverage' | 'reviewDeviation' | 'instrumentId' | 'callId' | 'submitted' | 'allocationTimeUnit'>
-  )>> }
-);
+export type GetProposalsCoreQuery = { proposalsView: Array<{ primaryKey: number, title: string, statusId: number, statusName: string, statusDescription: string, proposalId: string, rankOrder: number | null, finalStatus: ProposalEndStatus | null, notified: boolean, managementTimeAllocation: number | null, technicalTimeAllocation: number | null, technicalStatus: TechnicalReviewStatus | null, instrumentName: string | null, callShortCode: string | null, sepCode: string | null, sepId: number | null, reviewAverage: number | null, reviewDeviation: number | null, instrumentId: number | null, callId: number, submitted: boolean, allocationTimeUnit: AllocationTimeUnits }> | null };
 
 export type NotifyProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
 }>;
 
 
-export type NotifyProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { notifyProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type NotifyProposalMutation = { notifyProposal: { proposal: { primaryKey: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SubmitProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
 }>;
 
 
-export type SubmitProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { submitProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & ProposalFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SubmitProposalMutation = { submitProposal: { proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  abstract?: Maybe<Scalars['String']>;
-  users?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
-  proposerId?: Maybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+  abstract?: InputMaybe<Scalars['String']>;
+  users?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+  proposerId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type UpdateProposalMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProposal: (
-    { __typename?: 'ProposalResponseWrap' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'abstract'>
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateProposalMutation = { updateProposal: { proposal: { primaryKey: number, title: string, abstract: string, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
-  endsAfter?: Maybe<Scalars['TzLessDateTime']>;
-  status?: Maybe<Array<ProposalBookingStatusCore> | ProposalBookingStatusCore>;
-  instrumentId?: Maybe<Scalars['Int']>;
+  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
+  status?: InputMaybe<Array<ProposalBookingStatusCore> | ProposalBookingStatusCore>;
+  instrumentId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetUserProposalBookingsWithEventsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId' | 'finalStatus' | 'managementDecisionSubmitted'>
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, users: Array<(
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      )>, proposalBookingCore: Maybe<(
-        { __typename?: 'ProposalBookingCore' }
-        & { scheduledEvents: Array<(
-          { __typename?: 'ScheduledEventCore' }
-          & Pick<ScheduledEventCore, 'id' | 'startsAt' | 'endsAt' | 'bookingType'>
-          & { visit: Maybe<(
-            { __typename?: 'Visit' }
-            & { teamLead: (
-              { __typename?: 'BasicUserDetails' }
-              & BasicUserDetailsFragment
-            ), shipments: Array<(
-              { __typename?: 'Shipment' }
-              & ShipmentFragment
-            )>, registrations: Array<(
-              { __typename?: 'VisitRegistration' }
-              & { user: (
-                { __typename?: 'BasicUserDetails' }
-                & BasicUserDetailsFragment
-              ) }
-              & VisitRegistrationFragment
-            )>, esi: Maybe<(
-              { __typename?: 'ExperimentSafetyInput' }
-              & EsiFragment
-            )> }
-            & VisitFragment
-          )> }
-        )> }
-      )>, visits: Maybe<Array<(
-        { __typename?: 'Visit' }
-        & VisitFragment
-      )>>, instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'id' | 'name'>
-      )> }
-    )> }
-  )> }
-);
+export type GetUserProposalBookingsWithEventsQuery = { me: { proposals: Array<{ primaryKey: number, title: string, proposalId: string, finalStatus: ProposalEndStatus | null, managementDecisionSubmitted: boolean, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, proposalBookingCore: { scheduledEvents: Array<{ id: number, startsAt: string, endsAt: string, bookingType: ScheduledEventBookingType, status: ProposalBookingStatusCore, visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> } | null, esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any } | null, feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number } | null, shipments: Array<{ id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } }>, localContact: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null }> } | null, visits: Array<{ id: number, proposalPk: number, status: VisitStatus, creatorId: number }> | null, instrument: { id: number, name: string } | null }> } | null };
 
 export type AnswerTopicMutationVariables = Exact<{
   questionaryId: Scalars['Int'];
   topicId: Scalars['Int'];
   answers: Array<AnswerInput> | AnswerInput;
-  isPartialSave?: Maybe<Scalars['Boolean']>;
+  isPartialSave?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type AnswerTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { answerTopic: (
-    { __typename?: 'QuestionaryStepResponseWrap' }
-    & { questionaryStep: Maybe<(
-      { __typename?: 'QuestionaryStep' }
-      & QuestionaryStepFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AnswerTopicMutation = { answerTopic: { questionaryStep: { isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateQuestionaryMutationVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
 
 
-export type CreateQuestionaryMutation = (
-  { __typename?: 'Mutation' }
-  & { createQuestionary: (
-    { __typename?: 'QuestionaryResponseWrap' }
-    & { questionary: Maybe<(
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateQuestionaryMutation = { createQuestionary: { questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type AnswerFragment = (
-  { __typename?: 'Answer' }
-  & Pick<Answer, 'answerId' | 'sortOrder' | 'topicId' | 'dependenciesOperator' | 'value'>
-  & { question: (
-    { __typename?: 'Question' }
-    & QuestionFragment
-  ), config: (
-    { __typename?: 'BooleanConfig' }
-    & FieldConfigBooleanConfigFragment
-  ) | (
-    { __typename?: 'DateConfig' }
-    & FieldConfigDateConfigFragment
-  ) | (
-    { __typename?: 'EmbellishmentConfig' }
-    & FieldConfigEmbellishmentConfigFragment
-  ) | (
-    { __typename?: 'FileUploadConfig' }
-    & FieldConfigFileUploadConfigFragment
-  ) | (
-    { __typename?: 'SelectionFromOptionsConfig' }
-    & FieldConfigSelectionFromOptionsConfigFragment
-  ) | (
-    { __typename?: 'TextInputConfig' }
-    & FieldConfigTextInputConfigFragment
-  ) | (
-    { __typename?: 'SampleBasisConfig' }
-    & FieldConfigSampleBasisConfigFragment
-  ) | (
-    { __typename?: 'SampleDeclarationConfig' }
-    & FieldConfigSampleDeclarationConfigFragment
-  ) | (
-    { __typename?: 'SampleEsiBasisConfig' }
-    & FieldConfigSampleEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'SubTemplateConfig' }
-    & FieldConfigSubTemplateConfigFragment
-  ) | (
-    { __typename?: 'ProposalBasisConfig' }
-    & FieldConfigProposalBasisConfigFragment
-  ) | (
-    { __typename?: 'ProposalEsiBasisConfig' }
-    & FieldConfigProposalEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'IntervalConfig' }
-    & FieldConfigIntervalConfigFragment
-  ) | (
-    { __typename?: 'NumberInputConfig' }
-    & FieldConfigNumberInputConfigFragment
-  ) | (
-    { __typename?: 'ShipmentBasisConfig' }
-    & FieldConfigShipmentBasisConfigFragment
-  ) | (
-    { __typename?: 'RichTextInputConfig' }
-    & FieldConfigRichTextInputConfigFragment
-  ) | (
-    { __typename?: 'VisitBasisConfig' }
-    & FieldConfigVisitBasisConfigFragment
-  ), dependencies: Array<(
-    { __typename?: 'FieldDependency' }
-    & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
-    & { condition: (
-      { __typename?: 'FieldCondition' }
-      & FieldConditionFragment
-    ) }
-  )> }
-);
+export type AnswerFragment = { answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> };
 
-export type QuestionaryFragment = (
-  { __typename?: 'Questionary' }
-  & Pick<Questionary, 'questionaryId' | 'templateId' | 'created'>
-  & { steps: Array<(
-    { __typename?: 'QuestionaryStep' }
-    & QuestionaryStepFragment
-  )> }
-);
+export type QuestionaryFragment = { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> };
 
-export type QuestionaryStepFragment = (
-  { __typename?: 'QuestionaryStep' }
-  & Pick<QuestionaryStep, 'isCompleted'>
-  & { topic: (
-    { __typename?: 'Topic' }
-    & TopicFragment
-  ), fields: Array<(
-    { __typename?: 'Answer' }
-    & AnswerFragment
-  )> }
-);
+export type QuestionaryStepFragment = { isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> };
 
 export type GetBlankQuestionaryQueryVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
 
 
-export type GetBlankQuestionaryQuery = (
-  { __typename?: 'Query' }
-  & { blankQuestionary: (
-    { __typename?: 'Questionary' }
-    & Pick<Questionary, 'isCompleted'>
-    & QuestionaryFragment
-  ) }
-);
+export type GetBlankQuestionaryQuery = { blankQuestionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } };
 
 export type GetBlankQuestionaryStepsQueryVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
 
 
-export type GetBlankQuestionaryStepsQuery = (
-  { __typename?: 'Query' }
-  & { blankQuestionarySteps: Maybe<Array<(
-    { __typename?: 'QuestionaryStep' }
-    & QuestionaryStepFragment
-  )>> }
-);
+export type GetBlankQuestionaryStepsQuery = { blankQuestionarySteps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> | null };
 
 export type GetFileMetadataQueryVariables = Exact<{
   fileIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetFileMetadataQuery = (
-  { __typename?: 'Query' }
-  & { fileMetadata: Maybe<Array<(
-    { __typename?: 'FileMetadata' }
-    & Pick<FileMetadata, 'fileId' | 'originalFileName' | 'mimeType' | 'sizeInBytes' | 'createdDate'>
-  )>> }
-);
+export type GetFileMetadataQuery = { fileMetadata: Array<{ fileId: string, originalFileName: string, mimeType: string, sizeInBytes: number, createdDate: any }> | null };
 
 export type GetQuestionaryQueryVariables = Exact<{
   questionaryId: Scalars['Int'];
 }>;
 
 
-export type GetQuestionaryQuery = (
-  { __typename?: 'Query' }
-  & { questionary: Maybe<(
-    { __typename?: 'Questionary' }
-    & QuestionaryFragment
-  )> }
-);
+export type GetQuestionaryQuery = { questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } | null };
 
 export type AddTechnicalReviewMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
-  timeAllocation?: Maybe<Scalars['Int']>;
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  status?: Maybe<TechnicalReviewStatus>;
+  timeAllocation?: InputMaybe<Scalars['Int']>;
+  comment?: InputMaybe<Scalars['String']>;
+  publicComment?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
   reviewerId: Scalars['Int'];
 }>;
 
 
-export type AddTechnicalReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { addTechnicalReview: (
-    { __typename?: 'TechnicalReviewResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, technicalReview: Maybe<(
-      { __typename?: 'TechnicalReview' }
-      & Pick<TechnicalReview, 'id'>
-    )> }
-  ) }
-);
+export type AddTechnicalReviewMutation = { addTechnicalReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, technicalReview: { id: number } | null } };
 
 export type AddUserForReviewMutationVariables = Exact<{
   userID: Scalars['Int'];
@@ -5328,19 +3876,7 @@ export type AddUserForReviewMutationVariables = Exact<{
 }>;
 
 
-export type AddUserForReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { addUserForReview: (
-    { __typename?: 'ReviewResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, review: Maybe<(
-      { __typename?: 'Review' }
-      & Pick<Review, 'id'>
-    )> }
-  ) }
-);
+export type AddUserForReviewMutation = { addUserForReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, review: { id: number } | null } };
 
 export type UpdateTechnicalReviewAssigneeMutationVariables = Exact<{
   proposalPks: Array<Scalars['Int']> | Scalars['Int'];
@@ -5348,62 +3884,24 @@ export type UpdateTechnicalReviewAssigneeMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTechnicalReviewAssigneeMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTechnicalReviewAssignee: (
-    { __typename?: 'ProposalsResponseWrap' }
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & ProposalFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateTechnicalReviewAssigneeMutation = { updateTechnicalReviewAssignee: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type CoreReviewFragment = (
-  { __typename?: 'Review' }
-  & Pick<Review, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
-);
+export type CoreReviewFragment = { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number };
 
 export type GetProposalReviewsQueryVariables = Exact<{
   proposalPk: Scalars['Int'];
 }>;
 
 
-export type GetProposalReviewsQuery = (
-  { __typename?: 'Query' }
-  & { proposalReviews: Maybe<Array<(
-    { __typename?: 'Review' }
-    & Pick<Review, 'id' | 'userID' | 'comment' | 'grade' | 'status' | 'sepID'>
-  )>> }
-);
+export type GetProposalReviewsQuery = { proposalReviews: Array<{ id: number, userID: number, comment: string | null, grade: number | null, status: ReviewStatus, sepID: number }> | null };
 
 export type GetReviewQueryVariables = Exact<{
   reviewId: Scalars['Int'];
-  sepId?: Maybe<Scalars['Int']>;
+  sepId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetReviewQuery = (
-  { __typename?: 'Query' }
-  & { review: Maybe<(
-    { __typename?: 'Review' }
-    & { proposal: Maybe<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'title' | 'abstract'>
-      & { proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & Pick<BasicUserDetails, 'id'>
-      )> }
-    )>, reviewer: Maybe<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-    & CoreReviewFragment
-  )> }
-);
+export type GetReviewQuery = { review: { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number, proposal: { primaryKey: number, title: string, abstract: string, proposer: { id: number } | null } | null, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null };
 
 export type RemoveUserForReviewMutationVariables = Exact<{
   reviewId: Scalars['Int'];
@@ -5411,58 +3909,27 @@ export type RemoveUserForReviewMutationVariables = Exact<{
 }>;
 
 
-export type RemoveUserForReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { removeUserForReview: (
-    { __typename?: 'ReviewResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type RemoveUserForReviewMutation = { removeUserForReview: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SubmitProposalsReviewMutationVariables = Exact<{
   proposals: Array<ProposalPkWithReviewId> | ProposalPkWithReviewId;
 }>;
 
 
-export type SubmitProposalsReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { submitProposalsReview: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SubmitProposalsReviewMutation = { submitProposalsReview: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SubmitTechnicalReviewMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
-  timeAllocation?: Maybe<Scalars['Int']>;
-  comment?: Maybe<Scalars['String']>;
-  publicComment?: Maybe<Scalars['String']>;
-  status?: Maybe<TechnicalReviewStatus>;
+  timeAllocation?: InputMaybe<Scalars['Int']>;
+  comment?: InputMaybe<Scalars['String']>;
+  publicComment?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
   reviewerId: Scalars['Int'];
 }>;
 
 
-export type SubmitTechnicalReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { submitTechnicalReview: (
-    { __typename?: 'TechnicalReviewResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, technicalReview: Maybe<(
-      { __typename?: 'TechnicalReview' }
-      & Pick<TechnicalReview, 'id'>
-    )> }
-  ) }
-);
+export type SubmitTechnicalReviewMutation = { submitTechnicalReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, technicalReview: { id: number } | null } };
 
 export type AddReviewMutationVariables = Exact<{
   reviewID: Scalars['Int'];
@@ -5473,54 +3940,26 @@ export type AddReviewMutationVariables = Exact<{
 }>;
 
 
-export type AddReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { addReview: (
-    { __typename?: 'ReviewWithNextStatusResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, review: Maybe<(
-      { __typename?: 'ReviewWithNextProposalStatus' }
-      & Pick<ReviewWithNextProposalStatus, 'id' | 'userID' | 'status' | 'comment' | 'grade' | 'sepID'>
-      & { nextProposalStatus: Maybe<(
-        { __typename?: 'NextProposalStatus' }
-        & Pick<NextProposalStatus, 'id' | 'shortCode' | 'name'>
-      )> }
-    )> }
-  ) }
-);
+export type AddReviewMutation = { addReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, review: { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number, nextProposalStatus: { id: number | null, shortCode: string | null, name: string | null } | null } | null } };
 
 export type UserWithReviewsQueryVariables = Exact<{
-  callId?: Maybe<Scalars['Int']>;
-  instrumentId?: Maybe<Scalars['Int']>;
-  status?: Maybe<ReviewStatus>;
-  reviewer?: Maybe<ReviewerFilter>;
+  callId?: InputMaybe<Scalars['Int']>;
+  instrumentId?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<ReviewStatus>;
+  reviewer?: InputMaybe<ReviewerFilter>;
 }>;
 
 
-export type UserWithReviewsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstname' | 'lastname' | 'organisation'>
-    & { reviews: Array<(
-      { __typename?: 'Review' }
-      & Pick<Review, 'id' | 'grade' | 'comment' | 'status' | 'sepID'>
-      & { proposal: Maybe<(
-        { __typename?: 'Proposal' }
-        & Pick<Proposal, 'primaryKey' | 'title' | 'proposalId'>
-        & { call: Maybe<(
-          { __typename?: 'Call' }
-          & Pick<Call, 'shortCode'>
-        )>, instrument: Maybe<(
-          { __typename?: 'Instrument' }
-          & Pick<Instrument, 'shortCode'>
-        )> }
-      )> }
-    )> }
-  )> }
-);
+export type UserWithReviewsQuery = { me: { id: number, firstname: string, lastname: string, organisation: number, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, sepID: number, proposal: { primaryKey: number, title: string, proposalId: string, call: { shortCode: string } | null, instrument: { shortCode: string } | null } | null }> } | null };
+
+export type CloneSampleEsiMutationVariables = Exact<{
+  esiId: Scalars['Int'];
+  sampleId: Scalars['Int'];
+  newSampleTitle?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CloneSampleEsiMutation = { cloneSampleEsi: { esi: { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateSampleEsiMutationVariables = Exact<{
   sampleId: Scalars['Int'];
@@ -5528,27 +3967,7 @@ export type CreateSampleEsiMutationVariables = Exact<{
 }>;
 
 
-export type CreateSampleEsiMutation = (
-  { __typename?: 'Mutation' }
-  & { createSampleEsi: (
-    { __typename?: 'SampleEsiResponseWrap' }
-    & { esi: Maybe<(
-      { __typename?: 'SampleExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), sample: (
-        { __typename?: 'Sample' }
-        & SampleFragment
-      ) }
-      & SampleEsiFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateSampleEsiMutation = { createSampleEsi: { esi: { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteSampleEsiMutationVariables = Exact<{
   sampleId: Scalars['Int'];
@@ -5556,24 +3975,9 @@ export type DeleteSampleEsiMutationVariables = Exact<{
 }>;
 
 
-export type DeleteSampleEsiMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteSampleEsi: (
-    { __typename?: 'SampleEsiResponseWrap' }
-    & { esi: Maybe<(
-      { __typename?: 'SampleExperimentSafetyInput' }
-      & SampleEsiFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteSampleEsiMutation = { deleteSampleEsi: { esi: { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type SampleEsiFragment = (
-  { __typename?: 'SampleExperimentSafetyInput' }
-  & Pick<SampleExperimentSafetyInput, 'sampleId' | 'esiId' | 'questionaryId' | 'isSubmitted'>
-);
+export type SampleEsiFragment = { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean };
 
 export type GetSampleEsiQueryVariables = Exact<{
   sampleId: Scalars['Int'];
@@ -5581,242 +3985,96 @@ export type GetSampleEsiQueryVariables = Exact<{
 }>;
 
 
-export type GetSampleEsiQuery = (
-  { __typename?: 'Query' }
-  & { sampleEsi: Maybe<(
-    { __typename?: 'SampleExperimentSafetyInput' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ), sample: (
-      { __typename?: 'Sample' }
-      & SampleFragment
-    ) }
-    & SampleEsiFragment
-  )> }
-);
+export type GetSampleEsiQuery = { sampleEsi: { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } } | null };
 
 export type UpdateSampleEsiMutationVariables = Exact<{
   esiId: Scalars['Int'];
   sampleId: Scalars['Int'];
-  isSubmitted?: Maybe<Scalars['Boolean']>;
+  isSubmitted?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateSampleEsiMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSampleEsi: (
-    { __typename?: 'SampleEsiResponseWrap' }
-    & { esi: Maybe<(
-      { __typename?: 'SampleExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), sample: (
-        { __typename?: 'Sample' }
-        & SampleFragment
-      ) }
-      & SampleEsiFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateSampleEsiMutation = { updateSampleEsi: { esi: { sampleId: number, esiId: number, questionaryId: number, isSubmitted: boolean, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CloneSampleMutationVariables = Exact<{
   sampleId: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  isPostProposalSubmission?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type CloneSampleMutation = (
-  { __typename?: 'Mutation' }
-  & { cloneSample: (
-    { __typename?: 'SampleResponseWrap' }
-    & { sample: Maybe<(
-      { __typename?: 'Sample' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & SampleFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CloneSampleMutation = { cloneSample: { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateSampleMutationVariables = Exact<{
   title: Scalars['String'];
   templateId: Scalars['Int'];
   proposalPk: Scalars['Int'];
   questionId: Scalars['String'];
+  isPostProposalSubmission?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type CreateSampleMutation = (
-  { __typename?: 'Mutation' }
-  & { createSample: (
-    { __typename?: 'SampleResponseWrap' }
-    & { sample: Maybe<(
-      { __typename?: 'Sample' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & SampleFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateSampleMutation = { createSample: { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteSampleMutationVariables = Exact<{
   sampleId: Scalars['Int'];
 }>;
 
 
-export type DeleteSampleMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteSample: (
-    { __typename?: 'SampleResponseWrap' }
-    & { sample: Maybe<(
-      { __typename?: 'Sample' }
-      & SampleFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteSampleMutation = { deleteSample: { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type SampleFragment = (
-  { __typename?: 'Sample' }
-  & Pick<Sample, 'id' | 'title' | 'creatorId' | 'questionaryId' | 'safetyStatus' | 'safetyComment' | 'created' | 'proposalPk' | 'questionId'>
-);
+export type SampleFragment = { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string };
 
 export type GetSampleQueryVariables = Exact<{
   sampleId: Scalars['Int'];
 }>;
 
 
-export type GetSampleQuery = (
-  { __typename?: 'Query' }
-  & { sample: Maybe<(
-    { __typename?: 'Sample' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ) }
-    & SampleFragment
-  )> }
-);
+export type GetSampleQuery = { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null };
 
 export type GetSamplesByCallIdQueryVariables = Exact<{
   callId: Scalars['Int'];
 }>;
 
 
-export type GetSamplesByCallIdQuery = (
-  { __typename?: 'Query' }
-  & { samplesByCallId: Maybe<Array<(
-    { __typename?: 'Sample' }
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'proposalId'>
-    ) }
-    & SampleFragment
-  )>> }
-);
+export type GetSamplesByCallIdQuery = { samplesByCallId: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, proposal: { primaryKey: number, proposalId: string } }> | null };
 
 export type GetSamplesWithProposalDataQueryVariables = Exact<{
-  filter?: Maybe<SamplesFilter>;
+  filter?: InputMaybe<SamplesFilter>;
 }>;
 
 
-export type GetSamplesWithProposalDataQuery = (
-  { __typename?: 'Query' }
-  & { samples: Maybe<Array<(
-    { __typename?: 'Sample' }
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'proposalId'>
-    ) }
-    & SampleFragment
-  )>> }
-);
+export type GetSamplesWithProposalDataQuery = { samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, proposal: { primaryKey: number, proposalId: string } }> | null };
 
 export type GetSamplesWithQuestionaryStatusQueryVariables = Exact<{
-  filter?: Maybe<SamplesFilter>;
+  filter?: InputMaybe<SamplesFilter>;
 }>;
 
 
-export type GetSamplesWithQuestionaryStatusQuery = (
-  { __typename?: 'Query' }
-  & { samples: Maybe<Array<(
-    { __typename?: 'Sample' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-    ) }
-    & SampleFragment
-  )>> }
-);
+export type GetSamplesWithQuestionaryStatusQuery = { samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null };
 
 export type UpdateSampleMutationVariables = Exact<{
   sampleId: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  safetyComment?: Maybe<Scalars['String']>;
-  safetyStatus?: Maybe<SampleStatus>;
+  title?: InputMaybe<Scalars['String']>;
+  safetyComment?: InputMaybe<Scalars['String']>;
+  safetyStatus?: InputMaybe<SampleStatus>;
 }>;
 
 
-export type UpdateSampleMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSample: (
-    { __typename?: 'SampleResponseWrap' }
-    & { sample: Maybe<(
-      { __typename?: 'Sample' }
-      & SampleFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateSampleMutation = { updateSample: { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AddProposalWorkflowStatusMutationVariables = Exact<{
   proposalWorkflowId: Scalars['Int'];
   sortOrder: Scalars['Int'];
   droppableGroupId: Scalars['String'];
-  parentDroppableGroupId?: Maybe<Scalars['String']>;
+  parentDroppableGroupId?: InputMaybe<Scalars['String']>;
   proposalStatusId: Scalars['Int'];
-  nextProposalStatusId?: Maybe<Scalars['Int']>;
-  prevProposalStatusId?: Maybe<Scalars['Int']>;
+  nextProposalStatusId?: InputMaybe<Scalars['Int']>;
+  prevProposalStatusId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type AddProposalWorkflowStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { addProposalWorkflowStatus: (
-    { __typename?: 'ProposalWorkflowConnectionResponseWrap' }
-    & { proposalWorkflowConnection: Maybe<(
-      { __typename?: 'ProposalWorkflowConnection' }
-      & Pick<ProposalWorkflowConnection, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AddProposalWorkflowStatusMutation = { addProposalWorkflowStatus: { proposalWorkflowConnection: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AddStatusChangingEventsToConnectionMutationVariables = Exact<{
   proposalWorkflowConnectionId: Scalars['Int'];
@@ -5824,19 +4082,7 @@ export type AddStatusChangingEventsToConnectionMutationVariables = Exact<{
 }>;
 
 
-export type AddStatusChangingEventsToConnectionMutation = (
-  { __typename?: 'Mutation' }
-  & { addStatusChangingEventsToConnection: (
-    { __typename?: 'ProposalStatusChangingEventResponseWrap' }
-    & { statusChangingEvents: Maybe<Array<(
-      { __typename?: 'StatusChangingEvent' }
-      & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
-    )>>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type AddStatusChangingEventsToConnectionMutation = { addStatusChangingEventsToConnection: { statusChangingEvents: Array<{ statusChangingEventId: number, proposalWorkflowConnectionId: number, statusChangingEvent: string }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateProposalStatusMutationVariables = Exact<{
   shortCode: Scalars['String'];
@@ -5845,19 +4091,7 @@ export type CreateProposalStatusMutationVariables = Exact<{
 }>;
 
 
-export type CreateProposalStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { createProposalStatus: (
-    { __typename?: 'ProposalStatusResponseWrap' }
-    & { proposalStatus: Maybe<(
-      { __typename?: 'ProposalStatus' }
-      & ProposalStatusFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateProposalStatusMutation = { createProposalStatus: { proposalStatus: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateProposalWorkflowMutationVariables = Exact<{
   name: Scalars['String'];
@@ -5865,72 +4099,21 @@ export type CreateProposalWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type CreateProposalWorkflowMutation = (
-  { __typename?: 'Mutation' }
-  & { createProposalWorkflow: (
-    { __typename?: 'ProposalWorkflowResponseWrap' }
-    & { proposalWorkflow: Maybe<(
-      { __typename?: 'ProposalWorkflow' }
-      & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-      & { proposalWorkflowConnectionGroups: Array<(
-        { __typename?: 'ProposalWorkflowConnectionGroup' }
-        & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
-        & { connections: Array<(
-          { __typename?: 'ProposalWorkflowConnection' }
-          & Pick<ProposalWorkflowConnection, 'id' | 'sortOrder' | 'proposalWorkflowId' | 'proposalStatusId' | 'nextProposalStatusId' | 'prevProposalStatusId' | 'droppableGroupId'>
-          & { proposalStatus: (
-            { __typename?: 'ProposalStatus' }
-            & ProposalStatusFragment
-          ), statusChangingEvents: Maybe<Array<(
-            { __typename?: 'StatusChangingEvent' }
-            & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
-          )>> }
-        )> }
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateProposalWorkflowMutation = { createProposalWorkflow: { proposalWorkflow: { id: number, name: string, description: string, proposalWorkflowConnectionGroups: Array<{ groupId: string, parentGroupId: string | null, connections: Array<{ id: number, sortOrder: number, proposalWorkflowId: number, proposalStatusId: number, nextProposalStatusId: number | null, prevProposalStatusId: number | null, droppableGroupId: string, proposalStatus: { id: number, shortCode: string, name: string, description: string, isDefault: boolean }, statusChangingEvents: Array<{ statusChangingEventId: number, proposalWorkflowConnectionId: number, statusChangingEvent: string }> | null }> }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteProposalStatusMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteProposalStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteProposalStatus: (
-    { __typename?: 'ProposalStatusResponseWrap' }
-    & { proposalStatus: Maybe<(
-      { __typename?: 'ProposalStatus' }
-      & ProposalStatusFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteProposalStatusMutation = { deleteProposalStatus: { proposalStatus: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteProposalWorkflowMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteProposalWorkflowMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteProposalWorkflow: (
-    { __typename?: 'ProposalWorkflowResponseWrap' }
-    & { proposalWorkflow: Maybe<(
-      { __typename?: 'ProposalWorkflow' }
-      & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteProposalWorkflowMutation = { deleteProposalWorkflow: { proposalWorkflow: { id: number, name: string, description: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteProposalWorkflowStatusMutationVariables = Exact<{
   proposalStatusId: Scalars['Int'];
@@ -5939,83 +4122,31 @@ export type DeleteProposalWorkflowStatusMutationVariables = Exact<{
 }>;
 
 
-export type DeleteProposalWorkflowStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteProposalWorkflowStatus: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteProposalWorkflowStatusMutation = { deleteProposalWorkflowStatus: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type ProposalStatusFragment = (
-  { __typename?: 'ProposalStatus' }
-  & Pick<ProposalStatus, 'id' | 'shortCode' | 'name' | 'description' | 'isDefault'>
-);
+export type ProposalStatusFragment = { id: number, shortCode: string, name: string, description: string, isDefault: boolean };
 
 export type GetProposalEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProposalEventsQuery = (
-  { __typename?: 'Query' }
-  & { proposalEvents: Maybe<Array<(
-    { __typename?: 'ProposalEvent' }
-    & Pick<ProposalEvent, 'name' | 'description'>
-  )>> }
-);
+export type GetProposalEventsQuery = { proposalEvents: Array<{ name: Event, description: string | null }> | null };
 
 export type GetProposalStatusesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProposalStatusesQuery = (
-  { __typename?: 'Query' }
-  & { proposalStatuses: Maybe<Array<(
-    { __typename?: 'ProposalStatus' }
-    & ProposalStatusFragment
-  )>> }
-);
+export type GetProposalStatusesQuery = { proposalStatuses: Array<{ id: number, shortCode: string, name: string, description: string, isDefault: boolean }> | null };
 
 export type GetProposalWorkflowQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetProposalWorkflowQuery = (
-  { __typename?: 'Query' }
-  & { proposalWorkflow: Maybe<(
-    { __typename?: 'ProposalWorkflow' }
-    & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-    & { proposalWorkflowConnectionGroups: Array<(
-      { __typename?: 'ProposalWorkflowConnectionGroup' }
-      & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
-      & { connections: Array<(
-        { __typename?: 'ProposalWorkflowConnection' }
-        & Pick<ProposalWorkflowConnection, 'id' | 'sortOrder' | 'proposalWorkflowId' | 'proposalStatusId' | 'nextProposalStatusId' | 'prevProposalStatusId' | 'droppableGroupId'>
-        & { proposalStatus: (
-          { __typename?: 'ProposalStatus' }
-          & ProposalStatusFragment
-        ), statusChangingEvents: Maybe<Array<(
-          { __typename?: 'StatusChangingEvent' }
-          & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
-        )>> }
-      )> }
-    )> }
-  )> }
-);
+export type GetProposalWorkflowQuery = { proposalWorkflow: { id: number, name: string, description: string, proposalWorkflowConnectionGroups: Array<{ groupId: string, parentGroupId: string | null, connections: Array<{ id: number, sortOrder: number, proposalWorkflowId: number, proposalStatusId: number, nextProposalStatusId: number | null, prevProposalStatusId: number | null, droppableGroupId: string, proposalStatus: { id: number, shortCode: string, name: string, description: string, isDefault: boolean }, statusChangingEvents: Array<{ statusChangingEventId: number, proposalWorkflowConnectionId: number, statusChangingEvent: string }> | null }> }> } | null };
 
 export type GetProposalWorkflowsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProposalWorkflowsQuery = (
-  { __typename?: 'Query' }
-  & { proposalWorkflows: Maybe<Array<(
-    { __typename?: 'ProposalWorkflow' }
-    & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-  )>> }
-);
+export type GetProposalWorkflowsQuery = { proposalWorkflows: Array<{ id: number, name: string, description: string }> | null };
 
 export type MoveProposalWorkflowStatusMutationVariables = Exact<{
   from: IndexWithGroupId;
@@ -6024,16 +4155,7 @@ export type MoveProposalWorkflowStatusMutationVariables = Exact<{
 }>;
 
 
-export type MoveProposalWorkflowStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { moveProposalWorkflowStatus: (
-    { __typename?: 'ProposalWorkflowConnectionResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type MoveProposalWorkflowStatusMutation = { moveProposalWorkflowStatus: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateProposalStatusMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -6043,19 +4165,7 @@ export type UpdateProposalStatusMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProposalStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProposalStatus: (
-    { __typename?: 'ProposalStatusResponseWrap' }
-    & { proposalStatus: Maybe<(
-      { __typename?: 'ProposalStatus' }
-      & ProposalStatusFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateProposalStatusMutation = { updateProposalStatus: { proposalStatus: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateProposalWorkflowMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -6064,34 +4174,7 @@ export type UpdateProposalWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProposalWorkflowMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProposalWorkflow: (
-    { __typename?: 'ProposalWorkflowResponseWrap' }
-    & { proposalWorkflow: Maybe<(
-      { __typename?: 'ProposalWorkflow' }
-      & Pick<ProposalWorkflow, 'id' | 'name' | 'description'>
-      & { proposalWorkflowConnectionGroups: Array<(
-        { __typename?: 'ProposalWorkflowConnectionGroup' }
-        & Pick<ProposalWorkflowConnectionGroup, 'groupId' | 'parentGroupId'>
-        & { connections: Array<(
-          { __typename?: 'ProposalWorkflowConnection' }
-          & Pick<ProposalWorkflowConnection, 'id' | 'sortOrder' | 'proposalWorkflowId' | 'proposalStatusId' | 'nextProposalStatusId' | 'prevProposalStatusId' | 'droppableGroupId'>
-          & { proposalStatus: (
-            { __typename?: 'ProposalStatus' }
-            & Pick<ProposalStatus, 'id' | 'name' | 'description'>
-          ), statusChangingEvents: Maybe<Array<(
-            { __typename?: 'StatusChangingEvent' }
-            & Pick<StatusChangingEvent, 'statusChangingEventId' | 'proposalWorkflowConnectionId' | 'statusChangingEvent'>
-          )>> }
-        )> }
-      )> }
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateProposalWorkflowMutation = { updateProposalWorkflow: { proposalWorkflow: { id: number, name: string, description: string, proposalWorkflowConnectionGroups: Array<{ groupId: string, parentGroupId: string | null, connections: Array<{ id: number, sortOrder: number, proposalWorkflowId: number, proposalStatusId: number, nextProposalStatusId: number | null, prevProposalStatusId: number | null, droppableGroupId: string, proposalStatus: { id: number, name: string, description: string }, statusChangingEvents: Array<{ statusChangingEventId: number, proposalWorkflowConnectionId: number, statusChangingEvent: string }> | null }> }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AddSamplesToShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
@@ -6099,122 +4182,44 @@ export type AddSamplesToShipmentMutationVariables = Exact<{
 }>;
 
 
-export type AddSamplesToShipmentMutation = (
-  { __typename?: 'Mutation' }
-  & { addSamplesToShipment: (
-    { __typename?: 'ShipmentResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, shipment: Maybe<(
-      { __typename?: 'Shipment' }
-      & { samples: Array<(
-        { __typename?: 'Sample' }
-        & SampleFragment
-      )> }
-      & ShipmentFragment
-    )> }
-  ) }
-);
+export type AddSamplesToShipmentMutation = { addSamplesToShipment: { rejection: { reason: string, context: string | null, exception: string | null } | null, shipment: { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }>, proposal: { proposalId: string } } | null } };
 
 export type CreateShipmentMutationVariables = Exact<{
   title: Scalars['String'];
   proposalPk: Scalars['Int'];
-  visitId: Scalars['Int'];
+  scheduledEventId: Scalars['Int'];
 }>;
 
 
-export type CreateShipmentMutation = (
-  { __typename?: 'Mutation' }
-  & { createShipment: (
-    { __typename?: 'ShipmentResponseWrap' }
-    & { shipment: Maybe<(
-      { __typename?: 'Shipment' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ), samples: Array<(
-        { __typename?: 'Sample' }
-        & SampleFragment
-      )> }
-      & ShipmentFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateShipmentMutation = { createShipment: { shipment: { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }>, proposal: { proposalId: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
 }>;
 
 
-export type DeleteShipmentMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteShipment: (
-    { __typename?: 'ShipmentResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteShipmentMutation = { deleteShipment: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type ShipmentFragment = (
-  { __typename?: 'Shipment' }
-  & Pick<Shipment, 'id' | 'title' | 'proposalPk' | 'status' | 'externalRef' | 'questionaryId' | 'visitId' | 'creatorId' | 'created'>
-  & { proposal: (
-    { __typename?: 'Proposal' }
-    & Pick<Proposal, 'proposalId'>
-  ) }
-);
+export type ShipmentFragment = { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } };
 
 export type GetMyShipmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyShipmentsQuery = (
-  { __typename?: 'Query' }
-  & { myShipments: Maybe<Array<(
-    { __typename?: 'Shipment' }
-    & ShipmentFragment
-  )>> }
-);
+export type GetMyShipmentsQuery = { myShipments: Array<{ id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } }> | null };
 
 export type GetShipmentQueryVariables = Exact<{
   shipmentId: Scalars['Int'];
 }>;
 
 
-export type GetShipmentQuery = (
-  { __typename?: 'Query' }
-  & { shipment: Maybe<(
-    { __typename?: 'Shipment' }
-    & { questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ), samples: Array<(
-      { __typename?: 'Sample' }
-      & SampleFragment
-    )> }
-    & ShipmentFragment
-  )> }
-);
+export type GetShipmentQuery = { shipment: { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string }>, proposal: { proposalId: string } } | null };
 
 export type GetShipmentsQueryVariables = Exact<{
-  filter?: Maybe<ShipmentsFilter>;
+  filter?: InputMaybe<ShipmentsFilter>;
 }>;
 
 
-export type GetShipmentsQuery = (
-  { __typename?: 'Query' }
-  & { shipments: Maybe<Array<(
-    { __typename?: 'Shipment' }
-    & ShipmentFragment
-  )>> }
-);
+export type GetShipmentsQuery = { shipments: Array<{ id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } }> | null };
 
 export type SetActiveTemplateMutationVariables = Exact<{
   templateGroupId: TemplateGroupId;
@@ -6222,82 +4227,39 @@ export type SetActiveTemplateMutationVariables = Exact<{
 }>;
 
 
-export type SetActiveTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { setActiveTemplate: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SetActiveTemplateMutation = { setActiveTemplate: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SubmitShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
 }>;
 
 
-export type SubmitShipmentMutation = (
-  { __typename?: 'Mutation' }
-  & { submitShipment: (
-    { __typename?: 'ShipmentResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, shipment: Maybe<(
-      { __typename?: 'Shipment' }
-      & ShipmentFragment
-    )> }
-  ) }
-);
+export type SubmitShipmentMutation = { submitShipment: { rejection: { reason: string, context: string | null, exception: string | null } | null, shipment: { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } } | null } };
 
 export type UpdateShipmentMutationVariables = Exact<{
   shipmentId: Scalars['Int'];
-  title?: Maybe<Scalars['String']>;
-  proposalPk?: Maybe<Scalars['Int']>;
-  status?: Maybe<ShipmentStatus>;
+  title?: InputMaybe<Scalars['String']>;
+  proposalPk?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<ShipmentStatus>;
 }>;
 
 
-export type UpdateShipmentMutation = (
-  { __typename?: 'Mutation' }
-  & { updateShipment: (
-    { __typename?: 'ShipmentResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )>, shipment: Maybe<(
-      { __typename?: 'Shipment' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & ShipmentFragment
-    )> }
-  ) }
-);
+export type UpdateShipmentMutation = { updateShipment: { rejection: { reason: string, context: string | null, exception: string | null } | null, shipment: { id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, proposal: { proposalId: string } } | null } };
+
+export type ImportTemplateMutationVariables = Exact<{
+  templateAsJson: Scalars['String'];
+  conflictResolutions: Array<ConflictResolution> | ConflictResolution;
+}>;
+
+
+export type ImportTemplateMutation = { importTemplate: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CloneTemplateMutationVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
 
 
-export type CloneTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { cloneTemplate: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateMetadataFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CloneTemplateMutation = { cloneTemplate: { template: { questionaryCount: number, templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateQuestionMutationVariables = Exact<{
   categoryId: TemplateCategoryId;
@@ -6305,19 +4267,7 @@ export type CreateQuestionMutationVariables = Exact<{
 }>;
 
 
-export type CreateQuestionMutation = (
-  { __typename?: 'Mutation' }
-  & { createQuestion: (
-    { __typename?: 'QuestionResponseWrap' }
-    & { question: Maybe<(
-      { __typename?: 'Question' }
-      & QuestionFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateQuestionMutation = { createQuestion: { question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateQuestionTemplateRelationMutationVariables = Exact<{
   templateId: Scalars['Int'];
@@ -6327,40 +4277,16 @@ export type CreateQuestionTemplateRelationMutationVariables = Exact<{
 }>;
 
 
-export type CreateQuestionTemplateRelationMutation = (
-  { __typename?: 'Mutation' }
-  & { createQuestionTemplateRelation: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateQuestionTemplateRelationMutation = { createQuestionTemplateRelation: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateTemplateMutationVariables = Exact<{
   groupId: TemplateGroupId;
   name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { createTemplate: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateMetadataFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateTemplateMutation = { createTemplate: { template: { questionaryCount: number, templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateTopicMutationVariables = Exact<{
   templateId: Scalars['Int'];
@@ -6368,38 +4294,14 @@ export type CreateTopicMutationVariables = Exact<{
 }>;
 
 
-export type CreateTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { createTopic: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateTopicMutation = { createTopic: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteQuestionMutationVariables = Exact<{
   questionId: Scalars['String'];
 }>;
 
 
-export type DeleteQuestionMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteQuestion: (
-    { __typename?: 'QuestionResponseWrap' }
-    & { question: Maybe<(
-      { __typename?: 'Question' }
-      & QuestionFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteQuestionMutation = { deleteQuestion: { question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteQuestionTemplateRelationMutationVariables = Exact<{
   questionId: Scalars['String'];
@@ -6407,604 +4309,204 @@ export type DeleteQuestionTemplateRelationMutationVariables = Exact<{
 }>;
 
 
-export type DeleteQuestionTemplateRelationMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteQuestionTemplateRelation: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteQuestionTemplateRelationMutation = { deleteQuestionTemplateRelation: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteTemplateMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteTemplate: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & Pick<Template, 'templateId' | 'name'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteTemplateMutation = { deleteTemplate: { template: { templateId: number, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteTopicMutationVariables = Exact<{
   topicId: Scalars['Int'];
 }>;
 
 
-export type DeleteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteTopic: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteTopicMutation = { deleteTopic: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type FieldConditionFragment = (
-  { __typename?: 'FieldCondition' }
-  & Pick<FieldCondition, 'condition' | 'params'>
-);
+export type FieldConditionFragment = { condition: EvaluatorOperator, params: any };
 
-type FieldConfigBooleanConfigFragment = (
-  { __typename?: 'BooleanConfig' }
-  & Pick<BooleanConfig, 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_BooleanConfig_Fragment = { small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigDateConfigFragment = (
-  { __typename?: 'DateConfig' }
-  & Pick<DateConfig, 'small_label' | 'required' | 'tooltip' | 'minDate' | 'maxDate' | 'defaultDate' | 'includeTime'>
-);
+type FieldConfig_DateConfig_Fragment = { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean };
 
-type FieldConfigEmbellishmentConfigFragment = (
-  { __typename?: 'EmbellishmentConfig' }
-  & Pick<EmbellishmentConfig, 'html' | 'plain' | 'omitFromPdf'>
-);
+type FieldConfig_EmbellishmentConfig_Fragment = { html: string, plain: string, omitFromPdf: boolean };
 
-type FieldConfigFileUploadConfigFragment = (
-  { __typename?: 'FileUploadConfig' }
-  & Pick<FileUploadConfig, 'file_type' | 'max_files' | 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_FeedbackBasisConfig_Fragment = { small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigSelectionFromOptionsConfigFragment = (
-  { __typename?: 'SelectionFromOptionsConfig' }
-  & Pick<SelectionFromOptionsConfig, 'variant' | 'options' | 'isMultipleSelect' | 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_FileUploadConfig_Fragment = { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigTextInputConfigFragment = (
-  { __typename?: 'TextInputConfig' }
-  & Pick<TextInputConfig, 'min' | 'max' | 'multiline' | 'placeholder' | 'small_label' | 'required' | 'tooltip' | 'htmlQuestion' | 'isHtmlQuestion' | 'isCounterHidden'>
-);
+type FieldConfig_GenericTemplateBasisConfig_Fragment = { titlePlaceholder: string, questionLabel: string };
 
-type FieldConfigSampleBasisConfigFragment = (
-  { __typename?: 'SampleBasisConfig' }
-  & Pick<SampleBasisConfig, 'titlePlaceholder'>
-);
+type FieldConfig_IntervalConfig_Fragment = { units: Array<string> | null, small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigSampleDeclarationConfigFragment = (
-  { __typename?: 'SampleDeclarationConfig' }
-  & Pick<SampleDeclarationConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'esiTemplateId' | 'templateCategory' | 'required' | 'small_label'>
-);
+type FieldConfig_NumberInputConfig_Fragment = { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigSampleEsiBasisConfigFragment = (
-  { __typename?: 'SampleEsiBasisConfig' }
-  & Pick<SampleEsiBasisConfig, 'tooltip'>
-);
+type FieldConfig_ProposalBasisConfig_Fragment = { tooltip: string };
 
-type FieldConfigSubTemplateConfigFragment = (
-  { __typename?: 'SubTemplateConfig' }
-  & Pick<SubTemplateConfig, 'addEntryButtonLabel' | 'minEntries' | 'maxEntries' | 'templateId' | 'templateCategory' | 'required' | 'small_label'>
-);
+type FieldConfig_ProposalEsiBasisConfig_Fragment = { tooltip: string };
 
-type FieldConfigProposalBasisConfigFragment = (
-  { __typename?: 'ProposalBasisConfig' }
-  & Pick<ProposalBasisConfig, 'tooltip'>
-);
+type FieldConfig_RichTextInputConfig_Fragment = { small_label: string, required: boolean, tooltip: string, max: number | null };
 
-type FieldConfigProposalEsiBasisConfigFragment = (
-  { __typename?: 'ProposalEsiBasisConfig' }
-  & Pick<ProposalEsiBasisConfig, 'tooltip'>
-);
+type FieldConfig_SampleBasisConfig_Fragment = { titlePlaceholder: string };
 
-type FieldConfigIntervalConfigFragment = (
-  { __typename?: 'IntervalConfig' }
-  & Pick<IntervalConfig, 'units' | 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_SampleDeclarationConfig_Fragment = { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string };
 
-type FieldConfigNumberInputConfigFragment = (
-  { __typename?: 'NumberInputConfig' }
-  & Pick<NumberInputConfig, 'units' | 'numberValueConstraint' | 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_SampleEsiBasisConfig_Fragment = { tooltip: string };
 
-type FieldConfigShipmentBasisConfigFragment = (
-  { __typename?: 'ShipmentBasisConfig' }
-  & Pick<ShipmentBasisConfig, 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_SelectionFromOptionsConfig_Fragment = { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigRichTextInputConfigFragment = (
-  { __typename?: 'RichTextInputConfig' }
-  & Pick<RichTextInputConfig, 'small_label' | 'required' | 'tooltip' | 'max'>
-);
+type FieldConfig_ShipmentBasisConfig_Fragment = { small_label: string, required: boolean, tooltip: string };
 
-type FieldConfigVisitBasisConfigFragment = (
-  { __typename?: 'VisitBasisConfig' }
-  & Pick<VisitBasisConfig, 'small_label' | 'required' | 'tooltip'>
-);
+type FieldConfig_SubTemplateConfig_Fragment = { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string };
 
-export type FieldConfigFragment = FieldConfigBooleanConfigFragment | FieldConfigDateConfigFragment | FieldConfigEmbellishmentConfigFragment | FieldConfigFileUploadConfigFragment | FieldConfigSelectionFromOptionsConfigFragment | FieldConfigTextInputConfigFragment | FieldConfigSampleBasisConfigFragment | FieldConfigSampleDeclarationConfigFragment | FieldConfigSampleEsiBasisConfigFragment | FieldConfigSubTemplateConfigFragment | FieldConfigProposalBasisConfigFragment | FieldConfigProposalEsiBasisConfigFragment | FieldConfigIntervalConfigFragment | FieldConfigNumberInputConfigFragment | FieldConfigShipmentBasisConfigFragment | FieldConfigRichTextInputConfigFragment | FieldConfigVisitBasisConfigFragment;
+type FieldConfig_TextInputConfig_Fragment = { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean };
 
-export type QuestionFragment = (
-  { __typename?: 'Question' }
-  & Pick<Question, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
-  & { config: (
-    { __typename?: 'BooleanConfig' }
-    & FieldConfigBooleanConfigFragment
-  ) | (
-    { __typename?: 'DateConfig' }
-    & FieldConfigDateConfigFragment
-  ) | (
-    { __typename?: 'EmbellishmentConfig' }
-    & FieldConfigEmbellishmentConfigFragment
-  ) | (
-    { __typename?: 'FileUploadConfig' }
-    & FieldConfigFileUploadConfigFragment
-  ) | (
-    { __typename?: 'SelectionFromOptionsConfig' }
-    & FieldConfigSelectionFromOptionsConfigFragment
-  ) | (
-    { __typename?: 'TextInputConfig' }
-    & FieldConfigTextInputConfigFragment
-  ) | (
-    { __typename?: 'SampleBasisConfig' }
-    & FieldConfigSampleBasisConfigFragment
-  ) | (
-    { __typename?: 'SampleDeclarationConfig' }
-    & FieldConfigSampleDeclarationConfigFragment
-  ) | (
-    { __typename?: 'SampleEsiBasisConfig' }
-    & FieldConfigSampleEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'SubTemplateConfig' }
-    & FieldConfigSubTemplateConfigFragment
-  ) | (
-    { __typename?: 'ProposalBasisConfig' }
-    & FieldConfigProposalBasisConfigFragment
-  ) | (
-    { __typename?: 'ProposalEsiBasisConfig' }
-    & FieldConfigProposalEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'IntervalConfig' }
-    & FieldConfigIntervalConfigFragment
-  ) | (
-    { __typename?: 'NumberInputConfig' }
-    & FieldConfigNumberInputConfigFragment
-  ) | (
-    { __typename?: 'ShipmentBasisConfig' }
-    & FieldConfigShipmentBasisConfigFragment
-  ) | (
-    { __typename?: 'RichTextInputConfig' }
-    & FieldConfigRichTextInputConfigFragment
-  ) | (
-    { __typename?: 'VisitBasisConfig' }
-    & FieldConfigVisitBasisConfigFragment
-  ) }
-);
+type FieldConfig_VisitBasisConfig_Fragment = { small_label: string, required: boolean, tooltip: string };
 
-export type QuestionTemplateRelationFragment = (
-  { __typename?: 'QuestionTemplateRelation' }
-  & Pick<QuestionTemplateRelation, 'sortOrder' | 'topicId' | 'dependenciesOperator'>
-  & { question: (
-    { __typename?: 'Question' }
-    & QuestionFragment
-  ), config: (
-    { __typename?: 'BooleanConfig' }
-    & FieldConfigBooleanConfigFragment
-  ) | (
-    { __typename?: 'DateConfig' }
-    & FieldConfigDateConfigFragment
-  ) | (
-    { __typename?: 'EmbellishmentConfig' }
-    & FieldConfigEmbellishmentConfigFragment
-  ) | (
-    { __typename?: 'FileUploadConfig' }
-    & FieldConfigFileUploadConfigFragment
-  ) | (
-    { __typename?: 'SelectionFromOptionsConfig' }
-    & FieldConfigSelectionFromOptionsConfigFragment
-  ) | (
-    { __typename?: 'TextInputConfig' }
-    & FieldConfigTextInputConfigFragment
-  ) | (
-    { __typename?: 'SampleBasisConfig' }
-    & FieldConfigSampleBasisConfigFragment
-  ) | (
-    { __typename?: 'SampleDeclarationConfig' }
-    & FieldConfigSampleDeclarationConfigFragment
-  ) | (
-    { __typename?: 'SampleEsiBasisConfig' }
-    & FieldConfigSampleEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'SubTemplateConfig' }
-    & FieldConfigSubTemplateConfigFragment
-  ) | (
-    { __typename?: 'ProposalBasisConfig' }
-    & FieldConfigProposalBasisConfigFragment
-  ) | (
-    { __typename?: 'ProposalEsiBasisConfig' }
-    & FieldConfigProposalEsiBasisConfigFragment
-  ) | (
-    { __typename?: 'IntervalConfig' }
-    & FieldConfigIntervalConfigFragment
-  ) | (
-    { __typename?: 'NumberInputConfig' }
-    & FieldConfigNumberInputConfigFragment
-  ) | (
-    { __typename?: 'ShipmentBasisConfig' }
-    & FieldConfigShipmentBasisConfigFragment
-  ) | (
-    { __typename?: 'RichTextInputConfig' }
-    & FieldConfigRichTextInputConfigFragment
-  ) | (
-    { __typename?: 'VisitBasisConfig' }
-    & FieldConfigVisitBasisConfigFragment
-  ), dependencies: Array<(
-    { __typename?: 'FieldDependency' }
-    & Pick<FieldDependency, 'questionId' | 'dependencyId' | 'dependencyNaturalKey'>
-    & { condition: (
-      { __typename?: 'FieldCondition' }
-      & FieldConditionFragment
-    ) }
-  )> }
-);
+export type FieldConfigFragment = FieldConfig_BooleanConfig_Fragment | FieldConfig_DateConfig_Fragment | FieldConfig_EmbellishmentConfig_Fragment | FieldConfig_FeedbackBasisConfig_Fragment | FieldConfig_FileUploadConfig_Fragment | FieldConfig_GenericTemplateBasisConfig_Fragment | FieldConfig_IntervalConfig_Fragment | FieldConfig_NumberInputConfig_Fragment | FieldConfig_ProposalBasisConfig_Fragment | FieldConfig_ProposalEsiBasisConfig_Fragment | FieldConfig_RichTextInputConfig_Fragment | FieldConfig_SampleBasisConfig_Fragment | FieldConfig_SampleDeclarationConfig_Fragment | FieldConfig_SampleEsiBasisConfig_Fragment | FieldConfig_SelectionFromOptionsConfig_Fragment | FieldConfig_ShipmentBasisConfig_Fragment | FieldConfig_SubTemplateConfig_Fragment | FieldConfig_TextInputConfig_Fragment | FieldConfig_VisitBasisConfig_Fragment;
 
-export type TemplateFragment = (
-  { __typename?: 'Template' }
-  & Pick<Template, 'isArchived' | 'questionaryCount' | 'templateId' | 'groupId' | 'name' | 'description'>
-  & { steps: Array<(
-    { __typename?: 'TemplateStep' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicFragment
-    ), fields: Array<(
-      { __typename?: 'QuestionTemplateRelation' }
-      & QuestionTemplateRelationFragment
-    )> }
-  )>, complementaryQuestions: Array<(
-    { __typename?: 'Question' }
-    & QuestionFragment
-  )>, group: (
-    { __typename?: 'TemplateGroup' }
-    & Pick<TemplateGroup, 'groupId' | 'categoryId'>
-  ) }
-);
+export type QuestionFragment = { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } };
 
-export type TemplateMetadataFragment = (
-  { __typename?: 'Template' }
-  & Pick<Template, 'templateId' | 'name' | 'description' | 'isArchived'>
-);
+export type QuestionTemplateRelationFragment = { sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> };
 
-export type TemplateStepFragment = (
-  { __typename?: 'TemplateStep' }
-  & { topic: (
-    { __typename?: 'Topic' }
-    & Pick<Topic, 'title' | 'id' | 'sortOrder' | 'isEnabled'>
-  ), fields: Array<(
-    { __typename?: 'QuestionTemplateRelation' }
-    & QuestionTemplateRelationFragment
-  )> }
-);
+export type TemplateFragment = { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } };
 
-export type TopicFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Topic, 'title' | 'id' | 'templateId' | 'sortOrder' | 'isEnabled'>
-);
+export type TemplateMetadataFragment = { templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> };
+
+export type TemplateStepFragment = { topic: { title: string, id: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> };
+
+export type TopicFragment = { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean };
 
 export type GetActiveTemplateIdQueryVariables = Exact<{
   templateGroupId: TemplateGroupId;
 }>;
 
 
-export type GetActiveTemplateIdQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'activeTemplateId'>
-);
+export type GetActiveTemplateIdQuery = { activeTemplateId: number | null };
 
 export type GetIsNaturalKeyPresentQueryVariables = Exact<{
   naturalKey: Scalars['String'];
 }>;
 
 
-export type GetIsNaturalKeyPresentQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'isNaturalKeyPresent'>
-);
+export type GetIsNaturalKeyPresentQuery = { isNaturalKeyPresent: boolean | null };
 
 export type GetProposalTemplatesQueryVariables = Exact<{
-  filter?: Maybe<ProposalTemplatesFilter>;
+  filter?: InputMaybe<ProposalTemplatesFilter>;
 }>;
 
 
-export type GetProposalTemplatesQuery = (
-  { __typename?: 'Query' }
-  & { proposalTemplates: Maybe<Array<(
-    { __typename?: 'ProposalTemplate' }
-    & Pick<ProposalTemplate, 'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount' | 'callCount'>
-  )>> }
-);
+export type GetProposalTemplatesQuery = { proposalTemplates: Array<{ templateId: number, name: string, description: string | null, isArchived: boolean, questionaryCount: number, callCount: number }> | null };
 
 export type GetQuestionsQueryVariables = Exact<{
-  filter?: Maybe<QuestionsFilter>;
+  filter?: InputMaybe<QuestionsFilter>;
 }>;
 
 
-export type GetQuestionsQuery = (
-  { __typename?: 'Query' }
-  & { questions: Array<(
-    { __typename?: 'QuestionWithUsage' }
-    & Pick<QuestionWithUsage, 'id' | 'question' | 'naturalKey' | 'dataType' | 'categoryId'>
-    & { config: (
-      { __typename?: 'BooleanConfig' }
-      & FieldConfigBooleanConfigFragment
-    ) | (
-      { __typename?: 'DateConfig' }
-      & FieldConfigDateConfigFragment
-    ) | (
-      { __typename?: 'EmbellishmentConfig' }
-      & FieldConfigEmbellishmentConfigFragment
-    ) | (
-      { __typename?: 'FileUploadConfig' }
-      & FieldConfigFileUploadConfigFragment
-    ) | (
-      { __typename?: 'SelectionFromOptionsConfig' }
-      & FieldConfigSelectionFromOptionsConfigFragment
-    ) | (
-      { __typename?: 'TextInputConfig' }
-      & FieldConfigTextInputConfigFragment
-    ) | (
-      { __typename?: 'SampleBasisConfig' }
-      & FieldConfigSampleBasisConfigFragment
-    ) | (
-      { __typename?: 'SampleDeclarationConfig' }
-      & FieldConfigSampleDeclarationConfigFragment
-    ) | (
-      { __typename?: 'SampleEsiBasisConfig' }
-      & FieldConfigSampleEsiBasisConfigFragment
-    ) | (
-      { __typename?: 'SubTemplateConfig' }
-      & FieldConfigSubTemplateConfigFragment
-    ) | (
-      { __typename?: 'ProposalBasisConfig' }
-      & FieldConfigProposalBasisConfigFragment
-    ) | (
-      { __typename?: 'ProposalEsiBasisConfig' }
-      & FieldConfigProposalEsiBasisConfigFragment
-    ) | (
-      { __typename?: 'IntervalConfig' }
-      & FieldConfigIntervalConfigFragment
-    ) | (
-      { __typename?: 'NumberInputConfig' }
-      & FieldConfigNumberInputConfigFragment
-    ) | (
-      { __typename?: 'ShipmentBasisConfig' }
-      & FieldConfigShipmentBasisConfigFragment
-    ) | (
-      { __typename?: 'RichTextInputConfig' }
-      & FieldConfigRichTextInputConfigFragment
-    ) | (
-      { __typename?: 'VisitBasisConfig' }
-      & FieldConfigVisitBasisConfigFragment
-    ), answers: Array<(
-      { __typename?: 'AnswerBasic' }
-      & Pick<AnswerBasic, 'questionaryId'>
-    )>, templates: Array<(
-      { __typename?: 'Template' }
-      & Pick<Template, 'templateId'>
-    )> }
-  )> }
-);
+export type GetQuestionsQuery = { questions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, answers: Array<{ questionaryId: number }>, templates: Array<{ templateId: number }> }> };
 
 export type GetTemplateQueryVariables = Exact<{
   templateId: Scalars['Int'];
 }>;
 
 
-export type GetTemplateQuery = (
-  { __typename?: 'Query' }
-  & { template: Maybe<(
-    { __typename?: 'Template' }
-    & TemplateFragment
-  )> }
-);
+export type GetTemplateQuery = { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null };
 
 export type GetTemplateCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTemplateCategoriesQuery = (
-  { __typename?: 'Query' }
-  & { templateCategories: Maybe<Array<(
-    { __typename?: 'TemplateCategory' }
-    & Pick<TemplateCategory, 'categoryId' | 'name'>
-  )>> }
-);
+export type GetTemplateCategoriesQuery = { templateCategories: Array<{ categoryId: TemplateCategoryId, name: string }> | null };
 
-export type GetTemplatesQueryVariables = Exact<{
-  filter?: Maybe<TemplatesFilter>;
+export type GetTemplateExportQueryVariables = Exact<{
+  templateId: Scalars['Int'];
 }>;
 
 
-export type GetTemplatesQuery = (
-  { __typename?: 'Query' }
-  & { templates: Maybe<Array<(
-    { __typename?: 'Template' }
-    & Pick<Template, 'templateId' | 'name' | 'description' | 'isArchived' | 'questionaryCount'>
-  )>> }
-);
+export type GetTemplateExportQuery = { template: { json: string } | null };
+
+export type GetTemplatesQueryVariables = Exact<{
+  filter?: InputMaybe<TemplatesFilter>;
+}>;
+
+
+export type GetTemplatesQuery = { templates: Array<{ templateId: number, name: string, description: string | null, isArchived: boolean, questionaryCount: number }> | null };
 
 export type UpdateQuestionMutationVariables = Exact<{
   id: Scalars['String'];
-  naturalKey?: Maybe<Scalars['String']>;
-  question?: Maybe<Scalars['String']>;
-  config?: Maybe<Scalars['String']>;
+  naturalKey?: InputMaybe<Scalars['String']>;
+  question?: InputMaybe<Scalars['String']>;
+  config?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateQuestionMutation = (
-  { __typename?: 'Mutation' }
-  & { updateQuestion: (
-    { __typename?: 'QuestionResponseWrap' }
-    & { question: Maybe<(
-      { __typename?: 'Question' }
-      & QuestionFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateQuestionMutation = { updateQuestion: { question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateQuestionTemplateRelationMutationVariables = Exact<{
   questionId: Scalars['String'];
   templateId: Scalars['Int'];
-  topicId?: Maybe<Scalars['Int']>;
+  topicId?: InputMaybe<Scalars['Int']>;
   sortOrder: Scalars['Int'];
-  config?: Maybe<Scalars['String']>;
+  config?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateQuestionTemplateRelationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateQuestionTemplateRelation: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateQuestionTemplateRelationMutation = { updateQuestionTemplateRelation: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateQuestionTemplateRelationSettingsMutationVariables = Exact<{
   questionId: Scalars['String'];
   templateId: Scalars['Int'];
-  config?: Maybe<Scalars['String']>;
+  config?: InputMaybe<Scalars['String']>;
   dependencies: Array<FieldDependencyInput> | FieldDependencyInput;
-  dependenciesOperator?: Maybe<DependenciesLogicOperator>;
+  dependenciesOperator?: InputMaybe<DependenciesLogicOperator>;
 }>;
 
 
-export type UpdateQuestionTemplateRelationSettingsMutation = (
-  { __typename?: 'Mutation' }
-  & { updateQuestionTemplateRelationSettings: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateQuestionTemplateRelationSettingsMutation = { updateQuestionTemplateRelationSettings: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateTemplateMutationVariables = Exact<{
   templateId: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  isArchived?: Maybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateTemplateMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTemplate: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateMetadataFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateTemplateMutation = { updateTemplate: { template: { templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateTopicMutationVariables = Exact<{
   topicId: Scalars['Int'];
-  templateId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  sortOrder?: Maybe<Scalars['Int']>;
-  isEnabled?: Maybe<Scalars['Boolean']>;
+  templateId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+  sortOrder?: InputMaybe<Scalars['Int']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTopic: (
-    { __typename?: 'TemplateResponseWrap' }
-    & { template: Maybe<(
-      { __typename?: 'Template' }
-      & TemplateFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateTopicMutation = { updateTopic: { template: { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type CheckExternalTokenMutationVariables = Exact<{
-  externalToken: Scalars['String'];
+export type ValidateTemplateImportMutationVariables = Exact<{
+  templateAsJson: Scalars['String'];
 }>;
 
 
-export type CheckExternalTokenMutation = (
-  { __typename?: 'Mutation' }
-  & { checkExternalToken: (
-    { __typename?: 'CheckExternalTokenWrap' }
-    & Pick<CheckExternalTokenWrap, 'token'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type ValidateTemplateImportMutation = { validateTemplateImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CheckTokenQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
 
 
-export type CheckTokenQuery = (
-  { __typename?: 'Query' }
-  & { checkToken: (
-    { __typename?: 'TokenResult' }
-    & Pick<TokenResult, 'isValid'>
-  ) }
-);
+export type CheckTokenQuery = { checkToken: { isValid: boolean } };
 
 export type CreateUserMutationVariables = Exact<{
-  user_title?: Maybe<Scalars['String']>;
+  user_title?: InputMaybe<Scalars['String']>;
   firstname: Scalars['String'];
-  middlename?: Maybe<Scalars['String']>;
+  middlename?: InputMaybe<Scalars['String']>;
   lastname: Scalars['String'];
   password: Scalars['String'];
-  preferredname?: Maybe<Scalars['String']>;
+  preferredname?: InputMaybe<Scalars['String']>;
   orcid: Scalars['String'];
   orcidHash: Scalars['String'];
   refreshToken: Scalars['String'];
@@ -7016,24 +4518,12 @@ export type CreateUserMutationVariables = Exact<{
   position: Scalars['String'];
   email: Scalars['String'];
   telephone: Scalars['String'];
-  telephone_alt?: Maybe<Scalars['String']>;
-  otherOrganisation?: Maybe<Scalars['String']>;
+  telephone_alt?: InputMaybe<Scalars['String']>;
+  otherOrganisation?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { createUser: (
-    { __typename?: 'UserResponseWrap' }
-    & { user: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateUserMutation = { createUser: { user: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateUserByEmailInviteMutationVariables = Exact<{
   firstname: Scalars['String'];
@@ -7043,263 +4533,121 @@ export type CreateUserByEmailInviteMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserByEmailInviteMutation = (
-  { __typename?: 'Mutation' }
-  & { createUserByEmailInvite: (
-    { __typename?: 'CreateUserByEmailInviteResponseWrap' }
-    & Pick<CreateUserByEmailInviteResponseWrap, 'id'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateUserByEmailInviteMutation = { createUserByEmailInvite: { id: number | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type DeleteUserMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteUser: (
-    { __typename?: 'UserResponseWrap' }
-    & { user: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteUserMutation = { deleteUser: { user: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type BasicUserDetailsFragment = (
-  { __typename?: 'BasicUserDetails' }
-  & Pick<BasicUserDetails, 'id' | 'firstname' | 'lastname' | 'organisation' | 'position' | 'created' | 'placeholder'>
-);
+export type ExternalTokenLoginMutationVariables = Exact<{
+  externalToken: Scalars['String'];
+}>;
+
+
+export type ExternalTokenLoginMutation = { externalTokenLogin: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type BasicUserDetailsFragment = { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null };
 
 export type GetBasicUserDetailsQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetBasicUserDetailsQuery = (
-  { __typename?: 'Query' }
-  & { basicUserDetails: Maybe<(
-    { __typename?: 'BasicUserDetails' }
-    & BasicUserDetailsFragment
-  )> }
-);
+export type GetBasicUserDetailsQuery = { basicUserDetails: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null };
 
 export type GetBasicUserDetailsByEmailQueryVariables = Exact<{
   email: Scalars['String'];
-  role?: Maybe<UserRole>;
+  role?: InputMaybe<UserRole>;
 }>;
 
 
-export type GetBasicUserDetailsByEmailQuery = (
-  { __typename?: 'Query' }
-  & { basicUserDetailsByEmail: Maybe<(
-    { __typename?: 'BasicUserDetails' }
-    & BasicUserDetailsFragment
-  )> }
-);
+export type GetBasicUserDetailsByEmailQuery = { basicUserDetailsByEmail: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null };
 
 export type GetFieldsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFieldsQuery = (
-  { __typename?: 'Query' }
-  & { getFields: Maybe<(
-    { __typename?: 'Fields' }
-    & { nationalities: Array<(
-      { __typename?: 'Entry' }
-      & Pick<Entry, 'id' | 'value'>
-    )> }
-  )> }
-);
+export type GetFieldsQuery = { getFields: { nationalities: Array<{ id: number, value: string }> } | null };
 
 export type GetMyRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyRolesQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'firstname' | 'lastname'>
-    & { roles: Array<(
-      { __typename?: 'Role' }
-      & Pick<Role, 'id' | 'shortCode' | 'title'>
-    )> }
-  )> }
-);
+export type GetMyRolesQuery = { me: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string }> } | null };
 
 export type GetOrcIdInformationQueryVariables = Exact<{
   authorizationCode: Scalars['String'];
 }>;
 
 
-export type GetOrcIdInformationQuery = (
-  { __typename?: 'Query' }
-  & { getOrcIDInformation: Maybe<(
-    { __typename?: 'OrcIDInformation' }
-    & Pick<OrcIdInformation, 'firstname' | 'lastname' | 'orcid' | 'orcidHash' | 'refreshToken' | 'token'>
-  )> }
-);
+export type GetOrcIdInformationQuery = { getOrcIDInformation: { firstname: string | null, lastname: string | null, orcid: string | null, orcidHash: string | null, refreshToken: string | null, token: string | null } | null };
 
 export type GetPreviousCollaboratorsQueryVariables = Exact<{
   userId: Scalars['Int'];
-  filter?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  userRole?: Maybe<UserRole>;
-  subtractUsers?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  userRole?: InputMaybe<UserRole>;
+  subtractUsers?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
-export type GetPreviousCollaboratorsQuery = (
-  { __typename?: 'Query' }
-  & { previousCollaborators: Maybe<(
-    { __typename?: 'UserQueryResult' }
-    & Pick<UserQueryResult, 'totalCount'>
-    & { users: Array<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-  )> }
-);
+export type GetPreviousCollaboratorsQuery = { previousCollaborators: { totalCount: number, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null };
 
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = (
-  { __typename?: 'Query' }
-  & { roles: Maybe<Array<(
-    { __typename?: 'Role' }
-    & Pick<Role, 'id' | 'shortCode' | 'title'>
-  )>> }
-);
+export type GetRolesQuery = { roles: Array<{ id: number, shortCode: string, title: string }> | null };
 
 export type GetTokenMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
 
 
-export type GetTokenMutation = (
-  { __typename?: 'Mutation' }
-  & { token: (
-    { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type GetTokenMutation = { token: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetTokenForUserMutationVariables = Exact<{
   userId: Scalars['Int'];
 }>;
 
 
-export type GetTokenForUserMutation = (
-  { __typename?: 'Mutation' }
-  & { getTokenForUser: (
-    { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type GetTokenForUserMutation = { getTokenForUser: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetUserQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetUserQuery = (
-  { __typename?: 'Query' }
-  & { user: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid' | 'emailVerified' | 'placeholder'>
-  )> }
-);
+export type GetUserQuery = { user: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: string, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, orcid: string, emailVerified: boolean, placeholder: boolean } | null };
 
 export type GetUserMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserMeQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'user_title' | 'username' | 'firstname' | 'middlename' | 'lastname' | 'preferredname' | 'gender' | 'nationality' | 'birthdate' | 'organisation' | 'department' | 'position' | 'email' | 'telephone' | 'telephone_alt' | 'orcid' | 'emailVerified' | 'placeholder'>
-  )> }
-);
+export type GetUserMeQuery = { me: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: string, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, orcid: string, emailVerified: boolean, placeholder: boolean } | null };
 
 export type GetUserProposalsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserProposalsQuery = (
-  { __typename?: 'Query' }
-  & { me: Maybe<(
-    { __typename?: 'User' }
-    & { proposals: Array<(
-      { __typename?: 'Proposal' }
-      & Pick<Proposal, 'primaryKey' | 'proposalId' | 'title' | 'publicStatus' | 'statusId' | 'created' | 'finalStatus' | 'notified' | 'submitted'>
-      & { status: Maybe<(
-        { __typename?: 'ProposalStatus' }
-        & ProposalStatusFragment
-      )>, proposer: Maybe<(
-        { __typename?: 'BasicUserDetails' }
-        & Pick<BasicUserDetails, 'id'>
-      )>, call: Maybe<(
-        { __typename?: 'Call' }
-        & Pick<Call, 'id' | 'shortCode' | 'isActive'>
-      )> }
-    )> }
-  )> }
-);
+export type GetUserProposalsQuery = { me: { proposals: Array<{ primaryKey: number, proposalId: string, title: string, publicStatus: ProposalPublicStatus, statusId: number, created: any, finalStatus: ProposalEndStatus | null, notified: boolean, submitted: boolean, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, proposer: { id: number } | null, call: { id: number, shortCode: string, isActive: boolean, referenceNumberFormat: string | null } | null }> } | null };
 
 export type GetUserWithRolesQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetUserWithRolesQuery = (
-  { __typename?: 'Query' }
-  & { user: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'firstname' | 'lastname'>
-    & { roles: Array<(
-      { __typename?: 'Role' }
-      & Pick<Role, 'id' | 'shortCode' | 'title'>
-    )> }
-  )> }
-);
+export type GetUserWithRolesQuery = { user: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string }> } | null };
 
 export type GetUsersQueryVariables = Exact<{
-  filter?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  userRole?: Maybe<UserRole>;
-  subtractUsers?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  userRole?: InputMaybe<UserRole>;
+  subtractUsers?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
-export type GetUsersQuery = (
-  { __typename?: 'Query' }
-  & { users: Maybe<(
-    { __typename?: 'UserQueryResult' }
-    & Pick<UserQueryResult, 'totalCount'>
-    & { users: Array<(
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    )> }
-  )> }
-);
+export type GetUsersQuery = { users: { totalCount: number, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -7307,17 +4655,14 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login: (
-    { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type LoginMutation = { login: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type LogoutMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type LogoutMutation = { logout: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type ResetPasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -7325,33 +4670,14 @@ export type ResetPasswordMutationVariables = Exact<{
 }>;
 
 
-export type ResetPasswordMutation = (
-  { __typename?: 'Mutation' }
-  & { resetPassword: (
-    { __typename?: 'BasicUserDetailsResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type ResetPasswordMutation = { resetPassword: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type ResetPasswordEmailMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
 
 
-export type ResetPasswordEmailMutation = (
-  { __typename?: 'Mutation' }
-  & { resetPasswordEmail: (
-    { __typename?: 'SuccessResponseWrap' }
-    & Pick<SuccessResponseWrap, 'isSuccess'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type ResetPasswordEmailMutation = { resetPasswordEmail: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SelectRoleMutationVariables = Exact<{
   token: Scalars['String'];
@@ -7359,49 +4685,21 @@ export type SelectRoleMutationVariables = Exact<{
 }>;
 
 
-export type SelectRoleMutation = (
-  { __typename?: 'Mutation' }
-  & { selectRole: (
-    { __typename?: 'TokenResponseWrap' }
-    & Pick<TokenResponseWrap, 'token'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SelectRoleMutation = { selectRole: { token: string | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SetUserEmailVerifiedMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type SetUserEmailVerifiedMutation = (
-  { __typename?: 'Mutation' }
-  & { setUserEmailVerified: (
-    { __typename?: 'UserResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SetUserEmailVerifiedMutation = { setUserEmailVerified: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type SetUserNotPlaceholderMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type SetUserNotPlaceholderMutation = (
-  { __typename?: 'Mutation' }
-  & { setUserNotPlaceholder: (
-    { __typename?: 'UserResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type SetUserNotPlaceholderMutation = { setUserNotPlaceholder: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdatePasswordMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -7409,24 +4707,15 @@ export type UpdatePasswordMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePassword: (
-    { __typename?: 'BasicUserDetailsResponseWrap' }
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdatePasswordMutation = { updatePassword: { rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars['Int'];
-  user_title?: Maybe<Scalars['String']>;
+  user_title?: InputMaybe<Scalars['String']>;
   firstname: Scalars['String'];
-  middlename?: Maybe<Scalars['String']>;
+  middlename?: InputMaybe<Scalars['String']>;
   lastname: Scalars['String'];
-  preferredname?: Maybe<Scalars['String']>;
+  preferredname?: InputMaybe<Scalars['String']>;
   gender: Scalars['String'];
   nationality: Scalars['Int'];
   birthdate: Scalars['String'];
@@ -7435,308 +4724,93 @@ export type UpdateUserMutationVariables = Exact<{
   position: Scalars['String'];
   email: Scalars['String'];
   telephone: Scalars['String'];
-  telephone_alt?: Maybe<Scalars['String']>;
+  telephone_alt?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { updateUser: (
-    { __typename?: 'UserResponseWrap' }
-    & { user: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateUserMutation = { updateUser: { user: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateUserRolesMutationVariables = Exact<{
   id: Scalars['Int'];
-  roles?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  roles?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
-export type UpdateUserRolesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateUserRoles: (
-    { __typename?: 'UserResponseWrap' }
-    & { user: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateUserRolesMutation = { updateUserRoles: { user: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type VerifyEmailMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
 
 
-export type VerifyEmailMutation = (
-  { __typename?: 'Mutation' }
-  & { emailVerification: (
-    { __typename?: 'EmailVerificationResponseWrap' }
-    & Pick<EmailVerificationResponseWrap, 'success'>
-    & { rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type VerifyEmailMutation = { emailVerification: { success: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateVisitMutationVariables = Exact<{
-  proposalPk: Scalars['Int'];
-  team: Array<Scalars['Int']> | Scalars['Int'];
   scheduledEventId: Scalars['Int'];
+  team: Array<Scalars['Int']> | Scalars['Int'];
   teamLeadUserId: Scalars['Int'];
 }>;
 
 
-export type CreateVisitMutation = (
-  { __typename?: 'Mutation' }
-  & { createVisit: (
-    { __typename?: 'VisitResponseWrap' }
-    & { visit: Maybe<(
-      { __typename?: 'Visit' }
-      & { teamLead: (
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      ), registrations: Array<(
-        { __typename?: 'VisitRegistration' }
-        & { user: (
-          { __typename?: 'BasicUserDetails' }
-          & BasicUserDetailsFragment
-        ) }
-        & VisitRegistrationFragment
-      )>, proposal: (
-        { __typename?: 'Proposal' }
-        & { instrument: Maybe<(
-          { __typename?: 'Instrument' }
-          & Pick<Instrument, 'name'>
-        )> }
-        & ProposalFragment
-      ), shipments: Array<(
-        { __typename?: 'Shipment' }
-        & ShipmentFragment
-      )>, esi: Maybe<(
-        { __typename?: 'ExperimentSafetyInput' }
-        & EsiFragment
-      )> }
-      & VisitFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateVisitMutation = { createVisit: { visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }>, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, instrument: { name: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteVisitMutationVariables = Exact<{
   visitId: Scalars['Int'];
 }>;
 
 
-export type DeleteVisitMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteVisit: (
-    { __typename?: 'VisitResponseWrap' }
-    & { visit: Maybe<(
-      { __typename?: 'Visit' }
-      & VisitFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type DeleteVisitMutation = { deleteVisit: { visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type VisitFragment = (
-  { __typename?: 'Visit' }
-  & Pick<Visit, 'id' | 'proposalPk' | 'status' | 'creatorId'>
-);
+export type VisitFragment = { id: number, proposalPk: number, status: VisitStatus, creatorId: number };
 
 export type GetVisitQueryVariables = Exact<{
   visitId: Scalars['Int'];
 }>;
 
 
-export type GetVisitQuery = (
-  { __typename?: 'Query' }
-  & { visit: Maybe<(
-    { __typename?: 'Visit' }
-    & { registrations: Array<(
-      { __typename?: 'VisitRegistration' }
-      & { user: (
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      ) }
-      & VisitRegistrationFragment
-    )>, proposal: (
-      { __typename?: 'Proposal' }
-      & { instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'name'>
-      )> }
-      & ProposalFragment
-    ), esi: Maybe<(
-      { __typename?: 'ExperimentSafetyInput' }
-      & { questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & EsiFragment
-    )> }
-    & VisitFragment
-  )> }
-);
+export type GetVisitQuery = { visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }>, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, instrument: { name: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null };
 
 export type GetVisitsQueryVariables = Exact<{
-  filter?: Maybe<VisitsFilter>;
+  filter?: InputMaybe<VisitsFilter>;
 }>;
 
 
-export type GetVisitsQuery = (
-  { __typename?: 'Query' }
-  & { visits: Array<(
-    { __typename?: 'Visit' }
-    & { proposal: (
-      { __typename?: 'Proposal' }
-      & { instrument: Maybe<(
-        { __typename?: 'Instrument' }
-        & Pick<Instrument, 'name'>
-      )> }
-      & ProposalFragment
-    ) }
-    & VisitFragment
-  )> }
-);
+export type GetVisitsQuery = { visits: Array<{ id: number, proposalPk: number, status: VisitStatus, creatorId: number, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, instrument: { name: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } }> };
 
 export type UpdateVisitMutationVariables = Exact<{
   visitId: Scalars['Int'];
-  proposalPkAndEventId?: Maybe<ProposalPkAndEventId>;
-  team?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
-  status?: Maybe<VisitStatus>;
-  teamLeadUserId?: Maybe<Scalars['Int']>;
+  team?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+  status?: InputMaybe<VisitStatus>;
+  teamLeadUserId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type UpdateVisitMutation = (
-  { __typename?: 'Mutation' }
-  & { updateVisit: (
-    { __typename?: 'VisitResponseWrap' }
-    & { visit: Maybe<(
-      { __typename?: 'Visit' }
-      & { teamLead: (
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      ), registrations: Array<(
-        { __typename?: 'VisitRegistration' }
-        & { user: (
-          { __typename?: 'BasicUserDetails' }
-          & BasicUserDetailsFragment
-        ) }
-        & VisitRegistrationFragment
-      )>, proposal: (
-        { __typename?: 'Proposal' }
-        & { instrument: Maybe<(
-          { __typename?: 'Instrument' }
-          & Pick<Instrument, 'name'>
-        )> }
-        & ProposalFragment
-      ), shipments: Array<(
-        { __typename?: 'Shipment' }
-        & ShipmentFragment
-      )>, esi: Maybe<(
-        { __typename?: 'ExperimentSafetyInput' }
-        & EsiFragment
-      )> }
-      & VisitFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateVisitMutation = { updateVisit: { visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }>, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, instrument: { name: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateVisitRegistrationQuestionaryMutationVariables = Exact<{
   visitId: Scalars['Int'];
 }>;
 
 
-export type CreateVisitRegistrationQuestionaryMutation = (
-  { __typename?: 'Mutation' }
-  & { createVisitRegistrationQuestionary: (
-    { __typename?: 'VisitRegistrationResponseWrap' }
-    & { registration: Maybe<(
-      { __typename?: 'VisitRegistration' }
-      & { user: (
-        { __typename?: 'BasicUserDetails' }
-        & BasicUserDetailsFragment
-      ), questionary: (
-        { __typename?: 'Questionary' }
-        & Pick<Questionary, 'isCompleted'>
-        & QuestionaryFragment
-      ) }
-      & VisitRegistrationFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type CreateVisitRegistrationQuestionaryMutation = { createVisitRegistrationQuestionary: { registration: { userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type VisitRegistrationFragment = (
-  { __typename?: 'VisitRegistration' }
-  & Pick<VisitRegistration, 'userId' | 'visitId' | 'registrationQuestionaryId' | 'isRegistrationSubmitted' | 'trainingExpiryDate'>
-);
+export type VisitRegistrationFragment = { userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null };
 
 export type GetVisitRegistrationQueryVariables = Exact<{
   visitId: Scalars['Int'];
 }>;
 
 
-export type GetVisitRegistrationQuery = (
-  { __typename?: 'Query' }
-  & { visitRegistration: Maybe<(
-    { __typename?: 'VisitRegistration' }
-    & { user: (
-      { __typename?: 'BasicUserDetails' }
-      & BasicUserDetailsFragment
-    ), questionary: (
-      { __typename?: 'Questionary' }
-      & Pick<Questionary, 'isCompleted'>
-      & QuestionaryFragment
-    ) }
-    & VisitRegistrationFragment
-  )> }
-);
+export type GetVisitRegistrationQuery = { visitRegistration: { userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { units: Array<string> | null, small_label: string, required: boolean, tooltip: string } | { units: Array<string> | null, numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> } } | null };
 
 export type UpdateVisitRegistrationMutationVariables = Exact<{
   visitId: Scalars['Int'];
-  trainingExpiryDate?: Maybe<Scalars['DateTime']>;
-  isRegistrationSubmitted?: Maybe<Scalars['Boolean']>;
+  trainingExpiryDate?: InputMaybe<Scalars['DateTime']>;
+  isRegistrationSubmitted?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateVisitRegistrationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateVisitRegistration: (
-    { __typename?: 'VisitRegistrationResponseWrap' }
-    & { registration: Maybe<(
-      { __typename?: 'VisitRegistration' }
-      & VisitRegistrationFragment
-    )>, rejection: Maybe<(
-      { __typename?: 'Rejection' }
-      & RejectionFragment
-    )> }
-  ) }
-);
+export type UpdateVisitRegistrationMutation = { updateVisitRegistration: { registration: { userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export const RejectionFragmentDoc = gql`
     fragment rejection on Rejection {
@@ -7750,6 +4824,7 @@ export const BasicUserDetailsFragmentDoc = gql`
   id
   firstname
   lastname
+  preferredname
   organisation
   position
   created
@@ -7801,18 +4876,50 @@ export const CallFragmentDoc = gql`
   proposalCount
   title
   description
+  submissionMessage
 }
     ${BasicUserDetailsFragmentDoc}`;
 export const EsiFragmentDoc = gql`
     fragment esi on ExperimentSafetyInput {
   id
-  visitId
   creatorId
   questionaryId
   isSubmitted
   created
 }
     `;
+export const FeedbackFragmentDoc = gql`
+    fragment feedback on Feedback {
+  id
+  scheduledEventId
+  status
+  questionaryId
+  creatorId
+}
+    `;
+export const GenericTemplateFragmentDoc = gql`
+    fragment genericTemplate on GenericTemplate {
+  id
+  title
+  creatorId
+  questionaryId
+  created
+  proposalPk
+  questionId
+}
+    `;
+export const InstrumentFragmentDoc = gql`
+    fragment instrument on Instrument {
+  id
+  name
+  shortCode
+  description
+  managerUserId
+  scientists {
+    ...basicUserDetails
+  }
+}
+    ${BasicUserDetailsFragmentDoc}`;
 export const CoreTechnicalReviewFragmentDoc = gql`
     fragment coreTechnicalReview on TechnicalReview {
   id
@@ -7990,6 +5097,15 @@ export const FieldConfigFragmentDoc = gql`
     required
     tooltip
   }
+  ... on GenericTemplateBasisConfig {
+    titlePlaceholder
+    questionLabel
+  }
+  ... on FeedbackBasisConfig {
+    small_label
+    required
+    tooltip
+  }
 }
     `;
 export const QuestionFragmentDoc = gql`
@@ -8083,6 +5199,7 @@ export const SampleFragmentDoc = gql`
   questionaryId
   safetyStatus
   safetyComment
+  isPostProposalSubmission
   created
   proposalPk
   questionId
@@ -8096,7 +5213,7 @@ export const ShipmentFragmentDoc = gql`
   status
   externalRef
   questionaryId
-  visitId
+  scheduledEventId
   creatorId
   created
   proposal {
@@ -8160,8 +5277,13 @@ export const TemplateMetadataFragmentDoc = gql`
   name
   description
   isArchived
+  steps {
+    topic {
+      ...topic
+    }
+  }
 }
-    `;
+    ${TopicFragmentDoc}`;
 export const TemplateStepFragmentDoc = gql`
     fragment templateStep on TemplateStep {
   topic {
@@ -8350,17 +5472,11 @@ export const GetSepMembersDocument = gql`
       title
     }
     user {
-      id
-      firstname
-      lastname
-      organisation
-      position
-      placeholder
-      created
+      ...basicUserDetails
     }
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const GetSepProposalDocument = gql`
     query getSEPProposal($sepId: Int!, $proposalPk: Int!) {
   sepProposal(sepId: $sepId, proposalPk: $proposalPk) {
@@ -8501,17 +5617,11 @@ export const GetSepReviewersDocument = gql`
       title
     }
     user {
-      id
-      firstname
-      lastname
-      organisation
-      position
-      placeholder
-      created
+      ...basicUserDetails
     }
   }
 }
-    `;
+    ${BasicUserDetailsFragmentDoc}`;
 export const GetSePsDocument = gql`
     query getSEPs($filter: String!, $active: Boolean) {
   seps(filter: $filter, active: $active) {
@@ -8778,6 +5888,34 @@ export const GetUnitsDocument = gql`
   }
 }
     `;
+export const MergeInstitutionsDocument = gql`
+    mutation mergeInstitutions($institutionIdFrom: Int!, $institutionIdInto: Int!, $newTitle: String!) {
+  mergeInstitutions(
+    institutionIdFrom: $institutionIdFrom
+    institutionIdInto: $institutionIdInto
+    newTitle: $newTitle
+  ) {
+    institution {
+      id
+      verified
+      name
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const PrepareDbDocument = gql`
+    mutation prepareDB($includeSeeds: Boolean!) {
+  prepareDB(includeSeeds: $includeSeeds) {
+    log
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
 export const SetPageContentDocument = gql`
     mutation setPageContent($id: PageName!, $text: String!) {
   setPageContent(id: $id, text: $text) {
@@ -8837,9 +5975,9 @@ export const AssignInstrumentsToCallDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateCallDocument = gql`
-    mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
+    mutation createCall($shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $submissionMessage: String, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
   createCall(
-    createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $esiTemplateId, title: $title, description: $description}
+    createCallInput: {shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, submissionMessage: $submissionMessage, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $esiTemplateId, title: $title, description: $description}
   ) {
     rejection {
       ...rejection
@@ -8855,7 +5993,6 @@ export const DeleteCallDocument = gql`
     mutation deleteCall($id: Int!) {
   deleteCall(id: $id) {
     rejection {
-      ...rejection
       ...rejection
     }
     call {
@@ -8903,9 +6040,9 @@ export const RemoveAssignedInstrumentFromCallDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateCallDocument = gql`
-    mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
+    mutation updateCall($id: Int!, $shortCode: String!, $startCall: DateTime!, $endCall: DateTime!, $startReview: DateTime!, $endReview: DateTime!, $startSEPReview: DateTime, $endSEPReview: DateTime, $startNotify: DateTime!, $endNotify: DateTime!, $startCycle: DateTime!, $endCycle: DateTime!, $cycleComment: String!, $submissionMessage: String, $surveyComment: String!, $allocationTimeUnit: AllocationTimeUnits!, $referenceNumberFormat: String, $proposalWorkflowId: Int!, $templateId: Int!, $esiTemplateId: Int, $title: String, $description: String) {
   updateCall(
-    updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $esiTemplateId, title: $title, description: $description}
+    updateCallInput: {id: $id, shortCode: $shortCode, startCall: $startCall, endCall: $endCall, startReview: $startReview, endReview: $endReview, startSEPReview: $startSEPReview, endSEPReview: $endSEPReview, startNotify: $startNotify, endNotify: $endNotify, startCycle: $startCycle, endCycle: $endCycle, cycleComment: $cycleComment, submissionMessage: $submissionMessage, surveyComment: $surveyComment, allocationTimeUnit: $allocationTimeUnit, referenceNumberFormat: $referenceNumberFormat, proposalWorkflowId: $proposalWorkflowId, templateId: $templateId, esiTemplateId: $esiTemplateId, title: $title, description: $description}
   ) {
     rejection {
       ...rejection
@@ -8918,8 +6055,8 @@ export const UpdateCallDocument = gql`
     ${RejectionFragmentDoc}
 ${CallFragmentDoc}`;
 export const CreateEsiDocument = gql`
-    mutation createEsi($visitId: Int!) {
-  createEsi(visitId: $visitId) {
+    mutation createEsi($scheduledEventId: Int!) {
+  createEsi(scheduledEventId: $scheduledEventId) {
     esi {
       ...esi
       questionary {
@@ -8935,14 +6072,15 @@ export const CreateEsiDocument = gql`
           isCompleted
         }
       }
-      visit {
-        ...visit
-        proposal {
-          proposalId
-          title
-          samples {
-            ...sample
-          }
+      proposal {
+        primaryKey
+        proposalId
+        title
+        samples {
+          ...sample
+        }
+        questionary {
+          ...questionary
         }
       }
     }
@@ -8955,7 +6093,6 @@ export const CreateEsiDocument = gql`
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
 ${SampleEsiFragmentDoc}
-${VisitFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetEsiDocument = gql`
     query getEsi($esiId: Int!) {
@@ -8974,14 +6111,15 @@ export const GetEsiDocument = gql`
         isCompleted
       }
     }
-    visit {
-      ...visit
-      proposal {
-        proposalId
-        title
-        samples {
-          ...sample
-        }
+    proposal {
+      primaryKey
+      proposalId
+      title
+      samples {
+        ...sample
+      }
+      questionary {
+        ...questionary
       }
     }
   }
@@ -8989,8 +6127,7 @@ export const GetEsiDocument = gql`
     ${EsiFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
-${SampleEsiFragmentDoc}
-${VisitFragmentDoc}`;
+${SampleEsiFragmentDoc}`;
 export const UpdateEsiDocument = gql`
     mutation updateEsi($esiId: Int!, $isSubmitted: Boolean) {
   updateEsi(esiId: $esiId, isSubmitted: $isSubmitted) {
@@ -9037,6 +6174,154 @@ export const GetEventLogsDocument = gql`
   }
 }
     `;
+export const CreateFeedbackDocument = gql`
+    mutation createFeedback($scheduledEventId: Int!) {
+  createFeedback(scheduledEventId: $scheduledEventId) {
+    feedback {
+      ...feedback
+      questionary {
+        ...questionary
+        isCompleted
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
+export const GetFeedbackDocument = gql`
+    query getFeedback($feedbackId: Int!) {
+  feedback(feedbackId: $feedbackId) {
+    ...feedback
+    questionary {
+      ...questionary
+      isCompleted
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}`;
+export const UpdateFeedbackDocument = gql`
+    mutation updateFeedback($feedbackId: Int!, $status: FeedbackStatus) {
+  updateFeedback(feedbackId: $feedbackId, status: $status) {
+    feedback {
+      ...feedback
+      questionary {
+        ...questionary
+        isCompleted
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FeedbackFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
+export const CloneGenericTemplateDocument = gql`
+    mutation cloneGenericTemplate($genericTemplateId: Int!, $title: String) {
+  cloneGenericTemplate(genericTemplateId: $genericTemplateId, title: $title) {
+    genericTemplate {
+      ...genericTemplate
+      questionary {
+        isCompleted
+        ...questionary
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
+export const CreateGenericTemplateDocument = gql`
+    mutation createGenericTemplate($title: String!, $templateId: Int!, $proposalPk: Int!, $questionId: String!) {
+  createGenericTemplate(
+    title: $title
+    templateId: $templateId
+    proposalPk: $proposalPk
+    questionId: $questionId
+  ) {
+    genericTemplate {
+      ...genericTemplate
+      questionary {
+        isCompleted
+        ...questionary
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}
+${QuestionaryFragmentDoc}
+${RejectionFragmentDoc}`;
+export const DeleteGenericTemplateDocument = gql`
+    mutation deleteGenericTemplate($genericTemplateId: Int!) {
+  deleteGenericTemplate(genericTemplateId: $genericTemplateId) {
+    genericTemplate {
+      ...genericTemplate
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}
+${RejectionFragmentDoc}`;
+export const GetGenericTemplateDocument = gql`
+    query getGenericTemplate($genericTemplateId: Int!) {
+  genericTemplate(genericTemplateId: $genericTemplateId) {
+    ...genericTemplate
+    questionary {
+      isCompleted
+      ...questionary
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}
+${QuestionaryFragmentDoc}`;
+export const GetGenericTemplatesWithProposalDataDocument = gql`
+    query getGenericTemplatesWithProposalData($filter: GenericTemplatesFilter) {
+  genericTemplates(filter: $filter) {
+    ...genericTemplate
+    proposal {
+      primaryKey
+      proposalId
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}`;
+export const GetGenericTemplatesWithQuestionaryStatusDocument = gql`
+    query getGenericTemplatesWithQuestionaryStatus($filter: GenericTemplatesFilter) {
+  genericTemplates(filter: $filter) {
+    ...genericTemplate
+    questionary {
+      isCompleted
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}`;
+export const UpdateGenericTemplateDocument = gql`
+    mutation updateGenericTemplate($genericTemplateId: Int!, $title: String) {
+  updateGenericTemplate(genericTemplateId: $genericTemplateId, title: $title) {
+    genericTemplate {
+      ...genericTemplate
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${GenericTemplateFragmentDoc}
+${RejectionFragmentDoc}`;
 export const AssignProposalsToInstrumentDocument = gql`
     mutation assignProposalsToInstrument($proposals: [ProposalPkWithCallId!]!, $instrumentId: Int!) {
   assignProposalsToInstrument(proposals: $proposals, instrumentId: $instrumentId) {
@@ -9069,21 +6354,14 @@ export const CreateInstrumentDocument = gql`
     managerUserId: $managerUserId
   ) {
     instrument {
-      id
-      name
-      shortCode
-      description
-      managerUserId
-      scientists {
-        ...basicUserDetails
-      }
+      ...instrument
     }
     rejection {
       ...rejection
     }
   }
 }
-    ${BasicUserDetailsFragmentDoc}
+    ${InstrumentFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteInstrumentDocument = gql`
     mutation deleteInstrument($id: Int!) {
@@ -9098,34 +6376,21 @@ export const GetInstrumentsDocument = gql`
     query getInstruments($callIds: [Int!]) {
   instruments(callIds: $callIds) {
     instruments {
-      id
-      name
-      shortCode
-      description
-      managerUserId
-      scientists {
-        ...basicUserDetails
-      }
+      ...instrument
     }
     totalCount
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${InstrumentFragmentDoc}`;
 export const GetUserInstrumentsDocument = gql`
     query getUserInstruments {
   me {
     instruments {
-      id
-      name
-      shortCode
-      description
-      scientists {
-        ...basicUserDetails
-      }
+      ...instrument
     }
   }
 }
-    ${BasicUserDetailsFragmentDoc}`;
+    ${InstrumentFragmentDoc}`;
 export const RemoveProposalsFromInstrumentDocument = gql`
     mutation removeProposalsFromInstrument($proposalPks: [Int!]!) {
   removeProposalsFromInstrument(proposalPks: $proposalPks) {
@@ -9183,21 +6448,14 @@ export const UpdateInstrumentDocument = gql`
     managerUserId: $managerUserId
   ) {
     instrument {
-      id
-      name
-      shortCode
-      description
-      managerUserId
-      scientists {
-        ...basicUserDetails
-      }
+      ...instrument
     }
     rejection {
       ...rejection
     }
   }
 }
-    ${BasicUserDetailsFragmentDoc}
+    ${InstrumentFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const AdministrationProposalDocument = gql`
     mutation administrationProposal($proposalPk: Int!, $finalStatus: ProposalEndStatus, $statusId: Int, $commentForUser: String, $commentForManagement: String, $managementTimeAllocation: Int, $managementDecisionSubmitted: Boolean) {
@@ -9273,6 +6531,7 @@ export const CloneProposalsDocument = gql`
         id
         shortCode
         isActive
+        referenceNumberFormat
       }
     }
     rejection {
@@ -9311,6 +6570,12 @@ export const CreateProposalDocument = gql`
           isCompleted
         }
       }
+      genericTemplates {
+        ...genericTemplate
+        questionary {
+          isCompleted
+        }
+      }
     }
     rejection {
       ...rejection
@@ -9321,6 +6586,7 @@ export const CreateProposalDocument = gql`
 ${QuestionaryFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
 ${SampleFragmentDoc}
+${GenericTemplateFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteProposalDocument = gql`
     mutation deleteProposal($proposalPk: Int!) {
@@ -9335,52 +6601,29 @@ export const DeleteProposalDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const GetInstrumentScientistProposalsDocument = gql`
-    query getInstrumentScientistProposals($filter: ProposalsFilter) {
-  instrumentScientistProposals(filter: $filter) {
+    query getInstrumentScientistProposals($filter: ProposalsFilter, $offset: Int, $first: Int) {
+  instrumentScientistProposals(filter: $filter, offset: $offset, first: $first) {
     proposals {
-      ...proposal
-      proposer {
-        ...basicUserDetails
-      }
-      reviews {
-        id
-        grade
-        comment
-        status
-        userID
-        sepID
-        reviewer {
-          firstname
-          lastname
-          id
-        }
-      }
-      users {
-        ...basicUserDetails
-      }
-      technicalReview {
-        ...coreTechnicalReview
-      }
-      instrument {
-        id
-        name
-      }
-      call {
-        id
-        shortCode
-        allocationTimeUnit
-      }
-      sep {
-        id
-        code
-      }
+      primaryKey
+      proposalId
+      title
+      submitted
+      finalStatus
+      technicalReviewAssignee
+      technicalStatus
+      statusName
+      technicalReviewSubmitted
+      instrumentId
+      instrumentName
+      allocationTimeUnit
+      callShortCode
+      statusName
+      sepCode
     }
     totalCount
   }
 }
-    ${ProposalFragmentDoc}
-${BasicUserDetailsFragmentDoc}
-${CoreTechnicalReviewFragmentDoc}`;
+    `;
 export const GetMyProposalsDocument = gql`
     query getMyProposals($filter: UserProposalsFilter) {
   me {
@@ -9433,6 +6676,7 @@ export const GetProposalDocument = gql`
       shortCode
       isActive
       allocationTimeUnit
+      referenceNumberFormat
     }
     sep {
       id
@@ -9444,13 +6688,20 @@ export const GetProposalDocument = gql`
         isCompleted
       }
     }
+    genericTemplates {
+      ...genericTemplate
+      questionary {
+        isCompleted
+      }
+    }
   }
 }
     ${ProposalFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${CoreTechnicalReviewFragmentDoc}
-${SampleFragmentDoc}`;
+${SampleFragmentDoc}
+${GenericTemplateFragmentDoc}`;
 export const GetProposalsDocument = gql`
     query getProposals($filter: ProposalsFilter) {
   proposals(filter: $filter) {
@@ -9512,7 +6763,8 @@ export const GetProposalsCoreDocument = gql`
     rankOrder
     finalStatus
     notified
-    timeAllocation
+    managementTimeAllocation
+    technicalTimeAllocation
     technicalStatus
     instrumentName
     callShortCode
@@ -9600,13 +6852,11 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
           startsAt
           endsAt
           bookingType
+          status
           visit {
             ...visit
             teamLead {
               ...basicUserDetails
-            }
-            shipments {
-              ...shipment
             }
             registrations {
               ...visitRegistration
@@ -9614,9 +6864,18 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
                 ...basicUserDetails
               }
             }
-            esi {
-              ...esi
-            }
+          }
+          esi {
+            ...esi
+          }
+          feedback {
+            ...feedback
+          }
+          shipments {
+            ...shipment
+          }
+          localContact {
+            ...basicUserDetails
           }
         }
       }
@@ -9632,9 +6891,10 @@ export const GetUserProposalBookingsWithEventsDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}
 ${VisitFragmentDoc}
-${ShipmentFragmentDoc}
 ${VisitRegistrationFragmentDoc}
-${EsiFragmentDoc}`;
+${EsiFragmentDoc}
+${FeedbackFragmentDoc}
+${ShipmentFragmentDoc}`;
 export const AnswerTopicDocument = gql`
     mutation answerTopic($questionaryId: Int!, $topicId: Int!, $answers: [AnswerInput!]!, $isPartialSave: Boolean) {
   answerTopic(
@@ -9864,6 +7124,32 @@ export const UserWithReviewsDocument = gql`
   }
 }
     `;
+export const CloneSampleEsiDocument = gql`
+    mutation cloneSampleEsi($esiId: Int!, $sampleId: Int!, $newSampleTitle: String) {
+  cloneSampleEsi(
+    esiId: $esiId
+    sampleId: $sampleId
+    newSampleTitle: $newSampleTitle
+  ) {
+    esi {
+      ...sampleEsi
+      questionary {
+        isCompleted
+        ...questionary
+      }
+      sample {
+        ...sample
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${SampleEsiFragmentDoc}
+${QuestionaryFragmentDoc}
+${SampleFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateSampleEsiDocument = gql`
     mutation createSampleEsi($sampleId: Int!, $esiId: Int!) {
   createSampleEsi(sampleId: $sampleId, esiId: $esiId) {
@@ -9938,8 +7224,12 @@ ${QuestionaryFragmentDoc}
 ${SampleFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CloneSampleDocument = gql`
-    mutation cloneSample($sampleId: Int!, $title: String) {
-  cloneSample(sampleId: $sampleId, title: $title) {
+    mutation cloneSample($sampleId: Int!, $title: String, $isPostProposalSubmission: Boolean) {
+  cloneSample(
+    sampleId: $sampleId
+    title: $title
+    isPostProposalSubmission: $isPostProposalSubmission
+  ) {
     sample {
       ...sample
       questionary {
@@ -9956,12 +7246,13 @@ export const CloneSampleDocument = gql`
 ${QuestionaryFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateSampleDocument = gql`
-    mutation createSample($title: String!, $templateId: Int!, $proposalPk: Int!, $questionId: String!) {
+    mutation createSample($title: String!, $templateId: Int!, $proposalPk: Int!, $questionId: String!, $isPostProposalSubmission: Boolean) {
   createSample(
     title: $title
     templateId: $templateId
     proposalPk: $proposalPk
     questionId: $questionId
+    isPostProposalSubmission: $isPostProposalSubmission
   ) {
     sample {
       ...sample
@@ -10312,8 +7603,12 @@ export const AddSamplesToShipmentDocument = gql`
 ${ShipmentFragmentDoc}
 ${SampleFragmentDoc}`;
 export const CreateShipmentDocument = gql`
-    mutation createShipment($title: String!, $proposalPk: Int!, $visitId: Int!) {
-  createShipment(title: $title, proposalPk: $proposalPk, visitId: $visitId) {
+    mutation createShipment($title: String!, $proposalPk: Int!, $scheduledEventId: Int!) {
+  createShipment(
+    title: $title
+    proposalPk: $proposalPk
+    scheduledEventId: $scheduledEventId
+  ) {
     shipment {
       ...shipment
       questionary {
@@ -10418,11 +7713,29 @@ export const UpdateShipmentDocument = gql`
     ${RejectionFragmentDoc}
 ${ShipmentFragmentDoc}
 ${QuestionaryFragmentDoc}`;
+export const ImportTemplateDocument = gql`
+    mutation importTemplate($templateAsJson: String!, $conflictResolutions: [ConflictResolution!]!) {
+  importTemplate(
+    templateAsJson: $templateAsJson
+    conflictResolutions: $conflictResolutions
+  ) {
+    template {
+      ...template
+    }
+    rejection {
+      reason
+      context
+      exception
+    }
+  }
+}
+    ${TemplateFragmentDoc}`;
 export const CloneTemplateDocument = gql`
     mutation cloneTemplate($templateId: Int!) {
   cloneTemplate(templateId: $templateId) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection
@@ -10467,6 +7780,7 @@ export const CreateTemplateDocument = gql`
   createTemplate(groupId: $groupId, name: $name, description: $description) {
     template {
       ...templateMetadata
+      questionaryCount
     }
     rejection {
       ...rejection
@@ -10593,6 +7907,13 @@ export const GetTemplateCategoriesDocument = gql`
   }
 }
     `;
+export const GetTemplateExportDocument = gql`
+    query getTemplateExport($templateId: Int!) {
+  template(templateId: $templateId) {
+    json
+  }
+}
+    `;
 export const GetTemplatesDocument = gql`
     query getTemplates($filter: TemplatesFilter) {
   templates(filter: $filter) {
@@ -10697,16 +8018,33 @@ export const UpdateTopicDocument = gql`
 }
     ${TemplateFragmentDoc}
 ${RejectionFragmentDoc}`;
-export const CheckExternalTokenDocument = gql`
-    mutation checkExternalToken($externalToken: String!) {
-  checkExternalToken(externalToken: $externalToken) {
-    token
+export const ValidateTemplateImportDocument = gql`
+    mutation validateTemplateImport($templateAsJson: String!) {
+  validateTemplateImport(templateAsJson: $templateAsJson) {
+    validationResult {
+      json
+      version
+      exportDate
+      isValid
+      errors
+      questionComparisons {
+        existingQuestion {
+          ...question
+        }
+        newQuestion {
+          ...question
+        }
+        status
+        conflictResolutionStrategy
+      }
+    }
     rejection {
       ...rejection
     }
   }
 }
-    ${RejectionFragmentDoc}`;
+    ${QuestionFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CheckTokenDocument = gql`
     query checkToken($token: String!) {
   checkToken(token: $token) {
@@ -10767,6 +8105,16 @@ export const DeleteUserDocument = gql`
     user {
       id
     }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const ExternalTokenLoginDocument = gql`
+    mutation externalTokenLogin($externalToken: String!) {
+  externalTokenLogin(externalToken: $externalToken) {
+    token
     rejection {
       ...rejection
     }
@@ -10939,6 +8287,7 @@ export const GetUserProposalsDocument = gql`
         id
         shortCode
         isActive
+        referenceNumberFormat
       }
     }
   }
@@ -10976,6 +8325,16 @@ export const GetUsersDocument = gql`
 export const LoginDocument = gql`
     mutation login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
+    token
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const LogoutDocument = gql`
+    mutation logout($token: String!) {
+  logout(token: $token) {
     token
     rejection {
       ...rejection
@@ -11090,11 +8449,10 @@ export const VerifyEmailDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const CreateVisitDocument = gql`
-    mutation createVisit($proposalPk: Int!, $team: [Int!]!, $scheduledEventId: Int!, $teamLeadUserId: Int!) {
+    mutation createVisit($scheduledEventId: Int!, $team: [Int!]!, $teamLeadUserId: Int!) {
   createVisit(
-    proposalPk: $proposalPk
-    team: $team
     scheduledEventId: $scheduledEventId
+    team: $team
     teamLeadUserId: $teamLeadUserId
   ) {
     visit {
@@ -11114,12 +8472,6 @@ export const CreateVisitDocument = gql`
           name
         }
       }
-      shipments {
-        ...shipment
-      }
-      esi {
-        ...esi
-      }
     }
     rejection {
       ...rejection
@@ -11130,8 +8482,6 @@ export const CreateVisitDocument = gql`
 ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
-${ShipmentFragmentDoc}
-${EsiFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const DeleteVisitDocument = gql`
     mutation deleteVisit($visitId: Int!) {
@@ -11162,21 +8512,12 @@ export const GetVisitDocument = gql`
         name
       }
     }
-    esi {
-      ...esi
-      questionary {
-        isCompleted
-        ...questionary
-      }
-    }
   }
 }
     ${VisitFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${BasicUserDetailsFragmentDoc}
-${ProposalFragmentDoc}
-${EsiFragmentDoc}
-${QuestionaryFragmentDoc}`;
+${ProposalFragmentDoc}`;
 export const GetVisitsDocument = gql`
     query getVisits($filter: VisitsFilter) {
   visits(filter: $filter) {
@@ -11192,10 +8533,9 @@ export const GetVisitsDocument = gql`
     ${VisitFragmentDoc}
 ${ProposalFragmentDoc}`;
 export const UpdateVisitDocument = gql`
-    mutation updateVisit($visitId: Int!, $proposalPkAndEventId: ProposalPkAndEventId, $team: [Int!], $status: VisitStatus, $teamLeadUserId: Int) {
+    mutation updateVisit($visitId: Int!, $team: [Int!], $status: VisitStatus, $teamLeadUserId: Int) {
   updateVisit(
     visitId: $visitId
-    proposalPkAndEventId: $proposalPkAndEventId
     team: $team
     status: $status
     teamLeadUserId: $teamLeadUserId
@@ -11217,12 +8557,6 @@ export const UpdateVisitDocument = gql`
           name
         }
       }
-      shipments {
-        ...shipment
-      }
-      esi {
-        ...esi
-      }
     }
     rejection {
       ...rejection
@@ -11233,8 +8567,6 @@ export const UpdateVisitDocument = gql`
 ${BasicUserDetailsFragmentDoc}
 ${VisitRegistrationFragmentDoc}
 ${ProposalFragmentDoc}
-${ShipmentFragmentDoc}
-${EsiFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateVisitRegistrationQuestionaryDocument = gql`
     mutation createVisitRegistrationQuestionary($visitId: Int!) {
@@ -11292,566 +8624,618 @@ export const UpdateVisitRegistrationDocument = gql`
     ${VisitRegistrationFragmentDoc}
 ${RejectionFragmentDoc}`;
 
-export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
 
-const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName) => action();
+
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    assignProposalsToSep(variables: AssignProposalsToSepMutationVariables): Promise<AssignProposalsToSepMutation> {
-      return withWrapper(() => client.request<AssignProposalsToSepMutation>(print(AssignProposalsToSepDocument), variables));
+    assignProposalsToSep(variables: AssignProposalsToSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignProposalsToSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignProposalsToSepMutation>(AssignProposalsToSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignProposalsToSep');
     },
-    assignReviewersToSEP(variables: AssignReviewersToSepMutationVariables): Promise<AssignReviewersToSepMutation> {
-      return withWrapper(() => client.request<AssignReviewersToSepMutation>(print(AssignReviewersToSepDocument), variables));
+    assignReviewersToSEP(variables: AssignReviewersToSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignReviewersToSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignReviewersToSepMutation>(AssignReviewersToSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignReviewersToSEP');
     },
-    assignChairOrSecretary(variables: AssignChairOrSecretaryMutationVariables): Promise<AssignChairOrSecretaryMutation> {
-      return withWrapper(() => client.request<AssignChairOrSecretaryMutation>(print(AssignChairOrSecretaryDocument), variables));
+    assignChairOrSecretary(variables: AssignChairOrSecretaryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignChairOrSecretaryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignChairOrSecretaryMutation>(AssignChairOrSecretaryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignChairOrSecretary');
     },
-    assignSepReviewersToProposal(variables: AssignSepReviewersToProposalMutationVariables): Promise<AssignSepReviewersToProposalMutation> {
-      return withWrapper(() => client.request<AssignSepReviewersToProposalMutation>(print(AssignSepReviewersToProposalDocument), variables));
+    assignSepReviewersToProposal(variables: AssignSepReviewersToProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignSepReviewersToProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignSepReviewersToProposalMutation>(AssignSepReviewersToProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignSepReviewersToProposal');
     },
-    createSEP(variables: CreateSepMutationVariables): Promise<CreateSepMutation> {
-      return withWrapper(() => client.request<CreateSepMutation>(print(CreateSepDocument), variables));
+    createSEP(variables: CreateSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateSepMutation>(CreateSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createSEP');
     },
-    deleteSEP(variables: DeleteSepMutationVariables): Promise<DeleteSepMutation> {
-      return withWrapper(() => client.request<DeleteSepMutation>(print(DeleteSepDocument), variables));
+    deleteSEP(variables: DeleteSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteSepMutation>(DeleteSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteSEP');
     },
-    getInstrumentsBySEP(variables: GetInstrumentsBySepQueryVariables): Promise<GetInstrumentsBySepQuery> {
-      return withWrapper(() => client.request<GetInstrumentsBySepQuery>(print(GetInstrumentsBySepDocument), variables));
+    getInstrumentsBySEP(variables: GetInstrumentsBySepQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInstrumentsBySepQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetInstrumentsBySepQuery>(GetInstrumentsBySepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getInstrumentsBySEP');
     },
-    getUserSeps(variables?: GetUserSepsQueryVariables): Promise<GetUserSepsQuery> {
-      return withWrapper(() => client.request<GetUserSepsQuery>(print(GetUserSepsDocument), variables));
+    getUserSeps(variables?: GetUserSepsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserSepsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserSepsQuery>(GetUserSepsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserSeps');
     },
-    getSEP(variables: GetSepQueryVariables): Promise<GetSepQuery> {
-      return withWrapper(() => client.request<GetSepQuery>(print(GetSepDocument), variables));
+    getSEP(variables: GetSepQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSepQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSepQuery>(GetSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEP');
     },
-    getSEPMembers(variables: GetSepMembersQueryVariables): Promise<GetSepMembersQuery> {
-      return withWrapper(() => client.request<GetSepMembersQuery>(print(GetSepMembersDocument), variables));
+    getSEPMembers(variables: GetSepMembersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSepMembersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSepMembersQuery>(GetSepMembersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEPMembers');
     },
-    getSEPProposal(variables: GetSepProposalQueryVariables): Promise<GetSepProposalQuery> {
-      return withWrapper(() => client.request<GetSepProposalQuery>(print(GetSepProposalDocument), variables));
+    getSEPProposal(variables: GetSepProposalQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSepProposalQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSepProposalQuery>(GetSepProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEPProposal');
     },
-    getSEPProposals(variables: GetSepProposalsQueryVariables): Promise<GetSepProposalsQuery> {
-      return withWrapper(() => client.request<GetSepProposalsQuery>(print(GetSepProposalsDocument), variables));
+    getSEPProposals(variables: GetSepProposalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSepProposalsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSepProposalsQuery>(GetSepProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEPProposals');
     },
-    sepProposalsByInstrument(variables: SepProposalsByInstrumentQueryVariables): Promise<SepProposalsByInstrumentQuery> {
-      return withWrapper(() => client.request<SepProposalsByInstrumentQuery>(print(SepProposalsByInstrumentDocument), variables));
+    sepProposalsByInstrument(variables: SepProposalsByInstrumentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SepProposalsByInstrumentQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SepProposalsByInstrumentQuery>(SepProposalsByInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'sepProposalsByInstrument');
     },
-    getSEPReviewers(variables: GetSepReviewersQueryVariables): Promise<GetSepReviewersQuery> {
-      return withWrapper(() => client.request<GetSepReviewersQuery>(print(GetSepReviewersDocument), variables));
+    getSEPReviewers(variables: GetSepReviewersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSepReviewersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSepReviewersQuery>(GetSepReviewersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEPReviewers');
     },
-    getSEPs(variables: GetSePsQueryVariables): Promise<GetSePsQuery> {
-      return withWrapper(() => client.request<GetSePsQuery>(print(GetSePsDocument), variables));
+    getSEPs(variables: GetSePsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSePsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSePsQuery>(GetSePsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSEPs');
     },
-    removeProposalsFromSep(variables: RemoveProposalsFromSepMutationVariables): Promise<RemoveProposalsFromSepMutation> {
-      return withWrapper(() => client.request<RemoveProposalsFromSepMutation>(print(RemoveProposalsFromSepDocument), variables));
+    removeProposalsFromSep(variables: RemoveProposalsFromSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveProposalsFromSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveProposalsFromSepMutation>(RemoveProposalsFromSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeProposalsFromSep');
     },
-    removeMemberFromSep(variables: RemoveMemberFromSepMutationVariables): Promise<RemoveMemberFromSepMutation> {
-      return withWrapper(() => client.request<RemoveMemberFromSepMutation>(print(RemoveMemberFromSepDocument), variables));
+    removeMemberFromSep(variables: RemoveMemberFromSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveMemberFromSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveMemberFromSepMutation>(RemoveMemberFromSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeMemberFromSep');
     },
-    removeMemberFromSEPProposal(variables: RemoveMemberFromSepProposalMutationVariables): Promise<RemoveMemberFromSepProposalMutation> {
-      return withWrapper(() => client.request<RemoveMemberFromSepProposalMutation>(print(RemoveMemberFromSepProposalDocument), variables));
+    removeMemberFromSEPProposal(variables: RemoveMemberFromSepProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveMemberFromSepProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveMemberFromSepProposalMutation>(RemoveMemberFromSepProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeMemberFromSEPProposal');
     },
-    reorderSepMeetingDecisionProposals(variables: ReorderSepMeetingDecisionProposalsMutationVariables): Promise<ReorderSepMeetingDecisionProposalsMutation> {
-      return withWrapper(() => client.request<ReorderSepMeetingDecisionProposalsMutation>(print(ReorderSepMeetingDecisionProposalsDocument), variables));
+    reorderSepMeetingDecisionProposals(variables: ReorderSepMeetingDecisionProposalsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ReorderSepMeetingDecisionProposalsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ReorderSepMeetingDecisionProposalsMutation>(ReorderSepMeetingDecisionProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'reorderSepMeetingDecisionProposals');
     },
-    saveSepMeetingDecision(variables: SaveSepMeetingDecisionMutationVariables): Promise<SaveSepMeetingDecisionMutation> {
-      return withWrapper(() => client.request<SaveSepMeetingDecisionMutation>(print(SaveSepMeetingDecisionDocument), variables));
+    saveSepMeetingDecision(variables: SaveSepMeetingDecisionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SaveSepMeetingDecisionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SaveSepMeetingDecisionMutation>(SaveSepMeetingDecisionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'saveSepMeetingDecision');
     },
-    updateSEP(variables: UpdateSepMutationVariables): Promise<UpdateSepMutation> {
-      return withWrapper(() => client.request<UpdateSepMutation>(print(UpdateSepDocument), variables));
+    updateSEP(variables: UpdateSepMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateSepMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateSepMutation>(UpdateSepDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateSEP');
     },
-    updateSEPTimeAllocation(variables: UpdateSepTimeAllocationMutationVariables): Promise<UpdateSepTimeAllocationMutation> {
-      return withWrapper(() => client.request<UpdateSepTimeAllocationMutation>(print(UpdateSepTimeAllocationDocument), variables));
+    updateSEPTimeAllocation(variables: UpdateSepTimeAllocationMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateSepTimeAllocationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateSepTimeAllocationMutation>(UpdateSepTimeAllocationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateSEPTimeAllocation');
     },
-    addClientLog(variables: AddClientLogMutationVariables): Promise<AddClientLogMutation> {
-      return withWrapper(() => client.request<AddClientLogMutation>(print(AddClientLogDocument), variables));
+    addClientLog(variables: AddClientLogMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddClientLogMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddClientLogMutation>(AddClientLogDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addClientLog');
     },
-    createApiAccessToken(variables: CreateApiAccessTokenMutationVariables): Promise<CreateApiAccessTokenMutation> {
-      return withWrapper(() => client.request<CreateApiAccessTokenMutation>(print(CreateApiAccessTokenDocument), variables));
+    createApiAccessToken(variables: CreateApiAccessTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateApiAccessTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateApiAccessTokenMutation>(CreateApiAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createApiAccessToken');
     },
-    createInstitution(variables: CreateInstitutionMutationVariables): Promise<CreateInstitutionMutation> {
-      return withWrapper(() => client.request<CreateInstitutionMutation>(print(CreateInstitutionDocument), variables));
+    createInstitution(variables: CreateInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstitutionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateInstitutionMutation>(CreateInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createInstitution');
     },
-    createUnit(variables: CreateUnitMutationVariables): Promise<CreateUnitMutation> {
-      return withWrapper(() => client.request<CreateUnitMutation>(print(CreateUnitDocument), variables));
+    createUnit(variables: CreateUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUnitMutation>(CreateUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUnit');
     },
-    deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables): Promise<DeleteApiAccessTokenMutation> {
-      return withWrapper(() => client.request<DeleteApiAccessTokenMutation>(print(DeleteApiAccessTokenDocument), variables));
+    deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteApiAccessTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteApiAccessTokenMutation>(DeleteApiAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteApiAccessToken');
     },
-    deleteInstitution(variables: DeleteInstitutionMutationVariables): Promise<DeleteInstitutionMutation> {
-      return withWrapper(() => client.request<DeleteInstitutionMutation>(print(DeleteInstitutionDocument), variables));
+    deleteInstitution(variables: DeleteInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteInstitutionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteInstitutionMutation>(DeleteInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteInstitution');
     },
-    deleteUnit(variables: DeleteUnitMutationVariables): Promise<DeleteUnitMutation> {
-      return withWrapper(() => client.request<DeleteUnitMutation>(print(DeleteUnitDocument), variables));
+    deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
     },
-    getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
-      return withWrapper(() => client.request<GetAllApiAccessTokensAndPermissionsQuery>(print(GetAllApiAccessTokensAndPermissionsDocument), variables));
+    getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllApiAccessTokensAndPermissionsQuery>(GetAllApiAccessTokensAndPermissionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllApiAccessTokensAndPermissions');
     },
-    getAllQueriesAndMutations(variables?: GetAllQueriesAndMutationsQueryVariables): Promise<GetAllQueriesAndMutationsQuery> {
-      return withWrapper(() => client.request<GetAllQueriesAndMutationsQuery>(print(GetAllQueriesAndMutationsDocument), variables));
+    getAllQueriesAndMutations(variables?: GetAllQueriesAndMutationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllQueriesAndMutationsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllQueriesAndMutationsQuery>(GetAllQueriesAndMutationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllQueriesAndMutations');
     },
-    getFeatures(variables?: GetFeaturesQueryVariables): Promise<GetFeaturesQuery> {
-      return withWrapper(() => client.request<GetFeaturesQuery>(print(GetFeaturesDocument), variables));
+    getFeatures(variables?: GetFeaturesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFeaturesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFeaturesQuery>(GetFeaturesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFeatures');
     },
-    getInstitutions(variables?: GetInstitutionsQueryVariables): Promise<GetInstitutionsQuery> {
-      return withWrapper(() => client.request<GetInstitutionsQuery>(print(GetInstitutionsDocument), variables));
+    getInstitutions(variables?: GetInstitutionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInstitutionsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetInstitutionsQuery>(GetInstitutionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getInstitutions');
     },
-    getPageContent(variables: GetPageContentQueryVariables): Promise<GetPageContentQuery> {
-      return withWrapper(() => client.request<GetPageContentQuery>(print(GetPageContentDocument), variables));
+    getPageContent(variables: GetPageContentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPageContentQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPageContentQuery>(GetPageContentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPageContent');
     },
-    getSettings(variables?: GetSettingsQueryVariables): Promise<GetSettingsQuery> {
-      return withWrapper(() => client.request<GetSettingsQuery>(print(GetSettingsDocument), variables));
+    getSettings(variables?: GetSettingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSettingsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSettingsQuery>(GetSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSettings');
     },
-    getUnits(variables?: GetUnitsQueryVariables): Promise<GetUnitsQuery> {
-      return withWrapper(() => client.request<GetUnitsQuery>(print(GetUnitsDocument), variables));
+    getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
     },
-    setPageContent(variables: SetPageContentMutationVariables): Promise<SetPageContentMutation> {
-      return withWrapper(() => client.request<SetPageContentMutation>(print(SetPageContentDocument), variables));
+    mergeInstitutions(variables: MergeInstitutionsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MergeInstitutionsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MergeInstitutionsMutation>(MergeInstitutionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'mergeInstitutions');
     },
-    updateApiAccessToken(variables: UpdateApiAccessTokenMutationVariables): Promise<UpdateApiAccessTokenMutation> {
-      return withWrapper(() => client.request<UpdateApiAccessTokenMutation>(print(UpdateApiAccessTokenDocument), variables));
+    prepareDB(variables: PrepareDbMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PrepareDbMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PrepareDbMutation>(PrepareDbDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'prepareDB');
     },
-    updateInstitution(variables: UpdateInstitutionMutationVariables): Promise<UpdateInstitutionMutation> {
-      return withWrapper(() => client.request<UpdateInstitutionMutation>(print(UpdateInstitutionDocument), variables));
+    setPageContent(variables: SetPageContentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetPageContentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetPageContentMutation>(SetPageContentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setPageContent');
     },
-    assignInstrumentsToCall(variables: AssignInstrumentsToCallMutationVariables): Promise<AssignInstrumentsToCallMutation> {
-      return withWrapper(() => client.request<AssignInstrumentsToCallMutation>(print(AssignInstrumentsToCallDocument), variables));
+    updateApiAccessToken(variables: UpdateApiAccessTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateApiAccessTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateApiAccessTokenMutation>(UpdateApiAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateApiAccessToken');
     },
-    createCall(variables: CreateCallMutationVariables): Promise<CreateCallMutation> {
-      return withWrapper(() => client.request<CreateCallMutation>(print(CreateCallDocument), variables));
+    updateInstitution(variables: UpdateInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateInstitutionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateInstitutionMutation>(UpdateInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateInstitution');
     },
-    deleteCall(variables: DeleteCallMutationVariables): Promise<DeleteCallMutation> {
-      return withWrapper(() => client.request<DeleteCallMutation>(print(DeleteCallDocument), variables));
+    assignInstrumentsToCall(variables: AssignInstrumentsToCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignInstrumentsToCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignInstrumentsToCallMutation>(AssignInstrumentsToCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignInstrumentsToCall');
     },
-    getCall(variables: GetCallQueryVariables): Promise<GetCallQuery> {
-      return withWrapper(() => client.request<GetCallQuery>(print(GetCallDocument), variables));
+    createCall(variables: CreateCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateCallMutation>(CreateCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createCall');
     },
-    getCalls(variables?: GetCallsQueryVariables): Promise<GetCallsQuery> {
-      return withWrapper(() => client.request<GetCallsQuery>(print(GetCallsDocument), variables));
+    deleteCall(variables: DeleteCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteCallMutation>(DeleteCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteCall');
     },
-    getCallsByInstrumentScientist(variables: GetCallsByInstrumentScientistQueryVariables): Promise<GetCallsByInstrumentScientistQuery> {
-      return withWrapper(() => client.request<GetCallsByInstrumentScientistQuery>(print(GetCallsByInstrumentScientistDocument), variables));
+    getCall(variables: GetCallQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCallQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCallQuery>(GetCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCall');
     },
-    removeAssignedInstrumentFromCall(variables: RemoveAssignedInstrumentFromCallMutationVariables): Promise<RemoveAssignedInstrumentFromCallMutation> {
-      return withWrapper(() => client.request<RemoveAssignedInstrumentFromCallMutation>(print(RemoveAssignedInstrumentFromCallDocument), variables));
+    getCalls(variables?: GetCallsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCallsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCallsQuery>(GetCallsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCalls');
     },
-    updateCall(variables: UpdateCallMutationVariables): Promise<UpdateCallMutation> {
-      return withWrapper(() => client.request<UpdateCallMutation>(print(UpdateCallDocument), variables));
+    getCallsByInstrumentScientist(variables: GetCallsByInstrumentScientistQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCallsByInstrumentScientistQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCallsByInstrumentScientistQuery>(GetCallsByInstrumentScientistDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCallsByInstrumentScientist');
     },
-    createEsi(variables: CreateEsiMutationVariables): Promise<CreateEsiMutation> {
-      return withWrapper(() => client.request<CreateEsiMutation>(print(CreateEsiDocument), variables));
+    removeAssignedInstrumentFromCall(variables: RemoveAssignedInstrumentFromCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveAssignedInstrumentFromCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveAssignedInstrumentFromCallMutation>(RemoveAssignedInstrumentFromCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeAssignedInstrumentFromCall');
     },
-    getEsi(variables: GetEsiQueryVariables): Promise<GetEsiQuery> {
-      return withWrapper(() => client.request<GetEsiQuery>(print(GetEsiDocument), variables));
+    updateCall(variables: UpdateCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateCallMutation>(UpdateCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateCall');
     },
-    updateEsi(variables: UpdateEsiMutationVariables): Promise<UpdateEsiMutation> {
-      return withWrapper(() => client.request<UpdateEsiMutation>(print(UpdateEsiDocument), variables));
+    createEsi(variables: CreateEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateEsiMutation>(CreateEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createEsi');
     },
-    getEventLogs(variables: GetEventLogsQueryVariables): Promise<GetEventLogsQuery> {
-      return withWrapper(() => client.request<GetEventLogsQuery>(print(GetEventLogsDocument), variables));
+    getEsi(variables: GetEsiQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetEsiQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetEsiQuery>(GetEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEsi');
     },
-    assignProposalsToInstrument(variables: AssignProposalsToInstrumentMutationVariables): Promise<AssignProposalsToInstrumentMutation> {
-      return withWrapper(() => client.request<AssignProposalsToInstrumentMutation>(print(AssignProposalsToInstrumentDocument), variables));
+    updateEsi(variables: UpdateEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateEsiMutation>(UpdateEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateEsi');
     },
-    assignScientistsToInstrument(variables: AssignScientistsToInstrumentMutationVariables): Promise<AssignScientistsToInstrumentMutation> {
-      return withWrapper(() => client.request<AssignScientistsToInstrumentMutation>(print(AssignScientistsToInstrumentDocument), variables));
+    getEventLogs(variables: GetEventLogsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetEventLogsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetEventLogsQuery>(GetEventLogsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEventLogs');
     },
-    createInstrument(variables: CreateInstrumentMutationVariables): Promise<CreateInstrumentMutation> {
-      return withWrapper(() => client.request<CreateInstrumentMutation>(print(CreateInstrumentDocument), variables));
+    createFeedback(variables: CreateFeedbackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateFeedbackMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateFeedbackMutation>(CreateFeedbackDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createFeedback');
     },
-    deleteInstrument(variables: DeleteInstrumentMutationVariables): Promise<DeleteInstrumentMutation> {
-      return withWrapper(() => client.request<DeleteInstrumentMutation>(print(DeleteInstrumentDocument), variables));
+    getFeedback(variables: GetFeedbackQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFeedbackQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFeedbackQuery>(GetFeedbackDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFeedback');
     },
-    getInstruments(variables?: GetInstrumentsQueryVariables): Promise<GetInstrumentsQuery> {
-      return withWrapper(() => client.request<GetInstrumentsQuery>(print(GetInstrumentsDocument), variables));
+    updateFeedback(variables: UpdateFeedbackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateFeedbackMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateFeedbackMutation>(UpdateFeedbackDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateFeedback');
     },
-    getUserInstruments(variables?: GetUserInstrumentsQueryVariables): Promise<GetUserInstrumentsQuery> {
-      return withWrapper(() => client.request<GetUserInstrumentsQuery>(print(GetUserInstrumentsDocument), variables));
+    cloneGenericTemplate(variables: CloneGenericTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CloneGenericTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CloneGenericTemplateMutation>(CloneGenericTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'cloneGenericTemplate');
     },
-    removeProposalsFromInstrument(variables: RemoveProposalsFromInstrumentMutationVariables): Promise<RemoveProposalsFromInstrumentMutation> {
-      return withWrapper(() => client.request<RemoveProposalsFromInstrumentMutation>(print(RemoveProposalsFromInstrumentDocument), variables));
+    createGenericTemplate(variables: CreateGenericTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateGenericTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateGenericTemplateMutation>(CreateGenericTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createGenericTemplate');
     },
-    removeScientistFromInstrument(variables: RemoveScientistFromInstrumentMutationVariables): Promise<RemoveScientistFromInstrumentMutation> {
-      return withWrapper(() => client.request<RemoveScientistFromInstrumentMutation>(print(RemoveScientistFromInstrumentDocument), variables));
+    deleteGenericTemplate(variables: DeleteGenericTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteGenericTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteGenericTemplateMutation>(DeleteGenericTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteGenericTemplate');
     },
-    setInstrumentAvailabilityTime(variables: SetInstrumentAvailabilityTimeMutationVariables): Promise<SetInstrumentAvailabilityTimeMutation> {
-      return withWrapper(() => client.request<SetInstrumentAvailabilityTimeMutation>(print(SetInstrumentAvailabilityTimeDocument), variables));
+    getGenericTemplate(variables: GetGenericTemplateQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetGenericTemplateQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetGenericTemplateQuery>(GetGenericTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getGenericTemplate');
     },
-    submitInstrument(variables: SubmitInstrumentMutationVariables): Promise<SubmitInstrumentMutation> {
-      return withWrapper(() => client.request<SubmitInstrumentMutation>(print(SubmitInstrumentDocument), variables));
+    getGenericTemplatesWithProposalData(variables?: GetGenericTemplatesWithProposalDataQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetGenericTemplatesWithProposalDataQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetGenericTemplatesWithProposalDataQuery>(GetGenericTemplatesWithProposalDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getGenericTemplatesWithProposalData');
     },
-    updateInstrument(variables: UpdateInstrumentMutationVariables): Promise<UpdateInstrumentMutation> {
-      return withWrapper(() => client.request<UpdateInstrumentMutation>(print(UpdateInstrumentDocument), variables));
+    getGenericTemplatesWithQuestionaryStatus(variables?: GetGenericTemplatesWithQuestionaryStatusQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetGenericTemplatesWithQuestionaryStatusQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetGenericTemplatesWithQuestionaryStatusQuery>(GetGenericTemplatesWithQuestionaryStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getGenericTemplatesWithQuestionaryStatus');
     },
-    administrationProposal(variables: AdministrationProposalMutationVariables): Promise<AdministrationProposalMutation> {
-      return withWrapper(() => client.request<AdministrationProposalMutation>(print(AdministrationProposalDocument), variables));
+    updateGenericTemplate(variables: UpdateGenericTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateGenericTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateGenericTemplateMutation>(UpdateGenericTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateGenericTemplate');
     },
-    changeProposalsStatus(variables: ChangeProposalsStatusMutationVariables): Promise<ChangeProposalsStatusMutation> {
-      return withWrapper(() => client.request<ChangeProposalsStatusMutation>(print(ChangeProposalsStatusDocument), variables));
+    assignProposalsToInstrument(variables: AssignProposalsToInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignProposalsToInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignProposalsToInstrumentMutation>(AssignProposalsToInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignProposalsToInstrument');
     },
-    cloneProposals(variables: CloneProposalsMutationVariables): Promise<CloneProposalsMutation> {
-      return withWrapper(() => client.request<CloneProposalsMutation>(print(CloneProposalsDocument), variables));
+    assignScientistsToInstrument(variables: AssignScientistsToInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignScientistsToInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignScientistsToInstrumentMutation>(AssignScientistsToInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignScientistsToInstrument');
     },
-    createProposal(variables: CreateProposalMutationVariables): Promise<CreateProposalMutation> {
-      return withWrapper(() => client.request<CreateProposalMutation>(print(CreateProposalDocument), variables));
+    createInstrument(variables: CreateInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateInstrumentMutation>(CreateInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createInstrument');
     },
-    deleteProposal(variables: DeleteProposalMutationVariables): Promise<DeleteProposalMutation> {
-      return withWrapper(() => client.request<DeleteProposalMutation>(print(DeleteProposalDocument), variables));
+    deleteInstrument(variables: DeleteInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteInstrumentMutation>(DeleteInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteInstrument');
     },
-    getInstrumentScientistProposals(variables?: GetInstrumentScientistProposalsQueryVariables): Promise<GetInstrumentScientistProposalsQuery> {
-      return withWrapper(() => client.request<GetInstrumentScientistProposalsQuery>(print(GetInstrumentScientistProposalsDocument), variables));
+    getInstruments(variables?: GetInstrumentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInstrumentsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetInstrumentsQuery>(GetInstrumentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getInstruments');
     },
-    getMyProposals(variables?: GetMyProposalsQueryVariables): Promise<GetMyProposalsQuery> {
-      return withWrapper(() => client.request<GetMyProposalsQuery>(print(GetMyProposalsDocument), variables));
+    getUserInstruments(variables?: GetUserInstrumentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserInstrumentsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserInstrumentsQuery>(GetUserInstrumentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserInstruments');
     },
-    getProposal(variables: GetProposalQueryVariables): Promise<GetProposalQuery> {
-      return withWrapper(() => client.request<GetProposalQuery>(print(GetProposalDocument), variables));
+    removeProposalsFromInstrument(variables: RemoveProposalsFromInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveProposalsFromInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveProposalsFromInstrumentMutation>(RemoveProposalsFromInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeProposalsFromInstrument');
     },
-    getProposals(variables?: GetProposalsQueryVariables): Promise<GetProposalsQuery> {
-      return withWrapper(() => client.request<GetProposalsQuery>(print(GetProposalsDocument), variables));
+    removeScientistFromInstrument(variables: RemoveScientistFromInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveScientistFromInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveScientistFromInstrumentMutation>(RemoveScientistFromInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeScientistFromInstrument');
     },
-    getProposalsCore(variables?: GetProposalsCoreQueryVariables): Promise<GetProposalsCoreQuery> {
-      return withWrapper(() => client.request<GetProposalsCoreQuery>(print(GetProposalsCoreDocument), variables));
+    setInstrumentAvailabilityTime(variables: SetInstrumentAvailabilityTimeMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetInstrumentAvailabilityTimeMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetInstrumentAvailabilityTimeMutation>(SetInstrumentAvailabilityTimeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setInstrumentAvailabilityTime');
     },
-    notifyProposal(variables: NotifyProposalMutationVariables): Promise<NotifyProposalMutation> {
-      return withWrapper(() => client.request<NotifyProposalMutation>(print(NotifyProposalDocument), variables));
+    submitInstrument(variables: SubmitInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitInstrumentMutation>(SubmitInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitInstrument');
     },
-    submitProposal(variables: SubmitProposalMutationVariables): Promise<SubmitProposalMutation> {
-      return withWrapper(() => client.request<SubmitProposalMutation>(print(SubmitProposalDocument), variables));
+    updateInstrument(variables: UpdateInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateInstrumentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateInstrumentMutation>(UpdateInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateInstrument');
     },
-    updateProposal(variables: UpdateProposalMutationVariables): Promise<UpdateProposalMutation> {
-      return withWrapper(() => client.request<UpdateProposalMutation>(print(UpdateProposalDocument), variables));
+    administrationProposal(variables: AdministrationProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AdministrationProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AdministrationProposalMutation>(AdministrationProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'administrationProposal');
     },
-    getUserProposalBookingsWithEvents(variables?: GetUserProposalBookingsWithEventsQueryVariables): Promise<GetUserProposalBookingsWithEventsQuery> {
-      return withWrapper(() => client.request<GetUserProposalBookingsWithEventsQuery>(print(GetUserProposalBookingsWithEventsDocument), variables));
+    changeProposalsStatus(variables: ChangeProposalsStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ChangeProposalsStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ChangeProposalsStatusMutation>(ChangeProposalsStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'changeProposalsStatus');
     },
-    answerTopic(variables: AnswerTopicMutationVariables): Promise<AnswerTopicMutation> {
-      return withWrapper(() => client.request<AnswerTopicMutation>(print(AnswerTopicDocument), variables));
+    cloneProposals(variables: CloneProposalsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CloneProposalsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CloneProposalsMutation>(CloneProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'cloneProposals');
     },
-    createQuestionary(variables: CreateQuestionaryMutationVariables): Promise<CreateQuestionaryMutation> {
-      return withWrapper(() => client.request<CreateQuestionaryMutation>(print(CreateQuestionaryDocument), variables));
+    createProposal(variables: CreateProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateProposalMutation>(CreateProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createProposal');
     },
-    getBlankQuestionary(variables: GetBlankQuestionaryQueryVariables): Promise<GetBlankQuestionaryQuery> {
-      return withWrapper(() => client.request<GetBlankQuestionaryQuery>(print(GetBlankQuestionaryDocument), variables));
+    deleteProposal(variables: DeleteProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteProposalMutation>(DeleteProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteProposal');
     },
-    getBlankQuestionarySteps(variables: GetBlankQuestionaryStepsQueryVariables): Promise<GetBlankQuestionaryStepsQuery> {
-      return withWrapper(() => client.request<GetBlankQuestionaryStepsQuery>(print(GetBlankQuestionaryStepsDocument), variables));
+    getInstrumentScientistProposals(variables?: GetInstrumentScientistProposalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInstrumentScientistProposalsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetInstrumentScientistProposalsQuery>(GetInstrumentScientistProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getInstrumentScientistProposals');
     },
-    getFileMetadata(variables: GetFileMetadataQueryVariables): Promise<GetFileMetadataQuery> {
-      return withWrapper(() => client.request<GetFileMetadataQuery>(print(GetFileMetadataDocument), variables));
+    getMyProposals(variables?: GetMyProposalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMyProposalsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetMyProposalsQuery>(GetMyProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getMyProposals');
     },
-    getQuestionary(variables: GetQuestionaryQueryVariables): Promise<GetQuestionaryQuery> {
-      return withWrapper(() => client.request<GetQuestionaryQuery>(print(GetQuestionaryDocument), variables));
+    getProposal(variables: GetProposalQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalQuery>(GetProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposal');
     },
-    addTechnicalReview(variables: AddTechnicalReviewMutationVariables): Promise<AddTechnicalReviewMutation> {
-      return withWrapper(() => client.request<AddTechnicalReviewMutation>(print(AddTechnicalReviewDocument), variables));
+    getProposals(variables?: GetProposalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalsQuery>(GetProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposals');
     },
-    addUserForReview(variables: AddUserForReviewMutationVariables): Promise<AddUserForReviewMutation> {
-      return withWrapper(() => client.request<AddUserForReviewMutation>(print(AddUserForReviewDocument), variables));
+    getProposalsCore(variables?: GetProposalsCoreQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalsCoreQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalsCoreQuery>(GetProposalsCoreDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalsCore');
     },
-    updateTechnicalReviewAssignee(variables: UpdateTechnicalReviewAssigneeMutationVariables): Promise<UpdateTechnicalReviewAssigneeMutation> {
-      return withWrapper(() => client.request<UpdateTechnicalReviewAssigneeMutation>(print(UpdateTechnicalReviewAssigneeDocument), variables));
+    notifyProposal(variables: NotifyProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<NotifyProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<NotifyProposalMutation>(NotifyProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'notifyProposal');
     },
-    getProposalReviews(variables: GetProposalReviewsQueryVariables): Promise<GetProposalReviewsQuery> {
-      return withWrapper(() => client.request<GetProposalReviewsQuery>(print(GetProposalReviewsDocument), variables));
+    submitProposal(variables: SubmitProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitProposalMutation>(SubmitProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitProposal');
     },
-    getReview(variables: GetReviewQueryVariables): Promise<GetReviewQuery> {
-      return withWrapper(() => client.request<GetReviewQuery>(print(GetReviewDocument), variables));
+    updateProposal(variables: UpdateProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateProposalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateProposalMutation>(UpdateProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateProposal');
     },
-    removeUserForReview(variables: RemoveUserForReviewMutationVariables): Promise<RemoveUserForReviewMutation> {
-      return withWrapper(() => client.request<RemoveUserForReviewMutation>(print(RemoveUserForReviewDocument), variables));
+    getUserProposalBookingsWithEvents(variables?: GetUserProposalBookingsWithEventsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserProposalBookingsWithEventsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserProposalBookingsWithEventsQuery>(GetUserProposalBookingsWithEventsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserProposalBookingsWithEvents');
     },
-    submitProposalsReview(variables: SubmitProposalsReviewMutationVariables): Promise<SubmitProposalsReviewMutation> {
-      return withWrapper(() => client.request<SubmitProposalsReviewMutation>(print(SubmitProposalsReviewDocument), variables));
+    answerTopic(variables: AnswerTopicMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AnswerTopicMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AnswerTopicMutation>(AnswerTopicDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'answerTopic');
     },
-    submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables): Promise<SubmitTechnicalReviewMutation> {
-      return withWrapper(() => client.request<SubmitTechnicalReviewMutation>(print(SubmitTechnicalReviewDocument), variables));
+    createQuestionary(variables: CreateQuestionaryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateQuestionaryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateQuestionaryMutation>(CreateQuestionaryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createQuestionary');
     },
-    addReview(variables: AddReviewMutationVariables): Promise<AddReviewMutation> {
-      return withWrapper(() => client.request<AddReviewMutation>(print(AddReviewDocument), variables));
+    getBlankQuestionary(variables: GetBlankQuestionaryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBlankQuestionaryQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBlankQuestionaryQuery>(GetBlankQuestionaryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBlankQuestionary');
     },
-    userWithReviews(variables?: UserWithReviewsQueryVariables): Promise<UserWithReviewsQuery> {
-      return withWrapper(() => client.request<UserWithReviewsQuery>(print(UserWithReviewsDocument), variables));
+    getBlankQuestionarySteps(variables: GetBlankQuestionaryStepsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBlankQuestionaryStepsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBlankQuestionaryStepsQuery>(GetBlankQuestionaryStepsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBlankQuestionarySteps');
     },
-    createSampleEsi(variables: CreateSampleEsiMutationVariables): Promise<CreateSampleEsiMutation> {
-      return withWrapper(() => client.request<CreateSampleEsiMutation>(print(CreateSampleEsiDocument), variables));
+    getFileMetadata(variables: GetFileMetadataQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFileMetadataQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFileMetadataQuery>(GetFileMetadataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFileMetadata');
     },
-    deleteSampleEsi(variables: DeleteSampleEsiMutationVariables): Promise<DeleteSampleEsiMutation> {
-      return withWrapper(() => client.request<DeleteSampleEsiMutation>(print(DeleteSampleEsiDocument), variables));
+    getQuestionary(variables: GetQuestionaryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuestionaryQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetQuestionaryQuery>(GetQuestionaryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuestionary');
     },
-    getSampleEsi(variables: GetSampleEsiQueryVariables): Promise<GetSampleEsiQuery> {
-      return withWrapper(() => client.request<GetSampleEsiQuery>(print(GetSampleEsiDocument), variables));
+    addTechnicalReview(variables: AddTechnicalReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddTechnicalReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddTechnicalReviewMutation>(AddTechnicalReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addTechnicalReview');
     },
-    updateSampleEsi(variables: UpdateSampleEsiMutationVariables): Promise<UpdateSampleEsiMutation> {
-      return withWrapper(() => client.request<UpdateSampleEsiMutation>(print(UpdateSampleEsiDocument), variables));
+    addUserForReview(variables: AddUserForReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddUserForReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddUserForReviewMutation>(AddUserForReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addUserForReview');
     },
-    cloneSample(variables: CloneSampleMutationVariables): Promise<CloneSampleMutation> {
-      return withWrapper(() => client.request<CloneSampleMutation>(print(CloneSampleDocument), variables));
+    updateTechnicalReviewAssignee(variables: UpdateTechnicalReviewAssigneeMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateTechnicalReviewAssigneeMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateTechnicalReviewAssigneeMutation>(UpdateTechnicalReviewAssigneeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateTechnicalReviewAssignee');
     },
-    createSample(variables: CreateSampleMutationVariables): Promise<CreateSampleMutation> {
-      return withWrapper(() => client.request<CreateSampleMutation>(print(CreateSampleDocument), variables));
+    getProposalReviews(variables: GetProposalReviewsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalReviewsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalReviewsQuery>(GetProposalReviewsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalReviews');
     },
-    deleteSample(variables: DeleteSampleMutationVariables): Promise<DeleteSampleMutation> {
-      return withWrapper(() => client.request<DeleteSampleMutation>(print(DeleteSampleDocument), variables));
+    getReview(variables: GetReviewQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetReviewQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetReviewQuery>(GetReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getReview');
     },
-    getSample(variables: GetSampleQueryVariables): Promise<GetSampleQuery> {
-      return withWrapper(() => client.request<GetSampleQuery>(print(GetSampleDocument), variables));
+    removeUserForReview(variables: RemoveUserForReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveUserForReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveUserForReviewMutation>(RemoveUserForReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeUserForReview');
     },
-    getSamplesByCallId(variables: GetSamplesByCallIdQueryVariables): Promise<GetSamplesByCallIdQuery> {
-      return withWrapper(() => client.request<GetSamplesByCallIdQuery>(print(GetSamplesByCallIdDocument), variables));
+    submitProposalsReview(variables: SubmitProposalsReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitProposalsReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitProposalsReviewMutation>(SubmitProposalsReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitProposalsReview');
     },
-    getSamplesWithProposalData(variables?: GetSamplesWithProposalDataQueryVariables): Promise<GetSamplesWithProposalDataQuery> {
-      return withWrapper(() => client.request<GetSamplesWithProposalDataQuery>(print(GetSamplesWithProposalDataDocument), variables));
+    submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitTechnicalReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitTechnicalReviewMutation>(SubmitTechnicalReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitTechnicalReview');
     },
-    getSamplesWithQuestionaryStatus(variables?: GetSamplesWithQuestionaryStatusQueryVariables): Promise<GetSamplesWithQuestionaryStatusQuery> {
-      return withWrapper(() => client.request<GetSamplesWithQuestionaryStatusQuery>(print(GetSamplesWithQuestionaryStatusDocument), variables));
+    addReview(variables: AddReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddReviewMutation>(AddReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addReview');
     },
-    updateSample(variables: UpdateSampleMutationVariables): Promise<UpdateSampleMutation> {
-      return withWrapper(() => client.request<UpdateSampleMutation>(print(UpdateSampleDocument), variables));
+    userWithReviews(variables?: UserWithReviewsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UserWithReviewsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UserWithReviewsQuery>(UserWithReviewsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'userWithReviews');
     },
-    addProposalWorkflowStatus(variables: AddProposalWorkflowStatusMutationVariables): Promise<AddProposalWorkflowStatusMutation> {
-      return withWrapper(() => client.request<AddProposalWorkflowStatusMutation>(print(AddProposalWorkflowStatusDocument), variables));
+    cloneSampleEsi(variables: CloneSampleEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CloneSampleEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CloneSampleEsiMutation>(CloneSampleEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'cloneSampleEsi');
     },
-    addStatusChangingEventsToConnection(variables: AddStatusChangingEventsToConnectionMutationVariables): Promise<AddStatusChangingEventsToConnectionMutation> {
-      return withWrapper(() => client.request<AddStatusChangingEventsToConnectionMutation>(print(AddStatusChangingEventsToConnectionDocument), variables));
+    createSampleEsi(variables: CreateSampleEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateSampleEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateSampleEsiMutation>(CreateSampleEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createSampleEsi');
     },
-    createProposalStatus(variables: CreateProposalStatusMutationVariables): Promise<CreateProposalStatusMutation> {
-      return withWrapper(() => client.request<CreateProposalStatusMutation>(print(CreateProposalStatusDocument), variables));
+    deleteSampleEsi(variables: DeleteSampleEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteSampleEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteSampleEsiMutation>(DeleteSampleEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteSampleEsi');
     },
-    createProposalWorkflow(variables: CreateProposalWorkflowMutationVariables): Promise<CreateProposalWorkflowMutation> {
-      return withWrapper(() => client.request<CreateProposalWorkflowMutation>(print(CreateProposalWorkflowDocument), variables));
+    getSampleEsi(variables: GetSampleEsiQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSampleEsiQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSampleEsiQuery>(GetSampleEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSampleEsi');
     },
-    deleteProposalStatus(variables: DeleteProposalStatusMutationVariables): Promise<DeleteProposalStatusMutation> {
-      return withWrapper(() => client.request<DeleteProposalStatusMutation>(print(DeleteProposalStatusDocument), variables));
+    updateSampleEsi(variables: UpdateSampleEsiMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateSampleEsiMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateSampleEsiMutation>(UpdateSampleEsiDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateSampleEsi');
     },
-    deleteProposalWorkflow(variables: DeleteProposalWorkflowMutationVariables): Promise<DeleteProposalWorkflowMutation> {
-      return withWrapper(() => client.request<DeleteProposalWorkflowMutation>(print(DeleteProposalWorkflowDocument), variables));
+    cloneSample(variables: CloneSampleMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CloneSampleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CloneSampleMutation>(CloneSampleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'cloneSample');
     },
-    deleteProposalWorkflowStatus(variables: DeleteProposalWorkflowStatusMutationVariables): Promise<DeleteProposalWorkflowStatusMutation> {
-      return withWrapper(() => client.request<DeleteProposalWorkflowStatusMutation>(print(DeleteProposalWorkflowStatusDocument), variables));
+    createSample(variables: CreateSampleMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateSampleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateSampleMutation>(CreateSampleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createSample');
     },
-    getProposalEvents(variables?: GetProposalEventsQueryVariables): Promise<GetProposalEventsQuery> {
-      return withWrapper(() => client.request<GetProposalEventsQuery>(print(GetProposalEventsDocument), variables));
+    deleteSample(variables: DeleteSampleMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteSampleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteSampleMutation>(DeleteSampleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteSample');
     },
-    getProposalStatuses(variables?: GetProposalStatusesQueryVariables): Promise<GetProposalStatusesQuery> {
-      return withWrapper(() => client.request<GetProposalStatusesQuery>(print(GetProposalStatusesDocument), variables));
+    getSample(variables: GetSampleQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSampleQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSampleQuery>(GetSampleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSample');
     },
-    getProposalWorkflow(variables: GetProposalWorkflowQueryVariables): Promise<GetProposalWorkflowQuery> {
-      return withWrapper(() => client.request<GetProposalWorkflowQuery>(print(GetProposalWorkflowDocument), variables));
+    getSamplesByCallId(variables: GetSamplesByCallIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSamplesByCallIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSamplesByCallIdQuery>(GetSamplesByCallIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSamplesByCallId');
     },
-    getProposalWorkflows(variables?: GetProposalWorkflowsQueryVariables): Promise<GetProposalWorkflowsQuery> {
-      return withWrapper(() => client.request<GetProposalWorkflowsQuery>(print(GetProposalWorkflowsDocument), variables));
+    getSamplesWithProposalData(variables?: GetSamplesWithProposalDataQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSamplesWithProposalDataQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSamplesWithProposalDataQuery>(GetSamplesWithProposalDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSamplesWithProposalData');
     },
-    moveProposalWorkflowStatus(variables: MoveProposalWorkflowStatusMutationVariables): Promise<MoveProposalWorkflowStatusMutation> {
-      return withWrapper(() => client.request<MoveProposalWorkflowStatusMutation>(print(MoveProposalWorkflowStatusDocument), variables));
+    getSamplesWithQuestionaryStatus(variables?: GetSamplesWithQuestionaryStatusQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSamplesWithQuestionaryStatusQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetSamplesWithQuestionaryStatusQuery>(GetSamplesWithQuestionaryStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSamplesWithQuestionaryStatus');
     },
-    updateProposalStatus(variables: UpdateProposalStatusMutationVariables): Promise<UpdateProposalStatusMutation> {
-      return withWrapper(() => client.request<UpdateProposalStatusMutation>(print(UpdateProposalStatusDocument), variables));
+    updateSample(variables: UpdateSampleMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateSampleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateSampleMutation>(UpdateSampleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateSample');
     },
-    updateProposalWorkflow(variables: UpdateProposalWorkflowMutationVariables): Promise<UpdateProposalWorkflowMutation> {
-      return withWrapper(() => client.request<UpdateProposalWorkflowMutation>(print(UpdateProposalWorkflowDocument), variables));
+    addProposalWorkflowStatus(variables: AddProposalWorkflowStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddProposalWorkflowStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddProposalWorkflowStatusMutation>(AddProposalWorkflowStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addProposalWorkflowStatus');
     },
-    addSamplesToShipment(variables: AddSamplesToShipmentMutationVariables): Promise<AddSamplesToShipmentMutation> {
-      return withWrapper(() => client.request<AddSamplesToShipmentMutation>(print(AddSamplesToShipmentDocument), variables));
+    addStatusChangingEventsToConnection(variables: AddStatusChangingEventsToConnectionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddStatusChangingEventsToConnectionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddStatusChangingEventsToConnectionMutation>(AddStatusChangingEventsToConnectionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addStatusChangingEventsToConnection');
     },
-    createShipment(variables: CreateShipmentMutationVariables): Promise<CreateShipmentMutation> {
-      return withWrapper(() => client.request<CreateShipmentMutation>(print(CreateShipmentDocument), variables));
+    createProposalStatus(variables: CreateProposalStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateProposalStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateProposalStatusMutation>(CreateProposalStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createProposalStatus');
     },
-    deleteShipment(variables: DeleteShipmentMutationVariables): Promise<DeleteShipmentMutation> {
-      return withWrapper(() => client.request<DeleteShipmentMutation>(print(DeleteShipmentDocument), variables));
+    createProposalWorkflow(variables: CreateProposalWorkflowMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateProposalWorkflowMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateProposalWorkflowMutation>(CreateProposalWorkflowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createProposalWorkflow');
     },
-    getMyShipments(variables?: GetMyShipmentsQueryVariables): Promise<GetMyShipmentsQuery> {
-      return withWrapper(() => client.request<GetMyShipmentsQuery>(print(GetMyShipmentsDocument), variables));
+    deleteProposalStatus(variables: DeleteProposalStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteProposalStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteProposalStatusMutation>(DeleteProposalStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteProposalStatus');
     },
-    getShipment(variables: GetShipmentQueryVariables): Promise<GetShipmentQuery> {
-      return withWrapper(() => client.request<GetShipmentQuery>(print(GetShipmentDocument), variables));
+    deleteProposalWorkflow(variables: DeleteProposalWorkflowMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteProposalWorkflowMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteProposalWorkflowMutation>(DeleteProposalWorkflowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteProposalWorkflow');
     },
-    getShipments(variables?: GetShipmentsQueryVariables): Promise<GetShipmentsQuery> {
-      return withWrapper(() => client.request<GetShipmentsQuery>(print(GetShipmentsDocument), variables));
+    deleteProposalWorkflowStatus(variables: DeleteProposalWorkflowStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteProposalWorkflowStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteProposalWorkflowStatusMutation>(DeleteProposalWorkflowStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteProposalWorkflowStatus');
     },
-    setActiveTemplate(variables: SetActiveTemplateMutationVariables): Promise<SetActiveTemplateMutation> {
-      return withWrapper(() => client.request<SetActiveTemplateMutation>(print(SetActiveTemplateDocument), variables));
+    getProposalEvents(variables?: GetProposalEventsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalEventsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalEventsQuery>(GetProposalEventsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalEvents');
     },
-    submitShipment(variables: SubmitShipmentMutationVariables): Promise<SubmitShipmentMutation> {
-      return withWrapper(() => client.request<SubmitShipmentMutation>(print(SubmitShipmentDocument), variables));
+    getProposalStatuses(variables?: GetProposalStatusesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalStatusesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalStatusesQuery>(GetProposalStatusesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalStatuses');
     },
-    updateShipment(variables: UpdateShipmentMutationVariables): Promise<UpdateShipmentMutation> {
-      return withWrapper(() => client.request<UpdateShipmentMutation>(print(UpdateShipmentDocument), variables));
+    getProposalWorkflow(variables: GetProposalWorkflowQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalWorkflowQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalWorkflowQuery>(GetProposalWorkflowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalWorkflow');
     },
-    cloneTemplate(variables: CloneTemplateMutationVariables): Promise<CloneTemplateMutation> {
-      return withWrapper(() => client.request<CloneTemplateMutation>(print(CloneTemplateDocument), variables));
+    getProposalWorkflows(variables?: GetProposalWorkflowsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalWorkflowsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalWorkflowsQuery>(GetProposalWorkflowsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalWorkflows');
     },
-    createQuestion(variables: CreateQuestionMutationVariables): Promise<CreateQuestionMutation> {
-      return withWrapper(() => client.request<CreateQuestionMutation>(print(CreateQuestionDocument), variables));
+    moveProposalWorkflowStatus(variables: MoveProposalWorkflowStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MoveProposalWorkflowStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MoveProposalWorkflowStatusMutation>(MoveProposalWorkflowStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'moveProposalWorkflowStatus');
     },
-    createQuestionTemplateRelation(variables: CreateQuestionTemplateRelationMutationVariables): Promise<CreateQuestionTemplateRelationMutation> {
-      return withWrapper(() => client.request<CreateQuestionTemplateRelationMutation>(print(CreateQuestionTemplateRelationDocument), variables));
+    updateProposalStatus(variables: UpdateProposalStatusMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateProposalStatusMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateProposalStatusMutation>(UpdateProposalStatusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateProposalStatus');
     },
-    createTemplate(variables: CreateTemplateMutationVariables): Promise<CreateTemplateMutation> {
-      return withWrapper(() => client.request<CreateTemplateMutation>(print(CreateTemplateDocument), variables));
+    updateProposalWorkflow(variables: UpdateProposalWorkflowMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateProposalWorkflowMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateProposalWorkflowMutation>(UpdateProposalWorkflowDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateProposalWorkflow');
     },
-    createTopic(variables: CreateTopicMutationVariables): Promise<CreateTopicMutation> {
-      return withWrapper(() => client.request<CreateTopicMutation>(print(CreateTopicDocument), variables));
+    addSamplesToShipment(variables: AddSamplesToShipmentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddSamplesToShipmentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddSamplesToShipmentMutation>(AddSamplesToShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addSamplesToShipment');
     },
-    deleteQuestion(variables: DeleteQuestionMutationVariables): Promise<DeleteQuestionMutation> {
-      return withWrapper(() => client.request<DeleteQuestionMutation>(print(DeleteQuestionDocument), variables));
+    createShipment(variables: CreateShipmentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateShipmentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateShipmentMutation>(CreateShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createShipment');
     },
-    deleteQuestionTemplateRelation(variables: DeleteQuestionTemplateRelationMutationVariables): Promise<DeleteQuestionTemplateRelationMutation> {
-      return withWrapper(() => client.request<DeleteQuestionTemplateRelationMutation>(print(DeleteQuestionTemplateRelationDocument), variables));
+    deleteShipment(variables: DeleteShipmentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteShipmentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteShipmentMutation>(DeleteShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteShipment');
     },
-    deleteTemplate(variables: DeleteTemplateMutationVariables): Promise<DeleteTemplateMutation> {
-      return withWrapper(() => client.request<DeleteTemplateMutation>(print(DeleteTemplateDocument), variables));
+    getMyShipments(variables?: GetMyShipmentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMyShipmentsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetMyShipmentsQuery>(GetMyShipmentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getMyShipments');
     },
-    deleteTopic(variables: DeleteTopicMutationVariables): Promise<DeleteTopicMutation> {
-      return withWrapper(() => client.request<DeleteTopicMutation>(print(DeleteTopicDocument), variables));
+    getShipment(variables: GetShipmentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetShipmentQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetShipmentQuery>(GetShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getShipment');
     },
-    getActiveTemplateId(variables: GetActiveTemplateIdQueryVariables): Promise<GetActiveTemplateIdQuery> {
-      return withWrapper(() => client.request<GetActiveTemplateIdQuery>(print(GetActiveTemplateIdDocument), variables));
+    getShipments(variables?: GetShipmentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetShipmentsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetShipmentsQuery>(GetShipmentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getShipments');
     },
-    getIsNaturalKeyPresent(variables: GetIsNaturalKeyPresentQueryVariables): Promise<GetIsNaturalKeyPresentQuery> {
-      return withWrapper(() => client.request<GetIsNaturalKeyPresentQuery>(print(GetIsNaturalKeyPresentDocument), variables));
+    setActiveTemplate(variables: SetActiveTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetActiveTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetActiveTemplateMutation>(SetActiveTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setActiveTemplate');
     },
-    getProposalTemplates(variables?: GetProposalTemplatesQueryVariables): Promise<GetProposalTemplatesQuery> {
-      return withWrapper(() => client.request<GetProposalTemplatesQuery>(print(GetProposalTemplatesDocument), variables));
+    submitShipment(variables: SubmitShipmentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitShipmentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitShipmentMutation>(SubmitShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitShipment');
     },
-    getQuestions(variables?: GetQuestionsQueryVariables): Promise<GetQuestionsQuery> {
-      return withWrapper(() => client.request<GetQuestionsQuery>(print(GetQuestionsDocument), variables));
+    updateShipment(variables: UpdateShipmentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateShipmentMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateShipmentMutation>(UpdateShipmentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateShipment');
     },
-    getTemplate(variables: GetTemplateQueryVariables): Promise<GetTemplateQuery> {
-      return withWrapper(() => client.request<GetTemplateQuery>(print(GetTemplateDocument), variables));
+    importTemplate(variables: ImportTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ImportTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImportTemplateMutation>(ImportTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'importTemplate');
     },
-    getTemplateCategories(variables?: GetTemplateCategoriesQueryVariables): Promise<GetTemplateCategoriesQuery> {
-      return withWrapper(() => client.request<GetTemplateCategoriesQuery>(print(GetTemplateCategoriesDocument), variables));
+    cloneTemplate(variables: CloneTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CloneTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CloneTemplateMutation>(CloneTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'cloneTemplate');
     },
-    getTemplates(variables?: GetTemplatesQueryVariables): Promise<GetTemplatesQuery> {
-      return withWrapper(() => client.request<GetTemplatesQuery>(print(GetTemplatesDocument), variables));
+    createQuestion(variables: CreateQuestionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateQuestionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateQuestionMutation>(CreateQuestionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createQuestion');
     },
-    updateQuestion(variables: UpdateQuestionMutationVariables): Promise<UpdateQuestionMutation> {
-      return withWrapper(() => client.request<UpdateQuestionMutation>(print(UpdateQuestionDocument), variables));
+    createQuestionTemplateRelation(variables: CreateQuestionTemplateRelationMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateQuestionTemplateRelationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateQuestionTemplateRelationMutation>(CreateQuestionTemplateRelationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createQuestionTemplateRelation');
     },
-    updateQuestionTemplateRelation(variables: UpdateQuestionTemplateRelationMutationVariables): Promise<UpdateQuestionTemplateRelationMutation> {
-      return withWrapper(() => client.request<UpdateQuestionTemplateRelationMutation>(print(UpdateQuestionTemplateRelationDocument), variables));
+    createTemplate(variables: CreateTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateTemplateMutation>(CreateTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createTemplate');
     },
-    updateQuestionTemplateRelationSettings(variables: UpdateQuestionTemplateRelationSettingsMutationVariables): Promise<UpdateQuestionTemplateRelationSettingsMutation> {
-      return withWrapper(() => client.request<UpdateQuestionTemplateRelationSettingsMutation>(print(UpdateQuestionTemplateRelationSettingsDocument), variables));
+    createTopic(variables: CreateTopicMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateTopicMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateTopicMutation>(CreateTopicDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createTopic');
     },
-    updateTemplate(variables: UpdateTemplateMutationVariables): Promise<UpdateTemplateMutation> {
-      return withWrapper(() => client.request<UpdateTemplateMutation>(print(UpdateTemplateDocument), variables));
+    deleteQuestion(variables: DeleteQuestionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteQuestionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteQuestionMutation>(DeleteQuestionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteQuestion');
     },
-    updateTopic(variables: UpdateTopicMutationVariables): Promise<UpdateTopicMutation> {
-      return withWrapper(() => client.request<UpdateTopicMutation>(print(UpdateTopicDocument), variables));
+    deleteQuestionTemplateRelation(variables: DeleteQuestionTemplateRelationMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteQuestionTemplateRelationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteQuestionTemplateRelationMutation>(DeleteQuestionTemplateRelationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteQuestionTemplateRelation');
     },
-    checkExternalToken(variables: CheckExternalTokenMutationVariables): Promise<CheckExternalTokenMutation> {
-      return withWrapper(() => client.request<CheckExternalTokenMutation>(print(CheckExternalTokenDocument), variables));
+    deleteTemplate(variables: DeleteTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteTemplateMutation>(DeleteTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteTemplate');
     },
-    checkToken(variables: CheckTokenQueryVariables): Promise<CheckTokenQuery> {
-      return withWrapper(() => client.request<CheckTokenQuery>(print(CheckTokenDocument), variables));
+    deleteTopic(variables: DeleteTopicMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteTopicMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteTopicMutation>(DeleteTopicDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteTopic');
     },
-    createUser(variables: CreateUserMutationVariables): Promise<CreateUserMutation> {
-      return withWrapper(() => client.request<CreateUserMutation>(print(CreateUserDocument), variables));
+    getActiveTemplateId(variables: GetActiveTemplateIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetActiveTemplateIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetActiveTemplateIdQuery>(GetActiveTemplateIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getActiveTemplateId');
     },
-    createUserByEmailInvite(variables: CreateUserByEmailInviteMutationVariables): Promise<CreateUserByEmailInviteMutation> {
-      return withWrapper(() => client.request<CreateUserByEmailInviteMutation>(print(CreateUserByEmailInviteDocument), variables));
+    getIsNaturalKeyPresent(variables: GetIsNaturalKeyPresentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetIsNaturalKeyPresentQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetIsNaturalKeyPresentQuery>(GetIsNaturalKeyPresentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getIsNaturalKeyPresent');
     },
-    deleteUser(variables: DeleteUserMutationVariables): Promise<DeleteUserMutation> {
-      return withWrapper(() => client.request<DeleteUserMutation>(print(DeleteUserDocument), variables));
+    getProposalTemplates(variables?: GetProposalTemplatesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProposalTemplatesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetProposalTemplatesQuery>(GetProposalTemplatesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getProposalTemplates');
     },
-    getBasicUserDetails(variables: GetBasicUserDetailsQueryVariables): Promise<GetBasicUserDetailsQuery> {
-      return withWrapper(() => client.request<GetBasicUserDetailsQuery>(print(GetBasicUserDetailsDocument), variables));
+    getQuestions(variables?: GetQuestionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuestionsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetQuestionsQuery>(GetQuestionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuestions');
     },
-    getBasicUserDetailsByEmail(variables: GetBasicUserDetailsByEmailQueryVariables): Promise<GetBasicUserDetailsByEmailQuery> {
-      return withWrapper(() => client.request<GetBasicUserDetailsByEmailQuery>(print(GetBasicUserDetailsByEmailDocument), variables));
+    getTemplate(variables: GetTemplateQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTemplateQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTemplateQuery>(GetTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getTemplate');
     },
-    getFields(variables?: GetFieldsQueryVariables): Promise<GetFieldsQuery> {
-      return withWrapper(() => client.request<GetFieldsQuery>(print(GetFieldsDocument), variables));
+    getTemplateCategories(variables?: GetTemplateCategoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTemplateCategoriesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTemplateCategoriesQuery>(GetTemplateCategoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getTemplateCategories');
     },
-    getMyRoles(variables?: GetMyRolesQueryVariables): Promise<GetMyRolesQuery> {
-      return withWrapper(() => client.request<GetMyRolesQuery>(print(GetMyRolesDocument), variables));
+    getTemplateExport(variables: GetTemplateExportQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTemplateExportQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTemplateExportQuery>(GetTemplateExportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getTemplateExport');
     },
-    getOrcIDInformation(variables: GetOrcIdInformationQueryVariables): Promise<GetOrcIdInformationQuery> {
-      return withWrapper(() => client.request<GetOrcIdInformationQuery>(print(GetOrcIdInformationDocument), variables));
+    getTemplates(variables?: GetTemplatesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTemplatesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTemplatesQuery>(GetTemplatesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getTemplates');
     },
-    getPreviousCollaborators(variables: GetPreviousCollaboratorsQueryVariables): Promise<GetPreviousCollaboratorsQuery> {
-      return withWrapper(() => client.request<GetPreviousCollaboratorsQuery>(print(GetPreviousCollaboratorsDocument), variables));
+    updateQuestion(variables: UpdateQuestionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateQuestionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateQuestionMutation>(UpdateQuestionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateQuestion');
     },
-    getRoles(variables?: GetRolesQueryVariables): Promise<GetRolesQuery> {
-      return withWrapper(() => client.request<GetRolesQuery>(print(GetRolesDocument), variables));
+    updateQuestionTemplateRelation(variables: UpdateQuestionTemplateRelationMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateQuestionTemplateRelationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateQuestionTemplateRelationMutation>(UpdateQuestionTemplateRelationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateQuestionTemplateRelation');
     },
-    getToken(variables: GetTokenMutationVariables): Promise<GetTokenMutation> {
-      return withWrapper(() => client.request<GetTokenMutation>(print(GetTokenDocument), variables));
+    updateQuestionTemplateRelationSettings(variables: UpdateQuestionTemplateRelationSettingsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateQuestionTemplateRelationSettingsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateQuestionTemplateRelationSettingsMutation>(UpdateQuestionTemplateRelationSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateQuestionTemplateRelationSettings');
     },
-    getTokenForUser(variables: GetTokenForUserMutationVariables): Promise<GetTokenForUserMutation> {
-      return withWrapper(() => client.request<GetTokenForUserMutation>(print(GetTokenForUserDocument), variables));
+    updateTemplate(variables: UpdateTemplateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateTemplateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateTemplateMutation>(UpdateTemplateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateTemplate');
     },
-    getUser(variables: GetUserQueryVariables): Promise<GetUserQuery> {
-      return withWrapper(() => client.request<GetUserQuery>(print(GetUserDocument), variables));
+    updateTopic(variables: UpdateTopicMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateTopicMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateTopicMutation>(UpdateTopicDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateTopic');
     },
-    getUserMe(variables?: GetUserMeQueryVariables): Promise<GetUserMeQuery> {
-      return withWrapper(() => client.request<GetUserMeQuery>(print(GetUserMeDocument), variables));
+    validateTemplateImport(variables: ValidateTemplateImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateTemplateImportMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ValidateTemplateImportMutation>(ValidateTemplateImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateTemplateImport');
     },
-    getUserProposals(variables?: GetUserProposalsQueryVariables): Promise<GetUserProposalsQuery> {
-      return withWrapper(() => client.request<GetUserProposalsQuery>(print(GetUserProposalsDocument), variables));
+    checkToken(variables: CheckTokenQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckTokenQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckTokenQuery>(CheckTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'checkToken');
     },
-    getUserWithRoles(variables: GetUserWithRolesQueryVariables): Promise<GetUserWithRolesQuery> {
-      return withWrapper(() => client.request<GetUserWithRolesQuery>(print(GetUserWithRolesDocument), variables));
+    createUser(variables: CreateUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser');
     },
-    getUsers(variables?: GetUsersQueryVariables): Promise<GetUsersQuery> {
-      return withWrapper(() => client.request<GetUsersQuery>(print(GetUsersDocument), variables));
+    createUserByEmailInvite(variables: CreateUserByEmailInviteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUserByEmailInviteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUserByEmailInviteMutation>(CreateUserByEmailInviteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUserByEmailInvite');
     },
-    login(variables: LoginMutationVariables): Promise<LoginMutation> {
-      return withWrapper(() => client.request<LoginMutation>(print(LoginDocument), variables));
+    deleteUser(variables: DeleteUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUserMutation>(DeleteUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUser');
     },
-    resetPassword(variables: ResetPasswordMutationVariables): Promise<ResetPasswordMutation> {
-      return withWrapper(() => client.request<ResetPasswordMutation>(print(ResetPasswordDocument), variables));
+    externalTokenLogin(variables: ExternalTokenLoginMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ExternalTokenLoginMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ExternalTokenLoginMutation>(ExternalTokenLoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'externalTokenLogin');
     },
-    resetPasswordEmail(variables: ResetPasswordEmailMutationVariables): Promise<ResetPasswordEmailMutation> {
-      return withWrapper(() => client.request<ResetPasswordEmailMutation>(print(ResetPasswordEmailDocument), variables));
+    getBasicUserDetails(variables: GetBasicUserDetailsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBasicUserDetailsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBasicUserDetailsQuery>(GetBasicUserDetailsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBasicUserDetails');
     },
-    selectRole(variables: SelectRoleMutationVariables): Promise<SelectRoleMutation> {
-      return withWrapper(() => client.request<SelectRoleMutation>(print(SelectRoleDocument), variables));
+    getBasicUserDetailsByEmail(variables: GetBasicUserDetailsByEmailQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBasicUserDetailsByEmailQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBasicUserDetailsByEmailQuery>(GetBasicUserDetailsByEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBasicUserDetailsByEmail');
     },
-    setUserEmailVerified(variables: SetUserEmailVerifiedMutationVariables): Promise<SetUserEmailVerifiedMutation> {
-      return withWrapper(() => client.request<SetUserEmailVerifiedMutation>(print(SetUserEmailVerifiedDocument), variables));
+    getFields(variables?: GetFieldsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFieldsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFieldsQuery>(GetFieldsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFields');
     },
-    setUserNotPlaceholder(variables: SetUserNotPlaceholderMutationVariables): Promise<SetUserNotPlaceholderMutation> {
-      return withWrapper(() => client.request<SetUserNotPlaceholderMutation>(print(SetUserNotPlaceholderDocument), variables));
+    getMyRoles(variables?: GetMyRolesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMyRolesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetMyRolesQuery>(GetMyRolesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getMyRoles');
     },
-    updatePassword(variables: UpdatePasswordMutationVariables): Promise<UpdatePasswordMutation> {
-      return withWrapper(() => client.request<UpdatePasswordMutation>(print(UpdatePasswordDocument), variables));
+    getOrcIDInformation(variables: GetOrcIdInformationQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetOrcIdInformationQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetOrcIdInformationQuery>(GetOrcIdInformationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getOrcIDInformation');
     },
-    updateUser(variables: UpdateUserMutationVariables): Promise<UpdateUserMutation> {
-      return withWrapper(() => client.request<UpdateUserMutation>(print(UpdateUserDocument), variables));
+    getPreviousCollaborators(variables: GetPreviousCollaboratorsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPreviousCollaboratorsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPreviousCollaboratorsQuery>(GetPreviousCollaboratorsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPreviousCollaborators');
     },
-    updateUserRoles(variables: UpdateUserRolesMutationVariables): Promise<UpdateUserRolesMutation> {
-      return withWrapper(() => client.request<UpdateUserRolesMutation>(print(UpdateUserRolesDocument), variables));
+    getRoles(variables?: GetRolesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRolesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRolesQuery>(GetRolesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getRoles');
     },
-    verifyEmail(variables: VerifyEmailMutationVariables): Promise<VerifyEmailMutation> {
-      return withWrapper(() => client.request<VerifyEmailMutation>(print(VerifyEmailDocument), variables));
+    getToken(variables: GetTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTokenMutation>(GetTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getToken');
     },
-    createVisit(variables: CreateVisitMutationVariables): Promise<CreateVisitMutation> {
-      return withWrapper(() => client.request<CreateVisitMutation>(print(CreateVisitDocument), variables));
+    getTokenForUser(variables: GetTokenForUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTokenForUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTokenForUserMutation>(GetTokenForUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getTokenForUser');
     },
-    deleteVisit(variables: DeleteVisitMutationVariables): Promise<DeleteVisitMutation> {
-      return withWrapper(() => client.request<DeleteVisitMutation>(print(DeleteVisitDocument), variables));
+    getUser(variables: GetUserQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserQuery>(GetUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUser');
     },
-    getVisit(variables: GetVisitQueryVariables): Promise<GetVisitQuery> {
-      return withWrapper(() => client.request<GetVisitQuery>(print(GetVisitDocument), variables));
+    getUserMe(variables?: GetUserMeQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserMeQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserMeQuery>(GetUserMeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserMe');
     },
-    getVisits(variables?: GetVisitsQueryVariables): Promise<GetVisitsQuery> {
-      return withWrapper(() => client.request<GetVisitsQuery>(print(GetVisitsDocument), variables));
+    getUserProposals(variables?: GetUserProposalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserProposalsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserProposalsQuery>(GetUserProposalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserProposals');
     },
-    updateVisit(variables: UpdateVisitMutationVariables): Promise<UpdateVisitMutation> {
-      return withWrapper(() => client.request<UpdateVisitMutation>(print(UpdateVisitDocument), variables));
+    getUserWithRoles(variables: GetUserWithRolesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserWithRolesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserWithRolesQuery>(GetUserWithRolesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserWithRoles');
     },
-    createVisitRegistrationQuestionary(variables: CreateVisitRegistrationQuestionaryMutationVariables): Promise<CreateVisitRegistrationQuestionaryMutation> {
-      return withWrapper(() => client.request<CreateVisitRegistrationQuestionaryMutation>(print(CreateVisitRegistrationQuestionaryDocument), variables));
+    getUsers(variables?: GetUsersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUsersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUsersQuery>(GetUsersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUsers');
     },
-    getVisitRegistration(variables: GetVisitRegistrationQueryVariables): Promise<GetVisitRegistrationQuery> {
-      return withWrapper(() => client.request<GetVisitRegistrationQuery>(print(GetVisitRegistrationDocument), variables));
+    login(variables: LoginMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<LoginMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LoginMutation>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login');
     },
-    updateVisitRegistration(variables: UpdateVisitRegistrationMutationVariables): Promise<UpdateVisitRegistrationMutation> {
-      return withWrapper(() => client.request<UpdateVisitRegistrationMutation>(print(UpdateVisitRegistrationDocument), variables));
+    logout(variables: LogoutMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<LogoutMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LogoutMutation>(LogoutDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'logout');
+    },
+    resetPassword(variables: ResetPasswordMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ResetPasswordMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ResetPasswordMutation>(ResetPasswordDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'resetPassword');
+    },
+    resetPasswordEmail(variables: ResetPasswordEmailMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ResetPasswordEmailMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ResetPasswordEmailMutation>(ResetPasswordEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'resetPasswordEmail');
+    },
+    selectRole(variables: SelectRoleMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SelectRoleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SelectRoleMutation>(SelectRoleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'selectRole');
+    },
+    setUserEmailVerified(variables: SetUserEmailVerifiedMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetUserEmailVerifiedMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetUserEmailVerifiedMutation>(SetUserEmailVerifiedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setUserEmailVerified');
+    },
+    setUserNotPlaceholder(variables: SetUserNotPlaceholderMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetUserNotPlaceholderMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetUserNotPlaceholderMutation>(SetUserNotPlaceholderDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setUserNotPlaceholder');
+    },
+    updatePassword(variables: UpdatePasswordMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdatePasswordMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdatePasswordMutation>(UpdatePasswordDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updatePassword');
+    },
+    updateUser(variables: UpdateUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateUserMutation>(UpdateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateUser');
+    },
+    updateUserRoles(variables: UpdateUserRolesMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateUserRolesMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateUserRolesMutation>(UpdateUserRolesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateUserRoles');
+    },
+    verifyEmail(variables: VerifyEmailMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<VerifyEmailMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<VerifyEmailMutation>(VerifyEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'verifyEmail');
+    },
+    createVisit(variables: CreateVisitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateVisitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateVisitMutation>(CreateVisitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createVisit');
+    },
+    deleteVisit(variables: DeleteVisitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteVisitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteVisitMutation>(DeleteVisitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteVisit');
+    },
+    getVisit(variables: GetVisitQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetVisitQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetVisitQuery>(GetVisitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getVisit');
+    },
+    getVisits(variables?: GetVisitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetVisitsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetVisitsQuery>(GetVisitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getVisits');
+    },
+    updateVisit(variables: UpdateVisitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateVisitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateVisitMutation>(UpdateVisitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateVisit');
+    },
+    createVisitRegistrationQuestionary(variables: CreateVisitRegistrationQuestionaryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateVisitRegistrationQuestionaryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateVisitRegistrationQuestionaryMutation>(CreateVisitRegistrationQuestionaryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createVisitRegistrationQuestionary');
+    },
+    getVisitRegistration(variables: GetVisitRegistrationQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetVisitRegistrationQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetVisitRegistrationQuery>(GetVisitRegistrationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getVisitRegistration');
+    },
+    updateVisitRegistration(variables: UpdateVisitRegistrationMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateVisitRegistrationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateVisitRegistrationMutation>(UpdateVisitRegistrationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateVisitRegistration');
     }
   };
 }

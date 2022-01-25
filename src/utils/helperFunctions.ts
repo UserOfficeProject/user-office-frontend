@@ -1,5 +1,8 @@
-import { getTranslation, ResourceId } from '@esss-swap/duo-localisation';
 import { Column } from '@material-table/core';
+import {
+  getTranslation,
+  ResourceId,
+} from '@user-office-software/duo-localisation';
 
 import { SortDirectionType } from 'components/common/SuperMaterialTable';
 import { Proposal, ProposalEndStatus, ProposalStatus } from 'generated/sdk';
@@ -59,7 +62,8 @@ export const fromProposalToProposalView = (proposal: Proposal) => {
     proposalId: proposal.proposalId,
     rankOrder: proposal.sepMeetingDecision?.rankOrder,
     finalStatus: getTranslation(proposal.finalStatus as ResourceId),
-    timeAllocation: proposal.technicalReview?.timeAllocation || null,
+    technicalTimeAllocation: proposal.technicalReview?.timeAllocation || null,
+    managementTimeAllocation: proposal.managementTimeAllocation || null,
     technicalStatus: getTranslation(
       proposal.technicalReview?.status as ResourceId
     ),

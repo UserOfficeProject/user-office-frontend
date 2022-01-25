@@ -1,41 +1,30 @@
-import Container from '@material-ui/core/Container';
+import { Container } from '@material-ui/core';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
 import { TemplateGroupId } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
 
-import VisitsTemplatesTable from './VisitsTemplatesTable';
+import DefaultTemplatesTable from './DefaultTemplatesTable';
+import withMarkTemplateAsActiveAction from './withMarkTemplateAsActiveAction';
 
-export default function VisitTemplatesPage() {
-  const api = useDataApi();
+export default function SampleEsiPage() {
+  const templateGroup = TemplateGroupId.VISIT_REGISTRATION;
+  const itemCountLabel = '# visits';
+
+  const TableComponent = withMarkTemplateAsActiveAction(DefaultTemplatesTable);
 
   return (
     <Container>
       <SimpleTabs tabNames={['Current', 'Archived']}>
-        <VisitsTemplatesTable
-          dataProvider={() =>
-            api()
-              .getTemplates({
-                filter: {
-                  isArchived: false,
-                  group: TemplateGroupId.VISIT_REGISTRATION,
-                },
-              })
-              .then((data) => data.templates || [])
-          }
+        <TableComponent
+          templateGroup={templateGroup}
+          itemCountLabel={itemCountLabel}
+          isArchived={false}
         />
-        <VisitsTemplatesTable
-          dataProvider={() =>
-            api()
-              .getTemplates({
-                filter: {
-                  isArchived: true,
-                  group: TemplateGroupId.VISIT_REGISTRATION,
-                },
-              })
-              .then((data) => data.templates || [])
-          }
+        <TableComponent
+          templateGroup={templateGroup}
+          itemCountLabel={itemCountLabel}
+          isArchived={true}
         />
       </SimpleTabs>
     </Container>

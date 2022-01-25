@@ -122,4 +122,15 @@ fragment fieldConfig on FieldConfig {
     required
     tooltip
   }
+
+  ... on GenericTemplateBasisConfig {
+    titlePlaceholder
+    questionLabel
+  }
+
+    ... on FeedbackBasisConfig {
+    small_label
+    required
+    tooltip
+  }
 }

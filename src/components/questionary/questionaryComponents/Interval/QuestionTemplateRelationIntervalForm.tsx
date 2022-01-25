@@ -20,9 +20,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const QuestionTemplateRelationIntervalForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationIntervalForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   const classes = useStyles();
   const { units } = useUnitsData();
 

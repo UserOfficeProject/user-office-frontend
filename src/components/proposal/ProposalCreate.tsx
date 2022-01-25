@@ -3,8 +3,10 @@ import { useParams } from 'react-router';
 
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
-import { BasicUserDetails, QuestionaryStep } from 'generated/sdk';
+import { BasicUserDetails, Call, QuestionaryStep } from 'generated/sdk';
+import { useCallData } from 'hooks/call/useCallData';
 import { useBlankQuestionaryStepsData } from 'hooks/questionary/useBlankQuestionaryStepsData';
+import { useBasicUserData } from 'hooks/user/useUserData';
 import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 
 import ProposalContainer from './ProposalContainer';
@@ -13,7 +15,8 @@ function createProposalStub(
   callId: number,
   templateId: number,
   questionarySteps: QuestionaryStep[],
-  proposer: BasicUserDetails
+  proposer: BasicUserDetails,
+  call: Call | null
 ): ProposalWithQuestionary {
   return {
     primaryKey: 0,
@@ -40,6 +43,8 @@ function createProposalStub(
     submitted: false,
     users: [],
     samples: [],
+    genericTemplates: [],
+    call: call,
   };
 }
 
@@ -53,7 +58,10 @@ export default function ProposalCreate() {
     parseInt(templateId as string)
   );
 
-  if (!questionarySteps) {
+  // get call using api
+  const { call } = useCallData(+callId);
+  const { userData } = useBasicUserData(user.id);
+  if (!questionarySteps || !call || !userData) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
@@ -63,7 +71,8 @@ export default function ProposalCreate() {
         parseInt(callId as string),
         parseInt(templateId as string),
         questionarySteps,
-        user
+        userData,
+        call as Call
       )}
     />
   );

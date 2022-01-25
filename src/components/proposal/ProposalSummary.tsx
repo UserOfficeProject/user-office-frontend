@@ -48,11 +48,10 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const isCallActive = state.proposal?.call?.isActive ?? true;
 
-  const [loadingSubmitMessage, setLoadingSubmitMessage] = useState<boolean>(
-    true
-  );
+  const [loadingSubmitMessage, setLoadingSubmitMessage] =
+    useState<boolean>(true);
   const [submitButtonMessage, setSubmitButtonMessage] = useState<string>(
-    'I am aware that no further edits can be done after proposal submission.'
+    'I am aware that no further edits can be made after proposal submission.'
   );
 
   const proposal = state.proposal;
@@ -73,7 +72,7 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
   // Show a different submit confirmation if
   // EDITABLE_SUBMITTED is an upcoming status
   useEffect(() => {
-    async function checkUpcomingEditableStatus() {
+    async function initialiseSubmissionMessage() {
       if (!proposal.callId || submitDisabled) {
         setLoadingSubmitMessage(false);
 
@@ -101,14 +100,22 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
 
           if (proposal.status != null && hasUpcomingEditableStatus) {
             setSubmitButtonMessage(
-              'Submit proposal? The proposal can be edited after submission.'
+              'Submit proposal? The proposal can be edited after submission.'.concat(
+                call?.submissionMessage ? '\n' + call.submissionMessage : ''
+              )
+            );
+          } else {
+            setSubmitButtonMessage(
+              'I am aware that no further edits can be made after proposal submission.'.concat(
+                call?.submissionMessage ? '\n' + call.submissionMessage : ''
+              )
             );
           }
         }
       }
       setLoadingSubmitMessage(false);
     }
-    checkUpcomingEditableStatus();
+    initialiseSubmissionMessage();
   }, [api, proposal.callId, proposal.status, submitDisabled]);
 
   if (loadingSubmitMessage) {
@@ -129,10 +136,20 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
           <NavigButton
             onClick={() => {
               confirm(
-                () => {
+                async () => {
+                  const result = await api().submitProposal({
+                    proposalPk: state.proposal.primaryKey,
+                  });
+                  if (!result.submitProposal.proposal) {
+                    return;
+                  }
                   dispatch({
-                    type: 'PROPOSAL_SUBMIT_CLICKED',
-                    proposalPk: proposal.primaryKey,
+                    type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+                    itemWithQuestionary: result.submitProposal.proposal,
+                  });
+                  dispatch({
+                    type: 'ITEM_WITH_QUESTIONARY_SUBMITTED',
+                    itemWithQuestionary: result.submitProposal.proposal,
                   });
                 },
                 {

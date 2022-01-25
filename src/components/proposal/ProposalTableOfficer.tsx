@@ -26,12 +26,12 @@ import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import AssignProposalsToSEP from 'components/SEP/Proposals/AssignProposalsToSEP';
 import {
   Call,
-  Instrument,
   Proposal,
   ProposalsFilter,
   ProposalStatus,
   ProposalPkWithCallId,
   Sep,
+  InstrumentFragment,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
@@ -72,12 +72,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   confirm,
 }) => {
   const [openAssignment, setOpenAssignment] = useState(false);
-  const [openInstrumentAssignment, setOpenInstrumentAssignment] = useState(
-    false
-  );
-  const [openChangeProposalStatus, setOpenChangeProposalStatus] = useState(
-    false
-  );
+  const [openInstrumentAssignment, setOpenInstrumentAssignment] =
+    useState(false);
+  const [openChangeProposalStatus, setOpenChangeProposalStatus] =
+    useState(false);
   const [selectedProposals, setSelectedProposals] = useState<
     ProposalWithCallInstrumentAndSepId[]
   >([]);
@@ -92,9 +90,8 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
-  const { loading, setProposalsData, proposalsData } = useProposalsCoreData(
-    proposalFilter
-  );
+  const { loading, setProposalsData, proposalsData } =
+    useProposalsCoreData(proposalFilter);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
@@ -208,16 +205,28 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       ...{ width: 'auto' },
     },
     {
-      title: 'Time allocation',
+      title: 'Technical time allocation',
       render: (rowData) =>
-        rowData.timeAllocation
-          ? `${rowData.timeAllocation}(${rowData.allocationTimeUnit}s)`
+        rowData.technicalTimeAllocation
+          ? `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`
           : '',
       hidden: true,
     },
     {
       title: 'Technical status',
       field: 'technicalStatus',
+    },
+    {
+      title: 'Final time allocation',
+      render: (rowData) =>
+        rowData.managementTimeAllocation
+          ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
+          : '',
+      hidden: true,
+    },
+    {
+      title: 'Final Status',
+      field: 'finalStatus',
     },
     {
       title: 'Submitted',
@@ -236,14 +245,13 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       field: 'reviewAverage',
     },
     {
-      title: 'Final Status',
-      field: 'finalStatus',
-    },
-    {
       title: 'Ranking',
       field: 'rankOrder',
     },
-    { title: 'Notified', field: 'notified' },
+    {
+      title: 'Notified',
+      render: (rowData) => (rowData.notified ? 'Yes' : 'No'),
+    },
     {
       title: 'Instrument',
       field: 'instrumentName',
@@ -377,7 +385,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   };
 
   const assignProposalsToInstrument = async (
-    instrument: Instrument | null
+    instrument: InstrumentFragment | null
   ): Promise<void> => {
     if (instrument) {
       const result = await api(
@@ -643,6 +651,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           search: true,
           searchText: urlQueryParams.search || undefined,
           selection: true,
+          headerSelectionProps: {
+            inputProps: { 'aria-label': 'Select All Rows' },
+          },
           debounceInterval: 400,
           columnsButton: true,
           selectionProps: (rowdata: any) => ({
@@ -662,7 +673,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           },
           {
             icon: GetAppIconComponent,
-            tooltip: 'Download proposals in PDF',
+            tooltip: 'Download proposals',
             onClick: (event, rowData): void => {
               downloadPDFProposal(
                 (rowData as ProposalViewData[]).map((row) => row.primaryKey),

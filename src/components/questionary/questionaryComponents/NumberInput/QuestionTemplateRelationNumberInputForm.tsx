@@ -22,9 +22,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const QuestionTemplateRelationNumberForm: FC<QuestionTemplateRelationFormProps> = (
-  props
-) => {
+export const QuestionTemplateRelationNumberForm: FC<
+  QuestionTemplateRelationFormProps
+> = (props) => {
   const classes = useStyles();
   const { units } = useUnitsData();
 

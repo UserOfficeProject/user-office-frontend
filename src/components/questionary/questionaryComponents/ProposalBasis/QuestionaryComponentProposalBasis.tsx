@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.7,
   },
   container: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -62,8 +62,8 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
               setLocalTitle(event.target.value),
             onBlur: () => {
               dispatch({
-                type: 'PROPOSAL_MODIFIED',
-                proposal: { title: localTitle },
+                type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+                itemWithQuestionary: { title: localTitle },
               });
             },
           }}
@@ -73,9 +73,10 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
           data-cy="title"
           margin="dense"
           id="title-input"
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
-      </div>
-      <div className={classes.container}>
         <Field
           name={`${id}.abstract`}
           label="Abstract"
@@ -84,28 +85,31 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
               setLocalAbstract(event.target.value),
             onBlur: () => {
               dispatch({
-                type: 'PROPOSAL_MODIFIED',
-                proposal: { abstract: localAbstract },
+                type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+                itemWithQuestionary: { abstract: localAbstract },
               });
             },
           }}
           required
           multiline
-          rowsMax="16"
-          rows="4"
+          maxRows="16"
+          minRows="4"
           fullWidth
           component={TextFieldNoSubmit}
           data-cy="abstract"
           margin="dense"
           id="abstract-input"
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
       </div>
       <ProposalParticipant
         userChanged={(user: BasicUserDetails) => {
           formikProps.setFieldValue(`${id}.proposer`, user.id);
           dispatch({
-            type: 'PROPOSAL_MODIFIED',
-            proposal: {
+            type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+            itemWithQuestionary: {
               proposer: user,
               users: users.concat(proposer as BasicUserDetails),
             },
@@ -115,7 +119,7 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
         userId={proposer?.id}
       />
       <Participants
-        title="Add Co-Proposers"
+        title="Co-Proposers"
         className={classes.container}
         setUsers={(users: BasicUserDetails[]) => {
           formikProps.setFieldValue(
@@ -123,8 +127,8 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
             users.map((user) => user.id)
           );
           dispatch({
-            type: 'PROPOSAL_MODIFIED',
-            proposal: { users: users },
+            type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+            itemWithQuestionary: { users: users },
           });
         }}
         preserveSelf={true}
@@ -138,57 +142,58 @@ function QuestionaryComponentProposalBasis(props: BasicComponentProps) {
   );
 }
 
-const proposalBasisPreSubmit = () => async ({
-  api,
-  dispatch,
-  state,
-}: SubmitActionDependencyContainer) => {
-  const proposal = (state as ProposalSubmissionState).proposal;
-  const { primaryKey, title, abstract, users, proposer, callId } = proposal;
+const proposalBasisPreSubmit =
+  () =>
+  async ({ api, dispatch, state }: SubmitActionDependencyContainer) => {
+    const proposal = (state as ProposalSubmissionState).proposal;
+    const { primaryKey, title, abstract, users, proposer, callId } = proposal;
 
-  let returnValue = state.questionary.questionaryId;
+    let returnValue = state.questionary.questionaryId;
 
-  if (primaryKey > 0) {
-    const result = await api.updateProposal({
-      proposalPk: primaryKey,
-      title: title,
-      abstract: abstract,
-      users: users.map((user) => user.id),
-      proposerId: proposer?.id,
-    });
-
-    if (result.updateProposal.proposal) {
-      dispatch({
-        type: 'PROPOSAL_LOADED',
-        proposal: { ...proposal, ...result.updateProposal.proposal },
-      });
-    }
-  } else {
-    const createResult = await api.createProposal({
-      callId: callId,
-    });
-
-    if (createResult.createProposal.proposal) {
-      const updateResult = await api.updateProposal({
-        proposalPk: createResult.createProposal.proposal.primaryKey,
+    if (primaryKey > 0) {
+      const result = await api.updateProposal({
+        proposalPk: primaryKey,
         title: title,
         abstract: abstract,
         users: users.map((user) => user.id),
         proposerId: proposer?.id,
       });
-      dispatch({
-        type: 'PROPOSAL_CREATED',
-        proposal: {
-          ...proposal,
-          ...createResult.createProposal.proposal,
-          ...updateResult.updateProposal.proposal,
-        },
-      });
-      returnValue = createResult.createProposal.proposal.questionaryId;
-    }
-  }
 
-  return returnValue;
-};
+      if (result.updateProposal.proposal) {
+        dispatch({
+          type: 'ITEM_WITH_QUESTIONARY_LOADED',
+          itemWithQuestionary: {
+            ...proposal,
+            ...result.updateProposal.proposal,
+          },
+        });
+      }
+    } else {
+      const createResult = await api.createProposal({
+        callId: callId,
+      });
+
+      if (createResult.createProposal.proposal) {
+        const updateResult = await api.updateProposal({
+          proposalPk: createResult.createProposal.proposal.primaryKey,
+          title: title,
+          abstract: abstract,
+          users: users.map((user) => user.id),
+          proposerId: proposer?.id,
+        });
+        dispatch({
+          type: 'ITEM_WITH_QUESTIONARY_CREATED',
+          itemWithQuestionary: {
+            ...proposal,
+            ...createResult.createProposal.proposal,
+            ...updateResult.updateProposal.proposal,
+          },
+        });
+        returnValue = createResult.createProposal.proposal.questionaryId;
+      }
+    }
+
+    return returnValue;
+  };
 
 export { QuestionaryComponentProposalBasis, proposalBasisPreSubmit };
