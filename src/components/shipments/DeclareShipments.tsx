@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, Divider, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import React, { useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
@@ -69,6 +70,13 @@ function DeclareShipments({
   };
 
   const onDeleteClicked = (item: QuestionnairesListRow) => {
+    const shipment = shipments.find((s) => s.id === item.id);
+    if (shipment?.status === ShipmentStatus.SUBMITTED) {
+      alert('Cannot delete a submitted shipment'); // TODO implement withAlert
+
+      return;
+    }
+
     confirm(() => deleteShipment(item.id), {
       title: 'Delete Sample',
       description:
@@ -79,6 +87,8 @@ function DeclareShipments({
   const onAddClicked = () => {
     setIsModalOpen(true);
   };
+
+  const hasLocalContact = scheduledEvent.localContactId !== null;
 
   return (
     <div>
@@ -96,6 +106,10 @@ function DeclareShipments({
           <li>Post the shipment</li>
         </ol>
       </Typography>
+      <Alert severity="warning" hidden={!hasLocalContact}>
+        Shipment declarations are not possible until the local contact has been
+        assigned to your scheduled event
+      </Alert>
       <QuestionnairesList
         addButtonLabel="Add Shipment"
         data={shipments.map(shipmentToListRow) ?? []}
@@ -107,7 +121,8 @@ function DeclareShipments({
               setIsModalOpen(true);
             })
         }
-        onAddNewClick={onAddClicked}
+        onDeleteClick={onDeleteClicked}
+        onAddNewClick={hasLocalContact ? onAddClicked : undefined}
         style={{ maxWidth: '100%' }}
       />
       <Divider style={{ margin: '12px 0' }} />
