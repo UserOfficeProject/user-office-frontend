@@ -84,8 +84,8 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           data-cy={unitFieldId}
           className="MuiFormControl-marginDense"
         >
-          {config.units?.map((unit) => (
-            <MenuItem value={unit} key={unit}>
+          {config.units?.map(({ id, unit }) => (
+            <MenuItem value={id} key={id}>
               {unit}
             </MenuItem>
           ))}

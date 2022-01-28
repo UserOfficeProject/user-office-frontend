@@ -6,7 +6,9 @@ import * as Yup from 'yup';
 
 import FormikDropdown from 'components/common/FormikDropdown';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
+import FormikUICustomSelect, {
+  SelectedValueType,
+} from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionFormShell } from 'components/questionary/questionaryComponents/QuestionFormShell';
@@ -39,7 +41,7 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
         }),
       })}
     >
-      {() => (
+      {({ setFieldValue }) => (
         <>
           <Field
             name="naturalKey"
@@ -87,7 +89,18 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
               component={FormikUICustomSelect}
               multiple
               label="Units"
-              availableOptions={units.map((unit) => unit.name)}
+              availableOptions={units.map((unit) => ({
+                label: unit.symbol,
+                value: unit.id,
+              }))}
+              onChange={(
+                event: React.ChangeEvent<{
+                  value: SelectedValueType;
+                }>
+              ) => {
+                const newValue = event.target.value;
+                setFieldValue('config.units', newValue);
+              }}
               className={classes.units}
               data-cy="units"
             />

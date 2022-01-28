@@ -5,9 +5,12 @@ import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import PropTypes from 'prop-types';
 import React from 'react';
+import * as Yup from 'yup';
 
+import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
 import { Unit } from 'generated/sdk';
+import { useUnitsData } from 'hooks/settings/useUnitData';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,19 +27,27 @@ type CreateUnitProps = {
 const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
   const classes = useStyles();
   const { api, isExecutingCall } = useDataApiWithFeedback();
+  const { units, loadingUnits } = useUnitsData();
 
-  const initialValues = unit
+  const initialValues: Unit = unit
     ? unit
     : {
-        name: '',
+        id: '',
+        unit: '',
+        quantity: '',
+        symbol: '',
+        siConversionFormula: '',
       };
+
+  if (loadingUnits) return <UOLoader />;
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={async (values): Promise<void> => {
+      onSubmit={async (newUnit): Promise<void> => {
         const data = await api('Unit created successfully').createUnit({
-          name: values.name,
+          ...newUnit,
+          quantity: 'mass',
         });
         if (data.createUnit.rejection) {
           close(null);
@@ -44,17 +55,25 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
           close(data.createUnit.unit);
         }
       }}
+      validationSchema={Yup.object().shape({
+        id: Yup.string().required('Id is required'),
+        unit: Yup.string().required('Name is required'),
+        quantity: Yup.string().required('Quantity is required'),
+        symbol: Yup.string().required('Symbol is required'),
+        siConversionFormula: Yup.string().required(
+          'Conversion formula is required'
+        ),
+      })}
     >
       {() => (
         <Form>
           <Typography variant="h6" component="h1">
-            Create new unit
+            Create new units
           </Typography>
 
           <Field
-            name="name"
-            id="name"
-            label="Name"
+            name="id"
+            label="ID"
             type="text"
             component={TextField}
             margin="normal"
@@ -64,6 +83,49 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             required
           />
 
+          <Field
+            name="unit"
+            label="Name"
+            type="text"
+            component={TextField}
+            margin="normal"
+            fullWidth
+            data-cy="name"
+            disabled={isExecutingCall}
+            required
+          />
+          <FormikDropdown
+            name="quantity"
+            label="Quantity"
+            items={units.map((unit) => ({
+              text: `${unit.quantity} (${unit.symbol})`,
+              value: unit.id,
+            }))}
+            data-cy="quantity"
+            required
+          />
+          <Field
+            name="symbol"
+            label="Symbol"
+            type="text"
+            component={TextField}
+            margin="normal"
+            fullWidth
+            data-cy="symbol"
+            disabled={isExecutingCall}
+            required
+          />
+          <Field
+            name="siConversionFormula"
+            label="SI conversion formula"
+            type="text"
+            component={TextField}
+            margin="normal"
+            fullWidth
+            data-cy="siConversionFormula"
+            disabled={isExecutingCall}
+            required
+          />
           <Button
             type="submit"
             fullWidth

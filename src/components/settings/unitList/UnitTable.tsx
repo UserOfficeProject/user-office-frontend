@@ -18,7 +18,7 @@ import CreateUnit from './CreateUnit';
 const UnitTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
   const { loadingUnits, units, setUnitsWithLoading: setUnits } = useUnitsData();
-  const columns = [{ title: 'Unit', field: 'name' }];
+  const columns = [{ title: 'Unit', field: 'unit' }];
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const [urlQueryParams, setUrlQueryParams] =
     useQueryParams<UrlQueryParamsType>(DefaultQueryParams);

@@ -86,7 +86,7 @@ export const QuestionIntervalForm: FC<QuestionFormProps> = (props) => {
               component={FormikUICustomSelect}
               multiple
               label="Units"
-              availableOptions={units.map((unit) => unit.name)}
+              availableOptions={units.map(({ unit }) => unit)}
               className={classes.units}
               data-cy="units"
             />

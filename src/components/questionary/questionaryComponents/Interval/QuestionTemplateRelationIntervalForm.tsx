@@ -68,7 +68,7 @@ export const QuestionTemplateRelationIntervalForm: FC<
               multiple
               label="Units"
               margin="normal"
-              availableOptions={units.map((unit) => unit.name)}
+              availableOptions={units.map((unit) => unit.unit)}
               className={classes.units}
             />
           </TitledContainer>
