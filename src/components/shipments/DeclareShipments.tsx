@@ -1,13 +1,6 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  Divider,
-  Typography,
-} from '@material-ui/core';
+import { Dialog, DialogContent, Divider, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 
-import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import UOLoader from 'components/common/UOLoader';
 import {
   QuestionnairesList,
@@ -46,8 +39,7 @@ function DeclareShipments({
     scheduledEventId: scheduledEventId,
   });
 
-  const { scheduledEvent, setScheduledEvent } =
-    useScheduledEvent(scheduledEventId);
+  const { scheduledEvent } = useScheduledEvent(scheduledEventId);
 
   const [selectedShipment, setSelectedShipment] =
     useState<ShipmentFragment | null>(null);
@@ -84,29 +76,6 @@ function DeclareShipments({
     })();
   };
 
-  const declareShipment = () => {
-    api()
-      .updateScheduledEventCore({
-        scheduledEventId,
-        isShipmentDeclared: true,
-      })
-      .then(({ updateScheduledEventCore }) => {
-        const { scheduledEvent, rejection } = updateScheduledEventCore;
-        if (rejection) {
-          // error occurred
-          return;
-        }
-        setScheduledEvent(scheduledEvent);
-      });
-  };
-
-  const onDeclareShipmentClicked = () =>
-    confirm(declareShipment, {
-      title: 'Submit',
-      description:
-        'You are about to declare your shipments, no furher edits are be available',
-    })();
-
   const onAddClicked = () => {
     setIsModalOpen(true);
   };
@@ -119,15 +88,10 @@ function DeclareShipments({
       >
         Declare Shipments
       </Typography>
-      <Typography variant="h6" style={{ marginBottom: '12px' }}>
-        Shipment status:{' '}
-        {scheduledEvent.isShipmentDeclared ? 'Declared' : 'Not declared'}
-      </Typography>
       <Typography>
         Follow the steps below to declare your shipments:
         <ol style={{ margin: 0, paddingBottom: '22px' }}>
           <li>Add all the shipments (one shipment per parcel)</li>
-          <li>Declare the shipment</li>
           <li>Download labels</li>
           <li>Post the shipment</li>
         </ol>
@@ -143,29 +107,13 @@ function DeclareShipments({
               setIsModalOpen(true);
             })
         }
-        onDeleteClick={
-          scheduledEvent.isShipmentDeclared ? undefined : onDeleteClicked
-        }
-        onAddNewClick={
-          scheduledEvent.isShipmentDeclared ? undefined : onAddClicked
-        }
+        onAddNewClick={onAddClicked}
         style={{ maxWidth: '100%' }}
       />
       <Divider style={{ margin: '12px 0' }} />
       <Typography variant="body1" align={'right'}>
         {`${shipments.length} shipment(s)`}
       </Typography>
-      <ActionButtonContainer>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={scheduledEvent.isShipmentDeclared || shipments.length === 0}
-          onClick={onDeclareShipmentClicked}
-          data-cy="declare-shipments"
-        >
-          Declare shipments
-        </Button>
-      </ActionButtonContainer>
 
       <Dialog
         aria-labelledby="shipment-declaration"

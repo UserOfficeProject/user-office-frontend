@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+  BasicUserDetailsFragment,
   EsiFragment,
   FeedbackFragment,
   Instrument,
@@ -8,6 +9,7 @@ import {
   Proposal,
   ProposalBookingStatusCore,
   ScheduledEventCore,
+  ShipmentFragment,
   Visit,
   VisitFragment,
 } from 'generated/sdk';
@@ -15,19 +17,9 @@ import { useDataApi } from 'hooks/common/useDataApi';
 import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
 import { toTzLessDateTime } from 'utils/Time';
 
-import {
-  BasicUserDetailsFragment,
-  ShipmentFragment,
-} from './../../generated/sdk';
-
 export type ProposalScheduledEvent = Pick<
   ScheduledEventCore,
-  | 'startsAt'
-  | 'endsAt'
-  | 'id'
-  | 'status'
-  | 'localContact'
-  | 'isShipmentDeclared'
+  'startsAt' | 'endsAt' | 'id' | 'status' | 'localContact'
 > & {
   proposal: Pick<
     Proposal,
@@ -99,7 +91,6 @@ export function useProposalBookingsScheduledEvents({
                   endsAt: scheduledEvent.endsAt,
                   status: scheduledEvent.status,
                   localContact: scheduledEvent.localContact,
-                  isShipmentDeclared: scheduledEvent.isShipmentDeclared,
                   proposal: {
                     primaryKey: proposal.primaryKey,
                     title: proposal.title,

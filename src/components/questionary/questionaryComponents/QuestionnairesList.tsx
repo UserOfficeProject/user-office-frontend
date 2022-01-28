@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   questionnairesList: {
     maxWidth: '440px',
     padding: 0,
-    marginBottom: 0,
+    marginBottom: '10px',
     '& li': {
       paddingLeft: 0,
       paddingRight: 0,

@@ -6,7 +6,6 @@ fragment scheduledEventCore on ScheduledEventCore {
     endsAt
     status
     localContactId
-    isShipmentDeclared
 }
 
 

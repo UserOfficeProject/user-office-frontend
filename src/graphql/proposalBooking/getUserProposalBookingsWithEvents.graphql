@@ -23,7 +23,6 @@ query getUserProposalBookingsWithEvents(
           endsAt
           bookingType
           status
-          isShipmentDeclared
           visit {
             ...visit
             teamLead {

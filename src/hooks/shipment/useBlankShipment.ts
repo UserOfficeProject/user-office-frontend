@@ -2,17 +2,17 @@ import { useContext, useEffect, useState } from 'react';
 
 import { UserContext } from 'context/UserContextProvider';
 import {
-  BasicUserDetails,
   GetShipmentQuery,
   QuestionaryStep,
   ShipmentStatus,
   TemplateGroupId,
+  User,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { ShipmentWithQuestionary } from 'models/questionary/shipment/ShipmentWithQuestionary';
 
 function createShipmentStub(
-  creator: BasicUserDetails,
+  creator: Pick<User, 'id'>,
   questionarySteps: QuestionaryStep[],
   templateId: number,
   scheduledEventId: number,
