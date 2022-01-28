@@ -108,8 +108,6 @@ context('Shipments tests', () => {
       .find(`[title="${declareShipmentTitle}"]`)
       .click();
 
-    cy.get('[data-cy=declare-shipments]').should('be.disabled');
-
     cy.get('[data-cy=add-button]').click();
 
     cy.get('[data-cy=title-input] input')
@@ -158,18 +156,10 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
-    cy.get('[data-cy=declare-shipments]').should('not.be.disabled');
-
     cy.contains('1 shipment(s)');
-
-    cy.get('[data-cy=declare-shipments]').click();
-
-    cy.get('[data-cy=confirm-ok]').click();
-
-    cy.get('[data-cy=declare-shipments]').should('be.disabled');
 
     cy.visit('/');
 
-    cy.testActionButton(declareShipmentTitle, 'completed');
+    cy.testActionButton(declareShipmentTitle, 'neutral');
   });
 });
