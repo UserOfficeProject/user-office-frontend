@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
 import { NumberInputConfig, Unit } from 'generated/sdk';
+import expressionToFunction from 'utils/expressionToFunction';
 import isEventFromAutoComplete from 'utils/isEventFromAutoComplete';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,9 +29,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type AcceptableUserInput = number | '';
-
-const expressionToFunction = (expression: string) =>
-  new Function('x', `return ${expression}`);
 
 const getNumberOrDefault = (
   input: string,

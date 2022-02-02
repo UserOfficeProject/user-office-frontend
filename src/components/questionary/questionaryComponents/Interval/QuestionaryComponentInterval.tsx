@@ -10,7 +10,8 @@ import { Field, getIn } from 'formik';
 import React, { useState } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import { IntervalConfig } from 'generated/sdk';
+import { IntervalConfig, Unit } from 'generated/sdk';
+import expressionToFunction from 'utils/expressionToFunction';
 
 const useStyles = makeStyles((theme) => ({
   unitField: {
@@ -43,10 +44,9 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
   const [stateValue, setStateValue] = useState<{
     min: AcceptableUserInput;
     max: AcceptableUserInput;
-    unit: string;
+    unit: Unit;
     siMin: AcceptableUserInput;
     siMax: AcceptableUserInput;
-    siUnit: string;
   }>(answer.value);
 
   const classes = useStyles();
@@ -77,9 +77,18 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
       return (
         <Select
           label="Unit"
-          value={stateValue.unit}
+          value={stateValue.unit.id}
           onChange={(e) => {
-            const newState = { ...stateValue, unit: e.target.value as string };
+            const newUnitId = e.target.value as string;
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            const unit = config.units?.find((u) => u.id === newUnitId)!;
+            const convertToSi = expressionToFunction(unit.siConversionFormula);
+            const newState: typeof stateValue = {
+              ...stateValue,
+              unit,
+              siMin: convertToSi(stateValue.min),
+              siMax: convertToSi(stateValue.max),
+            };
             setStateValue(newState);
             onComplete(newState);
           }}
@@ -122,12 +131,20 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           <TextField
             label="Min"
             id={`${id}-Min`}
-            onChange={(e) =>
-              setStateValue({
+            onChange={(event) => {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              const unit = stateValue.unit;
+              const newValue = getNumberOrDefault(event.target.value, '');
+              const convertToSi = unit
+                ? expressionToFunction(unit.siConversionFormula)
+                : () => newValue;
+              const newStateValue: typeof stateValue = {
                 ...stateValue,
-                min: getNumberOrDefault(e.target.value, stateValue.min),
-              })
-            }
+                min: newValue,
+                siMin: convertToSi(newValue),
+              };
+              setStateValue(newStateValue);
+            }}
             onBlur={() => onComplete(stateValue)}
             value={stateValue.min}
             data-cy={minFieldId}
@@ -143,12 +160,20 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
           <TextField
             label="Max"
             id={`${id}-Max`}
-            onChange={(e) =>
-              setStateValue({
+            onChange={(event) => {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              const unit = stateValue.unit;
+              const newValue = getNumberOrDefault(event.target.value, '');
+              const convertToSi = unit
+                ? expressionToFunction(unit.siConversionFormula)
+                : () => newValue;
+              const newStateValue: typeof stateValue = {
                 ...stateValue,
-                max: getNumberOrDefault(e.target.value, stateValue.max),
-              })
-            }
+                max: newValue,
+                siMax: convertToSi(newValue),
+              };
+              setStateValue(newStateValue);
+            }}
             onBlur={() => onComplete(stateValue)}
             value={stateValue.max}
             data-cy={maxFieldId}

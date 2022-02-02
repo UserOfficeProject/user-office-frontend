@@ -84,6 +84,7 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
               fullWidth
               InputProps={{ 'data-cy': 'required' }}
             />
+
             <Autocomplete
               id="config-units"
               multiple
