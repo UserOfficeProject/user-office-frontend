@@ -88,7 +88,9 @@ export const QuestionIntervalForm: FC<QuestionFormProps> = (props) => {
               id="config-units"
               multiple
               options={units}
-              getOptionLabel={({ unit, symbol }) => `${unit} (${symbol})`}
+              getOptionLabel={({ unit, symbol, quantity }) =>
+                `${symbol} (${unit}) - ${quantity}`
+              }
               renderInput={(params) => (
                 <MaterialTextField {...params} label="Units" />
               )}

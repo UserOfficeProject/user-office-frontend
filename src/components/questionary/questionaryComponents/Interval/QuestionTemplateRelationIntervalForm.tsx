@@ -70,7 +70,9 @@ export const QuestionTemplateRelationIntervalForm: FC<
               id="config-units"
               multiple
               options={units}
-              getOptionLabel={({ unit, symbol }) => `${unit} (${symbol})`}
+              getOptionLabel={({ unit, symbol, quantity }) =>
+                `${symbol} (${unit}) - ${quantity}`
+              }
               renderInput={(params) => (
                 <MaterialTextField {...params} label="Units" />
               )}

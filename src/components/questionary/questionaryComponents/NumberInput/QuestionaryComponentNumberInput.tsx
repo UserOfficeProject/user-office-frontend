@@ -96,9 +96,9 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
           data-cy={unitFieldId}
           className="MuiFormControl-marginDense"
         >
-          {config.units?.map(({ id, unit }) => (
+          {config.units?.map(({ id, unit, symbol }) => (
             <MenuItem value={id} key={id}>
-              {unit}
+              {`${symbol} (${unit})`}
             </MenuItem>
           ))}
         </Select>
