@@ -8,7 +8,7 @@ const NumberInputAnswerRenderer: AnswerRenderer = (answer) => {
   }
 
   const value = answer.value.value;
-  const unit = answer.value.unit;
+  const unit = answer.value.symbol;
 
   return (
     <span>

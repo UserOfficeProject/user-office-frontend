@@ -44,6 +44,9 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
     min: AcceptableUserInput;
     max: AcceptableUserInput;
     unit: string;
+    siMin: AcceptableUserInput;
+    siMax: AcceptableUserInput;
+    siUnit: string;
   }>(answer.value);
 
   const classes = useStyles();
