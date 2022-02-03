@@ -44,7 +44,7 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
   const [stateValue, setStateValue] = useState<{
     min: AcceptableUserInput;
     max: AcceptableUserInput;
-    unit: Unit;
+    unit: Unit | null; // unit can be null, in case user has specified answer before units were added to the question
     siMin: AcceptableUserInput;
     siMax: AcceptableUserInput;
   }>(answer.value);
@@ -70,14 +70,14 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
     } else if (config.units?.length === 1) {
       return (
         <span className={`${classes.singleUnit} MuiFormControl-marginNormal`}>
-          {stateValue.unit}
+          {stateValue.unit?.symbol}
         </span>
       );
     } else {
       return (
         <Select
           label="Unit"
-          value={stateValue.unit.id}
+          value={stateValue.unit?.id ?? ''}
           onChange={(e) => {
             const newUnitId = e.target.value as string;
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
