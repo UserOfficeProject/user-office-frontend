@@ -91,7 +91,7 @@ function DeclareShipments({
   const hasLocalContact = scheduledEvent.localContactId !== null;
 
   return (
-    <div>
+    <>
       <Typography
         variant="h4"
         style={{ marginBottom: '12px', textAlign: 'center' }}
@@ -126,7 +126,7 @@ function DeclareShipments({
         style={{ maxWidth: '100%' }}
       />
       <Divider style={{ margin: '12px 0' }} />
-      <Typography variant="body1" align={'right'}>
+      <Typography variant="body1" align="right">
         {`${shipments.length} shipment(s)`}
       </Typography>
 
@@ -150,7 +150,7 @@ function DeclareShipments({
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
 
