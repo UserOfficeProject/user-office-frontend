@@ -45,10 +45,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={async (newUnit): Promise<void> => {
-        const data = await api('Unit created successfully').createUnit({
-          ...newUnit,
-          quantity: 'mass',
-        });
+        const data = await api('Unit created successfully').createUnit(newUnit);
         if (data.createUnit.rejection) {
           close(null);
         } else if (data.createUnit.unit) {
@@ -99,7 +96,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="Quantity"
             items={units.map((unit) => ({
               text: `${unit.quantity} (${unit.symbol})`,
-              value: unit.id,
+              value: unit.quantity,
             }))}
             data-cy="quantity"
             required
