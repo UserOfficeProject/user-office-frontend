@@ -13,8 +13,7 @@ const NumberInputAnswerRenderer: AnswerRenderer = (answer) => {
 
   return (
     <span>
-      {value}
-      {symbol ? ` (${symbol})` : ''}
+      {value} {symbol ?? ''}
     </span>
   );
 };

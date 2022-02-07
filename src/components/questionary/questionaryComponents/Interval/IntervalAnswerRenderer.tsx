@@ -19,7 +19,7 @@ export const IntervalAnswerRenderer: AnswerRenderer = (answer) => {
 
   return (
     <span>
-      {min} &ndash; {max} {symbol ? `(${symbol})` : ''}
+      {min} &ndash; {max} {symbol ?? ''}
     </span>
   );
 };
