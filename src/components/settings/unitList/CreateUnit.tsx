@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikAutocomplete from 'components/common/FormikAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Unit } from 'generated/sdk';
 import { useUnitsData } from 'hooks/settings/useUnitData';
@@ -91,7 +91,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             disabled={isExecutingCall}
             required
           />
-          <FormikDropdown
+          <FormikAutocomplete
             name="quantity"
             label="Quantity"
             items={units.map((unit) => ({

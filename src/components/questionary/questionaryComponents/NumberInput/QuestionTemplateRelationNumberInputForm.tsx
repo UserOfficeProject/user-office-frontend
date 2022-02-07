@@ -5,7 +5,7 @@ import { TextField } from 'formik-material-ui';
 import React, { FC, useState } from 'react';
 import * as Yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikAutocomplete from 'components/common/FormikAutocomplete';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
@@ -92,7 +92,7 @@ export const QuestionTemplateRelationNumberForm: FC<
                 data-cy="units"
               />
 
-              <FormikDropdown
+              <FormikAutocomplete
                 name="config.numberValueConstraint"
                 label="Value constraint"
                 InputProps={{

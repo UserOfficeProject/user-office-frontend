@@ -1,9 +1,11 @@
-import { PropTypes, TextField } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import { connect, FormikContextType } from 'formik';
+import { PropTypes } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import MuiTextField from '@material-ui/core/TextField';
+import Clear from '@material-ui/icons/Clear';
+import { connect, Field, FormikContextType } from 'formik';
+import { TextField } from 'formik-material-ui';
 import React from 'react';
-
-import ErrorMessage from './ErrorMessage';
 
 type TProps = {
   items: Option[];
@@ -29,48 +31,107 @@ const FormikDropdown: React.FC<
   label,
   required,
   disabled,
+  children,
   loading = false,
   noOptionsText,
   items,
+  value,
   InputProps,
   formik,
   onChange,
   isClearable,
 }) => {
-  return (
-    <>
-      <Autocomplete
-        options={items}
-        disableClearable={!isClearable}
-        disabled={disabled}
-        loading={loading}
-        noOptionsText={noOptionsText}
-        id={name + '-input'}
-        getOptionLabel={(option) => option.text}
-        includeInputInList
-        onChange={(e, value) => {
-          formik.setFieldValue(name, value !== null ? value.value : '');
-          onChange && onChange(e as React.ChangeEvent<HTMLInputElement>);
-        }}
-        defaultValue={{
-          text:
-            items.find((item) => item.value == formik.values[name])?.text ?? '',
-          value: formik.values[name] as Option['value'],
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            {...InputProps}
-            error={Boolean(formik.touched.contact && formik.errors[name])}
-            margin="normal"
-            label={label}
-            required={required}
-          />
-        )}
-      />
+  const menuItems =
+    items.length > 0 ? (
+      items.map((option) => {
+        return (
+          <MenuItem key={option.value} value={option.value}>
+            {option.text}
+          </MenuItem>
+        );
+      })
+    ) : (
+      <MenuItem disabled key="no-options">
+        {noOptionsText}
+      </MenuItem>
+    );
 
-      <ErrorMessage name={name} />
-    </>
+  /**
+   * Looks like if the items for a select are updated
+   * after the  select field was mounted
+   * you will get warning about out of range values.
+   * To fix that just avoid mounting the real select until it's loaded
+   */
+  if (loading) {
+    return (
+      <MuiTextField
+        label={label}
+        defaultValue="Loading..."
+        disabled
+        margin="normal"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        fullWidth
+        required={required}
+      />
+    );
+  }
+
+  const props: { value?: string } = {};
+  // Formik v2 uses undefined as a real value instead of ignoring it
+  // so if `value` wasn't provided don't even include it as a property
+  // otherwise it will generate warnings
+  if (value !== undefined) {
+    props.value = value;
+  }
+
+  const handleClearSelection = () => {
+    formik.setFieldValue(name, '');
+  };
+
+  if (isClearable && formik.values[name]) {
+    InputProps = {
+      ...InputProps,
+      endAdornment: (
+        <IconButton
+          onClick={handleClearSelection}
+          disabled={!formik.values[name]}
+          style={{ marginRight: 20 }}
+          title="Clear selection"
+          data-cy="clear-selection"
+        >
+          <Clear color="disabled" fontSize="small" />
+        </IconButton>
+      ),
+    };
+  }
+
+  return (
+    <Field
+      type="text"
+      name={name}
+      label={label}
+      id={name + '-input'}
+      select
+      margin="normal"
+      component={TextField}
+      InputLabelProps={{
+        shrink: true,
+      }}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange?.(e);
+        formik.handleChange(e);
+      }}
+      fullWidth
+      required={required}
+      disabled={disabled}
+      InputProps={InputProps}
+      {...props}
+    >
+      {children}
+      {menuItems}
+    </Field>
   );
 };
 
