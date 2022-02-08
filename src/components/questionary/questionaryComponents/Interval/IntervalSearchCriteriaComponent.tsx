@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
 import {
-  NumberInputConfig,
+  IntervalConfig,
   QuestionFilterCompareOperator,
   Unit,
 } from 'generated/sdk';
@@ -27,7 +27,7 @@ function IntervalSearchCriteriaComponent({
       QuestionFilterCompareOperator.GREATER_THAN
   );
 
-  const availableUnits = (questionTemplateRelation.config as NumberInputConfig)
+  const availableUnits = (questionTemplateRelation.config as IntervalConfig)
     .units;
   const [unit, setUnit] = useState<Unit | null>(availableUnits[0] ?? null);
 

@@ -799,7 +799,9 @@ context('Template tests', () => {
 
       cy.contains(numberQuestion3.title).click();
 
-      cy.get('[data-cy=units] input').should('have.value', 'celsius,kelvin');
+      cy.get('[data-cy=units]').contains('celsius');
+      cy.get('[data-cy=units]').contains('kelvin');
+
       cy.get('[data-cy="numberValueConstraint"] input').should(
         'have.value',
         'ONLY_POSITIVE'
