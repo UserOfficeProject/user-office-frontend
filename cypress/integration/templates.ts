@@ -735,13 +735,13 @@ context('Template tests', () => {
 
       cy.get('[data-cy=question]').clear().type(numberQuestion2.title);
 
-      cy.get('[data-cy=units]>[role=button]').click();
+      cy.get('[data-cy=units]').find('[title=Open]').click();
 
       cy.contains('celsius').click();
 
-      cy.contains('kelvin').click();
+      cy.get('[data-cy=units]').find('[title=Open]').click();
 
-      cy.get('body').type('{esc}');
+      cy.contains('kelvin').click();
 
       cy.get('[data-cy="numberValueConstraint"]').click();
 
@@ -769,13 +769,13 @@ context('Template tests', () => {
 
       cy.get('[data-cy=question]').clear().type(numberQuestion3.title);
 
-      cy.get('[data-cy=units]>[role=button]').click();
+      cy.get('[data-cy=units]').find('[title=Open]').click();
 
       cy.contains('celsius').click();
 
-      cy.contains('kelvin').click();
+      cy.get('[data-cy=units]').find('[title=Open]').click();
 
-      cy.get('body').type('{esc}');
+      cy.contains('kelvin').click();
 
       cy.get('[data-cy="numberValueConstraint"]').click();
 

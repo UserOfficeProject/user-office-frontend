@@ -85,7 +85,6 @@ export const QuestionIntervalForm: FC<QuestionFormProps> = (props) => {
             />
 
             <Autocomplete
-              id="config-units"
               multiple
               options={units}
               getOptionLabel={({ unit, symbol, quantity }) =>
