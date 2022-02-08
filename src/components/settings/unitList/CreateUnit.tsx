@@ -75,7 +75,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             component={TextField}
             margin="normal"
             fullWidth
-            data-cy="name"
+            InputProps={{ 'data-cy': 'unit-id' }}
             disabled={isExecutingCall}
             required
           />
@@ -87,7 +87,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             component={TextField}
             margin="normal"
             fullWidth
-            data-cy="name"
+            InputProps={{ 'data-cy': 'unit-name' }}
             disabled={isExecutingCall}
             required
           />
@@ -98,7 +98,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
               text: `${unit.quantity} (${unit.symbol})`,
               value: unit.quantity,
             }))}
-            data-cy="quantity"
+            InputProps={{ 'data-cy': 'unit-quantity' }}
             required
           />
           <Field
@@ -108,7 +108,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             component={TextField}
             margin="normal"
             fullWidth
-            data-cy="symbol"
+            InputProps={{ 'data-cy': 'unit-symbol' }}
             disabled={isExecutingCall}
             required
           />
@@ -119,7 +119,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             component={TextField}
             margin="normal"
             fullWidth
-            data-cy="siConversionFormula"
+            InputProps={{ 'data-cy': 'unit-siConversionFormula' }}
             disabled={isExecutingCall}
             required
           />

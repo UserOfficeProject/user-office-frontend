@@ -86,7 +86,7 @@ function NumberSearchCriteriaComponent({
             onChange(comparator, convertToSi(value as number, selectedUnit));
           }}
           value={unit?.id}
-          data-cy="call-filter"
+          data-cy="unit-select"
         >
           {availableUnits.map((unit) => (
             <MenuItem key={unit.id} value={unit.id}>
