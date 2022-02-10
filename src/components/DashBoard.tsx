@@ -62,6 +62,7 @@ import SampleTemplatesPage from './template/SampleTemplatesPage';
 import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import VisitTemplatesPage from './template/VisitTemplatesPage';
+import ImportUnitsPage from './unit/ImportUnitsPage';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
 import UserPage from './user/UserPage';
@@ -323,6 +324,9 @@ const Dashboard: React.FC = () => {
           )}
           {isUserOfficer && (
             <Route path="/ImportTemplate" component={ImportTemplatePage} />
+          )}
+          {isUserOfficer && (
+            <Route path="/ImportUnits" component={ImportUnitsPage} />
           )}
           <Route
             path="/CreateEsi/:scheduledEventId"

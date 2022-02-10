@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@material-ui/core';
 import Check from '@material-ui/icons/Check';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Error from '@material-ui/icons/Error';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
@@ -88,9 +89,15 @@ export function ConflictResolver<T>(props: {
           />
         );
       case QuestionComparisonStatus.NEW:
-      case QuestionComparisonStatus.SAME:
         return (
           <Check
+            className={clsx(classes.icon, classes.check)}
+            data-cy="same-icon"
+          />
+        );
+      case QuestionComparisonStatus.SAME:
+        return (
+          <DoneAllIcon
             className={clsx(classes.icon, classes.check)}
             data-cy="same-icon"
           />

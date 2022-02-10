@@ -1,13 +1,12 @@
 import { Typography } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import React from 'react';
+import { UnitMergeReview } from 'units/UnitMergeReview';
 
-import { TemplateImportWithValidation } from 'generated/sdk';
+import { SelectImportFile } from 'components/common/SelectImportFile';
+import { UnitsImportWithValidation } from 'generated/sdk';
 import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-import { SelectImportFile } from '../../common/SelectImportFile';
-import { MergeReview } from './MergeReview';
 
 export const getFileContents = async (file: File): Promise<string> => {
   return new Promise((resolve) => {
@@ -19,19 +18,19 @@ export const getFileContents = async (file: File): Promise<string> => {
   });
 };
 
-export default function ImportTemplatePage() {
+export default function ImportUnitsPage() {
   const { api } = useDataApiWithFeedback();
   const [validationResult, setValidationResult] =
-    React.useState<TemplateImportWithValidation | null>(null);
+    React.useState<UnitsImportWithValidation | null>(null);
 
   return (
     <Container>
       <StyledPaper>
         <Typography variant="h5" component="h5">
-          Import template
+          Import units
         </Typography>
         {validationResult ? (
-          <MergeReview
+          <UnitMergeReview
             data={validationResult}
             onBack={() => setValidationResult(null)}
           />
@@ -39,9 +38,9 @@ export default function ImportTemplatePage() {
           <SelectImportFile
             onFileSelected={(json) => {
               api()
-                .validateTemplateImport({ templateAsJson: json })
-                .then(({ validateTemplateImport }) => {
-                  const result = validateTemplateImport.validationResult;
+                .validateUnitsImport({ unitsAsJson: json })
+                .then(({ validateUnitsImport }) => {
+                  const result = validateUnitsImport.validationResult;
                   if (result) {
                     setValidationResult(result);
                   }

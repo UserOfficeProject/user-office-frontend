@@ -731,6 +731,7 @@ export type Mutation = {
   updateVisit: VisitResponseWrap;
   updateVisitRegistration: VisitRegistrationResponseWrap;
   validateTemplateImport: TemplateImportWithValidationWrap;
+  validateUnitsImport: UnitsImportWithValidationWrap;
 };
 
 
@@ -1570,6 +1571,11 @@ export type MutationValidateTemplateImportArgs = {
   templateAsJson: Scalars['String'];
 };
 
+
+export type MutationValidateUnitsImportArgs = {
+  unitsAsJson: Scalars['String'];
+};
+
 export type NextProposalStatus = {
   description: Maybe<Scalars['String']>;
   id: Maybe<Scalars['Int']>;
@@ -1961,6 +1967,7 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   templates: Maybe<Array<Template>>;
   units: Maybe<Array<Unit>>;
+  unitsAsJson: Maybe<Scalars['String']>;
   user: Maybe<User>;
   userHasAccessToProposal: Maybe<Scalars['Boolean']>;
   userInstruments: Maybe<InstrumentsQueryResult>;
@@ -2905,9 +2912,30 @@ export type Unit = {
   unit: Scalars['String'];
 };
 
+export type UnitComparison = {
+  conflictResolutionStrategy: ConflictResolutionStrategy;
+  existingUnit: Maybe<Unit>;
+  newUnit: Unit;
+  status: QuestionComparisonStatus;
+};
+
 export type UnitResponseWrap = {
   rejection: Maybe<Rejection>;
   unit: Maybe<Unit>;
+};
+
+export type UnitsImportWithValidation = {
+  errors: Array<Scalars['String']>;
+  exportDate: Scalars['DateTime'];
+  isValid: Scalars['Boolean'];
+  json: Scalars['String'];
+  unitComparisons: Array<UnitComparison>;
+  version: Scalars['String'];
+};
+
+export type UnitsImportWithValidationWrap = {
+  rejection: Maybe<Rejection>;
+  validationResult: Maybe<UnitsImportWithValidation>;
 };
 
 export type UpdateAnswerResponseWrap = {
@@ -3292,17 +3320,6 @@ export type CreateInstitutionMutationVariables = Exact<{
 
 export type CreateInstitutionMutation = { createInstitution: { institution: { id: number, name: string, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type CreateUnitMutationVariables = Exact<{
-  id: Scalars['String'];
-  unit: Scalars['String'];
-  quantity: Scalars['String'];
-  symbol: Scalars['String'];
-  siConversionFormula: Scalars['String'];
-}>;
-
-
-export type CreateUnitMutation = { createUnit: { unit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
@@ -3316,15 +3333,6 @@ export type DeleteInstitutionMutationVariables = Exact<{
 
 
 export type DeleteInstitutionMutation = { deleteInstitution: { institution: { id: number, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
-export type DeleteUnitMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteUnitMutation = { deleteUnit: { unit: { id: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
-export type UnitFragment = { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string };
 
 export type GetAllApiAccessTokensAndPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3355,20 +3363,10 @@ export type GetPageContentQueryVariables = Exact<{
 
 export type GetPageContentQuery = { getPageContent: string | null };
 
-export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetQuantitiesQuery = { quantities: Array<{ id: string }> };
-
 export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSettingsQuery = { settings: Array<{ id: SettingsId, settingsValue: string | null, description: string | null }> };
-
-export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUnitsQuery = { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null };
 
 export type MergeInstitutionsMutationVariables = Exact<{
   institutionIdFrom: Scalars['Int'];
@@ -4532,6 +4530,48 @@ export type ValidateTemplateImportMutationVariables = Exact<{
 
 
 export type ValidateTemplateImportMutation = { validateTemplateImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type CreateUnitMutationVariables = Exact<{
+  id: Scalars['String'];
+  unit: Scalars['String'];
+  quantity: Scalars['String'];
+  symbol: Scalars['String'];
+  siConversionFormula: Scalars['String'];
+}>;
+
+
+export type CreateUnitMutation = { createUnit: { unit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type DeleteUnitMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteUnitMutation = { deleteUnit: { unit: { id: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type UnitFragment = { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string };
+
+export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQuantitiesQuery = { quantities: Array<{ id: string }> };
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null };
+
+export type GetUnitsAsJsonQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsAsJsonQuery = { unitsAsJson: string | null };
+
+export type ValidateUnitsImportMutationVariables = Exact<{
+  unitsAsJson: Scalars['String'];
+}>;
+
+
+export type ValidateUnitsImportMutation = { validateUnitsImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, unitComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingUnit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, newUnit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CheckTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -5846,25 +5886,6 @@ export const CreateInstitutionDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const CreateUnitDocument = gql`
-    mutation createUnit($id: String!, $unit: String!, $quantity: String!, $symbol: String!, $siConversionFormula: String!) {
-  createUnit(
-    id: $id
-    unit: $unit
-    quantity: $quantity
-    symbol: $symbol
-    siConversionFormula: $siConversionFormula
-  ) {
-    unit {
-      ...unit
-    }
-    rejection {
-      ...rejection
-    }
-  }
-}
-    ${UnitFragmentDoc}
-${RejectionFragmentDoc}`;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
@@ -5881,18 +5902,6 @@ export const DeleteInstitutionDocument = gql`
     institution {
       id
       verified
-    }
-    rejection {
-      ...rejection
-    }
-  }
-}
-    ${RejectionFragmentDoc}`;
-export const DeleteUnitDocument = gql`
-    mutation deleteUnit($id: String!) {
-  deleteUnit(id: $id) {
-    unit {
-      id
     }
     rejection {
       ...rejection
@@ -5941,13 +5950,6 @@ export const GetPageContentDocument = gql`
   getPageContent(id: $id)
 }
     `;
-export const GetQuantitiesDocument = gql`
-    query getQuantities {
-  quantities {
-    id
-  }
-}
-    `;
 export const GetSettingsDocument = gql`
     query getSettings {
   settings {
@@ -5957,13 +5959,6 @@ export const GetSettingsDocument = gql`
   }
 }
     `;
-export const GetUnitsDocument = gql`
-    query getUnits {
-  units {
-    ...unit
-  }
-}
-    ${UnitFragmentDoc}`;
 export const MergeInstitutionsDocument = gql`
     mutation mergeInstitutions($institutionIdFrom: Int!, $institutionIdInto: Int!, $newTitle: String!) {
   mergeInstitutions(
@@ -8128,6 +8123,83 @@ export const ValidateTemplateImportDocument = gql`
 }
     ${QuestionFragmentDoc}
 ${RejectionFragmentDoc}`;
+export const CreateUnitDocument = gql`
+    mutation createUnit($id: String!, $unit: String!, $quantity: String!, $symbol: String!, $siConversionFormula: String!) {
+  createUnit(
+    id: $id
+    unit: $unit
+    quantity: $quantity
+    symbol: $symbol
+    siConversionFormula: $siConversionFormula
+  ) {
+    unit {
+      ...unit
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
+${RejectionFragmentDoc}`;
+export const DeleteUnitDocument = gql`
+    mutation deleteUnit($id: String!) {
+  deleteUnit(id: $id) {
+    unit {
+      id
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const GetQuantitiesDocument = gql`
+    query getQuantities {
+  quantities {
+    id
+  }
+}
+    `;
+export const GetUnitsDocument = gql`
+    query getUnits {
+  units {
+    ...unit
+  }
+}
+    ${UnitFragmentDoc}`;
+export const GetUnitsAsJsonDocument = gql`
+    query getUnitsAsJson {
+  unitsAsJson
+}
+    `;
+export const ValidateUnitsImportDocument = gql`
+    mutation validateUnitsImport($unitsAsJson: String!) {
+  validateUnitsImport(unitsAsJson: $unitsAsJson) {
+    validationResult {
+      json
+      version
+      exportDate
+      isValid
+      errors
+      unitComparisons {
+        existingUnit {
+          ...unit
+        }
+        newUnit {
+          ...unit
+        }
+        status
+        conflictResolutionStrategy
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CheckTokenDocument = gql`
     query checkToken($token: String!) {
   checkToken(token: $token) {
@@ -8789,17 +8861,11 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstitutionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateInstitutionMutation>(CreateInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createInstitution');
     },
-    createUnit(variables: CreateUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUnitMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<CreateUnitMutation>(CreateUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUnit');
-    },
     deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteApiAccessTokenMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteApiAccessTokenMutation>(DeleteApiAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteApiAccessToken');
     },
     deleteInstitution(variables: DeleteInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteInstitutionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteInstitutionMutation>(DeleteInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteInstitution');
-    },
-    deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
     },
     getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAllApiAccessTokensAndPermissionsQuery>(GetAllApiAccessTokensAndPermissionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllApiAccessTokensAndPermissions');
@@ -8816,14 +8882,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getPageContent(variables: GetPageContentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPageContentQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPageContentQuery>(GetPageContentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPageContent');
     },
-    getQuantities(variables?: GetQuantitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuantitiesQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetQuantitiesQuery>(GetQuantitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuantities');
-    },
     getSettings(variables?: GetSettingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSettingsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSettingsQuery>(GetSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSettings');
-    },
-    getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
     },
     mergeInstitutions(variables: MergeInstitutionsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MergeInstitutionsMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<MergeInstitutionsMutation>(MergeInstitutionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'mergeInstitutions');
@@ -9211,6 +9271,24 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     validateTemplateImport(variables: ValidateTemplateImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateTemplateImportMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<ValidateTemplateImportMutation>(ValidateTemplateImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateTemplateImport');
+    },
+    createUnit(variables: CreateUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUnitMutation>(CreateUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUnit');
+    },
+    deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
+    },
+    getQuantities(variables?: GetQuantitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuantitiesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetQuantitiesQuery>(GetQuantitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuantities');
+    },
+    getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
+    },
+    getUnitsAsJson(variables?: GetUnitsAsJsonQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsAsJsonQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsAsJsonQuery>(GetUnitsAsJsonDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnitsAsJson');
+    },
+    validateUnitsImport(variables: ValidateUnitsImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateUnitsImportMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ValidateUnitsImportMutation>(ValidateUnitsImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateUnitsImport');
     },
     checkToken(variables: CheckTokenQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckTokenQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckTokenQuery>(CheckTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'checkToken');

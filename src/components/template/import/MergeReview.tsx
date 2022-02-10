@@ -13,7 +13,7 @@ import {
 import { deepEqual } from 'utils/json';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import { ConflictResolver } from './ConflictResolver';
+import { ConflictResolver } from '../../common/ConflictResolver';
 
 interface MergeReviewProps {
   data: TemplateImportWithValidation;
