@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import FormikAutocomplete from 'components/common/FormikAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Unit } from 'generated/sdk';
-import { useUnitsData } from 'hooks/settings/useUnitData';
+import { useQuantities } from 'hooks/admin/useQuantities';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,7 +27,7 @@ type CreateUnitProps = {
 const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
   const classes = useStyles();
   const { api, isExecutingCall } = useDataApiWithFeedback();
-  const { units, loadingUnits } = useUnitsData();
+  const { quantities, loadingQuantities } = useQuantities();
 
   const initialValues: Unit = unit
     ? unit
@@ -39,7 +39,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
         siConversionFormula: '',
       };
 
-  if (loadingUnits) return <UOLoader />;
+  if (loadingQuantities) return <UOLoader />;
 
   return (
     <Formik
@@ -94,9 +94,9 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
           <FormikAutocomplete
             name="quantity"
             label="Quantity"
-            items={units.map((unit) => ({
-              text: `${unit.quantity} (${unit.symbol})`,
-              value: unit.quantity,
+            items={quantities.map((unit) => ({
+              text: `${unit.id}`,
+              value: unit.id,
             }))}
             InputProps={{ 'data-cy': 'unit-quantity' }}
             required

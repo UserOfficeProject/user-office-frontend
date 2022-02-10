@@ -1878,7 +1878,7 @@ export type ProposalsViewResult = {
 };
 
 export type Quantity = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 export type QueriesAndMutations = {
@@ -3354,6 +3354,11 @@ export type GetPageContentQueryVariables = Exact<{
 
 
 export type GetPageContentQuery = { getPageContent: string | null };
+
+export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQuantitiesQuery = { quantities: Array<{ id: string }> };
 
 export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5934,6 +5939,13 @@ export const GetInstitutionsDocument = gql`
 export const GetPageContentDocument = gql`
     query getPageContent($id: PageName!) {
   getPageContent(id: $id)
+}
+    `;
+export const GetQuantitiesDocument = gql`
+    query getQuantities {
+  quantities {
+    id
+  }
 }
     `;
 export const GetSettingsDocument = gql`
@@ -8803,6 +8815,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPageContent(variables: GetPageContentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPageContentQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPageContentQuery>(GetPageContentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPageContent');
+    },
+    getQuantities(variables?: GetQuantitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuantitiesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetQuantitiesQuery>(GetQuantitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuantities');
     },
     getSettings(variables?: GetSettingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSettingsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSettingsQuery>(GetSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSettings');
