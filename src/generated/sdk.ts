@@ -1961,7 +1961,6 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   templates: Maybe<Array<Template>>;
   units: Maybe<Array<Unit>>;
-  unitsAsJson: Maybe<Scalars['String']>;
   user: Maybe<User>;
   userHasAccessToProposal: Maybe<Scalars['Boolean']>;
   userInstruments: Maybe<InstrumentsQueryResult>;

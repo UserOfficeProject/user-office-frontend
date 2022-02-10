@@ -151,7 +151,22 @@ context('Template tests', () => {
         cy.updateQuestion({
           id: createdQuestion.id,
           question: intervalQuestion,
-          config: '{"units":["celsius","kelvin"]}',
+          config: `{"units":[
+                            {
+                              "id": "celsius",
+                              "unit": "celsius",
+                              "symbol": "c",
+                              "quantity": "thermodynamic temperature",
+                              "siConversionFormula": "x + 273.15"
+                            },
+                            {
+                                "id": "kelvin",
+                                "unit": "kelvin",
+                                "symbol": "k",
+                                "quantity": "thermodynamic temperature",
+                                "siConversionFormula": "x"
+                            }
+          ]}`,
         });
 
         if (shouldAddQuestionsToTemplate) {
@@ -175,7 +190,22 @@ context('Template tests', () => {
         cy.updateQuestion({
           id: createdQuestion.id,
           question: numberQuestion,
-          config: '{"units":["celsius","kelvin"]}',
+          config: `{"units":[
+                            {
+                              "id": "celsius",
+                              "unit": "celsius",
+                              "symbol": "c",
+                              "quantity": "thermodynamic temperature",
+                              "siConversionFormula": "x + 273.15"
+                            },
+                            {
+                                "id": "kelvin",
+                                "unit": "kelvin",
+                                "symbol": "k",
+                                "quantity": "thermodynamic temperature",
+                                "siConversionFormula": "x"
+                            }
+          ]}`,
         });
 
         if (shouldAddQuestionsToTemplate) {
@@ -802,7 +832,9 @@ context('Template tests', () => {
       cy.get('[data-cy=units]').contains('celsius');
       cy.get('[data-cy=units]').contains('kelvin');
 
-      cy.get('[data-cy="numberValueConstraint"]').contains('ONLY_POSITIVE');
+      cy.get('[data-cy="numberValueConstraint"]').contains(
+        'Only positive numbers'
+      );
 
       cy.get('[data-cy="numberValueConstraint"]').click();
 
@@ -1115,6 +1147,11 @@ context('Template tests', () => {
       cy.get('[data-cy=import-template-button]').click();
 
       cy.contains(resolvedQuestionTitle).should('exist');
+
+      cy.notification({
+        variant: 'success',
+        text: 'Template imported successfully',
+      });
     });
 
     it('should export template in compatible format', () => {
