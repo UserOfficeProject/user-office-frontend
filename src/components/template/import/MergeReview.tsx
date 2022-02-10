@@ -10,6 +10,7 @@ import {
   QuestionComparison,
   TemplateImportWithValidation,
 } from 'generated/sdk';
+import { deepEqual } from 'utils/json';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import { ConflictResolver } from './ConflictResolver';
@@ -85,10 +86,49 @@ export function MergeReview(props: MergeReviewProps) {
         </CardContent>
       </Card>
       {props.data.questionComparisons.map((comparison) => (
-        <ConflictResolver
+        <ConflictResolver<QuestionComparison>
           key={comparison.newQuestion.id}
-          questionComparison={comparison}
+          comparison={comparison}
           onConflictResolved={onConflictResolved}
+          getStatus={(comparison) => comparison.status}
+          getItemId={(comparison) => comparison.newQuestion.id}
+          getItemTitle={(comparison) => comparison.newQuestion.question}
+          getDiffInfo={({ existingQuestion, newQuestion }) => {
+            return [
+              {
+                existingVal: existingQuestion?.naturalKey,
+                newVal: newQuestion?.naturalKey ?? '',
+                heading: 'Natural key',
+                isDifferent:
+                  existingQuestion !== null &&
+                  existingQuestion?.naturalKey !== newQuestion.naturalKey,
+              },
+              {
+                existingVal: existingQuestion?.question,
+                newVal: newQuestion?.question ?? '',
+                heading: 'Question',
+                isDifferent:
+                  existingQuestion !== null &&
+                  existingQuestion.question !== newQuestion.question,
+              },
+              {
+                existingVal: (
+                  <pre>
+                    {JSON.stringify(existingQuestion?.config, undefined, 4) ||
+                      '-'}
+                  </pre>
+                ),
+                newVal: (
+                  <pre>{JSON.stringify(newQuestion?.config, undefined, 4)}</pre>
+                ),
+                heading: 'Config',
+                isDifferent:
+                  existingQuestion !== null &&
+                  deepEqual(existingQuestion?.config, newQuestion.config) ===
+                    false,
+              },
+            ];
+          }}
         />
       ))}
       <ActionButtonContainer>

@@ -20,10 +20,8 @@ import React, { useEffect } from 'react';
 
 import {
   ConflictResolutionStrategy,
-  QuestionComparison,
   QuestionComparisonStatus,
 } from 'generated/sdk';
-import { deepEqual } from 'utils/json';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -46,35 +44,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ConflictResolver(props: {
-  questionComparison: QuestionComparison;
+export function ConflictResolver<T>(props: {
+  comparison: T;
   onConflictResolved: (
-    comparison: QuestionComparison,
+    comparison: T,
     resolution: ConflictResolutionStrategy
   ) => void;
+  getStatus: (comparison: T) => QuestionComparisonStatus;
+  getItemId: (comparison: T) => string;
+  getItemTitle: (comparison: T) => string;
+  getDiffInfo: (comparison: T) => {
+    heading: string;
+    existingVal: React.ReactNode;
+    newVal: React.ReactNode;
+    isDifferent: boolean;
+  }[];
 }) {
-  const { questionComparison, onConflictResolved } = props;
-  const { existingQuestion, newQuestion, status } = questionComparison;
+  const { comparison, onConflictResolved } = props;
+  const { getStatus, getItemId, getItemTitle, getDiffInfo } = props;
 
-  const [existingQuestionCheck, setExistingQuestionCheck] = React.useState(
-    questionComparison.status === QuestionComparisonStatus.SAME
+  const [existingItemCheck, setExistingItemCheck] = React.useState(
+    getStatus(comparison) === QuestionComparisonStatus.SAME
   );
-  const [newQuestionCheck, setNewQuestionCheck] = React.useState(
-    questionComparison.status === QuestionComparisonStatus.NEW
+  const [newItemCheck, setNewItemCheck] = React.useState(
+    getStatus(comparison) === QuestionComparisonStatus.NEW
   );
-
-  const isNaturalKeyDifferent =
-    existingQuestion && existingQuestion?.naturalKey !== newQuestion.naturalKey;
-  const isQuestionDifferent =
-    existingQuestion && existingQuestion?.question !== newQuestion.question;
-  const isConfigDifferent =
-    existingQuestion &&
-    deepEqual(existingQuestion?.config, newQuestion.config) === false;
 
   const classes = useStyles();
 
   const getStatusIcon = (status: QuestionComparisonStatus) => {
-    const isResolved = existingQuestionCheck || newQuestionCheck;
+    const isResolved = existingItemCheck || newItemCheck;
     switch (status) {
       case QuestionComparisonStatus.DIFFERENT:
         return isResolved ? (
@@ -103,34 +102,20 @@ export function ConflictResolver(props: {
 
   // updating the checkboxes
   useEffect(() => {
-    if (existingQuestionCheck) {
-      onConflictResolved(
-        questionComparison,
-        ConflictResolutionStrategy.USE_EXISTING
-      );
-    } else if (newQuestionCheck) {
-      onConflictResolved(
-        questionComparison,
-        ConflictResolutionStrategy.USE_NEW
-      );
+    if (existingItemCheck) {
+      onConflictResolved(comparison, ConflictResolutionStrategy.USE_EXISTING);
+    } else if (newItemCheck) {
+      onConflictResolved(comparison, ConflictResolutionStrategy.USE_NEW);
     } else {
-      onConflictResolved(
-        questionComparison,
-        ConflictResolutionStrategy.UNRESOLVED
-      );
+      onConflictResolved(comparison, ConflictResolutionStrategy.UNRESOLVED);
     }
-  }, [
-    existingQuestionCheck,
-    newQuestionCheck,
-    onConflictResolved,
-    questionComparison,
-  ]);
+  }, [existingItemCheck, newItemCheck, onConflictResolved, comparison]);
 
   return (
-    <Accordion data-cy={`${newQuestion.id}-accordion`}>
+    <Accordion data-cy={`${getItemId(comparison)}-accordion`}>
       <AccordionSummary expandIcon={<ExpandMore />}>
-        {getStatusIcon(status)}
-        {newQuestion.question}
+        {getStatusIcon(getStatus(comparison))}
+        {getItemTitle(comparison)}
       </AccordionSummary>
 
       <AccordionDetails>
@@ -138,17 +123,20 @@ export function ConflictResolver(props: {
           <Table size="small" component="span">
             <TableHead>
               <TableRow>
-                <TableCell>{newQuestion.id}</TableCell>
+                <TableCell>{getItemId(comparison)}</TableCell>
                 <TableCell className={classes.heading}>
                   <FormControlLabel
                     control={
                       <Checkbox
                         data-cy="existing-question-checkbox"
-                        disabled={status !== QuestionComparisonStatus.DIFFERENT}
-                        checked={existingQuestionCheck}
+                        disabled={
+                          getStatus(comparison) !==
+                          QuestionComparisonStatus.DIFFERENT
+                        }
+                        checked={existingItemCheck}
                         onChange={(e) => {
-                          setExistingQuestionCheck(e.target.checked);
-                          setNewQuestionCheck(false);
+                          setExistingItemCheck(e.target.checked);
+                          setNewItemCheck(false);
                         }}
                       />
                     }
@@ -160,11 +148,14 @@ export function ConflictResolver(props: {
                     control={
                       <Checkbox
                         data-cy="new-question-checkbox"
-                        disabled={status !== QuestionComparisonStatus.DIFFERENT}
-                        checked={newQuestionCheck}
+                        disabled={
+                          getStatus(comparison) !==
+                          QuestionComparisonStatus.DIFFERENT
+                        }
+                        checked={newItemCheck}
                         onChange={(e) => {
-                          setNewQuestionCheck(e.target.checked);
-                          setExistingQuestionCheck(false);
+                          setNewItemCheck(e.target.checked);
+                          setExistingItemCheck(false);
                         }}
                       />
                     }
@@ -174,34 +165,18 @@ export function ConflictResolver(props: {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow
-                className={clsx(isNaturalKeyDifferent && classes.highlight)}
-              >
-                <TableCell className={classes.heading}>Natural key</TableCell>
-                <TableCell>{existingQuestion?.naturalKey || '-'}</TableCell>
-                <TableCell>{newQuestion.naturalKey}</TableCell>
-              </TableRow>
-              <TableRow
-                className={clsx(isQuestionDifferent && classes.highlight)}
-              >
-                <TableCell className={classes.heading}>Question</TableCell>
-                <TableCell>{existingQuestion?.question || '-'}</TableCell>
-                <TableCell>{newQuestion.question}</TableCell>
-              </TableRow>
-              <TableRow
-                className={clsx(isConfigDifferent && classes.highlight)}
-              >
-                <TableCell className={classes.heading}>Config</TableCell>
-                <TableCell>
-                  <pre>
-                    {JSON.stringify(existingQuestion?.config, undefined, 4) ||
-                      '-'}
-                  </pre>
-                </TableCell>
-                <TableCell>
-                  <pre>{JSON.stringify(newQuestion?.config, undefined, 4)}</pre>
-                </TableCell>
-              </TableRow>
+              {getDiffInfo(comparison).map((diffInfo) => (
+                <TableRow
+                  className={clsx(diffInfo.isDifferent && classes.highlight)}
+                  key={diffInfo.heading}
+                >
+                  <TableCell className={classes.heading}>
+                    {diffInfo.heading}
+                  </TableCell>
+                  <TableCell>{diffInfo.existingVal}</TableCell>
+                  <TableCell>{diffInfo.newVal}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
