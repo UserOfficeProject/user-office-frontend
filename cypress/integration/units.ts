@@ -1,3 +1,7 @@
+import path from 'path';
+
+import moment from 'moment';
+
 import initialDBData from '../support/initialDBData';
 
 context('Units tests', () => {
@@ -7,47 +11,47 @@ context('Units tests', () => {
       cy.resetDB();
     });
 
-    // it('User officer can create unit', () => {
-    //   cy.login('officer');
-    //   cy.visit('/');
+    it('User officer can create unit', () => {
+      cy.login('officer');
+      cy.visit('/');
 
-    //   cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
-    //   cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Units').click();
 
-    //   cy.get('[data-cy="create-new-entry"]').click();
-    //   cy.get('[data-cy="unit-id"]').clear().type('test');
-    //   cy.get('[data-cy="unit-name"]').clear().type('test');
-    //   cy.get('[data-cy="unit-quantity"]').click();
-    //   cy.get('#quantity-input-option-0').click();
+      cy.get('[data-cy="create-new-entry"]').click();
+      cy.get('[data-cy="unit-id"]').clear().type('test');
+      cy.get('[data-cy="unit-name"]').clear().type('test');
+      cy.get('[data-cy="unit-quantity"]').click();
+      cy.get('#quantity-input-option-0').click();
 
-    //   cy.get('[data-cy="unit-symbol"]').clear().type('test');
-    //   cy.get('[data-cy="unit-siConversionFormula"]').clear().type('x');
+      cy.get('[data-cy="unit-symbol"]').clear().type('test');
+      cy.get('[data-cy="unit-siConversionFormula"]').clear().type('x');
 
-    //   cy.get('[data-cy="submit"]').click();
-    //   cy.get('[placeholder="Search"]').clear().type('test');
+      cy.get('[data-cy="submit"]').click();
+      cy.get('[placeholder="Search"]').clear().type('test');
 
-    //   cy.get('[placeholder="Search"]').clear().type('test');
-    // });
+      cy.get('[placeholder="Search"]').clear().type('test');
+    });
 
-    // it('User officer can delete unit', () => {
-    //   const BECQUEREL_UNIT_TITLE = 'becquerel';
-    //   cy.login('officer');
-    //   cy.visit('/');
+    it('User officer can delete unit', () => {
+      const BECQUEREL_UNIT_TITLE = 'becquerel';
+      cy.login('officer');
+      cy.visit('/');
 
-    //   cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
-    //   cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Units').click();
 
-    //   cy.contains(BECQUEREL_UNIT_TITLE).should('exist');
+      cy.contains(BECQUEREL_UNIT_TITLE).should('exist');
 
-    //   cy.contains(BECQUEREL_UNIT_TITLE)
-    //     .closest('tr')
-    //     .find('[title=Delete]')
-    //     .click();
+      cy.contains(BECQUEREL_UNIT_TITLE)
+        .closest('tr')
+        .find('[title=Delete]')
+        .click();
 
-    //   cy.get('[title=Save]').click();
+      cy.get('[title=Save]').click();
 
-    //   cy.contains(BECQUEREL_UNIT_TITLE).should('not.exist');
-    // });
+      cy.contains(BECQUEREL_UNIT_TITLE).should('not.exist');
+    });
 
     it('User officer can import units', () => {
       const fileName = 'units_import.json';
@@ -86,6 +90,33 @@ context('Units tests', () => {
       cy.finishedLoading();
 
       cy.contains('ampere from import');
+    });
+
+    it('User officer can export units', () => {
+      const fileName = 'units_export.json';
+      const downloadFileName = `units_${moment().format('YYYY-MMM-DD')}.json`;
+
+      cy.login('officer');
+      cy.visit('/');
+
+      cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+
+      cy.get('[data-cy="export-units-button"]').click();
+
+      cy.fixture(fileName).then((expectedExport) => {
+        const downloadsFolder = Cypress.config('downloadsFolder');
+
+        cy.readFile(path.join(downloadsFolder, downloadFileName)).then(
+          (actualExport) => {
+            // remove date from the export, because it is not deterministic
+            delete expectedExport.exportDate;
+            delete actualExport.exportDate;
+
+            expect(expectedExport).to.deep.equal(actualExport);
+          }
+        );
+      });
     });
   });
 
