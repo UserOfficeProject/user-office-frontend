@@ -7,46 +7,85 @@ context('Units tests', () => {
       cy.resetDB();
     });
 
-    it('User officer can create unit', () => {
+    // it('User officer can create unit', () => {
+    //   cy.login('officer');
+    //   cy.visit('/');
+
+    //   cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+    //   cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+
+    //   cy.get('[data-cy="create-new-entry"]').click();
+    //   cy.get('[data-cy="unit-id"]').clear().type('test');
+    //   cy.get('[data-cy="unit-name"]').clear().type('test');
+    //   cy.get('[data-cy="unit-quantity"]').click();
+    //   cy.get('#quantity-input-option-0').click();
+
+    //   cy.get('[data-cy="unit-symbol"]').clear().type('test');
+    //   cy.get('[data-cy="unit-siConversionFormula"]').clear().type('x');
+
+    //   cy.get('[data-cy="submit"]').click();
+    //   cy.get('[placeholder="Search"]').clear().type('test');
+
+    //   cy.get('[placeholder="Search"]').clear().type('test');
+    // });
+
+    // it('User officer can delete unit', () => {
+    //   const BECQUEREL_UNIT_TITLE = 'becquerel';
+    //   cy.login('officer');
+    //   cy.visit('/');
+
+    //   cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+    //   cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+
+    //   cy.contains(BECQUEREL_UNIT_TITLE).should('exist');
+
+    //   cy.contains(BECQUEREL_UNIT_TITLE)
+    //     .closest('tr')
+    //     .find('[title=Delete]')
+    //     .click();
+
+    //   cy.get('[title=Save]').click();
+
+    //   cy.contains(BECQUEREL_UNIT_TITLE).should('not.exist');
+    // });
+
+    it('User officer can import units', () => {
+      const fileName = 'units_import.json';
+
       cy.login('officer');
       cy.visit('/');
 
       cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
       cy.get('[data-cy=officer-menu-items]').contains('Units').click();
 
-      cy.get('[data-cy="create-new-entry"]').click();
-      cy.get('[data-cy="unit-id"]').clear().type('test');
-      cy.get('[data-cy="unit-name"]').clear().type('test');
-      cy.get('[data-cy="unit-quantity"]').click();
-      cy.get('#quantity-input-option-0').click();
+      cy.get('[data-cy="import-units-button"]').click();
+      cy.get('input[type="file"]').attachFixture({
+        filePath: fileName,
+        fileName: fileName,
+        mimeType: 'application/json',
+      });
 
-      cy.get('[data-cy="unit-symbol"]').clear().type('test');
-      cy.get('[data-cy="unit-siConversionFormula"]').clear().type('x');
+      cy.get('[data-cy="back-button"]').click();
 
-      cy.get('[data-cy="submit"]').click();
-      cy.get('[placeholder="Search"]').clear().type('test');
+      cy.get('input[type="file"]').attachFixture({
+        filePath: fileName,
+        fileName: fileName,
+        mimeType: 'application/json',
+      });
 
-      cy.get('[placeholder="Search"]').clear().type('test');
-    });
+      cy.get('[data-cy="import-units-button"]').should('be.disabled');
 
-    it('User officer can delete unit', () => {
-      const BECQUEREL_UNIT_TITLE = 'becquerel';
-      cy.login('officer');
-      cy.visit('/');
+      cy.get('[data-cy="electric_current-accordion"]').click();
+      cy.get('[data-cy="electric_current-accordion"]')
+        .find('[data-cy="new-question-checkbox"]')
+        .find('input[type="checkbox"]')
+        .check();
 
-      cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
-      cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+      cy.get('[data-cy="import-units-button"]').click();
 
-      cy.contains(BECQUEREL_UNIT_TITLE).should('exist');
+      cy.finishedLoading();
 
-      cy.contains(BECQUEREL_UNIT_TITLE)
-        .closest('tr')
-        .find('[title=Delete]')
-        .click();
-
-      cy.get('[title=Save]').click();
-
-      cy.contains(BECQUEREL_UNIT_TITLE).should('not.exist');
+      cy.contains('ampere from import');
     });
   });
 

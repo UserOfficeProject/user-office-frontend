@@ -125,6 +125,7 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
       ))}
       <ActionButtonContainer>
         <Button
+          data-cy="back-button"
           variant="outlined"
           color="primary"
           onClick={() => props.onBack?.()}
@@ -132,7 +133,7 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
           Back
         </Button>
         <Button
-          data-cy="import-template-button"
+          data-cy="import-units-button"
           variant="contained"
           color="primary"
           onClick={handleImportClick}
