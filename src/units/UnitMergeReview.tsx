@@ -54,26 +54,20 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
     []
   );
 
-  const handleImportClick = () => {};
-  // api('Units imported successfully')
-  //   .importUnits({
-  //     templateAsJson: json,
-  //     conflictResolutions: state.unitComparisons.map((comparison) => {
-  //       const question = comparison.newUnit;
-
-  //       return {
-  //         questionId: question.id,
-  //         strategy: comparison.conflictResolutionStrategy,
-  //       };
-  //     }),
-  //   })
-  //   .then((result) => {
-  //     if (result.importTemplate.template) {
-  //       history.push(
-  //         `/QuestionaryEditor/${result.importTemplate.template.templateId}`
-  //       );
-  //     }
-  //   });
+  const handleImportClick = () =>
+    api('Units imported successfully')
+      .importUnits({
+        json,
+        conflictResolutions: state.unitComparisons.map(
+          ({ newUnit, conflictResolutionStrategy }) => {
+            return {
+              itemId: newUnit.id,
+              strategy: conflictResolutionStrategy,
+            };
+          }
+        ),
+      })
+      .then(() => history.push('/Units'));
 
   return (
     <>

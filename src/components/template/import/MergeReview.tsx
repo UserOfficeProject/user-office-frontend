@@ -64,7 +64,7 @@ export function MergeReview(props: MergeReviewProps) {
           const question = comparison.newQuestion;
 
           return {
-            questionId: question.id,
+            itemId: question.id,
             strategy: comparison.conflictResolutionStrategy,
           };
         }),

@@ -183,7 +183,7 @@ export type CloneProposalsInput = {
 };
 
 export type ConflictResolution = {
-  questionId: Scalars['String'];
+  itemId: Scalars['String'];
   strategy: ConflictResolutionStrategy;
 };
 
@@ -673,6 +673,7 @@ export type Mutation = {
   getTokenForUser: TokenResponseWrap;
   importProposal: ProposalResponseWrap;
   importTemplate: TemplateResponseWrap;
+  importUnits: UnitsResponseWrap;
   login: TokenResponseWrap;
   logout: LogoutTokenWrap;
   mergeInstitutions: InstitutionResponseWrap;
@@ -1186,6 +1187,12 @@ export type MutationImportProposalArgs = {
 export type MutationImportTemplateArgs = {
   conflictResolutions: Array<ConflictResolution>;
   templateAsJson: Scalars['String'];
+};
+
+
+export type MutationImportUnitsArgs = {
+  conflictResolutions: Array<ConflictResolution>;
+  json: Scalars['String'];
 };
 
 
@@ -2938,6 +2945,11 @@ export type UnitsImportWithValidationWrap = {
   validationResult: Maybe<UnitsImportWithValidation>;
 };
 
+export type UnitsResponseWrap = {
+  rejection: Maybe<Rejection>;
+  units: Array<Unit>;
+};
+
 export type UpdateAnswerResponseWrap = {
   questionId: Maybe<Scalars['String']>;
   rejection: Maybe<Rejection>;
@@ -4565,6 +4577,14 @@ export type GetUnitsAsJsonQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUnitsAsJsonQuery = { unitsAsJson: string | null };
+
+export type ImportUnitsMutationVariables = Exact<{
+  json: Scalars['String'];
+  conflictResolutions: Array<ConflictResolution> | ConflictResolution;
+}>;
+
+
+export type ImportUnitsMutation = { importUnits: { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type ValidateUnitsImportMutationVariables = Exact<{
   unitsAsJson: Scalars['String'];
@@ -8173,6 +8193,19 @@ export const GetUnitsAsJsonDocument = gql`
   unitsAsJson
 }
     `;
+export const ImportUnitsDocument = gql`
+    mutation importUnits($json: String!, $conflictResolutions: [ConflictResolution!]!) {
+  importUnits(json: $json, conflictResolutions: $conflictResolutions) {
+    units {
+      ...unit
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
+${RejectionFragmentDoc}`;
 export const ValidateUnitsImportDocument = gql`
     mutation validateUnitsImport($unitsAsJson: String!) {
   validateUnitsImport(unitsAsJson: $unitsAsJson) {
@@ -9286,6 +9319,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getUnitsAsJson(variables?: GetUnitsAsJsonQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsAsJsonQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsAsJsonQuery>(GetUnitsAsJsonDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnitsAsJson');
+    },
+    importUnits(variables: ImportUnitsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ImportUnitsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImportUnitsMutation>(ImportUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'importUnits');
     },
     validateUnitsImport(variables: ValidateUnitsImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateUnitsImportMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<ValidateUnitsImportMutation>(ValidateUnitsImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateUnitsImport');
