@@ -81,7 +81,7 @@ context('Units tests', () => {
 
       cy.get('[data-cy="electric_current-accordion"]').click();
       cy.get('[data-cy="electric_current-accordion"]')
-        .find('[data-cy="new-question-checkbox"]')
+        .find('[data-cy="new-item-checkbox"]')
         .find('input[type="checkbox"]')
         .check();
 

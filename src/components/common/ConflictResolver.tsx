@@ -135,7 +135,7 @@ export function ConflictResolver<T>(props: {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        data-cy="existing-question-checkbox"
+                        data-cy="existing-item-checkbox"
                         disabled={
                           getStatus(comparison) !==
                           QuestionComparisonStatus.DIFFERENT
@@ -154,7 +154,7 @@ export function ConflictResolver<T>(props: {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        data-cy="new-question-checkbox"
+                        data-cy="new-item-checkbox"
                         disabled={
                           getStatus(comparison) !==
                           QuestionComparisonStatus.DIFFERENT
