@@ -1413,6 +1413,7 @@ export type MutationUpdateProposalArgs = {
   abstract?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
   proposerId?: InputMaybe<Scalars['Int']>;
+  submitted?: InputMaybe<Scalars['Boolean']>;
   title?: InputMaybe<Scalars['String']>;
   users?: InputMaybe<Array<Scalars['Int']>>;
 };
@@ -3799,10 +3800,11 @@ export type UpdateProposalMutationVariables = Exact<{
   abstract?: InputMaybe<Scalars['String']>;
   users?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
   proposerId?: InputMaybe<Scalars['Int']>;
+  submitted?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateProposalMutation = { updateProposal: { proposal: { primaryKey: number, title: string, abstract: string, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type UpdateProposalMutation = { updateProposal: { proposal: { primaryKey: number, title: string, abstract: string, submitted: boolean, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
   endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
@@ -6833,18 +6835,23 @@ export const SubmitProposalDocument = gql`
     ${ProposalFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const UpdateProposalDocument = gql`
-    mutation updateProposal($proposalPk: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int) {
+    mutation updateProposal($proposalPk: Int!, $title: String, $abstract: String, $users: [Int!], $proposerId: Int, $submitted: Boolean) {
   updateProposal(
     proposalPk: $proposalPk
     title: $title
     abstract: $abstract
     users: $users
     proposerId: $proposerId
+    submitted: $submitted
   ) {
     proposal {
       primaryKey
       title
       abstract
+      submitted
+      status {
+        ...proposalStatus
+      }
       proposer {
         ...basicUserDetails
       }
@@ -6857,7 +6864,8 @@ export const UpdateProposalDocument = gql`
     }
   }
 }
-    ${BasicUserDetailsFragmentDoc}
+    ${ProposalStatusFragmentDoc}
+${BasicUserDetailsFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
     query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatusCore!], $instrumentId: Int) {
