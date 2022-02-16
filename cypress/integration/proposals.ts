@@ -527,17 +527,22 @@ context('Proposal tests', () => {
 
       cy.login('officer');
       cy.visit('/');
-      cy.get('[data-cy="view-proposal"]').click();
-      cy.finishedLoading();
-      cy.get('[data-cy=toggle-edit-proposal]').click();
-      cy.get('[data-cy=button-submit-proposal]').should('be.disabled');
-      cy.get('[data-cy="checkbox-proposal-submitted"] input').uncheck();
-      cy.get('[data-cy=button-submit-proposal]').should('not.be.disabled');
+
+      cy.get('[index="0"] input').check();
+      cy.get('[data-cy="change-proposal-status"]').click();
+      cy.get('#selectedStatusId-input').click();
+      cy.get('[role="listbox"]').contains('EDITABLE_SUBMITTED').click();
+      cy.get('[data-cy="submit-proposal-status-change"] ').click();
+
       cy.login('user');
       cy.visit('/');
       cy.get('[title="Edit proposal"]').click();
       cy.get('[role="tablist"]').contains('Proposal').click();
-      cy.get('[data-cy=button-submit-proposal]').should('not.be.disabled');
+      cy.get('[data-cy=save-and-continue-button]').should('not.be.disabled');
+
+      cy.get('[data-cy=questionary-stepper]').contains('Review').click();
+
+      cy.get('[data-cy=button-submit-proposal]').should('be.disabled');
     });
   });
 });
