@@ -10,7 +10,6 @@ export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {
 
     const isCallActive = proposal.call?.isActive ?? true;
     const proposalStatus = this.getProposalStatus(proposal);
-    console.log(proposalStatus);
 
     if (proposalStatus === 'EDITABLE_SUBMITTED') {
       return true;
