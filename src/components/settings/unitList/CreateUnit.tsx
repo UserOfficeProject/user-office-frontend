@@ -39,8 +39,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
         siConversionFormula: '',
       };
 
-  if (loadingQuantities) return <UOLoader />;
-
   return (
     <Formik
       initialValues={initialValues}
@@ -100,6 +98,7 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             }))}
             InputProps={{ 'data-cy': 'unit-quantity' }}
             required
+            loading={loadingQuantities}
           />
           <Field
             name="symbol"
