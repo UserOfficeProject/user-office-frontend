@@ -132,7 +132,6 @@ export function QuestionaryComponentInterval(props: BasicComponentProps) {
             label="Min"
             id={`${id}-Min`}
             onChange={(event) => {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
               const unit = stateValue.unit;
               const newValue = getNumberOrDefault(event.target.value, '');
               const convertToSi = unit
