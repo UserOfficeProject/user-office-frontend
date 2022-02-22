@@ -76,6 +76,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     instrument: NumberParam,
     reviewStatus: defaultReviewStatusQueryFilter,
     reviewModal: NumberParam,
+    modalTab: NumberParam,
     reviewer: defaultReviewerQueryFilter,
   });
 
@@ -182,19 +183,41 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   }, [userData, urlQueryParams.selection]);
 
+  const reviewerProposalReviewTabs: TabNames[] = [
+    'Proposal information',
+    'Technical review',
+    'Grade',
+  ];
+
   /**
    * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
    * and selection flag is true they are not working properly.
    */
   const RowActionButtons = (rowData: UserWithReview) => (
     <>
-      <Tooltip title="Review proposal">
+      <Tooltip
+        title={
+          rowData.status === ReviewStatus.DRAFT
+            ? 'Grade proposal'
+            : 'View proposal'
+        }
+      >
         <IconButton
           onClick={() => {
-            setUrlQueryParams({ reviewModal: rowData.reviewId });
+            setUrlQueryParams({
+              reviewModal: rowData.reviewId,
+              modalTab:
+                rowData.status === ReviewStatus.DRAFT
+                  ? reviewerProposalReviewTabs.indexOf('Grade')
+                  : reviewerProposalReviewTabs.indexOf('Proposal information'),
+            });
           }}
         >
-          {rowData.status === 'SUBMITTED' ? <Visibility /> : <RateReviewIcon />}
+          {rowData.status === ReviewStatus.DRAFT ? (
+            <RateReviewIcon />
+          ) : (
+            <Visibility />
+          )}
         </IconButton>
       </Tooltip>
       <Tooltip title="Download Proposal">
@@ -307,12 +330,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   };
 
-  const reviewerProposalReviewTabs: TabNames[] = [
-    'Proposal information',
-    'Technical review',
-    'Grade',
-  ];
-
   const proposalToReview = preselectedProposalsData.find(
     (review) => review.reviewId === urlQueryParams.reviewModal
   );
@@ -348,10 +365,10 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         }}
       />
       <ProposalReviewModal
-        title={`Review proposal: ${proposalToReview?.title} (${proposalToReview?.proposalId})`}
+        title={`Proposal: ${proposalToReview?.title} (${proposalToReview?.proposalId})`}
         proposalReviewModalOpen={!!urlQueryParams.reviewModal}
         setProposalReviewModalOpen={() => {
-          setUrlQueryParams({ reviewModal: undefined });
+          setUrlQueryParams({ reviewModal: undefined, modalTab: undefined });
           updateView();
         }}
       >
@@ -362,7 +379,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       </ProposalReviewModal>
       <MaterialTable
         icons={tableIcons}
-        title={'Proposals to review'}
+        title={'Proposals to grade'}
         columns={columns}
         data={preselectedProposalsData}
         isLoading={loading}
