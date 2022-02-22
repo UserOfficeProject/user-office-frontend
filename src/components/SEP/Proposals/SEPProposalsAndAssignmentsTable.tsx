@@ -44,6 +44,64 @@ type SEPProposalsAndAssignmentsTableProps = {
   selectedCallId: number;
 };
 
+const getGradesFromAssignments = (assignments: SEPProposalAssignmentType[]) =>
+  assignments?.map((assignment) => assignment.review?.grade) ?? [];
+
+const SEPProposalColumns = [
+  { title: 'ID', field: 'proposal.proposalId' },
+  {
+    title: 'Title',
+    field: 'proposal.title',
+  },
+  {
+    title: 'Status',
+    field: 'proposal.status.name',
+  },
+  {
+    title: 'Date assigned',
+    field: 'dateAssigned',
+    render: (rowData: SEPProposalType): string =>
+      dateformat(new Date(rowData.dateAssigned), 'dd-mmm-yyyy HH:MM:ss'),
+  },
+  {
+    title: 'Reviewers',
+    field: 'assignments.length',
+    emptyValue: '-',
+  },
+  {
+    title: 'Average grade',
+    render: (rowData: SEPProposalType): string => {
+      const avgGrade = average(
+        getGradesFromAssignments(rowData.assignments ?? []) as number[]
+      );
+
+      return isNaN(avgGrade) ? '-' : `${avgGrade}`;
+    },
+    customSort: (a: SEPProposalType, b: SEPProposalType) =>
+      (average(getGradesFromAssignments(a.assignments ?? []) as number[]) ||
+        0) -
+      (average(getGradesFromAssignments(b.assignments ?? []) as number[]) || 0),
+  },
+  {
+    title: 'Deviation',
+    field: 'deviation',
+    render: (rowData: SEPProposalType): string => {
+      const stdDeviation = standardDeviation(
+        getGradesFromAssignments(rowData.assignments ?? []) as number[]
+      );
+
+      return isNaN(stdDeviation) ? '-' : `${stdDeviation}`;
+    },
+    customSort: (a: SEPProposalType, b: SEPProposalType) =>
+      (standardDeviation(
+        getGradesFromAssignments(a.assignments ?? []) as number[]
+      ) || 0) -
+      (standardDeviation(
+        getGradesFromAssignments(b.assignments ?? []) as number[]
+      ) || 0),
+  },
+];
+
 const SEPProposalsAndAssignmentsTable: React.FC<
   SEPProposalsAndAssignmentsTableProps
 > = ({ sepId, selectedCallId, Toolbar }) => {
@@ -64,65 +122,6 @@ const SEPProposalsAndAssignmentsTable: React.FC<
   const hasRightToRemoveAssignedProposal = useCheckAccess([
     UserRole.USER_OFFICER,
   ]);
-
-  const getGradesFromAssignments = (assignments: SEPProposalAssignmentType[]) =>
-    assignments?.map((assignment) => assignment.review?.grade) ?? [];
-
-  const SEPProposalColumns = [
-    { title: 'ID', field: 'proposal.proposalId' },
-    {
-      title: 'Title',
-      field: 'proposal.title',
-    },
-    {
-      title: 'Status',
-      field: 'proposal.status.name',
-    },
-    {
-      title: 'Date assigned',
-      field: 'dateAssigned',
-      render: (rowData: SEPProposalType): string =>
-        dateformat(new Date(rowData.dateAssigned), 'dd-mmm-yyyy HH:MM:ss'),
-    },
-    {
-      title: 'Reviewers',
-      field: 'assignments.length',
-      emptyValue: '-',
-    },
-    {
-      title: 'Average grade',
-      render: (rowData: SEPProposalType): string => {
-        const avgGrade = average(
-          getGradesFromAssignments(rowData.assignments ?? []) as number[]
-        );
-
-        return isNaN(avgGrade) ? '-' : `${avgGrade}`;
-      },
-      customSort: (a: SEPProposalType, b: SEPProposalType) =>
-        (average(getGradesFromAssignments(a.assignments ?? []) as number[]) ||
-          0) -
-        (average(getGradesFromAssignments(b.assignments ?? []) as number[]) ||
-          0),
-    },
-    {
-      title: 'Deviation',
-      field: 'deviation',
-      render: (rowData: SEPProposalType): string => {
-        const stdDeviation = standardDeviation(
-          getGradesFromAssignments(rowData.assignments ?? []) as number[]
-        );
-
-        return isNaN(stdDeviation) ? '-' : `${stdDeviation}`;
-      },
-      customSort: (a: SEPProposalType, b: SEPProposalType) =>
-        (standardDeviation(
-          getGradesFromAssignments(a.assignments ?? []) as number[]
-        ) || 0) -
-        (standardDeviation(
-          getGradesFromAssignments(b.assignments ?? []) as number[]
-        ) || 0),
-    },
-  ];
 
   const removeProposalFromSEP = async (
     proposalToRemove: SEPProposalType
