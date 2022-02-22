@@ -289,7 +289,7 @@ context('Instrument tests', () => {
 
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="view-proposal"]')
         .click();
       cy.get('[role="dialog"]').as('dialog');
       cy.finishedLoading();
@@ -338,7 +338,7 @@ context('Instrument tests', () => {
 
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="view-proposal"]')
         .click();
       cy.get('[role="dialog"]').as('dialog');
       cy.finishedLoading();
@@ -368,7 +368,7 @@ context('Instrument tests', () => {
       selectAllProposalsFilterStatus();
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="edit-technical-review"]')
         .click();
       cy.get('[role="dialog"]').contains('Technical review').click();
 
@@ -615,7 +615,7 @@ context('Instrument tests', () => {
 
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="edit-technical-review"]')
         .click();
       cy.get('[role="dialog"]').as('dialog');
       cy.finishedLoading();
@@ -698,7 +698,7 @@ context('Instrument tests', () => {
 
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="view-proposal-and-technical-review"]')
         .should('not.exist');
 
       cy.contains(proposal1.title)
@@ -716,7 +716,7 @@ context('Instrument tests', () => {
 
       cy.contains(proposal1.title)
         .parent()
-        .find('[data-cy="view-proposal-and-technical-reivew"]')
+        .find('[data-cy="view-proposal-and-technical-review"]')
         .should('not.exist');
     });
   });
