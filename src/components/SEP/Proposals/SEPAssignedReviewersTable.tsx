@@ -132,8 +132,8 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         actions={[
           (rowData) => ({
             icon: isDraftStatus(rowData?.review?.status)
-              ? () => <RateReviewIcon />
-              : () => <Visibility />,
+              ? () => <RateReviewIcon data-cy="grade-proposal-icon" />
+              : () => <Visibility data-cy="view-proposal-details-icon" />,
             onClick: () => {
               if (!rowData.review) {
                 return;

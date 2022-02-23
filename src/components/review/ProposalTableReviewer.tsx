@@ -214,9 +214,9 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
           }}
         >
           {rowData.status === ReviewStatus.DRAFT ? (
-            <RateReviewIcon />
+            <RateReviewIcon data-cy="grade-proposal-icon" />
           ) : (
-            <Visibility />
+            <Visibility data-cy="view-proposal-details-icon" />
           )}
         </IconButton>
       </Tooltip>
