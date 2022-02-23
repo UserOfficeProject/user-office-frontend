@@ -80,6 +80,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   const formTeamAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
+    let stateReason: string | null = null;
 
     if (isPiOrCoProposer(user, event)) {
       if (
@@ -93,13 +94,15 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         }
       } else {
         buttonState = 'inactive';
+        stateReason =
+          'This action is disabled because proposal is not accepted or missing management decision';
       }
     } else {
       buttonState = 'invisible';
     }
 
     return createActionButton(
-      'Define who is coming',
+      `Define who is coming ${stateReason ? '(' + stateReason + ')' : ''}`,
       <GroupIcon />,
       buttonState,
       () => {
@@ -118,6 +121,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   const finishEsi = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
+    let stateReason: string | null = null;
 
     if (isPiOrCoProposer(user, event)) {
       if (
@@ -131,13 +135,15 @@ export function useActionButtons(args: UseActionButtonsArgs) {
         }
       } else {
         buttonState = 'inactive';
+        stateReason =
+          'This action is disabled because proposal is not accepted or missing management decision';
       }
     } else {
       buttonState = 'invisible';
     }
 
     return createActionButton(
-      'Finish safety input form',
+      `Finish safety input form ${stateReason ? '(' + stateReason + ')' : ''}`,
       <EsiIcon />,
       buttonState,
       () => {
@@ -152,6 +158,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   const registerVisitAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
+    let stateReason: string | null = null;
 
     if (event.visit !== null) {
       const registration = event.visit.registrations.find(
@@ -168,10 +175,11 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       }
     } else {
       buttonState = 'inactive';
+      stateReason = 'This action is disabled because visit is not defined';
     }
 
     return createActionButton(
-      'Define your own visit',
+      `Define your own visit ${stateReason ? '(' + stateReason + ')' : ''}`,
       <FlightTakeoffIcon />,
       buttonState,
       () => {
@@ -203,6 +211,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
   const individualTrainingAction = (event: ProposalScheduledEvent) => {
     let buttonState: ActionButtonState;
+    let stateReason: string | null = null;
 
     if (event.visit !== null) {
       const registration = event.visit.registrations.find(
@@ -222,10 +231,13 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       }
     } else {
       buttonState = 'inactive';
+      stateReason = 'This action is disabled because visit is not defined';
     }
 
     return createActionButton(
-      'Finish individual training',
+      `Finish individual training ${
+        stateReason ? '(' + stateReason + ')' : ''
+      }`,
       <SchoolIcon />,
       buttonState,
       () => {
