@@ -40,9 +40,19 @@ const useStyles = makeStyles((theme) => ({
       padding: '0 40px',
       backgroundColor: '#fafafa',
     },
-
     '& .draggingRow': {
       backgroundColor: `${theme.palette.warning.light} !important`,
+    },
+    '& .dropAreaSeparator': {
+      height: '0px',
+      backgroundColor: theme.palette.success.light,
+      transition: '0.1s',
+      textAlign: 'center',
+      color: theme.palette.grey[600],
+
+      '&.dropAreaAnimate': {
+        height: '50px',
+      },
     },
   },
   disabled: {
@@ -424,10 +434,61 @@ const SEPInstrumentProposalsTable: React.FC<
         e.currentTarget.classList.add('draggingRow');
         DragState.row = props.data.tableData.id;
       }}
-      onDragEnter={(e: DragEvent<HTMLDivElement>) => {
+      onDragEnter={(e: DragEvent<HTMLTableRowElement>) => {
         e.preventDefault();
 
-        DragState.dropIndex = props.data.tableData.id;
+        if (
+          e.currentTarget.parentElement &&
+          DragState.dropIndex !== props.data.tableData.id
+        ) {
+          const allTableRowElements = Array.from(
+            e.currentTarget.parentElement?.children
+          );
+          const elToRemove = allTableRowElements.find((element) =>
+            element.className.includes('dropAreaSeparator')
+          );
+
+          if (elToRemove) {
+            e.currentTarget.parentElement.removeChild(elToRemove);
+          }
+
+          DragState.dropIndex = props.data.tableData.id;
+
+          if (DragState.row === props.data.tableData.id) {
+            return;
+          }
+
+          const tableSeparatorRow = document.createElement('tr');
+          tableSeparatorRow.className = 'dropAreaSeparator';
+          // NOTE: Full width column is needed to set proper background
+          const tableSeparatorColumn = document.createElement('td');
+          tableSeparatorColumn.colSpan = assignmentColumns.length;
+          tableSeparatorColumn.textContent = 'Drop here';
+          tableSeparatorRow.appendChild(tableSeparatorColumn);
+
+          if (
+            DragState.dropIndex ===
+            sortedProposalsWithAverageScore.length - 1
+          ) {
+            e.currentTarget.parentElement.appendChild(tableSeparatorRow);
+          } else if (DragState.dropIndex === 0) {
+            e.currentTarget.parentElement.insertBefore(
+              tableSeparatorRow,
+              allTableRowElements[DragState.dropIndex]
+            );
+          } else {
+            e.currentTarget.parentElement.insertBefore(
+              tableSeparatorRow,
+              allTableRowElements[DragState.dropIndex + 1]
+            );
+          }
+
+          // NOTE: Add class with timeout to be able to animate.
+          setTimeout(
+            () => tableSeparatorRow.classList.add('dropAreaAnimate'),
+            100
+          );
+        }
       }}
       onDragEnd={async (e: DragEvent<HTMLDivElement>) => {
         e.currentTarget.classList.remove('draggingRow');
@@ -436,6 +497,19 @@ const SEPInstrumentProposalsTable: React.FC<
           DragState.dropIndex !== -1 &&
           DragState.dropIndex !== DragState.row
         ) {
+          if (e.currentTarget.parentElement) {
+            const allTableRowElements = Array.from(
+              e.currentTarget.parentElement?.children
+            );
+            const elToRemove = allTableRowElements.find((element) =>
+              element.className.includes('dropAreaSeparator')
+            );
+
+            if (elToRemove) {
+              e.currentTarget.parentElement.removeChild(elToRemove);
+            }
+          }
+
           await reOrderRow(DragState.row, DragState.dropIndex);
         }
         DragState.row = -1;
