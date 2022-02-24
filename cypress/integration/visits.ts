@@ -55,8 +55,8 @@ context('visits tests', () => {
 
     cy.get('[data-cy=submit]').click();
 
-    cy.createDateQuestion(startDateQuestionTitle);
-    cy.createDateQuestion(endDateQuestionTitle);
+    cy.contains(visitTemplate.name);
+    cy.contains(visitTemplate.description);
   });
 
   it('PI should see that he is able to form team', () => {
@@ -74,6 +74,8 @@ context('visits tests', () => {
   it('Non-visitor should not see upcoming events', () => {
     cy.login(visitor);
     cy.visit('/');
+
+    cy.finishedLoading();
 
     cy.contains(/Upcoming experiments/i).should('not.exist');
   });
@@ -100,6 +102,7 @@ context('visits tests', () => {
 
     // add visitors
     cy.get('[data-cy=add-participant-button]').click();
+    cy.finishedLoading();
     cy.get('[name=email]').type('david@teleworm.us{enter}');
     cy.finishedLoading();
     cy.contains('Beckley').parent().find('[type=checkbox]').click();
@@ -112,6 +115,8 @@ context('visits tests', () => {
       .click();
 
     cy.get('[data-cy=create-visit-button]').click();
+
+    cy.finishedLoading();
 
     cy.reload();
 
@@ -130,6 +135,8 @@ context('visits tests', () => {
     });
     cy.login(visitor);
     cy.visit('/');
+
+    cy.finishedLoading();
 
     cy.contains(/Upcoming experiments/i).should('exist');
 
@@ -157,6 +164,8 @@ context('visits tests', () => {
 
     cy.login(visitor);
     cy.visit('/');
+
+    cy.finishedLoading();
 
     // test if the actions are available after co-proposer defined the team
     cy.testActionButton(registerVisitTitle, 'active');
@@ -198,6 +207,8 @@ context('visits tests', () => {
     });
     cy.login(PI);
     cy.visit('/');
+
+    cy.finishedLoading();
 
     cy.contains(/Upcoming experiments/i).should('exist');
 
