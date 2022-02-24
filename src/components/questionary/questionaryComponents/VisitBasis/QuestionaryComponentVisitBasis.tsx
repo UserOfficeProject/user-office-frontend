@@ -107,12 +107,10 @@ const visitBasisPreSubmit =
     }
     const newRegistration = await updateVisitRegistration(api, registration);
 
-    if (newRegistration?.questionary) {
-      dispatch({
-        type: 'ITEM_WITH_QUESTIONARY_CREATED',
-        itemWithQuestionary: newRegistration,
-      });
-    }
+    dispatch({
+      type: 'ITEM_WITH_QUESTIONARY_CREATED',
+      itemWithQuestionary: newRegistration,
+    });
 
     return newRegistration.questionary.questionaryId;
   };
