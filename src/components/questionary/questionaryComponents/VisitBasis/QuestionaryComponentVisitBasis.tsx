@@ -104,15 +104,22 @@ const visitBasisPreSubmit =
 
     if (isStarted === false) {
       await createVisitRegistration(api, registration.visitId);
+      const newRegistration = await updateVisitRegistration(api, registration);
+      dispatch({
+        type: 'ITEM_WITH_QUESTIONARY_CREATED',
+        itemWithQuestionary: newRegistration,
+      });
+
+      return newRegistration.questionary.questionaryId;
+    } else {
+      const updRegistration = await updateVisitRegistration(api, registration);
+      dispatch({
+        type: 'ITEM_WITH_QUESTIONARY_MODIFIED',
+        itemWithQuestionary: updRegistration,
+      });
+
+      return updRegistration.questionary.questionaryId;
     }
-    const newRegistration = await updateVisitRegistration(api, registration);
-
-    dispatch({
-      type: 'ITEM_WITH_QUESTIONARY_CREATED',
-      itemWithQuestionary: newRegistration,
-    });
-
-    return newRegistration.questionary.questionaryId;
   };
 
 export { QuestionaryComponentVisitBasis, visitBasisPreSubmit };
