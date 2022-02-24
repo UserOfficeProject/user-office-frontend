@@ -115,7 +115,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
               type="submit"
               variant="contained"
               color="primary"
-              data-cy="create-visit-button"
+              data-cy="create-update-visit-button"
             >
               {visit ? 'Update' : 'Create'}
             </Button>

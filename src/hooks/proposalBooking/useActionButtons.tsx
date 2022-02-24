@@ -103,7 +103,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       `Define who is coming ${stateReason ? '(' + stateReason + ')' : ''}`,
-      <GroupIcon />,
+      <GroupIcon data-cy="define-visit-icon" />,
       buttonState,
       () => {
         openModal(
@@ -144,7 +144,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       `Finish safety input form ${stateReason ? '(' + stateReason + ')' : ''}`,
-      <EsiIcon />,
+      <EsiIcon data-cy="finish-safety-icon" />,
       buttonState,
       () => {
         if (event?.esi) {
@@ -180,7 +180,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       `Define your own visit ${stateReason ? '(' + stateReason + ')' : ''}`,
-      <FlightTakeoffIcon />,
+      <FlightTakeoffIcon data-cy="register-visit-icon" />,
       buttonState,
       () => {
         openModal(
@@ -238,7 +238,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
       `Finish individual training ${
         stateReason ? '(' + stateReason + ')' : ''
       }`,
-      <SchoolIcon />,
+      <SchoolIcon data-cy="finish-training-icon" />,
       buttonState,
       () => {
         history.push('/training');
@@ -260,7 +260,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       'Declare shipment(s)',
-      <BoxIcon />,
+      <BoxIcon data-cy="declare-shipment-icon" />,
       buttonState,
       () => {
         history.push(`/DeclareShipments/${event.id}`);
@@ -287,7 +287,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       'Provide feedback',
-      <FeedbackIcon />,
+      <FeedbackIcon data-cy="provide-feedback-icon" />,
       buttonState,
       () => {
         if (event?.feedback) {
