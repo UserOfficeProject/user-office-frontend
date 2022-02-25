@@ -7,6 +7,7 @@ import SuperMaterialTable, {
   DefaultQueryParams,
 } from 'components/common/SuperMaterialTable';
 import UOLoader from 'components/common/UOLoader';
+import ProposalEsiDetailsButton from 'components/questionary/questionaryComponents/ProposalEsiBasis/ProposalEsiDetailsButton';
 import { GetScheduledEventsCoreQuery } from 'generated/sdk';
 import { useScheduledEvents } from 'hooks/scheduledEvent/useScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
@@ -44,7 +45,12 @@ const columns = [
   },
   {
     title: 'ESI',
-    field: 'esi.isSubmitted',
+    render: (rowData: RowType) =>
+      rowData.esi ? (
+        <ProposalEsiDetailsButton esiId={rowData.esi?.id} />
+      ) : (
+        'No ESI'
+      ),
   },
   {
     title: 'Instrument',

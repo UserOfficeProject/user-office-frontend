@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Link, makeStyles } from '@material-ui/core';
 import React from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
@@ -9,24 +9,42 @@ interface ButtonWithDialogProps {
   label: string;
 }
 
+const useStyles = makeStyles(() => ({
+  container: {
+    width: '500px',
+  },
+  button: {
+    cursor: 'pointer',
+  },
+}));
+
 function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const classes = useStyles();
 
   return (
     <div>
-      <Button onClick={() => setIsDialogOpen(true)}>{label}</Button>
+      <Link
+        onClick={() => setIsDialogOpen(true)}
+        color="primary"
+        className={classes.button}
+      >
+        {label}
+      </Link>
       <InputDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-        {children}
-        <ActionButtonContainer>
-          <Button
-            type="button"
-            variant="outlined"
-            onClick={() => setIsDialogOpen(false)}
-            data-cy="close-dialog"
-          >
-            Close
-          </Button>
-        </ActionButtonContainer>
+        <div className={classes.container}>
+          {children}
+          <ActionButtonContainer>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => setIsDialogOpen(false)}
+              data-cy="close-dialog"
+            >
+              Close
+            </Button>
+          </ActionButtonContainer>
+        </div>
       </InputDialog>
     </div>
   );
