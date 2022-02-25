@@ -94,10 +94,14 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
       <ProposalReviewModal
         title={`Proposal: ${sepProposal.proposal.title} (${sepProposal.proposal.proposalId})`}
-        proposalReviewModalOpen={!!urlQueryParams.reviewerModal}
+        proposalReviewModalOpen={
+          !!urlQueryParams.reviewerModal &&
+          currentAssignment?.proposalPk === sepProposal.proposalPk
+        }
         setProposalReviewModalOpen={() => {
           setUrlQueryParams({ reviewerModal: undefined, modalTab: undefined });
           currentAssignment && updateView(currentAssignment);
+          setCurrentAssignment(null);
         }}
       >
         <ProposalReviewContent
@@ -139,15 +143,16 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
                 return;
               }
 
+              setCurrentAssignment({
+                ...rowData,
+                proposalPk: sepProposal.proposalPk,
+              });
+
               setUrlQueryParams({
                 modalTab: isDraftStatus(rowData?.review?.status)
                   ? reviewProposalTabNames.indexOf('Grade')
                   : reviewProposalTabNames.indexOf('Proposal information'),
                 reviewerModal: rowData.review.id,
-              });
-              setCurrentAssignment({
-                ...rowData,
-                proposalPk: sepProposal.proposalPk,
               });
             },
             tooltip: isDraftStatus(rowData?.review?.status)
