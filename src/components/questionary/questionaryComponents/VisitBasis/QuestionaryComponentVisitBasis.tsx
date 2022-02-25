@@ -1,4 +1,4 @@
-import DateFnsUtils from '@date-io/date-fns';
+import LuxonUtils from '@date-io/luxon';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { Field } from 'formik';
@@ -45,7 +45,7 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
   const id = answer.question.id;
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <MuiPickersUtilsProvider utils={LuxonUtils}>
       <DatePicker
         name={`${id}.startsAt`}
         label="Visit start"

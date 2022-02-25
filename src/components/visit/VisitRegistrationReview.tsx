@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';
@@ -39,11 +39,11 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
     },
     {
       label: 'Start date',
-      value: moment(registration.startsAt).format('YYYY-MM-DD'),
+      value: DateTime.fromISO(registration.startsAt).toFormat('YYYY-MM-DD'),
     },
     {
       label: 'End date',
-      value: moment(registration.endsAt).format('YYYY-MM-DD'),
+      value: DateTime.fromISO(registration.endsAt).toFormat('YYYY-MM-DD'),
     },
   ];
 
