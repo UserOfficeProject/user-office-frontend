@@ -18,13 +18,18 @@ query getScheduledEventsCore(
             ...esi
         }
         visit {
-        registrations {
-        ...visitRegistration
-        trainingStatus
-          user {
+            registrations {
+                ...visitRegistration
+                startsAt
+                endsAt
+                trainingStatus
+                user {
+                ...basicUserDetails
+                }
+            }
+            teamLead {
             ...basicUserDetails
-          }
-        }
+            }
       }
     }
 }

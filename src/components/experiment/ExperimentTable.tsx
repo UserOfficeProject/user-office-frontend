@@ -34,13 +34,13 @@ const columns = [
     title: 'Experiment start',
     field: 'startsAt',
     render: (rowData: RowType) =>
-      dateformat(new Date(rowData.startsAt), 'dd-mmm-yyyy HH:MM'),
+      dateformat(rowData.startsAt, 'dd-mmm-yyyy HH:MM'),
   },
   {
     title: 'Experiment end',
     field: 'endsAt',
     render: (rowData: RowType) =>
-      dateformat(new Date(rowData.endsAt), 'dd-mmm-yyyy HH:MM'),
+      dateformat(rowData.endsAt, 'dd-mmm-yyyy HH:MM'),
   },
   {
     title: 'ESI',
@@ -70,7 +70,7 @@ function ExperimentTable(props: ExperimentTableProps) {
     ({ rowData }: Record<'rowData', RowType>) => {
       return <ExperimentVisitsTable scheduledEvent={rowData} />;
     },
-    [scheduledEvents]
+    []
   );
 
   if (!scheduledEvents) {
