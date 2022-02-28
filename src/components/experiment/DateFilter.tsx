@@ -39,31 +39,23 @@ function getRelativeDatesFromToday(period: TimeSpan): {
   to?: Date;
 } {
   const now = new Date();
-  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dayEnd = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59
-  );
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   let from: Date | undefined;
   let to: Date | undefined;
   const DAY_IN_MS = 1000 * 60 * 60 * 24;
   switch (period) {
     case TimeSpan.TODAY:
-      from = dayStart;
-      to = dayEnd;
+      from = today;
+      to = new Date(today.getTime() + 1 * DAY_IN_MS);
       break;
     case TimeSpan.NEXT_WEEK:
-      from = dayStart;
-      to = new Date(dayEnd.getTime() + 7 * DAY_IN_MS);
+      from = today;
+      to = new Date(today.getTime() + 7 * DAY_IN_MS);
       break;
     case TimeSpan.NEXT_MONTH:
-      from = dayStart;
-      to = new Date(dayEnd.getTime() + 30 * DAY_IN_MS);
+      from = today;
+      to = new Date(today.getTime() + 30 * DAY_IN_MS);
       break;
     case TimeSpan.NONE:
       from = undefined;
