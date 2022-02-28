@@ -80,6 +80,11 @@
   "lint-staged": {
     "**/*.{js,ts,jsx,tsx}": "npm run lint"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
