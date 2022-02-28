@@ -2638,6 +2638,9 @@ export type ScheduledEventsCoreFilter = {
   endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
   endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
   instrumentId?: InputMaybe<Scalars['Int']>;
+  overlaps?: InputMaybe<TimeSpan>;
+  startsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
+  startsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
 };
 
 export type SelectionFromOptionsConfig = {
@@ -2878,6 +2881,11 @@ export type TextInputConfig = {
   required: Scalars['Boolean'];
   small_label: Scalars['String'];
   tooltip: Scalars['String'];
+};
+
+export type TimeSpan = {
+  from?: InputMaybe<Scalars['TzLessDateTime']>;
+  to?: InputMaybe<Scalars['TzLessDateTime']>;
 };
 
 export type TokenPayloadUnion = AuthJwtApiTokenPayload | AuthJwtPayload;

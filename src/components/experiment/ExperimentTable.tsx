@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import dateformat from 'dateformat';
-import React from 'react';
-import { useQueryParams, NumberParam } from 'use-query-params';
+import React, { useEffect } from 'react';
+import { useQueryParams, NumberParam, DateParam } from 'use-query-params';
 
 import SuperMaterialTable, {
   DefaultQueryParams,
@@ -13,7 +13,7 @@ import { useScheduledEvents } from 'hooks/scheduledEvent/useScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
 import { getFullUserName } from 'utils/user';
 
-import { ExperimentUrlQueryParamsType } from './ExperimentFilterBar';
+import { ExperimentUrlQueryParamsType } from './ExperimentUrlQueryParamsType';
 import ExperimentVisitsTable from './ExperimentVisitsTable';
 
 type RowType = GetScheduledEventsCoreQuery['scheduledEventsCore'][0];
@@ -58,19 +58,39 @@ const columns = [
   },
 ];
 
-interface ExperimentTableProps {
-  visit?: number;
-}
-function ExperimentTable(props: ExperimentTableProps) {
+function ExperimentTable() {
   const [urlQueryParams, setUrlQueryParams] =
     useQueryParams<ExperimentUrlQueryParamsType>({
       ...DefaultQueryParams,
-      callId: NumberParam,
-      instrumentId: NumberParam,
+      call: NumberParam,
+      instrument: NumberParam,
+      from: DateParam,
+      to: DateParam,
     });
 
-  const { scheduledEvents, setScheduledEvents, loadingEvents } =
+  const { scheduledEvents, setScheduledEvents, loadingEvents, setArgs } =
     useScheduledEvents({});
+
+  useEffect(() => {
+    setArgs({
+      filter: {
+        callId: urlQueryParams.call,
+        instrumentId: urlQueryParams.instrument,
+        overlaps: {
+          from: urlQueryParams.from
+            ? urlQueryParams.from.toISOString()
+            : undefined,
+          to: urlQueryParams.to ? urlQueryParams.to.toISOString() : undefined,
+        },
+      },
+    });
+  }, [
+    setArgs,
+    urlQueryParams.call,
+    urlQueryParams.instrument,
+    urlQueryParams.from,
+    urlQueryParams.to,
+  ]);
 
   const ScheduledEventDetails = React.useCallback(
     ({ rowData }: Record<'rowData', RowType>) => {
@@ -114,6 +134,24 @@ function ExperimentTable(props: ExperimentTableProps) {
         }}
       />
     </div>
+  );
+}
+
+function isOverlappingDates(
+  schedEvt_startsAt: Date,
+  schedEvt_endsAt: Date,
+  from?: Date,
+  to?: Date
+) {
+  if (!from || !to) {
+    return false;
+  }
+
+  return (
+    (schedEvt_startsAt >= from && schedEvt_startsAt <= to) ||
+    (schedEvt_endsAt >= from && schedEvt_endsAt <= to) ||
+    (from >= schedEvt_startsAt && from <= schedEvt_endsAt) ||
+    (to >= schedEvt_startsAt && to <= schedEvt_endsAt)
   );
 }
 

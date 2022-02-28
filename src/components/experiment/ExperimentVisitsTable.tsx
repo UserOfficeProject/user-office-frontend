@@ -98,10 +98,6 @@ function ExperimentVisitsTable({
     return <div className={classes.noVisit}>Visit is not defined</div>;
   }
 
-  if (scheduledEvent.visit === null) {
-    return <div className={classes.noVisit}>Visit is not defined</div>;
-  }
-
   return (
     <div className={classes.root}>
       <MaterialTable
