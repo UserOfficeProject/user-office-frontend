@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { default as React, useState } from 'react';
 
 import Questionary from 'components/questionary/Questionary';

@@ -1,9 +1,9 @@
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import useTheme from '@material-ui/core/styles/useTheme';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import Typography from '@material-ui/core/Typography';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import useTheme from '@mui/styles/useTheme';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
 import React, { useEffect } from 'react';
 import {
   NumberParam,

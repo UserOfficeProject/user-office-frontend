@@ -1,4 +1,4 @@
-import { Grid, Link, Typography } from '@material-ui/core';
+import { Grid, Link, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
 import StyledModal from 'components/common/StyledModal';

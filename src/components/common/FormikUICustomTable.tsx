@@ -3,10 +3,10 @@ import MaterialTable, {
   MTableAction,
   MTableToolbar,
 } from '@material-table/core';
-import { Button, makeStyles } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { Button, makeStyles } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { FormikHelpers, FormikValues } from 'formik';
 import React, { useRef } from 'react';
 

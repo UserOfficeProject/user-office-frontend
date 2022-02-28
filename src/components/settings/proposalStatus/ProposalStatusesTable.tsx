@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import Delete from '@material-ui/icons/DeleteOutline';
+import { Typography } from '@mui/material';
+import Delete from '@mui/icons-material/DeleteOutline';
 import React from 'react';
 import { useQueryParams } from 'use-query-params';
 

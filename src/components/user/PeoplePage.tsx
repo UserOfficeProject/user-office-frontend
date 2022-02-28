@@ -1,5 +1,5 @@
-import Grid from '@material-ui/core/Grid';
-import Edit from '@material-ui/icons/Edit';
+import Grid from '@mui/material/Grid';
+import Edit from '@mui/icons-material/Edit';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 

@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import makeStyles from '@mui/styles/makeStyles';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import React from 'react';
 
 import { ButtonContainer } from 'styles/StyledComponents';

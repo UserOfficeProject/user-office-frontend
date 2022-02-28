@@ -1,14 +1,14 @@
 import MaterialTable from '@material-table/core';
-import { Button } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
-import Clear from '@material-ui/icons/Clear';
-import Person from '@material-ui/icons/Person';
-import PersonAdd from '@material-ui/icons/PersonAdd';
+import { Button } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import Clear from '@mui/icons-material/Clear';
+import Person from '@mui/icons-material/Person';
+import PersonAdd from '@mui/icons-material/PersonAdd';
 import React, { useState, useContext } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';

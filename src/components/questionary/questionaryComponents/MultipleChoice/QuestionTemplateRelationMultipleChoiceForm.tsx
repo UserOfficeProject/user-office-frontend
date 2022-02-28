@@ -1,4 +1,4 @@
-import { FormControlLabel } from '@material-ui/core';
+import { FormControlLabel } from '@mui/material';
 import { Field } from 'formik';
 import { Checkbox } from 'formik-material-ui';
 import React, { ChangeEvent, FC, useState } from 'react';

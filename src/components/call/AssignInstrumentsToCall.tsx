@@ -1,6 +1,6 @@
 import MaterialTable from '@material-table/core';
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+import { Typography } from '@mui/material';
+import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 

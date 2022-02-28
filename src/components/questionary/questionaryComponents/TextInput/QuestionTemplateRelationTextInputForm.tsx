@@ -1,5 +1,5 @@
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
 import { Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React, { FC } from 'react';

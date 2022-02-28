@@ -1,5 +1,5 @@
-import { FormLabel, FormHelperText, makeStyles } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
+import { FormLabel, FormHelperText, makeStyles } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
 import { Editor } from '@tinymce/tinymce-react';
 import { getIn } from 'formik';
 import React, { useState } from 'react';

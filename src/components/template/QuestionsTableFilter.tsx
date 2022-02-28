@@ -5,7 +5,7 @@ import {
   MenuItem,
   Select,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, { useState } from 'react';
 
 import { creatableQuestions } from 'components/questionary/QuestionaryComponentRegistry';

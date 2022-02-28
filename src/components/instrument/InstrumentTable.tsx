@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import AssignmentInd from '@material-ui/icons/AssignmentInd';
+import { Typography } from '@mui/material';
+import AssignmentInd from '@mui/icons-material/AssignmentInd';
 import React, { useState } from 'react';
 import { useQueryParams } from 'use-query-params';
 

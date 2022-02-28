@@ -1,9 +1,9 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
 import { Editor } from '@tinymce/tinymce-react';
 import { saveSepMeetingDecisionValidationSchema } from '@user-office-software/duo-validation';
 import { Formik, Form, Field, useFormikContext } from 'formik';

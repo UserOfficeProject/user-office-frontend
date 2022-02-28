@@ -1,7 +1,7 @@
-import Grid from '@material-ui/core/Grid';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import useTheme from '@material-ui/core/styles/useTheme';
-import LockIcon from '@material-ui/icons/Lock';
+import Grid from '@mui/material/Grid';
+import makeStyles from '@mui/styles/makeStyles';
+import useTheme from '@mui/styles/useTheme';
+import LockIcon from '@mui/icons-material/Lock';
 import React, { useState } from 'react';
 import {
   Draggable,

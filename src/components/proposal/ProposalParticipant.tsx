@@ -1,8 +1,8 @@
-import { makeStyles, TextField } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import EditIcon from '@material-ui/icons/Edit';
+import { makeStyles, TextField } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import EditIcon from '@mui/icons-material/Edit';
 import React, { useState, useEffect } from 'react';
 
 import { BasicUserDetails, UserRole } from 'generated/sdk';

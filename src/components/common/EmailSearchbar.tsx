@@ -1,5 +1,5 @@
 import { MTableToolbar } from '@material-table/core';
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@mui/material';
 import { Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React from 'react';

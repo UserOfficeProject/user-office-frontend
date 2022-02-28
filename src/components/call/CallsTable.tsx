@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { DateTime } from 'luxon';
 import React, { useContext, useState } from 'react';
 import { useQueryParams } from 'use-query-params';

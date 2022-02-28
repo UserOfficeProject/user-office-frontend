@@ -1,8 +1,8 @@
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import Modal, { ModalProps } from '@material-ui/core/Modal';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import Backdrop from '@mui/material/Backdrop';
+import Fade from '@mui/material/Fade';
+import Grid from '@mui/material/Grid';
+import Modal, { ModalProps } from '@mui/material/Modal';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({

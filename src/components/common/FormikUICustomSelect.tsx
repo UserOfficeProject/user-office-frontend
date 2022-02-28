@@ -1,8 +1,8 @@
-import { MenuItem } from '@material-ui/core';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import ListItemText from '@material-ui/core/ListItemText';
-import Select from '@material-ui/core/Select';
+import { MenuItem } from '@mui/material';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import ListItemText from '@mui/material/ListItemText';
+import Select from '@mui/material/Select';
 import { FieldInputProps, FormikHelpers, FormikValues } from 'formik';
 import React from 'react';
 

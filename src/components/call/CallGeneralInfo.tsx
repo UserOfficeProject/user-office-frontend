@@ -17,8 +17,8 @@ import {
   Theme,
   Typography,
   withStyles,
-} from '@material-ui/core';
-import HelpIcon from '@material-ui/icons/Help';
+} from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-material-ui';

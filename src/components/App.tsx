@@ -1,6 +1,6 @@
-import { StylesProvider } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import Close from '@material-ui/icons/Close';
+import Close from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import { StyledEngineProvider } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import React, { ErrorInfo, useContext } from 'react';
 import { CookiesProvider } from 'react-cookie';
@@ -144,7 +144,7 @@ class App extends React.Component {
 
   render(): JSX.Element {
     return (
-      <StylesProvider injectFirst>
+      <StyledEngineProvider injectFirst>
         <CookiesProvider>
           <SnackbarProvider
             ref={this.notistackRef}
@@ -156,10 +156,10 @@ class App extends React.Component {
               </IconButton>
             )}
           >
-            <UserContextProvider>
-              <SettingsContextProvider>
-                <FeatureContextProvider>
-                  <Theme>
+            <SettingsContextProvider>
+              <Theme>
+                <UserContextProvider>
+                  <FeatureContextProvider>
                     <DownloadContextProvider>
                       <ReviewAndAssignmentContextProvider>
                         <Router>
@@ -169,13 +169,13 @@ class App extends React.Component {
                         </Router>
                       </ReviewAndAssignmentContextProvider>
                     </DownloadContextProvider>
-                  </Theme>
-                </FeatureContextProvider>
-              </SettingsContextProvider>
-            </UserContextProvider>
+                  </FeatureContextProvider>
+                </UserContextProvider>
+              </Theme>
+            </SettingsContextProvider>
           </SnackbarProvider>
         </CookiesProvider>
-      </StylesProvider>
+      </StyledEngineProvider>
     );
   }
 }

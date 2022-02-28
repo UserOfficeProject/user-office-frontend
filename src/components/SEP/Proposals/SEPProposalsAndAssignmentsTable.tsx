@@ -1,11 +1,11 @@
 import MaterialTable, { Options } from '@material-table/core';
-import { Typography } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import Grid from '@material-ui/core/Grid';
-import AssignmentInd from '@material-ui/icons/AssignmentInd';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import Visibility from '@material-ui/icons/Visibility';
+import { Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Grid from '@mui/material/Grid';
+import AssignmentInd from '@mui/icons-material/AssignmentInd';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import Visibility from '@mui/icons-material/Visibility';
 import dateformat from 'dateformat';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';

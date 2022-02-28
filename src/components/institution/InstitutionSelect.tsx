@@ -1,5 +1,4 @@
-import { TextField } from '@material-ui/core';
-import { AutocompleteProps, Autocomplete } from '@material-ui/lab';
+import { TextField, AutocompleteProps, Autocomplete } from '@mui/material';
 import React from 'react';
 
 import { Institution } from 'generated/sdk';

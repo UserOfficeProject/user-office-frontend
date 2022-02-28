@@ -1,6 +1,6 @@
 import MaterialTable, { Options } from '@material-table/core';
-import { Typography } from '@material-ui/core';
-import DoneAll from '@material-ui/icons/DoneAll';
+import { Typography } from '@mui/material';
+import DoneAll from '@mui/icons-material/DoneAll';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';

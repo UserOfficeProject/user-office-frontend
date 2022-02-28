@@ -6,7 +6,7 @@ import {
   Paper,
   Select,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { getQuestionaryComponentDefinitions } from 'components/questionary/QuestionaryComponentRegistry';

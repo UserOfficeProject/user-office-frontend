@@ -1,6 +1,6 @@
-import { Button, makeStyles, Typography } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import { Button, makeStyles, Typography } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 

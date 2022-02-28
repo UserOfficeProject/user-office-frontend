@@ -1,15 +1,15 @@
-import AppBar from '@material-ui/core/AppBar';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import IconButton from '@material-ui/core/IconButton';
-import Slide from '@material-ui/core/Slide';
-import { Theme } from '@material-ui/core/styles';
-import createStyles from '@material-ui/core/styles/createStyles';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import { TransitionProps } from '@material-ui/core/transitions/transition';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
+import AppBar from '@mui/material/AppBar';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import Slide from '@mui/material/Slide';
+import { Theme } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import Toolbar from '@mui/material/Toolbar';
+import { TransitionProps } from '@mui/material/transitions/transition';
+import Typography from '@mui/material/Typography';
+import CloseIcon from '@mui/icons-material/Close';
 import React, { Ref } from 'react';
 
 import { Proposal } from 'generated/sdk';

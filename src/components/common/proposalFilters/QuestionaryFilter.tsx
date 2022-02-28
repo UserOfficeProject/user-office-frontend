@@ -1,6 +1,5 @@
-import { Button, Collapse, Grid, TextField } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import SearchIcon from '@mui/icons-material/Search';
+import { Button, Collapse, Grid, TextField, Autocomplete } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 
 import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';

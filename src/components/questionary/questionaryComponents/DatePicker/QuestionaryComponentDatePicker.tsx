@@ -1,6 +1,6 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { DateType } from '@date-io/type';
-import FormControl from '@material-ui/core/FormControl';
+import FormControl from '@mui/material/FormControl';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { Field } from 'formik';

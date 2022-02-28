@@ -1,20 +1,20 @@
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
-import DoneIcon from '@material-ui/icons/Done';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import DoneIcon from '@mui/icons-material/Done';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { updateUserValidationSchema } from '@user-office-software/duo-validation';
 import dateformat from 'dateformat';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
-import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import { TextField } from 'formik-mui';
+import { KeyboardDatePicker } from 'formik-mui-pickers';
 import React, { useEffect, useState, useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';

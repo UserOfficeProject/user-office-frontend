@@ -1,9 +1,9 @@
 import MaterialTable, { Column } from '@material-table/core';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import Edit from '@material-ui/icons/Edit';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import Visibility from '@material-ui/icons/Visibility';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Edit from '@mui/icons-material/Edit';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import Visibility from '@mui/icons-material/Visibility';
 import {
   getTranslation,
   ResourceId,

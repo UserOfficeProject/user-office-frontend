@@ -4,8 +4,8 @@ import {
   makeStyles,
   Select,
   TextField,
-} from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
+} from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
 import { FormikErrors } from 'formik';
 import React, { useContext, useState } from 'react';
 

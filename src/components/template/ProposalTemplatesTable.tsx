@@ -1,6 +1,6 @@
 import MaterialTable, { Column } from '@material-table/core';
-import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import dateformat from 'dateformat';
 import React, { useState } from 'react';
 

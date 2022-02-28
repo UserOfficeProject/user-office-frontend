@@ -1,5 +1,5 @@
-import { Button, Link, makeStyles, Paper, Typography } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
+import { Button, Link, makeStyles, Paper, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 import clsx from 'clsx';
 import React, { Fragment, useContext, useState } from 'react';
 

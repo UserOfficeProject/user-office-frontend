@@ -1,16 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles';
-import styled from '@material-ui/core/styles/styled';
-import { CSSProperties } from '@material-ui/styles';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import { Theme } from '@mui/material/styles';
+import styled from '@mui/styles/styled';
 import React from 'react';
 
 const getValueFromArrayProperty = (prop: number[], theme: Theme) =>
   prop.map((item) => `${theme.spacing(item)}px`).join(' ');
 
 export const StyledPaper = styled(({ ...other }) => <Paper {...other} />)(
-  ({ theme, ...props }: { theme: Theme } & CSSProperties) => {
+  ({ theme, ...props }: { theme: Theme } & React.CSSProperties) => {
     const margin: string | number | undefined = Array.isArray(props.margin)
       ? getValueFromArrayProperty(props.margin, theme)
       : props.margin;
@@ -29,7 +28,7 @@ export const StyledPaper = styled(({ ...other }) => <Paper {...other} />)(
   }
 );
 export const FormWrapper = styled(({ ...other }) => <Box {...other} />)(
-  ({ theme, ...props }: { theme: Theme } & CSSProperties) => {
+  ({ theme, ...props }: { theme: Theme } & React.CSSProperties) => {
     const margin: string | number | undefined = Array.isArray(props.margin)
       ? getValueFromArrayProperty(props.margin, theme)
       : props.margin;
@@ -45,7 +44,7 @@ export const FormWrapper = styled(({ ...other }) => <Box {...other} />)(
 );
 export const ContentContainer = styled(({ maxWidth = false, ...other }) => (
   <Container maxWidth={maxWidth} {...other} />
-))(({ theme, ...props }: { theme: Theme } & CSSProperties) => {
+))(({ theme, ...props }: { theme: Theme } & React.CSSProperties) => {
   const padding: string | number | undefined = Array.isArray(props.padding)
     ? getValueFromArrayProperty(props.padding, theme)
     : props.padding;

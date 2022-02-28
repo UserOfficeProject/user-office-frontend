@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import Edit from '@material-ui/icons/Edit';
+import { Typography } from '@mui/material';
+import Edit from '@mui/icons-material/Edit';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { useQueryParams } from 'use-query-params';

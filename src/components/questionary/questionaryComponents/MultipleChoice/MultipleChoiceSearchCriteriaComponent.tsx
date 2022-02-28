@@ -1,5 +1,10 @@
-import { FormControl, Grid, InputLabel, TextField } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  TextField,
+  Autocomplete,
+} from '@mui/material';
 import React, { useState } from 'react';
 
 import {

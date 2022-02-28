@@ -1,5 +1,5 @@
-import { Button, Typography } from '@material-ui/core';
-import PublishIcon from '@material-ui/icons/Publish';
+import { Button, Typography } from '@mui/material';
+import PublishIcon from '@mui/icons-material/Publish';
 import React, { ChangeEvent } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';

@@ -11,10 +11,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@material-ui/core';
-import Check from '@material-ui/icons/Check';
-import Error from '@material-ui/icons/Error';
-import ExpandMore from '@material-ui/icons/ExpandMore';
+} from '@mui/material';
+import Check from '@mui/icons-material/Check';
+import Error from '@mui/icons-material/Error';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
 

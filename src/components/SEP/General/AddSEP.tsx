@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
 import { createSEPValidationSchema } from '@user-office-software/duo-validation/lib/SEP';
 import { Field, Form, Formik } from 'formik';
 import { Checkbox, TextField } from 'formik-material-ui';

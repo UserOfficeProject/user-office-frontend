@@ -1,6 +1,6 @@
-import { Button, makeStyles, TextField } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import MergeType from '@material-ui/icons/MergeType';
+import { Button, makeStyles, TextField } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import MergeType from '@mui/icons-material/MergeType';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 

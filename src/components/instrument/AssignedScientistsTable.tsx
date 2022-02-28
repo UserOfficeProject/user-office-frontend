@@ -1,5 +1,5 @@
 import MaterialTable from '@material-table/core';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 import React from 'react';
 

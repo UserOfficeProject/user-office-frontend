@@ -1,8 +1,8 @@
 import { Options, MTableToolbar } from '@material-table/core';
-import IconButton from '@material-ui/core/IconButton';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Tooltip from '@material-ui/core/Tooltip';
-import GridOnIcon from '@material-ui/icons/GridOn';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
+import Tooltip from '@mui/material/Tooltip';
+import GridOnIcon from '@mui/icons-material/GridOn';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 

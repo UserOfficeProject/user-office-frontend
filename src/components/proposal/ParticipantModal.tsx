@@ -1,6 +1,6 @@
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import AddBox from '@material-ui/icons/AddBox';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import AddBox from '@mui/icons-material/AddBox';
 import React from 'react';
 
 import { useCheckAccess } from 'components/common/Can';

@@ -1,6 +1,6 @@
 import MaterialTable, { Column } from '@material-table/core';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import TextField from '@material-ui/core/TextField';
+import makeStyles from '@mui/styles/makeStyles';
+import TextField from '@mui/material/TextField';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { ChangeEvent, useState } from 'react';

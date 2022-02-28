@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';
 import { Editor } from '@tinymce/tinymce-react';
 import { administrationProposalValidationSchema } from '@user-office-software/duo-validation/lib/Proposal';
 import { Formik, Form, Field, useFormikContext } from 'formik';

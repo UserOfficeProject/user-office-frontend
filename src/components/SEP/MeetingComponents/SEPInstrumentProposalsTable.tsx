@@ -1,10 +1,10 @@
 import MaterialTable, { MTableBodyRow } from '@material-table/core';
-import IconButton from '@material-ui/core/IconButton';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import useTheme from '@material-ui/core/styles/useTheme';
-import Tooltip from '@material-ui/core/Tooltip';
-import DragHandle from '@material-ui/icons/DragHandle';
-import Visibility from '@material-ui/icons/Visibility';
+import IconButton from '@mui/material/IconButton';
+import makeStyles from '@mui/styles/makeStyles';
+import useTheme from '@mui/styles/useTheme';
+import Tooltip from '@mui/material/Tooltip';
+import DragHandle from '@mui/icons-material/DragHandle';
+import Visibility from '@mui/icons-material/Visibility';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useContext, DragEvent, useState, useEffect } from 'react';

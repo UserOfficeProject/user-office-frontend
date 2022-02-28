@@ -1,8 +1,8 @@
-import { makeStyles, Typography } from '@material-ui/core';
-import Table, { TableProps } from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
+import { makeStyles, Typography } from '@mui/material';
+import Table, { TableProps } from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 import React, { FC } from 'react';
 
 import UOLoader from 'components/common/UOLoader';

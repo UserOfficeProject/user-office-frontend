@@ -1,10 +1,10 @@
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import makeStyles from '@material-ui/styles/makeStyles';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { userPasswordFieldValidationSchema } from '@user-office-software/duo-validation/lib/User';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React from 'react';
 
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';

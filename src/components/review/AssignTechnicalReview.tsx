@@ -1,5 +1,5 @@
-import { Button, makeStyles, TextField } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+import { Button, TextField, Autocomplete } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 
 import { UserRole } from 'generated/sdk';

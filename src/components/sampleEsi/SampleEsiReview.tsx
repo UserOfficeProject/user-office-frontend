@@ -1,5 +1,5 @@
-import { FormControlLabel } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
+import { FormControlLabel } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
 import React, { ChangeEvent, useContext, useState } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';

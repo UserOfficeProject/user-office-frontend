@@ -1,10 +1,10 @@
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import makeStyles from '@mui/styles/makeStyles';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalTechnicalReviewValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Formik, Form, Field, useFormikContext } from 'formik';

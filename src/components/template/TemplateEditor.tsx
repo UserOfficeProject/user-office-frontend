@@ -1,12 +1,12 @@
-import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import useTheme from '@material-ui/core/styles/useTheme';
-import Switch from '@material-ui/core/Switch';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import LinearProgress from '@mui/material/LinearProgress';
+import makeStyles from '@mui/styles/makeStyles';
+import useTheme from '@mui/styles/useTheme';
+import Switch from '@mui/material/Switch';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 

@@ -1,5 +1,5 @@
 import MaterialTable from '@material-table/core';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import dateformat from 'dateformat';
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -1,4 +1,4 @@
-import ExposureZeroIcon from '@material-ui/icons/ExposureZero';
+import ExposureZeroIcon from '@mui/icons-material/ExposureZero';
 import { numberInputQuestionValidationSchema } from '@user-office-software/duo-validation';
 import React from 'react';
 

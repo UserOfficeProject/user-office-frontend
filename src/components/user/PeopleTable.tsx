@@ -4,11 +4,11 @@ import MaterialTable, {
   Column,
   MTableToolbar,
 } from '@material-table/core';
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import Email from '@material-ui/icons/Email';
+import { Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Email from '@mui/icons-material/Email';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Formik } from 'formik';
 import React, { useState, useEffect, useContext } from 'react';

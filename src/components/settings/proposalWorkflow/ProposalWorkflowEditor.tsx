@@ -1,5 +1,5 @@
-import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import Grid from '@mui/material/Grid';
+import LinearProgress from '@mui/material/LinearProgress';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import {

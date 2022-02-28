@@ -1,5 +1,5 @@
-import Button from '@material-ui/core/Button';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useContext, useEffect, useState } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
