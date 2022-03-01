@@ -1,6 +1,6 @@
 import makeStyles from '@mui/styles/makeStyles';
 import { Field, getIn } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 

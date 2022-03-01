@@ -1,11 +1,11 @@
 import {
   FormControl,
   InputLabel,
-  makeStyles,
   MenuItem,
   Select,
   TextField,
 } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 
 import { creatableQuestions } from 'components/questionary/QuestionaryComponentRegistry';

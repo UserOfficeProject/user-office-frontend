@@ -1,4 +1,4 @@
-import { makeStyles } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';

@@ -6,7 +6,7 @@ import { SuperMaterialTable } from 'components/common/SuperMaterialTable';
 import { createQuestionForm } from 'components/questionary/QuestionaryComponentRegistry';
 import { useCreatableQuestions } from 'hooks/template/useCreatableQuestions';
 import { QuestionWithUsage } from 'hooks/template/useQuestions';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
@@ -81,7 +81,7 @@ function QuestionsPage() {
   ];
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper>
@@ -127,7 +127,7 @@ function QuestionsPage() {
       >
         <AnswerCountDetails question={selectedAnswerCountDetailsQuestion} />
       </StyledModal>
-    </ContentContainer>
+    </StyledContainer>
   );
 }
 

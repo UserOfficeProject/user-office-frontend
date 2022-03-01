@@ -1,3 +1,4 @@
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Tooltip,
   IconButton,
@@ -7,18 +8,17 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import EditIcon from '@mui/icons-material/Edit';
+import makeStyles from '@mui/styles/makeStyles';
 import { updateTimeAllocationValidationSchema } from '@user-office-software/duo-validation';
 import clsx from 'clsx';
 import { Formik, Form, Field } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 

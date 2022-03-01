@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import UpdateProposalEsi from './UpdateProposalEsi';
 
@@ -14,7 +14,7 @@ export default function UpdateProposalEsiPage() {
   }
 
   return (
-    <ContentContainer maxWidth="md">
+    <StyledContainer maxWidth="md">
       <Grid container>
         <Grid item xs={12} data-cy="update-proposal-esi-table">
           <StyledPaper>
@@ -22,6 +22,6 @@ export default function UpdateProposalEsiPage() {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

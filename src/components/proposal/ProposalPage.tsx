@@ -15,7 +15,7 @@ import { ProposalsFilter } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ProposalFilterBar, {
   questionaryFilterFromUrlQuery,
@@ -59,7 +59,7 @@ export default function ProposalPage() {
 
   return (
     <>
-      <ContentContainer>
+      <StyledContainer>
         <Grid container>
           <Grid item xs={12}>
             <StyledPaper data-cy="officer-proposals-table">
@@ -84,7 +84,7 @@ export default function ProposalPage() {
             </StyledPaper>
           </Grid>
         </Grid>
-      </ContentContainer>
+      </StyledContainer>
     </>
   );
 }

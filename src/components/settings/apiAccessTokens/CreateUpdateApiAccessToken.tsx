@@ -1,18 +1,18 @@
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import makeStyles from '@mui/styles/makeStyles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   createApiAccessTokenValidationSchema,
   updateApiAccessTokenValidationSchema,
 } from '@user-office-software/duo-validation/lib/Admin';
 import { Field, FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React from 'react';
 
 import ErrorMessage from 'components/common/ErrorMessage';
@@ -290,7 +290,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
           />
           <Grid
             container
-            justify="flex-end"
+            justifyContent="flex-end"
             className={classes.submitContainer}
           >
             <Grid item>

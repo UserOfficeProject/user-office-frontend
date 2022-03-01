@@ -1,9 +1,9 @@
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import useTheme from '@mui/styles/useTheme';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+import useTheme from '@mui/styles/useTheme';
 import React, { useEffect } from 'react';
 import {
   NumberParam,
@@ -64,7 +64,7 @@ const FullWidthTabs: React.FC<FullWidthTabsProps> = ({
   });
 
   const handleChange = (
-    event: React.ChangeEvent<Record<string, unknown>>,
+    event: React.SyntheticEvent<Element, Event>,
     newValue: number
   ) => {
     const tabValue = newValue > 0 ? newValue : undefined;

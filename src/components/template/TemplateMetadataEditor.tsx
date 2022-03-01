@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  buttonContainer: {
+  StyledButtonContainer: {
     margin: `${theme.spacing(1)} 0 0 0`,
   },
 }));
@@ -122,7 +122,7 @@ export function TemplateMetadataEditor(props: {
             fullWidth
             InputProps={{ 'data-cy': 'template-description' }}
           />
-          <ActionButtonContainer className={classes.buttonContainer}>
+          <ActionButtonContainer className={classes.StyledButtonContainer}>
             <IconButton
               disabled={isSubmitting}
               onClick={() => setIsEditMode(false)}

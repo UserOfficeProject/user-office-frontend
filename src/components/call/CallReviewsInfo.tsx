@@ -1,7 +1,7 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { Field, useFormikContext } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React, { useEffect } from 'react';
 

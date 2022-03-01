@@ -3,7 +3,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import { Field } from 'formik';
-import { Select, TextField } from 'formik-material-ui';
+import { Select, TextField } from 'formik-mui';
 import { default as React, FC, useContext } from 'react';
 import * as Yup from 'yup';
 

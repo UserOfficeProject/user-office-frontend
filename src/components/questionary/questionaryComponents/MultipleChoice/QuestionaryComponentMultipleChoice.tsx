@@ -6,7 +6,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import makeStyles from '@mui/styles/makeStyles';
 import { getIn } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -57,10 +57,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
   }, [answer]);
 
   const handleOnChange = (
-    _evt: React.ChangeEvent<{
-      name?: string | undefined;
-      value: unknown;
-    }>,
+    _evt: SelectChangeEvent<string | string[]>,
     value: string | string[]
   ) => {
     const newValue = toArray(value);
@@ -113,7 +110,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             }
             MenuProps={{
               variant: 'menu',
-              getContentAnchorEl: null,
+              anchorEl: null,
             }}
             data-natural-key={naturalKey}
           >

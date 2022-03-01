@@ -4,7 +4,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import { Check, MergeType } from '@mui/icons-material';
 import { Field, Form, Formik } from 'formik';
-import { Checkbox, TextField } from 'formik-material-ui';
+import { Checkbox, TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router';

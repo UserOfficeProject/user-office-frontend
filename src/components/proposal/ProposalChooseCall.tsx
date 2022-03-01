@@ -12,7 +12,7 @@ import React, { Fragment } from 'react';
 import { useHistory } from 'react-router';
 
 import { Call } from 'generated/sdk';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import { timeRemaining } from 'utils/Time';
 
 const useStyles = makeStyles(() => ({
@@ -42,7 +42,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
   };
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <StyledPaper margin={[0]}>
         <Typography variant="h6" component="h2" gutterBottom>
           Select a call
@@ -104,7 +104,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
           })}
         </List>
       </StyledPaper>
-    </ContentContainer>
+    </StyledContainer>
   );
 };
 

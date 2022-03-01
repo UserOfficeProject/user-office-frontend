@@ -3,8 +3,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { FieldArray, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -145,7 +145,7 @@ const AddStatusChangingEventsToConnection: React.FC<
             </Grid>
             <Grid
               container
-              justify="flex-end"
+              justifyContent="flex-end"
               className={classes.submitContainer}
             >
               <Grid item>

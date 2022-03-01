@@ -4,7 +4,7 @@ import React from 'react';
 
 import { PageName } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 const HelpPage: React.FC = () => {
   const [loadingHelpContent, helpPageContent] = useGetPageContent(
@@ -13,7 +13,7 @@ const HelpPage: React.FC = () => {
 
   return (
     <React.Fragment>
-      <ContentContainer>
+      <StyledContainer>
         <Grid container>
           <Grid item xs={12}>
             <StyledPaper>
@@ -21,7 +21,7 @@ const HelpPage: React.FC = () => {
             </StyledPaper>
           </Grid>
         </Grid>
-      </ContentContainer>
+      </StyledContainer>
     </React.Fragment>
   );
 };

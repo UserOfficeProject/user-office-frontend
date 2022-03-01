@@ -1,19 +1,19 @@
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import makeStyles from '@mui/styles/makeStyles';
 import { userPasswordFieldValidationSchema } from '@user-office-software/duo-validation/lib/User';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useUnauthorizedApi } from 'hooks/common/useDataApi';
-import { FormWrapper } from 'styles/StyledComponents';
+import { StyledFormWrapper } from 'styles/StyledComponents';
 
 import PhotoInSide from './PhotoInSide';
 
@@ -79,7 +79,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
       >
         <Form className={classes.form}>
           <CssBaseline />
-          <FormWrapper margin={[8, 4]}>
+          <StyledFormWrapper margin={[8, 4]}>
             <Avatar className={classes.avatar}>
               <LockOutlinedIcon />
             </Avatar>
@@ -131,7 +131,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
                 <Link to="/SignIn/">Back to Sign In? Sign In</Link>
               </Grid>
             </Grid>
-          </FormWrapper>
+          </StyledFormWrapper>
         </Form>
       </Formik>
     </PhotoInSide>

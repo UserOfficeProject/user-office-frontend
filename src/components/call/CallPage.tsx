@@ -1,13 +1,13 @@
 import Grid from '@mui/material/Grid';
 import React from 'react';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import CallsTable from './CallsTable';
 
 const CallPage: React.FC = () => {
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper>
@@ -15,7 +15,7 @@ const CallPage: React.FC = () => {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 };
 

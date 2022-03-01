@@ -14,7 +14,7 @@ import { Formik } from 'formik';
 import React, { useState, useEffect, useContext } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
-import EmailSearchbar from 'components/common/EmailSearchbar';
+import EmailSearchBar from 'components/common/EmailSearchBar';
 import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   BasicUserDetails,
@@ -439,7 +439,7 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                 setQuery({ ...query, first: rowsPerPage })
               }
               components={{
-                Toolbar: EmailSearchbar,
+                Toolbar: EmailSearchBar,
               }}
             />
             {props.selection && (

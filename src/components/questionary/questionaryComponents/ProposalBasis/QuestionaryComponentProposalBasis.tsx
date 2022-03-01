@@ -1,6 +1,6 @@
 import makeStyles from '@mui/styles/makeStyles';
 import { Field } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React, { ChangeEvent, useContext, useState } from 'react';
 
 import ErrorMessage from 'components/common/ErrorMessage';

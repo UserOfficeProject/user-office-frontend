@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import { Editor } from '@tinymce/tinymce-react';
 import { administrationProposalValidationSchema } from '@user-office-software/duo-validation/lib/Proposal';
 import { Formik, Form, Field, useFormikContext } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React from 'react';
 import { Prompt } from 'react-router';
 
@@ -15,7 +15,7 @@ import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import { UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
 import { ProposalData } from 'hooks/proposal/useProposalData';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 export type AdministrationFormData = {
@@ -204,7 +204,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
               </Grid>
               {isUserOfficer && (
                 <Grid item xs={12}>
-                  <ButtonContainer>
+                  <StyledButtonContainer>
                     <Field
                       id="managementDecisionSubmitted"
                       name="managementDecisionSubmitted"
@@ -222,7 +222,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                     >
                       Save
                     </Button>
-                  </ButtonContainer>
+                  </StyledButtonContainer>
                 </Grid>
               )}
             </Grid>

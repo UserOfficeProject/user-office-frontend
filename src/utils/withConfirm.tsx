@@ -78,7 +78,7 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
           onClose={handleCancel}
         >
           {title && (
-            <DialogTitle className={classes.title} disableTypography={true}>
+            <DialogTitle className={classes.title}>
               <Typography variant="h6" component="h1" gutterBottom>
                 {title}
               </Typography>

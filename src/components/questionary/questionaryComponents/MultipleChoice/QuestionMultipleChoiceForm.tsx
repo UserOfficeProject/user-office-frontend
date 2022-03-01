@@ -1,6 +1,6 @@
 import { FormControlLabel } from '@mui/material';
 import { Field } from 'formik';
-import { Checkbox, TextField } from 'formik-material-ui';
+import { Checkbox, TextField } from 'formik-mui';
 import React, { ChangeEvent, FC, useState } from 'react';
 import * as Yup from 'yup';
 

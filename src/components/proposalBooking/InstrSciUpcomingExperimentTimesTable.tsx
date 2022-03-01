@@ -5,7 +5,7 @@ import { useQueryParams, NumberParam } from 'use-query-params';
 import InstrumentFilter from 'components/common/proposalFilters/InstrumentFilter';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ExperimentsTable from './ExperimentTimesTable';
 
@@ -28,7 +28,7 @@ export default function InstrSciUpcomingExperimentTimesTable() {
     });
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper margin={[0]}>
@@ -47,7 +47,7 @@ export default function InstrSciUpcomingExperimentTimesTable() {
               title="Upcoming experiments"
               options={{
                 search: true,
-                padding: 'default',
+                padding: 'normal',
                 emptyRowsWhenPaging: true,
                 paging: true,
               }}
@@ -55,6 +55,6 @@ export default function InstrSciUpcomingExperimentTimesTable() {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

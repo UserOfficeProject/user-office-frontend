@@ -1,13 +1,13 @@
 import Grid from '@mui/material/Grid';
 import React from 'react';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ProposalWorkflowsTable from './ProposalWorkflowsTable';
 
 const ProposalWorkflowsPage: React.FC = () => {
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper>
@@ -15,7 +15,7 @@ const ProposalWorkflowsPage: React.FC = () => {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 };
 

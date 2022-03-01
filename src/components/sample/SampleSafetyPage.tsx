@@ -1,3 +1,5 @@
+import GetAppIcon from '@mui/icons-material/GetApp';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -6,10 +8,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React, { useEffect, useState } from 'react';
 import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
@@ -20,7 +20,7 @@ import { Maybe, SampleStatus } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { useDownloadPDFSample } from 'hooks/sample/useDownloadPDFSample';
 import { SampleWithProposalData } from 'models/questionary/sample/SampleWithProposalData';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import SampleDetails from './SampleDetails';
@@ -228,7 +228,7 @@ function SampleSafetyPage() {
 
   return (
     <>
-      <ContentContainer>
+      <StyledContainer>
         <Grid container>
           <Grid item xs={12}>
             <StyledPaper>
@@ -270,7 +270,7 @@ function SampleSafetyPage() {
             </StyledPaper>
           </Grid>
         </Grid>
-      </ContentContainer>
+      </StyledContainer>
       {selectedSample && (
         <SampleEvaluationDialog
           sample={selectedSample}

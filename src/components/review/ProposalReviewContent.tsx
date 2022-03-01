@@ -1,5 +1,6 @@
-import { Button, Link, makeStyles, Paper, Typography } from '@mui/material';
+import { Button, Link, Paper, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { Fragment, useContext, useState } from 'react';
 

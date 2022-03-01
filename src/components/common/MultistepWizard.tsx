@@ -2,8 +2,6 @@ import Button from '@mui/material/Button';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
-import { Theme } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import {
   Form,
@@ -18,32 +16,30 @@ import * as Yup from 'yup';
 import { ActionButtonContainer } from './ActionButtonContainer';
 import UOLoader from './UOLoader';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-    },
-    button: {
-      marginRight: theme.spacing(1),
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-    },
-    stepper: {
-      padding: '20px 0 0',
-      flexWrap: 'wrap',
-    },
-    formErrors: {
-      color: theme.palette.error.main,
-      marginBottom: '10px',
-    },
-    step: {
-      cursor: 'pointer',
-      padding: theme.spacing(1),
-    },
-  })
-);
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+  button: {
+    marginRight: theme.spacing(1),
+  },
+  instructions: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  stepper: {
+    padding: '20px 0 0',
+    flexWrap: 'wrap',
+  },
+  formErrors: {
+    color: theme.palette.error.main,
+    marginBottom: '10px',
+  },
+  step: {
+    cursor: 'pointer',
+    padding: theme.spacing(1),
+  },
+}));
 
 interface WizardProps
   extends Pick<

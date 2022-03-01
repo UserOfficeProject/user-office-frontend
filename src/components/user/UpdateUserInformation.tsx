@@ -14,7 +14,7 @@ import { updateUserValidationSchema } from '@user-office-software/duo-validation
 import dateformat from 'dateformat';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-mui';
-import { KeyboardDatePicker } from 'formik-mui-pickers';
+import { KeyboardDatePicker } from 'formik-mui-lab';
 import React, { useEffect, useState, useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
@@ -24,7 +24,7 @@ import { UpdateUserMutationVariables, User, UserRole } from 'generated/sdk';
 import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useGetFields } from 'hooks/user/useGetFields';
 import orcid from 'images/orcid.png';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -412,7 +412,7 @@ export default function UpdateUserInformation(props: { id: number }) {
                 />
               </Grid>
             </Grid>
-            <ButtonContainer>
+            <StyledButtonContainer>
               <Button
                 disabled={isSubmitting}
                 type="submit"
@@ -422,7 +422,7 @@ export default function UpdateUserInformation(props: { id: number }) {
               >
                 Update Profile
               </Button>
-            </ButtonContainer>
+            </StyledButtonContainer>
           </Form>
         )}
       </Formik>

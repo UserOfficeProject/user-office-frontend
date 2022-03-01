@@ -1,12 +1,12 @@
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import LinearProgress from '@mui/material/LinearProgress';
-import makeStyles from '@mui/styles/makeStyles';
-import useTheme from '@mui/styles/useTheme';
 import Switch from '@mui/material/Switch';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import makeStyles from '@mui/styles/makeStyles';
+import useTheme from '@mui/styles/useTheme';
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
@@ -25,7 +25,7 @@ import {
   getFieldById,
   getQuestionaryStepByTopicId,
 } from 'models/questionary/QuestionaryFunctions';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { MiddlewareInputParams } from 'utils/useReducerWithMiddleWares';
 import { FunctionType } from 'utils/utilTypes';
@@ -209,7 +209,7 @@ export default function TemplateEditor() {
     }
   };
 
-  const getContainerStyle = () => {
+  const getContainerStyle = (): React.CSSProperties => {
     return isLoading || state.templateId === 0
       ? {
           pointerEvents: 'none',
@@ -258,7 +258,7 @@ export default function TemplateEditor() {
     ) : null;
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <TemplateMetadataEditor dispatch={dispatch} template={state} />
       <StyledPaper style={getContainerStyle()}>
         {progressJsx}
@@ -320,6 +320,6 @@ export default function TemplateEditor() {
         closeMe={() => setSelectedQuestion(null)}
         template={state}
       />
-    </ContentContainer>
+    </StyledContainer>
   );
 }

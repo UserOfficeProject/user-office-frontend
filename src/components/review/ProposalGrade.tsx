@@ -17,7 +17,7 @@ import {
   ReviewWithNextProposalStatus,
   Review,
 } from 'generated/sdk';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -181,7 +181,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               data-cy="grade-proposal"
             />
           </Box>
-          <ButtonContainer>
+          <StyledButtonContainer>
             {isSubmitting && (
               <Box display="flex" alignItems="center" mx={1}>
                 <UOLoader buttonSized />
@@ -208,7 +208,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 ? 'Submitted'
                 : 'Submit'}
             </Button>
-          </ButtonContainer>
+          </StyledButtonContainer>
         </Form>
       )}
     </Formik>

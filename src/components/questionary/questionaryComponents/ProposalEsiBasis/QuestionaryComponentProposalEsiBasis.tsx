@@ -35,7 +35,7 @@ import {
 } from 'generated/sdk';
 import { getQuestionsByType } from 'models/questionary/QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from 'models/questionary/sampleEsi/SampleEsiWithQuestionary';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import withPrompt, { WithPromptType } from 'utils/withPrompt';
@@ -362,7 +362,7 @@ function QuestionaryComponentProposalEsiBasis(
               })}
             </List>
             <ErrorMessage name={answerId} />
-            <ButtonContainer>
+            <StyledButtonContainer>
               <Button
                 onClick={() =>
                   prompt(
@@ -380,7 +380,7 @@ function QuestionaryComponentProposalEsiBasis(
               >
                 Create new sample
               </Button>
-            </ButtonContainer>
+            </StyledButtonContainer>
             <Divider style={{ margin: '12px 0' }} />
             <Typography variant="body1" align={'right'}>
               {`${declaredEsis.length ?? 0} of

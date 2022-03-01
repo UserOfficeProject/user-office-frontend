@@ -2,7 +2,7 @@ import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import makeStyles from '@mui/styles/makeStyles';
 import { FormikHelpers, FormikValues } from 'formik';
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
@@ -166,8 +166,8 @@ const FormikUICustomDependencySelector = ({
           <Select
             id="dependency-id"
             value={dependencyId}
-            onChange={(event: React.ChangeEvent<{ value: unknown }>): void => {
-              const depFieldId = event.target.value as string;
+            onChange={(event: SelectChangeEvent<string>) => {
+              const depFieldId = event.target.value;
               setDependencyId(depFieldId);
             }}
             required
@@ -196,7 +196,7 @@ const FormikUICustomDependencySelector = ({
             fullWidth
             id="operator"
             value={operator}
-            onChange={(event: React.ChangeEvent<{ value: unknown }>): void => {
+            onChange={(event: SelectChangeEvent<EvaluatorOperator>) => {
               setOperator(event.target.value as EvaluatorOperator);
             }}
           >
@@ -217,9 +217,7 @@ const FormikUICustomDependencySelector = ({
             fullWidth
             id="dependencyValue"
             value={dependencyValue}
-            onChange={(
-              event: React.ChangeEvent<{ name?: string; value: unknown }>
-            ): void => {
+            onChange={(event: SelectChangeEvent<unknown>): void => {
               setDependencyValue(event.target.value);
             }}
             required

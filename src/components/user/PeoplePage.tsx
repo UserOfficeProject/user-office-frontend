@@ -1,15 +1,16 @@
-import Grid from '@mui/material/Grid';
 import Edit from '@mui/icons-material/Edit';
+import Grid from '@mui/material/Grid';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { BasicUserDetails } from 'generated/sdk';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import PeopleTable from './PeopleTable';
 
 export default function PeoplePage() {
-  const [userData, setUserData] = useState<{ id: number } | null>(null);
+  const [userData, setUserData] = useState<BasicUserDetails | null>(null);
   const { api } = useDataApiWithFeedback();
   const history = useHistory();
 
@@ -20,14 +21,14 @@ export default function PeoplePage() {
   }
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12} data-cy="people-table">
           <StyledPaper>
             <PeopleTable
               title="Users"
               action={{
-                fn: setUserData,
+                fn: (value) => setUserData(value as BasicUserDetails),
                 actionText: 'Edit user',
                 actionIcon: <Edit />,
               }}
@@ -42,6 +43,6 @@ export default function PeoplePage() {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

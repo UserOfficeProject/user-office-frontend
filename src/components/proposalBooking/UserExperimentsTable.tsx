@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid';
 import React from 'react';
 
 import { useProposalBookingsScheduledEvents } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ExperimentsTable from './ExperimentTimesTable';
 
@@ -13,7 +13,7 @@ export default function UserExperimentTimesTable() {
     });
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper margin={[0]}>
@@ -23,7 +23,7 @@ export default function UserExperimentTimesTable() {
               title="Experiment Times"
               options={{
                 search: true,
-                padding: 'default',
+                padding: 'normal',
                 emptyRowsWhenPaging: true,
                 paging: true,
               }}
@@ -31,6 +31,6 @@ export default function UserExperimentTimesTable() {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

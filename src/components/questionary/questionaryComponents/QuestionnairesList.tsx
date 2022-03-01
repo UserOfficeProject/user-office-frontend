@@ -4,7 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import React from 'react';
 
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 
 import { QuestionnairesListItem } from './QuestionnairesListItem';
 
@@ -67,7 +67,7 @@ export function QuestionnairesList({
           );
         })}
       </List>
-      <ButtonContainer>
+      <StyledButtonContainer>
         <Button
           onClick={onAddNewClick}
           variant="outlined"
@@ -82,7 +82,7 @@ export function QuestionnairesList({
         >
           {addButtonLabel || 'Add'}
         </Button>
-      </ButtonContainer>
+      </StyledButtonContainer>
     </div>
   );
 }

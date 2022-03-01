@@ -1,5 +1,6 @@
-import { makeStyles, Step, Stepper, Typography } from '@mui/material';
+import { Step, Stepper, Typography } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useContext, useRef, useEffect } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';

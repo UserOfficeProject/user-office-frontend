@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 
 import SimpleTabs from 'components/common/TabPanel';
 import EventLogList from 'components/eventLog/EventLogList';
-import { ContentContainer } from 'styles/StyledComponents';
+import { StyledContainer } from 'styles/StyledComponents';
 
 import { Impersonate } from './Impersonate';
 import UpdatePassword from './UpdatePassword';
@@ -29,7 +29,7 @@ function UserPage(props: { match: { params: { id: string } } }) {
   const classes = useStyles();
 
   return (
-    <ContentContainer cy-data="user-page">
+    <StyledContainer cy-data="user-page">
       <SimpleTabs tabNames={['General', 'Settings', 'Logs']}>
         <UpdateUserInformation id={userId} />
         <React.Fragment>
@@ -44,7 +44,7 @@ function UserPage(props: { match: { params: { id: string } } }) {
           changedObjectId={userId}
         />
       </SimpleTabs>
-    </ContentContainer>
+    </StyledContainer>
   );
 }
 

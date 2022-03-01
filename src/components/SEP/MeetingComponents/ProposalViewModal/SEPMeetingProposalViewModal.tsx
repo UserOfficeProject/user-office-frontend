@@ -1,17 +1,16 @@
+import CloseIcon from '@mui/icons-material/Close';
 import AppBar from '@mui/material/AppBar';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
-import { Theme } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import Toolbar from '@mui/material/Toolbar';
 import { TransitionProps } from '@mui/material/transitions/transition';
 import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
-import React, { Ref } from 'react';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import React from 'react';
 
 import { useCheckAccess } from 'components/common/Can';
 import UOLoader from 'components/common/UOLoader';
@@ -28,7 +27,7 @@ import FinalRankingForm from './FinalRankingForm';
 import ProposalDetails from './ProposalDetails';
 import TechnicalReviewInfo from './TechnicalReviewInfo';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     appBar: {
       position: 'relative',
@@ -40,11 +39,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const SlideComponent = (props: TransitionProps, ref: Ref<unknown>) => (
-  <Slide direction="up" ref={ref} {...props} />
-);
-
-const Transition = React.forwardRef<unknown, TransitionProps>(SlideComponent);
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 type SEPMeetingProposalViewModalProps = {
   proposalViewModalOpen: boolean;

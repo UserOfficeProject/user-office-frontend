@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import MuiLink from '@mui/material/Link';
-import makeStyles from '@mui/styles/makeStyles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import MenuIcon from '@mui/icons-material/Menu';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useContext, useMemo } from 'react';

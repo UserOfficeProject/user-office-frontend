@@ -1,11 +1,11 @@
 import MaterialTable, { Options } from '@material-table/core';
+import AssignmentInd from '@mui/icons-material/AssignmentInd';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import Visibility from '@mui/icons-material/Visibility';
 import { Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Grid from '@mui/material/Grid';
-import AssignmentInd from '@mui/icons-material/AssignmentInd';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import Visibility from '@mui/icons-material/Visibility';
 import dateformat from 'dateformat';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -173,7 +173,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
         if (proposalItem.proposalPk === proposalPk) {
           const newAssignments: SEPProposalAssignmentType[] = [
             ...(proposalItem.assignments ?? []),
-            ...assignedMembers.map(({ role, ...user }) => ({
+            ...assignedMembers.map(({ role = null, ...user }) => ({
               sepMemberUserId: user.id,
               dateAssigned: Date.now(),
               user,

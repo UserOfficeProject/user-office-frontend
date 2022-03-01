@@ -12,7 +12,7 @@ import React from 'react';
 import { useCheckAccess } from 'components/common/Can';
 import UOLoader from 'components/common/UOLoader';
 import { Sep, UserRole } from 'generated/sdk';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 type SEPPageProps = {
@@ -149,7 +149,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
             </Grid>
           </Grid>
           {hasAccessRights && (
-            <ButtonContainer>
+            <StyledButtonContainer>
               <Button
                 disabled={isExecutingCall}
                 type="submit"
@@ -161,7 +161,7 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                 {isExecutingCall && <UOLoader size={14} />}
                 Update SEP
               </Button>
-            </ButtonContainer>
+            </StyledButtonContainer>
           )}
         </Form>
       )}

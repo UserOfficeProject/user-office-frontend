@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import UpdateFeedback from './UpdateFeedback';
 
@@ -14,7 +14,7 @@ export default function UpdateFeedbackPage() {
   }
 
   return (
-    <ContentContainer maxWidth="md">
+    <StyledContainer maxWidth="md">
       <Grid container>
         <Grid item xs={12}>
           <StyledPaper>
@@ -22,6 +22,6 @@ export default function UpdateFeedbackPage() {
           </StyledPaper>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

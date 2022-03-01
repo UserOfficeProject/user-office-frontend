@@ -22,7 +22,7 @@ import {
   SepMeetingDecision,
   UserRole,
 } from 'generated/sdk';
-import { StyledPaper, ButtonContainer } from 'styles/StyledComponents';
+import { StyledPaper, StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
@@ -250,7 +250,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
                   />
-                  <ButtonContainer style={{ margin: '2rem 0 0' }}>
+                  <StyledButtonContainer style={{ margin: '2rem 0 0' }}>
                     {hasWriteAccess && (
                       <>
                         {isSubmitting && (
@@ -319,7 +319,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                         )}
                       </>
                     )}
-                  </ButtonContainer>
+                  </StyledButtonContainer>
                 </Grid>
               </Grid>
             </Form>

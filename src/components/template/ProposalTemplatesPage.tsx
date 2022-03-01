@@ -3,7 +3,7 @@ import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { ContentContainer } from 'styles/StyledComponents';
+import { StyledContainer } from 'styles/StyledComponents';
 
 import ProposalTemplatesTable from './ProposalTemplatesTable';
 
@@ -11,7 +11,7 @@ export default function ProposalTemplatesPage() {
   const api = useDataApi();
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <SimpleTabs tabNames={['Current', 'Archived']}>
@@ -32,6 +32,6 @@ export default function ProposalTemplatesPage() {
           </SimpleTabs>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

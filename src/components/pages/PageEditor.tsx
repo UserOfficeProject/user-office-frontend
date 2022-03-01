@@ -3,13 +3,13 @@ import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
 import { PageName } from 'generated/sdk';
-import { ContentContainer } from 'styles/StyledComponents';
+import { StyledContainer } from 'styles/StyledComponents';
 
 import PageInputBox from './PageInputBox';
 
 export default function PageEditor() {
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <SimpleTabs
@@ -49,6 +49,6 @@ export default function PageEditor() {
           </SimpleTabs>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

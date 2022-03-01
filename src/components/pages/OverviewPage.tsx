@@ -9,7 +9,7 @@ import ProposalTableReviewer from 'components/review/ProposalTableReviewer';
 import { FeatureContext } from 'context/FeatureContextProvider';
 import { PageName, UserRole, FeatureId } from 'generated/sdk';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 const PaperContainer: React.FC = ({ children }) => (
   <Grid item xs={12}>
@@ -51,7 +51,7 @@ export default function OverviewPage(props: { userRole: UserRole }) {
   }
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container spacing={3}>
         {props.userRole !== UserRole.INSTRUMENT_SCIENTIST && (
           <Grid item xs={12}>
@@ -66,6 +66,6 @@ export default function OverviewPage(props: { userRole: UserRole }) {
         )}
         {roleBasedOverView}
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 }

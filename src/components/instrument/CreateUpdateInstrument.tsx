@@ -6,7 +6,7 @@ import {
   updateInstrumentValidationSchema,
 } from '@user-office-software/duo-validation/lib/Instrument';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React from 'react';
 

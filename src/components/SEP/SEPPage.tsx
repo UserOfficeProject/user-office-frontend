@@ -8,7 +8,7 @@ import UOLoader from 'components/common/UOLoader';
 import EventLogList from 'components/eventLog/EventLogList';
 import { Sep, UserRole } from 'generated/sdk';
 import { useSEPData } from 'hooks/SEP/useSEPData';
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import SEPGeneralInfo from './General/SEPGeneralInfo';
 import SEPMeetingComponentsView from './MeetingComponents/SEPMeetingComponentsView';
@@ -33,26 +33,26 @@ const SEPPage: React.FC = () => {
 
   if (loading) {
     return (
-      <ContentContainer>
+      <StyledContainer>
         <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
-      </ContentContainer>
+      </StyledContainer>
     );
   }
 
   if (!sep) {
     return (
-      <ContentContainer>
+      <StyledContainer>
         <Grid container>
           <Grid item xs={12}>
             <StyledPaper>SEP not found</StyledPaper>
           </Grid>
         </Grid>
-      </ContentContainer>
+      </StyledContainer>
     );
   }
 
   return (
-    <ContentContainer>
+    <StyledContainer>
       <Grid container>
         <Grid item xs={12}>
           <SimpleTabs tabNames={tabNames}>
@@ -73,7 +73,7 @@ const SEPPage: React.FC = () => {
           </SimpleTabs>
         </Grid>
       </Grid>
-    </ContentContainer>
+    </StyledContainer>
   );
 };
 

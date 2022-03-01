@@ -1,13 +1,13 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ClearIcon from '@mui/icons-material/Clear';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import ClearIcon from '@mui/icons-material/Clear';
 import { Field, FieldArray, FormikProps } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -103,8 +103,8 @@ const QuestionDependencyList: React.FC<QuestionDependencyListProps> = ({
                       name="dependenciesOperator"
                       value={logicOperator}
                       onChange={(
-                        event: React.ChangeEvent<{ value: unknown }>
-                      ): void => {
+                        event: SelectChangeEvent<DependenciesLogicOperator>
+                      ) => {
                         setLogicOperator(
                           event.target.value as DependenciesLogicOperator
                         );

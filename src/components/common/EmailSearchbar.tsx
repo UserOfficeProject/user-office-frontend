@@ -1,7 +1,8 @@
 import { MTableToolbar } from '@material-table/core';
-import { Button, makeStyles } from '@mui/material';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
 import { Form, Field } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React from 'react';
 
 // This component is used to retrieve a user from the database using an email.
@@ -21,7 +22,7 @@ const useStyles = makeStyles({
   },
 });
 
-const EmailSearchbar: React.FC = (props) => {
+const EmailSearchBar: React.FC = (props) => {
   const classes = useStyles();
 
   return (
@@ -57,4 +58,4 @@ const EmailSearchbar: React.FC = (props) => {
   );
 };
 
-export default EmailSearchbar;
+export default EmailSearchBar;

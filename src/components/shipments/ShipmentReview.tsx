@@ -1,5 +1,6 @@
-import { Link, makeStyles } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import { Link } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useContext } from 'react';
 
 import { NavigButton } from 'components/common/NavigButton';

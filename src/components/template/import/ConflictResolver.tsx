@@ -1,10 +1,12 @@
+import Check from '@mui/icons-material/Check';
+import Error from '@mui/icons-material/Error';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Checkbox,
   FormControlLabel,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
@@ -12,9 +14,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import Check from '@mui/icons-material/Check';
-import Error from '@mui/icons-material/Error';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
 

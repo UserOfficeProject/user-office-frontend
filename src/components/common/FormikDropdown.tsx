@@ -1,10 +1,10 @@
-import { PropTypes } from '@mui/material';
+import Clear from '@mui/icons-material/Clear';
+import { FormControlTypeMap } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import MuiTextField from '@mui/material/TextField';
-import Clear from '@mui/icons-material/Clear';
 import { connect, Field, FormikContextType } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import React from 'react';
 
 type TProps = {
@@ -19,7 +19,7 @@ type TProps = {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isClearable?: boolean;
-  margin?: PropTypes.Margin;
+  margin?: FormControlTypeMap['props']['margin'];
 };
 
 const FormikDropdown: React.FC<

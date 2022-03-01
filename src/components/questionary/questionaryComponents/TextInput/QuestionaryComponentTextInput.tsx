@@ -72,7 +72,7 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
         helperText={isError && fieldError}
         multiline={config.multiline}
         rows={config.multiline ? 2 : 1}
-        rowsMax={config.multiline ? 16 : undefined}
+        maxRows={config.multiline ? 16 : undefined}
         maxLen={config.max || undefined}
         margin="dense"
         data-cy={id}

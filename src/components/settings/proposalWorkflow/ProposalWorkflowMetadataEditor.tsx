@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import { ProposalWorkflow } from 'generated/sdk';
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 
 import { Event, EventType } from './ProposalWorkflowEditorModel';
 
@@ -52,7 +52,7 @@ const ProposalWorkflowMetadataEditor: React.FC<{
       <div className={classes.workflowDescription}>
         {proposalWorkflow.description}
       </div>
-      <ButtonContainer>
+      <StyledButtonContainer>
         <Button
           variant="contained"
           color="primary"
@@ -63,7 +63,7 @@ const ProposalWorkflowMetadataEditor: React.FC<{
         >
           Edit
         </Button>
-      </ButtonContainer>
+      </StyledButtonContainer>
     </div>
   );
   const inputJSX = (

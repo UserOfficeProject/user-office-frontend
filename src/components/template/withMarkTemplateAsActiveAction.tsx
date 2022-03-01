@@ -1,6 +1,6 @@
 import { MaterialTableProps } from '@material-table/core';
-import { makeStyles } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
 import UOLoader from 'components/common/UOLoader';
