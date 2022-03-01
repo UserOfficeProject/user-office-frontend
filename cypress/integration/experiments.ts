@@ -29,6 +29,7 @@ context('Event log tests', () => {
       cy.login('officer');
       cy.visit('/');
       cy.get('[data-cy=officer-menu-items]').contains('Experiments').click();
+      cy.get('[value=NONE]').click();
 
       cy.get('[data-cy=call-filter]').click();
       cy.get('[role=presentation]').contains('call 1').click();
@@ -64,6 +65,7 @@ context('Event log tests', () => {
       cy.login('officer');
       cy.visit('/');
       cy.get('[data-cy=officer-menu-items]').contains('Experiments').click();
+      cy.get('[value=NONE]').click();
 
       cy.get('[data-cy=officer-scheduled-events-table]')
         .contains('View ESI')
@@ -75,6 +77,7 @@ context('Event log tests', () => {
       cy.login('officer');
       cy.visit('/');
       cy.get('[data-cy=officer-menu-items]').contains('Experiments').click();
+      cy.get('[value=NONE]').click();
 
       cy.get('[title="Show details"]').first().click();
       cy.get('[data-cy=officer-scheduled-events-table]').contains(

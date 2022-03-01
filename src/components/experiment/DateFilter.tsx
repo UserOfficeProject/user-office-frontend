@@ -34,7 +34,7 @@ const DatePicker = (props: KeyboardDatePickerProps) => (
   />
 );
 
-function getRelativeDatesFromToday(period: TimeSpan): {
+export function getRelativeDatesFromToday(period: TimeSpan): {
   from?: Date;
   to?: Date;
 } {
