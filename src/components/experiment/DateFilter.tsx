@@ -26,7 +26,7 @@ const DatePicker = (props: KeyboardDatePickerProps) => (
   <KeyboardDatePicker
     disableToolbar
     variant="inline"
-    format="MM/dd/yyyy"
+    format="yyyy-MM-dd"
     margin="none"
     autoOk
     defaultValue={null}
@@ -84,10 +84,12 @@ function DateFilter(props: DateFilterProps) {
         <DatePicker
           label="From"
           value={props.from ?? null}
-          onChange={(startsAt) =>
-            props.onChange(startsAt?.toJSDate(), props.to)
-          }
+          onChange={(startsAt) => {
+            props.onChange(startsAt?.toJSDate(), props.to);
+            setPresetValue(null);
+          }}
           className={classes.datePicker}
+          data-cy="from-date-picker"
         />
 
         <DatePicker
@@ -95,6 +97,7 @@ function DateFilter(props: DateFilterProps) {
           value={props.to ?? null}
           onChange={(endsAt) => props.onChange(props.from, endsAt?.toJSDate())}
           className={classes.datePicker}
+          data-cy="to-date-picker"
         />
         <PresetDateSelector
           value={presetValue}

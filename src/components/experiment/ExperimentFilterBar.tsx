@@ -33,6 +33,7 @@ function ExperimentFilterBar() {
         onChange={(callId) => {
           setUrlQueryParams({ call: callId });
         }}
+        data-cy="call-filter"
       />
 
       <InstrumentFilter
@@ -43,6 +44,7 @@ function ExperimentFilterBar() {
         onChange={(instrumentId) => {
           setUrlQueryParams({ instrument: instrumentId });
         }}
+        data-cy="instrument-filter"
       />
 
       <DateFilter
@@ -51,6 +53,7 @@ function ExperimentFilterBar() {
         onChange={(from, to) => {
           setUrlQueryParams({ from: from, to: to });
         }}
+        data-cy="date-filter"
       />
     </div>
   );

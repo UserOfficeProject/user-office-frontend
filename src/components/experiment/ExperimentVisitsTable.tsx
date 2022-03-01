@@ -54,7 +54,7 @@ interface ScheduledEventDetailsTableProps {
 }
 
 const formatDate = (date: Date | null) =>
-  date ? moment(date).format('YYYY-MM-DD') : 'N/A';
+  date ? moment(date).format('yyyy-MM-dd') : 'N/A';
 
 function ExperimentVisitsTable({
   scheduledEvent,
@@ -113,6 +113,7 @@ function ExperimentVisitsTable({
           pageSize: 20,
           padding: 'dense',
         }}
+        data-cy="visit-registrations-table"
       />
     </div>
   );

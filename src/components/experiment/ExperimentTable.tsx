@@ -35,13 +35,13 @@ const columns = [
     title: 'Experiment start',
     field: 'startsAt',
     render: (rowData: RowType) =>
-      dateformat(rowData.startsAt, 'dd-mmm-yyyy HH:MM'),
+      dateformat(rowData.startsAt, 'yyyy-mm-dd HH:MM'),
   },
   {
     title: 'Experiment end',
     field: 'endsAt',
     render: (rowData: RowType) =>
-      dateformat(rowData.endsAt, 'dd-mmm-yyyy HH:MM'),
+      dateformat(rowData.endsAt, 'yyyy-mm-dd HH:MM'),
   },
   {
     title: 'ESI',
@@ -104,54 +104,34 @@ function ExperimentTable() {
   }
 
   return (
-    <div>
-      <SuperMaterialTable
-        data={scheduledEvents}
-        setData={setScheduledEvents}
-        icons={tableIcons}
-        title={
-          <Typography variant="h6" component="h2">
-            Experiments
-          </Typography>
-        }
-        columns={columns}
-        isLoading={loadingEvents}
-        options={{
-          search: false,
-        }}
-        urlQueryParams={urlQueryParams}
-        setUrlQueryParams={setUrlQueryParams}
-        detailPanel={[
-          {
-            tooltip: 'Show details',
-            render: ScheduledEventDetails,
-          },
-        ]}
-        hasAccess={{
-          create: false,
-          remove: false,
-          update: false,
-        }}
-      />
-    </div>
-  );
-}
-
-function isOverlappingDates(
-  schedEvt_startsAt: Date,
-  schedEvt_endsAt: Date,
-  from?: Date,
-  to?: Date
-) {
-  if (!from || !to) {
-    return false;
-  }
-
-  return (
-    (schedEvt_startsAt >= from && schedEvt_startsAt <= to) ||
-    (schedEvt_endsAt >= from && schedEvt_endsAt <= to) ||
-    (from >= schedEvt_startsAt && from <= schedEvt_endsAt) ||
-    (to >= schedEvt_startsAt && to <= schedEvt_endsAt)
+    <SuperMaterialTable
+      data={scheduledEvents}
+      setData={setScheduledEvents}
+      icons={tableIcons}
+      title={
+        <Typography variant="h6" component="h2">
+          Experiments
+        </Typography>
+      }
+      columns={columns}
+      isLoading={loadingEvents}
+      options={{
+        search: false,
+      }}
+      urlQueryParams={urlQueryParams}
+      setUrlQueryParams={setUrlQueryParams}
+      detailPanel={[
+        {
+          tooltip: 'Show details',
+          render: ScheduledEventDetails,
+        },
+      ]}
+      hasAccess={{
+        create: false,
+        remove: false,
+        update: false,
+      }}
+    />
   );
 }
 
