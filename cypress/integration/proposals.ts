@@ -511,6 +511,40 @@ context('Proposal tests', () => {
         .find('[title="New Proposal"]')
         .should('have.css', 'pointer-events', 'none');
     });
+
+    it('User cannot select inactive call for new proposal', () => {
+      let createdCallId: number;
+      const createdCallTitle = 'Created call';
+
+      cy.login('user');
+      cy.visit('/');
+
+      cy.createCall({
+        ...newCall,
+        title: createdCallTitle,
+        endCall: tomorrow,
+        proposalWorkflowId: createdWorkflowId,
+      }).then((response) => {
+        if (response.createCall.call) {
+          createdCallId = response.createCall.call.id;
+        }
+
+        cy.contains('New Proposal').click();
+
+        cy.contains(createdCallTitle);
+
+        cy.updateCall({
+          id: createdCallId,
+          ...newCall,
+          endCall: yesterday,
+          proposalWorkflowId: createdWorkflowId,
+        });
+
+        cy.reload();
+
+        cy.contains(createdCallTitle).should('not.exist');
+      });
+    });
   });
 
   describe('Proposal advanced tests', () => {
@@ -544,40 +578,6 @@ context('Proposal tests', () => {
       cy.get('[data-cy=questionary-stepper]').contains('Review').click();
 
       cy.get('[data-cy=button-submit-proposal]').should('be.disabled');
-    });
-  });
-
-  it('User cannot select inactive call for new proposal', () => {
-    let createdCallId: number;
-    const createdCallTitle = 'Created call';
-
-    cy.login('user');
-    cy.visit('/');
-
-    cy.createCall({
-      ...newCall,
-      title: createdCallTitle,
-      endCall: tomorrow,
-      proposalWorkflowId: createdWorkflowId,
-    }).then((response) => {
-      if (response.createCall.call) {
-        createdCallId = response.createCall.call.id;
-      }
-
-      cy.contains('New Proposal').click();
-
-      cy.contains(createdCallTitle);
-
-      cy.updateCall({
-        id: createdCallId,
-        ...newCall,
-        endCall: yesterday,
-        proposalWorkflowId: createdWorkflowId,
-      });
-
-      cy.reload();
-
-      cy.contains(createdCallTitle).should('not.exist');
     });
   });
 });
