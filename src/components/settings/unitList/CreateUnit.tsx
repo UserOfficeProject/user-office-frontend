@@ -1,13 +1,13 @@
 import Button from '@mui/material/Button';
+import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-mui';
+import { Autocomplete, TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikAutocomplete from 'components/common/FormikAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Unit } from 'generated/sdk';
 import { useQuantities } from 'hooks/admin/useQuantities';
@@ -29,12 +29,15 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { quantities, loadingQuantities } = useQuantities();
 
-  const initialValues: Unit = unit
+  const initialValues: Pick<
+    Unit,
+    'id' | 'siConversionFormula' | 'symbol' | 'unit'
+  > & { quantity: string | null } = unit
     ? unit
     : {
         id: '',
         unit: '',
-        quantity: '',
+        quantity: null,
         symbol: '',
         siConversionFormula: '',
       };
@@ -43,7 +46,9 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={async (newUnit): Promise<void> => {
-        const data = await api('Unit created successfully').createUnit(newUnit);
+        const data = await api('Unit created successfully').createUnit(
+          newUnit as Unit
+        );
         if (data.createUnit.rejection) {
           close(null);
         } else if (data.createUnit.unit) {
@@ -89,16 +94,25 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             disabled={isExecutingCall}
             required
           />
-          <FormikAutocomplete
+          <Field
+            component={Autocomplete}
+            options={quantities.map((item) => item.id)}
+            noOptionsText="No items"
             name="quantity"
             label="Quantity"
-            items={quantities.map((unit) => ({
-              text: `${unit.id}`,
-              value: unit.id,
-            }))}
-            InputProps={{ 'data-cy': 'unit-quantity' }}
-            required
             loading={loadingQuantities}
+            fullWidth
+            required
+            data-cy="unit-quantity"
+            renderInput={(params: TextFieldProps) => (
+              <MuiTextField
+                {...params}
+                label="Quantity"
+                margin="normal"
+                placeholder="Quantity"
+                required
+              />
+            )}
           />
           <Field
             name="symbol"
