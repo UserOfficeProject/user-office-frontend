@@ -35,40 +35,48 @@ const CallCycleInfo: React.FC = () => {
           name="startNotify"
           label="Start of notification period"
           id="start-notification-period-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
         />
         <Field
           name="endNotify"
           label="End of notification period"
           id="end-notification-period-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           minDate={startNotify}
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
         />
         <Field
           name="startCycle"
           label="Start of cycle"
           id="start-cycle-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
           data-cy="start-cycle"
         />
         <Field
           name="endCycle"
           label="End of cycle"
           id="end-cycle-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           minDate={startCycle}
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
           data-cy="end-cycle"
         />
       </LocalizationProvider>

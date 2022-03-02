@@ -162,10 +162,12 @@ const CallGeneralInfo: React.FC<{
           name="startCall"
           label={`Start (${timezone})`}
           id="start-call-input"
-          format="yyyy-MM-dd HH:mm"
+          inputFormat="yyyy-MM-dd HH:mm"
           component={DateTimePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
           required
           data-cy="start-date"
         />
@@ -173,10 +175,12 @@ const CallGeneralInfo: React.FC<{
           name="endCall"
           label={`End (${timezone})`}
           id="end-call-input"
-          format="yyyy-MM-dd HH:mm"
+          inputFormat="yyyy-MM-dd HH:mm"
           component={DateTimePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
           minDate={startCall}
           required
           data-cy="end-date"

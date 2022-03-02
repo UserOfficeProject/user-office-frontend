@@ -83,30 +83,36 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 name="config.minDate"
                 id="Min-Time-Input"
                 label="Min"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="minDate"
               />
               <Field
                 name="config.maxDate"
                 id="Max-Time-Input"
                 label="Max"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="maxDate"
               />
               <Field
                 name="config.defaultDate"
                 id="Default-Time-Input"
                 label="Default"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="defaultDate"
               />
             </LocalizationProvider>

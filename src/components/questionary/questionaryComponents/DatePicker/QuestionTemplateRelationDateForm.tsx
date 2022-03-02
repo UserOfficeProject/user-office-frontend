@@ -58,30 +58,36 @@ export const QuestionTemplateRelationDateForm: FC<
                 name="config.minDate"
                 label="Min"
                 id="Min-input"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="minDate"
               />
               <Field
                 name="config.maxDate"
                 label="Max"
                 id="Max-input"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="maxDate"
               />
               <Field
                 name="config.defaultDate"
                 label="Default"
                 id="Default-input"
-                format="yyyy-MM-dd"
+                inputFormat="yyyy-MM-dd"
                 component={DatePicker}
-                margin="normal"
-                fullWidth
+                textField={{
+                  fullWidth: true,
+                  margin: 'normal',
+                }}
                 data-cy="defaultDate"
               />
             </LocalizationProvider>

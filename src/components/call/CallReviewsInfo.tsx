@@ -36,40 +36,48 @@ const CallReviewAndNotification: React.FC = () => {
           name="startReview"
           label="Start of review"
           id="start-review-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
           data-cy="start-review"
         />
         <Field
           name="endReview"
           label="End of review"
           id="end-review-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           minDate={startReview}
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
         />
         <Field
           name="startSEPReview"
           label="Start of SEP review"
           id="start-sep-review-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
         />
         <Field
           name="endSEPReview"
           label="End of SEP review"
           id="end-sep-review-input"
-          format="yyyy-MM-dd"
+          inputFormat="yyyy-MM-dd"
           minDate={endSEPReview}
           component={DatePicker}
-          margin="normal"
-          fullWidth
+          textField={{
+            fullWidth: true,
+            margin: 'normal',
+          }}
         />
       </LocalizationProvider>
       <Field

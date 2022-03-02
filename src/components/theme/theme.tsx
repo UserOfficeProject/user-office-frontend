@@ -69,6 +69,18 @@ const ThemeWrapper: React.FC = (props) => {
   const theme = responsiveFontSizes(
     createTheme({
       palette: palette,
+      components: {
+        MuiTextField: {
+          defaultProps: {
+            variant: 'standard',
+          },
+        },
+        MuiSelect: {
+          defaultProps: {
+            variant: 'standard',
+          },
+        },
+      },
     })
   );
 

@@ -314,10 +314,12 @@ export default function UpdateUserInformation(props: { id: number }) {
                     name="birthdate"
                     label="Birthdate"
                     id="birthdate-input"
-                    format="yyyy-MM-dd"
+                    inputFormat="yyyy-MM-dd"
                     component={DatePicker}
-                    margin="normal"
-                    fullWidth
+                    textField={{
+                      fullWidth: true,
+                      margin: 'normal',
+                    }}
                     data-cy="birthdate"
                   />
                 </LocalizationProvider>
