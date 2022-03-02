@@ -2,7 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import * as Dom from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -2630,7 +2630,6 @@ export type SaveSepMeetingDecisionInput = {
 };
 
 export enum ScheduledEventBookingType {
-  COMMISSIONING = 'COMMISSIONING',
   EQUIPMENT = 'EQUIPMENT',
   MAINTENANCE = 'MAINTENANCE',
   SHUTDOWN = 'SHUTDOWN',
@@ -2702,7 +2701,8 @@ export enum SettingsId {
   PALETTE_SECONDARY_MAIN = 'PALETTE_SECONDARY_MAIN',
   PALETTE_SUCCESS_MAIN = 'PALETTE_SUCCESS_MAIN',
   PALETTE_WARNING_MAIN = 'PALETTE_WARNING_MAIN',
-  PROFILE_PAGE_LINK = 'PROFILE_PAGE_LINK'
+  PROFILE_PAGE_LINK = 'PROFILE_PAGE_LINK',
+  TIMEZONE = 'TIMEZONE'
 }
 
 export type Shipment = {
@@ -3347,6 +3347,8 @@ export type DeleteInstitutionMutationVariables = Exact<{
 
 export type DeleteInstitutionMutation = { deleteInstitution: { institution: { id: number, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
+export type UnitFragment = { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string };
+
 export type GetAllApiAccessTokensAndPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3375,6 +3377,11 @@ export type GetPageContentQueryVariables = Exact<{
 
 
 export type GetPageContentQuery = { getPageContent: string | null };
+
+export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQuantitiesQuery = { quantities: Array<{ id: string }> };
 
 export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4561,13 +4568,6 @@ export type DeleteUnitMutationVariables = Exact<{
 
 
 export type DeleteUnitMutation = { deleteUnit: { unit: { id: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
-export type UnitFragment = { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string };
-
-export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetQuantitiesQuery = { quantities: Array<{ id: string }> };
 
 export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5969,6 +5969,13 @@ export const GetInstitutionsDocument = gql`
 export const GetPageContentDocument = gql`
     query getPageContent($id: PageName!) {
   getPageContent(id: $id)
+}
+    `;
+export const GetQuantitiesDocument = gql`
+    query getQuantities {
+  quantities {
+    id
+  }
 }
     `;
 export const GetSettingsDocument = gql`
@@ -8175,13 +8182,6 @@ export const DeleteUnitDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const GetQuantitiesDocument = gql`
-    query getQuantities {
-  quantities {
-    id
-  }
-}
-    `;
 export const GetUnitsDocument = gql`
     query getUnits {
   units {
@@ -8916,6 +8916,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getPageContent(variables: GetPageContentQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPageContentQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPageContentQuery>(GetPageContentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPageContent');
     },
+    getQuantities(variables?: GetQuantitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuantitiesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetQuantitiesQuery>(GetQuantitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuantities');
+    },
     getSettings(variables?: GetSettingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSettingsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSettingsQuery>(GetSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSettings');
     },
@@ -9311,9 +9314,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
-    },
-    getQuantities(variables?: GetQuantitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuantitiesQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetQuantitiesQuery>(GetQuantitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getQuantities');
     },
     getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
