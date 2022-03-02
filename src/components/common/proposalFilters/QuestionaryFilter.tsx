@@ -164,6 +164,7 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
                 dataType: selectedQuestion.question.dataType,
               } as QuestionFilterInput);
             }}
+            data-cy="search-btn"
           >
             Search
           </Button>
