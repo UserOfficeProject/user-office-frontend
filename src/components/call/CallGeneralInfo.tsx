@@ -1,6 +1,6 @@
-import LuxonUtils from '@date-io/luxon';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import HelpIcon from '@mui/icons-material/Help';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {
   Button,
   createStyles,
@@ -21,8 +21,8 @@ import {
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Field, useFormikContext } from 'formik';
-import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import { TextField } from 'formik-mui';
+import { DateTimePicker } from 'formik-mui-lab';
 import React, { useContext, useEffect } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
@@ -157,13 +157,13 @@ const CallGeneralInfo: React.FC<{
         required
         data-cy="short-code"
       />
-      <MuiPickersUtilsProvider utils={LuxonUtils}>
+      <LocalizationProvider dateAdapter={DateAdapter}>
         <Field
           name="startCall"
           label={`Start (${timezone})`}
           id="start-call-input"
           format="yyyy-MM-dd HH:mm"
-          component={KeyboardDateTimePicker}
+          component={DateTimePicker}
           margin="normal"
           fullWidth
           required
@@ -174,7 +174,7 @@ const CallGeneralInfo: React.FC<{
           label={`End (${timezone})`}
           id="end-call-input"
           format="yyyy-MM-dd HH:mm"
-          component={KeyboardDateTimePicker}
+          component={DateTimePicker}
           margin="normal"
           fullWidth
           minDate={startCall}
@@ -259,7 +259,7 @@ const CallGeneralInfo: React.FC<{
           fullWidth
           data-cy="reference-number-format"
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       <FormikDropdown
         name="templateId"
         label="Call template"

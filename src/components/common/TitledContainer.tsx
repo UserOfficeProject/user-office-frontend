@@ -1,6 +1,6 @@
 import Container from '@mui/material/Container';
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 import React, { PropsWithChildren } from 'react';
 

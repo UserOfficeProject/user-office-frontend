@@ -1,6 +1,6 @@
 import MaterialTable, { MaterialTableProps } from '@material-table/core';
-import Button from '@mui/material/Button';
 import Edit from '@mui/icons-material/Edit';
+import Button from '@mui/material/Button';
 import React, { SetStateAction, useState } from 'react';
 import {
   DecodedValueMap,

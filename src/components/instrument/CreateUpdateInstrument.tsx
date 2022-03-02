@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   createInstrumentValidationSchema,
   updateInstrumentValidationSchema,

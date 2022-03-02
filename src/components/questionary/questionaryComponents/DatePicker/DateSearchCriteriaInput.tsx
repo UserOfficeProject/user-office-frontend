@@ -1,16 +1,14 @@
-import DateFnsUtils from '@date-io/date-fns';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import DatePicker from '@mui/lab/DatePicker';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from '@mui/material';
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import React, { useState } from 'react';
 
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
@@ -63,32 +61,41 @@ function DateSearchCriteriaInput({
         </FormControl>
       </Grid>
       <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            disableToolbar
-            format="yyyy-MM-dd"
-            variant="inline"
-            autoOk={true}
+        <LocalizationProvider dateAdapter={DateAdapter}>
+          <DatePicker
+            // disableToolbar
+            inputFormat="yyyy-MM-dd"
+            renderInput={(props) => (
+              <TextField
+                {...props}
+                variant="standard"
+                required
+                margin="none"
+                size="small"
+                fullWidth
+                InputLabelProps={{
+                  shrink: value ? true : undefined,
+                }}
+              />
+            )}
+            // autoOk={true}
             label="Date"
             value={value}
-            onChange={(date: MaterialUiPickersDate) => {
+            onChange={(date) => {
               /*
               DateFnsUtils uses native Date object, but use of Luxon elsewhere (in call modal)
               causes incorrect type inference: https://github.com/dmtrKovalenko/date-io/issues/584
               */
-              const newDate = date as unknown as Date;
+              const newDate = date as Date;
               if (newDate && !isNaN(newDate.getTime())) {
                 newDate.setUTCHours(0, 0, 0, 0);
                 onChange(comparator, newDate.toISOString());
               }
               setValue(newDate);
             }}
-            InputLabelProps={{
-              shrink: value ? true : undefined,
-            }}
             data-cy="value"
           />
-        </MuiPickersUtilsProvider>
+        </LocalizationProvider>
       </Grid>
     </Grid>
   );

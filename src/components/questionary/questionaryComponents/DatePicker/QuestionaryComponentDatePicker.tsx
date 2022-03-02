@@ -1,13 +1,9 @@
-import DateFnsUtils from '@date-io/date-fns';
 import { DateType } from '@date-io/type';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import FormControl from '@mui/material/FormControl';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { Field } from 'formik';
-import {
-  KeyboardDatePicker,
-  KeyboardDateTimePicker,
-} from 'formik-material-ui-pickers';
+import { DatePicker, DateTimePicker } from 'formik-mui-lab';
 import React from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
@@ -33,11 +29,12 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       name={id}
       label={question}
       format={dateFormat}
-      component={KeyboardDatePicker}
+      component={DatePicker}
       variant="inline"
       disableToolbar
       autoOk={true}
-      onChange={(date: MaterialUiPickersDate) => {
+      // TODO: Use the right type from the change event
+      onChange={(date: any) => {
         /*
         DateFnsUtils correct type is Date | null, but use of Luxon elsewhere (in call modal)
         causes incorrect type inference: https://github.com/dmtrKovalenko/date-io/issues/584
@@ -58,7 +55,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
         name={id}
         label={question}
         format={timeFormat}
-        component={KeyboardDateTimePicker}
+        component={DateTimePicker}
         onChange={(date: DateType | null) => {
           onComplete(date);
         }}
@@ -68,11 +65,11 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
 
   return (
     <FormControl margin="dense">
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <LocalizationProvider dateAdapter={DateAdapter}>
         {(answer.config as DateConfig).includeTime
           ? getDateTimeField()
           : getDateField()}
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       <Hint>{tooltip}</Hint>
     </FormControl>
   );

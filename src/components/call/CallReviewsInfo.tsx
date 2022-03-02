@@ -1,8 +1,8 @@
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
-import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import { DatePicker } from 'formik-mui-lab';
 import React, { useEffect } from 'react';
 
 import {
@@ -31,13 +31,13 @@ const CallReviewAndNotification: React.FC = () => {
 
   return (
     <>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <LocalizationProvider dateAdapter={DateAdapter}>
         <Field
           name="startReview"
           label="Start of review"
           id="start-review-input"
           format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
           data-cy="start-review"
@@ -48,7 +48,7 @@ const CallReviewAndNotification: React.FC = () => {
           id="end-review-input"
           format="yyyy-MM-dd"
           minDate={startReview}
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
         />
@@ -57,7 +57,7 @@ const CallReviewAndNotification: React.FC = () => {
           label="Start of SEP review"
           id="start-sep-review-input"
           format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
         />
@@ -67,11 +67,11 @@ const CallReviewAndNotification: React.FC = () => {
           id="end-sep-review-input"
           format="yyyy-MM-dd"
           minDate={endSEPReview}
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       <Field
         name="surveyComment"
         label="Survey Comment"

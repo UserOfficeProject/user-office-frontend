@@ -1,8 +1,8 @@
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
-import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import { DatePicker } from 'formik-mui-lab';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
@@ -78,13 +78,13 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
               fullWidth
               data-cy="required"
             />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <LocalizationProvider dateAdapter={DateAdapter}>
               <Field
                 name="config.minDate"
                 id="Min-Time-Input"
                 label="Min"
                 format="yyyy-MM-dd"
-                component={KeyboardDatePicker}
+                component={DatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="minDate"
@@ -94,7 +94,7 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 id="Max-Time-Input"
                 label="Max"
                 format="yyyy-MM-dd"
-                component={KeyboardDatePicker}
+                component={DatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="maxDate"
@@ -104,12 +104,12 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 id="Default-Time-Input"
                 label="Default"
                 format="yyyy-MM-dd"
-                component={KeyboardDatePicker}
+                component={DatePicker}
                 margin="normal"
                 fullWidth
                 data-cy="defaultDate"
               />
-            </MuiPickersUtilsProvider>
+            </LocalizationProvider>
           </TitledContainer>
         </>
       )}

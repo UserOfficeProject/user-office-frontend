@@ -1,8 +1,8 @@
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
-import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import { DatePicker } from 'formik-mui-lab';
 import React, { useEffect } from 'react';
 
 import {
@@ -30,13 +30,13 @@ const CallCycleInfo: React.FC = () => {
 
   return (
     <>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <LocalizationProvider dateAdapter={DateAdapter}>
         <Field
           name="startNotify"
           label="Start of notification period"
           id="start-notification-period-input"
           format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
         />
@@ -46,7 +46,7 @@ const CallCycleInfo: React.FC = () => {
           id="end-notification-period-input"
           format="yyyy-MM-dd"
           minDate={startNotify}
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
         />
@@ -55,7 +55,7 @@ const CallCycleInfo: React.FC = () => {
           label="Start of cycle"
           id="start-cycle-input"
           format="yyyy-MM-dd"
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
           data-cy="start-cycle"
@@ -66,12 +66,12 @@ const CallCycleInfo: React.FC = () => {
           id="end-cycle-input"
           format="yyyy-MM-dd"
           minDate={startCycle}
-          component={KeyboardDatePicker}
+          component={DatePicker}
           margin="normal"
           fullWidth
           data-cy="end-cycle"
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       <Field
         name="cycleComment"
         label="Cycle comment (public)"

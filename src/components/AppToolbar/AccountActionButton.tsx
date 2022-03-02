@@ -1,3 +1,6 @@
+import { ExitToApp } from '@mui/icons-material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -5,9 +8,6 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { ExitToApp } from '@mui/icons-material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import React, { useContext, useState } from 'react';
 
 import { UserContext } from 'context/UserContextProvider';

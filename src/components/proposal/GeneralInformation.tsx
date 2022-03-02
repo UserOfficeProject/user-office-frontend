@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import makeStyles from '@mui/styles/makeStyles';
 import Switch from '@mui/material/Switch';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useState } from 'react';
 
 import { useCheckAccess } from 'components/common/Can';

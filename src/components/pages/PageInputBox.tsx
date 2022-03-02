@@ -15,8 +15,8 @@ import 'tinymce/icons/default/icons';
 
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import React, { useState, useEffect } from 'react';
 

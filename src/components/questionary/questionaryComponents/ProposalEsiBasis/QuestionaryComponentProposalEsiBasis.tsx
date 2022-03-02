@@ -1,3 +1,7 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import FileCopy from '@mui/icons-material/FileCopy';
 import {
   Button,
   Checkbox,
@@ -9,10 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import FileCopy from '@mui/icons-material/FileCopy';
 import { Field, FieldProps } from 'formik';
 import React, { MouseEvent, useContext, useState } from 'react';
 
