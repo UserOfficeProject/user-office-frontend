@@ -9,7 +9,6 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import EventIcon from '@material-ui/icons/Event';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import FolderOpen from '@material-ui/icons/FolderOpen';
 import FunctionsIcon from '@material-ui/icons/Functions';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
@@ -219,18 +218,20 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
           <ListItemText primary="Proposals" />
         </ListItem>
       </Tooltip>
-      <Tooltip title="Experiments">
-        <ListItem
-          component={NavLink}
-          to={`/ExperimentPage?from=${encodeDate(from)}&to=${encodeDate(to)}`}
-          button
-        >
-          <ListItemIcon>
-            <FlightTakeoffIcon />
-          </ListItemIcon>
-          <ListItemText primary="Experiments" />
-        </ListItem>
-      </Tooltip>
+      {isSchedulerEnabled && (
+        <Tooltip title="Experiments">
+          <ListItem
+            component={NavLink}
+            to={`/ExperimentPage?from=${encodeDate(from)}&to=${encodeDate(to)}`}
+            button
+          >
+            <ListItemIcon>
+              <EventIcon />
+            </ListItemIcon>
+            <ListItemText primary="Experiments" />
+          </ListItem>
+        </Tooltip>
+      )}
       <Tooltip title="Calls">
         <ListItem component={NavLink} to="/CallPage" button>
           <ListItemIcon>
