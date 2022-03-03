@@ -20,7 +20,11 @@ import {
 } from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
-import { getGrades, average, standardDeviation } from 'utils/mathFunctions';
+import {
+  getGradesFromReviews,
+  average,
+  standardDeviation,
+} from 'utils/mathFunctions';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
@@ -127,8 +131,9 @@ const SEPInstrumentProposalsTable: React.FC<
 
       return data
         .map((proposalData) => {
-          const proposalAverageScore =
-            average(getGrades(proposalData.proposal.reviews) as number[]) || 0;
+          const proposalAverageScore = average(
+            getGradesFromReviews(proposalData.proposal.reviews ?? [])
+          );
 
           return {
             ...proposalData,
@@ -266,7 +271,7 @@ const SEPInstrumentProposalsTable: React.FC<
         rowData: SepProposalWithAverageScoreAndAvailabilityZone
       ): string => {
         const stdDeviation = standardDeviation(
-          getGrades(rowData.proposal.reviews ?? []) as number[]
+          getGradesFromReviews(rowData.proposal.reviews ?? [])
         );
 
         return isNaN(stdDeviation) ? '-' : `${stdDeviation}`;
@@ -275,9 +280,9 @@ const SEPInstrumentProposalsTable: React.FC<
         a: SepProposalWithAverageScoreAndAvailabilityZone,
         b: SepProposalWithAverageScoreAndAvailabilityZone
       ) =>
-        (standardDeviation(getGrades(a.proposal.reviews ?? []) as number[]) ||
+        (standardDeviation(getGradesFromReviews(a.proposal.reviews ?? [])) ||
           0) -
-        (standardDeviation(getGrades(b.proposal.reviews ?? []) as number[]) ||
+        (standardDeviation(getGradesFromReviews(b.proposal.reviews ?? [])) ||
           0),
     },
     {
