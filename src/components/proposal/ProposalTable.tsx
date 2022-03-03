@@ -102,7 +102,7 @@ const ProposalTable = ({
       proposalsToClonePk: [proposalToClonePk],
     });
 
-    const [resultProposal] = result.cloneProposals.proposals;
+    const [resultProposal] = result.cloneProposals.proposals ?? [];
 
     if (
       !result.cloneProposals.rejection &&
