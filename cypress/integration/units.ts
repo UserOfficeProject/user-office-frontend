@@ -1,7 +1,7 @@
 import path from 'path';
 
 import faker from 'faker';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 
 import initialDBData from '../support/initialDBData';
 
@@ -116,7 +116,8 @@ context('Units tests', () => {
 
     it('User officer can export units', () => {
       const fileName = 'units_export.json';
-      const downloadFileName = `units_${moment().format('YYYY-MMM-DD')}.json`;
+      const now = DateTime.now();
+      const downloadFileName = `units_${now.toFormat('yyyy-LLL-dd')}.json`;
 
       cy.login('officer');
       cy.visit('/');

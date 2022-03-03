@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { useQueryParams } from 'use-query-params';
@@ -116,7 +116,7 @@ const UnitTable: React.FC = () => {
                     });
                     downloadBlob(
                       blob,
-                      `units_${moment().format('YYYY-MMM-DD')}.json`
+                      `units_${DateTime.now().toFormat('yyyy-LLL-dd')}.json`
                     );
                   });
               }}
