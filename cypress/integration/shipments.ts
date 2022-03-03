@@ -4,7 +4,7 @@ import initialDBData from '../support/initialDBData';
 
 faker.seed(1);
 
-const declareShipmentTitle = 'Declare shipment(s)';
+const declareShipmentIconCyTag = 'declare-shipment-icon';
 
 const existingProposal = initialDBData.proposal;
 
@@ -39,12 +39,12 @@ context('Shipments tests', () => {
     cy.login('user');
     cy.visit('/');
 
-    cy.testActionButton(declareShipmentTitle, 'neutral');
+    cy.testActionButton(declareShipmentIconCyTag, 'neutral');
   });
 
   it('Visitor should see that he can declare shipment', () => {
     cy.login({ email: 'david@teleworm.us', password: 'Test1234!' });
-    cy.testActionButton(declareShipmentTitle, 'neutral');
+    cy.testActionButton(declareShipmentIconCyTag, 'neutral');
   });
 
   it('Should be able to create and use shipments template', () => {
@@ -101,11 +101,11 @@ context('Shipments tests', () => {
     cy.login('user');
     cy.visit('/');
 
-    cy.testActionButton(declareShipmentTitle, 'neutral');
+    cy.testActionButton(declareShipmentIconCyTag, 'neutral');
 
     cy.contains(existingProposal.title)
       .parent()
-      .find(`[title="${declareShipmentTitle}"]`)
+      .find(`[title="${declareShipmentIconCyTag}"]`)
       .click();
 
     cy.get('[data-cy=add-button]').click();
@@ -160,6 +160,6 @@ context('Shipments tests', () => {
 
     cy.visit('/');
 
-    cy.testActionButton(declareShipmentTitle, 'neutral');
+    cy.testActionButton(declareShipmentIconCyTag, 'neutral');
   });
 });

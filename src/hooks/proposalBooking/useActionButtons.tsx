@@ -144,7 +144,7 @@ export function useActionButtons(args: UseActionButtonsArgs) {
 
     return createActionButton(
       `Finish safety input form ${stateReason ? '(' + stateReason + ')' : ''}`,
-      <EsiIcon data-cy="finish-safety-icon" />,
+      <EsiIcon data-cy="finish-safety-input-form-icon" />,
       buttonState,
       () => {
         if (event?.esi) {
