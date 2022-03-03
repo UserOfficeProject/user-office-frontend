@@ -1,4 +1,5 @@
 import { Button, Card, CardContent, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import dateformat from 'dateformat';
 import produce from 'immer';
 import React, { useCallback, useState } from 'react';
@@ -29,7 +30,7 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
   const { api } = useDataApiWithFeedback();
   const history = useHistory();
   const templateExport = props.data;
-  const { version, json } = templateExport;
+  const { version, json, errors } = templateExport;
   const exportDate = dateformat(templateExport.exportDate, 'dd-mmm-yyyy');
 
   const [state, setState] = useState({ ...templateExport });
@@ -77,6 +78,14 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
           <Typography variant="body2">Export date: {exportDate}</Typography>
         </CardContent>
       </Card>
+      {errors.length !== 0 && (
+        <Alert severity="warning">
+          {errors.map((error) => (
+            <Typography key={error}>{error}</Typography>
+          ))}
+        </Alert>
+      )}
+
       {props.data.unitComparisons.map((comparison) => (
         <ConflictResolver<UnitComparison>
           key={comparison.newUnit.id}

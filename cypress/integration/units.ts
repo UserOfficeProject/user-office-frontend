@@ -1,5 +1,6 @@
 import path from 'path';
 
+import faker from 'faker';
 import moment from 'moment';
 
 import initialDBData from '../support/initialDBData';
@@ -29,8 +30,29 @@ context('Units tests', () => {
 
       cy.get('[data-cy="submit"]').click();
       cy.get('[placeholder="Search"]').clear().type('test');
+    });
 
-      cy.get('[placeholder="Search"]').clear().type('test');
+    it('Can no create unit with invalid conversion formula', () => {
+      cy.login('officer');
+      cy.visit('/');
+
+      cy.get('[data-cy=officer-menu-items]').contains('Settings').click();
+      cy.get('[data-cy=officer-menu-items]').contains('Units').click();
+
+      cy.get('[data-cy="create-new-entry"]').click();
+      cy.get('[data-cy="unit-id"]').clear().type('test');
+      cy.get('[data-cy="unit-name"]').clear().type('test');
+      cy.get('[data-cy="unit-quantity"]').click();
+      cy.get('#quantity-input-option-0').click();
+
+      cy.get('[data-cy="unit-symbol"]').clear().type('test');
+      cy.get('[data-cy="unit-siConversionFormula"]')
+        .clear()
+        .type(faker.lorem.words(2));
+
+      cy.get('[data-cy="submit"]').click();
+
+      cy.notification({ variant: 'error', text: /formula is not valid/g });
     });
 
     it('User officer can delete unit', () => {

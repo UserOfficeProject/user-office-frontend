@@ -2948,7 +2948,7 @@ export type UnitsImportWithValidationWrap = {
 
 export type UnitsResponseWrap = {
   rejection: Maybe<Rejection>;
-  units: Array<Unit>;
+  units: Maybe<Array<Unit>>;
 };
 
 export type UpdateAnswerResponseWrap = {
@@ -4585,7 +4585,7 @@ export type ImportUnitsMutationVariables = Exact<{
 }>;
 
 
-export type ImportUnitsMutation = { importUnits: { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type ImportUnitsMutation = { importUnits: { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type ValidateUnitsImportMutationVariables = Exact<{
   unitsAsJson: Scalars['String'];
