@@ -13,7 +13,7 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   return (
-    <div>
+    <>
       <Button onClick={() => setIsDialogOpen(true)}>{label}</Button>
       <InputDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
         {children}
@@ -28,7 +28,7 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
           </Button>
         </ActionButtonContainer>
       </InputDialog>
-    </div>
+    </>
   );
 }
 
