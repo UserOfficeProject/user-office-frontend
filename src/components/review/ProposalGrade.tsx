@@ -10,6 +10,7 @@ import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
+import ErrorMessage from 'components/common/ErrorMessage';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
@@ -176,6 +177,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             }}
             disabled={isDisabled(isSubmitting)}
           />
+          <ErrorMessage name="comment" />
           <Box marginTop={1} width={150}>
             <Field
               name="grade"
