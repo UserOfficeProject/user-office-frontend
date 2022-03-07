@@ -9,7 +9,7 @@ import { NumberParam, useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
 import ProposalReviewContent, {
-  TabNames,
+  PROPOSAL_MODAL_TAB_NAMES,
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
@@ -84,10 +84,10 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
   const isDraftStatus = (status?: ReviewStatus) =>
     status === ReviewStatus.DRAFT;
 
-  const reviewProposalTabNames: TabNames[] = [
-    'Proposal information',
-    'Technical review',
-    'Grade',
+  const reviewProposalTabNames = [
+    PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
+    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
+    PROPOSAL_MODAL_TAB_NAMES.GRADE,
   ];
 
   return (
@@ -141,8 +141,12 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
 
               setUrlQueryParams({
                 modalTab: isDraftStatus(rowData?.review?.status)
-                  ? reviewProposalTabNames.indexOf('Grade')
-                  : reviewProposalTabNames.indexOf('Proposal information'),
+                  ? reviewProposalTabNames.indexOf(
+                      PROPOSAL_MODAL_TAB_NAMES.GRADE
+                    )
+                  : reviewProposalTabNames.indexOf(
+                      PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION
+                    ),
                 reviewerModal: rowData.review.id,
               });
               setCurrentAssignment({

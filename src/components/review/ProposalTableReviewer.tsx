@@ -31,7 +31,9 @@ import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-import ProposalReviewContent, { TabNames } from './ProposalReviewContent';
+import ProposalReviewContent, {
+  PROPOSAL_MODAL_TAB_NAMES,
+} from './ProposalReviewContent';
 import ProposalReviewModal from './ProposalReviewModal';
 import ReviewerFilterComponent, {
   defaultReviewerQueryFilter,
@@ -183,10 +185,10 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   }, [userData, urlQueryParams.selection]);
 
-  const reviewerProposalReviewTabs: TabNames[] = [
-    'Proposal information',
-    'Technical review',
-    'Grade',
+  const reviewerProposalReviewTabs = [
+    PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
+    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
+    PROPOSAL_MODAL_TAB_NAMES.GRADE,
   ];
 
   /**
@@ -208,8 +210,12 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
               reviewModal: rowData.reviewId,
               modalTab:
                 rowData.status === ReviewStatus.DRAFT
-                  ? reviewerProposalReviewTabs.indexOf('Grade')
-                  : reviewerProposalReviewTabs.indexOf('Proposal information'),
+                  ? reviewerProposalReviewTabs.indexOf(
+                      PROPOSAL_MODAL_TAB_NAMES.GRADE
+                    )
+                  : reviewerProposalReviewTabs.indexOf(
+                      PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION
+                    ),
             });
           }}
         >

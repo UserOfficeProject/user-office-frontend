@@ -1,8 +1,6 @@
-import InfoIcon from '@mui/icons-material/InfoOutlined';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
@@ -120,18 +118,13 @@ const ProposalTechnicalReview = ({
   return (
     <>
       <Typography variant="h6" component="h2" gutterBottom>
-        Technical Review{' '}
-        {proposal.technicalReview?.reviewer && (
-          <Tooltip
-            data-cy="reviewed-by-info"
-            title={`Reviewed by ${getFullUserName(
-              proposal.technicalReview?.reviewer
-            )}`}
-          >
-            <InfoIcon fontSize="small" />
-          </Tooltip>
-        )}
+        Technical Review
       </Typography>
+      {proposal.technicalReview?.reviewer && (
+        <Typography variant="subtitle2" data-cy="reviewed-by-info">
+          {`Reviewed by ${getFullUserName(proposal.technicalReview?.reviewer)}`}
+        </Typography>
+      )}
       <Formik
         initialValues={initialValues}
         validationSchema={proposalTechnicalReviewValidationSchema}
