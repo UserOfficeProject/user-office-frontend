@@ -17,6 +17,12 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import CreateUpdateProposalStatus from './CreateUpdateProposalStatus';
 
+const columns = [
+  { title: 'Short code', field: 'shortCode' },
+  { title: 'Name', field: 'name' },
+  { title: 'Description', field: 'description' },
+];
+
 const ProposalStatusesTable: React.FC<{ confirm: WithConfirmType }> = ({
   confirm,
 }) => {
@@ -26,11 +32,6 @@ const ProposalStatusesTable: React.FC<{ confirm: WithConfirmType }> = ({
     proposalStatuses,
     setProposalStatusesWithLoading: setProposalStatuses,
   } = useProposalStatusesData();
-  const columns = [
-    { title: 'Short code', field: 'shortCode' },
-    { title: 'Name', field: 'name' },
-    { title: 'Description', field: 'description' },
-  ];
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const [urlQueryParams, setUrlQueryParams] =
     useQueryParams<UrlQueryParamsType>(DefaultQueryParams);

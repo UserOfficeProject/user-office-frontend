@@ -21,6 +21,17 @@ import ParticipantModal from '../proposal/ParticipantModal';
 import AssignedScientistsTable from './AssignedScientistsTable';
 import CreateUpdateInstrument from './CreateUpdateInstrument';
 
+const columns = [
+  { title: 'Name', field: 'name' },
+  { title: 'Short code', field: 'shortCode' },
+  { title: 'Description', field: 'description' },
+  {
+    title: 'Scientists',
+    field: 'scientists.length',
+    emptyValue: '-',
+  },
+];
+
 const InstrumentTable: React.FC = () => {
   const {
     loadingInstruments,
@@ -28,16 +39,6 @@ const InstrumentTable: React.FC = () => {
     setInstrumentsWithLoading: setInstruments,
   } = useInstrumentsData();
 
-  const columns = [
-    { title: 'Name', field: 'name' },
-    { title: 'Short code', field: 'shortCode' },
-    { title: 'Description', field: 'description' },
-    {
-      title: 'Scientists',
-      field: 'scientists.length',
-      emptyValue: '-',
-    },
-  ];
   const { api } = useDataApiWithFeedback();
   const [assigningInstrumentId, setAssigningInstrumentId] = useState<
     number | null

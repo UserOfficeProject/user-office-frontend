@@ -14,6 +14,15 @@ import { FunctionType } from 'utils/utilTypes';
 
 import CreateUpdateInstitution from './CreateUpdateInstitution';
 
+const columns = [
+  { title: 'Name', field: 'name' },
+  {
+    title: 'Verified',
+    field: 'verified',
+    lookup: { true: 'true', false: 'false' },
+  },
+];
+
 const InstitutionPage: React.FC = () => {
   const { api } = useDataApiWithFeedback();
 
@@ -38,15 +47,6 @@ const InstitutionPage: React.FC = () => {
         }
       });
   };
-
-  const columns = [
-    { title: 'Name', field: 'name' },
-    {
-      title: 'Verified',
-      field: 'verified',
-      lookup: { true: 'true', false: 'false' },
-    },
-  ];
 
   const createModal = (
     onUpdate: FunctionType<void, [Institution | null]>,

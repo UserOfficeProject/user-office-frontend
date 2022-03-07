@@ -12,6 +12,8 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 import RoleModal from './RoleModal';
 
+const columns = [{ title: 'Name', field: 'title' }];
+
 export default function UpdateUserRoles(props: { id: number }) {
   const [userData, setUserData] = useState<
     GetUserWithRolesQuery['user'] | null
@@ -66,8 +68,6 @@ export default function UpdateUserRoles(props: { id: number }) {
     };
     getUserInformation();
   }, [props.id, api]);
-
-  const columns = [{ title: 'Name', field: 'title' }];
 
   return (
     <div data-cy="user-roles-table">

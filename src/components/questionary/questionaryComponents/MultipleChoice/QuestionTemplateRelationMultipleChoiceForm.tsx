@@ -14,6 +14,8 @@ import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
 import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFormShell';
 
+const columns = [{ title: 'Answer', field: 'answer' }];
+
 export const QuestionTemplateRelationMultipleChoiceForm: FC<
   QuestionTemplateRelationFormProps
 > = (props) => {
@@ -83,7 +85,7 @@ export const QuestionTemplateRelationMultipleChoiceForm: FC<
               title=""
               name="config.options"
               component={FormikUICustomTable}
-              columns={[{ title: 'Answer', field: 'answer' }]}
+              columns={columns}
               dataTransforms={{
                 toTable: (options: string[]) => {
                   return options.map((option) => {

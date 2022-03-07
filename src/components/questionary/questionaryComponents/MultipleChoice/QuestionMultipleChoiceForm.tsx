@@ -13,6 +13,8 @@ import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
+const columns = [{ title: 'Answer', field: 'answer' }];
+
 export const QuestionMultipleChoiceForm: FC<QuestionFormProps> = (props) => {
   const field = props.question;
   const config = field.config as SelectionFromOptionsConfig;
@@ -102,7 +104,7 @@ export const QuestionMultipleChoiceForm: FC<QuestionFormProps> = (props) => {
               title=""
               name="config.options"
               component={FormikUICustomTable}
-              columns={[{ title: 'Answer', field: 'answer' }]}
+              columns={columns}
               dataTransforms={{
                 toTable: (options: string[]) => {
                   return options.map((option) => {

@@ -17,6 +17,32 @@ import {
 } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
+const columns: Column<ProposalScheduledEvent>[] = [
+  { title: 'Proposal title', field: 'proposal.title' },
+  { title: 'Proposal ID', field: 'proposal.proposalId' },
+  { title: 'Instrument', field: 'instrument.name' },
+  {
+    title: 'Local contact',
+    render: (rowData) => getFullUserName(rowData.localContact),
+  },
+  {
+    title: 'Starts at',
+    field: 'startsAt',
+    render: (rowData) =>
+      parseTzLessDateTime(rowData.startsAt).format(
+        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
+      ),
+  },
+  {
+    title: 'Ends at',
+    field: 'endsAt',
+    render: (rowData) =>
+      parseTzLessDateTime(rowData.endsAt).format(
+        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
+      ),
+  },
+];
+
 export default function UserUpcomingExperimentsTable() {
   const { loading, proposalScheduledEvents, setProposalScheduledEvents } =
     useProposalBookingsScheduledEvents({
@@ -45,32 +71,6 @@ export default function UserUpcomingExperimentsTable() {
       setProposalScheduledEvents(updatedEvents);
     },
   });
-
-  const columns: Column<ProposalScheduledEvent>[] = [
-    { title: 'Proposal title', field: 'proposal.title' },
-    { title: 'Proposal ID', field: 'proposal.proposalId' },
-    { title: 'Instrument', field: 'instrument.name' },
-    {
-      title: 'Local contact',
-      render: (rowData) => getFullUserName(rowData.localContact),
-    },
-    {
-      title: 'Starts at',
-      field: 'startsAt',
-      render: (rowData) =>
-        parseTzLessDateTime(rowData.startsAt).format(
-          TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-        ),
-    },
-    {
-      title: 'Ends at',
-      field: 'endsAt',
-      render: (rowData) =>
-        parseTzLessDateTime(rowData.endsAt).format(
-          TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-        ),
-    },
-  ];
 
   // if there are no upcoming experiments
   // just hide the whole table altogether

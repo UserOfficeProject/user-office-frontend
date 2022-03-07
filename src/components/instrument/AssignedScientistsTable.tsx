@@ -29,6 +29,21 @@ type AssignedScientistsTableProps = {
   ) => void;
 };
 
+const assignmentColumns = [
+  {
+    title: 'Name',
+    field: 'firstname',
+  },
+  {
+    title: 'Surname',
+    field: 'lastname',
+  },
+  {
+    title: 'Organisation',
+    field: 'organisation',
+  },
+];
+
 const AssignedScientistsTable: React.FC<AssignedScientistsTableProps> = ({
   instrument,
   removeAssignedScientistFromInstrument,
@@ -36,21 +51,6 @@ const AssignedScientistsTable: React.FC<AssignedScientistsTableProps> = ({
   const classes = useStyles();
   const { api } = useDataApiWithFeedback();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-
-  const assignmentColumns = [
-    {
-      title: 'Name',
-      field: 'firstname',
-    },
-    {
-      title: 'Surname',
-      field: 'lastname',
-    },
-    {
-      title: 'Organisation',
-      field: 'organisation',
-    },
-  ];
 
   const removeAssignedScientist = async (scientistId: number) => {
     const result = await api(

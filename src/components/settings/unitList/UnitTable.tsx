@@ -15,14 +15,15 @@ import { FunctionType } from 'utils/utilTypes';
 
 import CreateUnit from './CreateUnit';
 
+const columns = [
+  { title: 'Quantity', field: 'quantity' },
+  { title: 'Symbol', field: 'symbol' },
+  { title: 'Unit', field: 'unit' },
+];
+
 const UnitTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
   const { loadingUnits, units, setUnitsWithLoading: setUnits } = useUnitsData();
-  const columns = [
-    { title: 'Quantity', field: 'quantity' },
-    { title: 'Symbol', field: 'symbol' },
-    { title: 'Unit', field: 'unit' },
-  ];
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const [urlQueryParams, setUrlQueryParams] =
     useQueryParams<UrlQueryParamsType>(DefaultQueryParams);

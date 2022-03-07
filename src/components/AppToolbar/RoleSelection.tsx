@@ -9,6 +9,14 @@ import { getUniqueArrayBy } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
+const columns = [
+  { title: 'Role', field: 'title' },
+  {
+    title: 'Action',
+    field: 'roleAction',
+  },
+];
+
 const RoleSelection: React.FC = () => {
   const { currentRole, token, handleNewToken } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
@@ -74,13 +82,10 @@ const RoleSelection: React.FC = () => {
     </>
   );
 
-  const columns = [
-    { title: 'Role', field: 'title' },
-    {
-      title: 'Action',
-      render: RoleAction,
-    },
-  ];
+  const rolesWithRoleAction = roles.map((role) => ({
+    ...role,
+    roleAction: RoleAction(role),
+  }));
 
   return (
     <div data-cy="role-selection-table">
@@ -88,7 +93,7 @@ const RoleSelection: React.FC = () => {
         icons={tableIcons}
         title="User roles"
         columns={columns}
-        data={roles}
+        data={rolesWithRoleAction}
         isLoading={loading}
         options={{
           search: false,

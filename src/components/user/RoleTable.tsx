@@ -13,9 +13,10 @@ type RoleTableProps = {
   activeRoles: Role[];
 };
 
+const columns = [{ title: 'Role', field: 'title' }];
+
 const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
   const api = useDataApi();
-  const columns = [{ title: 'Role', field: 'title' }];
   const [roles, setRoles] = useState<GetRolesQuery['roles']>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);

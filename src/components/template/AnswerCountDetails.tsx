@@ -8,7 +8,7 @@ import { useShipments } from 'hooks/shipment/useShipments';
 import { QuestionWithUsage } from 'hooks/template/useQuestions';
 import { tableIcons } from 'utils/materialIcons';
 
-const columns = [
+const proposalListColumns = [
   { title: 'ID', field: 'proposalId' },
   { title: 'Title', field: 'title' },
 ];
@@ -28,13 +28,20 @@ function ProposalList({ question }: { question: QuestionWithUsage }) {
     <MaterialTable
       style={{ width: '100%' }}
       icons={tableIcons}
-      columns={columns}
+      columns={proposalListColumns}
       data={proposalsDataWithId}
       title="Proposals"
       options={{ paging: false }}
     />
   );
 }
+
+const sampleListColumns = [
+  { title: 'id', field: 'id' },
+  { title: 'Title', field: 'title' },
+  { title: 'Created', field: 'created' },
+  { title: 'Safety status', field: 'safetyStatus' },
+];
 
 function SampleList({ question }: { question: QuestionWithUsage }) {
   const questionaryIds = useMemo(
@@ -47,18 +54,19 @@ function SampleList({ question }: { question: QuestionWithUsage }) {
     <MaterialTable
       style={{ width: '100%' }}
       icons={tableIcons}
-      columns={[
-        { title: 'id', field: 'id' },
-        { title: 'Title', field: 'title' },
-        { title: 'Created', field: 'created' },
-        { title: 'Safety status', field: 'safetyStatus' },
-      ]}
+      columns={sampleListColumns}
       data={samples}
       title="Samples"
       options={{ paging: false }}
     />
   );
 }
+
+const shipmentListColumns = [
+  { title: 'ID', field: 'id' },
+  { title: 'Title', field: 'title' },
+  { title: 'Status', field: 'status' },
+];
 
 function ShipmentList({ question }: { question: QuestionWithUsage }) {
   const questionaryIds = useMemo(
@@ -71,11 +79,7 @@ function ShipmentList({ question }: { question: QuestionWithUsage }) {
     <MaterialTable
       style={{ width: '100%' }}
       icons={tableIcons}
-      columns={[
-        { title: 'ID', field: 'id' },
-        { title: 'Title', field: 'title' },
-        { title: 'Status', field: 'status' },
-      ]}
+      columns={shipmentListColumns}
       data={shipments}
       title="Shipments"
       options={{ paging: false }}

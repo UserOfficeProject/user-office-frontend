@@ -38,6 +38,18 @@ type ProposalTableProps = {
   confirm: WithConfirmType;
 };
 
+const columns = [
+  { title: 'Proposal ID', field: 'proposalId' },
+  { title: 'Title', field: 'title' },
+  { title: 'Status', field: 'publicStatus' },
+  {
+    title: 'Call',
+    field: 'call.shortCode',
+    emptyValue: '-',
+  },
+  { title: 'Created', field: 'created' },
+];
+
 const ProposalTable = ({
   title,
   search,
@@ -63,18 +75,6 @@ const ProposalTable = ({
       }
     });
   }, [searchQuery]);
-
-  const columns = [
-    { title: 'Proposal ID', field: 'proposalId' },
-    { title: 'Title', field: 'title' },
-    { title: 'Status', field: 'publicStatus' },
-    {
-      title: 'Call',
-      field: 'call.shortCode',
-      emptyValue: '-',
-    },
-    { title: 'Created', field: 'created' },
-  ];
 
   const [editProposalPk, setEditProposalPk] = useState(0);
 

@@ -47,6 +47,18 @@ type SEPMembersProps = {
   confirm: WithConfirmType;
 };
 
+const columns = [
+  { title: 'Name', field: 'user.firstname' },
+  {
+    title: 'Surname',
+    field: 'user.lastname',
+  },
+  {
+    title: 'Organization',
+    field: 'user.organisation',
+  },
+];
+
 const SEPMembers: React.FC<SEPMembersProps> = ({
   data: sepData,
   sepId,
@@ -71,18 +83,6 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
     UserRole.SEP_SECRETARY,
   ]);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
-
-  const columns = [
-    { title: 'Name', field: 'user.firstname' },
-    {
-      title: 'Surname',
-      field: 'user.lastname',
-    },
-    {
-      title: 'Organization',
-      field: 'user.organisation',
-    },
-  ];
 
   const sendSEPChairUpdate = async (
     value: BasicUserDetails[]

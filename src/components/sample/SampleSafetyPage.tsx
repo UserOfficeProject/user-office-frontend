@@ -147,6 +147,22 @@ function SampleEvaluationDialog(props: {
   );
 }
 
+const columns = [
+  {
+    title: 'Actions',
+    sorting: false,
+    removable: false,
+    field: 'rowActions',
+  },
+  {
+    title: 'Proposal ID',
+    field: 'proposal.proposalId',
+  },
+  { title: 'Title', field: 'title' },
+  { title: 'Status', field: 'safetyStatus' },
+  { title: 'Created', field: 'created' },
+];
+
 function SampleSafetyPage() {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { calls, loadingCalls } = useCallsData({ isActive: true });
@@ -209,21 +225,10 @@ function SampleSafetyPage() {
     );
   };
 
-  const columns = [
-    {
-      title: 'Actions',
-      sorting: false,
-      removable: false,
-      render: RowActionButtons,
-    },
-    {
-      title: 'Proposal ID',
-      field: 'proposal.proposalId',
-    },
-    { title: 'Title', field: 'title' },
-    { title: 'Status', field: 'safetyStatus' },
-    { title: 'Created', field: 'created' },
-  ];
+  const samplesWithRowActions = samples.map((sample) => ({
+    ...sample,
+    rowActions: RowActionButtons(sample),
+  }));
 
   return (
     <>
@@ -241,7 +246,7 @@ function SampleSafetyPage() {
                 shouldShowAll={true}
               />
               <SamplesTable
-                data={samples}
+                data={samplesWithRowActions}
                 isLoading={isExecutingCall}
                 urlQueryParams={urlQueryParams}
                 setUrlQueryParams={setUrlQueryParams}
