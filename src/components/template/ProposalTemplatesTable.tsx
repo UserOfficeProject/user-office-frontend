@@ -95,7 +95,7 @@ function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
   );
 
   // NOTE: Keeping the columns inside the component just because it needs NumberOfCalls which is wrapped with callback and uses setSelectedTemplateId.
-  const columnss: Column<ProposalTemplateRowDataType>[] = [
+  const columns: Column<ProposalTemplateRowDataType>[] = [
     { title: 'Name', field: 'name' },
     { title: 'Description', field: 'description' },
     { title: '# proposals', field: 'questionaryCount' },
