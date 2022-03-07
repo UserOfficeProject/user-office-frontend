@@ -33,13 +33,8 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       variant="inline"
       disableToolbar
       autoOk={true}
-      // TODO: Use the right type from the change event
-      onChange={(date: any) => {
-        /*
-        DateFnsUtils correct type is Date | null, but use of Luxon elsewhere (in call modal)
-        causes incorrect type inference: https://github.com/dmtrKovalenko/date-io/issues/584
-        */
-        const newDate = date as unknown as Date;
+      onChange={(date: Date | null) => {
+        const newDate = date;
         newDate?.setHours(0, 0, 0, 0); // omit time
         onComplete(newDate);
       }}
