@@ -103,7 +103,7 @@ function ProposalTemplatesTable(props: ProposalTemplatesTableProps) {
       title: '# calls',
       field: 'callCount',
       editable: 'never',
-      render: NumberOfCalls,
+      render: NumberOfCalls, 
     },
   ];
 
