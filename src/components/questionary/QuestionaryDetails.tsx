@@ -23,6 +23,9 @@ const useStyles = makeStyles(() => ({
   value: {
     width: '35%',
   },
+  break: {
+    wordBreak: 'break-word',
+  },
 }));
 
 export interface TableRowData {
@@ -84,7 +87,7 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
           {title}
         </Typography>
       )}
-      <Table size="small" {...restProps}>
+      <Table className={classes.break} size="small" {...restProps}>
         <TableBody>
           {/* Additional details */}
           {additionalDetails?.map((row, index) =>
