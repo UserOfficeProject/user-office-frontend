@@ -70,7 +70,6 @@ export default function ResetPasswordEmail() {
               id="email-id"
               type="email"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="reset-password-email"
             />

@@ -52,7 +52,6 @@ export const QuestionTemplateRelationIntervalForm: FC<
             id="small-label-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'small-label' }}
           />
@@ -61,7 +60,6 @@ export const QuestionTemplateRelationIntervalForm: FC<
               name="config.required"
               component={FormikUICustomCheckbox}
               label="Check to make this field mandatory"
-              margin="normal"
               fullWidth
               InputProps={{ 'data-cy': 'required' }}
             />

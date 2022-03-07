@@ -206,6 +206,10 @@ const TemplatesTable = ({
   const EditIconComponent = () => <Edit />;
   const FileCopyIconComponent = () => <FileCopy />;
 
+  const templatesWithId = templates.map((template) =>
+    Object.assign(template, { id: template.templateId })
+  );
+
   return (
     <>
       <InputDialog open={show} onClose={() => setShow(false)}>
@@ -235,9 +239,7 @@ const TemplatesTable = ({
         }
         columns={columns}
         isLoading={loadingTemplates}
-        data={templates.map((template) =>
-          Object.assign(template, { id: template.templateId })
-        )}
+        data={templatesWithId}
         actions={[
           ...customActions,
           {

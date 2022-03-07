@@ -75,7 +75,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                 value={values.code}
                 onChange={handleChange}
                 component={TextField}
-                margin="normal"
                 fullWidth
                 data-cy="code"
                 error={touched.code && errors.code !== undefined}
@@ -88,7 +87,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                 label="Number of ratings required"
                 type="number"
                 component={TextField}
-                margin="normal"
                 fullWidth
                 onChange={handleChange}
                 value={values.numberRatingsRequired}
@@ -112,7 +110,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                 label="Description"
                 type="text"
                 component={TextField}
-                margin="normal"
                 fullWidth
                 multiline
                 maxRows="16"

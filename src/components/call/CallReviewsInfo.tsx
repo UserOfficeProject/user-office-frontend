@@ -40,7 +40,6 @@ const CallReviewAndNotification: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
           data-cy="start-review"
         />
@@ -53,7 +52,6 @@ const CallReviewAndNotification: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
         />
         <Field
@@ -64,7 +62,6 @@ const CallReviewAndNotification: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
         />
         <Field
@@ -76,7 +73,6 @@ const CallReviewAndNotification: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
         />
       </LocalizationProvider>
@@ -86,7 +82,6 @@ const CallReviewAndNotification: React.FC = () => {
         id="survey-comment-input"
         type="text"
         component={TextField}
-        margin="normal"
         fullWidth
         required
         inputProps={{ maxLength: '100' }}

@@ -34,7 +34,6 @@ export const QuestionGenericTemplateBasisForm: FC<QuestionFormProps> = (
             id="Key-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'natural_key' }}
           />
@@ -44,7 +43,6 @@ export const QuestionGenericTemplateBasisForm: FC<QuestionFormProps> = (
             id="Question-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'question' }}
           />

@@ -68,7 +68,6 @@ function DateSearchCriteriaInput({
             renderInput={(props) => (
               <TextField
                 {...props}
-                variant="standard"
                 required
                 margin="none"
                 size="small"

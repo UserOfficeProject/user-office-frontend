@@ -43,7 +43,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
               name="config.required"
               component={FormikUICustomCheckbox}
               label="Is required"
-              margin="normal"
               fullWidth
               data-cy="required"
             />
@@ -54,7 +53,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
               id="Min-input"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="min"
             />
@@ -65,7 +63,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
               id="Max-input"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="max"
             />
@@ -77,7 +74,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
               id="Placeholder-input"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="placeholder"
             />
@@ -89,7 +85,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
                 }
                 component={FormikUICustomCheckbox}
                 label="Multiple lines"
-                margin="normal"
                 data-cy="multiline"
               />
             </Box>
@@ -102,7 +97,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
                 }
                 component={FormikUICustomCheckbox}
                 label="Hide counter"
-                margin="normal"
                 data-cy="multiline"
               />
             </Box>
@@ -122,7 +116,6 @@ export const QuestionTemplateRelationTextInputForm: FC<
                 name="config.htmlQuestion"
                 type="text"
                 component={FormikUICustomEditor}
-                margin="normal"
                 fullWidth
                 init={{
                   skin: false,

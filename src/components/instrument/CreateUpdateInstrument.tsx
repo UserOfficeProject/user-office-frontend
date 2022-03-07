@@ -94,7 +94,6 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="name"
             disabled={isExecutingCall}
@@ -105,7 +104,6 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             label="Short code"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="shortCode"
             disabled={isExecutingCall}
@@ -116,7 +114,6 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             label="Description"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             multiline
             rowsMax="16"

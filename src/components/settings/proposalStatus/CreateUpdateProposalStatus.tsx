@@ -92,7 +92,6 @@ const CreateUpdateProposalStatus: React.FC<CreateUpdateProposalStatusProps> = ({
             className={
               !!initialValues.shortCode ? classes.darkerDisabledTextField : ''
             }
-            margin="normal"
             fullWidth
             data-cy="shortCode"
             required
@@ -104,7 +103,6 @@ const CreateUpdateProposalStatus: React.FC<CreateUpdateProposalStatusProps> = ({
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="name"
             disabled={isExecutingCall}
@@ -116,7 +114,6 @@ const CreateUpdateProposalStatus: React.FC<CreateUpdateProposalStatusProps> = ({
             label="Description"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             multiline
             rowsMax="16"

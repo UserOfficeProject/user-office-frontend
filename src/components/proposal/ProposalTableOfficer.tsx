@@ -64,6 +64,82 @@ type ProposalWithCallInstrumentAndSepId = ProposalPkWithCallId & {
   statusId: number;
 };
 
+let columns: Column<ProposalViewData>[] = [
+  {
+    title: 'Actions',
+    cellStyle: { padding: 0, minWidth: 152 },
+    sorting: false,
+    removable: false,
+    field: 'rowActionButtons',
+  },
+  { title: 'Proposal ID', field: 'proposalId' },
+  {
+    title: 'Title',
+    field: 'title',
+    ...{ width: 'auto' },
+  },
+  {
+    title: 'Technical time allocation',
+    render: (rowData) =>
+      rowData.technicalTimeAllocation
+        ? `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`
+        : '',
+    hidden: true,
+  },
+  {
+    title: 'Technical status',
+    field: 'technicalStatus',
+  },
+  {
+    title: 'Final time allocation',
+    render: (rowData) =>
+      rowData.managementTimeAllocation
+        ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
+        : '',
+    hidden: true,
+  },
+  {
+    title: 'Final Status',
+    field: 'finalStatus',
+  },
+  {
+    title: 'Submitted',
+    render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+  },
+  {
+    title: 'Status',
+    field: 'statusName',
+  },
+  {
+    title: 'Deviation',
+    field: 'reviewDeviation',
+  },
+  {
+    title: 'Average Score',
+    field: 'reviewAverage',
+  },
+  {
+    title: 'Ranking',
+    field: 'rankOrder',
+  },
+  {
+    title: 'Notified',
+    render: (rowData) => (rowData.notified ? 'Yes' : 'No'),
+  },
+  {
+    title: 'Instrument',
+    field: 'instrumentName',
+  },
+  {
+    title: 'Call',
+    field: 'callShortCode',
+  },
+  {
+    title: 'SEP',
+    field: 'sepCode',
+  },
+];
+
 const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   proposalFilter,
   urlQueryParams,
@@ -189,82 +265,6 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       </>
     );
   };
-
-  let columns: Column<ProposalViewData>[] = [
-    {
-      title: 'Actions',
-      cellStyle: { padding: 0, minWidth: 152 },
-      sorting: false,
-      removable: false,
-      render: RowActionButtons,
-    },
-    { title: 'Proposal ID', field: 'proposalId' },
-    {
-      title: 'Title',
-      field: 'title',
-      ...{ width: 'auto' },
-    },
-    {
-      title: 'Technical time allocation',
-      render: (rowData) =>
-        rowData.technicalTimeAllocation
-          ? `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`
-          : '',
-      hidden: true,
-    },
-    {
-      title: 'Technical status',
-      field: 'technicalStatus',
-    },
-    {
-      title: 'Final time allocation',
-      render: (rowData) =>
-        rowData.managementTimeAllocation
-          ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
-          : '',
-      hidden: true,
-    },
-    {
-      title: 'Final Status',
-      field: 'finalStatus',
-    },
-    {
-      title: 'Submitted',
-      render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Status',
-      field: 'statusName',
-    },
-    {
-      title: 'Deviation',
-      field: 'reviewDeviation',
-    },
-    {
-      title: 'Average Score',
-      field: 'reviewAverage',
-    },
-    {
-      title: 'Ranking',
-      field: 'rankOrder',
-    },
-    {
-      title: 'Notified',
-      render: (rowData) => (rowData.notified ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Instrument',
-      field: 'instrumentName',
-    },
-    {
-      title: 'Call',
-      field: 'callShortCode',
-    },
-    {
-      title: 'SEP',
-      field: 'sepCode',
-    },
-  ];
 
   // NOTE: We are remapping only the hidden field because functions like `render` can not be stringified.
   if (localStorageValue) {
@@ -533,6 +533,18 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     PROPOSAL_MODAL_TAB_NAMES.LOGS,
   ];
 
+  /** NOTE:
+   * Including the id property for https://material-table-core.com/docs/breaking-changes#id
+   * Including the action buttons as property to avoid the console warning(https://github.com/material-table-core/core/issues/286)
+   */
+  const preselectedProposalDataWithIdAndRowActions =
+    preselectedProposalsData.map((proposal) =>
+      Object.assign(proposal, {
+        id: proposal.primaryKey,
+        rowActionButtons: RowActionButtons(proposal),
+      })
+    );
+
   return (
     <>
       <Dialog
@@ -632,9 +644,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
           </Typography>
         }
         columns={columns}
-        data={preselectedProposalsData.map((proposal) =>
-          Object.assign(proposal, { id: proposal.primaryKey })
-        )}
+        data={preselectedProposalDataWithIdAndRowActions}
         isLoading={loading}
         onSearchChange={(searchText) => {
           setUrlQueryParams({ search: searchText ? searchText : undefined });

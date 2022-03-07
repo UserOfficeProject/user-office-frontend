@@ -67,7 +67,6 @@ function SampleEvaluationDialog(props: {
               name="safetyStatus"
               label="Status"
               select
-              margin="normal"
               component={TextField}
               InputLabelProps={{
                 shrink: true,

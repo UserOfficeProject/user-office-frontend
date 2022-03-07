@@ -40,7 +40,6 @@ export function QuestionaryComponentTextInput(props: BasicComponentProps) {
       )}
       <TextFieldNoSubmit
         isCounterHidden={config.isCounterHidden}
-        variant="standard"
         id={id}
         name={id}
         fullWidth

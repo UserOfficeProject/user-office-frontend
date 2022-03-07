@@ -8,6 +8,11 @@ import { useShipments } from 'hooks/shipment/useShipments';
 import { QuestionWithUsage } from 'hooks/template/useQuestions';
 import { tableIcons } from 'utils/materialIcons';
 
+const columns = [
+  { title: 'ID', field: 'proposalId' },
+  { title: 'Title', field: 'title' },
+];
+
 function ProposalList({ question }: { question: QuestionWithUsage }) {
   const questionaryIds = useMemo(
     () => question.answers.map((answer) => answer.questionaryId),
@@ -15,17 +20,16 @@ function ProposalList({ question }: { question: QuestionWithUsage }) {
   );
   const { proposalsData } = useProposalsData({ questionaryIds });
 
+  const proposalsDataWithId = proposalsData.map((proposal) =>
+    Object.assign(proposal, { id: proposal.primaryKey })
+  );
+
   return (
     <MaterialTable
       style={{ width: '100%' }}
       icons={tableIcons}
-      columns={[
-        { title: 'ID', field: 'proposalId' },
-        { title: 'Title', field: 'title' },
-      ]}
-      data={proposalsData.map((proposal) =>
-        Object.assign(proposal, { id: proposal.primaryKey })
-      )}
+      columns={columns}
+      data={proposalsDataWithId}
       title="Proposals"
       options={{ paging: false }}
     />

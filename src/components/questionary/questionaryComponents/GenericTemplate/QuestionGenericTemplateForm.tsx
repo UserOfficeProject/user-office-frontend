@@ -46,7 +46,6 @@ export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
             label="Key"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'natural_key' }}
           />
@@ -57,13 +56,12 @@ export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
             label="Question"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'question' }}
           />
 
           <TitledContainer label="Options">
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth>
               <InputLabel htmlFor="config.templateId">Template name</InputLabel>
               <Field
                 name="config.templateId"
@@ -105,7 +103,6 @@ export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
               placeholder='(e.g. "add new")'
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="addEntryButtonLabel"
             />
@@ -116,7 +113,6 @@ export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
               placeholder="(e.g. 1, leave blank for unlimited)"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="min-entries"
             />
@@ -127,7 +123,6 @@ export const QuestionGenericTemplateForm: FC<QuestionFormProps> = (props) => {
               placeholder="(e.g. 4, leave blank for unlimited)"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="max-entries"
             />

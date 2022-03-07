@@ -39,7 +39,6 @@ const CallCycleInfo: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
         />
         <Field
@@ -51,7 +50,6 @@ const CallCycleInfo: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
         />
         <Field
@@ -62,7 +60,6 @@ const CallCycleInfo: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
           data-cy="start-cycle"
         />
@@ -75,7 +72,6 @@ const CallCycleInfo: React.FC = () => {
           component={DatePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
           data-cy="end-cycle"
         />
@@ -86,7 +82,6 @@ const CallCycleInfo: React.FC = () => {
         id="cycle-comment-input"
         type="text"
         component={TextField}
-        margin="normal"
         required
         fullWidth
         data-cy="cycle-comment"
@@ -98,7 +93,6 @@ const CallCycleInfo: React.FC = () => {
         id="submission-message-input"
         type="text"
         component={TextField}
-        margin="normal"
         fullWidth
         data-cy="submission-message"
       />

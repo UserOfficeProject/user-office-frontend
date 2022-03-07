@@ -88,7 +88,6 @@ const ProposalWorkflowMetadataEditor: React.FC<{
             component={TextField}
             value={values.name}
             onChange={handleChange}
-            margin="normal"
             fullWidth
             data-cy="name"
           />
@@ -101,7 +100,6 @@ const ProposalWorkflowMetadataEditor: React.FC<{
             component={TextField}
             value={values.description}
             onChange={handleChange}
-            margin="normal"
             fullWidth
             data-cy="description"
           />

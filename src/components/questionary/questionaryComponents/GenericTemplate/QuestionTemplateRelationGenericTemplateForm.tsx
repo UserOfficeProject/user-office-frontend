@@ -55,7 +55,6 @@ export const QuestionTemplateRelationGenericTemplateForm: FC<
               placeholder='(e.g. "add new")'
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="addEntryButtonLabel"
             />
@@ -69,7 +68,6 @@ export const QuestionTemplateRelationGenericTemplateForm: FC<
               placeholder="(e.g. 1, leave blank for unlimited)"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="min-entries"
             />
@@ -79,7 +77,6 @@ export const QuestionTemplateRelationGenericTemplateForm: FC<
               id="Max-input"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="max-entries"
             />
@@ -92,7 +89,6 @@ export const QuestionTemplateRelationGenericTemplateForm: FC<
                 name="config.templateId"
                 type="text"
                 component={Select}
-                margin="normal"
                 data-cy="templateId"
                 defaultValue={''}
               >

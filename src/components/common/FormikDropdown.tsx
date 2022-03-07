@@ -68,7 +68,6 @@ const FormikDropdown: React.FC<
         label={label}
         defaultValue="Loading..."
         disabled
-        margin="normal"
         InputLabelProps={{
           shrink: true,
         }}
@@ -114,7 +113,6 @@ const FormikDropdown: React.FC<
       label={label}
       id={name + '-input'}
       select
-      margin="normal"
       component={TextField}
       InputLabelProps={{
         shrink: true,

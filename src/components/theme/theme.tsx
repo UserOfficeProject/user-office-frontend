@@ -73,6 +73,7 @@ const ThemeWrapper: React.FC = (props) => {
         MuiTextField: {
           defaultProps: {
             variant: 'standard',
+            margin: 'normal',
           },
         },
         MuiSelect: {

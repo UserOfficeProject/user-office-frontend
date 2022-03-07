@@ -49,7 +49,6 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
             id="Key-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'natural_key' }}
           />
@@ -59,7 +58,6 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
             id="Question-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'question' }}
           />
@@ -70,7 +68,6 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
             id="Small-label-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'small-label' }}
           />
@@ -80,7 +77,6 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
               name="config.required"
               component={FormikUICustomCheckbox}
               label="Check to make this field mandatory"
-              margin="normal"
               fullWidth
               InputProps={{ 'data-cy': 'required' }}
             />

@@ -246,7 +246,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                     id="firstname-input"
                     type="text"
                     component={TextField}
-                    margin="normal"
                     fullWidth
                     data-cy="firstname"
                   />
@@ -256,7 +255,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                     id="middlename-input"
                     type="text"
                     component={TextField}
-                    margin="normal"
                     fullWidth
                     data-cy="middlename"
                   />
@@ -266,7 +264,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                     id="lastname-input"
                     type="text"
                     component={TextField}
-                    margin="normal"
                     fullWidth
                     data-cy="lastname"
                   />
@@ -276,7 +273,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                     id="preferredname-input"
                     type="text"
                     component={TextField}
-                    margin="normal"
                     fullWidth
                     data-cy="preferredname"
                   />
@@ -297,7 +293,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                       id="othergender-input"
                       type="text"
                       component={TextField}
-                      margin="normal"
                       fullWidth
                       data-cy="othergender"
                       required
@@ -318,7 +313,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                     component={DatePicker}
                     textField={{
                       fullWidth: true,
-                      margin: 'normal',
                     }}
                     data-cy="birthdate"
                   />
@@ -348,7 +342,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="username-input"
                   type="text"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   autoComplete="off"
                   data-cy="username"
@@ -366,7 +359,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="department-input"
                   type="text"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   data-cy="department"
                 />
@@ -376,7 +368,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="position-input"
                   type="text"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   data-cy="position"
                 />
@@ -386,7 +377,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="email-input"
                   type="email"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   data-cy="email"
                 />
@@ -396,7 +386,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="telephone-input"
                   type="text"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   data-cy="telephone"
                 />
@@ -406,7 +395,6 @@ export default function UpdateUserInformation(props: { id: number }) {
                   id="telephone-alt-input"
                   type="text"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   data-cy="telephone-alt"
                 />

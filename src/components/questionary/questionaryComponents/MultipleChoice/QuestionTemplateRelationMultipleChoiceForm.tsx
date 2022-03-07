@@ -42,7 +42,6 @@ export const QuestionTemplateRelationMultipleChoiceForm: FC<
                 <Field
                   name="config.required"
                   component={Checkbox}
-                  margin="normal"
                   type="checkbox"
                   inputProps={{ 'data-cy': 'required' }}
                 />
@@ -70,7 +69,6 @@ export const QuestionTemplateRelationMultipleChoiceForm: FC<
                   <Field
                     name="config.isMultipleSelect"
                     component={Checkbox}
-                    margin="normal"
                     type="checkbox"
                     inputProps={{ 'data-cy': 'is-multiple-select' }}
                   />
@@ -96,7 +94,6 @@ export const QuestionTemplateRelationMultipleChoiceForm: FC<
                   return rows.map((row) => row.answer);
                 },
               }}
-              margin="normal"
               fullWidth
               data-cy="options"
             />

@@ -77,7 +77,6 @@ const InviteUserForm: React.FC<InviteUserFormProps> = ({
             label="First name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="firstname"
           />
@@ -87,7 +86,6 @@ const InviteUserForm: React.FC<InviteUserFormProps> = ({
             label="Last name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="lastname"
           />
@@ -97,7 +95,6 @@ const InviteUserForm: React.FC<InviteUserFormProps> = ({
             label="E-mail"
             type="email"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="email"
           />

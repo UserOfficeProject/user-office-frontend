@@ -119,7 +119,6 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                   id="time-managemment-input"
                   type="number"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   autoComplete="off"
                   data-cy="managementTimeAllocation"

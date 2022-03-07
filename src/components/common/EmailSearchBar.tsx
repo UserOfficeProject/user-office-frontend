@@ -38,7 +38,6 @@ const EmailSearchBar: React.FC = (props) => {
             id="Email-input"
             type="email"
             component={TextField}
-            margin="normal"
             fullWidth
             flex="1"
             data-cy="email"

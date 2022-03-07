@@ -31,7 +31,6 @@ export const QuestionVisitBasisForm: FC<QuestionFormProps> = (props) => {
             id="Key-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'natural_key' }}
           />
@@ -41,7 +40,6 @@ export const QuestionVisitBasisForm: FC<QuestionFormProps> = (props) => {
             id="Question-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'question' }}
           />

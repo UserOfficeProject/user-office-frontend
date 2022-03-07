@@ -228,7 +228,6 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="name"
             disabled={isExecutingCall}
@@ -266,7 +265,6 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
             label="Access token"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             className={classes.darkerDisabledTextField}
             InputProps={{

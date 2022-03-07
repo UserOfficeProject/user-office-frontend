@@ -92,7 +92,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               id="password-input"
               type="password"
               component={TextField}
-              margin="normal"
               helperText="Password must contain at least 8 characters (including upper case, lower case and numbers)"
               autoComplete="new-password"
               fullWidth
@@ -104,7 +103,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
               type="password"
               component={TextField}
               autoComplete="new-password"
-              margin="normal"
               fullWidth
             />
             {passwordReset && (

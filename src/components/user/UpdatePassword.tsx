@@ -53,7 +53,6 @@ export default function UpdatePassword(props: { id: number }) {
                   id="password-input"
                   type="password"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   autoComplete="new-password"
                   data-cy="password"
@@ -67,7 +66,6 @@ export default function UpdatePassword(props: { id: number }) {
                   id="confirm-password-input"
                   type="password"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   autoComplete="new-password"
                   data-cy="confirmPassword"

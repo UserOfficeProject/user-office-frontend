@@ -182,7 +182,6 @@ const ProposalTechnicalReview = ({
                   id="time-allocation-input"
                   type="number"
                   component={TextField}
-                  margin="normal"
                   fullWidth
                   autoComplete="off"
                   data-cy="timeAllocation"

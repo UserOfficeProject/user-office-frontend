@@ -34,7 +34,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
             id="Key-Input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'natural_key' }}
           />
@@ -44,7 +43,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
             id="Question-Input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'question' }}
           />
@@ -53,7 +51,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
             id="Include-time-Input"
             label="Include time"
             component={FormikUICustomCheckbox}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'includeTime' }}
           />
@@ -63,7 +60,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
             label="Tooltip"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'tooltip' }}
           />
@@ -74,7 +70,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
               id="Is-Required-Input"
               label="Is required"
               component={FormikUICustomCheckbox}
-              margin="normal"
               fullWidth
               data-cy="required"
             />
@@ -87,7 +82,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="minDate"
               />
@@ -99,7 +93,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="maxDate"
               />
@@ -111,7 +104,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="defaultDate"
               />

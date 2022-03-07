@@ -59,7 +59,6 @@ const CreateProposalWorkflow: React.FC<CreateProposalWorkflowProps> = ({
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="name"
             disabled={isExecutingCall}
@@ -70,7 +69,6 @@ const CreateProposalWorkflow: React.FC<CreateProposalWorkflowProps> = ({
             label="Description"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             multiline
             rowsMax="16"

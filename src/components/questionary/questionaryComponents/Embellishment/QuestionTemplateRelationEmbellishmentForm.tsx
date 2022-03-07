@@ -32,7 +32,6 @@ export const QuestionTemplateRelationEmbellishmentForm: FC<
             name="config.html"
             type="text"
             component={FormikUICustomEditor}
-            margin="normal"
             fullWidth
             init={{
               skin: false,
@@ -50,7 +49,6 @@ export const QuestionTemplateRelationEmbellishmentForm: FC<
             id="plain-description-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="plain"
           />
@@ -59,7 +57,6 @@ export const QuestionTemplateRelationEmbellishmentForm: FC<
             name="config.omitFromPdf"
             component={FormikUICustomCheckbox}
             label="Omit from PDF"
-            margin="normal"
             fullWidth
             data-cy="omit"
           />

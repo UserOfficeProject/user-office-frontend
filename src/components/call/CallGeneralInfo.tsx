@@ -151,7 +151,6 @@ const CallGeneralInfo: React.FC<{
         id="short-code-input"
         type="text"
         component={TextField}
-        margin="normal"
         inputProps={{ maxLength: '20' }}
         fullWidth
         required
@@ -166,7 +165,6 @@ const CallGeneralInfo: React.FC<{
           component={DateTimePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
           required
           data-cy="start-date"
@@ -179,7 +177,6 @@ const CallGeneralInfo: React.FC<{
           component={DateTimePicker}
           textField={{
             fullWidth: true,
-            margin: 'normal',
           }}
           minDate={startCall}
           required
@@ -259,7 +256,6 @@ const CallGeneralInfo: React.FC<{
               </InputAdornment>
             ),
           }}
-          margin="normal"
           fullWidth
           data-cy="reference-number-format"
         />
@@ -319,7 +315,6 @@ const CallGeneralInfo: React.FC<{
         id="title-input"
         type="text"
         component={TextField}
-        margin="normal"
         fullWidth
         inputProps={{ maxLength: '100' }}
         data-cy="title"
@@ -330,7 +325,6 @@ const CallGeneralInfo: React.FC<{
         id="description-input"
         type="text"
         component={TextField}
-        margin="normal"
         multiline
         fullWidth
         data-cy="description"

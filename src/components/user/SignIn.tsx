@@ -140,7 +140,6 @@ export default function SignInSide() {
                 id="email-input"
                 type="text"
                 component={TextField}
-                margin="normal"
                 fullWidth
                 data-cy="input-email"
                 disabled={isSubmitting}
@@ -151,7 +150,6 @@ export default function SignInSide() {
                 id="Password-input"
                 type="password"
                 component={TextField}
-                margin="normal"
                 fullWidth
                 data-cy="input-password"
                 disabled={isSubmitting}

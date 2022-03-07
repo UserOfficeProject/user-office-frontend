@@ -76,7 +76,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="ID"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-id' }}
             disabled={isExecutingCall}
@@ -88,7 +87,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-name' }}
             disabled={isExecutingCall}
@@ -108,7 +106,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
               <MuiTextField
                 {...params}
                 label="Quantity"
-                margin="normal"
                 placeholder="Quantity"
                 required
               />
@@ -119,7 +116,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="Symbol"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-symbol' }}
             disabled={isExecutingCall}
@@ -130,7 +126,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="SI conversion formula"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-siConversionFormula' }}
             disabled={isExecutingCall}

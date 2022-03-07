@@ -60,7 +60,6 @@ export const QuestionTemplateRelationNumberForm: FC<
               id="small-label-id"
               type="text"
               component={TextField}
-              margin="normal"
               fullWidth
               inputProps={{ 'data-cy': 'small-label' }}
             />
@@ -69,7 +68,6 @@ export const QuestionTemplateRelationNumberForm: FC<
                 name="config.required"
                 component={FormikUICustomCheckbox}
                 label="Check to make this field mandatory"
-                margin="normal"
                 fullWidth
                 InputProps={{ 'data-cy': 'required' }}
               />

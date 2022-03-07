@@ -57,7 +57,6 @@ const AddSEP: React.FC<AddSEPProps> = ({ close }) => {
             label="Code"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="code"
             disabled={isExecutingCall}
@@ -68,7 +67,6 @@ const AddSEP: React.FC<AddSEPProps> = ({ close }) => {
             label="Description"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             multiline
             rowsMax="16"
@@ -83,7 +81,6 @@ const AddSEP: React.FC<AddSEPProps> = ({ close }) => {
             label="Number of ratings required"
             type="number"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="numberRatingsRequired"
             disabled={isExecutingCall}

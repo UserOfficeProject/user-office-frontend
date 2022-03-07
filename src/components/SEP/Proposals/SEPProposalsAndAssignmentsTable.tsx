@@ -325,6 +325,10 @@ const SEPProposalsAndAssignmentsTable: React.FC<
     [setSEPProposalsData, sepId, api]
   );
 
+  const SEPProposalsWitId = initialValues.map((sepProposal) =>
+    Object.assign(sepProposal, { id: sepProposal.proposalPk })
+  );
+
   return (
     <React.Fragment>
       <ProposalReviewModal
@@ -375,9 +379,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
                 SEP Proposals
               </Typography>
             }
-            data={initialValues.map((sepProposal) =>
-              Object.assign(sepProposal, { id: sepProposal.proposalPk })
-            )}
+            data={SEPProposalsWitId}
             isLoading={loadingSEPProposals}
             localization={{
               toolbar: {

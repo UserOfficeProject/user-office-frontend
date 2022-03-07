@@ -136,7 +136,6 @@ const QuestionDependencyList: React.FC<QuestionDependencyListProps> = ({
                       template={template}
                       dependency={dependency}
                       currentQuestionId={currentQuestionId}
-                      margin="normal"
                       fullWidth
                       inputProps={{ 'data-cy': 'dependencies' }}
                     />

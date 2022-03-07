@@ -204,12 +204,14 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
 
   const AddPersonIcon = (): JSX.Element => <PersonAdd data-cy="add-member" />;
 
-  const alreadySelectedMembers = (SEPReviewersData ?? []).map(
-    ({ userId }) => userId
-  );
+  const alreadySelectedMembers = SEPReviewersData.map(({ userId }) => userId);
 
   sepData.sepChair && alreadySelectedMembers.push(sepData.sepChair.id);
   sepData.sepSecretary && alreadySelectedMembers.push(sepData.sepSecretary.id);
+
+  const SEPReviewersDataWithId = SEPReviewersData.map((sepReviewer) =>
+    Object.assign(sepReviewer, { id: sepReviewer.userId })
+  );
 
   return (
     <>
@@ -373,9 +375,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                 </Typography>
               }
               columns={columns}
-              data={(SEPReviewersData ?? []).map((sepReviewer) =>
-                Object.assign(sepReviewer, { id: sepReviewer.userId })
-              )}
+              data={SEPReviewersDataWithId}
               editable={
                 hasAccessRights
                   ? {

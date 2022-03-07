@@ -23,6 +23,16 @@ import SEPStatusFilter, {
   SEPStatus,
 } from './SEPStatusFilter';
 
+const columns = [
+  { title: 'Code', field: 'code' },
+  { title: 'Description', field: 'description' },
+  {
+    title: 'Active',
+    field: 'active',
+    render: (rowData: Sep): string => (rowData.active ? 'Yes' : 'No'),
+  },
+];
+
 const SEPsTable: React.FC = () => {
   const { currentRole } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
@@ -33,15 +43,6 @@ const SEPsTable: React.FC = () => {
     SEPs,
     setSEPsWithLoading: setSEPs,
   } = useSEPsData('', sepFilter, currentRole as UserRole);
-  const columns = [
-    { title: 'Code', field: 'code' },
-    { title: 'Description', field: 'description' },
-    {
-      title: 'Active',
-      field: 'active',
-      render: (rowData: Sep): string => (rowData.active ? 'Yes' : 'No'),
-    },
-  ];
   const [editSEPID, setEditSEPID] = useState(0);
 
   const [urlQueryParams, setUrlQueryParams] = useQueryParams<

@@ -90,6 +90,11 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     PROPOSAL_MODAL_TAB_NAMES.GRADE,
   ];
 
+  const SEPAssignmentsWithId = (sepProposal.assignments as SepAssignment[]).map(
+    (sepAssignment) =>
+      Object.assign(sepAssignment, { id: sepAssignment.sepMemberUserId })
+  );
+
   return (
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
       <ProposalReviewModal
@@ -111,10 +116,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         icons={tableIcons}
         columns={assignmentColumns}
         title={'Assigned reviewers'}
-        data={(sepProposal.assignments as SepAssignment[]).map(
-          (sepAssignment) =>
-            Object.assign(sepAssignment, { id: sepAssignment.sepMemberUserId })
-        )}
+        data={SEPAssignmentsWithId}
         editable={
           hasAccessRights
             ? {

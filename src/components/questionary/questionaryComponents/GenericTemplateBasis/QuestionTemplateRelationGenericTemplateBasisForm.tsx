@@ -31,7 +31,6 @@ export const QuestionTemplateRelationGenericTemplateBasisForm: FC<
               name="config.questionLabel"
               label="Question"
               component={TextField}
-              margin="normal"
               type="text"
               inputProps={{ 'data-cy': 'question' }}
             />

@@ -49,7 +49,6 @@ const CreateTemplate = (props: {
               name="name"
               label="Name"
               component={TextField}
-              margin="normal"
               fullWidth
               data-cy="name"
             />
@@ -58,7 +57,6 @@ const CreateTemplate = (props: {
               name="description"
               label="Description"
               component={TextField}
-              margin="normal"
               fullWidth
               multiline
               rowsMax="16"

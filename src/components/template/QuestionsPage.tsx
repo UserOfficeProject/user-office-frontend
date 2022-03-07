@@ -15,6 +15,24 @@ import AnswerCountDetails from './AnswerCountDetails';
 import QuestionsTableFilter from './QuestionsTableFilter';
 import TemplateCountDetails from './TemplateCountDetails';
 
+const columns = [
+  { title: 'Question', field: 'question' },
+  { title: 'Key', field: 'naturalKey' },
+  { title: 'Category', field: 'categoryId' },
+  {
+    title: '# Answers',
+    field: 'answerCountButton',
+    customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
+      a.answers.length - b.answers.length,
+  },
+  {
+    title: '# Templates',
+    field: 'templateCountButton',
+    customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
+      a.templates.length - b.templates.length,
+  },
+];
+
 function QuestionsPage() {
   const { questions, setQuestions, setQuestionsFilter, loadingQuestions } =
     useCreatableQuestions();
@@ -62,23 +80,11 @@ function QuestionsPage() {
     </Link>
   );
 
-  const columns = [
-    { title: 'Question', field: 'question' },
-    { title: 'Key', field: 'naturalKey' },
-    { title: 'Category', field: 'categoryId' },
-    {
-      title: '# Answers',
-      render: answerCountButton,
-      customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
-        a.answers.length - b.answers.length,
-    },
-    {
-      title: '# Templates',
-      render: templateCountButton,
-      customSort: (a: QuestionWithUsage, b: QuestionWithUsage) =>
-        a.templates.length - b.templates.length,
-    },
-  ];
+  const questionsWithButtons = questions.map((question) => ({
+    ...question,
+    answerCountButton: answerCountButton(question),
+    templateCountButton: templateCountButton(question),
+  }));
 
   return (
     <StyledContainer>
@@ -107,7 +113,7 @@ function QuestionsPage() {
                 }
                 columns={columns}
                 isLoading={loadingQuestions}
-                data={questions}
+                data={questionsWithButtons}
                 options={{ search: false }}
                 hasAccess={{ create: false, update: true, remove: true }}
               />

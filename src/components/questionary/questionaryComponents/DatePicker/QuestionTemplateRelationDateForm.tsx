@@ -29,7 +29,6 @@ export const QuestionTemplateRelationDateForm: FC<
             name="config.includeTime"
             label="Include time"
             component={FormikUICustomCheckbox}
-            margin="normal"
             fullWidth
             inputProps={{ 'data-cy': 'includeTime' }}
           />
@@ -39,7 +38,6 @@ export const QuestionTemplateRelationDateForm: FC<
             id="tooltip-input"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             data-cy="tooltip"
           />
@@ -48,7 +46,6 @@ export const QuestionTemplateRelationDateForm: FC<
               name="config.required"
               label="Is required"
               component={FormikUICustomCheckbox}
-              margin="normal"
               fullWidth
               data-cy="required"
             />
@@ -62,7 +59,6 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="minDate"
               />
@@ -74,7 +70,6 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="maxDate"
               />
@@ -86,7 +81,6 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
-                  margin: 'normal',
                 }}
                 data-cy="defaultDate"
               />
