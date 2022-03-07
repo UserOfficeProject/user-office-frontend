@@ -418,8 +418,7 @@ context('Settings tests', () => {
 
       cy.get('[title="Edit"]').last().click();
 
-      cy.contains('Edit').click();
-
+      cy.get('[data-cy="Edit-button"]').click();
       cy.get('#name').clear().type(updatedWorkflowName);
       cy.get('#description').clear().type(updatedWorkflowDescription);
       cy.get('[data-cy="submit"]').click();
@@ -719,9 +718,10 @@ context('Settings tests', () => {
 
       cy.get('[role="dialog"]').should('not.exist');
       cy.get("[title='Show Reviewers']").first().click();
-      cy.contains('Nilsson').parent().find('[title="Review proposal"]').click();
-
-      cy.get('[role="dialog"]').contains('Grade').click({ force: true });
+      cy.contains('Nilsson')
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
 
       cy.setTinyMceContent('comment', faker.lorem.words(3));
 

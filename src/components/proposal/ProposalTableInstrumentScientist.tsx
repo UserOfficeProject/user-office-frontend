@@ -13,7 +13,7 @@ import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
 import ProposalReviewContent, {
-  TabNames,
+  PROPOSAL_MODAL_TAB_NAMES,
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import { UserContext } from 'context/UserContextProvider';
@@ -96,13 +96,16 @@ const ProposalTableInstrumentScientist: React.FC = () => {
           }
         >
           <IconButton
-            data-cy="view-proposal"
             onClick={() => {
               setUrlQueryParams({ reviewModal: rowData.primaryKey });
             }}
             style={iconButtonStyle}
           >
-            {showView ? <Visibility /> : <Edit />}
+            {showView ? (
+              <Visibility data-cy="view-proposal-and-technical-review" />
+            ) : (
+              <Edit data-cy="edit-technical-review" />
+            )}
           </IconButton>
         </Tooltip>
 
@@ -138,7 +141,9 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     {
       title: 'Time allocation',
       render: (rowData) =>
-        `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`,
+        `${rowData.technicalTimeAllocation ?? 0} (${
+          rowData.allocationTimeUnit
+        }s)`,
       hidden: false,
     },
     {
@@ -160,7 +165,7 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     },
     {
       title: 'Instrument',
-      field: 'instrument.name',
+      field: 'instrumentName',
       emptyValue: '-',
     },
     {
@@ -199,9 +204,9 @@ const ProposalTableInstrumentScientist: React.FC = () => {
     (proposal) => proposal.primaryKey === urlQueryParams.reviewModal
   );
 
-  const instrumentScientistProposalReviewTabs: TabNames[] = [
-    'Proposal information',
-    'Technical review',
+  const instrumentScientistProposalReviewTabs = [
+    PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
+    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
   ];
 
   return (
