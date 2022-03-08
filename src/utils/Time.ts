@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import moment, { Moment } from 'moment';
 
 import { Scalars } from 'generated/sdk';
@@ -87,22 +88,16 @@ export function timeAgo(dateParam: Date | Scalars['DateTime'] | null): string {
   return getFormattedDate(date); // 10. January 2017. at 10:20
 }
 
-export function daysRemaining(date: Date) {
-  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  const firstDate = new Date();
-  const secondDate = date;
-
-  return Math.round(
-    Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
-  );
-}
-
 export function timeRemaining(toDate: Date): string {
-  const diff = toDate.getTime() - new Date().getTime();
+  const fromNow = DateTime.now();
+  const untilDate = DateTime.fromJSDate(toDate);
 
-  const minutes = Math.floor(diff / 1000 / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const { days, hours, minutes } = untilDate.diff(fromNow, [
+    'days',
+    'hours',
+    'minutes',
+    'seconds',
+  ]);
 
   if (days > 30) {
     return '';

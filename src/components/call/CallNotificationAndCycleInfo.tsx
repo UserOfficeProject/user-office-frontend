@@ -36,6 +36,7 @@ const CallCycleInfo: React.FC = () => {
           label="Start of notification period"
           id="start-notification-period-input"
           inputFormat="yyyy-MM-dd"
+          allowSameDateSelection
           component={DatePicker}
           textField={{
             fullWidth: true,
@@ -47,6 +48,7 @@ const CallCycleInfo: React.FC = () => {
           id="end-notification-period-input"
           inputFormat="yyyy-MM-dd"
           minDate={startNotify}
+          allowSameDateSelection
           component={DatePicker}
           textField={{
             fullWidth: true,
@@ -58,10 +60,11 @@ const CallCycleInfo: React.FC = () => {
           id="start-cycle-input"
           inputFormat="yyyy-MM-dd"
           component={DatePicker}
+          allowSameDateSelection
           textField={{
             fullWidth: true,
+            'data-cy': 'start-cycle',
           }}
-          data-cy="start-cycle"
         />
         <Field
           name="endCycle"
@@ -70,10 +73,11 @@ const CallCycleInfo: React.FC = () => {
           inputFormat="yyyy-MM-dd"
           minDate={startCycle}
           component={DatePicker}
+          allowSameDateSelection
           textField={{
             fullWidth: true,
+            'data-cy': 'end-cycle',
           }}
-          data-cy="end-cycle"
         />
       </LocalizationProvider>
       <Field

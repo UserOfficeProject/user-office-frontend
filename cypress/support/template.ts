@@ -24,7 +24,7 @@ import { getE2EApi } from './utils';
 
 const navigateToTemplatesSubmenu = (submenuName: string) => {
   cy.contains('Templates').click();
-  cy.get(`[title='${submenuName}']`).first().click();
+  cy.get(`[aria-label='${submenuName}']`).children().first().click();
 };
 
 const createTopic = (
@@ -276,19 +276,19 @@ function createMultipleChoiceQuestion(
   if (options?.option1) {
     cy.get('[data-cy=add-answer-button]').closest('button').click();
     cy.get('[placeholder=Answer]').type(options?.option1);
-    cy.get('[title="Save"]').click();
+    cy.get('[aria-label="Save"]').click();
   }
 
   if (options?.option2) {
     cy.get('[data-cy=add-answer-button]').closest('button').click();
     cy.get('[placeholder=Answer]').type(options.option2);
-    cy.get('[title="Save"]').click();
+    cy.get('[aria-label="Save"]').click();
   }
 
   if (options?.option3) {
     cy.get('[data-cy=add-answer-button]').closest('button').click();
     cy.get('[placeholder=Answer]').type(options.option3);
-    cy.get('[title="Save"]').click();
+    cy.get('[aria-label="Save"]').click();
   }
 
   cy.contains('Save').click();
@@ -336,7 +336,7 @@ function createNumberInputQuestion(
 
   if (options?.units && options.units.length > 0) {
     for (const unit of options.units) {
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
       cy.contains(unit).click();
     }
   }
@@ -364,7 +364,7 @@ function createIntervalQuestion(
 
   if (options?.units && options.units.length > 0) {
     for (const unit of options.units) {
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
       cy.contains(unit).click();
     }
   }

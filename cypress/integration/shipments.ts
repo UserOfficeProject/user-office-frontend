@@ -105,7 +105,7 @@ context('Shipments tests', () => {
 
     cy.contains(existingProposal.title)
       .parent()
-      .find(`[title="${declareShipmentTitle}"]`)
+      .find(`[aria-label="${declareShipmentTitle}"]`)
       .click();
 
     cy.get('[data-cy=add-button]').click();

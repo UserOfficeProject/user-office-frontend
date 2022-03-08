@@ -24,7 +24,7 @@ function Questionary({ title, info }: QuestionaryProps) {
   const useStyles = makeStyles((theme) => ({
     stepper: {
       margin: theme.spacing(3, 0),
-      overflowX: 'auto',
+      overflowX: 'auto', // TODO: Check this because it opens scroll all the time.
       '&::-webkit-scrollbar': {
         webkitAppearance: 'none',
         maxWidth: '10px',

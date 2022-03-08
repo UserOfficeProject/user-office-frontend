@@ -41,10 +41,10 @@ context('Units tests', () => {
 
       cy.contains(BECQUEREL_UNIT_TITLE)
         .closest('tr')
-        .find('[title=Delete]')
+        .find('[aria-label=Delete]')
         .click();
 
-      cy.get('[title=Save]').click();
+      cy.get('[aria-label=Save]').click();
 
       cy.contains(BECQUEREL_UNIT_TITLE).should('not.exist');
     });

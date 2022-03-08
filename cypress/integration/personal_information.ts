@@ -67,7 +67,10 @@ context('Personal information tests', () => {
 
     cy.finishedLoading();
 
-    cy.contains('Andersson').parent().find('button[title="Edit user"]').click();
+    cy.contains('Andersson')
+      .parent()
+      .find('button[aria-label="Edit user"]')
+      .click();
 
     cy.get('main').as('mainContentElement');
     cy.get('@mainContentElement').contains('Settings').click();

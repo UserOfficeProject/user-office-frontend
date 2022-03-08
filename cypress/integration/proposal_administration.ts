@@ -372,7 +372,7 @@ context('Proposal administration tests', () => {
 
       cy.contains(proposalName1)
         .parent()
-        .get('[title="Edit proposal"]')
+        .get('[aria-label="Edit proposal"]')
         .click();
 
       cy.finishedLoading();
@@ -576,7 +576,7 @@ context('Proposal administration tests', () => {
 
       cy.contains(proposalName2)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
       cy.finishedLoading();
       cy.contains('Save and continue').click();

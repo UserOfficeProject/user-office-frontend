@@ -261,7 +261,10 @@ context('GenericTemplates tests', () => {
 
       cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.contains(proposalTemplateName).parent().find('[title="Edit"]').click();
+      cy.contains(proposalTemplateName)
+        .parent()
+        .find('[aria-label="Edit"]')
+        .click();
 
       cy.finishedLoading();
 
@@ -434,7 +437,7 @@ context('GenericTemplates tests', () => {
         .find('input[type="checkbox"]')
         .click();
 
-      cy.get('[title="Clone proposals to call"]').click();
+      cy.get('[aria-label="Clone proposals to call"]').click();
 
       cy.get('#selectedCallId-input').click();
       cy.get('[role="presentation"]').contains(updatedCall.shortCode).click();
@@ -448,7 +451,7 @@ context('GenericTemplates tests', () => {
 
       cy.contains(`Copy of ${proposalTitle[1]}`)
         .parent()
-        .find('[title="View proposal"]')
+        .find('[aria-label="View proposal"]')
         .click();
 
       cy.contains('Edit proposal').click();
@@ -556,7 +559,7 @@ context('GenericTemplates tests', () => {
 
       cy.get("input[type='checkbox']").first().click();
 
-      cy.get("[title='Delete proposals']").first().click();
+      cy.get("[aria-label='Delete proposals']").first().click();
 
       cy.get('[data-cy="confirm-ok"]').click();
 

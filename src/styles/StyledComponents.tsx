@@ -37,21 +37,19 @@ export const StyledPaper = styled(Paper, {
 
 export const StyledFormWrapper = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'margin' && prop !== 'padding',
-})<BoxProps & StyledComponentProps>(
-  ({ margin, display, flexDirection, alignItems, overflow, theme }) => {
-    const marginValue: string | number | undefined = Array.isArray(margin)
-      ? getValueFromArrayProperty(margin, theme)
-      : margin;
+})<BoxProps & StyledComponentProps>(({ margin, theme }) => {
+  const marginValue: string | number | undefined = Array.isArray(margin)
+    ? getValueFromArrayProperty(margin, theme)
+    : margin;
 
-    return {
-      margin: marginValue || theme.spacing(3, 0),
-      display: display || 'flex',
-      flexDirection: flexDirection || 'column',
-      alignItems: alignItems || 'center',
-      overflow: overflow || 'auto',
-    };
-  }
-);
+  return {
+    margin: marginValue || theme.spacing(3, 0),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflow: 'auto',
+  };
+});
 
 export const StyledContainer = styled(Container, {
   shouldForwardProp: (prop) => prop !== 'margin' && prop !== 'padding',

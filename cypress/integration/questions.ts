@@ -20,7 +20,7 @@ context('Questions tests', () => {
 
     cy.contains(initialDBData.template.name)
       .parent()
-      .get("[title='Edit']")
+      .get("[aria-label='Edit']")
       .click();
 
     cy.createTextQuestion(textQuestion, {

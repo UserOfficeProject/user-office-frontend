@@ -163,24 +163,28 @@ const CallGeneralInfo: React.FC<{
           id="start-call-input"
           inputFormat="yyyy-MM-dd HH:mm"
           component={DateTimePicker}
+          allowSameDateSelection
           textField={{
             fullWidth: true,
+            required: true,
+            'data-cy': 'start-date',
           }}
           required
-          data-cy="start-date"
         />
         <Field
           name="endCall"
           label={`End (${timezone})`}
           id="end-call-input"
           inputFormat="yyyy-MM-dd HH:mm"
+          allowSameDateSelection
           component={DateTimePicker}
           textField={{
             fullWidth: true,
+            required: true,
+            'data-cy': 'end-date',
           }}
           minDate={startCall}
           required
-          data-cy="end-date"
         />
         <Field
           name="referenceNumberFormat"

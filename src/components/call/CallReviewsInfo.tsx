@@ -38,10 +38,11 @@ const CallReviewAndNotification: React.FC = () => {
           id="start-review-input"
           inputFormat="yyyy-MM-dd"
           component={DatePicker}
+          allowSameDateSelection
           textField={{
             fullWidth: true,
+            'data-cy': 'start-review',
           }}
-          data-cy="start-review"
         />
         <Field
           name="endReview"
@@ -50,6 +51,7 @@ const CallReviewAndNotification: React.FC = () => {
           inputFormat="yyyy-MM-dd"
           minDate={startReview}
           component={DatePicker}
+          allowSameDateSelection
           textField={{
             fullWidth: true,
           }}
@@ -59,6 +61,7 @@ const CallReviewAndNotification: React.FC = () => {
           label="Start of SEP review"
           id="start-sep-review-input"
           inputFormat="yyyy-MM-dd"
+          allowSameDateSelection
           component={DatePicker}
           textField={{
             fullWidth: true,
@@ -69,6 +72,7 @@ const CallReviewAndNotification: React.FC = () => {
           label="End of SEP review"
           id="end-sep-review-input"
           inputFormat="yyyy-MM-dd"
+          allowSameDateSelection
           minDate={endSEPReview}
           component={DatePicker}
           textField={{

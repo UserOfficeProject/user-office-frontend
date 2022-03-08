@@ -352,7 +352,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -495,14 +495,14 @@ context('Template tests', () => {
 
       cy.contains(multipleChoiceQuestion.answers[1])
         .parent()
-        .find('[title=Up]')
+        .find('[aria-label=Up]')
         .click();
 
       cy.get('[index=0]').contains(multipleChoiceQuestion.answers[1]);
 
       cy.contains(multipleChoiceQuestion.answers[1])
         .parent()
-        .find('[title=Down]')
+        .find('[aria-label=Down]')
         .click();
 
       cy.contains('Save').click();
@@ -595,7 +595,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -621,7 +621,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Clone']")
+        .find("[aria-label='Clone']")
         .first()
         .click();
 
@@ -639,7 +639,7 @@ context('Template tests', () => {
 
       cy.contains(`Copy of ${initialDBData.template.name}`)
         .parent()
-        .find("[title='Delete']")
+        .find("[aria-label='Delete']")
         .first()
         .click();
 
@@ -656,7 +656,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Archive']")
+        .find("[aria-label='Archive']")
         .first()
         .click();
 
@@ -672,7 +672,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Unarchive']")
+        .find("[aria-label='Unarchive']")
         .first()
         .click();
 
@@ -689,7 +689,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -778,7 +778,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -794,11 +794,11 @@ context('Template tests', () => {
 
       cy.get('[data-cy=question]').clear().type(numberQuestion2.title);
 
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
 
       cy.contains('celsius').click();
 
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
 
       cy.contains('kelvin').click();
 
@@ -828,11 +828,11 @@ context('Template tests', () => {
 
       cy.get('[data-cy=question]').clear().type(numberQuestion3.title);
 
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
 
       cy.contains('celsius').click();
 
-      cy.get('[data-cy=units]').find('[title=Open]').click();
+      cy.get('[data-cy=units]').find('[aria-label=Open]').click();
 
       cy.contains('kelvin').click();
 
@@ -919,7 +919,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -960,7 +960,7 @@ context('Template tests', () => {
 
       cy.contains(proposal.title)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
 
       cy.contains('save and continue', { matchCase: false }).click();
@@ -1010,7 +1010,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1191,7 +1191,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .closest('TR')
-        .find('[title="Export"]')
+        .find('[aria-label="Export"]')
         .click();
 
       cy.fixture('template_export.json').then((expectedExport) => {
@@ -1232,7 +1232,7 @@ context('Template tests', () => {
 
       cy.contains(proposal.title)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
 
       cy.contains('save and continue', { matchCase: false }).click();
@@ -1314,7 +1314,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1372,7 +1372,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1408,7 +1408,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1447,7 +1447,7 @@ context('Template tests', () => {
 
       cy.contains(proposal.title)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
 
       cy.contains('save and continue', { matchCase: false }).click();
@@ -1503,7 +1503,7 @@ context('Template tests', () => {
 
       cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.get('[title="Edit"]').last().click();
+      cy.get('[aria-label="Edit"]').last().click();
 
       cy.contains(textQuestion.title).click();
 
@@ -1532,7 +1532,7 @@ context('Template tests', () => {
 
       cy.contains(proposal.title)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
 
       cy.contains('save and continue', { matchCase: false }).click();
@@ -1566,7 +1566,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1603,7 +1603,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1618,7 +1618,7 @@ context('Template tests', () => {
 
       cy.contains(proposal.title)
         .parent()
-        .find('[title="Edit proposal"]')
+        .find('[aria-label="Edit proposal"]')
         .click();
       cy.finishedLoading();
 
@@ -1640,7 +1640,7 @@ context('Template tests', () => {
 
       cy.contains(fileName);
 
-      cy.get('[title="Add image caption"]').click();
+      cy.get('[aria-label="Add image caption"]').click();
 
       cy.get('[data-cy="image-figure"] input').type('Fig_test');
       cy.get('[data-cy="image-caption"] input').type('Test caption');

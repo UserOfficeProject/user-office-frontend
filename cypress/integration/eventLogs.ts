@@ -79,7 +79,7 @@ context('Event log tests', () => {
 
       cy.contains(loggedInUserParsed.lastname)
         .parent()
-        .find('button[title="Edit user"]')
+        .find('button[aria-label="Edit user"]')
         .click();
 
       cy.get("[name='firstname']").should('have.value', newFirstName);
