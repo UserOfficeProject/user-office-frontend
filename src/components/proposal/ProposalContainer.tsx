@@ -2,6 +2,7 @@
 import { Typography } from '@material-ui/core';
 import { default as React, useState } from 'react';
 
+import CopyToClipboard from 'components/common/CopyToClipboard';
 import Questionary from 'components/questionary/Questionary';
 import {
   QuestionaryContext,
@@ -52,7 +53,9 @@ export default function ProposalContainer(props: {
 
   const { submitted, proposalId } = state.proposal;
 
-  let info: JSX.Element | string = proposalId || 'DRAFT';
+  let info: JSX.Element | string =
+    <CopyToClipboard text={proposalId}>{proposalId}</CopyToClipboard> ||
+    'DRAFT';
 
   if (!submitted && hasReferenceNumberFormat && proposalId) {
     info = (
