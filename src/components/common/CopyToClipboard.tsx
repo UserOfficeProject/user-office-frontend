@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
 
 interface CopyToClipboardProps {
   text: string;
-  children: React.ReactChild;
+  children: React.ReactChild | React.ReactChild[];
   successMessage?: string;
 }
 const CopyToClipboard = (props: CopyToClipboardProps) => {
@@ -29,7 +29,14 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
 
   const isChildrenPrimitive =
     typeof children === 'string' || typeof children === 'number';
-  const childrenJsx = isChildrenPrimitive ? <span>{children}</span> : children;
+  const isChildrenArray = Array.isArray(children);
+  const childrenJsx = isChildrenPrimitive ? (
+    <span>{children}</span>
+  ) : isChildrenArray ? (
+    <>{children}</>
+  ) : (
+    children
+  );
 
   return (
     <>
