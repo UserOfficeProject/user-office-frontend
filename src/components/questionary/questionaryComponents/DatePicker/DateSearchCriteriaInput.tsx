@@ -1,4 +1,4 @@
-import DateFnsUtils from '@date-io/date-fns';
+import LuxonUtils from '@date-io/luxon';
 import {
   FormControl,
   Grid,
@@ -11,17 +11,21 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
 import { QuestionFilterCompareOperator } from 'generated/sdk';
+import { LUXON_DATE_FORMAT } from 'utils/Time';
 
 function DateSearchCriteriaInput({
   onChange,
   searchCriteria,
 }: SearchCriteriaInputProps) {
-  const [value, setValue] = useState<Date | null>(
-    searchCriteria ? new Date(searchCriteria?.value as string) : null
+  const [value, setValue] = useState<DateTime | null>(
+    searchCriteria
+      ? DateTime.fromFormat(searchCriteria?.value as string, LUXON_DATE_FORMAT)
+      : null
   );
   const [comparator, setComparator] = useState<QuestionFilterCompareOperator>(
     searchCriteria?.compareOperator ?? QuestionFilterCompareOperator.EQUALS
@@ -40,7 +44,7 @@ function DateSearchCriteriaInput({
                 .value as QuestionFilterCompareOperator;
               setComparator(newComparator);
               if (value) {
-                onChange(newComparator, value.toISOString());
+                onChange(newComparator, value.toFormat(LUXON_DATE_FORMAT));
               }
             }}
             value={comparator}
@@ -63,7 +67,7 @@ function DateSearchCriteriaInput({
         </FormControl>
       </Grid>
       <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiPickersUtilsProvider utils={LuxonUtils}>
           <KeyboardDatePicker
             disableToolbar
             format="yyyy-MM-dd"
@@ -72,14 +76,9 @@ function DateSearchCriteriaInput({
             label="Date"
             value={value}
             onChange={(date: MaterialUiPickersDate) => {
-              /*
-              DateFnsUtils uses native Date object, but use of Luxon elsewhere (in call modal)
-              causes incorrect type inference: https://github.com/dmtrKovalenko/date-io/issues/584
-              */
-              const newDate = date as unknown as Date;
-              if (newDate && !isNaN(newDate.getTime())) {
-                newDate.setUTCHours(0, 0, 0, 0);
-                onChange(comparator, newDate.toISOString());
+              const newDate = date as unknown as DateTime;
+              if (newDate && newDate.isValid) {
+                onChange(comparator, newDate.toFormat(LUXON_DATE_FORMAT));
               }
               setValue(newDate);
             }}

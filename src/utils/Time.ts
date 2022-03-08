@@ -117,6 +117,8 @@ export function timeRemaining(toDate: Date): string {
   }
 }
 
+export const LUXON_DATE_FORMAT = 'yyyy-MM-dd';
+
 export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
 
 export const TZ_LESS_DATE_TIME_LOW_PREC_FORMAT = 'yyyy-MM-DD HH:mm';

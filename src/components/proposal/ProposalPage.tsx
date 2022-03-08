@@ -1,6 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import {
+  BooleanParam,
   NumberParam,
   QueryParamConfig,
   StringParam,
@@ -31,6 +32,7 @@ export type ProposalUrlQueryParamsType = {
   questionId: QueryParamConfig<string | null | undefined>;
   value: QueryParamConfig<string | null | undefined>;
   dataType: QueryParamConfig<string | null | undefined>;
+  isNot: QueryParamConfig<boolean | null | undefined>;
 } & UrlQueryParamsType;
 
 export default function ProposalPage() {
@@ -45,6 +47,7 @@ export default function ProposalPage() {
       compareOperator: StringParam,
       value: StringParam,
       dataType: StringParam,
+      isNot: BooleanParam,
     });
   const [proposalFilter, setProposalFilter] = React.useState<ProposalsFilter>({
     callId: urlQueryParams.call,
