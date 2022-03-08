@@ -21,8 +21,6 @@ const useStyles = makeStyles((theme) => ({
   },
   singleUnit: {
     alignItems: 'flex-end',
-    display: 'flex',
-    height: '100%',
     fontSize: '1rem',
     padding: '0px 5px',
   },
@@ -129,7 +127,6 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
         </Grid>
         <Grid item xs={2} className={classes.unitField}>
           <TextField
-            label="Value"
             id={`${id}-value`}
             onChange={(event) => {
               const unit = stateValue.unit;
@@ -159,7 +156,7 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
             data-natural-key={naturalKey}
             type="number"
             name={valueFieldId}
-            margin="dense"
+            margin="none"
             fullWidth
             error={isError}
           />

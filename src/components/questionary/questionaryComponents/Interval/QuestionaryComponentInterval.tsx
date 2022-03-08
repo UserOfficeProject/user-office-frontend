@@ -20,8 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
   singleUnit: {
     alignItems: 'flex-end',
-    display: 'flex',
-    height: '100%',
     fontSize: '1rem',
     padding: '0px 5px',
   },
