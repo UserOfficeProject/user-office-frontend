@@ -37,26 +37,26 @@ context('visits tests', () => {
     cy.viewport(1920, 1080);
   });
 
-  // it('PI should see ESI assessment button ', () => {
-  //   cy.login(PI);
-  //   cy.visit('/');
+  it('PI should see ESI assessment button ', () => {
+    cy.login(PI);
+    cy.visit('/');
 
-  //   cy.testActionButton(proposalEsiIconCyTag, 'active');
-  // });
+    cy.testActionButton(proposalEsiIconCyTag, 'active');
+  });
 
-  // it('Co-proposer should see ESI button ', () => {
-  //   cy.login(coProposer);
-  //   cy.visit('/');
+  it('Co-proposer should see ESI button ', () => {
+    cy.login(coProposer);
+    cy.visit('/');
 
-  //   cy.testActionButton(proposalEsiIconCyTag, 'active');
-  // });
+    cy.testActionButton(proposalEsiIconCyTag, 'active');
+  });
 
-  // it('Visitor should not see ESI button', () => {
-  //   cy.login(visitor);
-  //   cy.visit('/');
+  it('Visitor should not see ESI button', () => {
+    cy.login(visitor);
+    cy.visit('/');
 
-  //   cy.testActionButton(proposalEsiIconCyTag, 'invisible');
-  // });
+    cy.testActionButton(proposalEsiIconCyTag, 'invisible');
+  });
 
   it('Should be able to complete ESI', () => {
     cy.login('user');
