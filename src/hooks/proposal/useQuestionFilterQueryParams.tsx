@@ -1,5 +1,7 @@
 import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
 
+import { QuestionFilterInput } from 'generated/sdk';
+
 export const useQuestionFilterQueryParams = () => {
   const [query, setQuery] = useQueryParams({
     questionId: StringParam,
@@ -8,13 +10,7 @@ export const useQuestionFilterQueryParams = () => {
     dataType: StringParam,
     isNot: BooleanParam,
   });
-  const setQuestionFilterQuery = (filter?: {
-    questionId: string;
-    compareOperator: string;
-    value: string;
-    dataType: string;
-    isNot: boolean;
-  }) => {
+  const setQuestionFilterQuery = (filter?: QuestionFilterInput) => {
     setQuery({
       questionId: filter?.questionId,
       compareOperator: filter?.compareOperator,
