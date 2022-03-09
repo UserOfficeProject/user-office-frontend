@@ -1,7 +1,7 @@
 import MaterialTable, { Column } from '@material-table/core';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
-import dateformat from 'dateformat';
+import { DateTime } from 'luxon';
 import React, { useCallback, useState } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
@@ -18,13 +18,13 @@ const callListColumns = [
     title: 'Start Date',
     field: 'startCall',
     render: (rowData: Call) =>
-      dateformat(new Date(rowData.startCall), 'dd-mmm-yyyy'),
+      DateTime.fromISO(rowData.startCall).toFormat('dd-MMM-yyyy'),
   },
   {
     title: 'End Date',
     field: 'endCall',
     render: (rowData: Call) =>
-      dateformat(new Date(rowData.endCall), 'dd-mmm-yyyy'),
+      DateTime.fromISO(rowData.endCall).toFormat('dd-MMM-yyyy'),
   },
 ];
 

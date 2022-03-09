@@ -177,7 +177,7 @@ context('visits tests', () => {
 
     cy.contains(startQuestion).parent().click().clear().type('101010');
     cy.get('[data-cy=save-and-continue-button]').click();
-    cy.contains(/invalid date format/i).should('exist');
+    cy.contains(/Invalid date/i).should('exist');
 
     cy.contains(startQuestion).parent().click().clear().type(endDate);
     cy.contains(endQuestion).parent().click().clear().type(startDate);

@@ -13,7 +13,7 @@ function FileUploadSearchCriteriaInput({
   return (
     <Grid container>
       <Grid item xs={12}>
-        <FormControl style={{ width: '100%' }}>
+        <FormControl fullWidth>
           <InputLabel shrink id="has-attachments">
             Has attachments
           </InputLabel>

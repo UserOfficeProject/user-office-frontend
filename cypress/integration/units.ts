@@ -18,7 +18,7 @@ context('Units tests', () => {
       cy.get('[data-cy="unit-id"]').clear().type('test');
       cy.get('[data-cy="unit-name"]').clear().type('test');
       cy.get('[data-cy="unit-quantity"]').click();
-      cy.get('#quantity-input-option-0').click();
+      cy.get('[role="presentation"] [role="option"]').first().click();
 
       cy.get('[data-cy="unit-symbol"]').clear().type('test');
       cy.get('[data-cy="unit-siConversionFormula"]').clear().type('x');
@@ -63,13 +63,13 @@ context('Units tests', () => {
       cy.get('[role=listbox]').contains('call 1').click();
       cy.get('[data-cy=question-search-toggle]').click();
       cy.get('#question-list').click();
-      cy.get('#question-list-option-0').click();
+      cy.get('[role="presentation"] [role="option"]').first().click();
       cy.get('body').click();
 
       cy.get('[data-cy=comparator]').click();
       cy.get('[data-value="LESS_THAN"]').click();
 
-      cy.get('[data-cy="value"]').clear().type('5');
+      cy.get('[data-cy="value"] input').clear().type('5');
 
       cy.get('[data-cy=unit-select]').click();
       cy.get('[data-value="centimeter"]').click();

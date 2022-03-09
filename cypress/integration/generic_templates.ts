@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { DateTime } from 'luxon';
 
 import {
   AllocationTimeUnits,
@@ -27,8 +28,7 @@ context('GenericTemplates tests', () => {
     description: faker.random.words(5),
   };
 
-  const currentDayStart = new Date();
-  currentDayStart.setHours(0, 0, 0, 0);
+  const currentDayStart = DateTime.now().startOf('day');
 
   const updatedCall = {
     id: initialDBData.call.id,

@@ -2,7 +2,7 @@ import MaterialTable from '@material-table/core';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import Visibility from '@mui/icons-material/Visibility';
 import makeStyles from '@mui/styles/makeStyles';
-import dateformat from 'dateformat';
+import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
@@ -52,7 +52,7 @@ const assignmentColumns = [
     title: 'Date assigned',
     field: 'dateAssigned',
     render: (rowData: SepAssignment): string =>
-      dateformat(new Date(rowData.dateAssigned), 'dd-mmm-yyyy HH:MM:ss'),
+      DateTime.fromISO(rowData.dateAssigned).toFormat('dd-MMM-yyyy HH:mm:ss'),
   },
   { title: 'Review status', field: 'review.status' },
   {

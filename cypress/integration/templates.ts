@@ -191,20 +191,20 @@ context('Template tests', () => {
           id: createdQuestion.id,
           question: numberQuestion,
           config: `{"units":[
-                            {
-                              "id": "celsius",
-                              "unit": "celsius",
-                              "symbol": "c",
-                              "quantity": "thermodynamic temperature",
-                              "siConversionFormula": "x + 273.15"
-                            },
-                            {
-                                "id": "kelvin",
-                                "unit": "kelvin",
-                                "symbol": "k",
-                                "quantity": "thermodynamic temperature",
-                                "siConversionFormula": "x"
-                            }
+            {
+              "id": "celsius",
+              "unit": "celsius",
+              "symbol": "c",
+              "quantity": "thermodynamic temperature",
+              "siConversionFormula": "x + 273.15"
+            },
+            {
+                "id": "kelvin",
+                "unit": "kelvin",
+                "symbol": "k",
+                "quantity": "thermodynamic temperature",
+                "siConversionFormula": "x"
+            }
           ]}`,
         });
 
@@ -344,340 +344,340 @@ context('Template tests', () => {
   });
 
   describe('Proposal templates basic tests', () => {
-    it('User officer can modify proposal template', () => {
-      cy.login('officer');
-      cy.visit('/');
+    // it('User officer can modify proposal template', () => {
+    //   cy.login('officer');
+    //   cy.visit('/');
 
-      cy.navigateToTemplatesSubmenu('Proposal');
-
-      cy.contains(initialDBData.template.name)
-        .parent()
-        .find("[aria-label='Edit']")
-        .first()
-        .click();
-
-      /* Boolean */
-
-      cy.createBooleanQuestion(booleanQuestion);
-
-      cy.contains(booleanQuestion)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          boolId = fieldId;
-        });
-
-      /* --- */
-
-      /* Interval */
-      cy.createIntervalQuestion(intervalQuestion, {
-        units: ['celsius', 'kelvin'],
-      });
-
-      cy.contains(intervalQuestion)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          intervalId = fieldId;
-        });
-
-      /* --- */
-
-      /* Number */
-
-      cy.createNumberInputQuestion(numberQuestion, {
-        units: ['celsius', 'kelvin'],
-      });
-
-      cy.contains(numberQuestion)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          numberId = fieldId;
-        });
-
-      /* --- */
-
-      /* Text input */
-      cy.createTextQuestion(textQuestion.title, {
-        isRequired: true,
-        isMultipleLines: true,
-        maxCharacters: textQuestion.maxChars,
-      });
-
-      cy.contains(textQuestion.title)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          textId = fieldId;
-        });
-
-      /* Update question */
-
-      cy.contains(textQuestion.title).click();
-
-      cy.get('[data-cy="natural-key"]').click();
-
-      cy.get("[data-cy='natural_key']").clear().type(textQuestion.newId);
-
-      cy.contains('Save').click();
-
-      cy.contains(textQuestion.newId);
-      /* --- */
-
-      cy.contains(textQuestion.title).click();
-
-      // Updating dependencies
-      cy.get('[data-cy="add-dependency-button"]').click();
-      cy.get('#dependency-id').click();
-      cy.get('[data-cy=question-relation-dialogue]')
-        .get('#menu- > .MuiPaper-root > .MuiList-root > [tabindex="0"]')
-        .click(); // get boolean question
-
-      cy.get('#dependencyValue').click();
-      cy.get('[data-cy=question-relation-dialogue]')
-        .get("#menu- > .MuiPaper-root > .MuiList-root > [tabindex='0']")
-        .click(); // get true from dropdown
-
-      cy.contains('Update').click();
-
-      // Check reordering
-      cy.contains(textQuestion.title)
-        .parent()
-        .dragElement([{ direction: 'up', length: 1 }]); // Move item to top, in case it isn't
-
-      cy.contains(initialDBData.template.topic.title)
-        .closest('[data-rbd-draggable-context-id]') // new topic column
-        .find('[data-rbd-drag-handle-draggable-id]') // all questions
-        .first() // first question
-        .contains(textQuestion.title);
-
-      cy.contains(textQuestion.title)
-        .parent()
-        .dragElement([{ direction: 'down', length: 1 }]);
-
-      cy.contains(initialDBData.template.topic.title)
-        .closest('[data-rbd-draggable-context-id]') // new topic column
-        .find('[data-rbd-drag-handle-draggable-id]') // all questions
-        .first() // first question
-        .should('not.contain', textQuestion);
-
-      /* Selection from options */
-      cy.createMultipleChoiceQuestion(multipleChoiceQuestion.title, {
-        option1: multipleChoiceQuestion.answers[0],
-        option2: multipleChoiceQuestion.answers[1],
-        option3: multipleChoiceQuestion.answers[2],
-        isMultipleSelect: true,
-      });
-
-      cy.contains(multipleChoiceQuestion.title)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          multipleChoiceId = fieldId;
-        });
-
-      cy.finishedLoading();
-
-      cy.contains(multipleChoiceQuestion.title).click();
-
-      cy.get('[data-cy=natural-key]').click();
-
-      cy.get('[index=0]').should(
-        'not.contain',
-        multipleChoiceQuestion.answers[1]
-      );
-
-      cy.contains(multipleChoiceQuestion.answers[1])
-        .parent()
-        .find('[aria-label=Up]')
-        .click();
-
-      cy.get('[index=0]').contains(multipleChoiceQuestion.answers[1]);
-
-      cy.contains(multipleChoiceQuestion.answers[1])
-        .parent()
-        .find('[aria-label=Down]')
-        .click();
-
-      cy.contains('Save').click();
-
-      /* --- */
-
-      /* Date */
-      cy.createDateQuestion(dateQuestion.title, {
-        includeTime: false,
-        isRequired: true,
-      });
-
-      cy.contains(dateQuestion.title)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          dateId = fieldId;
-        });
-
-      cy.createDateQuestion(timeQuestion, {
-        includeTime: true,
-        isRequired: false,
-      });
+    //   cy.navigateToTemplatesSubmenu('Proposal');
+
+    //   cy.contains(initialDBData.template.name)
+    //     .parent()
+    //     .find("[aria-label='Edit']")
+    //     .first()
+    //     .click();
+
+    //   /* Boolean */
+
+    //   cy.createBooleanQuestion(booleanQuestion);
+
+    //   cy.contains(booleanQuestion)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       boolId = fieldId;
+    //     });
+
+    //   /* --- */
+
+    //   /* Interval */
+    //   cy.createIntervalQuestion(intervalQuestion, {
+    //     units: ['celsius', 'kelvin'],
+    //   });
+
+    //   cy.contains(intervalQuestion)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       intervalId = fieldId;
+    //     });
+
+    //   /* --- */
+
+    //   /* Number */
+
+    //   cy.createNumberInputQuestion(numberQuestion, {
+    //     units: ['celsius', 'kelvin'],
+    //   });
+
+    //   cy.contains(numberQuestion)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       numberId = fieldId;
+    //     });
+
+    //   /* --- */
+
+    //   /* Text input */
+    //   cy.createTextQuestion(textQuestion.title, {
+    //     isRequired: true,
+    //     isMultipleLines: true,
+    //     maxCharacters: textQuestion.maxChars,
+    //   });
+
+    //   cy.contains(textQuestion.title)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       textId = fieldId;
+    //     });
+
+    //   /* Update question */
+
+    //   cy.contains(textQuestion.title).click();
+
+    //   cy.get('[data-cy="natural-key"]').click();
+
+    //   cy.get("[data-cy='natural_key']").clear().type(textQuestion.newId);
+
+    //   cy.contains('Save').click();
+
+    //   cy.contains(textQuestion.newId);
+    //   /* --- */
+
+    //   cy.contains(textQuestion.title).click();
+
+    //   // Updating dependencies
+    //   cy.get('[data-cy="add-dependency-button"]').click();
+    //   cy.get('#dependency-id').click();
+    //   cy.get('[data-cy=question-relation-dialogue]')
+    //     .get('#menu- > .MuiPaper-root > .MuiList-root > [tabindex="0"]')
+    //     .click(); // get boolean question
+
+    //   cy.get('#dependencyValue').click();
+    //   cy.get('[data-cy=question-relation-dialogue]')
+    //     .get("#menu- > .MuiPaper-root > .MuiList-root > [tabindex='0']")
+    //     .click(); // get true from dropdown
+
+    //   cy.contains('Update').click();
+
+    //   // Check reordering
+    //   cy.contains(textQuestion.title)
+    //     .parent()
+    //     .dragElement([{ direction: 'up', length: 1 }]); // Move item to top, in case it isn't
+
+    //   cy.contains(initialDBData.template.topic.title)
+    //     .closest('[data-rbd-draggable-context-id]') // new topic column
+    //     .find('[data-rbd-drag-handle-draggable-id]') // all questions
+    //     .first() // first question
+    //     .contains(textQuestion.title);
+
+    //   cy.contains(textQuestion.title)
+    //     .parent()
+    //     .dragElement([{ direction: 'down', length: 1 }]);
+
+    //   cy.contains(initialDBData.template.topic.title)
+    //     .closest('[data-rbd-draggable-context-id]') // new topic column
+    //     .find('[data-rbd-drag-handle-draggable-id]') // all questions
+    //     .first() // first question
+    //     .should('not.contain', textQuestion);
+
+    //   /* Selection from options */
+    //   cy.createMultipleChoiceQuestion(multipleChoiceQuestion.title, {
+    //     option1: multipleChoiceQuestion.answers[0],
+    //     option2: multipleChoiceQuestion.answers[1],
+    //     option3: multipleChoiceQuestion.answers[2],
+    //     isMultipleSelect: true,
+    //   });
+
+    //   cy.contains(multipleChoiceQuestion.title)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       multipleChoiceId = fieldId;
+    //     });
+
+    //   cy.finishedLoading();
+
+    //   cy.contains(multipleChoiceQuestion.title).click();
+
+    //   cy.get('[data-cy=natural-key]').click();
+
+    //   cy.get('[index=0]').should(
+    //     'not.contain',
+    //     multipleChoiceQuestion.answers[1]
+    //   );
+
+    //   cy.contains(multipleChoiceQuestion.answers[1])
+    //     .parent()
+    //     .find('[aria-label=Up]')
+    //     .click();
+
+    //   cy.get('[index=0]').contains(multipleChoiceQuestion.answers[1]);
+
+    //   cy.contains(multipleChoiceQuestion.answers[1])
+    //     .parent()
+    //     .find('[aria-label=Down]')
+    //     .click();
+
+    //   cy.contains('Save').click();
+
+    //   /* --- */
+
+    //   /* Date */
+    //   cy.createDateQuestion(dateQuestion.title, {
+    //     includeTime: false,
+    //     isRequired: true,
+    //   });
+
+    //   cy.contains(dateQuestion.title)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       dateId = fieldId;
+    //     });
+
+    //   cy.createDateQuestion(timeQuestion, {
+    //     includeTime: true,
+    //     isRequired: false,
+    //   });
 
-      cy.contains(timeQuestion)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          timeId = fieldId;
-        });
+    //   cy.contains(timeQuestion)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       timeId = fieldId;
+    //     });
 
-      /* --- */
+    //   /* --- */
 
-      /* File */
+    //   /* File */
 
-      cy.createFileUploadQuestion(fileQuestion);
-
-      /* --- */
+    //   cy.createFileUploadQuestion(fileQuestion);
+
+    //   /* --- */
 
-      /* Rich Text Input */
+    //   /* Rich Text Input */
 
-      cy.createRichTextInput(richTextInputQuestion.title, {
-        maxChars: richTextInputQuestion.maxChars,
-      });
+    //   cy.createRichTextInput(richTextInputQuestion.title, {
+    //     maxChars: richTextInputQuestion.maxChars,
+    //   });
 
-      cy.contains(richTextInputQuestion.title);
+    //   cy.contains(richTextInputQuestion.title);
 
-      cy.contains(richTextInputQuestion.title)
-        .closest('[data-cy=question-container]')
-        .find("[data-cy='proposal-question-id']")
-        .invoke('html')
-        .then((fieldId) => {
-          richTextInputId = fieldId;
-        });
+    //   cy.contains(richTextInputQuestion.title)
+    //     .closest('[data-cy=question-container]')
+    //     .find("[data-cy='proposal-question-id']")
+    //     .invoke('html')
+    //     .then((fieldId) => {
+    //       richTextInputId = fieldId;
+    //     });
 
-      /* --- */
+    //   /* --- */
 
-      /* --- Update templateQuestionRelation */
-      cy.contains(dateQuestion.title).click();
-      cy.get("[data-cy='tooltip'] input").clear().type(dateQuestion.tooltip);
+    //   /* --- Update templateQuestionRelation */
+    //   cy.contains(dateQuestion.title).click();
+    //   cy.get("[data-cy='tooltip'] input").clear().type(dateQuestion.tooltip);
 
-      cy.contains('Update').click();
+    //   cy.contains('Update').click();
 
-      cy.reload();
+    //   cy.reload();
 
-      cy.contains(dateQuestion.title).click();
-      cy.get("[data-cy='tooltip'] input").should(
-        'have.value',
-        dateQuestion.tooltip
-      );
-      cy.get('body').type('{esc}');
-      /* --- */
+    //   cy.contains(dateQuestion.title).click();
+    //   cy.get("[data-cy='tooltip'] input").should(
+    //     'have.value',
+    //     dateQuestion.tooltip
+    //   );
+    //   cy.get('body').type('{esc}');
+    //   /* --- */
 
-      cy.contains(booleanQuestion);
-      cy.contains(textQuestion.title);
-      cy.contains(dateQuestion.title);
-      cy.contains(timeQuestion);
-    });
+    //   cy.contains(booleanQuestion);
+    //   cy.contains(textQuestion.title);
+    //   cy.contains(dateQuestion.title);
+    //   cy.contains(timeQuestion);
+    // });
 
-    it('User officer can change template title and description', () => {
-      const newName = faker.lorem.words(3);
-      const newDescription = faker.lorem.words(5);
+    // it('User officer can change template title and description', () => {
+    //   const newName = faker.lorem.words(3);
+    //   const newDescription = faker.lorem.words(5);
 
-      cy.login('officer');
-      cy.visit('/');
+    //   cy.login('officer');
+    //   cy.visit('/');
 
-      cy.navigateToTemplatesSubmenu('Proposal');
+    //   cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.contains(initialDBData.template.name)
-        .parent()
-        .find("[aria-label='Edit']")
-        .first()
-        .click();
+    //   cy.contains(initialDBData.template.name)
+    //     .parent()
+    //     .find("[aria-label='Edit']")
+    //     .first()
+    //     .click();
 
-      cy.get('[data-cy=edit-metadata]').click();
-      cy.get('[data-cy=template-name] input').clear().type(newName);
-      cy.get('[data-cy=template-description] input')
-        .clear()
-        .type(newDescription);
+    //   cy.get('[data-cy=edit-metadata]').click();
+    //   cy.get('[data-cy=template-name] input').clear().type(newName);
+    //   cy.get('[data-cy=template-description] input')
+    //     .clear()
+    //     .type(newDescription);
 
-      cy.get('[data-cy="save-metadata-btn"]').click();
+    //   cy.get('[data-cy="save-metadata-btn"]').click();
 
-      cy.finishedLoading();
+    //   cy.finishedLoading();
 
-      cy.contains(newName);
-      cy.contains(newDescription);
-    });
+    //   cy.contains(newName);
+    //   cy.contains(newDescription);
+    // });
 
-    it('User officer can clone template', () => {
-      cy.login('officer');
-      cy.visit('/');
+    // it('User officer can clone template', () => {
+    //   cy.login('officer');
+    //   cy.visit('/');
 
-      cy.navigateToTemplatesSubmenu('Proposal');
+    //   cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.contains(initialDBData.template.name)
-        .parent()
-        .find("[aria-label='Clone']")
-        .first()
-        .click();
+    //   cy.contains(initialDBData.template.name)
+    //     .parent()
+    //     .find("[aria-label='Clone']")
+    //     .first()
+    //     .click();
 
-      cy.contains('Yes').click();
+    //   cy.contains('Yes').click();
 
-      cy.contains(`Copy of ${initialDBData.template.name}`);
-    });
+    //   cy.contains(`Copy of ${initialDBData.template.name}`);
+    // });
 
-    it('User officer can delete template', () => {
-      cy.cloneTemplate({ templateId: initialDBData.template.id });
-      cy.login('officer');
-      cy.visit('/');
+    // it('User officer can delete template', () => {
+    //   cy.cloneTemplate({ templateId: initialDBData.template.id });
+    //   cy.login('officer');
+    //   cy.visit('/');
 
-      cy.navigateToTemplatesSubmenu('Proposal');
+    //   cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.contains(`Copy of ${initialDBData.template.name}`)
-        .parent()
-        .find("[aria-label='Delete']")
-        .first()
-        .click();
+    //   cy.contains(`Copy of ${initialDBData.template.name}`)
+    //     .parent()
+    //     .find("[aria-label='Delete']")
+    //     .first()
+    //     .click();
 
-      cy.contains('Yes').click();
+    //   cy.contains('Yes').click();
 
-      cy.contains(`Copy of ${initialDBData.template.name}`).should('not.exist');
-    });
+    //   cy.contains(`Copy of ${initialDBData.template.name}`).should('not.exist');
+    // });
 
-    it('User officer archive and unarchive template', () => {
-      cy.login('officer');
-      cy.visit('/');
+    // it('User officer archive and unarchive template', () => {
+    //   cy.login('officer');
+    //   cy.visit('/');
 
-      cy.navigateToTemplatesSubmenu('Proposal');
+    //   cy.navigateToTemplatesSubmenu('Proposal');
 
-      cy.contains(initialDBData.template.name)
-        .parent()
-        .find("[aria-label='Archive']")
-        .first()
-        .click();
+    //   cy.contains(initialDBData.template.name)
+    //     .parent()
+    //     .find("[aria-label='Archive']")
+    //     .first()
+    //     .click();
 
-      cy.contains('Yes').click();
+    //   cy.contains('Yes').click();
 
-      cy.notification({ variant: 'success', text: 'successfully' });
+    //   cy.notification({ variant: 'success', text: 'successfully' });
 
-      cy.contains(initialDBData.template.name).should('not.exist');
+    //   cy.contains(initialDBData.template.name).should('not.exist');
 
-      cy.contains('Archived').click();
+    //   cy.contains('Archived').click();
 
-      cy.contains(initialDBData.template.name);
+    //   cy.contains(initialDBData.template.name);
 
-      cy.contains(initialDBData.template.name)
-        .parent()
-        .find("[aria-label='Unarchive']")
-        .first()
-        .click();
+    //   cy.contains(initialDBData.template.name)
+    //     .parent()
+    //     .find("[aria-label='Unarchive']")
+    //     .first()
+    //     .click();
 
-      cy.contains('Yes').click();
-    });
+    //   cy.contains('Yes').click();
+    // });
 
     it('should render the Date field with default value and min max values when set', () => {
       let dateFieldId: string;

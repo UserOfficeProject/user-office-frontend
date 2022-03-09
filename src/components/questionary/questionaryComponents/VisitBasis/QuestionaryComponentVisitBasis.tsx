@@ -39,6 +39,7 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
         required
         textField={{
           fullWidth: true,
+          required: true,
         }}
         InputLabelProps={{
           shrink: true,
@@ -61,6 +62,7 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
         required
         textField={{
           fullWidth: true,
+          required: true,
         }}
         InputLabelProps={{
           shrink: true,

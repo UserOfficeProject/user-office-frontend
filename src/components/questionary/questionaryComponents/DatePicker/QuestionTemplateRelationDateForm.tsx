@@ -59,8 +59,8 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
+                  'data-cy': 'minDate',
                 }}
-                data-cy="minDate"
               />
               <Field
                 name="config.maxDate"
@@ -70,8 +70,8 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
+                  'data-cy': 'maxDate',
                 }}
-                data-cy="maxDate"
               />
               <Field
                 name="config.defaultDate"
@@ -81,8 +81,8 @@ export const QuestionTemplateRelationDateForm: FC<
                 component={DatePicker}
                 textField={{
                   fullWidth: true,
+                  'data-cy': 'defaultDate',
                 }}
-                data-cy="defaultDate"
               />
             </LocalizationProvider>
           </TitledContainer>

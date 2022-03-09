@@ -11,10 +11,10 @@ import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { updateUserValidationSchema } from '@user-office-software/duo-validation';
-import dateformat from 'dateformat';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
+import { DateTime } from 'luxon';
 import React, { useEffect, useState, useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
@@ -161,9 +161,8 @@ export default function UpdateUserInformation(props: { id: number }) {
               : userData.gender,
           othergender: userData.gender,
           nationality: userData.nationality,
-          birthdate: dateformat(
-            new Date(parseInt(userData.birthdate)),
-            'yyyy-mm-dd'
+          birthdate: DateTime.fromMillis(parseInt(userData.birthdate)).toFormat(
+            'yyyy-MM-dd'
           ),
           organisation: userData.organisation,
           department: userData.department,
@@ -313,8 +312,8 @@ export default function UpdateUserInformation(props: { id: number }) {
                     component={DatePicker}
                     textField={{
                       fullWidth: true,
+                      'data-cy': 'birthdate',
                     }}
-                    data-cy="birthdate"
                   />
                 </LocalizationProvider>
               </Grid>

@@ -81,6 +81,12 @@ const ThemeWrapper: React.FC = (props) => {
             variant: 'standard',
           },
         },
+        MuiFormControl: {
+          defaultProps: {
+            variant: 'standard',
+            margin: 'none',
+          },
+        },
       },
     })
   );

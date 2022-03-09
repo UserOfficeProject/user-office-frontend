@@ -4,6 +4,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import FormControl from '@mui/material/FormControl';
 import { Field } from 'formik';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
+import { DateTime } from 'luxon';
 import React from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
@@ -16,28 +17,32 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
   const {
     question: { id, question },
   } = answer;
-  const { tooltip, required } = answer.config as DateConfig;
+  const { tooltip, required, minDate, maxDate } = answer.config as DateConfig;
 
   const dateFormat = 'yyyy-MM-dd';
   const timeFormat = `${dateFormat} HH:mm`;
 
+  console.log('aaaaaaa', question, answer);
+
+  debugger;
+
   const getDateField = () => (
     <Field
       required={required}
-      data-cy={`${id}.value`}
       id={`${id}-id`}
       name={id}
       label={question}
-      format={dateFormat}
+      inputFormat={dateFormat}
       component={DatePicker}
-      variant="inline"
       disableToolbar
       autoOk={true}
-      onChange={(date: Date | null) => {
-        const newDate = date;
-        newDate?.setHours(0, 0, 0, 0); // omit time
-        onComplete(newDate);
+      onChange={(date: DateTime) => onComplete(date.startOf('day'))}
+      textField={{
+        'data-cy': `${id}.value`,
+        required: required,
       }}
+      // minDate={minDate}
+      // maxDate={maxDate}
     />
   );
 
@@ -45,14 +50,17 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
     <>
       <Field
         required={required}
-        data-cy={`${id}.value`}
         id={`${id}-id`}
         name={id}
         label={question}
-        format={timeFormat}
+        inputFormat={timeFormat}
         component={DateTimePicker}
         onChange={(date: DateType | null) => {
           onComplete(date);
+        }}
+        textField={{
+          'data-cy': `${id}.value`,
+          required: required,
         }}
       />
     </>

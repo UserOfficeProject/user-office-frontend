@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { DateTime } from 'luxon';
 
 import {
   AllocationTimeUnits,
@@ -133,8 +134,7 @@ context('Settings tests', () => {
     let prevProposalStatusId: number;
     let createdEsiTemplateId: number;
 
-    const currentDayStart = new Date();
-    currentDayStart.setHours(0, 0, 0, 0);
+    const currentDayStart = DateTime.now().startOf('day');
 
     const updatedCall = {
       shortCode: faker.random.alphaNumeric(15),
@@ -717,7 +717,7 @@ context('Settings tests', () => {
       });
 
       cy.get('[role="dialog"]').should('not.exist');
-      cy.get("[aria-label='Show Reviewers']").first().click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
       cy.contains('Nilsson')
         .parent()
         .find('[data-cy="grade-proposal-icon"]')

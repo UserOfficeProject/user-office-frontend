@@ -84,7 +84,7 @@ function Questionary({ title, info }: QuestionaryProps) {
           );
 
           return (
-            <Step key={index}>
+            <Step key={index} completed={stepMetadata.isCompleted}>
               <QuestionaryStepButton
                 onClick={async () => {
                   dispatch({
@@ -92,7 +92,6 @@ function Questionary({ title, info }: QuestionaryProps) {
                     stepIndex: index,
                   });
                 }}
-                completed={stepMetadata.isCompleted}
                 readonly={stepMetadata.isReadonly && !isUserOfficer}
               >
                 <span>{stepMetadata.title}</span>

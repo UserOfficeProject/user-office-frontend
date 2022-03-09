@@ -39,11 +39,11 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
     },
     {
       label: 'Start date',
-      value: DateTime.fromISO(registration.startsAt).toFormat('YYYY-MM-DD'),
+      value: DateTime.fromISO(registration.startsAt).toFormat('yyyy-MM-dd'),
     },
     {
       label: 'End date',
-      value: DateTime.fromISO(registration.endsAt).toFormat('YYYY-MM-DD'),
+      value: DateTime.fromISO(registration.endsAt).toFormat('yyyy-MM-dd'),
     },
   ];
 

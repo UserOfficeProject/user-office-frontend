@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { DateTime } from 'luxon';
 
 import {
   AllocationTimeUnits,
@@ -24,11 +25,10 @@ context('Proposal tests', () => {
   let createdProposalPk: number;
   const textQuestion = faker.random.words(2);
 
-  const currentDayStart = new Date();
-  currentDayStart.setHours(0, 0, 0, 0);
-  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  const twoDaysAgo = new Date(new Date().setDate(new Date().getDate() - 2));
-  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+  const currentDayStart = DateTime.now().startOf('day');
+  const yesterday = currentDayStart.plus({ days: -1 });
+  const twoDaysAgo = currentDayStart.plus({ days: -2 });
+  const tomorrow = currentDayStart.plus({ days: 1 });
 
   const newCall = {
     shortCode: faker.random.alphaNumeric(15),

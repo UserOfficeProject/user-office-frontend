@@ -6,7 +6,7 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
-import dateformat from 'dateformat';
+import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useHistory } from 'react-router';
@@ -38,7 +38,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
   };
 
   const formatDate = (date: Date) => {
-    return dateformat(new Date(date), 'dd-mmm-yyyy HH:MM');
+    return DateTime.fromJSDate(date).toFormat('dd-MMM-yyyy HH:mm');
   };
 
   return (

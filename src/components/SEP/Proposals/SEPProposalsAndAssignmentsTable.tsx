@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Grid from '@mui/material/Grid';
-import dateformat from 'dateformat';
+import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
@@ -70,7 +70,7 @@ const SEPProposalColumns = [
     title: 'Date assigned',
     field: 'dateAssigned',
     render: (rowData: SEPProposalType): string =>
-      dateformat(new Date(rowData.dateAssigned), 'dd-mmm-yyyy HH:MM:ss'),
+      DateTime.fromISO(rowData.dateAssigned).toFormat('dd-MMM-yyyy HH:mm:ss'),
   },
   {
     title: 'Reviewers',

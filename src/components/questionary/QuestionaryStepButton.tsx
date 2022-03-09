@@ -25,7 +25,6 @@ export function QuestionaryStepButton(
   props: PropsWithChildren<{
     onClick: () => Promise<void>;
     active?: boolean;
-    completed?: boolean;
     clickable?: boolean;
     readonly: boolean;
   }>

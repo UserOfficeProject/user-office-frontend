@@ -13,10 +13,9 @@ context('Calls tests', () => {
   const esiTemplateName = faker.lorem.words(2);
   let workflowId: number;
 
-  const currentDayStart = new Date();
-  currentDayStart.setHours(0, 0, 0, 0);
-  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  const twoDaysAgo = new Date(new Date().setDate(new Date().getDate() - 2));
+  const currentDayStart = DateTime.now().startOf('day');
+  const yesterday = currentDayStart.plus({ days: -1 });
+  const twoDaysAgo = currentDayStart.plus({ days: -2 });
 
   const newCall = {
     shortCode: faker.random.alphaNumeric(15),
@@ -40,8 +39,8 @@ context('Calls tests', () => {
 
   const newInactiveCall = {
     shortCode: faker.random.alphaNumeric(15),
-    startCall: twoDaysAgo.toISOString(),
-    endCall: yesterday.toISOString(),
+    startCall: twoDaysAgo.toISO(),
+    endCall: yesterday.toISO(),
     startReview: currentDayStart,
     endReview: currentDayStart,
     startSEPReview: currentDayStart,

@@ -1,5 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, Collapse, Grid, TextField, Autocomplete } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { FC, useEffect, useState } from 'react';
 
 import { getQuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
@@ -19,7 +20,7 @@ import UOLoader from '../UOLoader';
 
 export interface SearchCriteria {
   compareOperator: QuestionFilterCompareOperator;
-  value: string | number | boolean | unknown[];
+  value: string | number | boolean | unknown[] | null;
 }
 
 interface QuestionaryFilterProps {
@@ -60,8 +61,16 @@ const extractSearchableQuestionsFromTemplate = (
     ); // only searchable questions
 };
 
+const useStyles = makeStyles((theme) => ({
+  questionList: {
+    flex: 1,
+    marginBottom: theme.spacing(1),
+  },
+}));
+
 function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
   const { template, isLoadingTemplate } = useTemplate(templateId);
+  const classes = useStyles();
 
   const { questionFilterQuery, setQuestionFilterQuery } =
     useQuestionFilterQueryParams();
@@ -117,7 +126,9 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
           id="question-list"
           options={questions}
           getOptionLabel={(option) => option.question.question}
-          renderInput={(params) => <TextField {...params} label="Question" />}
+          renderInput={(params) => (
+            <TextField {...params} margin="none" label="Question" />
+          )}
           onChange={(_event, newValue) => {
             setSelectedQuestion(newValue);
             setSearchCriteria(null);
@@ -125,7 +136,7 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
               handleSubmit(undefined); // submitting because it feels intuitive that filter is cleared if no question is selected
             }
           }}
-          style={{ flex: 1, marginBottom: '8px' }}
+          className={classes.questionList}
           value={selectedQuestion}
           data-cy="question-list"
         />

@@ -187,6 +187,7 @@ context('PageTable component tests', () => {
       cy.login('user');
       cy.visit('/');
 
+      cy.finishedLoading();
       cy.contains('New Proposal').click();
 
       cy.get('[data-cy=add-participant-button]').click();
@@ -222,12 +223,12 @@ context('PageTable component tests', () => {
       cy.get('@modal').contains('2 user(s) selected');
 
       cy.finishedLoading();
-      cy.get('@modal').find('[aria-label="Next Page"]').click();
+      cy.get('@modal').find('button[aria-label="Next Page"]').click();
 
       cy.get('@modal').find('tr[index="0"] input').check();
       cy.get('@modal').contains('3 user(s) selected');
 
-      cy.get('@modal').find('[aria-label="Previous Page"]').click();
+      cy.get('@modal').find('button[aria-label="Previous Page"]').click();
 
       cy.get('@modal').find('tr[index="1"] input:checked');
       cy.get('@modal').contains('3 user(s) selected');
@@ -237,7 +238,7 @@ context('PageTable component tests', () => {
       cy.get('@modal').find('thead th input').uncheck();
       cy.get('@modal').contains('1 user(s) selected');
 
-      cy.get('@modal').find('[aria-label="Next Page"]').click();
+      cy.get('@modal').find('button[aria-label="Next Page"]').click();
       cy.get('@modal').find('tr[index="0"] input:checked');
       cy.get('@modal').contains('1 user(s) selected');
       cy.get('[data-cy="assign-selected-users"]').click();
@@ -371,14 +372,14 @@ context('PageTable component tests', () => {
 
       cy.get('@modal').contains('1 user(s) selected');
 
-      cy.get('@modal').find('[aria-label="Next Page"]').click();
+      cy.get('@modal').find('button[aria-label="Next Page"]').click();
 
       cy.finishedLoading();
 
       cy.get('@modal').find('tr[index="0"] input').check();
       cy.get('@modal').contains('2 user(s) selected');
 
-      cy.get('@modal').find('[aria-label="Previous Page"]').click();
+      cy.get('@modal').find('button[aria-label="Previous Page"]').click();
 
       cy.finishedLoading();
 
@@ -390,7 +391,7 @@ context('PageTable component tests', () => {
       cy.get('@modal').find('thead th input').uncheck();
       cy.get('@modal').contains('1 user(s) selected');
 
-      cy.get('@modal').find('[aria-label="Next Page"]').click();
+      cy.get('@modal').find('button[aria-label="Next Page"]').click();
 
       cy.finishedLoading();
 

@@ -269,7 +269,7 @@ context('SEP reviews tests', () => {
       });
 
       cy.get('[role="dialog"]').should('not.exist');
-      cy.get("[aria-label='Show Reviewers']").first().click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
       cy.contains(sepMembers.reviewer.lastName);
 
       cy.contains('Logs').click();
@@ -390,7 +390,7 @@ context('SEP reviews tests', () => {
       });
 
       cy.get('[role="dialog"]').should('not.exist');
-      cy.get("[aria-label='Show Reviewers']").first().click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
 
       cy.contains(sepMembers.chair.lastName);
     });
@@ -485,7 +485,7 @@ context('SEP reviews tests', () => {
       });
 
       cy.get('[role="dialog"]').should('not.exist');
-      cy.get("[aria-label='Show Reviewers']").first().click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
 
       cy.contains(sepMembers.secretary.lastName);
     });
@@ -1053,7 +1053,7 @@ context('SEP meeting components tests', () => {
 
       cy.finishedLoading();
 
-      cy.get("[aria-label='Show Reviewers']").first().click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
 
       cy.get('[data-cy="sep-reviewer-assignments-table"] table tbody tr').as(
         'rows'

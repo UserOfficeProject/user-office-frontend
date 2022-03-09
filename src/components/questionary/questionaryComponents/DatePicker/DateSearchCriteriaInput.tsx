@@ -9,6 +9,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
@@ -26,9 +27,9 @@ function DateSearchCriteriaInput({
   );
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} alignItems="end">
       <Grid item xs={6}>
-        <FormControl style={{ width: '100%' }}>
+        <FormControl fullWidth>
           <InputLabel shrink id="comparator">
             Operator
           </InputLabel>
@@ -63,7 +64,6 @@ function DateSearchCriteriaInput({
       <Grid item xs={6}>
         <LocalizationProvider dateAdapter={DateAdapter}>
           <DatePicker
-            // disableToolbar
             inputFormat="yyyy-MM-dd"
             renderInput={(props) => (
               <TextField
@@ -72,27 +72,22 @@ function DateSearchCriteriaInput({
                 margin="none"
                 size="small"
                 fullWidth
+                data-cy="value"
                 InputLabelProps={{
                   shrink: value ? true : undefined,
                 }}
               />
             )}
-            // autoOk={true}
             label="Date"
             value={value}
-            onChange={(date) => {
-              /*
-              DateFnsUtils uses native Date object, but use of Luxon elsewhere (in call modal)
-              causes incorrect type inference: https://github.com/dmtrKovalenko/date-io/issues/584
-              */
-              const newDate = date as Date;
+            onChange={(date: DateTime | null) => {
+              const newDate = date?.startOf('day').toJSDate();
+
               if (newDate && !isNaN(newDate.getTime())) {
-                newDate.setUTCHours(0, 0, 0, 0);
-                onChange(comparator, newDate.toISOString());
+                onChange(comparator, newDate?.toISOString());
               }
-              setValue(newDate);
+              setValue(newDate || null);
             }}
-            data-cy="value"
           />
         </LocalizationProvider>
       </Grid>

@@ -28,7 +28,7 @@ const columns: Column<ProposalScheduledEvent>[] = [
     title: 'Starts at',
     field: 'startsAt',
     render: (rowData) =>
-      parseTzLessDateTime(rowData.startsAt).format(
+      parseTzLessDateTime(rowData.startsAt).toFormat(
         TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
       ),
   },
@@ -36,7 +36,7 @@ const columns: Column<ProposalScheduledEvent>[] = [
     title: 'Ends at',
     field: 'endsAt',
     render: (rowData) =>
-      parseTzLessDateTime(rowData.endsAt).format(
+      parseTzLessDateTime(rowData.endsAt).toFormat(
         TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
       ),
   },

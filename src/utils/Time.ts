@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import moment, { Moment } from 'moment';
 
 import { Scalars } from 'generated/sdk';
 
@@ -116,14 +115,16 @@ export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
 
 export const TZ_LESS_DATE_TIME_LOW_PREC_FORMAT = 'yyyy-MM-DD HH:mm';
 
-export function parseTzLessDateTime(tzLessDateTime: string): Moment {
-  return moment(tzLessDateTime, TZ_LESS_DATE_TIME_FORMAT);
+export function parseTzLessDateTime(tzLessDateTime: string): DateTime {
+  return DateTime.fromISO(tzLessDateTime);
 }
 
-export function toTzLessDateTime(dateTime: Moment | Date | string): string {
-  if (dateTime instanceof Date || typeof dateTime === 'string') {
-    dateTime = moment(dateTime);
+export function toTzLessDateTime(dateTime: DateTime | Date | string): string {
+  if (dateTime instanceof Date) {
+    dateTime = DateTime.fromJSDate(dateTime);
+  } else if (typeof dateTime === 'string') {
+    dateTime = DateTime.fromISO(dateTime);
   }
 
-  return dateTime.format(TZ_LESS_DATE_TIME_FORMAT);
+  return dateTime.toFormat(TZ_LESS_DATE_TIME_FORMAT);
 }
