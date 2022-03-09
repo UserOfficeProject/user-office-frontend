@@ -2,9 +2,10 @@ import faker from 'faker';
 import { DateTime } from 'luxon';
 
 import initialDBData from '../support/initialDBData';
-import { LUXON_DATE_FORMAT } from './../../src/utils/Time';
 
 context('Proposal administration tests', () => {
+  const LUXON_DATE_FORMAT = 'yyyy-MM-dd';
+
   const proposalName1 = faker.lorem.words(3);
   const proposalName2 = faker.lorem.words(3);
   const proposalFixedName = '0000. Alphabetically first title';
