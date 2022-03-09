@@ -6,11 +6,14 @@ const useStyles = makeStyles(() => ({
   withPointer: {
     cursor: 'pointer',
   },
+  container: {
+    display: 'inline-block',
+  },
 }));
 
 interface CopyToClipboardProps {
   text: string;
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
   successMessage?: string;
 }
 const CopyToClipboard = (props: CopyToClipboardProps) => {
@@ -25,30 +28,15 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
     navigator.clipboard.writeText(text);
   };
 
-  if (!children) return null;
-
-  const isChildrenPrimitive =
-    typeof children === 'string' || typeof children === 'number';
-  const isChildrenArray = Array.isArray(children);
-  const childrenJsx = isChildrenPrimitive ? (
-    <span>{children}</span>
-  ) : isChildrenArray ? (
-    <>{children}</>
-  ) : (
-    children
-  );
-
   return (
-    <>
-      <Tooltip
-        onClick={handleClick}
-        color="primary"
-        title="Copy to clipboard"
-        className={classes.withPointer}
-      >
-        {childrenJsx}
-      </Tooltip>
-    </>
+    <Tooltip
+      onClick={handleClick}
+      color="primary"
+      title="Copy to clipboard"
+      className={classes.withPointer}
+    >
+      <div className={classes.container}>{children}</div>
+    </Tooltip>
   );
 };
 

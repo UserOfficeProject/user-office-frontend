@@ -66,7 +66,13 @@ export default function ProposalContainer(props: {
   if (!submitted && hasReferenceNumberFormat && proposalId) {
     info = (
       <Typography>
-        {proposalId} <br /> <small>Pre-submission reference</small>
+        <CopyToClipboard
+          text={proposalId}
+          successMessage={`'${proposalId}' copied to clipboard`}
+        >
+          {proposalId}
+        </CopyToClipboard>{' '}
+        <br /> <small>Pre-submission reference</small>
       </Typography>
     );
   }
