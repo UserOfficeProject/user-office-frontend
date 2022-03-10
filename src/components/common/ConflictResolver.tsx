@@ -94,7 +94,7 @@ export function ConflictResolver<T>(props: {
         return (
           <Check
             className={clsx(classes.icon, classes.check)}
-            data-cy="same-icon"
+            data-cy="new-icon"
           />
         );
       case QuestionComparisonStatus.SAME:
