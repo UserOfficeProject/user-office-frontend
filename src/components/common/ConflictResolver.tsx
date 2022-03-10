@@ -38,12 +38,19 @@ const useStyles = makeStyles((theme) => ({
     color: '#ffbb00',
   },
   check: {
-    color: '#00ff00',
+    color: theme.palette.success.main,
   },
   highlight: {
     backgroundColor: '#faed27',
   },
 }));
+
+export interface DiffInfo {
+  heading: string;
+  existingVal: React.ReactNode;
+  newVal: React.ReactNode;
+  isDifferent: boolean;
+}
 
 export function ConflictResolver<T>(props: {
   comparison: T;
@@ -54,12 +61,7 @@ export function ConflictResolver<T>(props: {
   getStatus: (comparison: T) => QuestionComparisonStatus;
   getItemId: (comparison: T) => string;
   getItemTitle: (comparison: T) => string;
-  getDiffInfo: (comparison: T) => {
-    heading: string;
-    existingVal: React.ReactNode;
-    newVal: React.ReactNode;
-    isDifferent: boolean;
-  }[];
+  getDiffInfo: (comparison: T) => DiffInfo[];
 }) {
   const { comparison, onConflictResolved } = props;
   const { getStatus, getItemId, getItemTitle, getDiffInfo } = props;

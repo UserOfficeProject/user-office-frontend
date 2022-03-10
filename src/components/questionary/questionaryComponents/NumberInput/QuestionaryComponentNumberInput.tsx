@@ -132,7 +132,6 @@ export function QuestionaryComponentNumber(props: BasicComponentProps) {
             label="Value"
             id={`${id}-value`}
             onChange={(event) => {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
               const unit = stateValue.unit;
               const newValue = getNumberOrDefault(event.target.value, '');
               const convertToSi = unit

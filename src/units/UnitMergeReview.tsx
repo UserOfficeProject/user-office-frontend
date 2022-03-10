@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
-import { ConflictResolver } from 'components/common/ConflictResolver';
+import { ConflictResolver, DiffInfo } from 'components/common/ConflictResolver';
 import {
   ConflictResolutionStrategy,
   UnitComparison,
@@ -70,6 +70,42 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
       })
       .then(() => history.push('/Units'));
 
+  const getDiffInfo = (comparison: UnitComparison): DiffInfo[] => {
+    const { newUnit, existingUnit } = comparison;
+
+    return [
+      {
+        existingVal: existingUnit?.quantity,
+        newVal: newUnit?.quantity ?? '',
+        heading: 'Quantity',
+        isDifferent:
+          existingUnit !== null && existingUnit?.quantity !== newUnit.quantity,
+      },
+      {
+        existingVal: existingUnit?.siConversionFormula,
+        newVal: newUnit?.siConversionFormula ?? '',
+        heading: 'SI conversion formula',
+        isDifferent:
+          existingUnit !== null &&
+          existingUnit.siConversionFormula !== newUnit.siConversionFormula,
+      },
+      {
+        existingVal: existingUnit?.symbol,
+        newVal: newUnit?.symbol ?? '',
+        heading: 'Symbol',
+        isDifferent:
+          existingUnit !== null && existingUnit.symbol !== newUnit.symbol,
+      },
+      {
+        existingVal: existingUnit?.unit,
+        newVal: newUnit?.unit ?? '',
+        heading: 'Unit',
+        isDifferent:
+          existingUnit !== null && existingUnit.unit !== newUnit.unit,
+      },
+    ];
+  };
+
   return (
     <>
       <Card>
@@ -94,42 +130,7 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
           getStatus={(comparison) => comparison.status}
           getItemId={(comparison) => comparison.newUnit.id}
           getItemTitle={(comparison) => comparison.newUnit.unit}
-          getDiffInfo={({ existingUnit, newUnit }) => {
-            return [
-              {
-                existingVal: existingUnit?.quantity,
-                newVal: newUnit?.quantity ?? '',
-                heading: 'Quantity',
-                isDifferent:
-                  existingUnit !== null &&
-                  existingUnit?.quantity !== newUnit.quantity,
-              },
-              {
-                existingVal: existingUnit?.siConversionFormula,
-                newVal: newUnit?.siConversionFormula ?? '',
-                heading: 'SI conversion formula',
-                isDifferent:
-                  existingUnit !== null &&
-                  existingUnit.siConversionFormula !==
-                    newUnit.siConversionFormula,
-              },
-              {
-                existingVal: existingUnit?.symbol,
-                newVal: newUnit?.symbol ?? '',
-                heading: 'Symbol',
-                isDifferent:
-                  existingUnit !== null &&
-                  existingUnit.symbol !== newUnit.symbol,
-              },
-              {
-                existingVal: existingUnit?.unit,
-                newVal: newUnit?.unit ?? '',
-                heading: 'Unit',
-                isDifferent:
-                  existingUnit !== null && existingUnit.unit !== newUnit.unit,
-              },
-            ];
-          }}
+          getDiffInfo={getDiffInfo}
         />
       ))}
       <ActionButtonContainer>

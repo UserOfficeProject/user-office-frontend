@@ -1,11 +1,10 @@
 import { Typography } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
 import React from 'react';
 import { UnitMergeReview } from 'units/UnitMergeReview';
 
 import { SelectImportFile } from 'components/common/SelectImportFile';
 import { UnitsImportWithValidation } from 'generated/sdk';
-import { StyledPaper } from 'styles/StyledComponents';
+import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 export const getFileContents = async (file: File): Promise<string> => {
@@ -23,8 +22,19 @@ export default function ImportUnitsPage() {
   const [validationResult, setValidationResult] =
     React.useState<UnitsImportWithValidation | null>(null);
 
+  const handleFileSelect = async (json: string) => {
+    api()
+      .validateUnitsImport({ unitsAsJson: json })
+      .then(({ validateUnitsImport }) => {
+        const result = validateUnitsImport.validationResult;
+        if (result) {
+          setValidationResult(result);
+        }
+      });
+  };
+
   return (
-    <Container>
+    <ContentContainer>
       <StyledPaper>
         <Typography variant="h5" component="h5">
           Import units
@@ -35,20 +45,9 @@ export default function ImportUnitsPage() {
             onBack={() => setValidationResult(null)}
           />
         ) : (
-          <SelectImportFile
-            onFileSelected={(json) => {
-              api()
-                .validateUnitsImport({ unitsAsJson: json })
-                .then(({ validateUnitsImport }) => {
-                  const result = validateUnitsImport.validationResult;
-                  if (result) {
-                    setValidationResult(result);
-                  }
-                });
-            }}
-          />
+          <SelectImportFile onFileSelected={handleFileSelect} />
         )}
       </StyledPaper>
-    </Container>
+    </ContentContainer>
   );
 }
