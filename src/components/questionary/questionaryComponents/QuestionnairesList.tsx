@@ -24,15 +24,28 @@ export interface QuestionnairesListProps {
   style?: React.CSSProperties;
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   questionnairesList: {
-    maxWidth: '440px',
     padding: 0,
     marginBottom: '10px',
     '& li': {
       paddingLeft: 0,
       paddingRight: 0,
     },
+  },
+  emptyList: {
+    display: 'flex',
+    justifyContent: 'center',
+    fontStyle: 'italic',
+    padding: theme.spacing(2),
+    color: theme.palette.grey[500],
+  },
+  bottomBar: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flex: '1 1 0px',
   },
 }));
 
@@ -47,42 +60,50 @@ export function QuestionnairesList({
   addButtonLabel,
 }: QuestionnairesListProps) {
   const classes = useStyles();
+  const isListEmpty = data.length === 0;
 
   return (
     <div>
-      <List
-        component="ul"
-        className={classes.questionnairesList}
-        style={{ ...style }}
-      >
-        {data.map((record) => {
-          return (
-            <QuestionnairesListItem
-              record={record}
-              onEditClick={onEditClick}
-              onDeleteClick={onDeleteClick}
-              onCloneClick={onCloneClick}
-              key={record.id}
-            />
-          );
-        })}
-      </List>
-      <ButtonContainer>
-        <Button
-          onClick={onAddNewClick}
-          variant="outlined"
-          data-cy="add-button"
-          size="small"
-          color="primary"
-          startIcon={<AddCircleOutlineIcon />}
-          disabled={
-            (!!maxEntries && data.length >= maxEntries) ||
-            onAddNewClick === undefined
-          }
+      {isListEmpty ? (
+        <div className={classes.emptyList}>The list is empty</div>
+      ) : (
+        <List
+          component="ul"
+          className={classes.questionnairesList}
+          style={{ ...style }}
         >
-          {addButtonLabel || 'Add'}
-        </Button>
-      </ButtonContainer>
+          {data.map((record) => {
+            return (
+              <QuestionnairesListItem
+                record={record}
+                onEditClick={onEditClick}
+                onDeleteClick={onDeleteClick}
+                onCloneClick={onCloneClick}
+                key={record.id}
+              />
+            );
+          })}
+        </List>
+      )}
+      <div className={classes.bottomBar}>
+        {`${data.length} item(s)`}
+        <ButtonContainer className={classes.buttonContainer}>
+          <Button
+            onClick={onAddNewClick}
+            variant="outlined"
+            data-cy="add-button"
+            size="small"
+            color="primary"
+            startIcon={<AddCircleOutlineIcon />}
+            disabled={
+              (!!maxEntries && data.length >= maxEntries) ||
+              onAddNewClick === undefined
+            }
+          >
+            {addButtonLabel || 'Add'}
+          </Button>
+        </ButtonContainer>
+      </div>
     </div>
   );
 }
