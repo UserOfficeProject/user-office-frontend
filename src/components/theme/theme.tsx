@@ -66,6 +66,8 @@ const ThemeWrapper: React.FC = (props) => {
     },
   };
 
+  // NOTE: If DatePicker/DateTimePicker are added here later we can add the desktopModeMediaQuery as default to fix this:
+  // https://stackoverflow.com/a/69986695/5619063 and https://github.com/cypress-io/cypress/issues/970
   const theme = responsiveFontSizes(
     createTheme({
       palette: palette,

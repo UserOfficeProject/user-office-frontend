@@ -18,6 +18,7 @@ import {
   TableRow,
   Theme,
   Typography,
+  useTheme,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Field, useFormikContext } from 'formik';
@@ -52,6 +53,7 @@ const CallGeneralInfo: React.FC<{
   loadingTemplates,
 }) => {
   const { features } = useContext(FeatureContext);
+  const theme = useTheme();
 
   const settingsContext = useContext(SettingsContext);
 
@@ -169,6 +171,8 @@ const CallGeneralInfo: React.FC<{
             required: true,
             'data-cy': 'start-date',
           }}
+          // NOTE: This is needed just because Cypress testing a Material-UI datepicker is not working on Github actions  https://stackoverflow.com/a/69986695/5619063
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
           required
         />
         <Field
@@ -183,6 +187,9 @@ const CallGeneralInfo: React.FC<{
             required: true,
             'data-cy': 'end-date',
           }}
+          // NOTE: This is needed just because Cypress testing a Material-UI datepicker is not working on Github actions
+          // https://stackoverflow.com/a/69986695/5619063 and https://github.com/cypress-io/cypress/issues/970
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
           minDate={startCall}
           required
         />

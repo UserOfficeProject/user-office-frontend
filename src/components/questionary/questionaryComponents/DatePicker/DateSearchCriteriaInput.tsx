@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  useTheme,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import React, { useState } from 'react';
@@ -19,6 +20,7 @@ function DateSearchCriteriaInput({
   onChange,
   searchCriteria,
 }: SearchCriteriaInputProps) {
+  const theme = useTheme();
   const [value, setValue] = useState<Date | null>(
     searchCriteria ? new Date(searchCriteria?.value as string) : null
   );
@@ -88,6 +90,7 @@ function DateSearchCriteriaInput({
               }
               setValue(newDate || null);
             }}
+            desktopModeMediaQuery={theme.breakpoints.up('sm')}
           />
         </LocalizationProvider>
       </Grid>

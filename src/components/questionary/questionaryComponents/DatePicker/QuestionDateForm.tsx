@@ -1,5 +1,6 @@
 import DateAdapter from '@mui/lab/AdapterLuxon';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import useTheme from '@mui/material/styles/useTheme';
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
@@ -14,6 +15,7 @@ import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
+  const theme = useTheme();
   const field = props.question;
 
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
@@ -84,6 +86,7 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                   fullWidth: true,
                   'data-cy': 'minDate',
                 }}
+                desktopModeMediaQuery={theme.breakpoints.up('sm')}
               />
               <Field
                 name="config.maxDate"
@@ -95,6 +98,7 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                   fullWidth: true,
                   'data-cy': 'maxDate',
                 }}
+                desktopModeMediaQuery={theme.breakpoints.up('sm')}
               />
               <Field
                 name="config.defaultDate"
@@ -106,6 +110,7 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                   fullWidth: true,
                   'data-cy': 'defaultDate',
                 }}
+                desktopModeMediaQuery={theme.breakpoints.up('sm')}
               />
             </LocalizationProvider>
           </TitledContainer>

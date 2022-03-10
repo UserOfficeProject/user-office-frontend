@@ -2,6 +2,7 @@ import { DateType } from '@date-io/type';
 import DateAdapter from '@mui/lab/AdapterLuxon';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import FormControl from '@mui/material/FormControl';
+import useTheme from '@mui/material/styles/useTheme';
 import { Field } from 'formik';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
@@ -13,6 +14,7 @@ import { DateConfig } from 'generated/sdk';
 import Hint from '../Hint';
 
 export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
+  const theme = useTheme();
   const { answer, onComplete } = props;
   const {
     question: { id, question },
@@ -48,6 +50,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       }}
       minDate={fieldMinDate}
       maxDate={fieldMaxDate}
+      desktopModeMediaQuery={theme.breakpoints.up('sm')}
     />
   );
 
@@ -69,6 +72,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       }}
       minDate={fieldMinDate}
       maxDate={fieldMaxDate}
+      desktopModeMediaQuery={theme.breakpoints.up('sm')}
     />
   );
 

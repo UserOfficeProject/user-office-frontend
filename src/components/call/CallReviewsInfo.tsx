@@ -1,5 +1,6 @@
 import DateAdapter from '@mui/lab/AdapterLuxon';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import useTheme from '@mui/material/styles/useTheme';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
@@ -11,6 +12,7 @@ import {
 } from 'generated/sdk';
 
 const CallReviewAndNotification: React.FC = () => {
+  const theme = useTheme();
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
@@ -43,6 +45,7 @@ const CallReviewAndNotification: React.FC = () => {
             fullWidth: true,
             'data-cy': 'start-review',
           }}
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
         />
         <Field
           name="endReview"
@@ -55,6 +58,7 @@ const CallReviewAndNotification: React.FC = () => {
           textField={{
             fullWidth: true,
           }}
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
         />
         <Field
           name="startSEPReview"
@@ -66,6 +70,7 @@ const CallReviewAndNotification: React.FC = () => {
           textField={{
             fullWidth: true,
           }}
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
         />
         <Field
           name="endSEPReview"
@@ -78,6 +83,7 @@ const CallReviewAndNotification: React.FC = () => {
           textField={{
             fullWidth: true,
           }}
+          desktopModeMediaQuery={theme.breakpoints.up('sm')}
         />
       </LocalizationProvider>
       <Field
