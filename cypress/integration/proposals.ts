@@ -108,7 +108,6 @@ context('Proposal tests', () => {
           });
         }
       });
-      cy.viewport(1920, 1080);
     });
 
     it('Should be able create proposal', () => {
@@ -553,7 +552,6 @@ context('Proposal tests', () => {
   describe('Proposal advanced tests', () => {
     beforeEach(() => {
       cy.resetDB(true);
-      cy.viewport(1920, 1080);
     });
 
     it('User officer should reopen proposal', () => {

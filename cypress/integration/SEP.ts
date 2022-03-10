@@ -132,8 +132,6 @@ function initializationBeforeTests() {
     id: sepMembers.reviewer.id,
     roles: [initialDBData.roles.sepReviewer],
   });
-
-  cy.viewport(1920, 1080);
 }
 
 context('SEP reviews tests', () => {

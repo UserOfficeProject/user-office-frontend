@@ -1,6 +1,5 @@
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Role } from 'generated/sdk';
@@ -11,7 +10,7 @@ type RoleModalProps = {
   show: boolean;
   close: () => void;
   add: (role: Role[]) => void;
-  activeRoles: Role[];
+  activeRoles?: Role[];
 };
 
 const RoleModal: React.FC<RoleModalProps> = ({
@@ -34,13 +33,6 @@ const RoleModal: React.FC<RoleModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
-
-RoleModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  activeRoles: PropTypes.array.isRequired,
 };
 
 export default RoleModal;

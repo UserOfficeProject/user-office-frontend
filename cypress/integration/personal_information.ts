@@ -5,7 +5,6 @@ import initialDBData from '../support/initialDBData';
 context('Personal information tests', () => {
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
   });
 
   const newFirstName = faker.name.firstName();

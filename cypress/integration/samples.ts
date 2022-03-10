@@ -140,7 +140,6 @@ context('Samples tests', () => {
         createdWorkflowId = result.createProposalWorkflow.proposalWorkflow.id;
       }
     });
-    cy.viewport(1920, 1080);
   });
 
   describe('Samples basic tests', () => {

@@ -74,7 +74,6 @@ context('Calls tests', () => {
   };
 
   beforeEach(() => {
-    cy.viewport(1920, 1080);
     cy.resetDB();
     cy.createTemplate({
       groupId: TemplateGroupId.PROPOSAL_ESI,

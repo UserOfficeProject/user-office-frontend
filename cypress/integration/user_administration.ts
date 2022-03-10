@@ -15,7 +15,7 @@ context('User administration tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
+
     cy.login('officer');
     cy.visit('/');
   });

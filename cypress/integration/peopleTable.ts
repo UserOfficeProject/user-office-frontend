@@ -9,7 +9,6 @@ context('PageTable component tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
   });
 
   describe('ProposalPeopleTable component Preserve selected users', () => {

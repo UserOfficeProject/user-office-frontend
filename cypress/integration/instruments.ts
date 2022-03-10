@@ -38,7 +38,6 @@ context('Instrument tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
   });
 
   // TODO: Maybe this should be moved to permission testing.

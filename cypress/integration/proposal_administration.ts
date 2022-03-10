@@ -199,7 +199,6 @@ context('Proposal administration tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
   });
 
   describe('Proposal administration advanced search filter tests', () => {

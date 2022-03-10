@@ -26,7 +26,6 @@ context('visits tests', () => {
       managementTimeAllocation: 5,
       managementDecisionSubmitted: true,
     });
-    cy.viewport(1920, 1080);
   });
 
   const startQuestion = 'Visit start';

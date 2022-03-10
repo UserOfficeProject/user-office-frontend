@@ -3,7 +3,6 @@ import initialDBData from '../support/initialDBData';
 context('Units tests', () => {
   describe('Template basic unit tests', () => {
     beforeEach(() => {
-      cy.viewport(1920, 1080);
       cy.resetDB();
     });
 
@@ -52,7 +51,6 @@ context('Units tests', () => {
 
   describe('Template advanced unit tests', () => {
     beforeEach(() => {
-      cy.viewport(1920, 1080);
       cy.resetDB(true);
     });
 

@@ -1,49 +1,25 @@
 import MaterialTable from '@material-table/core';
 import Button from '@mui/material/Button';
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
-import { GetRolesQuery, Role } from 'generated/sdk';
-import { useDataApi } from 'hooks/common/useDataApi';
+import { Role } from 'generated/sdk';
+import { useRolesData } from 'hooks/user/useRolesData';
 import { tableIcons } from 'utils/materialIcons';
 
 type RoleTableProps = {
   add: (values: Role[]) => void;
-  activeRoles: Role[];
+  activeRoles?: Role[];
 };
 
 const columns = [{ title: 'Role', field: 'title' }];
 
 const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
-  const api = useDataApi();
-  const [roles, setRoles] = useState<GetRolesQuery['roles']>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { rolesData, loading } = useRolesData();
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
 
-  useEffect(() => {
-    const getRoles = async () => {
-      setIsLoading(true);
-      const data = await api()
-        .getRoles()
-        .then((data: GetRolesQuery) => {
-          return {
-            page: 0,
-            totalCount: data?.roles?.length,
-            data: data?.roles,
-          };
-        });
-
-      if (data) {
-        setRoles(data.data);
-        setIsLoading(false);
-      }
-    };
-    getRoles();
-  }, [api]);
-
-  const inactiveRoles = roles?.filter(
-    (role) => !activeRoles.find((activeRole) => activeRole.id === role.id)
+  const inactiveRoles = rolesData?.filter(
+    (role) => !activeRoles?.find((activeRole) => activeRole.id === role.id)
   );
 
   return (
@@ -53,7 +29,7 @@ const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
         title="Add Roles"
         columns={columns}
         data={inactiveRoles as Role[]}
-        isLoading={isLoading}
+        isLoading={loading}
         onSelectionChange={(data) => setSelectedRoles(data)}
         options={{
           search: true,
@@ -79,11 +55,8 @@ const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
           type="button"
           variant="contained"
           color="primary"
-          onClick={() => {
-            setIsLoading(true);
-            add(selectedRoles);
-          }}
-          disabled={selectedRoles.length === 0 || isLoading}
+          onClick={() => add(selectedRoles)}
+          disabled={selectedRoles.length === 0 || loading}
           data-cy="assign-instrument-to-call"
         >
           Update
@@ -91,11 +64,6 @@ const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
       </ActionButtonContainer>
     </>
   );
-};
-
-RoleTable.propTypes = {
-  add: PropTypes.func.isRequired,
-  activeRoles: PropTypes.array.isRequired,
 };
 
 export default RoleTable;

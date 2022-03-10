@@ -35,7 +35,6 @@ context('visits tests', () => {
       teamLeadUserId: coProposer.id,
       scheduledEventId: existingScheduledEventId,
     });
-    cy.viewport(1920, 1080);
   });
 
   it('PI should see ESI assessment button ', () => {

@@ -15,14 +15,15 @@ import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
-import { UpdateUserMutationVariables, User, UserRole } from 'generated/sdk';
+import { UpdateUserMutationVariables, UserRole } from 'generated/sdk';
 import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useGetFields } from 'hooks/user/useGetFields';
+import { useUserData } from 'hooks/user/useUserData';
 import orcid from 'images/orcid.png';
 import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -55,33 +56,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UpdateUserInformation(props: { id: number }) {
-  const { user, currentRole } = useContext(UserContext);
-  const [userData, setUserData] = useState<User | null>(null);
+  const { currentRole } = useContext(UserContext);
+  const { userData, setUserData } = useUserData(props);
   const { api } = useDataApiWithFeedback();
   const fieldsContent = useGetFields();
   const { institutions, loadingInstitutions } = useInstitutionsData();
   const [nationalitiesList, setNationalitiesList] = useState<Option[]>([]);
   const [institutionsList, setInstitutionsList] = useState<Option[]>([]);
   const classes = useStyles();
-
-  useEffect(() => {
-    const getUserInformation = (id: number) => {
-      if (user.id !== props.id) {
-        api()
-          .getUser({ id })
-          .then((data) => {
-            setUserData({ ...(data.user as User) });
-          });
-      } else {
-        api()
-          .getUserMe()
-          .then((data) => {
-            setUserData({ ...(data.me as User) });
-          });
-      }
-    };
-    getUserInformation(props.id);
-  }, [props.id, user.id, api]);
 
   if (loadingInstitutions || !fieldsContent || !userData) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '50px' }} />;

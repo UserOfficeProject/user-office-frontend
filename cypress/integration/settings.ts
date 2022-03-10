@@ -11,7 +11,6 @@ import initialDBData from '../support/initialDBData';
 context('Settings tests', () => {
   beforeEach(() => {
     cy.resetDB();
-    cy.viewport(1920, 1080);
   });
 
   describe('Proposal statuses tests', () => {

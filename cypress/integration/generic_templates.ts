@@ -56,7 +56,6 @@ context('GenericTemplates tests', () => {
 
   beforeEach(() => {
     cy.resetDB(true);
-    cy.viewport(1920, 1080);
   });
 
   const createTemplateAndAllQuestions = () => {
