@@ -156,7 +156,7 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
-    cy.contains('1 shipment(s)');
+    cy.contains('1 item(s)');
 
     cy.visit('/');
 
