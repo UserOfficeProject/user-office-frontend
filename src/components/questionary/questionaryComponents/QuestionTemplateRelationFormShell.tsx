@@ -134,6 +134,7 @@ export const QuestionTemplateRelationFormShell = (
                 variant="contained"
                 color="primary"
                 data-cy="submit"
+                disabled={!formikProps.isValid}
               >
                 Update
               </Button>

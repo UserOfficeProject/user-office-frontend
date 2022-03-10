@@ -67,7 +67,7 @@ context('General scientific evaluation panel tests', () => {
       cy.get('[cy-data="user-page"]').contains('Settings').click();
       cy.contains('Add role').click();
 
-      cy.get('[data-cy="co-proposers"] [aria-label="Search"]').type(
+      cy.get('[data-cy="role-modal"] [aria-label="Search"]').type(
         'SEP Reviewer'
       );
       cy.get('[role="dialog"] input[type="checkbox"]').first().click();
@@ -84,7 +84,7 @@ context('General scientific evaluation panel tests', () => {
       cy.get('[cy-data="user-page"]').contains('Settings').click();
       cy.contains('Add role').click();
 
-      cy.get('[data-cy="co-proposers"] [aria-label="Search"]').type(
+      cy.get('[data-cy="role-modal"] [aria-label="Search"]').type(
         'SEP Reviewer'
       );
       cy.get('[role="dialog"] input[type="checkbox"]').first().click();

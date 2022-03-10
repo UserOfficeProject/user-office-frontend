@@ -17,14 +17,18 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
   const {
     question: { id, question },
   } = answer;
-  const { tooltip, required, minDate, maxDate } = answer.config as DateConfig;
+  const { tooltip, required, minDate, maxDate, includeTime } =
+    answer.config as DateConfig;
 
   const dateFormat = 'yyyy-MM-dd';
   const timeFormat = `${dateFormat} HH:mm`;
 
-  console.log('aaaaaaa', question, answer);
-
-  debugger;
+  const fieldMinDate = minDate
+    ? DateTime.fromISO(minDate).startOf(includeTime ? 'minute' : 'day')
+    : null;
+  const fieldMaxDate = maxDate
+    ? DateTime.fromISO(maxDate).startOf(includeTime ? 'minute' : 'day')
+    : null;
 
   const getDateField = () => (
     <Field
@@ -34,44 +38,44 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       label={question}
       inputFormat={dateFormat}
       component={DatePicker}
+      ampm={false}
       disableToolbar
       autoOk={true}
-      onChange={(date: DateTime) => onComplete(date.startOf('day'))}
+      onChange={(date: DateTime) => date && onComplete(date.startOf('day'))}
       textField={{
         'data-cy': `${id}.value`,
         required: required,
       }}
-      // minDate={minDate}
-      // maxDate={maxDate}
+      minDate={fieldMinDate}
+      maxDate={fieldMaxDate}
     />
   );
 
   const getDateTimeField = () => (
-    <>
-      <Field
-        required={required}
-        id={`${id}-id`}
-        name={id}
-        label={question}
-        inputFormat={timeFormat}
-        component={DateTimePicker}
-        onChange={(date: DateType | null) => {
-          onComplete(date);
-        }}
-        textField={{
-          'data-cy': `${id}.value`,
-          required: required,
-        }}
-      />
-    </>
+    <Field
+      required={required}
+      id={`${id}-id`}
+      name={id}
+      label={question}
+      ampm={false}
+      inputFormat={timeFormat}
+      component={DateTimePicker}
+      onChange={(date: DateType | null) => {
+        date && onComplete(date);
+      }}
+      textField={{
+        'data-cy': `${id}.value`,
+        required: required,
+      }}
+      minDate={fieldMinDate}
+      maxDate={fieldMaxDate}
+    />
   );
 
   return (
     <FormControl margin="dense">
       <LocalizationProvider dateAdapter={DateAdapter}>
-        {(answer.config as DateConfig).includeTime
-          ? getDateTimeField()
-          : getDateField()}
+        {includeTime ? getDateTimeField() : getDateField()}
       </LocalizationProvider>
       <Hint>{tooltip}</Hint>
     </FormControl>

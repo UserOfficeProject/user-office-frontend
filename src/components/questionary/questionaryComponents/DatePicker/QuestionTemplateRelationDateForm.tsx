@@ -2,13 +2,15 @@ import DateAdapter from '@mui/lab/AdapterLuxon';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
-import { DatePicker } from 'formik-mui-lab';
+import { DatePicker, DateTimePicker } from 'formik-mui-lab';
+import { DateTime } from 'luxon';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
+import { DateConfig } from 'generated/sdk';
 
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
@@ -16,13 +18,64 @@ import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFo
 
 export const QuestionTemplateRelationDateForm: FC<
   QuestionTemplateRelationFormProps
-> = (props) => {
-  return (
-    <QuestionTemplateRelationFormShell
-      {...props}
-      validationSchema={Yup.object().shape({})}
-    >
-      {(formikProps) => (
+> = (props) => (
+  <QuestionTemplateRelationFormShell
+    {...props}
+    validationSchema={Yup.object().shape({})}
+  >
+    {(formikProps) => {
+      const { minDate, maxDate, defaultDate, includeTime } = formikProps.values
+        .config as DateConfig;
+
+      const defaultFieldMinDate = minDate
+        ? DateTime.fromISO(minDate).startOf(includeTime ? 'minute' : 'day')
+        : null;
+      const defaultFieldMaxDate = maxDate
+        ? DateTime.fromISO(maxDate).startOf(includeTime ? 'minute' : 'day')
+        : null;
+      const defaultFieldDate = defaultDate
+        ? DateTime.fromISO(defaultDate).startOf(includeTime ? 'minute' : 'day')
+        : null;
+
+      const isDefaultDateBeforeMinDate =
+        defaultFieldDate &&
+        defaultFieldMinDate &&
+        defaultFieldMinDate > defaultFieldDate;
+      const isDefaultDateAfterMaxDate =
+        defaultFieldDate &&
+        defaultFieldMaxDate &&
+        defaultFieldMaxDate < defaultFieldDate;
+
+      const isMinDateAfterMaxDate =
+        defaultFieldMinDate &&
+        defaultFieldMaxDate &&
+        defaultFieldMinDate > defaultFieldMaxDate;
+
+      if (formikProps.isValid) {
+        if (isDefaultDateBeforeMinDate) {
+          formikProps.setFieldError(
+            'config.defaultDate',
+            'Default should be after "Min" date'
+          );
+        }
+        if (isDefaultDateAfterMaxDate) {
+          formikProps.setFieldError(
+            'config.defaultDate',
+            'Default should be before "Max" date'
+          );
+        }
+        if (isMinDateAfterMaxDate) {
+          formikProps.setFieldError(
+            'config.minDate',
+            '"Min" date should be before "Max" date'
+          );
+        }
+      }
+
+      const component = includeTime ? DateTimePicker : DatePicker;
+      const inputFormat = includeTime ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd';
+
+      return (
         <>
           <QuestionExcerpt question={props.questionRel.question} />
           <Field
@@ -55,8 +108,10 @@ export const QuestionTemplateRelationDateForm: FC<
                 name="config.minDate"
                 label="Min"
                 id="Min-input"
-                inputFormat="yyyy-MM-dd"
-                component={DatePicker}
+                ampm={false}
+                inputFormat={inputFormat}
+                component={component}
+                maxDate={defaultFieldMaxDate}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'minDate',
@@ -66,8 +121,10 @@ export const QuestionTemplateRelationDateForm: FC<
                 name="config.maxDate"
                 label="Max"
                 id="Max-input"
-                inputFormat="yyyy-MM-dd"
-                component={DatePicker}
+                ampm={false}
+                inputFormat={inputFormat}
+                component={component}
+                minDate={defaultFieldMinDate}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'maxDate',
@@ -77,8 +134,11 @@ export const QuestionTemplateRelationDateForm: FC<
                 name="config.defaultDate"
                 label="Default"
                 id="Default-input"
-                inputFormat="yyyy-MM-dd"
-                component={DatePicker}
+                ampm={false}
+                inputFormat={inputFormat}
+                component={component}
+                minDate={defaultFieldMinDate}
+                maxDate={defaultFieldMaxDate}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'defaultDate',
@@ -93,7 +153,7 @@ export const QuestionTemplateRelationDateForm: FC<
             />
           </TitledContainer>
         </>
-      )}
-    </QuestionTemplateRelationFormShell>
-  );
-};
+      );
+    }}
+  </QuestionTemplateRelationFormShell>
+);

@@ -111,12 +111,12 @@ export function timeRemaining(toDate: Date): string {
   }
 }
 
-export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-DD HH:mm:ss';
+export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 
-export const TZ_LESS_DATE_TIME_LOW_PREC_FORMAT = 'yyyy-MM-DD HH:mm';
+export const TZ_LESS_DATE_TIME_LOW_PREC_FORMAT = 'yyyy-MM-dd HH:mm';
 
-export function parseTzLessDateTime(tzLessDateTime: string): DateTime {
-  return DateTime.fromISO(tzLessDateTime);
+export function parseTzLessDateTime(tzLessDateTime: string) {
+  return DateTime.fromSQL(tzLessDateTime);
 }
 
 export function toTzLessDateTime(dateTime: DateTime | Date | string): string {
