@@ -40,6 +40,9 @@ function QuestionsPage() {
       return createQuestionForm({
         question,
         onUpdated: (q) => onUpdate(q as QuestionWithUsage),
+        onDeleted: (q) => {
+          setQuestions(questions.filter((q2) => q2.id !== q.id));
+        },
       });
     }
   };
