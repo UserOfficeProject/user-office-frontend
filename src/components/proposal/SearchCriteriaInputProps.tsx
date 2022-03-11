@@ -9,8 +9,7 @@ export interface SearchCriteriaInputProps {
   searchCriteria: SearchCriteria | null;
   onChange: (
     comparator: QuestionFilterCompareOperator,
-    value: string | number | boolean | unknown[],
-    isNot?: boolean
+    value: string | number | boolean | unknown[]
   ) => unknown;
   questionTemplateRelation: QuestionTemplateRelationFragment;
 }

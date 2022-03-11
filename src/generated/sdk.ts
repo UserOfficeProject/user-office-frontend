@@ -2349,7 +2349,6 @@ export enum QuestionFilterCompareOperator {
 export type QuestionFilterInput = {
   compareOperator: QuestionFilterCompareOperator;
   dataType: DataType;
-  isNot?: InputMaybe<Scalars['Boolean']>;
   questionId: Scalars['String'];
   value: Scalars['String'];
 };

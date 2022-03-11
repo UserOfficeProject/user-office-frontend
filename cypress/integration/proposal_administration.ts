@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import initialDBData from '../support/initialDBData';
 
 context('Proposal administration tests', () => {
-  const LUXON_DATE_FORMAT = 'yyyy-MM-dd';
+  const DATE_FORMAT = 'yyyy-MM-dd';
 
   const proposalName1 = faker.lorem.words(3);
   const proposalName2 = faker.lorem.words(3);
@@ -408,11 +408,13 @@ context('Proposal administration tests', () => {
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('No').click();
       cy.contains('Search').click();
+      cy.finishedLoading();
       cy.contains(initialDBData.proposal.title).should('not.exist');
 
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('Yes').click();
       cy.contains('Search').click();
+      cy.finishedLoading();
       cy.contains(initialDBData.proposal.title).should('exist');
 
       // If answer false, find when search for No
@@ -431,14 +433,16 @@ context('Proposal administration tests', () => {
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('No').click();
       cy.contains('Search').click();
+      cy.finishedLoading();
       cy.contains(initialDBData.proposal.title).should('exist');
 
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('Yes').click();
       cy.contains('Search').click();
+      cy.finishedLoading();
       cy.contains(initialDBData.proposal.title).should('not.exist');
 
-      // If missing answer, find when search for No
+      // If missing answer, do not find the result for both, Yes and No
       cy.answerTopic({
         questionaryId: initialDBData.proposal.questionaryId,
         topicId: initialDBData.template.topic.id,
@@ -449,11 +453,13 @@ context('Proposal administration tests', () => {
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('No').click();
       cy.contains('Search').click();
-      cy.contains(initialDBData.proposal.title).should('exist');
+      cy.finishedLoading();
+      cy.contains(initialDBData.proposal.title).should('not.exist');
 
       cy.get('[data-cy=is-checked]').click();
       cy.get('[role=listbox]').contains('Yes').click();
       cy.contains('Search').click();
+      cy.finishedLoading();
       cy.contains(initialDBData.proposal.title).should('not.exist');
     });
 
@@ -461,15 +467,15 @@ context('Proposal administration tests', () => {
       // Date questions
       const { questions, proposal, answers } = initialDBData;
 
-      const PROPOSAL_DATE = answers.proposal.date.value;
+      const DATE_ANSWER = answers.proposal.date.value;
 
-      const DATE_BEFORE = DateTime.fromFormat(PROPOSAL_DATE, LUXON_DATE_FORMAT)
+      const DATE_BEFORE = DateTime.fromFormat(DATE_ANSWER, DATE_FORMAT)
         .minus({ days: 1 })
-        .toFormat(LUXON_DATE_FORMAT);
+        .toFormat(DATE_FORMAT);
 
-      const DATE_AFTER = DateTime.fromFormat(PROPOSAL_DATE, LUXON_DATE_FORMAT)
+      const DATE_AFTER = DateTime.fromFormat(DATE_ANSWER, DATE_FORMAT)
         .plus({ days: 1 })
-        .toFormat(LUXON_DATE_FORMAT);
+        .toFormat(DATE_FORMAT);
 
       cy.get('[data-cy=question-list]').click();
       cy.contains(questions.date.text).click();
@@ -482,7 +488,7 @@ context('Proposal administration tests', () => {
 
       cy.get('[data-cy=comparator]').click();
       cy.get('[role=listbox]').contains('Exact').click();
-      cy.get('[data-cy=value] input').clear().type(PROPOSAL_DATE);
+      cy.get('[data-cy=value] input').clear().type(DATE_ANSWER);
       cy.contains('Search').click();
       cy.contains(proposal.title).should('exist');
 

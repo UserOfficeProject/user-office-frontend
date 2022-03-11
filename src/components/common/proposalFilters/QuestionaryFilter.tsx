@@ -21,7 +21,6 @@ import UOLoader from '../UOLoader';
 export interface SearchCriteria {
   compareOperator: QuestionFilterCompareOperator;
   value: string | number | boolean | unknown[];
-  isNot: boolean | undefined;
 }
 
 interface QuestionaryFilterProps {
@@ -74,7 +73,6 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
           compareOperator:
             questionFilterQuery.compareOperator as QuestionFilterCompareOperator,
           value: questionFilterQuery.value,
-          isNot: false,
         }
       : null;
 
@@ -138,11 +136,10 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
           {selectedQuestion && (
             <SearchCriteriaComponent
               searchCriteria={searchCriteria}
-              onChange={(compareOperator, value, isNot = false) => {
+              onChange={(compareOperator, value) => {
                 setSearchCriteria({
                   compareOperator,
                   value,
-                  isNot,
                 });
               }}
               questionTemplateRelation={selectedQuestion}
@@ -166,7 +163,6 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
                 compareOperator: searchCriteria.compareOperator,
                 value: searchCriteria.value,
                 dataType: selectedQuestion.question.dataType,
-                isNot: searchCriteria.isNot,
               } as QuestionFilterInput);
             }}
             data-cy="search-btn"

@@ -1,4 +1,4 @@
-import LuxonUtils from '@date-io/luxon';
+import DateFnsUtils from '@date-io/date-fns';
 import {
   FormControl,
   Grid,
@@ -10,22 +10,17 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 
 import { SearchCriteriaInputProps } from 'components/proposal/SearchCriteriaInputProps';
 import { QuestionFilterCompareOperator } from 'generated/sdk';
-import { LUXON_DATE_FORMAT } from 'utils/Time';
 
 function DateSearchCriteriaInput({
   onChange,
   searchCriteria,
 }: SearchCriteriaInputProps) {
-  const [value, setValue] = useState<DateTime | null>(
-    searchCriteria
-      ? DateTime.fromFormat(searchCriteria?.value as string, LUXON_DATE_FORMAT)
-      : null
+  const [value, setValue] = useState<string | null>(
+    searchCriteria ? (searchCriteria?.value as string) : null
   );
   const [comparator, setComparator] = useState<QuestionFilterCompareOperator>(
     searchCriteria?.compareOperator ?? QuestionFilterCompareOperator.EQUALS
@@ -44,7 +39,7 @@ function DateSearchCriteriaInput({
                 .value as QuestionFilterCompareOperator;
               setComparator(newComparator);
               if (value) {
-                onChange(newComparator, value.toFormat(LUXON_DATE_FORMAT));
+                onChange(newComparator, value);
               }
             }}
             value={comparator}
@@ -67,7 +62,7 @@ function DateSearchCriteriaInput({
         </FormControl>
       </Grid>
       <Grid item xs={6}>
-        <MuiPickersUtilsProvider utils={LuxonUtils}>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             disableToolbar
             format="yyyy-MM-dd"
@@ -75,12 +70,11 @@ function DateSearchCriteriaInput({
             autoOk={true}
             label="Date"
             value={value}
-            onChange={(date: MaterialUiPickersDate) => {
-              const newDate = date as unknown as DateTime;
-              if (newDate && newDate.isValid) {
-                onChange(comparator, newDate.toFormat(LUXON_DATE_FORMAT));
+            onChange={(_date, value) => {
+              if (typeof value === 'string') {
+                onChange(comparator, value);
+                setValue(value);
               }
-              setValue(newDate);
             }}
             InputLabelProps={{
               shrink: value ? true : undefined,

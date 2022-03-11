@@ -9,12 +9,7 @@ import {
   ResourceId,
 } from '@user-office-software/duo-localisation';
 import React, { useContext } from 'react';
-import {
-  BooleanParam,
-  NumberParam,
-  StringParam,
-  useQueryParams,
-} from 'use-query-params';
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
 import ProposalReviewContent, {
@@ -51,7 +46,6 @@ const ProposalTableInstrumentScientist: React.FC = () => {
       compareOperator: StringParam,
       value: StringParam,
       dataType: StringParam,
-      isNot: BooleanParam,
       reviewModal: NumberParam,
       ...DefaultQueryParams,
     });

@@ -1,4 +1,4 @@
-import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
+import { StringParam, useQueryParams } from 'use-query-params';
 
 import { QuestionFilterInput } from 'generated/sdk';
 
@@ -8,7 +8,6 @@ export const useQuestionFilterQueryParams = () => {
     compareOperator: StringParam,
     value: StringParam,
     dataType: StringParam,
-    isNot: BooleanParam,
   });
   const setQuestionFilterQuery = (filter?: QuestionFilterInput) => {
     setQuery({
@@ -16,7 +15,6 @@ export const useQuestionFilterQueryParams = () => {
       compareOperator: filter?.compareOperator,
       value: filter?.value,
       dataType: filter?.dataType,
-      isNot: filter?.isNot,
     });
   };
 

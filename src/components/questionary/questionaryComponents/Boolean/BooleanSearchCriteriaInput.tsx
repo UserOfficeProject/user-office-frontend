@@ -28,7 +28,7 @@ function BooleanSearchCriteriaInput({
             onChange={(event) => {
               const newValue = event.target.value === 'yes';
               setValue(event.target.value as string);
-              onChange(QuestionFilterCompareOperator.EQUALS, true, !newValue);
+              onChange(QuestionFilterCompareOperator.EQUALS, newValue);
             }}
             labelId="is-checked"
             data-cy="is-checked"

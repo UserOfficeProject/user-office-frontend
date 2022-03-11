@@ -29,8 +29,7 @@ export const questionaryFilterFromUrlQuery = (
     urlQuery.questionId &&
     urlQuery.compareOperator &&
     urlQuery.value &&
-    urlQuery.dataType &&
-    urlQuery.isNot
+    urlQuery.dataType
   ) {
     return {
       questionId: urlQuery.questionId,
@@ -38,7 +37,6 @@ export const questionaryFilterFromUrlQuery = (
         urlQuery.compareOperator as QuestionFilterCompareOperator,
       value: urlQuery.value,
       dataType: urlQuery.dataType as DataType,
-      isNot: urlQuery.isNot,
     };
   }
 };
