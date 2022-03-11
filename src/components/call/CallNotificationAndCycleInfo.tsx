@@ -4,15 +4,20 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
 import {
   CreateCallMutationVariables,
+  SettingsId,
   UpdateCallMutationVariables,
 } from 'generated/sdk';
 
 const CallCycleInfo: React.FC = () => {
   const theme = useTheme();
+  const { settings } = useContext(SettingsContext);
+  const dateFormat = settings.get(SettingsId.DATE_FORMAT)?.settingsValue;
+  const mask = dateFormat?.replace(/[a-zA-Z]/g, '_');
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
@@ -37,7 +42,8 @@ const CallCycleInfo: React.FC = () => {
           name="startNotify"
           label="Start of notification period"
           id="start-notification-period-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           allowSameDateSelection
           component={DatePicker}
           textField={{
@@ -49,7 +55,8 @@ const CallCycleInfo: React.FC = () => {
           name="endNotify"
           label="End of notification period"
           id="end-notification-period-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           minDate={startNotify}
           allowSameDateSelection
           component={DatePicker}
@@ -62,7 +69,8 @@ const CallCycleInfo: React.FC = () => {
           name="startCycle"
           label="Start of cycle"
           id="start-cycle-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           component={DatePicker}
           allowSameDateSelection
           textField={{
@@ -75,7 +83,8 @@ const CallCycleInfo: React.FC = () => {
           name="endCycle"
           label="End of cycle"
           id="end-cycle-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           minDate={startCycle}
           component={DatePicker}
           allowSameDateSelection

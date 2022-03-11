@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material';
-import { DateTime } from 'luxon';
 import React, { useContext, useState } from 'react';
 import { useQueryParams } from 'use-query-params';
 
@@ -19,6 +18,7 @@ import {
 } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { tableIcons } from 'utils/materialIcons';
+import { toFormattedDateTime } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -38,7 +38,9 @@ const getFilterStatus = (callStatus: string | CallStatus) =>
 
 const CallsTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
-  const settingsContext = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
+  const timezone = settings.get(SettingsId.TIMEZONE)?.settingsValue;
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
   const [assigningInstrumentsCallId, setAssigningInstrumentsCallId] = useState<
     number | null
   >(null);
@@ -66,9 +68,6 @@ const CallsTable: React.FC = () => {
       isActive: getFilterStatus(callStatus),
     }));
   };
-
-  const timezone =
-    settingsContext.settings.get(SettingsId.TIMEZONE)?.settingsValue || '';
 
   // NOTE: Here we keep the columns inside the component just because of the timezone shown in the title
   const columns = [
@@ -221,12 +220,14 @@ const CallsTable: React.FC = () => {
 
   const callsWithFormattedData = calls.map((call) => ({
     ...call,
-    formattedStartCall: DateTime.fromISO(call.startCall, {
-      zone: timezone,
-    }).toFormat('dd-MMM-yyyy HH:mm'),
-    formattedEndCall: DateTime.fromISO(call.endCall, {
-      zone: timezone,
-    }).toFormat('dd-MMM-yyyy HH:mm'),
+    formattedStartCall: toFormattedDateTime(call.startCall, {
+      format,
+      timezone,
+    }),
+    formattedEndCall: toFormattedDateTime(call.endCall, {
+      format,
+      timezone,
+    }),
   }));
 
   return (

@@ -158,8 +158,8 @@ class App extends React.Component {
           >
             <SettingsContextProvider>
               <Theme>
-                <UserContextProvider>
-                  <FeatureContextProvider>
+                <FeatureContextProvider>
+                  <UserContextProvider>
                     <DownloadContextProvider>
                       <ReviewAndAssignmentContextProvider>
                         <Router>
@@ -169,8 +169,8 @@ class App extends React.Component {
                         </Router>
                       </ReviewAndAssignmentContextProvider>
                     </DownloadContextProvider>
-                  </FeatureContextProvider>
-                </UserContextProvider>
+                  </UserContextProvider>
+                </FeatureContextProvider>
               </Theme>
             </SettingsContextProvider>
           </SnackbarProvider>

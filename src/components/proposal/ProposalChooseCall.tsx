@@ -6,14 +6,14 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
-import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { useHistory } from 'react-router';
 
-import { Call } from 'generated/sdk';
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { Call, SettingsId } from 'generated/sdk';
 import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
-import { timeRemaining } from 'utils/Time';
+import { timeRemaining, toFormattedDateTime } from 'utils/Time';
 
 const useStyles = makeStyles(() => ({
   date: {
@@ -31,14 +31,12 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
 }) => {
   const history = useHistory();
   const classes = useStyles();
+  const { settings } = useContext(SettingsContext);
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
 
   const handleSelect = (callId: number, templateId: number | null) => {
     const url = `/ProposalCreate/${callId}/${templateId}`;
     history.push(url);
-  };
-
-  const formatDate = (date: Date) => {
-    return DateTime.fromJSDate(date).toFormat('dd-MMM-yyyy HH:mm');
   };
 
   return (
@@ -77,8 +75,9 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
                   secondary={
                     <Fragment>
                       <Typography component="div" className={classes.date}>
-                        {`Application deadline: ${formatDate(
-                          call.endCall
+                        {`Application deadline: ${toFormattedDateTime(
+                          call.endCall,
+                          { format }
                         )} ${timeRemainingText}`}
                       </Typography>
                       <Typography component="div">

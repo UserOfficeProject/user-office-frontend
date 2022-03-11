@@ -28,16 +28,15 @@ import React, { useContext, useEffect } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import { FeatureContext } from 'context/FeatureContextProvider';
-import { SettingsContext } from 'context/SettingsContextProvider';
 import {
   AllocationTimeUnits,
   CreateCallMutationVariables,
   FeatureId,
   GetTemplatesQuery,
   ProposalWorkflow,
-  SettingsId,
   UpdateCallMutationVariables,
 } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 
 const CallGeneralInfo: React.FC<{
   templates: GetTemplatesQuery['templates'];
@@ -53,9 +52,9 @@ const CallGeneralInfo: React.FC<{
   loadingTemplates,
 }) => {
   const { features } = useContext(FeatureContext);
-  const theme = useTheme();
+  const { format: dateTimeFormat, mask, timezone } = useFormattedDateTime();
 
-  const settingsContext = useContext(SettingsContext);
+  const theme = useTheme();
 
   const proposalWorkflowOptions = proposalWorkflows.map((proposalWorkflow) => ({
     text: proposalWorkflow.name,
@@ -133,9 +132,6 @@ const CallGeneralInfo: React.FC<{
     })
   )(TableRow);
 
-  const timezone =
-    settingsContext.settings.get(SettingsId.TIMEZONE)?.settingsValue || '';
-
   function populateTable(format: string, refNumber: string) {
     return { format, refNumber };
   }
@@ -163,7 +159,8 @@ const CallGeneralInfo: React.FC<{
           name="startCall"
           label={`Start (${timezone})`}
           id="start-call-input"
-          inputFormat="yyyy-MM-dd HH:mm"
+          inputFormat={dateTimeFormat}
+          mask={mask}
           component={DateTimePicker}
           allowSameDateSelection
           textField={{
@@ -179,7 +176,8 @@ const CallGeneralInfo: React.FC<{
           name="endCall"
           label={`End (${timezone})`}
           id="end-call-input"
-          inputFormat="yyyy-MM-dd HH:mm"
+          inputFormat={dateTimeFormat}
+          mask={mask}
           allowSameDateSelection
           component={DateTimePicker}
           textField={{

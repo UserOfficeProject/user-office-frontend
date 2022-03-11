@@ -16,8 +16,6 @@ export type Scalars = {
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
   IntStringDateBoolArray: any;
-  /** DateTime without timezone in 'yyyy-MM-DD HH:mm:ss' format */
-  TzLessDateTime: string;
   _Any: any;
 };
 
@@ -1700,8 +1698,8 @@ export type ProposalBookingFilter = {
 
 export type ProposalBookingScheduledEventFilterCore = {
   bookingType?: InputMaybe<ScheduledEventBookingType>;
-  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
-  endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsAfter?: InputMaybe<Scalars['DateTime']>;
+  endsBefore?: InputMaybe<Scalars['DateTime']>;
   status?: InputMaybe<Array<ProposalBookingStatusCore>>;
 };
 
@@ -2216,8 +2214,8 @@ export type QueryScheduledEventCoreArgs = {
 
 
 export type QueryScheduledEventsCoreArgs = {
-  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
-  endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsAfter?: InputMaybe<Scalars['DateTime']>;
+  endsBefore?: InputMaybe<Scalars['DateTime']>;
 };
 
 
@@ -2626,7 +2624,7 @@ export enum ScheduledEventBookingType {
 
 export type ScheduledEventCore = {
   bookingType: ScheduledEventBookingType;
-  endsAt: Scalars['TzLessDateTime'];
+  endsAt: Scalars['DateTime'];
   esi: Maybe<ExperimentSafetyInput>;
   feedback: Maybe<Feedback>;
   feedbackRequests: Array<FeedbackRequest>;
@@ -2635,7 +2633,7 @@ export type ScheduledEventCore = {
   localContactId: Maybe<Scalars['Int']>;
   proposalPk: Maybe<Scalars['Int']>;
   shipments: Array<Shipment>;
-  startsAt: Scalars['TzLessDateTime'];
+  startsAt: Scalars['DateTime'];
   status: ProposalBookingStatusCore;
   visit: Maybe<Visit>;
 };
@@ -2671,6 +2669,8 @@ export type Settings = {
 };
 
 export enum SettingsId {
+  DATE_FORMAT = 'DATE_FORMAT',
+  DATE_TIME_FORMAT = 'DATE_TIME_FORMAT',
   EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL',
   FEEDBACK_EXHAUST_DAYS = 'FEEDBACK_EXHAUST_DAYS',
   FEEDBACK_FREQUENCY_DAYS = 'FEEDBACK_FREQUENCY_DAYS',
@@ -3833,13 +3833,13 @@ export type UpdateProposalMutationVariables = Exact<{
 export type UpdateProposalMutation = { updateProposal: { proposal: { primaryKey: number, title: string, abstract: string, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
-  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsAfter?: InputMaybe<Scalars['DateTime']>;
   status?: InputMaybe<Array<ProposalBookingStatusCore> | ProposalBookingStatusCore>;
   instrumentId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetUserProposalBookingsWithEventsQuery = { me: { proposals: Array<{ primaryKey: number, title: string, proposalId: string, finalStatus: ProposalEndStatus | null, managementDecisionSubmitted: boolean, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, proposalBookingCore: { scheduledEvents: Array<{ id: number, startsAt: string, endsAt: string, bookingType: ScheduledEventBookingType, status: ProposalBookingStatusCore, visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, startsAt: any | null, endsAt: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> } | null, esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any } | null, feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number } | null, shipments: Array<{ id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } }>, localContact: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null }> } | null, visits: Array<{ id: number, proposalPk: number, status: VisitStatus, creatorId: number }> | null, instrument: { id: number, name: string } | null }> } | null };
+export type GetUserProposalBookingsWithEventsQuery = { me: { proposals: Array<{ primaryKey: number, title: string, proposalId: string, finalStatus: ProposalEndStatus | null, managementDecisionSubmitted: boolean, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, proposalBookingCore: { scheduledEvents: Array<{ id: number, startsAt: any, endsAt: any, bookingType: ScheduledEventBookingType, status: ProposalBookingStatusCore, visit: { id: number, proposalPk: number, status: VisitStatus, creatorId: number, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }, registrations: Array<{ userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, startsAt: any | null, endsAt: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> } | null, esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any } | null, feedback: { id: number, scheduledEventId: number, status: FeedbackStatus, questionaryId: number, creatorId: number } | null, shipments: Array<{ id: number, title: string, proposalPk: number, status: ShipmentStatus, externalRef: string | null, questionaryId: number, scheduledEventId: number, creatorId: number, created: any, proposal: { proposalId: string } }>, localContact: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null }> } | null, visits: Array<{ id: number, proposalPk: number, status: VisitStatus, creatorId: number }> | null, instrument: { id: number, name: string } | null }> } | null };
 
 export type AnswerTopicMutationVariables = Exact<{
   questionaryId: Scalars['Int'];
@@ -4099,14 +4099,14 @@ export type UpdateSampleMutationVariables = Exact<{
 
 export type UpdateSampleMutation = { updateSample: { sample: { id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type ScheduledEventCoreFragment = { id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: string, endsAt: string, status: ProposalBookingStatusCore, localContactId: number | null };
+export type ScheduledEventCoreFragment = { id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: any, endsAt: any, status: ProposalBookingStatusCore, localContactId: number | null };
 
 export type GetScheduledEventCoreQueryVariables = Exact<{
   scheduledEventId: Scalars['Int'];
 }>;
 
 
-export type GetScheduledEventCoreQuery = { scheduledEventCore: { id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: string, endsAt: string, status: ProposalBookingStatusCore, localContactId: number | null } | null };
+export type GetScheduledEventCoreQuery = { scheduledEventCore: { id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: any, endsAt: any, status: ProposalBookingStatusCore, localContactId: number | null } | null };
 
 export type AddProposalWorkflowStatusMutationVariables = Exact<{
   proposalWorkflowId: Scalars['Int'];
@@ -6917,7 +6917,7 @@ export const UpdateProposalDocument = gql`
     ${BasicUserDetailsFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
-    query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatusCore!], $instrumentId: Int) {
+    query getUserProposalBookingsWithEvents($endsAfter: DateTime, $status: [ProposalBookingStatusCore!], $instrumentId: Int) {
   me {
     proposals(filter: {instrumentId: $instrumentId}) {
       primaryKey

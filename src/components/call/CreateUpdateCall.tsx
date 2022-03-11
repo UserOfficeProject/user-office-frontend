@@ -88,6 +88,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
         endNotify: getDateTimeFromISO(call.endNotify),
         startCycle: getDateTimeFromISO(call.startCycle),
         endCycle: getDateTimeFromISO(call.endCycle),
+        submissionMessage: call.submissionMessage || '',
       }
     : {
         shortCode: '',
@@ -110,6 +111,7 @@ const CreateUpdateCall: React.FC<CreateUpdateCallProps> = ({ call, close }) => {
         allocationTimeUnit: AllocationTimeUnits.DAY,
         title: '',
         description: '',
+        submissionMessage: '',
       };
 
   const closeModal = (error: string | null | undefined, callToReturn: Call) => {

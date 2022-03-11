@@ -111,20 +111,18 @@ export function timeRemaining(toDate: Date): string {
   }
 }
 
-export const TZ_LESS_DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+export function toFormattedDateTime(
+  isoDateTime: string,
+  { format, timezone }: { format?: string | null; timezone?: string | null }
+): string {
+  const dateTime = DateTime.fromISO(isoDateTime, {
+    zone: timezone || undefined,
+  });
 
-export const TZ_LESS_DATE_TIME_LOW_PREC_FORMAT = 'yyyy-MM-dd HH:mm';
-
-export function parseTzLessDateTime(tzLessDateTime: string) {
-  return DateTime.fromSQL(tzLessDateTime);
-}
-
-export function toTzLessDateTime(dateTime: DateTime | Date | string): string {
-  if (dateTime instanceof Date) {
-    dateTime = DateTime.fromJSDate(dateTime);
-  } else if (typeof dateTime === 'string') {
-    dateTime = DateTime.fromISO(dateTime);
+  if (!format) {
+    // IF format is not provided return some default one from luxon
+    return dateTime.toLocaleString(DateTime.DATETIME_SHORT);
   }
 
-  return dateTime.toFormat(TZ_LESS_DATE_TIME_FORMAT);
+  return dateTime.toFormat(format);
 }

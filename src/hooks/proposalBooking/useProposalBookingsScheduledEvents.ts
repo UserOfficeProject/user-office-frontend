@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { DateTime } from 'luxon';
+import { useContext, useEffect, useState } from 'react';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
 import {
   BasicUserDetailsFragment,
   EsiFragment,
@@ -9,13 +11,14 @@ import {
   Proposal,
   ProposalBookingStatusCore,
   ScheduledEventCore,
+  SettingsId,
   ShipmentFragment,
   Visit,
   VisitFragment,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
-import { toTzLessDateTime } from 'utils/Time';
+import { toFormattedDateTime } from 'utils/Time';
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEventCore,
@@ -57,6 +60,9 @@ export function useProposalBookingsScheduledEvents({
     ProposalScheduledEvent[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const { settings } = useContext(SettingsContext);
+
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
 
   const api = useDataApi();
 
@@ -66,7 +72,13 @@ export function useProposalBookingsScheduledEvents({
     setLoading(true);
     api()
       .getUserProposalBookingsWithEvents({
-        ...(onlyUpcoming ? { endsAfter: toTzLessDateTime(new Date()) } : null),
+        ...(onlyUpcoming
+          ? {
+              endsAfter: toFormattedDateTime(DateTime.now().toUTC().toISO(), {
+                format,
+              }),
+            }
+          : null),
         status: notDraft
           ? [
               ProposalBookingStatusCore.ACTIVE,
@@ -120,7 +132,7 @@ export function useProposalBookingsScheduledEvents({
     return () => {
       unmounted = true;
     };
-  }, [onlyUpcoming, notDraft, instrumentId, api]);
+  }, [onlyUpcoming, notDraft, instrumentId, api, format]);
 
   return { loading, proposalScheduledEvents, setProposalScheduledEvents };
 }

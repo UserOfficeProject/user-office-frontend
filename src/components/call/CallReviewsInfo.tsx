@@ -4,15 +4,20 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
 import {
   CreateCallMutationVariables,
+  SettingsId,
   UpdateCallMutationVariables,
 } from 'generated/sdk';
 
 const CallReviewAndNotification: React.FC = () => {
   const theme = useTheme();
+  const { settings } = useContext(SettingsContext);
+  const dateFormat = settings.get(SettingsId.DATE_FORMAT)?.settingsValue;
+  const mask = dateFormat?.replace(/[a-zA-Z]/g, '_');
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
@@ -38,7 +43,8 @@ const CallReviewAndNotification: React.FC = () => {
           name="startReview"
           label="Start of review"
           id="start-review-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           component={DatePicker}
           allowSameDateSelection
           textField={{
@@ -51,7 +57,8 @@ const CallReviewAndNotification: React.FC = () => {
           name="endReview"
           label="End of review"
           id="end-review-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           minDate={startReview}
           component={DatePicker}
           allowSameDateSelection
@@ -64,7 +71,8 @@ const CallReviewAndNotification: React.FC = () => {
           name="startSEPReview"
           label="Start of SEP review"
           id="start-sep-review-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           allowSameDateSelection
           component={DatePicker}
           textField={{
@@ -76,7 +84,8 @@ const CallReviewAndNotification: React.FC = () => {
           name="endSEPReview"
           label="End of SEP review"
           id="end-sep-review-input"
-          inputFormat="yyyy-MM-dd"
+          inputFormat={dateFormat}
+          mask={mask}
           allowSameDateSelection
           minDate={endSEPReview}
           component={DatePicker}

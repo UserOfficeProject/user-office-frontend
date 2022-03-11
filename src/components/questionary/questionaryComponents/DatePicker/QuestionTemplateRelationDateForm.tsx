@@ -5,13 +5,14 @@ import { Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import * as Yup from 'yup';
 
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
-import { DateConfig } from 'generated/sdk';
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { DateConfig, SettingsId } from 'generated/sdk';
 
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
@@ -21,6 +22,12 @@ export const QuestionTemplateRelationDateForm: FC<
   QuestionTemplateRelationFormProps
 > = (props) => {
   const theme = useTheme();
+  const { settings } = useContext(SettingsContext);
+
+  const dateTimeFormat = settings.get(
+    SettingsId.DATE_TIME_FORMAT
+  )?.settingsValue;
+  const dateFormat = settings.get(SettingsId.DATE_FORMAT)?.settingsValue;
 
   return (
     <QuestionTemplateRelationFormShell
@@ -79,7 +86,7 @@ export const QuestionTemplateRelationDateForm: FC<
         }
 
         const component = includeTime ? DateTimePicker : DatePicker;
-        const inputFormat = includeTime ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd';
+        const inputFormat = includeTime ? dateTimeFormat : dateFormat;
 
         return (
           <>

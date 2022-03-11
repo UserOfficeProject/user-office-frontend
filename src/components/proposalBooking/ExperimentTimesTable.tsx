@@ -1,12 +1,11 @@
 import MaterialTable, { Column, Options } from '@material-table/core';
-import React from 'react';
+import React, { useContext } from 'react';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { SettingsId } from 'generated/sdk';
 import { ProposalScheduledEvent } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
-import {
-  parseTzLessDateTime,
-  TZ_LESS_DATE_TIME_LOW_PREC_FORMAT,
-} from 'utils/Time';
+import { toFormattedDateTime } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
 type ExperimentTimesTableProps = {
@@ -26,19 +25,11 @@ const columns: Column<ProposalScheduledEvent>[] = [
   },
   {
     title: 'Starts at',
-    field: 'startsAt',
-    render: (rowData) =>
-      parseTzLessDateTime(rowData.startsAt).toFormat(
-        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-      ),
+    field: 'startsAtFormatted',
   },
   {
     title: 'Ends at',
-    field: 'endsAt',
-    render: (rowData) =>
-      parseTzLessDateTime(rowData.endsAt).toFormat(
-        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-      ),
+    field: 'endsAtFormatted',
   },
 ];
 
@@ -48,13 +39,29 @@ export default function ExperimentsTable({
   proposalScheduledEvents,
   options,
 }: ExperimentTimesTableProps) {
+  const { settings } = useContext(SettingsContext);
+
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+
+  const proposalScheduledEventsWithFormattedDates = proposalScheduledEvents.map(
+    (event) => ({
+      ...event,
+      startsAtFormatted: toFormattedDateTime(event.startsAt, {
+        format,
+      }),
+      endsAtFormatted: toFormattedDateTime(event.endsAt, {
+        format,
+      }),
+    })
+  );
+
   return (
     <MaterialTable
       icons={tableIcons}
       title={title}
       isLoading={isLoading}
       columns={columns}
-      data={proposalScheduledEvents}
+      data={proposalScheduledEventsWithFormattedDates}
       options={{
         search: false,
         padding: 'dense',

@@ -1,12 +1,13 @@
 import MaterialTable from '@material-table/core';
 import { Typography } from '@mui/material';
-import { DateTime } from 'luxon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { EventLog } from 'generated/sdk';
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { EventLog, SettingsId } from 'generated/sdk';
 import { useEventLogsData } from 'hooks/eventLog/useEventLogsData';
 import { tableIcons } from 'utils/materialIcons';
+import { toFormattedDateTime } from 'utils/Time';
 
 type EventLogListProps = {
   /** Id of the changed object that we want to list event logs for. */
@@ -27,8 +28,7 @@ const columns = [
   },
   {
     title: 'Changed on',
-    render: (rowData: EventLog): string =>
-      DateTime.fromISO(rowData.eventTStamp).toFormat('dd-MMM-yyyy HH:mm:ss'),
+    field: 'changedOnFormatted',
   },
   { title: 'Event type', field: 'eventType' },
 ];
@@ -41,6 +41,13 @@ const EventLogList: React.FC<EventLogListProps> = ({
     eventType,
     changedObjectId.toString()
   );
+  const { settings } = useContext(SettingsContext);
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+
+  const eventLogsDataWithFormattedDates = eventLogsData.map((eventLog) => ({
+    ...eventLog,
+    changedOnFormatted: toFormattedDateTime(eventLog.eventTStamp, { format }),
+  }));
 
   return (
     <div data-cy="event-logs-table">
@@ -52,7 +59,7 @@ const EventLogList: React.FC<EventLogListProps> = ({
           </Typography>
         }
         columns={columns}
-        data={eventLogsData}
+        data={eventLogsDataWithFormattedDates}
         isLoading={loading}
         options={{
           search: true,

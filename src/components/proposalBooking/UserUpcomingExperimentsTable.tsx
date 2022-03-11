@@ -1,9 +1,11 @@
 import MaterialTable, { Column } from '@material-table/core';
 import { Dialog, DialogContent } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ReactNode } from 'react';
 
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { SettingsId } from 'generated/sdk';
 import { useActionButtons } from 'hooks/proposalBooking/useActionButtons';
 import {
   ProposalScheduledEvent,
@@ -11,10 +13,7 @@ import {
 } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
-import {
-  parseTzLessDateTime,
-  TZ_LESS_DATE_TIME_LOW_PREC_FORMAT,
-} from 'utils/Time';
+import { toFormattedDateTime } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
 const columns: Column<ProposalScheduledEvent>[] = [
@@ -27,19 +26,11 @@ const columns: Column<ProposalScheduledEvent>[] = [
   },
   {
     title: 'Starts at',
-    field: 'startsAt',
-    render: (rowData) =>
-      parseTzLessDateTime(rowData.startsAt).toFormat(
-        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-      ),
+    field: 'startsAtFormatted',
   },
   {
     title: 'Ends at',
-    field: 'endsAt',
-    render: (rowData) =>
-      parseTzLessDateTime(rowData.endsAt).toFormat(
-        TZ_LESS_DATE_TIME_LOW_PREC_FORMAT
-      ),
+    field: 'endsAtFormatted',
   },
 ];
 
@@ -49,6 +40,8 @@ export default function UserUpcomingExperimentsTable() {
       onlyUpcoming: true,
       notDraft: true,
     });
+  const { settings } = useContext(SettingsContext);
+  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
 
   const [modalContents, setModalContents] = useState<ReactNode>(null);
 
@@ -78,6 +71,14 @@ export default function UserUpcomingExperimentsTable() {
     return null;
   }
 
+  const proposalScheduledEventsWithFormattedDates = proposalScheduledEvents.map(
+    (event) => ({
+      ...event,
+      startsAtFormatted: toFormattedDateTime(event.startsAt, { format }),
+      endsAtFormatted: toFormattedDateTime(event.endsAt, { format }),
+    })
+  );
+
   return (
     <Grid item xs={12} data-cy="upcoming-experiments">
       <StyledPaper margin={[0]}>
@@ -94,7 +95,7 @@ export default function UserUpcomingExperimentsTable() {
           title="Upcoming experiments"
           isLoading={loading}
           columns={columns}
-          data={proposalScheduledEvents}
+          data={proposalScheduledEventsWithFormattedDates}
           options={{
             search: false,
             padding: 'dense',
