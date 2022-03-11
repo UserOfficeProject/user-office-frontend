@@ -44,6 +44,11 @@ function QuestionsPage() {
     }
   };
 
+  const deleteQuestion = async (questionId: string | number) =>
+    api('Question deleted')
+      .deleteQuestion({ questionId: questionId as string })
+      .then((result) => result.deleteQuestion.rejection === null);
+
   const templateCountButton = (rowData: QuestionWithUsage) => (
     <Link
       onClick={() => setSelectedTemplateCountDetailsQuestion(rowData)}
@@ -93,11 +98,7 @@ function QuestionsPage() {
             <div data-cy="questions-table">
               <SuperMaterialTable
                 createModal={createModal}
-                delete={(questionId) =>
-                  api('Question deleted')
-                    .deleteQuestion({ questionId: questionId as string })
-                    .then((result) => result.deleteQuestion === null)
-                }
+                delete={deleteQuestion}
                 setData={setQuestions}
                 icons={tableIcons}
                 title={
