@@ -45,7 +45,9 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
           millisecond: 0,
         }); // omit time
         //Luxon returns a date object with a invalid date while date fns returned a string invalid date
-        onComplete(newDate?.isValid ? newDate : 'Invalid Date');
+        onComplete(
+          newDate?.isValid ? newDate : newDate ? 'Invalid Date' : null
+        );
       }}
     />
   );
@@ -61,7 +63,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
         format={timeFormat}
         component={KeyboardDateTimePicker}
         onChange={(date: DateType | null) => {
-          onComplete(date);
+          onComplete(date?.isValid ? date : date ? 'Invalid Date' : null);
         }}
       />
     </>
