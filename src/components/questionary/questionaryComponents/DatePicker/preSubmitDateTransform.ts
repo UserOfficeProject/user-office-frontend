@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import { QuestionaryComponentDefinition } from 'components/questionary/QuestionaryComponentRegistry';
 import { DateConfig } from 'generated/sdk';
 
@@ -12,6 +10,8 @@ export const preSubmitDateTransform: QuestionaryComponentDefinition['preSubmitTr
       ...answer,
       value: ifNotRequiredDateCanBeNull
         ? null
-        : moment(answer.value).format('YYYY-MM-DDTHH:mm:ss.SSS'), // ISO time format without timezone
+        : typeof answer.value === 'string' //Either string or DateTime
+        ? answer.value
+        : answer.value.toISO({ includeOffset: false }), // ISO time format without timezone
     };
   };

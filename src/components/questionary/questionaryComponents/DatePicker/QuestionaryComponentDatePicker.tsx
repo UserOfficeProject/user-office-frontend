@@ -44,7 +44,8 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
           second: 0,
           millisecond: 0,
         }); // omit time
-        onComplete(newDate);
+        //Luxon returns a date object with a invalid date while date fns returned a string invalid date
+        onComplete(newDate?.isValid ? newDate : 'Invalid Date');
       }}
     />
   );
