@@ -214,6 +214,7 @@ context('Calls tests', () => {
       const tomorrowDate = DateTime.now()
         .plus({ days: 1 })
         .startOf('day')
+        // TODO: Find a way how to access the settings format here and not hard coding it like this.
         .toFormat('yyyy-MM-dd HH:mm')
         .toString();
 

@@ -46,6 +46,7 @@ const CallReviewAndNotification: React.FC = () => {
           inputFormat={dateFormat}
           mask={mask}
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
@@ -61,6 +62,7 @@ const CallReviewAndNotification: React.FC = () => {
           mask={mask}
           minDate={startReview}
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
@@ -75,6 +77,7 @@ const CallReviewAndNotification: React.FC = () => {
           mask={mask}
           allowSameDateSelection
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
           }}
@@ -89,6 +92,7 @@ const CallReviewAndNotification: React.FC = () => {
           allowSameDateSelection
           minDate={endSEPReview}
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
           }}

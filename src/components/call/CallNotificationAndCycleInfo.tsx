@@ -46,6 +46,7 @@ const CallCycleInfo: React.FC = () => {
           mask={mask}
           allowSameDateSelection
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
           }}
@@ -60,6 +61,7 @@ const CallCycleInfo: React.FC = () => {
           minDate={startNotify}
           allowSameDateSelection
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
           }}
@@ -72,6 +74,7 @@ const CallCycleInfo: React.FC = () => {
           inputFormat={dateFormat}
           mask={mask}
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
@@ -87,6 +90,7 @@ const CallCycleInfo: React.FC = () => {
           mask={mask}
           minDate={startCycle}
           component={DatePicker}
+          inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,

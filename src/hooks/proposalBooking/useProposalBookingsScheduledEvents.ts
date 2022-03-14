@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { SettingsContext } from 'context/SettingsContextProvider';
 import {
   BasicUserDetailsFragment,
   EsiFragment,
@@ -11,14 +10,12 @@ import {
   Proposal,
   ProposalBookingStatusCore,
   ScheduledEventCore,
-  SettingsId,
   ShipmentFragment,
   Visit,
   VisitFragment,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { VisitRegistrationCore } from 'models/questionary/visit/VisitRegistrationCore';
-import { toFormattedDateTime } from 'utils/Time';
 
 export type ProposalScheduledEvent = Pick<
   ScheduledEventCore,
@@ -60,9 +57,6 @@ export function useProposalBookingsScheduledEvents({
     ProposalScheduledEvent[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const { settings } = useContext(SettingsContext);
-
-  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
 
   const api = useDataApi();
 
@@ -74,9 +68,7 @@ export function useProposalBookingsScheduledEvents({
       .getUserProposalBookingsWithEvents({
         ...(onlyUpcoming
           ? {
-              endsAfter: toFormattedDateTime(DateTime.now().toUTC().toISO(), {
-                format,
-              }),
+              endsAfter: DateTime.now().toUTC().toISO(),
             }
           : null),
         status: notDraft
@@ -132,7 +124,7 @@ export function useProposalBookingsScheduledEvents({
     return () => {
       unmounted = true;
     };
-  }, [onlyUpcoming, notDraft, instrumentId, api, format]);
+  }, [onlyUpcoming, notDraft, instrumentId, api]);
 
   return { loading, proposalScheduledEvents, setProposalScheduledEvents };
 }

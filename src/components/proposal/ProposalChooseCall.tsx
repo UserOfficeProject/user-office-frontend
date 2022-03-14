@@ -7,13 +7,13 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
-import React, { Fragment, useContext } from 'react';
+import React, { Fragment } from 'react';
 import { useHistory } from 'react-router';
 
-import { SettingsContext } from 'context/SettingsContextProvider';
-import { Call, SettingsId } from 'generated/sdk';
+import { Call } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
-import { timeRemaining, toFormattedDateTime } from 'utils/Time';
+import { timeRemaining } from 'utils/Time';
 
 const useStyles = makeStyles(() => ({
   date: {
@@ -31,8 +31,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
 }) => {
   const history = useHistory();
   const classes = useStyles();
-  const { settings } = useContext(SettingsContext);
-  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+  const { toFormattedDateTime } = useFormattedDateTime();
 
   const handleSelect = (callId: number, templateId: number | null) => {
     const url = `/ProposalCreate/${callId}/${templateId}`;
@@ -76,8 +75,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
                     <Fragment>
                       <Typography component="div" className={classes.date}>
                         {`Application deadline: ${toFormattedDateTime(
-                          call.endCall,
-                          { format }
+                          call.endCall
                         )} ${timeRemainingText}`}
                       </Typography>
                       <Typography component="div">

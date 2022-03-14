@@ -20,7 +20,12 @@ import React, { useState, useContext } from 'react';
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
-import { UpdateUserMutationVariables, UserRole } from 'generated/sdk';
+import {
+  SettingsId,
+  UpdateUserMutationVariables,
+  UserRole,
+} from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useGetFields } from 'hooks/user/useGetFields';
 import { useUserData } from 'hooks/user/useUserData';
@@ -58,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
 export default function UpdateUserInformation(props: { id: number }) {
   const { currentRole } = useContext(UserContext);
   const { userData, setUserData } = useUserData(props);
+  const { format, mask, toFormattedDateTime } = useFormattedDateTime({
+    settingsFormatToUse: SettingsId.DATE_FORMAT,
+  });
   const { api } = useDataApiWithFeedback();
   const fieldsContent = useGetFields();
   const { institutions, loadingInstitutions } = useInstitutionsData();
@@ -143,8 +151,8 @@ export default function UpdateUserInformation(props: { id: number }) {
               : userData.gender,
           othergender: userData.gender,
           nationality: userData.nationality,
-          birthdate: DateTime.fromMillis(parseInt(userData.birthdate)).toFormat(
-            'yyyy-MM-dd'
+          birthdate: toFormattedDateTime(
+            DateTime.fromMillis(parseInt(userData.birthdate)).toISO()
           ),
           organisation: userData.organisation,
           department: userData.department,
@@ -290,7 +298,9 @@ export default function UpdateUserInformation(props: { id: number }) {
                     name="birthdate"
                     label="Birthdate"
                     id="birthdate-input"
-                    inputFormat="yyyy-MM-dd"
+                    inputFormat={format}
+                    mask={mask}
+                    inputProps={{ placeholder: format }}
                     component={DatePicker}
                     textField={{
                       fullWidth: true,

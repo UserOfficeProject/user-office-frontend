@@ -11,7 +11,12 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import { VisitRegistrationContextType } from 'components/visit/VisitRegistrationContainer';
-import { Sdk, UpdateVisitRegistrationMutationVariables } from 'generated/sdk';
+import {
+  Sdk,
+  SettingsId,
+  UpdateVisitRegistrationMutationVariables,
+} from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { SubmitActionDependencyContainer } from 'hooks/questionary/useSubmitActions';
 import { VisitRegistrationSubmissionState } from 'models/questionary/visit/VisitRegistrationSubmissionState';
 
@@ -19,6 +24,9 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
   const { dispatch, state } = useContext(
     QuestionaryContext
   ) as VisitRegistrationContextType;
+  const { format, mask } = useFormattedDateTime({
+    settingsFormatToUse: SettingsId.DATE_FORMAT,
+  });
 
   if (!state || !dispatch) {
     throw new Error(createMissingContextErrorMessage());
@@ -31,8 +39,10 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
       <Field
         name={`${id}.startsAt`}
         label="Visit start"
-        inputFormat="yyyy-MM-dd"
+        inputFormat={format}
+        mask={mask}
         component={DatePicker}
+        inputProps={{ placeholder: format }}
         variant="inline"
         disableToolbar
         autoOk={true}
@@ -54,8 +64,10 @@ function QuestionaryComponentVisitBasis({ answer }: BasicComponentProps) {
       <Field
         name={`${id}.endsAt`}
         label="Visit end"
-        inputFormat="yyyy-MM-dd"
+        inputFormat={format}
+        mask={mask}
         component={DatePicker}
+        inputProps={{ placeholder: format }}
         variant="inline"
         disableToolbar
         autoOk={true}

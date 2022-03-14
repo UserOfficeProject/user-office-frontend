@@ -6,24 +6,29 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field } from 'formik';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { BasicComponentProps } from 'components/proposal/IBasicComponentProps';
-import { DateConfig } from 'generated/sdk';
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { DateConfig, SettingsId } from 'generated/sdk';
 
 import Hint from '../Hint';
 
 export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
   const theme = useTheme();
+  const { settings } = useContext(SettingsContext);
+  const dateFormat = settings.get(SettingsId.DATE_FORMAT)?.settingsValue;
+  const dateMask = dateFormat?.replace(/[a-zA-Z]/g, '_');
+  const dateTimeFormat = settings.get(
+    SettingsId.DATE_TIME_FORMAT
+  )?.settingsValue;
+  const dateTimeMask = dateTimeFormat?.replace(/[a-zA-Z]/g, '_');
   const { answer, onComplete } = props;
   const {
     question: { id, question },
   } = answer;
   const { tooltip, required, minDate, maxDate, includeTime } =
     answer.config as DateConfig;
-
-  const dateFormat = 'yyyy-MM-dd';
-  const timeFormat = `${dateFormat} HH:mm`;
 
   const fieldMinDate = minDate
     ? DateTime.fromISO(minDate).startOf(includeTime ? 'minute' : 'day')
@@ -39,7 +44,9 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       name={id}
       label={question}
       inputFormat={dateFormat}
+      mask={dateMask}
       component={DatePicker}
+      inputProps={{ placeholder: dateFormat }}
       ampm={false}
       disableToolbar
       autoOk={true}
@@ -61,8 +68,10 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
       name={id}
       label={question}
       ampm={false}
-      inputFormat={timeFormat}
+      inputFormat={dateTimeFormat}
+      mask={dateTimeMask}
       component={DateTimePicker}
+      inputProps={{ placeholder: dateTimeFormat }}
       onChange={(date: DateType | null) => {
         date && onComplete(date);
       }}

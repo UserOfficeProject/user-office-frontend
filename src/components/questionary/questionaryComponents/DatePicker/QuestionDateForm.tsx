@@ -10,12 +10,17 @@ import * as Yup from 'yup';
 import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
+import { SettingsId } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useNaturalKeySchema } from 'utils/userFieldValidationSchema';
 
 import { QuestionFormShell } from '../QuestionFormShell';
 
 export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
   const theme = useTheme();
+  const { format, mask } = useFormattedDateTime({
+    settingsFormatToUse: SettingsId.DATE_FORMAT,
+  });
   const field = props.question;
 
   const naturalKeySchema = useNaturalKeySchema(field.naturalKey);
@@ -80,8 +85,10 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 name="config.minDate"
                 id="Min-Time-Input"
                 label="Min"
-                inputFormat="yyyy-MM-dd"
+                inputFormat={format}
+                mask={mask}
                 component={DatePicker}
+                inputProps={{ placeholder: format }}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'minDate',
@@ -92,8 +99,10 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 name="config.maxDate"
                 id="Max-Time-Input"
                 label="Max"
-                inputFormat="yyyy-MM-dd"
+                inputFormat={format}
+                mask={mask}
                 component={DatePicker}
+                inputProps={{ placeholder: format }}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'maxDate',
@@ -104,8 +113,10 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 name="config.defaultDate"
                 id="Default-Time-Input"
                 label="Default"
-                inputFormat="yyyy-MM-dd"
+                inputFormat={format}
+                mask={mask}
                 component={DatePicker}
+                inputProps={{ placeholder: format }}
                 textField={{
                   fullWidth: true,
                   'data-cy': 'defaultDate',

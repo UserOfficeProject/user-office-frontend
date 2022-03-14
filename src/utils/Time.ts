@@ -110,19 +110,3 @@ export function timeRemaining(toDate: Date): string {
     return '';
   }
 }
-
-export function toFormattedDateTime(
-  isoDateTime: string,
-  { format, timezone }: { format?: string | null; timezone?: string | null }
-): string {
-  const dateTime = DateTime.fromISO(isoDateTime, {
-    zone: timezone || undefined,
-  });
-
-  if (!format) {
-    // IF format is not provided return some default one from luxon
-    return dateTime.toLocaleString(DateTime.DATETIME_SHORT);
-  }
-
-  return dateTime.toFormat(format);
-}

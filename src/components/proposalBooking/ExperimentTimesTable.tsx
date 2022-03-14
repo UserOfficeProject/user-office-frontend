@@ -1,11 +1,9 @@
 import MaterialTable, { Column, Options } from '@material-table/core';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { SettingsContext } from 'context/SettingsContextProvider';
-import { SettingsId } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { ProposalScheduledEvent } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
-import { toFormattedDateTime } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
 type ExperimentTimesTableProps = {
@@ -39,19 +37,13 @@ export default function ExperimentsTable({
   proposalScheduledEvents,
   options,
 }: ExperimentTimesTableProps) {
-  const { settings } = useContext(SettingsContext);
-
-  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+  const { toFormattedDateTime } = useFormattedDateTime();
 
   const proposalScheduledEventsWithFormattedDates = proposalScheduledEvents.map(
     (event) => ({
       ...event,
-      startsAtFormatted: toFormattedDateTime(event.startsAt, {
-        format,
-      }),
-      endsAtFormatted: toFormattedDateTime(event.endsAt, {
-        format,
-      }),
+      startsAtFormatted: toFormattedDateTime(event.startsAt),
+      endsAtFormatted: toFormattedDateTime(event.endsAt),
     })
   );
 

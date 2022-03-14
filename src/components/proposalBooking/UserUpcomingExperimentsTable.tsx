@@ -1,11 +1,10 @@
 import MaterialTable, { Column } from '@material-table/core';
 import { Dialog, DialogContent } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { ReactNode } from 'react';
 
-import { SettingsContext } from 'context/SettingsContextProvider';
-import { SettingsId } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useActionButtons } from 'hooks/proposalBooking/useActionButtons';
 import {
   ProposalScheduledEvent,
@@ -13,7 +12,6 @@ import {
 } from 'hooks/proposalBooking/useProposalBookingsScheduledEvents';
 import { StyledPaper } from 'styles/StyledComponents';
 import { tableIcons } from 'utils/materialIcons';
-import { toFormattedDateTime } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
 const columns: Column<ProposalScheduledEvent>[] = [
@@ -40,8 +38,7 @@ export default function UserUpcomingExperimentsTable() {
       onlyUpcoming: true,
       notDraft: true,
     });
-  const { settings } = useContext(SettingsContext);
-  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+  const { toFormattedDateTime } = useFormattedDateTime();
 
   const [modalContents, setModalContents] = useState<ReactNode>(null);
 
@@ -74,8 +71,8 @@ export default function UserUpcomingExperimentsTable() {
   const proposalScheduledEventsWithFormattedDates = proposalScheduledEvents.map(
     (event) => ({
       ...event,
-      startsAtFormatted: toFormattedDateTime(event.startsAt, { format }),
-      endsAtFormatted: toFormattedDateTime(event.endsAt, { format }),
+      startsAtFormatted: toFormattedDateTime(event.startsAt),
+      endsAtFormatted: toFormattedDateTime(event.endsAt),
     })
   );
 

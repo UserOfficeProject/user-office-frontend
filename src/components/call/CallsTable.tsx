@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useQueryParams } from 'use-query-params';
 
 import { useCheckAccess } from 'components/common/Can';
@@ -9,16 +9,10 @@ import SuperMaterialTable, {
   DefaultQueryParams,
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
-import { SettingsContext } from 'context/SettingsContextProvider';
-import {
-  Call,
-  InstrumentWithAvailabilityTime,
-  SettingsId,
-  UserRole,
-} from 'generated/sdk';
+import { Call, InstrumentWithAvailabilityTime, UserRole } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { tableIcons } from 'utils/materialIcons';
-import { toFormattedDateTime } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 
@@ -38,9 +32,9 @@ const getFilterStatus = (callStatus: string | CallStatus) =>
 
 const CallsTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
-  const { settings } = useContext(SettingsContext);
-  const timezone = settings.get(SettingsId.TIMEZONE)?.settingsValue;
-  const format = settings.get(SettingsId.DATE_TIME_FORMAT)?.settingsValue;
+  const { timezone, toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
   const [assigningInstrumentsCallId, setAssigningInstrumentsCallId] = useState<
     number | null
   >(null);
@@ -220,14 +214,8 @@ const CallsTable: React.FC = () => {
 
   const callsWithFormattedData = calls.map((call) => ({
     ...call,
-    formattedStartCall: toFormattedDateTime(call.startCall, {
-      format,
-      timezone,
-    }),
-    formattedEndCall: toFormattedDateTime(call.endCall, {
-      format,
-      timezone,
-    }),
+    formattedStartCall: toFormattedDateTime(call.startCall),
+    formattedEndCall: toFormattedDateTime(call.endCall),
   }));
 
   return (

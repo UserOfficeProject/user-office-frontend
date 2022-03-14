@@ -162,6 +162,7 @@ const CallGeneralInfo: React.FC<{
           inputFormat={dateTimeFormat}
           mask={mask}
           component={DateTimePicker}
+          inputProps={{ placeholder: dateTimeFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
@@ -180,6 +181,7 @@ const CallGeneralInfo: React.FC<{
           mask={mask}
           allowSameDateSelection
           component={DateTimePicker}
+          inputProps={{ placeholder: dateTimeFormat }}
           textField={{
             fullWidth: true,
             required: true,
