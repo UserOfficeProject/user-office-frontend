@@ -29,29 +29,24 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const { quantities, loadingQuantities } = useQuantities();
 
-  const initialValues: Pick<
-    Unit,
-    'id' | 'siConversionFormula' | 'symbol' | 'unit'
-  > & { quantity: string | null } = unit
+  const initialValues: Unit = unit
     ? unit
     : {
         id: '',
         unit: '',
-        quantity: null,
+        quantity: '',
         symbol: '',
         siConversionFormula: '',
       };
+
+  if (loadingQuantities) return <UOLoader />;
 
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={async (newUnit): Promise<void> => {
-        const data = await api('Unit created successfully').createUnit(
-          newUnit as Unit
-        );
-        if (data.createUnit.rejection) {
-          close(null);
-        } else if (data.createUnit.unit) {
+        const data = await api('Unit created successfully').createUnit(newUnit);
+        if (data.createUnit.unit) {
           close(data.createUnit.unit);
         }
       }}

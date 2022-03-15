@@ -64,6 +64,11 @@ const ThemeWrapper: React.FC = (props) => {
         settings.get(SettingsId.PALETTE_INFO_MAIN)?.settingsValue ||
         defaultTheme.palette.info.main,
     },
+    // NOTE: This was previous default background on the body. Now it is white and that's why we are overwriting it.
+    // (https://v4.mui.com/customization/default-theme/#explore vs https://mui.com/customization/default-theme/#explore)
+    background: {
+      default: '#fafafa',
+    },
   };
 
   // NOTE: If DatePicker/DateTimePicker are added here later we can add the desktopModeMediaQuery as default to fix this:
