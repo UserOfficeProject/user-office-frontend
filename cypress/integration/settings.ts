@@ -149,8 +149,8 @@ context('Settings tests', () => {
       startCycle: currentDayStart,
       endCycle: currentDayStart,
       allocationTimeUnit: AllocationTimeUnits.DAY,
-      cycleComment: faker.lorem.word(),
-      surveyComment: faker.lorem.word(),
+      cycleComment: faker.lorem.word(10),
+      surveyComment: faker.lorem.word(10),
       templateId: initialDBData.template.id,
     };
 
@@ -729,13 +729,12 @@ context('Settings tests', () => {
 
       cy.get('[role="listbox"] > [role="option"]').first().click();
 
-      cy.contains('Submit').click();
+      cy.get('[data-cy="is-grade-submitted"]').click();
+      cy.get('[type="submit"]').contains('Save').click();
 
-      cy.get('[data-cy="confirm-ok"]').click();
+      cy.notification({ variant: 'success', text: 'Updated' });
 
-      cy.notification({ variant: 'success', text: 'Submitted' });
-
-      cy.get('[aria-label="close"]').click();
+      cy.closeModal();
 
       cy.get('[role="dialog"]').should('not.exist');
       cy.contains('SEP Meeting');
