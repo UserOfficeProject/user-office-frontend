@@ -16,7 +16,9 @@ export function useFormattedDateTime(params?: {
   const settingsTimeZone = (params?.shouldUseTimeZone && timezone) || undefined;
   const mask = format?.replace(/[a-zA-Z]/g, '_');
 
-  const toFormattedDateTime = (isoDateTime: string): string => {
+  const toFormattedDateTime = (
+    isoDateTime = DateTime.now().toISO()
+  ): string => {
     const dateTime = DateTime.fromISO(isoDateTime, {
       zone: settingsTimeZone,
     });

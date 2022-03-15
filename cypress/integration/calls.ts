@@ -215,7 +215,7 @@ context('Calls tests', () => {
         .plus({ days: 1 })
         .startOf('day')
         // TODO: Find a way how to access the settings format here and not hard coding it like this.
-        .toFormat('yyyy-MM-dd HH:mm')
+        .toFormat('dd-MM-yyyy HH:mm')
         .toString();
 
       cy.contains('Proposals');
