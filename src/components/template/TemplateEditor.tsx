@@ -224,7 +224,6 @@ export default function TemplateEditor() {
     state.steps.length === 0 ? (
       <Button
         variant="outlined"
-        color="primary"
         className={classes.centeredButton}
         onClick={(): void =>
           dispatch({
@@ -249,7 +248,6 @@ export default function TemplateEditor() {
             <Switch
               checked={isTopicReorderMode}
               onChange={(): void => setIsTopicReorderMode(!isTopicReorderMode)}
-              color="primary"
             />
           }
           label="Reorder topics mode"

@@ -97,7 +97,9 @@ const DownloadMonitorDialog = ({
                       )
                     }
                   />
-                  <Button onClick={() => cancel(item.id)}>Cancel</Button>
+                  <Button variant="text" onClick={() => cancel(item.id)}>
+                    Cancel
+                  </Button>
                 </ListItem>
               );
             })}

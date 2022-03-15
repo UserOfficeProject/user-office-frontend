@@ -94,8 +94,6 @@ function AssignTechnicalReview({
         }}
         data-cy="re-assign-submit"
         type="button"
-        variant="contained"
-        color="primary"
         className={classes.submitButton}
         disabled={proposal.technicalReview?.submitted}
       >
@@ -108,7 +106,6 @@ function AssignTechnicalReview({
         }}
         type="button"
         variant="outlined"
-        color="primary"
         className={classes.submitButton}
       >
         Cancel

@@ -262,8 +262,6 @@ export default function QuestionaryStepView(props: {
                   onClick={saveHandler}
                   disabled={!state.isDirty}
                   isBusy={isSubmitting}
-                  variant="contained"
-                  color="primary"
                   data-cy="save-button"
                 >
                   Save
@@ -272,8 +270,6 @@ export default function QuestionaryStepView(props: {
               <NavigButton
                 onClick={submitForm}
                 isBusy={isSubmitting}
-                variant="contained"
-                color="primary"
                 data-cy="save-and-continue-button"
               >
                 Save and continue

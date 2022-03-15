@@ -449,8 +449,6 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
                 </div>
                 <Button
                   type="button"
-                  variant="contained"
-                  color="primary"
                   onClick={() => {
                     if (props.onUpdate) {
                       props.onUpdate(selectedParticipants);

@@ -344,8 +344,6 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                         </p>
                         <Button
                           fullWidth
-                          variant="contained"
-                          color="primary"
                           className={classes.orcButton}
                           onClick={() => reDirectOrcID()}
                         >
@@ -649,8 +647,6 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                 <Button
                   type="submit"
                   fullWidth
-                  variant="contained"
-                  color="primary"
                   className={classes.submit}
                   data-cy="submit"
                   disabled={

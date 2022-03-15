@@ -14,7 +14,7 @@ const sepMembers = {
   reviewer2: initialDBData.users.user3,
 };
 
-function readWriteReview() {
+function readWriteReview({ shouldSubmit } = { shouldSubmit: false }) {
   cy.get('[role="dialog"]').as('dialog');
 
   cy.finishedLoading();
@@ -28,6 +28,10 @@ function readWriteReview() {
   cy.get('@dialog').get('[data-cy="grade-proposal"]').click();
 
   cy.get('[role="listbox"] > [role="option"]').first().click();
+
+  if (shouldSubmit) {
+    cy.get('[data-cy="is-grade-submitted"]').click();
+  }
 
   cy.get('@dialog').contains('Save').click();
 
@@ -308,6 +312,68 @@ context('SEP reviews tests', () => {
       readWriteReview();
     });
 
+    it('Officer should be able to submit and un-submit reviews', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.get('[title="Show Reviewers"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+
+      readWriteReview({ shouldSubmit: true });
+
+      cy.contains(sepMembers.reviewer.lastName).parent().contains('SUBMITTED');
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="view-proposal-details-icon"]')
+        .click();
+
+      cy.get('[role="presentation"] [role="tab"]').contains('Grade').click();
+
+      cy.get('[role="presentation"] form button[type="submit"]').should(
+        'not.be.disabled'
+      );
+
+      cy.get('[data-cy="is-grade-submitted"]').click();
+
+      cy.get('[role="presentation"] form button[type="submit"]').click();
+
+      cy.notification({ variant: 'success', text: 'Updated' });
+
+      cy.closeModal();
+      cy.get('[role="dialog"]').should('not.exist');
+
+      cy.get('[role="tab"]').contains('Members').click();
+      cy.get('[role="tab"]')
+        .contains('Proposals and assignments', { matchCase: false })
+        .click();
+      cy.finishedLoading();
+      cy.get('[title="Show Reviewers"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName).parent().contains('DRAFT');
+    });
+
     it('Officer should get error when trying to delete proposal which has dependencies (like reviews)', () => {
       cy.assignProposalsToSep({
         sepId: createdSepId,
@@ -413,7 +479,7 @@ context('SEP reviews tests', () => {
       cy.get('[role="dialog"]').contains('Download PDF');
     });
 
-    it('SEP Chair should be able to read/write reviews', () => {
+    it('SEP Chair should be able to read/write and un-submit reviews', () => {
       cy.assignSepReviewersToProposal({
         sepId: createdSepId,
         memberIds: [sepMembers.reviewer.id],
@@ -431,6 +497,7 @@ context('SEP reviews tests', () => {
         .parent()
         .find('[data-cy="grade-proposal-icon"]')
         .click();
+      cy.get('[data-cy="is-grade-submitted"]').should('exist');
       readWriteReview();
     });
   });
@@ -488,7 +555,7 @@ context('SEP reviews tests', () => {
       cy.contains(sepMembers.secretary.lastName);
     });
 
-    it('SEP Secretary should be able to read/write reviews', () => {
+    it('SEP Secretary should be able to read/write and un-submit reviews', () => {
       cy.assignSepReviewersToProposal({
         sepId: createdSepId,
         memberIds: [sepMembers.reviewer.id],
@@ -506,6 +573,7 @@ context('SEP reviews tests', () => {
         .parent()
         .find('[data-cy="grade-proposal-icon"]')
         .click();
+      cy.get('[data-cy="is-grade-submitted"]').should('exist');
       readWriteReview();
     });
   });

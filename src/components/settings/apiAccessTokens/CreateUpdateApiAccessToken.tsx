@@ -143,7 +143,6 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
                   name="accessPermissions"
                   value={item}
                   checked={formValues.accessPermissions.includes(item)}
-                  color="primary"
                   data-cy={`permission-${title.toLowerCase()}`}
                   onChange={(e) => {
                     if (e.target.checked) fieldArrayHelpers.push(item);
@@ -296,8 +295,6 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
 
               <Button
                 type="submit"
-                variant="contained"
-                color="primary"
                 disabled={
                   isSubmitting || loadingQueriesAndMutations || isExecutingCall
                 }

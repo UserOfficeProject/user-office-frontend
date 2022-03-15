@@ -103,8 +103,6 @@ const AssignProposalsToInstrument: React.FC<
             <Button
               type="submit"
               fullWidth
-              variant="contained"
-              color="primary"
               className={classes.submit}
               disabled={isSubmitting || loadingInstruments}
               data-cy="submit-assign-remove-instrument"

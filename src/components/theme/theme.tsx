@@ -83,6 +83,11 @@ const ThemeWrapper: React.FC = (props) => {
             margin: 'normal',
           },
         },
+        MuiButton: {
+          defaultProps: {
+            variant: 'contained',
+          },
+        },
         MuiSelect: {
           defaultProps: {
             variant: 'standard',

@@ -85,8 +85,6 @@ function VisitRegistrationReview({ confirm }: VisitRegistrationReviewProps) {
             )()
           }
           disabled={registration.isRegistrationSubmitted}
-          variant="contained"
-          color="primary"
           data-cy="submit-visit-registration-button"
         >
           {registration.isRegistrationSubmitted ? '✔ Submitted' : 'Submit'}

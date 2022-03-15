@@ -209,14 +209,11 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                       name="managementDecisionSubmitted"
                       component={FormikUICustomCheckbox}
                       label="Submitted"
-                      color="primary"
                       data-cy="is-management-decision-submitted"
                     />
                     <Button
                       disabled={isSubmitting}
                       type="submit"
-                      variant="contained"
-                      color="primary"
                       data-cy="save-admin-decision"
                     >
                       Save

@@ -63,13 +63,7 @@ const CreateTemplate = (props: {
               rows="3"
               data-cy="description"
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              data-cy="submit"
-            >
+            <Button type="submit" fullWidth data-cy="submit">
               Create
             </Button>
           </Form>

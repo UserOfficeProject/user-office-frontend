@@ -122,7 +122,6 @@ export const QuestionTemplateRelationFormShell = (
               <Button
                 type="button"
                 variant="outlined"
-                color="primary"
                 data-cy="remove-from-template"
                 onClick={deleteHandler}
                 disabled={definition.creatable === false}
@@ -131,8 +130,6 @@ export const QuestionTemplateRelationFormShell = (
               </Button>
               <Button
                 type="submit"
-                variant="contained"
-                color="primary"
                 data-cy="submit"
                 disabled={!formikProps.isValid}
               >

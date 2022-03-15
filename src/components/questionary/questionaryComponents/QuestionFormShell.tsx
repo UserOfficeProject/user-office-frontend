@@ -87,19 +87,13 @@ export const QuestionFormShell = (
               <Button
                 type="button"
                 variant="outlined"
-                color="primary"
                 data-cy="delete"
                 onClick={deleteHandler}
                 disabled={definition.creatable === false}
               >
                 Delete
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                data-cy="submit"
-              >
+              <Button type="submit" data-cy="submit">
                 Save
               </Button>
             </ActionButtonContainer>

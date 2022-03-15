@@ -94,16 +94,30 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     (sepAssignment) =>
       Object.assign(sepAssignment, { id: sepAssignment.sepMemberUserId })
   );
+  const proposalReviewModalShouldOpen =
+    !!urlQueryParams.reviewerModal &&
+    currentAssignment?.proposalPk === sepProposal.proposalPk;
+
+  const onProposalReviewModalClose = () => {
+    setUrlQueryParams({ reviewerModal: undefined, modalTab: undefined });
+    currentAssignment && updateView(currentAssignment);
+    setCurrentAssignment(null);
+  };
+
+  const editableTableRow = hasAccessRights
+    ? {
+        deleteTooltip: () => 'Remove assignment',
+        onRowDelete: (rowAssignmentsData: SepAssignment): Promise<void> =>
+          removeAssignedReviewer(rowAssignmentsData, sepProposal.proposalPk),
+      }
+    : {};
 
   return (
     <div className={classes.root} data-cy="sep-reviewer-assignments-table">
       <ProposalReviewModal
         title={`Proposal: ${sepProposal.proposal.title} (${sepProposal.proposal.proposalId})`}
-        proposalReviewModalOpen={!!urlQueryParams.reviewerModal}
-        setProposalReviewModalOpen={() => {
-          setUrlQueryParams({ reviewerModal: undefined, modalTab: undefined });
-          currentAssignment && updateView(currentAssignment);
-        }}
+        proposalReviewModalOpen={proposalReviewModalShouldOpen}
+        setProposalReviewModalOpen={onProposalReviewModalClose}
       >
         <ProposalReviewContent
           reviewId={urlQueryParams.reviewerModal}
@@ -117,20 +131,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
         columns={assignmentColumns}
         title={'Assigned reviewers'}
         data={SEPAssignmentsWithId}
-        editable={
-          hasAccessRights
-            ? {
-                deleteTooltip: () => 'Remove assignment',
-                onRowDelete: (
-                  rowAssignmentsData: SepAssignment
-                ): Promise<void> =>
-                  removeAssignedReviewer(
-                    rowAssignmentsData,
-                    sepProposal.proposalPk
-                  ),
-              }
-            : {}
-        }
+        editable={editableTableRow}
         actions={[
           (rowData) => ({
             icon: isDraftStatus(rowData?.review?.status)

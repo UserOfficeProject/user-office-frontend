@@ -130,13 +130,7 @@ function SampleEvaluationDialog(props: {
             />
 
             <ActionButtonContainer>
-              <Button
-                variant="contained"
-                type="submit"
-                color="primary"
-                data-cy="submit"
-                disabled={!dirty}
-              >
+              <Button type="submit" data-cy="submit" disabled={!dirty}>
                 Submit
               </Button>
             </ActionButtonContainer>

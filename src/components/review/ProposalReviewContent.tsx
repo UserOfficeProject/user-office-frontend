@@ -86,7 +86,9 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <h2>Proposal not found</h2>
-        <Button onClick={() => console.log('Not implemented')}>Retry</Button>
+        <Button variant="text" onClick={() => console.log('Not implemented')}>
+          Retry
+        </Button>
       </Box>
     );
   }

@@ -41,7 +41,6 @@ import InstrSciUpcomingExperimentTimesTable from './proposalBooking/InstrSciUpco
 import UserExperimentTimesTable from './proposalBooking/UserExperimentsTable';
 import CreateProposalEsiPage from './proposalEsi/CreateProposalEsiPage';
 import UpdateProposalEsiPage from './proposalEsi/UpdateProposalEsiPage';
-import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
 import SEPsPage from './SEP/SEPsPage';
@@ -384,12 +383,6 @@ const Dashboard: React.FC = () => {
             title="Esi Samples"
             path="/SampleEsiTemplates"
             component={SampleEsiPage}
-          />
-          <TitledRoute
-            setHeader={setHeader}
-            title="Proposal Table Reviewer"
-            path="/ProposalTableReviewer"
-            component={ProposalTableReviewer}
           />
           {isUserOfficer && (
             <TitledRoute

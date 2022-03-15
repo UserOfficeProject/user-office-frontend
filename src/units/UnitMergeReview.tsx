@@ -139,15 +139,12 @@ export function UnitMergeReview(props: UnitMergeReviewProps) {
         <Button
           data-cy="back-button"
           variant="outlined"
-          color="primary"
           onClick={() => props.onBack?.()}
         >
           Back
         </Button>
         <Button
           data-cy="import-units-button"
-          variant="contained"
-          color="primary"
           onClick={handleImportClick}
           disabled={hasUnresolvedConflicts(state.unitComparisons)}
         >

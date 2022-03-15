@@ -76,8 +76,6 @@ export default function UpdatePassword(props: { id: number }) {
               <Button
                 disabled={isSubmitting}
                 type="submit"
-                variant="contained"
-                color="primary"
                 className={classes.button}
               >
                 Change Password

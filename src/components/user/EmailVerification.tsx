@@ -65,13 +65,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ match }) => {
         </Typography>
         {emailVerified && (
           <Link to="/SignIn/" className={classes.signLink}>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
+            <Button type="submit" fullWidth className={classes.submit}>
               click here to sign in
             </Button>
           </Link>

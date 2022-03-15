@@ -111,7 +111,6 @@ const Participants: React.FC<ParticipantsProps> = ({
             onClick={openModal}
             data-cy="add-participant-button"
             size="small"
-            color="primary"
             startIcon={<PersonAddIcon />}
           >
             Add

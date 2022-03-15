@@ -502,8 +502,6 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
             </div>
             <Button
               type="button"
-              variant="contained"
-              color="primary"
               onClick={() => {
                 if (props.onUpdate) {
                   props.onUpdate(selectedParticipants);
@@ -522,8 +520,6 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
             {invitationButtons.map((item: InvitationButtonProps, i) => (
               <Button
                 type="button"
-                variant="contained"
-                color="primary"
                 onClick={() => item.action()}
                 data-cy={item['data-cy']}
                 key={i}

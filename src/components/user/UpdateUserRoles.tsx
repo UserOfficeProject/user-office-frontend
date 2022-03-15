@@ -103,8 +103,6 @@ export default function UpdateUserRoles(props: { id: number }) {
       <ActionButtonContainer>
         <Button
           type="button"
-          variant="contained"
-          color="primary"
           data-cy="add-role-button"
           onClick={() => setOpen(true)}
           disabled={isExecutingCall || loading}

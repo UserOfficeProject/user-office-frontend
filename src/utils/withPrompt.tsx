@@ -70,8 +70,10 @@ const withPrompt = <T extends {}>(WrappedComponent: React.ComponentType<T>) => {
               onEnter={handleOk}
             />
             <DialogActions>
-              <Button onClick={handleCancel}>{cancelBtnLabel}</Button>
-              <Button onClick={handleOk} color="primary" data-cy="prompt-ok">
+              <Button variant="text" onClick={handleCancel}>
+                {cancelBtnLabel}
+              </Button>
+              <Button variant="text" onClick={handleOk} data-cy="prompt-ok">
                 {okBtnLabel}
               </Button>
             </DialogActions>

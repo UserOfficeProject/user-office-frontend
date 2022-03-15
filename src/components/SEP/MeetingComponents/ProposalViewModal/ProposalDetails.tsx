@@ -101,7 +101,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
                     onClick={() =>
                       downloadPDFProposal([proposal.primaryKey], proposal.title)
                     }
-                    color="primary"
+                    variant="text"
                   >
                     Click here to view pdf
                   </Button>

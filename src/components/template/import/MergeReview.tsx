@@ -134,17 +134,11 @@ export function MergeReview(props: MergeReviewProps) {
         />
       ))}
       <ActionButtonContainer>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => props.onBack?.()}
-        >
+        <Button variant="outlined" onClick={() => props.onBack?.()}>
           Back
         </Button>
         <Button
           data-cy="import-template-button"
-          variant="contained"
-          color="primary"
           onClick={handleImportClick}
           disabled={hasUnresolvedConflicts(state.questionComparisons)}
         >

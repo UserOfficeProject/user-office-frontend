@@ -73,7 +73,6 @@ export function QuestionnairesList({
           variant="outlined"
           data-cy="add-button"
           size="small"
-          color="primary"
           startIcon={<AddCircleOutlineIcon />}
           disabled={
             (!!maxEntries && data.length >= maxEntries) ||
