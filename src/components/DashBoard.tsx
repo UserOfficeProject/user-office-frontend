@@ -62,6 +62,7 @@ import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import VisitTemplatesPage from './template/VisitTemplatesPage';
 import TitledRoute from './TitledRoute';
+import ImportUnitsPage from './unit/ImportUnitsPage';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
 import UserPage from './user/UserPage';
@@ -462,6 +463,14 @@ const Dashboard: React.FC = () => {
               title="Import Templates"
               path="/ImportTemplate"
               component={ImportTemplatePage}
+            />
+          )}
+          {isUserOfficer && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="Import Units"
+              path="/ImportUnits"
+              component={ImportUnitsPage}
             />
           )}
           <TitledRoute
