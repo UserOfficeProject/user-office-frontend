@@ -4,7 +4,6 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
-import { DateTime } from 'luxon';
 import React, { FC, useContext } from 'react';
 import * as Yup from 'yup';
 
@@ -13,6 +12,7 @@ import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { SettingsContext } from 'context/SettingsContextProvider';
 import { DateConfig, SettingsId } from 'generated/sdk';
+import { minMaxDateTimeCalculations } from 'utils/Time';
 
 import QuestionDependencyList from '../QuestionDependencyList';
 import { QuestionExcerpt } from '../QuestionExcerpt';
@@ -38,46 +38,33 @@ export const QuestionTemplateRelationDateForm: FC<
         const { minDate, maxDate, defaultDate, includeTime } = formikProps
           .values.config as DateConfig;
 
-        const defaultFieldMinDate = minDate
-          ? DateTime.fromISO(minDate).startOf(includeTime ? 'minute' : 'day')
-          : null;
-        const defaultFieldMaxDate = maxDate
-          ? DateTime.fromISO(maxDate).startOf(includeTime ? 'minute' : 'day')
-          : null;
-        const defaultFieldDate = defaultDate
-          ? DateTime.fromISO(defaultDate).startOf(
-              includeTime ? 'minute' : 'day'
-            )
-          : null;
-
-        const isDefaultDateBeforeMinDate =
-          defaultFieldDate &&
-          defaultFieldMinDate &&
-          defaultFieldMinDate > defaultFieldDate;
-        const isDefaultDateAfterMaxDate =
-          defaultFieldDate &&
-          defaultFieldMaxDate &&
-          defaultFieldMaxDate < defaultFieldDate;
-
-        const isMinDateAfterMaxDate =
-          defaultFieldMinDate &&
-          defaultFieldMaxDate &&
-          defaultFieldMinDate > defaultFieldMaxDate;
+        const {
+          defaultFieldMaxDate,
+          defaultFieldMinDate,
+          isDefaultAfterMaxDate,
+          isDefaultBeforeMinDate,
+          isMinAfterMaxDate,
+        } = minMaxDateTimeCalculations({
+          minDate,
+          maxDate,
+          defaultDate,
+          includeTime,
+        });
 
         if (formikProps.isValid) {
-          if (isDefaultDateBeforeMinDate) {
+          if (isDefaultBeforeMinDate) {
             formikProps.setFieldError(
               'config.defaultDate',
               'Default should be after "Min" date'
             );
           }
-          if (isDefaultDateAfterMaxDate) {
+          if (isDefaultAfterMaxDate) {
             formikProps.setFieldError(
               'config.defaultDate',
               'Default should be before "Max" date'
             );
           }
-          if (isMinDateAfterMaxDate) {
+          if (isMinAfterMaxDate) {
             formikProps.setFieldError(
               'config.minDate',
               '"Min" date should be before "Max" date'
@@ -87,6 +74,7 @@ export const QuestionTemplateRelationDateForm: FC<
 
         const component = includeTime ? DateTimePicker : DatePicker;
         const inputFormat = includeTime ? dateTimeFormat : dateFormat;
+        const mask = inputFormat?.replace(/[a-zA-Z]/g, '_');
 
         return (
           <>
@@ -123,6 +111,7 @@ export const QuestionTemplateRelationDateForm: FC<
                   id="Min-input"
                   ampm={false}
                   inputFormat={inputFormat}
+                  mask={mask}
                   component={component}
                   maxDate={defaultFieldMaxDate}
                   textField={{
@@ -137,6 +126,7 @@ export const QuestionTemplateRelationDateForm: FC<
                   id="Max-input"
                   ampm={false}
                   inputFormat={inputFormat}
+                  mask={mask}
                   component={component}
                   minDate={defaultFieldMinDate}
                   textField={{
@@ -151,6 +141,7 @@ export const QuestionTemplateRelationDateForm: FC<
                   id="Default-input"
                   ampm={false}
                   inputFormat={inputFormat}
+                  mask={mask}
                   component={component}
                   minDate={defaultFieldMinDate}
                   maxDate={defaultFieldMaxDate}

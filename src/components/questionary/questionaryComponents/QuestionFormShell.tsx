@@ -99,6 +99,7 @@ export const QuestionFormShell = (
                 variant="contained"
                 color="primary"
                 data-cy="submit"
+                disabled={!formikProps.isValid}
               >
                 Save
               </Button>
