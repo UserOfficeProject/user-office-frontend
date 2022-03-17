@@ -1,5 +1,5 @@
-import Alert from '@mui/lab/Alert';
 import { Button, Card, CardContent, Typography } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import produce from 'immer';
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';

@@ -21,7 +21,9 @@ const InstitutionSelect = (props: InstitutionSelectProps) => {
       {...selectProps}
       options={institutions}
       getOptionLabel={(option) => option.name}
-      renderInput={(params) => <TextField {...params} label={label} />}
+      renderInput={(params) => (
+        <TextField {...params} label={label} margin="none" />
+      )}
       onChange={(_event, newValue) => {
         onInstitutionSelected(newValue);
       }}
