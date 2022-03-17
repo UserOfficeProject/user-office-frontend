@@ -79,25 +79,45 @@ const ProposalTechnicalReview = ({
 
   const handleUpdateOrSubmit = async (
     values: TechnicalReviewFormType,
-    method: 'submitTechnicalReview' | 'addTechnicalReview'
+    method: 'submitTechnicalReviews' | 'addTechnicalReview'
   ) => {
     const shouldSubmit =
-      method === 'submitTechnicalReview' || (isUserOfficer && values.submitted);
+      method === 'submitTechnicalReviews' ||
+      (isUserOfficer && values.submitted);
     const successMessage = isUserOfficer
       ? `Technical review updated successfully!`
       : `Technical review ${
           shouldSubmit ? 'submitted' : 'updated'
         } successfully!`;
 
-    const result = await api(successMessage)[method]({
-      proposalPk: proposal.primaryKey,
-      timeAllocation: +values.timeAllocation,
-      comment: values.comment,
-      publicComment: values.publicComment,
-      status: TechnicalReviewStatus[values.status as TechnicalReviewStatus],
-      submitted: shouldSubmit,
-      reviewerId: user.id,
-    });
+    let result;
+
+    if (method === 'submitTechnicalReviews') {
+      result = await api(successMessage)[method]({
+        technicalReviews: [
+          {
+            proposalPk: proposal.primaryKey,
+            timeAllocation: +values.timeAllocation,
+            comment: values.comment,
+            publicComment: values.publicComment,
+            status:
+              TechnicalReviewStatus[values.status as TechnicalReviewStatus],
+            submitted: shouldSubmit,
+            reviewerId: user.id,
+          },
+        ],
+      });
+    } else {
+      result = await api(successMessage)[method]({
+        proposalPk: proposal.primaryKey,
+        timeAllocation: +values.timeAllocation,
+        comment: values.comment,
+        publicComment: values.publicComment,
+        status: TechnicalReviewStatus[values.status as TechnicalReviewStatus],
+        submitted: shouldSubmit,
+        reviewerId: user.id,
+      });
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(result as any)[method].error) {
@@ -133,7 +153,7 @@ const ProposalTechnicalReview = ({
             if (!isUserOfficer) {
               confirm(
                 async () => {
-                  await handleUpdateOrSubmit(values, 'submitTechnicalReview');
+                  await handleUpdateOrSubmit(values, 'submitTechnicalReviews');
                 },
                 {
                   title: 'Please confirm',
@@ -142,7 +162,7 @@ const ProposalTechnicalReview = ({
                 }
               )();
             } else {
-              await handleUpdateOrSubmit(values, 'submitTechnicalReview');
+              await handleUpdateOrSubmit(values, 'submitTechnicalReviews');
             }
           } else {
             await handleUpdateOrSubmit(values, 'addTechnicalReview');

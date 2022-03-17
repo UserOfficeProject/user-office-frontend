@@ -1,28 +1,12 @@
-mutation submitTechnicalReview(
-  $proposalPk: Int!
-  $timeAllocation: Int
-  $comment: String
-  $publicComment: String
-  $status: TechnicalReviewStatus
-  $submitted: Boolean!
-  $reviewerId: Int!
+mutation submitTechnicalReviews(
+  $technicalReviews: [SubmitTechnicalReviewInput!]!
 ) {
-  submitTechnicalReview(
-    submitTechnicalReviewInput: {
-      proposalPk: $proposalPk
-      timeAllocation: $timeAllocation
-      comment: $comment
-      publicComment: $publicComment
-      status: $status
-      submitted: $submitted
-      reviewerId: $reviewerId
-    }
+  submitTechnicalReviews(
+    submitTechnicalReviewsInput: { technicalReviews: $technicalReviews }
   ) {
     rejection {
       ...rejection
     }
-    technicalReview {
-      id
-    }
+    isSuccess
   }
 }

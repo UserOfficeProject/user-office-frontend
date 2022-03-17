@@ -2,17 +2,17 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
+import { Select, CheckboxWithLabel } from 'formik-mui';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import ErrorMessage from 'components/common/ErrorMessage';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
@@ -182,19 +182,20 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             <Field
               name="grade"
               label="Grade"
-              fullWidth
-              component={FormikUICustomSelect}
-              inputProps={{
-                id: 'grade-proposal',
+              component={Select}
+              formControl={{
+                fullWidth: true,
+                required: true,
+                margin: 'normal',
               }}
-              availableOptions={[...Array(10)].map((e, i) =>
-                (i + 1).toString()
-              )}
-              disabled={isDisabled(isSubmitting)}
-              required
-              nbrOptionShown={10}
               data-cy="grade-proposal"
-            />
+            >
+              {[...Array(10)].map((e, i) => (
+                <MenuItem value={i + 1} key={i}>
+                  {(i + 1).toString()}
+                </MenuItem>
+              ))}
+            </Field>
           </Box>
           <StyledButtonContainer>
             {isSubmitting && (
@@ -206,9 +207,12 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               <Field
                 id="submitted"
                 name="submitted"
-                component={FormikUICustomCheckbox}
-                label="Submitted"
-                color="primary"
+                type="checkbox"
+                component={CheckboxWithLabel}
+                Label={{
+                  label: 'Submitted',
+                  margin: 'normal',
+                }}
                 disabled={isSubmitting}
                 data-cy="is-grade-submitted"
               />

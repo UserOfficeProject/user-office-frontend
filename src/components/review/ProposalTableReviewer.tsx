@@ -13,7 +13,6 @@ import InstrumentFilter from 'components/common/proposalFilters/InstrumentFilter
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
-  ProposalPkWithReviewId,
   ReviewerFilter,
   ReviewStatus,
   SepAssignment,
@@ -46,12 +45,12 @@ type UserWithReview = {
   proposalId: string;
   proposalPk: number;
   title: string;
-  grade: number;
+  grade: number | null;
   reviewId: number;
-  comment: string;
+  comment: string | null;
   status: ReviewStatus;
-  callShortCode: string;
-  instrumentShortCode: string;
+  callShortCode?: string;
+  instrumentShortCode?: string;
 };
 
 const getFilterStatus = (selected: string | ReviewStatus) =>
@@ -101,10 +100,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     reviewer: defaultReviewerQueryFilter,
   });
 
-  const [selectedProposals, setSelectedProposals] = useState<
-    (ProposalPkWithReviewId & { title: string })[]
-  >([]);
-
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
     UserWithReview[]
   >([]);
@@ -124,83 +119,34 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       reviewer: getFilterReviewer(urlQueryParams.reviewer),
     });
 
-  const handleStatusFilterChange = (reviewStatus: ReviewStatus) => {
-    setUrlQueryParams((queries) => ({ ...queries, reviewStatus }));
-    setUserWithReviewsFilter((filter) => ({
-      ...filter,
-      status: getFilterStatus(reviewStatus),
-    }));
-  };
-
-  const handleReviewOwnerFilterChange = (reviewer: ReviewerFilter) => {
-    setUrlQueryParams((queries) => ({ ...queries, reviewer }));
-    setUserWithReviewsFilter((filter) => ({
-      ...filter,
-      reviewer,
-    }));
-  };
-
   useEffect(() => {
-    setPreselectedProposalsData(
-      userData
-        ? userData.reviews.map(
-            (review) =>
-              ({
-                proposalId: review?.proposal?.proposalId,
-                proposalPk: review?.proposal?.primaryKey,
-                title: review?.proposal?.title,
-                grade: review.grade,
-                reviewId: review.id,
-                comment: review.comment,
-                status: review.status,
-                callShortCode: review.proposal?.call?.shortCode,
-                instrumentShortCode: review.proposal?.instrument?.shortCode,
-              } as UserWithReview)
-          )
-        : []
-    );
-  }, [userData]);
+    const getProposalsToGradeDataFromUserData = (
+      selection?: Set<string | null>
+    ) =>
+      userData?.reviews.map((review) => ({
+        proposalId: review.proposal!.proposalId,
+        proposalPk: review.proposal!.primaryKey,
+        title: review.proposal!.title,
+        grade: review.grade,
+        reviewId: review.id,
+        comment: review.comment,
+        status: review.status,
+        callShortCode: review.proposal?.call?.shortCode,
+        instrumentShortCode: review.proposal?.instrument?.shortCode,
+        tableData: {
+          checked:
+            selection?.has(review.proposal?.primaryKey.toString() || null) ||
+            false,
+        },
+      })) || [];
 
-  useEffect(() => {
     if (urlQueryParams.selection.length > 0) {
       const selection = new Set(urlQueryParams.selection);
-
-      setPreselectedProposalsData((preselectedProposalsData) => {
-        const selected: {
-          proposalPk: number;
-          reviewId: number;
-          title: string;
-        }[] = [];
-        const preselected = preselectedProposalsData.map((proposal) => {
-          if (selection.has(proposal.proposalPk.toString())) {
-            selected.push({
-              proposalPk: proposal.proposalPk,
-              reviewId: proposal.reviewId,
-              title: proposal.title,
-            });
-          }
-
-          return {
-            ...proposal,
-            tableData: {
-              checked: selection.has(proposal.proposalPk.toString()),
-            },
-          };
-        });
-
-        setSelectedProposals(selected);
-
-        return preselected;
-      });
-    } else {
-      setPreselectedProposalsData((proposalsData) =>
-        proposalsData.map((proposal) => ({
-          ...proposal,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          tableData: { ...(proposal as any).tableData, checked: false },
-        }))
+      setPreselectedProposalsData(
+        getProposalsToGradeDataFromUserData(selection)
       );
-      setSelectedProposals([]);
+    } else {
+      setPreselectedProposalsData(getProposalsToGradeDataFromUserData());
     }
   }, [userData, urlQueryParams.selection]);
 
@@ -210,52 +156,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     PROPOSAL_MODAL_TAB_NAMES.GRADE,
   ];
 
-  /**
-   * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
-   * and selection flag is true they are not working properly.
-   */
-  const RowActionButtons = (rowData: UserWithReview) => (
-    <>
-      <Tooltip
-        title={
-          rowData.status === ReviewStatus.DRAFT
-            ? 'Grade proposal'
-            : 'View proposal'
-        }
-      >
-        <IconButton
-          onClick={() => {
-            setUrlQueryParams({
-              reviewModal: rowData.reviewId,
-              modalTab:
-                rowData.status === ReviewStatus.DRAFT
-                  ? reviewerProposalReviewTabs.indexOf(
-                      PROPOSAL_MODAL_TAB_NAMES.GRADE
-                    )
-                  : reviewerProposalReviewTabs.indexOf(
-                      PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION
-                    ),
-            });
-          }}
-        >
-          {rowData.status === ReviewStatus.DRAFT ? (
-            <RateReviewIcon data-cy="grade-proposal-icon" />
-          ) : (
-            <Visibility data-cy="view-proposal-details-icon" />
-          )}
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Download Proposal">
-        <IconButton
-          onClick={() =>
-            downloadPDFProposal([rowData.proposalPk], rowData.title)
-          }
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-    </>
-  );
   const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
   const DoneAllIcon = (
     props: JSX.IntrinsicAttributes & {
@@ -268,6 +168,59 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     columns,
     urlQueryParams.sortColumn,
     urlQueryParams.sortDirection
+  );
+
+  /**
+   * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
+   * and selection flag is true they are not working properly.
+   */
+  const RowActionButtons = (rowData: UserWithReview) => (
+    <>
+      {!loading && (
+        <Tooltip
+          title={
+            rowData.status === ReviewStatus.DRAFT
+              ? 'Grade proposal'
+              : 'View proposal'
+          }
+        >
+          <IconButton
+            onClick={() => {
+              setUrlQueryParams({
+                reviewModal: rowData.reviewId,
+                modalTab:
+                  rowData.status === ReviewStatus.DRAFT
+                    ? reviewerProposalReviewTabs.indexOf(
+                        PROPOSAL_MODAL_TAB_NAMES.GRADE
+                      )
+                    : reviewerProposalReviewTabs.indexOf(
+                        PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION
+                      ),
+              });
+            }}
+          >
+            {/* NOTE: When reviewer filter is set to all then just show view icon for now and decide later how the reviews are shown
+             * Review status and grades should be shown differently here when multiple review per proposal. Here is the task for this: https://jira.esss.lu.se/browse/SWAP-2407
+             */}
+            {urlQueryParams.reviewer === ReviewerFilter.YOU &&
+            rowData.status === ReviewStatus.DRAFT ? (
+              <RateReviewIcon data-cy="grade-proposal-icon" />
+            ) : (
+              <Visibility data-cy="view-proposal-details-icon" />
+            )}
+          </IconButton>
+        </Tooltip>
+      )}
+      <Tooltip title="Download Proposal">
+        <IconButton
+          onClick={() =>
+            downloadPDFProposal([rowData.proposalPk], rowData.title)
+          }
+        >
+          <GetAppIcon />
+        </IconButton>
+      </Tooltip>
+    </>
   );
 
   const updateView = () => {
@@ -293,8 +246,61 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   };
 
-  // Bulk submit proposal reviews.
-  const submitProposalReviews = async () => {
+  const handleStatusFilterChange = (reviewStatus: ReviewStatus) => {
+    setUrlQueryParams((queries) => ({ ...queries, reviewStatus }));
+    setUserWithReviewsFilter((filter) => ({
+      ...filter,
+      status: getFilterStatus(reviewStatus),
+    }));
+  };
+
+  const handleReviewOwnerFilterChange = (reviewer: ReviewerFilter) => {
+    setUrlQueryParams((queries) => ({ ...queries, reviewer }));
+    setUserWithReviewsFilter((filter) => ({
+      ...filter,
+      reviewer,
+    }));
+  };
+
+  const handleColumnSelectionChange = (selectedItems: UserWithReview[]) => {
+    setUrlQueryParams((params) => ({
+      ...params,
+      selection:
+        selectedItems.length > 0
+          ? selectedItems.map((selectedItem) =>
+              selectedItem.proposalPk.toString()
+            )
+          : undefined,
+    }));
+  };
+
+  const handleColumnSortOrderChange = (
+    orderedColumnId: number,
+    orderDirection: 'desc' | 'asc'
+  ) => {
+    setUrlQueryParams &&
+      setUrlQueryParams((params) => ({
+        ...params,
+        sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+        sortDirection: orderDirection ? orderDirection : undefined,
+      }));
+  };
+
+  const handleBulkDownLoadClick = (
+    _: React.MouseEventHandler<HTMLButtonElement>,
+    selectedProposals: UserWithReview | UserWithReview[]
+  ) => {
+    if (!Array.isArray(selectedProposals)) {
+      return;
+    }
+
+    downloadPDFProposal(
+      selectedProposals.map((proposal) => proposal.proposalPk),
+      selectedProposals[0].title
+    );
+  };
+
+  const submitProposalReviews = async (selectedProposals: UserWithReview[]) => {
     if (selectedProposals?.length) {
       const shouldAddPluralLetter = selectedProposals.length > 1 ? 's' : '';
       const submitProposalReviewsInput = selectedProposals.map((proposal) => ({
@@ -336,13 +342,43 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   };
 
+  const handleBulkReviewsSubmitClick = (
+    _: React.MouseEventHandler<HTMLButtonElement>,
+    selectedProposals: UserWithReview | UserWithReview[]
+  ) => {
+    if (!Array.isArray(selectedProposals)) {
+      return;
+    }
+
+    const someSelectedReviewsWithoutGrade = selectedProposals?.some(
+      (reviewToSubmit) => !reviewToSubmit.grade
+    );
+
+    confirm(
+      async () => {
+        await submitProposalReviews(selectedProposals);
+      },
+      {
+        title: 'Submit proposal reviews',
+        description:
+          'No further changes to proposal reviews are possible after submission. Are you sure you want to submit the proposal reviews?',
+        alertText: someSelectedReviewsWithoutGrade
+          ? 'Some of the selected proposals are missing review grade. Please open the details and insert grades before submitting'
+          : '',
+      }
+    )();
+  };
+
   const proposalToReview = preselectedProposalsData.find(
     (review) => review.reviewId === urlQueryParams.reviewModal
   );
 
-  const preselectedProposalsDataWithRowActions = preselectedProposalsData.map(
-    (proposal) => ({ ...proposal, rowActions: RowActionButtons(proposal) })
-  );
+  const preselectedProposalsDataWithIdAndRowActions =
+    preselectedProposalsData.map((proposal) => ({
+      ...proposal,
+      id: proposal.proposalPk,
+      rowActions: RowActionButtons(proposal),
+    }));
 
   return (
     <>
@@ -391,7 +427,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         icons={tableIcons}
         title={'Proposals to grade'}
         columns={columns}
-        data={preselectedProposalsDataWithRowActions}
+        data={preselectedProposalsDataWithIdAndRowActions}
         isLoading={loading}
         options={{
           search: false,
@@ -405,25 +441,8 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             },
           }),
         }}
-        onSelectionChange={(selectedItems) => {
-          setUrlQueryParams((params) => ({
-            ...params,
-            selection:
-              selectedItems.length > 0
-                ? selectedItems.map((selectedItem) =>
-                    selectedItem.proposalPk.toString()
-                  )
-                : undefined,
-          }));
-        }}
-        onOrderChange={(orderedColumnId, orderDirection) => {
-          setUrlQueryParams &&
-            setUrlQueryParams((params) => ({
-              ...params,
-              sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
-              sortDirection: orderDirection ? orderDirection : undefined,
-            }));
-        }}
+        onSelectionChange={handleColumnSelectionChange}
+        onOrderChange={handleColumnSortOrderChange}
         localization={{
           toolbar: {
             nRowsSelected: '{0} proposal(s) selected',
@@ -433,12 +452,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
           {
             icon: GetAppIconComponent,
             tooltip: 'Download proposals',
-            onClick: () => {
-              downloadPDFProposal(
-                selectedProposals.map((proposal) => proposal.proposalPk),
-                selectedProposals[0].title
-              );
-            },
+            onClick: handleBulkDownLoadClick,
             position: 'toolbarOnSelect',
           },
           {
@@ -446,31 +460,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
               'data-cy': 'submit-proposal-reviews',
             }),
             tooltip: 'Submit proposal reviews',
-            onClick: () => {
-              const reviewsToSubmit = userData?.reviews.filter((review) =>
-                selectedProposals.find(
-                  (rowItem) => rowItem.reviewId === review.id
-                )
-              );
-              const shouldShowAlert = reviewsToSubmit?.some(
-                (reviewToSubmit) =>
-                  reviewToSubmit.status === ReviewStatus.SUBMITTED
-              );
-
-              confirm(
-                () => {
-                  submitProposalReviews();
-                },
-                {
-                  title: 'Submit proposal reviews',
-                  description:
-                    'No further changes to proposal reviews are possible after submission. Are you sure you want to submit the proposal reviews?',
-                  alertText: shouldShowAlert
-                    ? 'Some of the selected proposals have already submitted reviews.'
-                    : '',
-                }
-              )();
-            },
+            onClick: handleBulkReviewsSubmitClick,
             position: 'toolbarOnSelect',
           },
         ]}
