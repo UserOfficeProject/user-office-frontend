@@ -407,10 +407,19 @@ const ProposalTableInstrumentScientist: React.FC<{
           setProposalsData(
             proposalsData.map((proposal) => {
               if (proposal.primaryKey === updatedProposal?.primaryKey) {
-                return Object.assign(
-                  proposal,
-                  updatedProposal
-                ) as ProposalViewData;
+                return {
+                  ...proposal,
+                  technicalReviewAssignee:
+                    updatedProposal.technicalReviewAssignee,
+                  technicalReviewSubmitted: updatedProposal.technicalReview
+                    ?.submitted
+                    ? 1
+                    : 0,
+                  technicalStatus:
+                    updatedProposal.technicalReview?.status || '',
+                  technicalTimeAllocation:
+                    updatedProposal.technicalReview?.timeAllocation || null,
+                };
               } else {
                 return proposal;
               }

@@ -728,5 +728,58 @@ context('Instrument tests', () => {
         .find('[data-cy="view-proposal-and-technical-review"]')
         .should('not.exist');
     });
+
+    it('Technical review assignee should be able to bulk submit technical reviews', () => {
+      selectAllProposalsFilterStatus();
+
+      cy.contains(proposal1.title)
+        .parent()
+        .find('input[type="checkbox"]')
+        .click();
+
+      cy.get('[data-cy="submit-proposal-reviews"]').click();
+
+      cy.get('[role="presentation"] [role="alert"] .MuiAlert-message').should(
+        'exist'
+      );
+
+      cy.get('[data-cy="confirm-cancel"]').click();
+
+      cy.contains(proposal1.title)
+        .parent()
+        .find('[data-cy="edit-technical-review"]')
+        .click();
+
+      cy.get('[data-cy="technical-review-status"]').click();
+      cy.get('[data-value="FEASIBLE"]').click();
+      cy.get('[data-cy="timeAllocation"] input').type('10');
+
+      cy.get('[data-cy="save-technical-review"]').click();
+
+      cy.notification({
+        text: 'Technical review updated successfully',
+        variant: 'success',
+      });
+
+      cy.closeModal();
+
+      cy.get('[data-cy="submit-proposal-reviews"]').click();
+
+      cy.get('[role="presentation"] [role="alert"] .MuiAlert-message').should(
+        'not.exist'
+      );
+
+      cy.get('[data-cy="confirm-ok"]').click();
+
+      cy.notification({
+        text: 'Proposal technical review submitted successfully',
+        variant: 'success',
+      });
+
+      cy.contains(proposal1.title)
+        .parent()
+        .find('[data-cy="view-proposal-and-technical-review"]')
+        .should('exist');
+    });
   });
 });
