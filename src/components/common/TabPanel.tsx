@@ -12,8 +12,6 @@ import {
   withDefault,
 } from 'use-query-params';
 
-import { StyledPaper } from 'styles/StyledComponents';
-
 interface TabPanelProps {
   children?: React.ReactNode;
   dir?: string;
@@ -88,7 +86,7 @@ const FullWidthTabs: React.FC<FullWidthTabsProps> = ({
   }, [setQuery, isInsideModal]);
 
   return (
-    <StyledPaper>
+    <>
       <AppBar position="static" color="default">
         <Tabs
           value={isInsideModal ? query.modalTab : query.tab}
@@ -114,7 +112,7 @@ const FullWidthTabs: React.FC<FullWidthTabsProps> = ({
           {tabContent}
         </TabPanel>
       ))}
-    </StyledPaper>
+    </>
   );
 };
 

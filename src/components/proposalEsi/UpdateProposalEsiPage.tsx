@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
@@ -14,14 +13,10 @@ export default function UpdateProposalEsiPage() {
   }
 
   return (
-    <StyledContainer maxWidth="md">
-      <Grid container>
-        <Grid item xs={12} data-cy="update-proposal-esi-table">
-          <StyledPaper>
-            <UpdateProposalEsi esiId={+esiId} />
-          </StyledPaper>
-        </Grid>
-      </Grid>
+    <StyledContainer>
+      <StyledPaper data-cy="update-proposal-esi-table">
+        <UpdateProposalEsi esiId={+esiId} />
+      </StyledPaper>
     </StyledContainer>
   );
 }

@@ -2,7 +2,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
@@ -226,49 +225,6 @@ function SampleSafetyPage() {
 
   return (
     <>
-      <StyledContainer>
-        <Grid container>
-          <Grid item xs={12}>
-            <StyledPaper>
-              <CallFilter
-                callId={selectedCallId}
-                calls={calls}
-                isLoading={loadingCalls}
-                onChange={(callId) => {
-                  setSelectedCallId(callId);
-                }}
-                shouldShowAll={true}
-              />
-              <SamplesTable
-                data={samplesWithRowActions}
-                isLoading={isExecutingCall}
-                urlQueryParams={urlQueryParams}
-                setUrlQueryParams={setUrlQueryParams}
-                columns={columns}
-                options={{
-                  selection: true,
-                  headerSelectionProps: {
-                    inputProps: { 'aria-label': 'Select All Rows' },
-                  },
-                }}
-                actions={[
-                  {
-                    icon: GetAppIcon,
-                    tooltip: 'Download sample',
-                    onClick: (event, rowData) =>
-                      downloadPDFSample(
-                        (rowData as SampleWithProposalData[]).map(
-                          ({ id }) => id
-                        ),
-                        (rowData as SampleWithProposalData[])[0].title
-                      ),
-                  },
-                ]}
-              />
-            </StyledPaper>
-          </Grid>
-        </Grid>
-      </StyledContainer>
       {selectedSample && (
         <SampleEvaluationDialog
           sample={selectedSample}
@@ -284,6 +240,43 @@ function SampleSafetyPage() {
           }}
         />
       )}
+      <StyledContainer>
+        <StyledPaper>
+          <CallFilter
+            callId={selectedCallId}
+            calls={calls}
+            isLoading={loadingCalls}
+            onChange={(callId) => {
+              setSelectedCallId(callId);
+            }}
+            shouldShowAll={true}
+          />
+          <SamplesTable
+            data={samplesWithRowActions}
+            isLoading={isExecutingCall}
+            urlQueryParams={urlQueryParams}
+            setUrlQueryParams={setUrlQueryParams}
+            columns={columns}
+            options={{
+              selection: true,
+              headerSelectionProps: {
+                inputProps: { 'aria-label': 'Select All Rows' },
+              },
+            }}
+            actions={[
+              {
+                icon: GetAppIcon,
+                tooltip: 'Download sample',
+                onClick: (event, rowData) =>
+                  downloadPDFSample(
+                    (rowData as SampleWithProposalData[]).map(({ id }) => id),
+                    (rowData as SampleWithProposalData[])[0].title
+                  ),
+              },
+            ]}
+          />
+        </StyledPaper>
+      </StyledContainer>
     </>
   );
 }

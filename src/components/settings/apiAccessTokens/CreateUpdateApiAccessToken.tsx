@@ -20,6 +20,7 @@ import SimpleTabs from 'components/common/TabPanel';
 import UOLoader from 'components/common/UOLoader';
 import { PermissionsWithAccessToken } from 'generated/sdk';
 import { useQueriesAndMutationsData } from 'hooks/admin/useQueriesAndMutationsData';
+import { StyledPaper } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,17 +44,6 @@ const useStyles = makeStyles((theme) => ({
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-    },
-  },
-  tabsContainer: {
-    '& > div': {
-      margin: 0,
-      padding: theme.spacing(1, 0),
-      boxShadow: 'none',
-
-      '& [role="tabpanel"] > div': {
-        padding: theme.spacing(0, 0.5),
-      },
     },
   },
   checkBoxLabelText: {
@@ -239,7 +229,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
             <FieldArray
               name="accessPermissions"
               render={(arrayHelpers) => (
-                <div className={classes.tabsContainer}>
+                <StyledPaper margin={[0]} padding={[0]}>
                   <SimpleTabs tabNames={['Queries', 'Mutations']}>
                     {allAccessPermissions(
                       queriesAndMutations.queries,
@@ -254,7 +244,7 @@ const CreateUpdateApiAccessToken: React.FC<CreateUpdateApiAccessTokenProps> = ({
                       arrayHelpers
                     )}
                   </SimpleTabs>
-                </div>
+                </StyledPaper>
               )}
             />
           )}

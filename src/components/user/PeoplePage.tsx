@@ -1,5 +1,4 @@
 import Edit from '@mui/icons-material/Edit';
-import Grid from '@mui/material/Grid';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
@@ -22,27 +21,23 @@ export default function PeoplePage() {
 
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12} data-cy="people-table">
-          <StyledPaper>
-            <PeopleTable
-              title="Users"
-              action={{
-                fn: (value) => setUserData(value as BasicUserDetails),
-                actionText: 'Edit user',
-                actionIcon: <Edit />,
-              }}
-              selection={false}
-              showInvitationButtons
-              onRemove={(user: { id: number }) =>
-                api('User removed successfully!').deleteUser({
-                  id: user.id,
-                })
-              }
-            />
-          </StyledPaper>
-        </Grid>
-      </Grid>
+      <StyledPaper data-cy="people-table">
+        <PeopleTable
+          title="Users"
+          action={{
+            fn: (value) => setUserData(value as BasicUserDetails),
+            actionText: 'Edit user',
+            actionIcon: <Edit />,
+          }}
+          selection={false}
+          showInvitationButtons
+          onRemove={(user: { id: number }) =>
+            api('User removed successfully!').deleteUser({
+              id: user.id,
+            })
+          }
+        />
+      </StyledPaper>
     </StyledContainer>
   );
 }

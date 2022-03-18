@@ -80,7 +80,7 @@ export default function UserUpcomingExperimentsTable() {
 
   return (
     <Grid item xs={12} data-cy="upcoming-experiments">
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <MaterialTable
           actions={[
             formTeamAction,

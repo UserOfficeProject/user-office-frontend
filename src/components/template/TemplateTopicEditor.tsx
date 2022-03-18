@@ -310,7 +310,7 @@ export default function QuestionaryEditorTopic(props: {
           style={getItemStyle(provided.draggableProps.style)}
           {...provided.dragHandleProps}
         >
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <AppBar position="static" className={classes.appBar}>
               <Toolbar className={classes.toolbar}>
                 <div className={classes.title}>{titleJsx}</div>

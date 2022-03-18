@@ -37,7 +37,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
 
   return (
     <div data-cy="SEP-meeting-components-proposal-details">
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <Typography variant="h6" className={classes.heading} gutterBottom>
           Proposal details
         </Typography>

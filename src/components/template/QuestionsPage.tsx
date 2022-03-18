@@ -1,4 +1,4 @@
-import { Grid, Link, Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
 import StyledModal from 'components/common/StyledModal';
@@ -96,35 +96,31 @@ function QuestionsPage() {
 
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12}>
-          <StyledPaper>
-            <QuestionsTableFilter
-              onChange={(filter) => {
-                setQuestionsFilter(filter);
-              }}
-            />
-            <div data-cy="questions-table">
-              <SuperMaterialTable
-                createModal={createModal}
-                delete={deleteQuestion}
-                setData={setQuestions}
-                icons={tableIcons}
-                title={
-                  <Typography variant="h6" component="h2">
-                    Questions
-                  </Typography>
-                }
-                columns={columns}
-                isLoading={loadingQuestions}
-                data={questionsWithButtons}
-                options={{ search: false }}
-                hasAccess={{ create: false, update: true, remove: true }}
-              />
-            </div>
-          </StyledPaper>
-        </Grid>
-      </Grid>
+      <StyledPaper>
+        <QuestionsTableFilter
+          onChange={(filter) => {
+            setQuestionsFilter(filter);
+          }}
+        />
+        <div data-cy="questions-table">
+          <SuperMaterialTable
+            createModal={createModal}
+            delete={deleteQuestion}
+            setData={setQuestions}
+            icons={tableIcons}
+            title={
+              <Typography variant="h6" component="h2">
+                Questions
+              </Typography>
+            }
+            columns={columns}
+            isLoading={loadingQuestions}
+            data={questionsWithButtons}
+            options={{ search: false }}
+            hasAccess={{ create: false, update: true, remove: true }}
+          />
+        </div>
+      </StyledPaper>
       <StyledModal
         onClose={() => setSelectedTemplateCountDetailsQuestion(null)}
         open={selectedTemplateCountDetailsQuestion !== null}

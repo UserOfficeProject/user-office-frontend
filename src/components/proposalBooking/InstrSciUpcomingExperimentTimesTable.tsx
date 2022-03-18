@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React, { useState } from 'react';
 import { useQueryParams, NumberParam } from 'use-query-params';
 
@@ -29,32 +28,28 @@ export default function InstrSciUpcomingExperimentTimesTable() {
 
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12}>
-          <StyledPaper margin={[0]}>
-            <InstrumentFilter
-              shouldShowAll
-              instruments={instruments}
-              isLoading={loadingInstruments}
-              instrumentId={selectedInstrumentId}
-              onChange={(instrumentId) => {
-                setSelectedInstrumentId(instrumentId);
-              }}
-            />
-            <ExperimentsTable
-              isLoading={loading}
-              proposalScheduledEvents={proposalScheduledEvents}
-              title="Upcoming experiments"
-              options={{
-                search: true,
-                padding: 'normal',
-                emptyRowsWhenPaging: true,
-                paging: true,
-              }}
-            />
-          </StyledPaper>
-        </Grid>
-      </Grid>
+      <StyledPaper>
+        <InstrumentFilter
+          shouldShowAll
+          instruments={instruments}
+          isLoading={loadingInstruments}
+          instrumentId={selectedInstrumentId}
+          onChange={(instrumentId) => {
+            setSelectedInstrumentId(instrumentId);
+          }}
+        />
+        <ExperimentsTable
+          isLoading={loading}
+          proposalScheduledEvents={proposalScheduledEvents}
+          title="Upcoming experiments"
+          options={{
+            search: true,
+            padding: 'normal',
+            emptyRowsWhenPaging: true,
+            paging: true,
+          }}
+        />
+      </StyledPaper>
     </StyledContainer>
   );
 }

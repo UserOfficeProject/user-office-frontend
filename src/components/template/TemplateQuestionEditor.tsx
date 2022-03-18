@@ -203,7 +203,7 @@ export default function TemplateQuestionEditor(props: {
           <Grid item xs={10} className={classes.question}>
             {questionDefinition.renderers
               ? questionDefinition.renderers.questionRenderer(props.data)
-              : defaultRenderer.questionRenderer}
+              : defaultRenderer.questionRenderer(props.data)}
           </Grid>
 
           <Grid item xs={12} className={classes.dependencies}>

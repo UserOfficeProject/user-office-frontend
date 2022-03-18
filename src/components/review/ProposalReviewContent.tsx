@@ -24,6 +24,7 @@ import {
 } from 'generated/sdk';
 import { ProposalData, useProposalData } from 'hooks/proposal/useProposalData';
 import { useReviewData } from 'hooks/review/useReviewData';
+import { StyledPaper } from 'styles/StyledComponents';
 
 import AssignTechnicalReview from './AssignTechnicalReview';
 import ProposalGrade from './ProposalGrade';
@@ -219,9 +220,11 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   });
 
   return (
-    <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
-      {tabsContent}
-    </SimpleTabs>
+    <StyledPaper>
+      <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
+        {tabsContent}
+      </SimpleTabs>
+    </StyledPaper>
   );
 };
 
