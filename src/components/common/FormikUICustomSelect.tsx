@@ -63,7 +63,6 @@ const FormikUICustomSelect = ({
         width: 250,
       },
     },
-    getContentAnchorEl: null,
   };
   const availableOptionsNormalized: Option[] =
     normalizeOptions(availableOptions);
