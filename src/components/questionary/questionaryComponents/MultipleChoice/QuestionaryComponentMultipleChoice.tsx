@@ -23,7 +23,7 @@ const toArray = (input: string | string[]): string[] => {
   return input;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   horizontalLayout: {
     flexDirection: 'row',
   },
