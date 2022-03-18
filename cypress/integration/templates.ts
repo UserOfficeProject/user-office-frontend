@@ -1581,7 +1581,7 @@ context('Template tests', () => {
     });
 
     it('User can add captions after uploading image/* file', () => {
-      const fileName = 'file_upload_test.png';
+      const fileName = 'file_upload_test2.png'; // need to use another file due to bug in cypress, which do not allow the same fixture to be reused
       cy.createProposal({ callId: initialDBData.call.id }).then((result) => {
         const createdProposal = result.createProposal.proposal;
         if (createdProposal) {
