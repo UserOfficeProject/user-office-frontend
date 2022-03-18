@@ -58,6 +58,7 @@ export function QuestionaryComponentDatePicker(props: BasicComponentProps) {
           textField={{
             'data-cy': `${id}.value`,
             required: required,
+            margin: 'none',
           }}
           minDate={fieldMinDate}
           maxDate={fieldMaxDate}
