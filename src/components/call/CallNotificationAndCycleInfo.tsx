@@ -4,7 +4,7 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { SettingsContext } from 'context/SettingsContextProvider';
 import {
@@ -21,19 +21,7 @@ const CallCycleInfo: React.FC = () => {
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
-  const { startNotify, endNotify, startCycle, endCycle } = formik.values;
-
-  useEffect(() => {
-    if (endNotify && endNotify < startNotify) {
-      formik.setFieldValue('endNotify', startNotify);
-      formik.setFieldTouched('endNotify', false);
-    }
-
-    if (endCycle && endCycle < startCycle) {
-      formik.setFieldValue('endCycle', startCycle);
-      formik.setFieldTouched('endCycle', false);
-    }
-  }, [startNotify, endNotify, startCycle, endCycle, formik]);
+  const { startNotify, startCycle } = formik.values;
 
   return (
     <>
@@ -44,13 +32,16 @@ const CallCycleInfo: React.FC = () => {
           id="start-notification-period-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           allowSameDateSelection
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
         <Field
           name="endNotify"
@@ -58,14 +49,17 @@ const CallCycleInfo: React.FC = () => {
           id="end-notification-period-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           minDate={startNotify}
           allowSameDateSelection
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           textField={{
             fullWidth: true,
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
         <Field
           name="startCycle"
@@ -73,14 +67,17 @@ const CallCycleInfo: React.FC = () => {
           id="start-cycle-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
             'data-cy': 'start-cycle',
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
         <Field
           name="endCycle"
@@ -88,6 +85,7 @@ const CallCycleInfo: React.FC = () => {
           id="end-cycle-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           minDate={startCycle}
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
@@ -95,8 +93,10 @@ const CallCycleInfo: React.FC = () => {
           textField={{
             fullWidth: true,
             'data-cy': 'end-cycle',
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
       </LocalizationProvider>
       <Field

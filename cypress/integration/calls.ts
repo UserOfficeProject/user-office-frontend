@@ -126,8 +126,8 @@ context('Calls tests', () => {
         .toISOString()
         .slice(0, 16)
         .replace('T', ' ');
-      const invalidPastDate = faker.date.past().toISOString().slice(0, 10); // no time
-      const invalidFutureDate = faker.date.future().toISOString().slice(0, 10); // no time
+      const invalidPastDate = faker.date.past().toISOString().slice(0, 12); // no time
+      const invalidFutureDate = faker.date.future().toISOString().slice(0, 12); // no time
 
       cy.contains('Proposals');
 
@@ -150,9 +150,11 @@ context('Calls tests', () => {
 
       cy.contains('Invalid Date');
 
-      cy.get('[data-cy=start-date] input').clear().type(invalidPastDate);
       // NOTE: Luxon adapter still doesn't work well with newest MUI lab version to support placeholder text (https://github.com/mui/material-ui/issues/29851)
-      // .should('have.value', invalidPastDate + ' __:__');
+      cy.get('[data-cy=start-date] input')
+        .clear()
+        .type(invalidPastDate)
+        .should('have.value', invalidPastDate + ':');
 
       cy.contains('Invalid Date');
 
@@ -161,9 +163,11 @@ context('Calls tests', () => {
         .type(startDate)
         .should('have.value', startDate);
 
-      cy.get('[data-cy=end-date] input').clear().type(invalidFutureDate);
       // NOTE: Luxon adapter still doesn't work well with newest MUI lab version to support placeholder text (https://github.com/mui/material-ui/issues/29851)
-      // .should('have.value', invalidFutureDate + ' __:__');
+      cy.get('[data-cy=end-date] input')
+        .clear()
+        .type(invalidFutureDate)
+        .should('have.value', invalidFutureDate + ':');
 
       cy.get('[data-cy=end-date] input')
         .clear()
