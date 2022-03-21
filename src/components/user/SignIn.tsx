@@ -217,7 +217,7 @@ export default function SignInSide() {
           )}
         </Formik>
         <div className={classes.footer}>
-          <ButtonWithDialog label="Help">
+          <ButtonWithDialog label="Problems signing in?">
             <LoginHelpPage />
           </ButtonWithDialog>
         </div>
