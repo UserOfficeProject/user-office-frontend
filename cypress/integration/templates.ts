@@ -1693,7 +1693,7 @@ context('Template tests', () => {
 
       cy.contains(initialDBData.template.name)
         .parent()
-        .find("[title='Edit']")
+        .find("[aria-label='Edit']")
         .first()
         .click();
 
@@ -1707,8 +1707,6 @@ context('Template tests', () => {
       cy.get('[data-cy=title] input').type('title');
 
       cy.get('[data-cy=abstract] textarea').first().type('abstract');
-
-      cy.contains('Save and continue').click();
 
       cy.contains(fileQuestion);
     });

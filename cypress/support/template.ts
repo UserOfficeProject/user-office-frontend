@@ -323,7 +323,10 @@ function createFileUploadQuestion(question: string, fileTypes: string[]) {
 
   cy.contains(question)
     .parent()
-    .dragElement([{ direction: 'left', length: 1 }]);
+    .dragElement([
+      { direction: 'left', length: 2 },
+      { direction: 'down', length: 1 },
+    ]);
 
   cy.finishedLoading();
 
