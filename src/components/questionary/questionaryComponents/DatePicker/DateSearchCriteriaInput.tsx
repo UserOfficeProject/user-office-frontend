@@ -86,7 +86,7 @@ function DateSearchCriteriaInput({
               const newDate = date?.startOf('day').toJSDate();
 
               if (newDate && !isNaN(newDate.getTime())) {
-                onChange(comparator, newDate?.toISOString());
+                onChange(comparator, newDate.toISOString());
               }
               setValue(newDate || null);
             }}
