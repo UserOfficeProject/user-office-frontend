@@ -20,6 +20,7 @@ export default function PageEditor() {
               'Privacy',
               'Cookie',
               'Footer',
+              'Login',
             ]}
           >
             <PageInputBox
@@ -45,6 +46,10 @@ export default function PageEditor() {
             <PageInputBox
               pageName={PageName.FOOTERCONTENT}
               heading={'Set footer content'}
+            />
+            <PageInputBox
+              pageName={PageName.LOGINHELPPAGE}
+              heading={'Set login help page'}
             />
           </SimpleTabs>
         </Grid>
