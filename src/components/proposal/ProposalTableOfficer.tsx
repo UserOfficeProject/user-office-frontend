@@ -162,6 +162,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [selectedProposals, setSelectedProposals] = useState<
     ProposalWithCallInstrumentAndSepId[]
   >([]);
+  const [tableData, setTableData] = useState<ProposalViewData[]>([]);
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
     ProposalViewData[]
   >([]);
@@ -197,7 +198,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     let endSlice = rowsPerPage * (currentPage + 1);
     endSlice = endSlice == 0 ? prefetchSize + 1 : endSlice + 1; // Final page of a loaded section would produce the slice (x, 0) without this
     if (isMounted) {
-      setPreselectedProposalsData(
+      setTableData(
         preselectedProposalsData.slice(
           (currentPage * rowsPerPage) % prefetchSize,
           endSlice
@@ -580,13 +581,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
    * Including the id property for https://material-table-core.com/docs/breaking-changes#id
    * Including the action buttons as property to avoid the console warning(https://github.com/material-table-core/core/issues/286)
    */
-  const preselectedProposalDataWithIdAndRowActions =
-    preselectedProposalsData.map((proposal) =>
-      Object.assign(proposal, {
-        id: proposal.primaryKey,
-        rowActionButtons: RowActionButtons(proposal),
-      })
-    );
+  const preselectedProposalDataWithIdAndRowActions = tableData.map((proposal) =>
+    Object.assign(proposal, {
+      id: proposal.primaryKey,
+      rowActionButtons: RowActionButtons(proposal),
+    })
+  );
 
   return (
     <>
