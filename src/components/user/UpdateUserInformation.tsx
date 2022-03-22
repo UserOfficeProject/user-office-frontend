@@ -150,7 +150,7 @@ export default function UpdateUserInformation(props: { id: number }) {
               ? 'other'
               : userData.gender,
           othergender: userData.gender,
-          nationality: userData.nationality,
+          nationality: userData.nationality || '',
           birthdate: toFormattedDateTime(
             DateTime.fromMillis(parseInt(userData.birthdate)).toISO()
           ),
