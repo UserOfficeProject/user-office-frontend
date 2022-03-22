@@ -31,7 +31,7 @@ context('Units tests', () => {
       cy.get('[placeholder="Search"]').clear().type('test');
     });
 
-    it('Can no create unit with invalid conversion formula', () => {
+    it('Can not create unit with invalid conversion formula', () => {
       cy.login('officer');
       cy.visit('/');
 
@@ -42,7 +42,7 @@ context('Units tests', () => {
       cy.get('[data-cy="unit-id"]').clear().type('test');
       cy.get('[data-cy="unit-name"]').clear().type('test');
       cy.get('[data-cy="unit-quantity"]').click();
-      cy.get('#quantity-input-option-0').click();
+      cy.get('[role="presentation"] [role="option"]').first().click();
 
       cy.get('[data-cy="unit-symbol"]').clear().type('test');
       cy.get('[data-cy="unit-siConversionFormula"]')

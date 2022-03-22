@@ -94,6 +94,7 @@ function QuestionsTableFilter(props: QuestionsTableFilterProps) {
         <TextField
           label=" "
           value={searchText ?? ''}
+          margin="none"
           onChange={(event) => setSearchText(event.target.value)}
           onKeyPress={(event) => {
             if (event.key === 'Enter') {

@@ -302,18 +302,31 @@ function createMultipleChoiceQuestion(
   closeQuestionsMenu();
 }
 
-function createFileUploadQuestion(question: string) {
+function createFileUploadQuestion(question: string, fileTypes: string[]) {
   openQuestionsMenu();
 
   cy.contains('Add File Upload').click();
 
   cy.get('[data-cy=question]').clear().type(question);
 
+  cy.get('[data-cy="file_type"]').click();
+
+  fileTypes.forEach((type) => {
+    cy.get('[role="presentation"]').contains(type).click();
+  });
+
+  cy.get('body').type('{esc}');
+
+  cy.get('[data-cy=max_files]').clear().type('3');
+
   cy.contains('Save').click();
 
   cy.contains(question)
     .parent()
-    .dragElement([{ direction: 'left', length: 1 }]);
+    .dragElement([
+      { direction: 'left', length: 2 },
+      { direction: 'down', length: 1 },
+    ]);
 
   cy.finishedLoading();
 

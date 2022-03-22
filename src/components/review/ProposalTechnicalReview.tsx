@@ -277,7 +277,6 @@ const ProposalTechnicalReview = ({
                       name="submitted"
                       component={FormikUICustomCheckbox}
                       label="Submitted"
-                      color="primary"
                       disabled={isSubmitting}
                       data-cy="is-review-submitted"
                     />
@@ -289,7 +288,6 @@ const ProposalTechnicalReview = ({
                     }
                     type="submit"
                     onClick={() => setShouldSubmit(false)}
-                    variant="contained"
                     color={isUserOfficer ? 'primary' : 'secondary'}
                     data-cy="save-technical-review"
                   >
@@ -301,8 +299,6 @@ const ProposalTechnicalReview = ({
                       type="submit"
                       className={classes.submitButton}
                       onClick={() => setShouldSubmit(true)}
-                      variant="contained"
-                      color="primary"
                       data-cy="submit-technical-review"
                     >
                       {data?.submitted ? 'Submitted' : 'Submit'}

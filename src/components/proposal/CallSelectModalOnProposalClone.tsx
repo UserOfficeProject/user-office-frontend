@@ -90,8 +90,6 @@ const CallSelectModalOnProposalsClone: React.FC<
             <Button
               type="submit"
               fullWidth
-              variant="contained"
-              color="primary"
               className={classes.submit}
               disabled={isSubmitting}
               data-cy="submit"

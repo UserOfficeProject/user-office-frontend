@@ -113,7 +113,6 @@ const AddStatusChangingEventsToConnection: React.FC<
                                 checked={values.selectedStatusChangingEvents.includes(
                                   proposalEvent.name
                                 )}
-                                color="primary"
                                 data-cy="status-changing-event"
                                 onChange={(e) => {
                                   if (e.target.checked)
@@ -153,8 +152,6 @@ const AddStatusChangingEventsToConnection: React.FC<
 
                 <Button
                   type="submit"
-                  variant="contained"
-                  color="primary"
                   disabled={isSubmitting || loadingProposalEvents}
                   data-cy="submit"
                 >

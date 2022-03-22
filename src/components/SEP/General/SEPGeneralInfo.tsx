@@ -133,7 +133,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
                     type="checkbox"
                     component={Checkbox}
                     checked={values.active}
-                    color="primary"
                     onChange={(): void =>
                       setFieldValue('active', !values.active)
                     }
@@ -150,8 +149,6 @@ const SEPGeneralInfo: React.FC<SEPPageProps> = ({ data, onSEPUpdate }) => {
               <Button
                 disabled={isExecutingCall}
                 type="submit"
-                variant="contained"
-                color="primary"
                 className={classes.button}
                 data-cy="submit"
               >

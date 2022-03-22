@@ -130,13 +130,12 @@ export const Wizard: React.FC<WizardProps> = ({
               onClick={() => previous(formik.values)}
               fullWidth
               className={classes.button}
+              variant="text"
             >
               Back
             </Button>
             <Button
               key={`step-button-${stepNumber}`}
-              variant="contained"
-              color="primary"
               data-cy={isLastStep ? 'submit' : 'next-step'}
               type="submit"
               fullWidth

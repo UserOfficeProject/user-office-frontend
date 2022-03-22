@@ -64,7 +64,7 @@ export default function ProposalContainer(props: {
 
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
-      <StyledContainer maxWidth="md">
+      <StyledContainer>
         <StyledPaper>
           <Questionary
             title={state.proposal.title || 'New Proposal'}

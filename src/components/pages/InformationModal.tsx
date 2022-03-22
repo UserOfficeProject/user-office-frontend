@@ -59,11 +59,12 @@ const InformationDialog: React.FC<InformationDialogProps> = (props) => {
   }
 
   return (
-    <div>
+    <>
       <Button
         className={classes.buttonLink}
         onClick={handleClickOpen}
         style={props.linkStyle}
+        variant="text"
       >
         {props.linkText}
       </Button>
@@ -76,12 +77,12 @@ const InformationDialog: React.FC<InformationDialogProps> = (props) => {
           <Typography gutterBottom>{parse(props.text)}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
+          <Button autoFocus onClick={handleClose} variant="text">
             Close
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 

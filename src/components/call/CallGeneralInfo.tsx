@@ -203,7 +203,6 @@ const CallGeneralInfo: React.FC<{
                   onClose={handleClose}
                   aria-labelledby="customized-dialog-title"
                   open={open}
-                  color="primary"
                 >
                   <DialogContent dividers>
                     <Typography gutterBottom color="inherit" variant="body1">
@@ -252,7 +251,7 @@ const CallGeneralInfo: React.FC<{
                     </Typography>
                   </DialogContent>
                   <DialogActions>
-                    <Button autoFocus onClick={handleClose} color="primary">
+                    <Button autoFocus variant="text" onClick={handleClose}>
                       Close
                     </Button>
                   </DialogActions>

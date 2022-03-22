@@ -1,9 +1,8 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
 import { useDataApi } from 'hooks/common/useDataApi';
-import { StyledContainer } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ProposalTemplatesTable from './ProposalTemplatesTable';
 
@@ -12,26 +11,24 @@ export default function ProposalTemplatesPage() {
 
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12}>
-          <SimpleTabs tabNames={['Current', 'Archived']}>
-            <ProposalTemplatesTable
-              dataProvider={() =>
-                api()
-                  .getProposalTemplates({ filter: { isArchived: false } })
-                  .then((data) => data.proposalTemplates || [])
-              }
-            />
-            <ProposalTemplatesTable
-              dataProvider={() =>
-                api()
-                  .getProposalTemplates({ filter: { isArchived: true } })
-                  .then((data) => data.proposalTemplates || [])
-              }
-            />
-          </SimpleTabs>
-        </Grid>
-      </Grid>
+      <StyledPaper>
+        <SimpleTabs tabNames={['Current', 'Archived']}>
+          <ProposalTemplatesTable
+            dataProvider={() =>
+              api()
+                .getProposalTemplates({ filter: { isArchived: false } })
+                .then((data) => data.proposalTemplates || [])
+            }
+          />
+          <ProposalTemplatesTable
+            dataProvider={() =>
+              api()
+                .getProposalTemplates({ filter: { isArchived: true } })
+                .then((data) => data.proposalTemplates || [])
+            }
+          />
+        </SimpleTabs>
+      </StyledPaper>
     </StyledContainer>
   );
 }

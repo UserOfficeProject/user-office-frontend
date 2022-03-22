@@ -102,15 +102,12 @@ const InviteUserForm: React.FC<InviteUserFormProps> = ({
           <div className={classes.buttons}>
             <Button
               onClick={() => close()}
-              variant="contained"
               color="secondary"
               className={classes.button}
             >
               Cancel
             </Button>
             <Button
-              variant="contained"
-              color="primary"
               className={classes.button}
               type="submit"
               data-cy="invitation-submit"

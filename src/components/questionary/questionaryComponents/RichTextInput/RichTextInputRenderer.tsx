@@ -51,7 +51,7 @@ export const RichTextInputRendererComponent: React.FC<{
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} variant="text">
             Close
           </Button>
         </DialogActions>

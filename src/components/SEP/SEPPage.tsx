@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
@@ -34,7 +33,9 @@ const SEPPage: React.FC = () => {
   if (loading) {
     return (
       <StyledContainer>
-        <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
+        <StyledPaper>
+          <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />
+        </StyledPaper>
       </StyledContainer>
     );
   }
@@ -42,37 +43,31 @@ const SEPPage: React.FC = () => {
   if (!sep) {
     return (
       <StyledContainer>
-        <Grid container>
-          <Grid item xs={12}>
-            <StyledPaper>SEP not found</StyledPaper>
-          </Grid>
-        </Grid>
+        <StyledPaper>SEP not found</StyledPaper>
       </StyledContainer>
     );
   }
 
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12}>
-          <SimpleTabs tabNames={tabNames}>
-            <SEPGeneralInfo
-              data={sep}
-              onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
-            />
-            <SEPMembers
-              data={sep}
-              sepId={sep.id}
-              onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
-            />
-            <SEPProposalsAndAssignmentsView sepId={sep.id} />
-            <SEPMeetingComponentsView sepId={sep.id} />
-            {hasAccessRights && (
-              <EventLogList changedObjectId={sep.id} eventType="SEP" />
-            )}
-          </SimpleTabs>
-        </Grid>
-      </Grid>
+      <StyledPaper>
+        <SimpleTabs tabNames={tabNames}>
+          <SEPGeneralInfo
+            data={sep}
+            onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
+          />
+          <SEPMembers
+            data={sep}
+            sepId={sep.id}
+            onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
+          />
+          <SEPProposalsAndAssignmentsView sepId={sep.id} />
+          <SEPMeetingComponentsView sepId={sep.id} />
+          {hasAccessRights && (
+            <EventLogList changedObjectId={sep.id} eventType="SEP" />
+          )}
+        </SimpleTabs>
+      </StyledPaper>
     </StyledContainer>
   );
 };

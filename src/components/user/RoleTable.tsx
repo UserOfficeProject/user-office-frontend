@@ -53,8 +53,6 @@ const RoleTable: React.FC<RoleTableProps> = ({ add, activeRoles }) => {
       <ActionButtonContainer>
         <Button
           type="button"
-          variant="contained"
-          color="primary"
           onClick={() => add(selectedRoles)}
           disabled={selectedRoles.length === 0 || loading}
           data-cy="assign-instrument-to-call"

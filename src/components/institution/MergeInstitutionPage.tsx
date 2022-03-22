@@ -119,8 +119,6 @@ function MergeInstitutionsPage({ confirm }: MergeInstitutionPageProps) {
             <ActionButtonContainer>
               <Button
                 type="button"
-                variant="contained"
-                color="primary"
                 disabled={
                   institutionFrom === null ||
                   institutionInto === null ||

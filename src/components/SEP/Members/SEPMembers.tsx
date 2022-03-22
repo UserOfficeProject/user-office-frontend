@@ -402,7 +402,6 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                   variant="outlined"
                   onClick={() => setOpen(true)}
                   data-cy="add-participant-button"
-                  color="primary"
                   startIcon={<AddPersonIcon />}
                 >
                   Add reviewers

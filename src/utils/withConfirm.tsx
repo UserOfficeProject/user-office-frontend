@@ -87,12 +87,15 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleCancel} data-cy="confirm-cancel">
+            <Button
+              variant="text"
+              onClick={handleCancel}
+              data-cy="confirm-cancel"
+            >
               {cancellationText}
             </Button>
             <Button
               onClick={handleConfirm}
-              color="primary"
               data-cy="confirm-ok"
               disabled={!!alertText}
             >

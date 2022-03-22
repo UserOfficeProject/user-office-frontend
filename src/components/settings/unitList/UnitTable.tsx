@@ -83,8 +83,6 @@ const UnitTable: React.FC = () => {
             <Button
               startIcon={<PublishIcon />}
               type="button"
-              variant="contained"
-              color="primary"
               onClick={() => {
                 history.push('/ImportUnits');
               }}
@@ -95,8 +93,6 @@ const UnitTable: React.FC = () => {
             <Button
               startIcon={<ShareIcon />}
               type="button"
-              variant="contained"
-              color="primary"
               onClick={() => {
                 api()
                   .getUnitsAsJson()

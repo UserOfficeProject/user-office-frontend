@@ -128,15 +128,13 @@ const OverwriteTimeAllocationDialog = ({
             <DialogActions>
               <Button
                 onClick={() => onClose()}
-                color="primary"
+                variant="text"
                 disabled={isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                color="primary"
-                variant="contained"
                 disabled={isSubmitting}
                 data-cy="save-time-allocation"
               >

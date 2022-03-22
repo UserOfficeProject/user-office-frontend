@@ -334,7 +334,7 @@ context('SEP reviews tests', () => {
       cy.contains('Proposals and Assignments').click();
       cy.finishedLoading();
 
-      cy.get('[title="Show Reviewers"]').click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
 
       cy.contains(sepMembers.reviewer.lastName)
         .parent()
@@ -369,7 +369,7 @@ context('SEP reviews tests', () => {
         .contains('Proposals and assignments', { matchCase: false })
         .click();
       cy.finishedLoading();
-      cy.get('[title="Show Reviewers"]').click();
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
 
       cy.contains(sepMembers.reviewer.lastName).parent().contains('DRAFT');
     });

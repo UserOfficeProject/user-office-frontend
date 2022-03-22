@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import parse from 'html-react-parser';
 import React, { useContext } from 'react';
 
@@ -12,9 +11,7 @@ import { useGetPageContent } from 'hooks/admin/useGetPageContent';
 import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 const PaperContainer: React.FC = ({ children }) => (
-  <Grid item xs={12}>
-    <StyledPaper margin={[0]}>{children}</StyledPaper>
-  </Grid>
+  <StyledPaper>{children}</StyledPaper>
 );
 
 export default function OverviewPage(props: { userRole: UserRole }) {
@@ -52,20 +49,16 @@ export default function OverviewPage(props: { userRole: UserRole }) {
 
   return (
     <StyledContainer>
-      <Grid container spacing={3}>
-        {props.userRole !== UserRole.INSTRUMENT_SCIENTIST && (
-          <Grid item xs={12}>
-            <StyledPaper margin={[0]}>
-              {loadingContent ? (
-                <div>Loading...</div>
-              ) : (
-                parse(pageContent as string)
-              )}
-            </StyledPaper>
-          </Grid>
-        )}
-        {roleBasedOverView}
-      </Grid>
+      {props.userRole !== UserRole.INSTRUMENT_SCIENTIST && (
+        <StyledPaper margin={[0, 0, 2, 0]}>
+          {loadingContent ? (
+            <div>Loading...</div>
+          ) : (
+            parse(pageContent as string)
+          )}
+        </StyledPaper>
+      )}
+      {roleBasedOverView}
     </StyledContainer>
   );
 }

@@ -409,6 +409,7 @@ const ProposalWorkflowConnectionsEditor: React.FC<
         <Button
           className={classes.addRowButton}
           onClick={() => setOpenNewRowDialog(true)}
+          variant="text"
         >
           Add multi-column row
         </Button>

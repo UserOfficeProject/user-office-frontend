@@ -310,8 +310,6 @@ const TemplatesTable = ({
         <Button
           startIcon={<PublishIcon />}
           type="button"
-          variant="contained"
-          color="primary"
           onClick={() => {
             history.push('/ImportTemplate');
           }}
@@ -322,8 +320,6 @@ const TemplatesTable = ({
         <Button
           startIcon={<PostAddIcon />}
           type="button"
-          variant="contained"
-          color="primary"
           onClick={() => setShow(true)}
           data-cy="create-new-button"
         >

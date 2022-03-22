@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 
 import SimpleTabs from 'components/common/TabPanel';
 import EventLogList from 'components/eventLog/EventLogList';
-import { StyledContainer } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import { Impersonate } from './Impersonate';
 import UpdatePassword from './UpdatePassword';
@@ -29,21 +29,23 @@ function UserPage(props: { match: { params: { id: string } } }) {
   const classes = useStyles();
 
   return (
-    <StyledContainer cy-data="user-page">
-      <SimpleTabs tabNames={['General', 'Settings', 'Logs']}>
-        <UpdateUserInformation id={userId} />
-        <React.Fragment>
-          <UpdatePassword id={userId} />
-          <Divider className={classes.divider} />
-          <UpdateUserRoles id={userId} />
-          <Divider className={classes.divider} />
-          <Impersonate id={userId} />
-        </React.Fragment>
-        <EventLogList
-          eventType="USER | EMAIL_INVITE"
-          changedObjectId={userId}
-        />
-      </SimpleTabs>
+    <StyledContainer>
+      <StyledPaper cy-data="user-page">
+        <SimpleTabs tabNames={['General', 'Settings', 'Logs']}>
+          <UpdateUserInformation id={userId} />
+          <React.Fragment>
+            <UpdatePassword id={userId} />
+            <Divider className={classes.divider} />
+            <UpdateUserRoles id={userId} />
+            <Divider className={classes.divider} />
+            <Impersonate id={userId} />
+          </React.Fragment>
+          <EventLogList
+            eventType="USER | EMAIL_INVITE"
+            changedObjectId={userId}
+          />
+        </SimpleTabs>
+      </StyledPaper>
     </StyledContainer>
   );
 }

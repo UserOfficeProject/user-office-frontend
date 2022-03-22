@@ -40,7 +40,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
 
   return (
     <StyledContainer>
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <Typography variant="h6" component="h2" gutterBottom>
           Select a call
         </Typography>

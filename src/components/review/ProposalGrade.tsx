@@ -208,14 +208,12 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 name="submitted"
                 component={FormikUICustomCheckbox}
                 label="Submitted"
-                color="primary"
                 disabled={isSubmitting}
                 data-cy="is-grade-submitted"
               />
             )}
             <Button
               disabled={isDisabled(isSubmitting)}
-              variant="contained"
               color="secondary"
               type="submit"
               onClick={() => setShouldSubmit(false)}
@@ -226,8 +224,6 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               <Button
                 className={classes.button}
                 disabled={isDisabled(isSubmitting)}
-                variant="contained"
-                color="primary"
                 type="submit"
                 onClick={() => setShouldSubmit(true)}
               >

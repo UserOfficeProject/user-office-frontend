@@ -160,8 +160,6 @@ export default function SignInSide() {
               <Button
                 type="submit"
                 fullWidth
-                variant="contained"
-                color="primary"
                 className={classes.submit}
                 data-cy="submit"
                 disabled={isSubmitting}
@@ -182,6 +180,7 @@ export default function SignInSide() {
                     <span className={classes.loginAlternativeOr}>or</span>
                     <Button
                       className={classes.orcButton}
+                      variant="text"
                       onClick={() =>
                         (window.location.href = process.env
                           .REACT_APP_ORCID_REDIRECT as string)

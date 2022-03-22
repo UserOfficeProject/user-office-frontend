@@ -395,8 +395,6 @@ export default function UpdateUserInformation(props: { id: number }) {
               <Button
                 disabled={isSubmitting}
                 type="submit"
-                variant="contained"
-                color="primary"
                 className={classes.button}
               >
                 Update Profile

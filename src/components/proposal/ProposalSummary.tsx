@@ -159,8 +159,6 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
               )();
             }}
             disabled={submitDisabled}
-            variant="contained"
-            color="primary"
             data-cy="button-submit-proposal"
           >
             {proposal.submitted ? '✔ Submitted' : 'Submit'}
@@ -171,7 +169,6 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
             }
             disabled={!allStepsComplete}
             className={classes.button}
-            variant="contained"
             color="secondary"
           >
             Download PDF

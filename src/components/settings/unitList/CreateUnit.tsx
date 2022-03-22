@@ -129,8 +129,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
             data-cy="submit"
             disabled={isExecutingCall}

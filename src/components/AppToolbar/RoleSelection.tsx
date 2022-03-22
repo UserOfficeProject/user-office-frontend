@@ -76,9 +76,15 @@ const RoleSelection: React.FC<{ onClose: FunctionType }> = ({ onClose }) => {
   const RoleAction = (rowData: Role) => (
     <>
       {rowData.shortCode.toUpperCase() === currentRole?.valueOf() ? (
-        <Button disabled>In Use</Button>
+        <Button variant="text" disabled>
+          In Use
+        </Button>
       ) : (
-        <Button disabled={loading} onClick={() => selectUserRole(rowData)}>
+        <Button
+          variant="text"
+          disabled={loading}
+          onClick={() => selectUserRole(rowData)}
+        >
           Use
         </Button>
       )}

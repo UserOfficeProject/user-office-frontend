@@ -92,7 +92,6 @@ const AddSEP: React.FC<AddSEPProps> = ({ close }) => {
                 id="active"
                 name="active"
                 component={Checkbox}
-                color="primary"
                 type="checkbox"
                 inputProps={{ 'aria-label': 'primary checkbox' }}
                 data-cy="sepActive"
@@ -104,8 +103,6 @@ const AddSEP: React.FC<AddSEPProps> = ({ close }) => {
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
             data-cy="submit"
             disabled={isExecutingCall}

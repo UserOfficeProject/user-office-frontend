@@ -110,8 +110,6 @@ function ShipmentReview({ confirm }: ShipmentReviewProps) {
             )()
           }
           disabled={isSubmitted}
-          variant="contained"
-          color="primary"
         >
           {isSubmitted ? '✔ Submitted' : 'Submit'}
         </NavigButton>
@@ -124,7 +122,6 @@ function ShipmentReview({ confirm }: ShipmentReviewProps) {
               )
             }
             startIcon={<GetAppIcon />}
-            variant="contained"
             color="secondary"
             data-cy="download-shipment-label"
           >
