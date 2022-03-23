@@ -38,7 +38,9 @@ export default function UserUpcomingExperimentsTable() {
       onlyUpcoming: true,
       notDraft: true,
     });
-  const { toFormattedDateTime } = useFormattedDateTime();
+  const { toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
 
   const [modalContents, setModalContents] = useState<ReactNode>(null);
 
