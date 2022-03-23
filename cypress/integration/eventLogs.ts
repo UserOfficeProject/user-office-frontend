@@ -56,7 +56,7 @@ context('Event log tests', () => {
       const newFirstName = faker.name.firstName();
       // NOTE: Hour date format is enough because we don't know the exact time in seconds and minutes when update will happen in the database.
       const updateProfileDate = DateTime.now().toFormat(
-        initialDBData.formats.dateFormat + 'HH'
+        initialDBData.formats.dateFormat + ' HH'
       );
       const loggedInUser = window.localStorage.getItem('user');
 

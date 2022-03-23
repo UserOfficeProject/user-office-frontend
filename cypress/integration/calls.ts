@@ -124,11 +124,11 @@ context('Calls tests', () => {
       );
 
       const invalidPastDate = DateTime.fromJSDate(faker.date.past()).toFormat(
-        initialDBData.formats.dateFormat + 'HH'
+        initialDBData.formats.dateFormat + ' HH'
       ); // no minutes
       const invalidFutureDate = DateTime.fromJSDate(
         faker.date.future()
-      ).toFormat(initialDBData.formats.dateFormat + 'HH'); // no minutes
+      ).toFormat(initialDBData.formats.dateFormat + ' HH'); // no minutes
 
       cy.contains('Proposals');
 
