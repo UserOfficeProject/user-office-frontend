@@ -1,6 +1,5 @@
-import { DatePickerProps, LocalizationProvider } from '@mui/lab';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterLuxon';
-import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import { FormControl, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
@@ -19,15 +18,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
 }));
-
-const FilterDatePicker = (props: Omit<DatePickerProps, 'renderInput'>) => (
-  <DesktopDatePicker
-    renderInput={(tfProps) => (
-      <TextField {...tfProps} style={{ margin: '0 16px 16px 0' }} />
-    )}
-    {...props}
-  />
-);
 
 export function getRelativeDatesFromToday(period: TimeSpan): {
   from?: Date;
@@ -76,25 +66,37 @@ function DateFilter(props: DateFilterProps) {
   return (
     <FormControl className={classes.formControl}>
       <LocalizationProvider dateAdapter={DateAdapter}>
-        <FilterDatePicker
+        <DatePicker
           label="From"
           value={props.from ?? null}
-          onChange={(startsAt) => {
-            props.onChange((startsAt as DateTime).toJSDate(), props.to);
+          onChange={(startsAt: unknown) => {
+            props.onChange((startsAt as DateTime)?.toJSDate(), props.to);
             setPresetValue(null);
           }}
           className={classes.datePicker}
-          data-cy="from-date-picker"
+          renderInput={(tfProps) => (
+            <TextField
+              {...tfProps}
+              style={{ margin: '0 16px 16px 0' }}
+              data-cy="from-date-picker"
+            />
+          )}
         />
 
-        <FilterDatePicker
+        <DatePicker
           label="To"
           value={props.to ?? null}
-          onChange={(endsAt) =>
-            props.onChange(props.from, (endsAt as DateTime).toJSDate())
+          onChange={(endsAt: unknown) =>
+            props.onChange(props.from, (endsAt as DateTime)?.toJSDate())
           }
           className={classes.datePicker}
-          data-cy="to-date-picker"
+          renderInput={(tfProps) => (
+            <TextField
+              {...tfProps}
+              style={{ margin: '0 16px 16px 0' }}
+              data-cy="to-date-picker"
+            />
+          )}
         />
         <PresetDateSelector
           value={presetValue}

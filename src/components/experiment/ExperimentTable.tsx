@@ -34,13 +34,17 @@ const columns = [
     title: 'Experiment start',
     field: 'startsAt',
     render: (rowData: RowType) =>
-      DateTime.fromISO(rowData.startsAt).toFormat('dd-MM-yyyy HH:mm'),
+      DateTime.fromFormat(rowData.startsAt, 'yyyy-MM-dd HH:mm:ss').toFormat(
+        'dd/MM/yyyy HH:mm'
+      ),
   },
   {
     title: 'Experiment end',
     field: 'endsAt',
     render: (rowData: RowType) =>
-      DateTime.fromISO(rowData.endsAt).toFormat('dd-MM-yyyy HH:mm'),
+      DateTime.fromFormat(rowData.endsAt, 'yyyy-MM-dd HH:mm:ss').toFormat(
+        'dd/MM/yyyy HH:mm'
+      ),
   },
   {
     title: 'ESI',
