@@ -631,7 +631,6 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                 </Card>
                 <Field
                   name="privacy_agreement"
-                  className={classes.agreeBox}
                   component={CheckboxWithLabel}
                   type="checkbox"
                   Label={{
@@ -653,7 +652,6 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                 <Field
                   name="cookie_policy"
                   type="checkbox"
-                  className={classes.agreeBox}
                   component={CheckboxWithLabel}
                   Label={{
                     classes: { label: classes.agreeBox },

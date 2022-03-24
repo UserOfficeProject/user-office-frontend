@@ -2,12 +2,11 @@ import DateAdapter from '@mui/lab/AdapterLuxon';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import useTheme from '@mui/material/styles/useTheme';
 import { Field } from 'formik';
-import { TextField } from 'formik-mui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import { DatePicker, DateTimePicker } from 'formik-mui-lab';
 import React, { FC, useContext } from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { SettingsContext } from 'context/SettingsContextProvider';
@@ -81,8 +80,11 @@ export const QuestionTemplateRelationDateForm: FC<
             <QuestionExcerpt question={props.questionRel.question} />
             <Field
               name="config.includeTime"
-              label="Include time"
-              component={FormikUICustomCheckbox}
+              component={CheckboxWithLabel}
+              type="checkbox"
+              Label={{
+                label: 'Include time',
+              }}
               fullWidth
               inputProps={{ 'data-cy': 'includeTime' }}
             />
@@ -98,8 +100,11 @@ export const QuestionTemplateRelationDateForm: FC<
             <TitledContainer label="Constraints">
               <Field
                 name="config.required"
-                label="Is required"
-                component={FormikUICustomCheckbox}
+                component={CheckboxWithLabel}
+                type="checkbox"
+                Label={{
+                  label: 'Is required',
+                }}
                 fullWidth
                 data-cy="required"
               />

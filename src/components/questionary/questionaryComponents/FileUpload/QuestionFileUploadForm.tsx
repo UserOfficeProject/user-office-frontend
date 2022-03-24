@@ -1,9 +1,8 @@
 import { Field } from 'formik';
-import { TextField } from 'formik-mui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
@@ -65,9 +64,12 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
           <TitledContainer label="Constraints">
             <Field
               name="config.required"
-              label="Is required"
               id="Is-Required-Input"
-              component={FormikUICustomCheckbox}
+              component={CheckboxWithLabel}
+              type="checkbox"
+              Label={{
+                label: 'Is required',
+              }}
               fullWidth
               data-cy="required"
             />

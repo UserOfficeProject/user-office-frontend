@@ -6,12 +6,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
+import { CheckboxWithLabel } from 'formik-mui';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import ErrorMessage from 'components/common/ErrorMessage';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
@@ -206,8 +206,11 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               <Field
                 id="submitted"
                 name="submitted"
-                component={FormikUICustomCheckbox}
-                label="Submitted"
+                component={CheckboxWithLabel}
+                type="checkbox"
+                Label={{
+                  label: 'Submitted',
+                }}
                 disabled={isSubmitting}
                 data-cy="is-grade-submitted"
               />

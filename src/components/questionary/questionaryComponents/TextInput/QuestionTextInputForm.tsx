@@ -1,11 +1,10 @@
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import { Field } from 'formik';
-import { TextField } from 'formik-mui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomEditor from 'components/common/FormikUICustomEditor';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionFormProps } from 'components/questionary/QuestionaryComponentRegistry';
@@ -59,8 +58,11 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
           <TitledContainer label="Constraints">
             <Field
               name="config.required"
-              component={FormikUICustomCheckbox}
-              label="Is required"
+              component={CheckboxWithLabel}
+              type="checkbox"
+              Label={{
+                label: 'Is required',
+              }}
               fullWidth
               data-cy="required"
             />
@@ -102,8 +104,11 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
                 checked={
                   (formikProps.values.config as TextInputConfig).multiline
                 }
-                component={FormikUICustomCheckbox}
-                label="Multiple lines"
+                component={CheckboxWithLabel}
+                type="checkbox"
+                Label={{
+                  label: 'Multiple lines',
+                }}
                 fullWidth
                 data-cy="multiline"
               />
@@ -115,17 +120,23 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
                 checked={
                   (formikProps.values.config as TextInputConfig).isCounterHidden
                 }
-                component={FormikUICustomCheckbox}
-                label="Hide counter"
+                component={CheckboxWithLabel}
+                type="checkbox"
+                Label={{
+                  label: 'Hide counter',
+                }}
                 fullWidth
                 data-cy="multiline"
               />
             </Box>
 
             <Field
-              label="Enable rich text question"
+              component={CheckboxWithLabel}
+              type="checkbox"
+              Label={{
+                label: 'Enable rich text question',
+              }}
               name="config.isHtmlQuestion"
-              component={FormikUICustomCheckbox}
             />
             <Collapse
               in={(formikProps.values.config as TextInputConfig).isHtmlQuestion}

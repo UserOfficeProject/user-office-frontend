@@ -7,13 +7,13 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { saveSepMeetingDecisionValidationSchema } from '@user-office-software/duo-validation';
 import { Formik, Form, Field, useFormikContext } from 'formik';
+import { CheckboxWithLabel } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import UOLoader from 'components/common/UOLoader';
 import {
   Proposal,
@@ -266,8 +266,11 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                           <Field
                             id="submitted"
                             name="submitted"
-                            component={FormikUICustomCheckbox}
-                            label="Submitted"
+                            component={CheckboxWithLabel}
+                            type="checkbox"
+                            Label={{
+                              label: 'Submitted',
+                            }}
                             disabled={isSubmitting}
                             data-cy="is-sep-meeting-submitted"
                           />

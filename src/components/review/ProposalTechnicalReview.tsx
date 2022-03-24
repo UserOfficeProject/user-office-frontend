@@ -6,13 +6,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalTechnicalReviewValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Formik, Form, Field, useFormikContext } from 'formik';
-import { TextField } from 'formik-mui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React, { useContext, useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import FormikDropdown from 'components/common/FormikDropdown';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import { UserContext } from 'context/UserContextProvider';
 import {
   TechnicalReviewStatus,
@@ -275,8 +274,11 @@ const ProposalTechnicalReview = ({
                     <Field
                       id="submitted"
                       name="submitted"
-                      component={FormikUICustomCheckbox}
-                      label="Submitted"
+                      component={CheckboxWithLabel}
+                      type="checkbox"
+                      Label={{
+                        label: 'Submitted',
+                      }}
                       disabled={isSubmitting}
                       data-cy="is-review-submitted"
                     />
