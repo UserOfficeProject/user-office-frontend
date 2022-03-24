@@ -32,7 +32,6 @@ context('Shipments tests', () => {
       teamLeadUserId: PI.id,
       scheduledEventId: existingScheduledEventId,
     });
-    cy.viewport(1920, 1080);
   });
 
   it('Co-proposer should see that he can declare shipment', () => {

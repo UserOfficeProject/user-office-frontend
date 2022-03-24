@@ -1,7 +1,7 @@
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import React from 'react';
 
-import { ContentContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import ExperimentFilterBar from './ExperimentFilterBar';
 import ExperimentTable from './ExperimentTable';
@@ -11,18 +11,16 @@ interface ExperimentPageProps {
 }
 function ExperimentPage(props: ExperimentPageProps) {
   return (
-    <>
-      <ContentContainer>
-        <Grid container>
-          <Grid item xs={12}>
-            <StyledPaper data-cy="officer-scheduled-events-table">
-              <ExperimentFilterBar />
-              <ExperimentTable />
-            </StyledPaper>
-          </Grid>
+    <StyledContainer>
+      <Grid container>
+        <Grid item xs={12}>
+          <StyledPaper data-cy="officer-scheduled-events-table">
+            <ExperimentFilterBar />
+            <ExperimentTable />
+          </StyledPaper>
         </Grid>
-      </ContentContainer>
-    </>
+      </Grid>
+    </StyledContainer>
   );
 }
 

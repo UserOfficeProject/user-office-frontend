@@ -1,11 +1,9 @@
-import LuxonUtils from '@date-io/luxon';
-import { makeStyles } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import {
-  KeyboardDatePicker,
-  KeyboardDatePickerProps,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { DatePickerProps, LocalizationProvider } from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterLuxon';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import { FormControl, TextField } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { DateTime } from 'luxon';
 import React from 'react';
 
 import PresetDateSelector, { TimeSpan } from './PresetDateSelector';
@@ -22,14 +20,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DatePicker = (props: KeyboardDatePickerProps) => (
-  <KeyboardDatePicker
-    disableToolbar
-    variant="inline"
-    format="yyyy-MM-dd"
-    margin="none"
-    autoOk
-    defaultValue={null}
+const FilterDatePicker = (props: Omit<DatePickerProps, 'renderInput'>) => (
+  <DesktopDatePicker
+    renderInput={(tfProps) => (
+      <TextField {...tfProps} style={{ margin: '0 16px 16px 0' }} />
+    )}
     {...props}
   />
 );
@@ -80,22 +75,24 @@ function DateFilter(props: DateFilterProps) {
 
   return (
     <FormControl className={classes.formControl}>
-      <MuiPickersUtilsProvider utils={LuxonUtils}>
-        <DatePicker
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <FilterDatePicker
           label="From"
           value={props.from ?? null}
           onChange={(startsAt) => {
-            props.onChange(startsAt?.toJSDate(), props.to);
+            props.onChange((startsAt as DateTime).toJSDate(), props.to);
             setPresetValue(null);
           }}
           className={classes.datePicker}
           data-cy="from-date-picker"
         />
 
-        <DatePicker
+        <FilterDatePicker
           label="To"
           value={props.to ?? null}
-          onChange={(endsAt) => props.onChange(props.from, endsAt?.toJSDate())}
+          onChange={(endsAt) =>
+            props.onChange(props.from, (endsAt as DateTime).toJSDate())
+          }
           className={classes.datePicker}
           data-cy="to-date-picker"
         />
@@ -107,7 +104,7 @@ function DateFilter(props: DateFilterProps) {
             setPresetValue(val);
           }}
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </FormControl>
   );
 }

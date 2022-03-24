@@ -34,7 +34,6 @@ context('visits tests', () => {
       teamLeadUserId: coProposer.id,
       scheduledEventId: existingScheduledEventId,
     });
-    cy.viewport(1920, 1080);
   });
 
   it('PI should see ESI assessment button ', () => {
@@ -66,7 +65,6 @@ context('visits tests', () => {
       .contains(initialDBData.scheduledEvents.upcoming.startsAt)
       .closest('TR')
       .find(`[data-cy='${proposalEsiIconCyTag}']`)
-      .first()
       .click();
     cy.get('[data-cy=sample-esi-list]')
       .contains(sampleTitle)

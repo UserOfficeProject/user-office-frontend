@@ -1,6 +1,6 @@
 import MaterialTable from '@material-table/core';
-import { makeStyles } from '@material-ui/core';
-import dateformat from 'dateformat';
+import { makeStyles } from '@mui/styles';
+import { DateTime } from 'luxon';
 import moment from 'moment';
 import React from 'react';
 
@@ -31,14 +31,12 @@ type RowType = NonNullable<
 const getHumanReadableStatus = (rowData: RowType) => {
   switch (rowData.trainingStatus) {
     case TrainingStatus.ACTIVE:
-      return `Valid until ${dateformat(
-        new Date(rowData.trainingExpiryDate),
-        'dd-mmm-yyyy HH:MM'
-      )}`;
+      return `Valid until ${DateTime.fromISO(
+        rowData.trainingExpiryDate
+      ).toFormat('dd-MM-yyyy HH:mm')}`;
     case TrainingStatus.EXPIRED:
-      return `Expired ${dateformat(
-        new Date(rowData.trainingExpiryDate),
-        'dd-mmm-yyyy HH:MM'
+      return `Expired ${DateTime.fromISO(rowData.trainingExpiryDate).toFormat(
+        'dd-MM-yyyy HH:mm'
       )}`;
     case TrainingStatus.NONE:
       return 'Not started';

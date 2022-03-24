@@ -26,7 +26,6 @@ context('visits tests', () => {
       managementTimeAllocation: 5,
       managementDecisionSubmitted: true,
     });
-    cy.viewport(1920, 1080);
   });
 
   const startQuestion = 'Visit start';
@@ -186,7 +185,7 @@ context('visits tests', () => {
 
     cy.contains(startQuestion).parent().click().clear().type('101010');
     cy.get('[data-cy=save-and-continue-button]').click();
-    cy.contains(/invalid date format/i).should('exist');
+    cy.contains(/Invalid date/i).should('exist');
 
     cy.contains(startQuestion).parent().click().clear().type(endDate);
     cy.contains(endQuestion).parent().click().clear().type(startDate);
@@ -229,10 +228,10 @@ context('visits tests', () => {
     cy.get('[role="dialog"]')
       .contains('Carlsson')
       .parent()
-      .find('[title=Delete]')
+      .find('[aria-label=Delete]')
       .click();
 
-    cy.get('[title="Save"]').click();
+    cy.get('[aria-label="Save"]').click();
 
     cy.get('[data-cy=create-update-visit-button]').click();
 

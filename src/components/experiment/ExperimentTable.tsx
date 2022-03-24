@@ -1,12 +1,11 @@
-import { Typography } from '@material-ui/core';
-import dateformat from 'dateformat';
+import { Typography } from '@mui/material';
+import { DateTime } from 'luxon';
 import React, { useEffect } from 'react';
 import { useQueryParams, NumberParam, DateParam } from 'use-query-params';
 
 import SuperMaterialTable, {
   DefaultQueryParams,
 } from 'components/common/SuperMaterialTable';
-import UOLoader from 'components/common/UOLoader';
 import ProposalEsiDetailsButton from 'components/questionary/questionaryComponents/ProposalEsiBasis/ProposalEsiDetailsButton';
 import { GetScheduledEventsCoreQuery } from 'generated/sdk';
 import { useScheduledEvents } from 'hooks/scheduledEvent/useScheduledEvents';
@@ -35,13 +34,13 @@ const columns = [
     title: 'Experiment start',
     field: 'startsAt',
     render: (rowData: RowType) =>
-      dateformat(rowData.startsAt, 'yyyy-mm-dd HH:MM'),
+      DateTime.fromISO(rowData.startsAt).toFormat('dd-MM-yyyy HH:mm'),
   },
   {
     title: 'Experiment end',
     field: 'endsAt',
     render: (rowData: RowType) =>
-      dateformat(rowData.endsAt, 'yyyy-mm-dd HH:MM'),
+      DateTime.fromISO(rowData.endsAt).toFormat('dd-MM-yyyy HH:mm'),
   },
   {
     title: 'ESI',
@@ -98,10 +97,6 @@ function ExperimentTable() {
     },
     []
   );
-
-  if (!scheduledEvents) {
-    return <UOLoader />;
-  }
 
   return (
     <SuperMaterialTable

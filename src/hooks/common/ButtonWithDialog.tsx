@@ -1,4 +1,6 @@
-import { Button, Link, makeStyles } from '@material-ui/core';
+import { Link } from '@mui/material';
+import Button from '@mui/material/Button';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
@@ -23,7 +25,7 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
   const classes = useStyles();
 
   return (
-    <div>
+    <>
       <Link
         onClick={() => setIsDialogOpen(true)}
         color="primary"
@@ -46,7 +48,7 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
           </ActionButtonContainer>
         </div>
       </InputDialog>
-    </div>
+    </>
   );
 }
 
