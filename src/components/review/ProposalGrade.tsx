@@ -14,6 +14,7 @@ import { Prompt } from 'react-router';
 import { useCheckAccess } from 'components/common/Can';
 import ErrorMessage from 'components/common/ErrorMessage';
 import UOLoader from 'components/common/UOLoader';
+import GradeGuidePage from 'components/pages/GradeGuidePage';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
   ReviewStatus,
@@ -21,6 +22,7 @@ import {
   Review,
   UserRole,
 } from 'generated/sdk';
+import ButtonWithDialog from 'hooks/common/ButtonWithDialog';
 import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
@@ -222,6 +224,9 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 data-cy="is-grade-submitted"
               />
             )}
+            <ButtonWithDialog label="Grading guide">
+              <GradeGuidePage />
+            </ButtonWithDialog>
             <Button
               disabled={isDisabled(isSubmitting)}
               color="secondary"
