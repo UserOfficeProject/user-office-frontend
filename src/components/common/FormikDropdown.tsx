@@ -8,7 +8,7 @@ import { TextField } from 'formik-mui';
 import React from 'react';
 
 type TProps = {
-  items: Option[];
+  items: any[];
   name: string;
   label: string;
   loading?: boolean;
@@ -132,10 +132,5 @@ const FormikDropdown: React.FC<
     </Field>
   );
 };
-
-export interface Option {
-  text: string;
-  value: string | number;
-}
 
 export default connect<TProps>(FormikDropdown);

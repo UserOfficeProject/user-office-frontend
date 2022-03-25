@@ -2,17 +2,17 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
-import { CheckboxWithLabel } from 'formik-mui';
+import { CheckboxWithLabel, Select } from 'formik-mui';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import ErrorMessage from 'components/common/ErrorMessage';
-import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
@@ -182,19 +182,26 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             <Field
               name="grade"
               label="Grade"
-              fullWidth
-              component={FormikUICustomSelect}
+              formControl={{
+                fullWidth: true,
+                required: true,
+                margin: 'normal',
+              }}
               inputProps={{
                 id: 'grade-proposal',
               }}
-              availableOptions={[...Array(10)].map((e, i) =>
-                (i + 1).toString()
-              )}
-              disabled={isDisabled(isSubmitting)}
-              required
-              nbrOptionShown={10}
+              component={Select}
               data-cy="grade-proposal"
-            />
+              labelId="grade-proposal-label"
+            >
+              {[...Array(10)].map((e, i) => {
+                return (
+                  <MenuItem value={i + 1} key={i}>
+                    {(i + 1).toString()}
+                  </MenuItem>
+                );
+              })}
+            </Field>
           </Box>
           <StyledButtonContainer>
             {isSubmitting && (

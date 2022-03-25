@@ -18,7 +18,7 @@ import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import React, { useState, useContext } from 'react';
 
-import FormikDropdown, { Option } from 'components/common/FormikDropdown';
+import FormikDropdown from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
 import {
@@ -33,6 +33,7 @@ import { useUserData } from 'hooks/user/useUserData';
 import orcid from 'images/orcid.png';
 import { StyledButtonContainer } from 'styles/StyledComponents';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { Option } from 'utils/utilTypes';
 
 const useStyles = makeStyles((theme) => ({
   button: {

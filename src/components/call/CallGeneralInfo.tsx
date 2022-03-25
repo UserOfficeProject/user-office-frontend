@@ -16,17 +16,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextFieldProps,
   Theme,
   Typography,
   useTheme,
+  TextField as MuiTextField,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Field, useFormikContext } from 'formik';
-import { TextField } from 'formik-mui';
+import { Autocomplete, TextField } from 'formik-mui';
 import { DateTimePicker } from 'formik-mui-lab';
 import React, { useContext } from 'react';
 
-import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   AllocationTimeUnits,
@@ -37,6 +38,9 @@ import {
   UpdateCallMutationVariables,
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
+import { Option } from 'utils/utilTypes';
+
+type PartialTemplate = NonNullable<GetTemplatesQuery['templates']>[0];
 
 const CallGeneralInfo: React.FC<{
   templates: GetTemplatesQuery['templates'];
@@ -56,14 +60,9 @@ const CallGeneralInfo: React.FC<{
 
   const theme = useTheme();
 
-  const proposalWorkflowOptions = proposalWorkflows.map((proposalWorkflow) => ({
-    text: proposalWorkflow.name,
-    value: proposalWorkflow.id,
-  }));
-
   const allocationTimeUnitOptions = Object.values(AllocationTimeUnits).map(
     (key) => ({
-      text: key,
+      label: key,
       value: key,
     })
   );
@@ -263,54 +262,69 @@ const CallGeneralInfo: React.FC<{
           data-cy="reference-number-format"
         />
       </LocalizationProvider>
-      <FormikDropdown
+      <Field
         name="templateId"
-        label="Call template"
-        loading={loadingTemplates}
+        component={Autocomplete}
         noOptionsText="No templates"
-        items={
-          templates?.map((template) => ({
-            text: template.name,
-            value: template.templateId,
-          })) || []
-        }
-        InputProps={{ 'data-cy': 'call-template' }}
-        required
+        loading={loadingTemplates}
+        options={templates || []}
+        getOptionLabel={(option: PartialTemplate) => option.name || ''}
+        isOptionEqualToValue={(
+          option: PartialTemplate,
+          value: PartialTemplate | null
+        ) => option.templateId === value?.templateId}
+        renderInput={(params: TextFieldProps) => (
+          <MuiTextField {...params} label="Call template" required />
+        )}
+        data-cy="call-template"
       />
       {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
-        <FormikDropdown
+        <Field
           name="esiTemplateId"
-          label="ESI template"
-          loading={loadingTemplates}
+          component={Autocomplete}
           noOptionsText="No templates"
-          items={
-            esiTemplates?.map((template) => ({
-              text: template.name,
-              value: template.templateId,
-            })) || []
-          }
-          InputProps={{ 'data-cy': 'call-esi-template' }}
-          required
+          loading={loadingTemplates}
+          options={esiTemplates || []}
+          getOptionLabel={(option: PartialTemplate) => option.name || ''}
+          isOptionEqualToValue={(
+            option: PartialTemplate,
+            value: PartialTemplate | null
+          ) => option.templateId === value?.templateId}
+          renderInput={(params: TextFieldProps) => (
+            <MuiTextField {...params} label="ESI template" required />
+          )}
+          data-cy="call-esi-template"
         />
       )}
-
-      <FormikDropdown
+      <Field
         name="proposalWorkflowId"
-        label="Proposal workflow"
-        loading={loadingProposalWorkflows}
+        component={Autocomplete}
         noOptionsText="No proposal workflows"
-        items={proposalWorkflows.length > 0 ? proposalWorkflowOptions : []}
-        InputProps={{
-          'data-cy': 'call-workflow',
-        }}
-        required
+        loading={loadingProposalWorkflows}
+        options={proposalWorkflows || []}
+        getOptionLabel={(option: PartialTemplate) => option.name || ''}
+        isOptionEqualToValue={(
+          option: ProposalWorkflow,
+          value: ProposalWorkflow | null
+        ) => option.id === value?.id}
+        renderInput={(params: TextFieldProps) => (
+          <MuiTextField {...params} label="Proposal workflow" required />
+        )}
+        data-cy="call-workflow"
       />
-
-      <FormikDropdown
+      <Field
         name="allocationTimeUnit"
-        label="Allocation time unit"
-        items={allocationTimeUnitOptions as Option[]}
-        InputProps={{ 'data-cy': 'allocation-time-unit' }}
+        component={Autocomplete}
+        loading={loadingProposalWorkflows}
+        options={allocationTimeUnitOptions || []}
+        getOptionLabel={(option: Option) => option.text || ''}
+        isOptionEqualToValue={(option: Option, value: Option | null) =>
+          option.value === value?.value
+        }
+        renderInput={(params: TextFieldProps) => (
+          <MuiTextField {...params} label="Allocation time unit" required />
+        )}
+        data-cy="allocation-time-unit"
       />
       <Field
         name="title"

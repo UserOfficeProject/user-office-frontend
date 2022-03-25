@@ -10,12 +10,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
 import useTheme from '@mui/material/styles/useTheme';
+import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { createUserValidationSchema } from '@user-office-software/duo-validation';
 import clsx from 'clsx';
 import { Field, Form, Formik } from 'formik';
-import { CheckboxWithLabel, TextField } from 'formik-mui';
+import { Autocomplete, CheckboxWithLabel, TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import { useSnackbar } from 'notistack';
@@ -25,7 +26,6 @@ import React, { useContext, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
-import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import UOLoader from 'components/common/UOLoader';
 import InformationModal from 'components/pages/InformationModal';
 import { UserContext } from 'context/UserContextProvider';
@@ -33,6 +33,7 @@ import {
   PageName,
   CreateUserMutationVariables,
   SettingsId,
+  Maybe,
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
@@ -41,6 +42,7 @@ import { useUnauthorizedApi } from 'hooks/common/useDataApi';
 import { useGetFields } from 'hooks/user/useGetFields';
 import { useOrcIDInformation } from 'hooks/user/useOrcIDInformation';
 import orcid from 'images/orcid.png';
+import { Option } from 'utils/utilTypes';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -197,21 +199,31 @@ const SignUp: React.FC<SignUpProps> = (props) => {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '100px' }} />;
   }
 
-  const initialValues = {
-    user_title: '',
+  const initialValues: Omit<
+    CreateUserMutationVariables,
+    'gender' | 'nationality' | 'organisation'
+  > & {
+    gender: Maybe<string>;
+    othergender: string;
+    organisation: Maybe<number>;
+    nationality: Maybe<number>;
+    confirmPassword: string;
+    privacy_agreement: boolean;
+    cookie_policy: boolean;
+  } = {
+    user_title: null,
     firstname: firstname as string,
     middlename: '',
     lastname: lastname as string,
     password: '',
     confirmPassword: '',
     preferredname: '',
-    gender: '',
+    gender: null,
     othergender: '',
-    nationality: '',
+    nationality: null,
     birthdate: userMaxBirthDate,
-    organisation: '',
+    organisation: null,
     department: '',
-    organisation_address: '',
     position: '',
     email: (email as string) || '',
     telephone: '',
@@ -222,6 +234,20 @@ const SignUp: React.FC<SignUpProps> = (props) => {
     orcidHash: orcData?.orcidHash as string,
     refreshToken: orcData?.refreshToken as string,
   };
+
+  const userTitleOptions = [
+    { text: 'Ms.', value: 'Ms.' },
+    { text: 'Mr.', value: 'Mr.' },
+    { text: 'Dr.', value: 'Dr.' },
+    { text: 'Prof.', value: 'Prof.' },
+    { text: 'Rather not say', value: 'unspecified' },
+  ];
+
+  const genderOptions = [
+    { text: 'Female', value: 'female' },
+    { text: 'Male', value: 'male' },
+    { text: 'Other', value: 'other' },
+  ];
 
   if (!institutionsList.length) {
     setInstitutionsList(
@@ -264,8 +290,8 @@ const SignUp: React.FC<SignUpProps> = (props) => {
           if (orcData && orcData.orcid) {
             const newValues = {
               ...values,
-              nationality: +values.nationality,
-              organisation: +values.organisation,
+              nationality: +values.nationality!,
+              organisation: +values.organisation!,
               orcid: orcData?.orcid as string,
               orcidHash: orcData?.orcidHash as string,
               refreshToken: orcData?.refreshToken as string,
@@ -273,7 +299,9 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                 ? values.preferredname
                 : values.firstname,
               gender:
-                values.gender === 'other' ? values.othergender : values.gender,
+                values.gender === 'other'
+                  ? values.othergender
+                  : values.gender ?? '',
             };
 
             await sendSignUpRequest(newValues);
@@ -435,19 +463,20 @@ const SignUp: React.FC<SignUpProps> = (props) => {
 
                   <CardContent>
                     <LocalizationProvider dateAdapter={DateAdapter}>
-                      <FormikDropdown
+                      <Field
                         name="user_title"
-                        label="Title"
-                        items={[
-                          { text: 'Ms.', value: 'Ms.' },
-                          { text: 'Mr.', value: 'Mr.' },
-                          { text: 'Dr.', value: 'Dr.' },
-                          { text: 'Prof.', value: 'Prof.' },
-                          { text: 'Rather not say', value: 'unspecified' },
-                        ]}
-                        data-cy="title"
-                        required
+                        component={Autocomplete}
+                        options={userTitleOptions}
+                        getOptionLabel={(option: Option) => option.text}
+                        isOptionEqualToValue={(
+                          option: Option,
+                          value: Option | null
+                        ) => option.value === value?.value}
+                        renderInput={(params: TextFieldProps) => (
+                          <MuiTextField {...params} label="Title" required />
+                        )}
                         disabled={!orcData}
+                        data-cy="title"
                       />
                       <Field
                         name="firstname"
@@ -491,17 +520,20 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                         data-cy="preferredname"
                         disabled={!orcData}
                       />
-                      <FormikDropdown
+                      <Field
                         name="gender"
-                        label="Gender"
-                        items={[
-                          { text: 'Female', value: 'female' },
-                          { text: 'Male', value: 'male' },
-                          { text: 'Other', value: 'other' },
-                        ]}
-                        data-cy="gender"
-                        required
+                        component={Autocomplete}
+                        options={genderOptions}
+                        getOptionLabel={(option: Option) => option.text}
+                        isOptionEqualToValue={(
+                          option: Option,
+                          value: Option | null
+                        ) => option.value === value?.value}
+                        renderInput={(params: TextFieldProps) => (
+                          <MuiTextField {...params} label="Gender" required />
+                        )}
                         disabled={!orcData}
+                        data-cy="gender"
                       />
                       {values.gender === 'other' && (
                         <Field
@@ -516,13 +548,24 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                           disabled={!orcData}
                         />
                       )}
-                      <FormikDropdown
+                      <Field
                         name="nationality"
-                        label="Nationality"
-                        items={nationalitiesList}
-                        data-cy="nationality"
-                        required
+                        component={Autocomplete}
+                        options={nationalitiesList}
+                        getOptionLabel={(option: Option) => option.text}
+                        isOptionEqualToValue={(
+                          option: Option,
+                          value: Option | null
+                        ) => option.value === value?.value}
+                        renderInput={(params: TextFieldProps) => (
+                          <MuiTextField
+                            {...params}
+                            label="Nationality"
+                            required
+                          />
+                        )}
                         disabled={!orcData}
+                        data-cy="nationality"
                       />
                       <Field
                         name="birthdate"
@@ -551,51 +594,65 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                     4. Organisation details
                   </Typography>
                   <CardContent>
-                    <Grid container spacing={1}>
-                      <Field
-                        name="position"
-                        label="Position"
-                        id="position-input"
-                        type="text"
-                        component={TextField}
-                        fullWidth
-                        data-cy="position"
-                        required
-                        disabled={!orcData}
-                      />
-                      <Field
-                        name="department"
-                        label="Department"
-                        id="department-input"
-                        type="text"
-                        component={TextField}
-                        fullWidth
-                        data-cy="department"
-                        required
-                        disabled={!orcData}
-                      />
-                      <FormikDropdown
-                        name="organisation"
-                        label="Organisation"
-                        items={institutionsList}
-                        data-cy="organisation"
-                        required
-                        disabled={!orcData}
-                      />
-                      {+values.organisation === 1 && (
-                        <Field
-                          name="otherOrganisation"
-                          label="Please specify organisation"
-                          id="organisation-input"
-                          type="text"
-                          component={TextField}
-                          fullWidth
-                          data-cy="otherOrganisation"
+                    <Field
+                      name="position"
+                      label="Position"
+                      id="position-input"
+                      type="text"
+                      component={TextField}
+                      fullWidth
+                      data-cy="position"
+                      required
+                      disabled={!orcData}
+                    />
+                    <Field
+                      name="department"
+                      label="Department"
+                      id="department-input"
+                      type="text"
+                      component={TextField}
+                      fullWidth
+                      data-cy="department"
+                      required
+                      disabled={!orcData}
+                    />
+                    <Field
+                      name="organisation"
+                      component={Autocomplete}
+                      options={institutionsList}
+                      getOptionLabel={(option: Option) => option.text}
+                      renderOption={(props: unknown, option: Option) => (
+                        <li {...props} key={option.value}>
+                          {option.text}
+                        </li>
+                      )}
+                      isOptionEqualToValue={(
+                        option: Option,
+                        value: Option | null
+                      ) => option.value === value?.value}
+                      renderInput={(params: TextFieldProps) => (
+                        <MuiTextField
+                          {...params}
+                          label="Organization"
                           required
-                          disabled={!orcData}
                         />
                       )}
-                    </Grid>
+                      disabled={!orcData}
+                      data-cy="organisation"
+                    />
+                    {values.organisation && +values.organisation === 1 && (
+                      <Field
+                        name="otherOrganisation"
+                        label="Please specify organisation"
+                        id="organisation-input"
+                        type="text"
+                        component={TextField}
+                        fullWidth
+                        data-cy="otherOrganisation"
+                        required
+                        disabled={!orcData}
+                      />
+                    )}
                   </CardContent>
                 </Card>
 

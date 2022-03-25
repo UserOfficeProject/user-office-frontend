@@ -1,9 +1,10 @@
+import ListItemText from '@mui/material/ListItemText';
 import { Field } from 'formik';
-import { CheckboxWithLabel, TextField } from 'formik-mui';
+import { CheckboxWithLabel, Select, TextField } from 'formik-mui';
 import React, { FC } from 'react';
 import * as Yup from 'yup';
 
-import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
+import MultiMenuItem from 'components/common/MultiMenuItem';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 
@@ -14,6 +15,15 @@ import { QuestionTemplateRelationFormShell } from '../QuestionTemplateRelationFo
 export const QuestionTemplateRelationFileUploadForm: FC<
   QuestionTemplateRelationFormProps
 > = (props) => {
+  const availableFileTypeOptions = [
+    { label: '.pdf', value: '.pdf' },
+    { label: '.doc', value: '.doc' },
+    { label: '.docx', value: '.docx' },
+    { label: 'audio/*', value: 'audio/*' },
+    { label: 'video/*', value: 'video/*' },
+    { label: 'image/*', value: 'image/*' },
+  ];
+
   return (
     <QuestionTemplateRelationFormShell
       {...props}
@@ -55,23 +65,30 @@ export const QuestionTemplateRelationFileUploadForm: FC<
               data-cy="required"
             />
             <Field
+              id="fileType"
               name="config.file_type"
               label="Accepted file types"
-              id="fileType"
-              component={FormikUICustomSelect}
               multiple
-              availableOptions={[
-                '.pdf',
-                '.doc',
-                '.docx',
-                'audio/*',
-                'video/*',
-                'image/*',
-              ]}
-              fullWidth
+              formControl={{
+                fullWidth: true,
+                required: true,
+                margin: 'normal',
+              }}
+              inputProps={{
+                id: 'fileType',
+              }}
+              component={Select}
               data-cy="file_type"
-              required
-            />
+              labelId="fileType-label"
+            >
+              {availableFileTypeOptions.map(({ value, label }) => {
+                return (
+                  <MultiMenuItem value={value} key={value}>
+                    <ListItemText primary={label} />
+                  </MultiMenuItem>
+                );
+              })}
+            </Field>
             <Field
               name="config.max_files"
               label="Max number of files"
