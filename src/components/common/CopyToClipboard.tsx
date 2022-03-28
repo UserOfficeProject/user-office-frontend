@@ -1,14 +1,23 @@
-import { Box, Tooltip } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { makeStyles } from '@mui/styles';
+import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import React from 'react';
-
+import React, { useState } from 'react';
 const useStyles = makeStyles(() => ({
-  withPointer: {
+  container: {
+    position: 'relative',
+    display: 'inline-block',
     cursor: 'pointer',
   },
-  container: {
-    display: 'inline-block',
+  hidden: {
+    opacity: 0,
+  },
+  copyIcon: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: '-28px',
+    transition: 'all 0.15s ease-in-out',
   },
 }));
 
@@ -20,6 +29,7 @@ interface CopyToClipboardProps {
 const CopyToClipboard = (props: CopyToClipboardProps) => {
   const { successMessage, children, text } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const [showIcon, setShowIcon] = useState(false);
   const classes = useStyles();
 
   const handleClick = () => {
@@ -27,17 +37,30 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
       variant: 'success',
     });
     navigator.clipboard.writeText(text);
+    setShowIcon(false);
+  };
+  const handleMouseOver = () => {
+    setShowIcon(true);
+  };
+  const handleMouseOut = () => {
+    setShowIcon(false);
   };
 
   return (
-    <Tooltip
+    <div
+      className={classes.container}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
       onClick={handleClick}
-      color="primary"
-      title="Copy to clipboard"
-      className={classes.withPointer}
     >
-      <Box display="inline-block">{children}</Box>
-    </Tooltip>
+      {children}
+      <ContentCopyIcon
+        className={clsx({
+          [classes.hidden]: !showIcon,
+          [classes.copyIcon]: true,
+        })}
+      />
+    </div>
   );
 };
 
