@@ -1,4 +1,5 @@
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { Box, Tooltip } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 
@@ -35,7 +36,7 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
       title="Copy to clipboard"
       className={classes.withPointer}
     >
-      <div className={classes.container}>{children}</div>
+      <Box display="inline-block">{children}</Box>
     </Tooltip>
   );
 };

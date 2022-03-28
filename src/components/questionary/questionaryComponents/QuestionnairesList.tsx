@@ -1,10 +1,11 @@
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Box } from '@mui/material';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
-import { ButtonContainer } from 'styles/StyledComponents';
+import { StyledButtonContainer } from 'styles/StyledComponents';
 
 import { QuestionnairesListItem } from './QuestionnairesListItem';
 
@@ -39,10 +40,6 @@ const useStyles = makeStyles((theme) => ({
     fontStyle: 'italic',
     padding: theme.spacing(2),
     color: theme.palette.grey[500],
-  },
-  bottomBar: {
-    display: 'flex',
-    alignItems: 'center',
   },
   buttonContainer: {
     flex: '1 1 0px',
@@ -85,9 +82,9 @@ export function QuestionnairesList({
           })}
         </List>
       )}
-      <div className={classes.bottomBar}>
+      <Box display="box" alignItems="center">
         {`${data.length} item(s)`}
-        <ButtonContainer className={classes.buttonContainer}>
+        <StyledButtonContainer className={classes.buttonContainer}>
           <Button
             onClick={onAddNewClick}
             variant="outlined"
@@ -102,8 +99,8 @@ export function QuestionnairesList({
           >
             {addButtonLabel || 'Add'}
           </Button>
-        </ButtonContainer>
-      </div>
+        </StyledButtonContainer>
+      </Box>
     </div>
   );
 }

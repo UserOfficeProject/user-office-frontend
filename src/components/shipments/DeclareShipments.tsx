@@ -1,11 +1,5 @@
-import {
-  Dialog,
-  DialogContent,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Dialog, DialogContent, Typography, Alert, Paper } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
