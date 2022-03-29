@@ -1,6 +1,6 @@
-import { Button, Card, CardContent, Typography } from '@material-ui/core';
-import dateformat from 'dateformat';
+import { Button, Card, CardContent, Typography } from '@mui/material';
 import produce from 'immer';
+import { DateTime } from 'luxon';
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 
@@ -10,9 +10,10 @@ import {
   QuestionComparison,
   TemplateImportWithValidation,
 } from 'generated/sdk';
+import { deepEqual } from 'utils/json';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
-import { ConflictResolver } from './ConflictResolver';
+import { ConflictResolver } from '../../common/ConflictResolver';
 
 interface MergeReviewProps {
   data: TemplateImportWithValidation;
@@ -31,7 +32,9 @@ export function MergeReview(props: MergeReviewProps) {
   const history = useHistory();
   const templateExport = props.data;
   const { version, json } = templateExport;
-  const exportDate = dateformat(templateExport.exportDate, 'dd-mmm-yyyy');
+  const exportDate = DateTime.fromISO(templateExport.exportDate).toFormat(
+    'dd-MMM-yyyy'
+  );
 
   const [state, setState] = useState({ ...templateExport });
 
@@ -63,7 +66,7 @@ export function MergeReview(props: MergeReviewProps) {
           const question = comparison.newQuestion;
 
           return {
-            questionId: question.id,
+            itemId: question.id,
             strategy: comparison.conflictResolutionStrategy,
           };
         }),
@@ -85,24 +88,57 @@ export function MergeReview(props: MergeReviewProps) {
         </CardContent>
       </Card>
       {props.data.questionComparisons.map((comparison) => (
-        <ConflictResolver
+        <ConflictResolver<QuestionComparison>
           key={comparison.newQuestion.id}
-          questionComparison={comparison}
+          comparison={comparison}
           onConflictResolved={onConflictResolved}
+          getStatus={(comparison) => comparison.status}
+          getItemId={(comparison) => comparison.newQuestion.id}
+          getItemTitle={(comparison) => comparison.newQuestion.question}
+          getDiffInfo={({ existingQuestion, newQuestion }) => {
+            return [
+              {
+                existingVal: existingQuestion?.naturalKey,
+                newVal: newQuestion?.naturalKey ?? '',
+                heading: 'Natural key',
+                isDifferent:
+                  existingQuestion !== null &&
+                  existingQuestion?.naturalKey !== newQuestion.naturalKey,
+              },
+              {
+                existingVal: existingQuestion?.question,
+                newVal: newQuestion?.question ?? '',
+                heading: 'Question',
+                isDifferent:
+                  existingQuestion !== null &&
+                  existingQuestion.question !== newQuestion.question,
+              },
+              {
+                existingVal: (
+                  <pre>
+                    {JSON.stringify(existingQuestion?.config, undefined, 4) ||
+                      '-'}
+                  </pre>
+                ),
+                newVal: (
+                  <pre>{JSON.stringify(newQuestion?.config, undefined, 4)}</pre>
+                ),
+                heading: 'Config',
+                isDifferent:
+                  existingQuestion !== null &&
+                  deepEqual(existingQuestion?.config, newQuestion.config) ===
+                    false,
+              },
+            ];
+          }}
         />
       ))}
       <ActionButtonContainer>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => props.onBack?.()}
-        >
+        <Button variant="outlined" onClick={() => props.onBack?.()}>
           Back
         </Button>
         <Button
           data-cy="import-template-button"
-          variant="contained"
-          color="primary"
           onClick={handleImportClick}
           disabled={hasUnresolvedConflicts(state.questionComparisons)}
         >

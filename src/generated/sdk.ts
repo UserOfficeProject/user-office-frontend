@@ -38,6 +38,7 @@ export type AddStatusChangingEventsToConnectionInput = {
 
 export type AddTechnicalReviewInput = {
   comment?: InputMaybe<Scalars['String']>;
+  files?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
   publicComment?: InputMaybe<Scalars['String']>;
   reviewerId?: InputMaybe<Scalars['Int']>;
@@ -183,7 +184,7 @@ export type CloneProposalsInput = {
 };
 
 export type ConflictResolution = {
-  questionId: Scalars['String'];
+  itemId: Scalars['String'];
   strategy: ConflictResolutionStrategy;
 };
 
@@ -313,6 +314,7 @@ export enum EvaluatorOperator {
 }
 
 export enum Event {
+  CALL_CREATED = 'CALL_CREATED',
   CALL_ENDED = 'CALL_ENDED',
   CALL_REVIEW_ENDED = 'CALL_REVIEW_ENDED',
   CALL_SEP_REVIEW_ENDED = 'CALL_SEP_REVIEW_ENDED',
@@ -602,7 +604,6 @@ export type MoveProposalWorkflowStatusInput = {
 export type Mutation = {
   addClientLog: SuccessResponseWrap;
   addProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
-  addReview: ReviewWithNextStatusResponseWrap;
   addSamplesToShipment: ShipmentResponseWrap;
   addStatusChangingEventsToConnection: ProposalStatusChangingEventResponseWrap;
   addTechnicalReview: TechnicalReviewResponseWrap;
@@ -674,6 +675,7 @@ export type Mutation = {
   getTokenForUser: TokenResponseWrap;
   importProposal: ProposalResponseWrap;
   importTemplate: TemplateResponseWrap;
+  importUnits: UnitsResponseWrap;
   login: TokenResponseWrap;
   logout: LogoutTokenWrap;
   mergeInstitutions: InstitutionResponseWrap;
@@ -719,6 +721,7 @@ export type Mutation = {
   updateQuestion: QuestionResponseWrap;
   updateQuestionTemplateRelation: TemplateResponseWrap;
   updateQuestionTemplateRelationSettings: TemplateResponseWrap;
+  updateReview: ReviewWithNextStatusResponseWrap;
   updateSEP: SepResponseWrap;
   updateSEPTimeAllocation: SepProposalResponseWrap;
   updateSample: SampleResponseWrap;
@@ -732,6 +735,7 @@ export type Mutation = {
   updateVisit: VisitResponseWrap;
   updateVisitRegistration: VisitRegistrationResponseWrap;
   validateTemplateImport: TemplateImportWithValidationWrap;
+  validateUnitsImport: UnitsImportWithValidationWrap;
 };
 
 
@@ -742,15 +746,6 @@ export type MutationAddClientLogArgs = {
 
 export type MutationAddProposalWorkflowStatusArgs = {
   newProposalWorkflowStatusInput: AddProposalWorkflowStatusInput;
-};
-
-
-export type MutationAddReviewArgs = {
-  comment: Scalars['String'];
-  grade: Scalars['Int'];
-  reviewID: Scalars['Int'];
-  sepID: Scalars['Int'];
-  status: ReviewStatus;
 };
 
 
@@ -1189,6 +1184,12 @@ export type MutationImportTemplateArgs = {
 };
 
 
+export type MutationImportUnitsArgs = {
+  conflictResolutions: Array<ConflictResolution>;
+  json: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1459,6 +1460,15 @@ export type MutationUpdateQuestionTemplateRelationSettingsArgs = {
 };
 
 
+export type MutationUpdateReviewArgs = {
+  comment: Scalars['String'];
+  grade: Scalars['Int'];
+  reviewID: Scalars['Int'];
+  sepID: Scalars['Int'];
+  status: ReviewStatus;
+};
+
+
 export type MutationUpdateSepArgs = {
   active: Scalars['Boolean'];
   code: Scalars['String'];
@@ -1534,6 +1544,7 @@ export type MutationUpdateUserArgs = {
   nationality?: InputMaybe<Scalars['Int']>;
   orcid?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['Int']>;
+  otherOrganisation?: InputMaybe<Scalars['String']>;
   placeholder?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['String']>;
   preferredname?: InputMaybe<Scalars['String']>;
@@ -1571,6 +1582,11 @@ export type MutationUpdateVisitRegistrationArgs = {
 
 export type MutationValidateTemplateImportArgs = {
   templateAsJson: Scalars['String'];
+};
+
+
+export type MutationValidateUnitsImportArgs = {
+  unitsAsJson: Scalars['String'];
 };
 
 export type NextProposalStatus = {
@@ -1617,8 +1633,10 @@ export type Page = {
 export enum PageName {
   COOKIEPAGE = 'COOKIEPAGE',
   FOOTERCONTENT = 'FOOTERCONTENT',
+  GRADEGUIDEPAGE = 'GRADEGUIDEPAGE',
   HELPPAGE = 'HELPPAGE',
   HOMEPAGE = 'HOMEPAGE',
+  LOGINHELPPAGE = 'LOGINHELPPAGE',
   PRIVACYPAGE = 'PRIVACYPAGE',
   REVIEWPAGE = 'REVIEWPAGE'
 }
@@ -1861,6 +1879,7 @@ export type ProposalsFilter = {
   proposalStatusId?: InputMaybe<Scalars['Int']>;
   questionFilter?: InputMaybe<QuestionFilterInput>;
   questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
+  referenceNumbers?: InputMaybe<Array<Scalars['String']>>;
   shortCodes?: InputMaybe<Array<Scalars['String']>>;
   text?: InputMaybe<Scalars['String']>;
 };
@@ -1871,8 +1890,13 @@ export type ProposalsQueryResult = {
 };
 
 export type ProposalsResponseWrap = {
-  proposals: Array<Proposal>;
+  proposals: Maybe<Array<Proposal>>;
   rejection: Maybe<Rejection>;
+};
+
+export type ProposalsViewQueryResult = {
+  proposalViews: Array<ProposalView>;
+  totalCount: Scalars['Int'];
 };
 
 export type ProposalsViewResult = {
@@ -1937,7 +1961,7 @@ export type Query = {
   proposalWorkflow: Maybe<ProposalWorkflow>;
   proposalWorkflows: Maybe<Array<ProposalWorkflow>>;
   proposals: Maybe<ProposalsQueryResult>;
-  proposalsView: Maybe<Array<ProposalView>>;
+  proposalsView: Maybe<ProposalsViewQueryResult>;
   quantities: Array<Quantity>;
   queriesAndMutations: Maybe<QueriesAndMutations>;
   questionary: Maybe<Questionary>;
@@ -1964,6 +1988,7 @@ export type Query = {
   templateCategories: Maybe<Array<TemplateCategory>>;
   templates: Maybe<Array<Template>>;
   units: Maybe<Array<Unit>>;
+  unitsAsJson: Maybe<Scalars['String']>;
   user: Maybe<User>;
   userHasAccessToProposal: Maybe<Scalars['Boolean']>;
   userInstruments: Maybe<InstrumentsQueryResult>;
@@ -2170,6 +2195,11 @@ export type QueryProposalsArgs = {
 
 export type QueryProposalsViewArgs = {
   filter?: InputMaybe<ProposalsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  searchText?: InputMaybe<Scalars['String']>;
+  sortDirection?: InputMaybe<Scalars['String']>;
+  sortField?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2757,6 +2787,7 @@ export type SubmitProposalsReviewInput = {
 
 export type SubmitTechnicalReviewInput = {
   comment?: InputMaybe<Scalars['String']>;
+  files?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
   publicComment?: InputMaybe<Scalars['String']>;
   reviewerId: Scalars['Int'];
@@ -2772,6 +2803,7 @@ export type SuccessResponseWrap = {
 
 export type TechnicalReview = {
   comment: Maybe<Scalars['String']>;
+  files: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   proposal: Maybe<Proposal>;
   proposalPk: Scalars['Int'];
@@ -2908,9 +2940,35 @@ export type Unit = {
   unit: Scalars['String'];
 };
 
+export type UnitComparison = {
+  conflictResolutionStrategy: ConflictResolutionStrategy;
+  existingUnit: Maybe<Unit>;
+  newUnit: Unit;
+  status: QuestionComparisonStatus;
+};
+
 export type UnitResponseWrap = {
   rejection: Maybe<Rejection>;
   unit: Maybe<Unit>;
+};
+
+export type UnitsImportWithValidation = {
+  errors: Array<Scalars['String']>;
+  exportDate: Scalars['DateTime'];
+  isValid: Scalars['Boolean'];
+  json: Scalars['String'];
+  unitComparisons: Array<UnitComparison>;
+  version: Scalars['String'];
+};
+
+export type UnitsImportWithValidationWrap = {
+  rejection: Maybe<Rejection>;
+  validationResult: Maybe<UnitsImportWithValidation>;
+};
+
+export type UnitsResponseWrap = {
+  rejection: Maybe<Rejection>;
+  units: Maybe<Array<Unit>>;
 };
 
 export type UpdateAnswerResponseWrap = {
@@ -3180,7 +3238,7 @@ export type GetSepProposalQueryVariables = Exact<{
 }>;
 
 
-export type GetSepProposalQuery = { sepProposal: { proposalPk: number, sepId: number, sepTimeAllocation: number | null, instrumentSubmitted: boolean, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, allocationTimeUnit: AllocationTimeUnits } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null };
+export type GetSepProposalQuery = { sepProposal: { proposalPk: number, sepId: number, sepTimeAllocation: number | null, instrumentSubmitted: boolean, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, files: string | null, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, allocationTimeUnit: AllocationTimeUnits } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } } | null };
 
 export type GetSepProposalsQueryVariables = Exact<{
   sepId: Scalars['Int'];
@@ -3297,17 +3355,6 @@ export type CreateInstitutionMutationVariables = Exact<{
 
 export type CreateInstitutionMutation = { createInstitution: { institution: { id: number, name: string, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type CreateUnitMutationVariables = Exact<{
-  id: Scalars['String'];
-  unit: Scalars['String'];
-  quantity: Scalars['String'];
-  symbol: Scalars['String'];
-  siConversionFormula: Scalars['String'];
-}>;
-
-
-export type CreateUnitMutation = { createUnit: { unit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
 }>;
@@ -3321,13 +3368,6 @@ export type DeleteInstitutionMutationVariables = Exact<{
 
 
 export type DeleteInstitutionMutation = { deleteInstitution: { institution: { id: number, verified: boolean } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
-
-export type DeleteUnitMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteUnitMutation = { deleteUnit: { unit: { id: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UnitFragment = { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string };
 
@@ -3369,11 +3409,6 @@ export type GetSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSettingsQuery = { settings: Array<{ id: SettingsId, settingsValue: string | null, description: string | null }> };
-
-export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUnitsQuery = { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null };
 
 export type MergeInstitutionsMutationVariables = Exact<{
   institutionIdFrom: Scalars['Int'];
@@ -3750,7 +3785,7 @@ export type CloneProposalsMutationVariables = Exact<{
 }>;
 
 
-export type CloneProposalsMutation = { cloneProposals: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, referenceNumberFormat: string | null } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type CloneProposalsMutation = { cloneProposals: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, files: string | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, referenceNumberFormat: string | null } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateProposalMutationVariables = Exact<{
   callId: Scalars['Int'];
@@ -3766,7 +3801,7 @@ export type DeleteProposalMutationVariables = Exact<{
 
 export type DeleteProposalMutation = { deleteProposal: { rejection: { reason: string, context: string | null, exception: string | null } | null, proposal: { primaryKey: number } | null } };
 
-export type CoreTechnicalReviewFragment = { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean };
+export type CoreTechnicalReviewFragment = { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, files: string | null };
 
 export type ProposalFragment = { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null };
 
@@ -3791,21 +3826,26 @@ export type GetProposalQueryVariables = Exact<{
 }>;
 
 
-export type GetProposalQuery = { proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, allocationTimeUnit: AllocationTimeUnits, referenceNumberFormat: string | null } | null, sep: { id: number, code: string } | null, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } | null };
+export type GetProposalQuery = { proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, questionary: { isCompleted: boolean, questionaryId: number, templateId: number, created: any, steps: Array<{ isCompleted: boolean, topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ answerId: number | null, sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, value: any | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }> }, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, files: string | null, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, instrument: { id: number, name: string, shortCode: string } | null, call: { id: number, shortCode: string, isActive: boolean, allocationTimeUnit: AllocationTimeUnits, referenceNumberFormat: string | null } | null, sep: { id: number, code: string } | null, samples: Array<{ id: number, title: string, creatorId: number, questionaryId: number, safetyStatus: SampleStatus, safetyComment: string, isPostProposalSubmission: boolean, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, genericTemplates: Array<{ id: number, title: string, creatorId: number, questionaryId: number, created: any, proposalPk: number, questionId: string, questionary: { isCompleted: boolean } }> | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null } | null };
 
 export type GetProposalsQueryVariables = Exact<{
   filter?: InputMaybe<ProposalsFilter>;
 }>;
 
 
-export type GetProposalsQuery = { proposals: { totalCount: number, proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, instrument: { id: number, name: string } | null, call: { id: number, shortCode: string } | null, sep: { id: number, code: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> } | null };
+export type GetProposalsQuery = { proposals: { totalCount: number, proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, reviews: Array<{ id: number, grade: number | null, comment: string | null, status: ReviewStatus, userID: number, sepID: number, reviewer: { firstname: string, lastname: string, id: number } | null }> | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }>, technicalReview: { id: number, comment: string | null, publicComment: string | null, timeAllocation: number | null, status: TechnicalReviewStatus | null, proposalPk: number, submitted: boolean, files: string | null, reviewer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null } | null, instrument: { id: number, name: string } | null, call: { id: number, shortCode: string } | null, sep: { id: number, code: string } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> } | null };
 
 export type GetProposalsCoreQueryVariables = Exact<{
   filter?: InputMaybe<ProposalsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  sortField?: InputMaybe<Scalars['String']>;
+  sortDirection?: InputMaybe<Scalars['String']>;
+  searchText?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetProposalsCoreQuery = { proposalsView: Array<{ primaryKey: number, title: string, statusId: number, statusName: string, statusDescription: string, proposalId: string, rankOrder: number | null, finalStatus: ProposalEndStatus | null, notified: boolean, managementTimeAllocation: number | null, technicalTimeAllocation: number | null, technicalStatus: TechnicalReviewStatus | null, instrumentName: string | null, callShortCode: string | null, sepCode: string | null, sepId: number | null, reviewAverage: number | null, reviewDeviation: number | null, instrumentId: number | null, callId: number, submitted: boolean, allocationTimeUnit: AllocationTimeUnits }> | null };
+export type GetProposalsCoreQuery = { proposalsView: { totalCount: number, proposalViews: Array<{ primaryKey: number, title: string, statusId: number, statusName: string, statusDescription: string, proposalId: string, rankOrder: number | null, finalStatus: ProposalEndStatus | null, notified: boolean, managementTimeAllocation: number | null, technicalTimeAllocation: number | null, technicalStatus: TechnicalReviewStatus | null, instrumentName: string | null, callShortCode: string | null, sepCode: string | null, sepId: number | null, reviewAverage: number | null, reviewDeviation: number | null, instrumentId: number | null, callId: number, submitted: boolean, allocationTimeUnit: AllocationTimeUnits }> } | null };
 
 export type NotifyProposalMutationVariables = Exact<{
   proposalPk: Scalars['Int'];
@@ -3900,6 +3940,7 @@ export type AddTechnicalReviewMutationVariables = Exact<{
   status?: InputMaybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
   reviewerId: Scalars['Int'];
+  files?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3920,7 +3961,7 @@ export type UpdateTechnicalReviewAssigneeMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTechnicalReviewAssigneeMutation = { updateTechnicalReviewAssignee: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }>, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type UpdateTechnicalReviewAssigneeMutation = { updateTechnicalReviewAssignee: { proposals: Array<{ primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CoreReviewFragment = { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number };
 
@@ -3962,12 +4003,13 @@ export type SubmitTechnicalReviewMutationVariables = Exact<{
   status?: InputMaybe<TechnicalReviewStatus>;
   submitted: Scalars['Boolean'];
   reviewerId: Scalars['Int'];
+  files?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type SubmitTechnicalReviewMutation = { submitTechnicalReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, technicalReview: { id: number } | null } };
 
-export type AddReviewMutationVariables = Exact<{
+export type UpdateReviewMutationVariables = Exact<{
   reviewID: Scalars['Int'];
   grade: Scalars['Int'];
   comment: Scalars['String'];
@@ -3976,7 +4018,7 @@ export type AddReviewMutationVariables = Exact<{
 }>;
 
 
-export type AddReviewMutation = { addReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, review: { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number, nextProposalStatus: { id: number | null, shortCode: string | null, name: string | null } | null } | null } };
+export type UpdateReviewMutation = { updateReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, review: { id: number, userID: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number, nextProposalStatus: { id: number | null, shortCode: string | null, name: string | null } | null } | null } };
 
 export type UserWithReviewsQueryVariables = Exact<{
   callId?: InputMaybe<Scalars['Int']>;
@@ -4331,7 +4373,7 @@ export type CreateTemplateMutationVariables = Exact<{
 }>;
 
 
-export type CreateTemplateMutation = { createTemplate: { template: { questionaryCount: number, templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type CreateTemplateMutation = { createTemplate: { template: { questionaryCount: number, isArchived: boolean, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateTopicMutationVariables = Exact<{
   templateId: Scalars['Int'];
@@ -4537,6 +4579,49 @@ export type ValidateTemplateImportMutationVariables = Exact<{
 
 
 export type ValidateTemplateImportMutation = { validateTemplateImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type CreateUnitMutationVariables = Exact<{
+  id: Scalars['String'];
+  unit: Scalars['String'];
+  quantity: Scalars['String'];
+  symbol: Scalars['String'];
+  siConversionFormula: Scalars['String'];
+}>;
+
+
+export type CreateUnitMutation = { createUnit: { unit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type DeleteUnitMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteUnitMutation = { deleteUnit: { unit: { id: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null };
+
+export type GetUnitsAsJsonQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsAsJsonQuery = { unitsAsJson: string | null };
+
+export type ImportUnitsMutationVariables = Exact<{
+  json: Scalars['String'];
+  conflictResolutions: Array<ConflictResolution> | ConflictResolution;
+}>;
+
+
+export type ImportUnitsMutation = { importUnits: { units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type ValidateUnitsImportMutationVariables = Exact<{
+  unitsAsJson: Scalars['String'];
+}>;
+
+
+export type ValidateUnitsImportMutation = { validateUnitsImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, unitComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingUnit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } | null, newUnit: { id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CheckTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -4770,6 +4855,7 @@ export type UpdateUserMutationVariables = Exact<{
   email: Scalars['String'];
   telephone: Scalars['String'];
   telephone_alt?: InputMaybe<Scalars['String']>;
+  otherOrganisation?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -4976,6 +5062,7 @@ export const CoreTechnicalReviewFragmentDoc = gql`
   status
   proposalPk
   submitted
+  files
 }
     `;
 export const ProposalStatusFragmentDoc = gql`
@@ -5855,25 +5942,6 @@ export const CreateInstitutionDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const CreateUnitDocument = gql`
-    mutation createUnit($id: String!, $unit: String!, $quantity: String!, $symbol: String!, $siConversionFormula: String!) {
-  createUnit(
-    id: $id
-    unit: $unit
-    quantity: $quantity
-    symbol: $symbol
-    siConversionFormula: $siConversionFormula
-  ) {
-    unit {
-      ...unit
-    }
-    rejection {
-      ...rejection
-    }
-  }
-}
-    ${UnitFragmentDoc}
-${RejectionFragmentDoc}`;
 export const DeleteApiAccessTokenDocument = gql`
     mutation deleteApiAccessToken($accessTokenId: String!) {
   deleteApiAccessToken(deleteApiAccessTokenInput: {accessTokenId: $accessTokenId}) {
@@ -5890,18 +5958,6 @@ export const DeleteInstitutionDocument = gql`
     institution {
       id
       verified
-    }
-    rejection {
-      ...rejection
-    }
-  }
-}
-    ${RejectionFragmentDoc}`;
-export const DeleteUnitDocument = gql`
-    mutation deleteUnit($id: String!) {
-  deleteUnit(id: $id) {
-    unit {
-      id
     }
     rejection {
       ...rejection
@@ -5966,13 +6022,6 @@ export const GetSettingsDocument = gql`
   }
 }
     `;
-export const GetUnitsDocument = gql`
-    query getUnits {
-  units {
-    ...unit
-  }
-}
-    ${UnitFragmentDoc}`;
 export const MergeInstitutionsDocument = gql`
     mutation mergeInstitutions($institutionIdFrom: Int!, $institutionIdInto: Int!, $newTitle: String!) {
   mergeInstitutions(
@@ -6837,30 +6886,40 @@ export const GetProposalsDocument = gql`
 ${BasicUserDetailsFragmentDoc}
 ${CoreTechnicalReviewFragmentDoc}`;
 export const GetProposalsCoreDocument = gql`
-    query getProposalsCore($filter: ProposalsFilter) {
-  proposalsView(filter: $filter) {
-    primaryKey
-    title
-    statusId
-    statusName
-    statusDescription
-    proposalId
-    rankOrder
-    finalStatus
-    notified
-    managementTimeAllocation
-    technicalTimeAllocation
-    technicalStatus
-    instrumentName
-    callShortCode
-    sepCode
-    sepId
-    reviewAverage
-    reviewDeviation
-    instrumentId
-    callId
-    submitted
-    allocationTimeUnit
+    query getProposalsCore($filter: ProposalsFilter, $first: Int, $offset: Int, $sortField: String, $sortDirection: String, $searchText: String) {
+  proposalsView(
+    filter: $filter
+    first: $first
+    offset: $offset
+    sortField: $sortField
+    sortDirection: $sortDirection
+    searchText: $searchText
+  ) {
+    proposalViews {
+      primaryKey
+      title
+      statusId
+      statusName
+      statusDescription
+      proposalId
+      rankOrder
+      finalStatus
+      notified
+      managementTimeAllocation
+      technicalTimeAllocation
+      technicalStatus
+      instrumentName
+      callShortCode
+      sepCode
+      sepId
+      reviewAverage
+      reviewDeviation
+      instrumentId
+      callId
+      submitted
+      allocationTimeUnit
+    }
+    totalCount
   }
 }
     `;
@@ -7046,9 +7105,9 @@ export const GetQuestionaryDocument = gql`
 }
     ${QuestionaryFragmentDoc}`;
 export const AddTechnicalReviewDocument = gql`
-    mutation addTechnicalReview($proposalPk: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
+    mutation addTechnicalReview($proposalPk: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!, $files: String) {
   addTechnicalReview(
-    addTechnicalReviewInput: {proposalPk: $proposalPk, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
+    addTechnicalReviewInput: {proposalPk: $proposalPk, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId, files: $files}
   ) {
     rejection {
       ...rejection
@@ -7135,9 +7194,9 @@ export const SubmitProposalsReviewDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const SubmitTechnicalReviewDocument = gql`
-    mutation submitTechnicalReview($proposalPk: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!) {
+    mutation submitTechnicalReview($proposalPk: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!, $files: String) {
   submitTechnicalReview(
-    submitTechnicalReviewInput: {proposalPk: $proposalPk, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId}
+    submitTechnicalReviewInput: {proposalPk: $proposalPk, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId, files: $files}
   ) {
     rejection {
       ...rejection
@@ -7148,9 +7207,9 @@ export const SubmitTechnicalReviewDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const AddReviewDocument = gql`
-    mutation addReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
-  addReview(
+export const UpdateReviewDocument = gql`
+    mutation updateReview($reviewID: Int!, $grade: Int!, $comment: String!, $status: ReviewStatus!, $sepID: Int!) {
+  updateReview(
     reviewID: $reviewID
     grade: $grade
     comment: $comment
@@ -7871,7 +7930,7 @@ export const CreateTemplateDocument = gql`
     mutation createTemplate($groupId: TemplateGroupId!, $name: String!, $description: String) {
   createTemplate(groupId: $groupId, name: $name, description: $description) {
     template {
-      ...templateMetadata
+      ...template
       questionaryCount
     }
     rejection {
@@ -7879,7 +7938,7 @@ export const CreateTemplateDocument = gql`
     }
   }
 }
-    ${TemplateMetadataFragmentDoc}
+    ${TemplateFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateTopicDocument = gql`
     mutation createTopic($templateId: Int!, $sortOrder: Int!) {
@@ -8136,6 +8195,89 @@ export const ValidateTemplateImportDocument = gql`
   }
 }
     ${QuestionFragmentDoc}
+${RejectionFragmentDoc}`;
+export const CreateUnitDocument = gql`
+    mutation createUnit($id: String!, $unit: String!, $quantity: String!, $symbol: String!, $siConversionFormula: String!) {
+  createUnit(
+    id: $id
+    unit: $unit
+    quantity: $quantity
+    symbol: $symbol
+    siConversionFormula: $siConversionFormula
+  ) {
+    unit {
+      ...unit
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
+${RejectionFragmentDoc}`;
+export const DeleteUnitDocument = gql`
+    mutation deleteUnit($id: String!) {
+  deleteUnit(id: $id) {
+    unit {
+      id
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const GetUnitsDocument = gql`
+    query getUnits {
+  units {
+    ...unit
+  }
+}
+    ${UnitFragmentDoc}`;
+export const GetUnitsAsJsonDocument = gql`
+    query getUnitsAsJson {
+  unitsAsJson
+}
+    `;
+export const ImportUnitsDocument = gql`
+    mutation importUnits($json: String!, $conflictResolutions: [ConflictResolution!]!) {
+  importUnits(json: $json, conflictResolutions: $conflictResolutions) {
+    units {
+      ...unit
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
+${RejectionFragmentDoc}`;
+export const ValidateUnitsImportDocument = gql`
+    mutation validateUnitsImport($unitsAsJson: String!) {
+  validateUnitsImport(unitsAsJson: $unitsAsJson) {
+    validationResult {
+      json
+      version
+      exportDate
+      isValid
+      errors
+      unitComparisons {
+        existingUnit {
+          ...unit
+        }
+        newUnit {
+          ...unit
+        }
+        status
+        conflictResolutionStrategy
+      }
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${UnitFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CheckTokenDocument = gql`
     query checkToken($token: String!) {
@@ -8491,7 +8633,7 @@ export const UpdatePasswordDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateUserDocument = gql`
-    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: String!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String) {
+    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: String!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String) {
   updateUser(
     id: $id
     user_title: $user_title
@@ -8508,6 +8650,7 @@ export const UpdateUserDocument = gql`
     email: $email
     telephone: $telephone
     telephone_alt: $telephone_alt
+    otherOrganisation: $otherOrganisation
   ) {
     user {
       id
@@ -8809,17 +8952,11 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createInstitution(variables: CreateInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstitutionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateInstitutionMutation>(CreateInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createInstitution');
     },
-    createUnit(variables: CreateUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUnitMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<CreateUnitMutation>(CreateUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUnit');
-    },
     deleteApiAccessToken(variables: DeleteApiAccessTokenMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteApiAccessTokenMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteApiAccessTokenMutation>(DeleteApiAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteApiAccessToken');
     },
     deleteInstitution(variables: DeleteInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteInstitutionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteInstitutionMutation>(DeleteInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteInstitution');
-    },
-    deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
     },
     getAllApiAccessTokensAndPermissions(variables?: GetAllApiAccessTokensAndPermissionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllApiAccessTokensAndPermissionsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAllApiAccessTokensAndPermissionsQuery>(GetAllApiAccessTokensAndPermissionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllApiAccessTokensAndPermissions');
@@ -8841,9 +8978,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getSettings(variables?: GetSettingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetSettingsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSettingsQuery>(GetSettingsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSettings');
-    },
-    getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
     },
     mergeInstitutions(variables: MergeInstitutionsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MergeInstitutionsMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<MergeInstitutionsMutation>(MergeInstitutionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'mergeInstitutions');
@@ -9043,8 +9177,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitTechnicalReviewMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SubmitTechnicalReviewMutation>(SubmitTechnicalReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitTechnicalReview');
     },
-    addReview(variables: AddReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddReviewMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<AddReviewMutation>(AddReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addReview');
+    updateReview(variables: UpdateReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateReviewMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateReviewMutation>(UpdateReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateReview');
     },
     userWithReviews(variables?: UserWithReviewsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UserWithReviewsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<UserWithReviewsQuery>(UserWithReviewsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'userWithReviews');
@@ -9231,6 +9365,24 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     validateTemplateImport(variables: ValidateTemplateImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateTemplateImportMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<ValidateTemplateImportMutation>(ValidateTemplateImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateTemplateImport');
+    },
+    createUnit(variables: CreateUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUnitMutation>(CreateUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUnit');
+    },
+    deleteUnit(variables: DeleteUnitMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteUnitMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUnitMutation>(DeleteUnitDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteUnit');
+    },
+    getUnits(variables?: GetUnitsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsQuery>(GetUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnits');
+    },
+    getUnitsAsJson(variables?: GetUnitsAsJsonQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUnitsAsJsonQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUnitsAsJsonQuery>(GetUnitsAsJsonDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUnitsAsJson');
+    },
+    importUnits(variables: ImportUnitsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ImportUnitsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImportUnitsMutation>(ImportUnitsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'importUnits');
+    },
+    validateUnitsImport(variables: ValidateUnitsImportMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ValidateUnitsImportMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ValidateUnitsImportMutation>(ValidateUnitsImportDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'validateUnitsImport');
     },
     checkToken(variables: CheckTokenQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckTokenQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckTokenQuery>(CheckTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'checkToken');

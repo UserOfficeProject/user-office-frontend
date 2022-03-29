@@ -1,13 +1,13 @@
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import parse from 'html-react-parser';
 import PropTypes from 'prop-types';
@@ -41,7 +41,6 @@ import InstrSciUpcomingExperimentTimesTable from './proposalBooking/InstrSciUpco
 import UserExperimentTimesTable from './proposalBooking/UserExperimentsTable';
 import CreateProposalEsiPage from './proposalEsi/CreateProposalEsiPage';
 import UpdateProposalEsiPage from './proposalEsi/UpdateProposalEsiPage';
-import ProposalTableReviewer from './review/ProposalTableReviewer';
 import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
 import SEPsPage from './SEP/SEPsPage';
@@ -63,6 +62,7 @@ import ShipmentTemplatesPage from './template/ShipmentTemplatesPage';
 import TemplateEditor from './template/TemplateEditor';
 import VisitTemplatesPage from './template/VisitTemplatesPage';
 import TitledRoute from './TitledRoute';
+import ImportUnitsPage from './unit/ImportUnitsPage';
 import PeoplePage from './user/PeoplePage';
 import ProfilePage from './user/ProfilePage';
 import UserPage from './user/UserPage';
@@ -269,15 +269,15 @@ const Dashboard: React.FC = () => {
             <TitledRoute
               setHeader={setHeader}
               title="User"
-              path="/PeoplePage/:id"
+              path="/People/:id"
               component={UserPage}
             />
           )}
-          {isUserOfficer && <Route path="/PeoplePage" component={PeoplePage} />}
+          {isUserOfficer && <Route path="/People" component={PeoplePage} />}
           <TitledRoute
             setHeader={setHeader}
             title="Proposal"
-            path="/ProposalPage"
+            path="/Proposals"
             component={ProposalPage}
           />
           <TitledRoute
@@ -290,7 +290,7 @@ const Dashboard: React.FC = () => {
             <TitledRoute
               setHeader={setHeader}
               title="Call"
-              path="/CallPage"
+              path="/Calls"
               component={CallPage}
             />
           )}
@@ -309,19 +309,19 @@ const Dashboard: React.FC = () => {
           <TitledRoute
             setHeader={setHeader}
             title="SEPs"
-            path="/SEPPage"
+            path="/SEPs"
             component={SEPsPage}
           />
           <TitledRoute
             setHeader={setHeader}
             title="Instruments"
-            path="/InstrumentPage"
+            path="/Instruments"
             component={InstrumentsPage}
           />
           <TitledRoute
             setHeader={setHeader}
             title="Institution"
-            path="/InstitutionPage"
+            path="/Institutions"
             component={InstitutionPage}
           />
           <TitledRoute
@@ -383,12 +383,6 @@ const Dashboard: React.FC = () => {
             title="Esi Samples"
             path="/SampleEsiTemplates"
             component={SampleEsiPage}
-          />
-          <TitledRoute
-            setHeader={setHeader}
-            title="Proposal Table Reviewer"
-            path="/ProposalTableReviewer"
-            component={ProposalTableReviewer}
           />
           {isUserOfficer && (
             <TitledRoute
@@ -469,6 +463,14 @@ const Dashboard: React.FC = () => {
               title="Import Templates"
               path="/ImportTemplate"
               component={ImportTemplatePage}
+            />
+          )}
+          {isUserOfficer && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="Import Units"
+              path="/ImportUnits"
+              component={ImportUnitsPage}
             />
           )}
           <TitledRoute

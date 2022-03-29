@@ -1,13 +1,13 @@
-import Button from '@material-ui/core/Button';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { Autocomplete, TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormikAutocomplete from 'components/common/FormikAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Unit } from 'generated/sdk';
 import { useQuantities } from 'hooks/admin/useQuantities';
@@ -39,14 +39,14 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
         siConversionFormula: '',
       };
 
+  if (loadingQuantities) return <UOLoader />;
+
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={async (newUnit): Promise<void> => {
         const data = await api('Unit created successfully').createUnit(newUnit);
-        if (data.createUnit.rejection) {
-          close(null);
-        } else if (data.createUnit.unit) {
+        if (data.createUnit.unit) {
           close(data.createUnit.unit);
         }
       }}
@@ -71,7 +71,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="ID"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-id' }}
             disabled={isExecutingCall}
@@ -83,29 +82,35 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="Name"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-name' }}
             disabled={isExecutingCall}
             required
           />
-          <FormikAutocomplete
+          <Field
+            component={Autocomplete}
+            options={quantities.map((item) => item.id)}
+            noOptionsText="No items"
             name="quantity"
             label="Quantity"
-            items={quantities.map((unit) => ({
-              text: `${unit.id}`,
-              value: unit.id,
-            }))}
-            InputProps={{ 'data-cy': 'unit-quantity' }}
-            required
             loading={loadingQuantities}
+            fullWidth
+            required
+            data-cy="unit-quantity"
+            renderInput={(params: TextFieldProps) => (
+              <MuiTextField
+                {...params}
+                label="Quantity"
+                placeholder="Quantity"
+                required
+              />
+            )}
           />
           <Field
             name="symbol"
             label="Symbol"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-symbol' }}
             disabled={isExecutingCall}
@@ -116,7 +121,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
             label="SI conversion formula"
             type="text"
             component={TextField}
-            margin="normal"
             fullWidth
             InputProps={{ 'data-cy': 'unit-siConversionFormula' }}
             disabled={isExecutingCall}
@@ -125,8 +129,6 @@ const CreateUnit: React.FC<CreateUnitProps> = ({ close, unit }) => {
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
             data-cy="submit"
             disabled={isExecutingCall}
