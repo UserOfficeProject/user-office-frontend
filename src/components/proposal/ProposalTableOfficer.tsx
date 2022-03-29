@@ -64,6 +64,14 @@ type ProposalWithCallInstrumentAndSepId = ProposalPkWithCallId & {
   statusId: number;
 };
 
+export type QueryParameters = {
+  first?: number;
+  offset?: number;
+  sortField?: string | undefined;
+  sortDirection?: string | undefined;
+  searchText?: string | undefined;
+};
+
 let columns: Column<ProposalViewData>[] = [
   {
     title: 'Actions',
@@ -154,6 +162,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [selectedProposals, setSelectedProposals] = useState<
     ProposalWithCallInstrumentAndSepId[]
   >([]);
+  const [tableData, setTableData] = useState<ProposalViewData[]>([]);
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
     ProposalViewData[]
   >([]);
@@ -165,17 +174,46 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
-  const { loading, setProposalsData, proposalsData } =
-    useProposalsCoreData(proposalFilter);
+
+  const prefetchSize = 200;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [query, setQuery] = useState<QueryParameters>({
+    first: prefetchSize,
+    offset: 0,
+    sortField: urlQueryParams?.sortField,
+    sortDirection: urlQueryParams?.sortDirection ?? undefined,
+    searchText: urlQueryParams?.search ?? undefined,
+  });
+  const { loading, setProposalsData, proposalsData, totalCount } =
+    useProposalsCoreData(proposalFilter, query);
 
   useEffect(() => {
     setPreselectedProposalsData(proposalsData);
-  }, [proposalsData]);
+  }, [proposalsData, query]);
+
+  useEffect(() => {
+    let isMounted = true;
+    let endSlice = rowsPerPage * (currentPage + 1);
+    endSlice = endSlice == 0 ? prefetchSize + 1 : endSlice + 1; // Final page of a loaded section would produce the slice (x, 0) without this
+    if (isMounted) {
+      setTableData(
+        preselectedProposalsData.slice(
+          (currentPage * rowsPerPage) % prefetchSize,
+          endSlice
+        )
+      );
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentPage, rowsPerPage, preselectedProposalsData, query]);
 
   useEffect(() => {
     if (urlQueryParams.selection.length > 0) {
       const selection = new Set(urlQueryParams.selection);
-
       setPreselectedProposalsData((preselectedProposalsData) => {
         const selected: ProposalWithCallInstrumentAndSepId[] = [];
         const preselected = preselectedProposalsData.map((proposal) => {
@@ -265,6 +303,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       </>
     );
   };
+
+  columns = columns.map((v: Column<ProposalViewData>) => {
+    v.customSort = () => 0; // Disables client side sorting
+
+    return v;
+  });
 
   // NOTE: We are remapping only the hidden field because functions like `render` can not be stringified.
   if (localStorageValue) {
@@ -537,13 +581,12 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
    * Including the id property for https://material-table-core.com/docs/breaking-changes#id
    * Including the action buttons as property to avoid the console warning(https://github.com/material-table-core/core/issues/286)
    */
-  const preselectedProposalDataWithIdAndRowActions =
-    preselectedProposalsData.map((proposal) =>
-      Object.assign(proposal, {
-        id: proposal.primaryKey,
-        rowActionButtons: RowActionButtons(proposal),
-      })
-    );
+  const preselectedProposalDataWithIdAndRowActions = tableData.map((proposal) =>
+    Object.assign(proposal, {
+      id: proposal.primaryKey,
+      rowActionButtons: RowActionButtons(proposal),
+    })
+  );
 
   return (
     <>
@@ -645,8 +688,23 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         }
         columns={columns}
         data={preselectedProposalDataWithIdAndRowActions}
+        totalCount={totalCount}
+        page={currentPage}
+        onPageChange={(page, pageSize) => {
+          const newOffset =
+            Math.floor((pageSize * page) / prefetchSize) * prefetchSize;
+          if (page !== currentPage && newOffset != query.offset) {
+            setQuery({ ...query, offset: newOffset });
+          }
+          setCurrentPage(page);
+        }}
+        onRowsPerPageChange={(rowsPerPage) => setRowsPerPage(rowsPerPage)}
         isLoading={loading}
         onSearchChange={(searchText) => {
+          setQuery({
+            ...query,
+            searchText: searchText ? searchText : undefined,
+          });
           setUrlQueryParams({ search: searchText ? searchText : undefined });
         }}
         onSelectionChange={(selectedItems) => {
@@ -787,8 +845,23 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
             setUrlQueryParams((params) => ({
               ...params,
               sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+              sortField:
+                orderedColumnId >= 0
+                  ? columns[orderedColumnId].field?.toString()
+                  : undefined,
               sortDirection: orderDirection ? orderDirection : undefined,
             }));
+          if (orderDirection && orderedColumnId > 0) {
+            setQuery({
+              ...query,
+              sortField: columns[orderedColumnId].field?.toString(),
+              sortDirection: orderDirection,
+            });
+          } else {
+            delete query.sortField;
+            delete query.sortDirection;
+            setQuery(query);
+          }
         }}
       />
     </>

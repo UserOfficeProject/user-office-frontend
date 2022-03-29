@@ -11,7 +11,16 @@ export default function PageEditor() {
     <StyledContainer>
       <StyledPaper>
         <SimpleTabs
-          tabNames={['User', 'Reviewer', 'Help', 'Privacy', 'Cookie', 'Footer']}
+          tabNames={[
+            'User',
+            'Reviewer',
+            'Help',
+            'Privacy',
+            'Cookie',
+            'Footer',
+            'Login',
+            'Grade guide',
+          ]}
         >
           <PageInputBox
             pageName={PageName.HOMEPAGE}
@@ -36,6 +45,14 @@ export default function PageEditor() {
           <PageInputBox
             pageName={PageName.FOOTERCONTENT}
             heading={'Set footer content'}
+          />
+          <PageInputBox
+            pageName={PageName.LOGINHELPPAGE}
+            heading={'Set login help page'}
+          />
+          <PageInputBox
+            pageName={PageName.GRADEGUIDEPAGE}
+            heading={'Set grade guide page'}
           />
         </SimpleTabs>
       </StyledPaper>
