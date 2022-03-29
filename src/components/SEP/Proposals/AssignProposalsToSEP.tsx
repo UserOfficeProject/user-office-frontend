@@ -83,11 +83,10 @@ const AssignProposalsToSEP: React.FC<AssignProposalToSEPProps> = ({
                   label="Select SEP"
                   loading={loadingSEPs}
                   items={SEPs.map((sep) => ({
-                    value: sep.id.toString(),
+                    value: sep.id,
                     text: sep.code,
                   }))}
                   disabled={isSubmitting}
-                  isClearable
                   noOptionsText="No SEPs"
                 />
               </Grid>

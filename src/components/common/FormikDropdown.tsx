@@ -1,136 +1,67 @@
-import Clear from '@mui/icons-material/Clear';
-import { FormControlTypeMap } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import MuiTextField from '@mui/material/TextField';
-import { connect, Field, FormikContextType } from 'formik';
-import { TextField } from 'formik-mui';
+import { InputProps } from '@mui/material/Input';
+import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
+import { Field } from 'formik';
+import { Autocomplete } from 'formik-mui';
 import React from 'react';
 
+import { Option } from 'utils/utilTypes';
+
 type TProps = {
-  items: any[];
+  items: Option[];
   name: string;
   label: string;
   loading?: boolean;
   noOptionsText?: string;
   required?: boolean;
   disabled?: boolean;
-  InputProps?: Record<string, unknown>;
-  value?: string;
+  InputProps?: Partial<InputProps> & { 'data-cy': string };
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isClearable?: boolean;
-  margin?: FormControlTypeMap['props']['margin'];
 };
 
-const FormikDropdown: React.FC<
-  TProps & {
-    formik: FormikContextType<Record<string, unknown>>;
-  }
-> = ({
+const FormikDropdown: React.FC<TProps> = ({
   name,
   label,
   required,
   disabled,
-  children,
   loading = false,
   noOptionsText,
   items,
-  value,
   InputProps,
-  formik,
-  onChange,
-  isClearable,
+  ...props
 }) => {
-  const menuItems =
-    items.length > 0 ? (
-      items.map((option) => {
-        return (
-          <MenuItem key={option.value} value={option.value}>
-            {option.text}
-          </MenuItem>
-        );
-      })
-    ) : (
-      <MenuItem disabled key="no-options">
-        {noOptionsText}
-      </MenuItem>
-    );
-
-  /**
-   * Looks like if the items for a select are updated
-   * after the  select field was mounted
-   * you will get warning about out of range values.
-   * To fix that just avoid mounting the real select until it's loaded
-   */
-  if (loading) {
-    return (
-      <MuiTextField
-        label={label}
-        defaultValue="Loading..."
-        disabled
-        InputLabelProps={{
-          shrink: true,
-        }}
-        fullWidth
-        required={required}
-      />
-    );
-  }
-
-  const props: { value?: string } = {};
-  // Formik v2 uses undefined as a real value instead of ignoring it
-  // so if `value` wasn't provided don't even include it as a property
-  // otherwise it will generate warnings
-  if (value !== undefined) {
-    props.value = value;
-  }
-
-  const handleClearSelection = () => {
-    formik.setFieldValue(name, '');
-  };
-
-  if (isClearable && formik.values[name]) {
-    InputProps = {
-      ...InputProps,
-      endAdornment: (
-        <IconButton
-          onClick={handleClearSelection}
-          disabled={!formik.values[name]}
-          style={{ marginRight: 20 }}
-          title="Clear selection"
-          data-cy="clear-selection"
-        >
-          <Clear color="disabled" fontSize="small" />
-        </IconButton>
-      ),
-    };
-  }
+  const options = items.map((item) => item.value);
 
   return (
     <Field
-      type="text"
-      name={name}
-      label={label}
       id={name + '-input'}
-      select
-      component={TextField}
-      InputLabelProps={{
-        shrink: true,
+      name={name}
+      component={Autocomplete}
+      loading={loading}
+      options={options}
+      noOptionsText={noOptionsText}
+      isOptionEqualToValue={(
+        option: string | number | null,
+        value: string | number | null
+      ) => {
+        // TODO: Check if this is really needed or it can go without the option isOptionEqualToValue
+        return option === value;
       }}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange?.(e);
-        formik.handleChange(e);
+      getOptionLabel={(option: number | string) => {
+        const foundOption = items.find((item) => item.value === option);
+
+        return foundOption?.text || '';
       }}
-      fullWidth
-      required={required}
-      disabled={disabled}
-      InputProps={InputProps}
-      {...props}
-    >
-      {children}
-      {menuItems}
-    </Field>
+      renderInput={(params: TextFieldProps) => (
+        <MuiTextField
+          {...params}
+          label={label}
+          required={required}
+          disabled={disabled}
+          InputProps={{ ...params.InputProps, ...InputProps }}
+        />
+      )}
+    />
   );
 };
 
-export default connect<TProps>(FormikDropdown);
+export default FormikDropdown;

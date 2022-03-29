@@ -2,14 +2,13 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import MuiTextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
-import { Field, Form, Formik } from 'formik';
-import { Autocomplete, TextFieldProps } from 'formik-mui';
+import { Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FormikDropdown from 'components/common/FormikDropdown';
 import { InstrumentFragment } from 'generated/sdk';
 import { useInstrumentsData } from 'hooks/instrument/useInstrumentsData';
 
@@ -46,10 +45,9 @@ const AssignProposalsToInstrument: React.FC<
   );
 
   const selectedProposalsInstrument =
-    (allSelectedProposalsHaveSameInstrument &&
-      instrumentIds[0] &&
-      instruments.find((instrument) => instrument.id === instrumentIds[0])) ||
-    null;
+    allSelectedProposalsHaveSameInstrument && instrumentIds[0]
+      ? instrumentIds[0].toString()
+      : '';
 
   return (
     <Container
@@ -58,12 +56,15 @@ const AssignProposalsToInstrument: React.FC<
       data-cy="proposals-instrument-assignment"
     >
       <Formik
-        enableReinitialize
         initialValues={{
-          selectedInstrument: selectedProposalsInstrument,
+          selectedInstrumentId: selectedProposalsInstrument,
         }}
         onSubmit={async (values): Promise<void> => {
-          await assignProposalsToInstrument(values.selectedInstrument);
+          const selectedInstrument = instruments.find(
+            (instrument) => instrument.id === +values.selectedInstrumentId
+          );
+
+          await assignProposalsToInstrument(selectedInstrument || null);
           close();
         }}
       >
@@ -79,25 +80,20 @@ const AssignProposalsToInstrument: React.FC<
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Field
-                  name="selectedInstrument"
-                  component={Autocomplete}
-                  options={instruments}
+                <FormikDropdown
+                  name="selectedInstrumentId"
+                  label="Select instrument"
                   loading={loadingInstruments}
-                  getOptionLabel={(option: InstrumentFragment) => option.name}
-                  isOptionEqualToValue={(
-                    option: InstrumentFragment,
-                    value: InstrumentFragment | null
-                  ) => option.id === value?.id}
-                  renderInput={(params: TextFieldProps) => (
-                    <MuiTextField {...params} label="Select instrument" />
-                  )}
+                  items={instruments.map((instrument) => ({
+                    value: instrument.id,
+                    text: instrument.name,
+                  }))}
                   disabled={isSubmitting}
-                  data-cy="instrument-selection"
+                  noOptionsText="No instruments"
                 />
               </Grid>
             </Grid>
-            {!!instruments.length && !values.selectedInstrument && (
+            {!values.selectedInstrumentId && (
               <Alert severity="warning" data-cy="remove-instrument-alert">
                 Be aware that leaving instrument selection empty will remove
                 assigned instrument from proposal/s.

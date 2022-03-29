@@ -97,8 +97,8 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
             name="teamLeadUserId"
             InputProps={{
               'data-cy': 'team-lead-user-dropdown',
+              margin: 'dense',
             }}
-            margin="dense"
           />
 
           <ActionButtonContainer>
