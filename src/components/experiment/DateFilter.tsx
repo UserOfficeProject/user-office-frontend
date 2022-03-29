@@ -34,11 +34,11 @@ export function getRelativeDatesFromToday(period: TimeSpan): {
       from = today;
       to = new Date(today.getTime() + 1 * DAY_IN_MS);
       break;
-    case TimeSpan.NEXT_WEEK:
+    case TimeSpan.NEXT_7_DAYS:
       from = today;
       to = new Date(today.getTime() + 7 * DAY_IN_MS);
       break;
-    case TimeSpan.NEXT_MONTH:
+    case TimeSpan.NEXT_30_DAYS:
       from = today;
       to = new Date(today.getTime() + 30 * DAY_IN_MS);
       break;
@@ -67,6 +67,7 @@ function DateFilter(props: DateFilterProps) {
     <FormControl className={classes.formControl}>
       <LocalizationProvider dateAdapter={DateAdapter}>
         <DatePicker
+          inputFormat="dd/MM/yyyy"
           label="From"
           value={props.from ?? null}
           onChange={(startsAt: unknown) => {
@@ -84,6 +85,7 @@ function DateFilter(props: DateFilterProps) {
         />
 
         <DatePicker
+          inputFormat="dd/MM/yyyy"
           label="To"
           value={props.to ?? null}
           onChange={(endsAt: unknown) =>

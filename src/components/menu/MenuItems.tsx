@@ -143,7 +143,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
     FeatureId.SCHEDULER
   )?.isEnabled;
 
-  const { from, to } = getRelativeDatesFromToday(TimeSpan.NEXT_MONTH);
+  const { from, to } = getRelativeDatesFromToday(TimeSpan.NEXT_30_DAYS);
 
   const user = (
     <div data-cy="user-menu-items">

@@ -10,6 +10,7 @@ import ProposalEsiDetailsButton from 'components/questionary/questionaryComponen
 import { GetScheduledEventsCoreQuery } from 'generated/sdk';
 import { useScheduledEvents } from 'hooks/scheduledEvent/useScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
+import { toTzLessDateTime } from 'utils/Time';
 import { getFullUserName } from 'utils/user';
 
 import { ExperimentUrlQueryParamsType } from './ExperimentUrlQueryParamsType';
@@ -81,9 +82,11 @@ function ExperimentTable() {
         instrumentId: urlQueryParams.instrument,
         overlaps: {
           from: urlQueryParams.from
-            ? urlQueryParams.from.toISOString()
+            ? toTzLessDateTime(urlQueryParams.from)
             : undefined,
-          to: urlQueryParams.to ? urlQueryParams.to.toISOString() : undefined,
+          to: urlQueryParams.to
+            ? toTzLessDateTime(urlQueryParams.to)
+            : undefined,
         },
       },
     });

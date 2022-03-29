@@ -79,7 +79,11 @@ context('Event log tests', () => {
       cy.get('[data-cy=officer-menu-items]').contains('Experiments').click();
       cy.get('[value=NONE]').click();
 
-      cy.get('[title="Show details"]').first().click();
+      cy.finishedLoading();
+
+      cy.get('[data-cy=officer-scheduled-events-table] Table button')
+        .first()
+        .click();
       cy.get('[data-cy=officer-scheduled-events-table]').contains(
         initialDBData.users.user1.lastName
       );

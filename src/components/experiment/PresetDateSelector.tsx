@@ -17,8 +17,8 @@ const StyledToggleButtonGroup = withStyles((theme) => ({
 
 export enum TimeSpan {
   TODAY = 'TODAY',
-  NEXT_WEEK = 'NEXT_WEEK',
-  NEXT_MONTH = 'NEXT_MONTH',
+  NEXT_7_DAYS = 'NEXT_7_DAYS',
+  NEXT_30_DAYS = 'NEXT_30_DAYS',
   NONE = 'NONE',
 }
 interface PresetDateSelectorProps {
@@ -34,8 +34,8 @@ function PresetDateSelector({ value, setValue }: PresetDateSelectorProps) {
       onChange={(_e, val) => setValue(val)}
     >
       <ToggleButton value={TimeSpan.TODAY}>Today</ToggleButton>
-      <ToggleButton value={TimeSpan.NEXT_WEEK}>Next 7 days</ToggleButton>
-      <ToggleButton value={TimeSpan.NEXT_MONTH}>Next 30 days</ToggleButton>
+      <ToggleButton value={TimeSpan.NEXT_7_DAYS}>Next 7 days</ToggleButton>
+      <ToggleButton value={TimeSpan.NEXT_30_DAYS}>Next 30 days</ToggleButton>
       <ToggleButton value={TimeSpan.NONE}>All</ToggleButton>
     </StyledToggleButtonGroup>
   );
