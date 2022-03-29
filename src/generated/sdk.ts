@@ -36,6 +36,7 @@ export type AddStatusChangingEventsToConnectionInput = {
 
 export type AddTechnicalReviewInput = {
   comment?: InputMaybe<Scalars['String']>;
+  files?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
   publicComment?: InputMaybe<Scalars['String']>;
   reviewerId?: InputMaybe<Scalars['Int']>;
@@ -311,6 +312,7 @@ export enum EvaluatorOperator {
 }
 
 export enum Event {
+  CALL_CREATED = 'CALL_CREATED',
   CALL_ENDED = 'CALL_ENDED',
   CALL_REVIEW_ENDED = 'CALL_REVIEW_ENDED',
   CALL_SEP_REVIEW_ENDED = 'CALL_SEP_REVIEW_ENDED',
@@ -1540,6 +1542,7 @@ export type MutationUpdateUserArgs = {
   nationality?: InputMaybe<Scalars['Int']>;
   orcid?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['Int']>;
+  otherOrganisation?: InputMaybe<Scalars['String']>;
   placeholder?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['String']>;
   preferredname?: InputMaybe<Scalars['String']>;
@@ -2784,6 +2787,7 @@ export type SubmitProposalsReviewInput = {
 
 export type SubmitTechnicalReviewInput = {
   comment?: InputMaybe<Scalars['String']>;
+  files?: InputMaybe<Scalars['String']>;
   proposalPk: Scalars['Int'];
   publicComment?: InputMaybe<Scalars['String']>;
   reviewerId: Scalars['Int'];
@@ -2799,6 +2803,7 @@ export type SuccessResponseWrap = {
 
 export type TechnicalReview = {
   comment: Maybe<Scalars['String']>;
+  files: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   proposal: Maybe<Proposal>;
   proposalPk: Scalars['Int'];
@@ -4848,6 +4853,7 @@ export type UpdateUserMutationVariables = Exact<{
   email: Scalars['String'];
   telephone: Scalars['String'];
   telephone_alt?: InputMaybe<Scalars['String']>;
+  otherOrganisation?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -8624,7 +8630,7 @@ export const UpdatePasswordDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateUserDocument = gql`
-    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String) {
+    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String) {
   updateUser(
     id: $id
     user_title: $user_title
@@ -8641,6 +8647,7 @@ export const UpdateUserDocument = gql`
     email: $email
     telephone: $telephone
     telephone_alt: $telephone_alt
+    otherOrganisation: $otherOrganisation
   ) {
     user {
       id
