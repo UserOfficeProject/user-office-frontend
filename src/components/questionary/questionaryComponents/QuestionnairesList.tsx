@@ -82,7 +82,7 @@ export function QuestionnairesList({
           })}
         </List>
       )}
-      <Box display="box" alignItems="center">
+      <Box display="flex" alignItems="center">
         {`${data.length} item(s)`}
         <StyledButtonContainer className={classes.buttonContainer}>
           <Button
