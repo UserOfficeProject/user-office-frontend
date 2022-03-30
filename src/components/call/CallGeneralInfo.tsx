@@ -56,6 +56,24 @@ const CallGeneralInfo: React.FC<{
 
   const theme = useTheme();
 
+  const templateOptions =
+    templates?.map((template) => ({
+      text: template.name,
+      value: template.templateId,
+    })) || [];
+
+  const esiTemplateOptions =
+    esiTemplates?.map((template) => ({
+      text: template.name,
+      value: template.templateId,
+    })) || [];
+
+  const proposalWorkflowOptions =
+    proposalWorkflows.map((proposalWorkflow) => ({
+      text: proposalWorkflow.name,
+      value: proposalWorkflow.id,
+    })) || [];
+
   const allocationTimeUnitOptions = Object.values(AllocationTimeUnits).map(
     (key) => ({
       text: key,
@@ -264,12 +282,7 @@ const CallGeneralInfo: React.FC<{
         label="Call template"
         loading={loadingTemplates}
         noOptionsText="No templates"
-        items={
-          templates?.map((template) => ({
-            text: template.name,
-            value: template.templateId,
-          })) || []
-        }
+        items={templateOptions}
         InputProps={{ 'data-cy': 'call-template' }}
         required
       />
@@ -279,12 +292,7 @@ const CallGeneralInfo: React.FC<{
           label="ESI template"
           loading={loadingTemplates}
           noOptionsText="No templates"
-          items={
-            esiTemplates?.map((template) => ({
-              text: template.name,
-              value: template.templateId,
-            })) || []
-          }
+          items={esiTemplateOptions}
           InputProps={{ 'data-cy': 'call-esi-template' }}
           required
         />
@@ -294,12 +302,7 @@ const CallGeneralInfo: React.FC<{
         label="Proposal workflow"
         loading={loadingProposalWorkflows}
         noOptionsText="No proposal workflows"
-        items={
-          proposalWorkflows.map((proposalWorkflow) => ({
-            text: proposalWorkflow.name,
-            value: proposalWorkflow.id,
-          })) || []
-        }
+        items={proposalWorkflowOptions}
         InputProps={{
           'data-cy': 'call-workflow',
         }}

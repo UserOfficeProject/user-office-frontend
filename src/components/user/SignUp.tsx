@@ -7,8 +7,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
+import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import useTheme from '@mui/material/styles/useTheme';
 import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -16,7 +19,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { createUserValidationSchema } from '@user-office-software/duo-validation';
 import clsx from 'clsx';
 import { Field, Form, Formik } from 'formik';
-import { Autocomplete, CheckboxWithLabel, TextField } from 'formik-mui';
+import { Autocomplete, CheckboxWithLabel, Select, TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import { useSnackbar } from 'notistack';
@@ -236,17 +239,17 @@ const SignUp: React.FC<SignUpProps> = (props) => {
   };
 
   const userTitleOptions = [
-    { text: 'Ms.', value: 'Ms.' },
-    { text: 'Mr.', value: 'Mr.' },
-    { text: 'Dr.', value: 'Dr.' },
-    { text: 'Prof.', value: 'Prof.' },
-    { text: 'Rather not say', value: 'unspecified' },
+    { label: 'Ms.', value: 'Ms.' },
+    { label: 'Mr.', value: 'Mr.' },
+    { label: 'Dr.', value: 'Dr.' },
+    { label: 'Prof.', value: 'Prof.' },
+    { label: 'Rather not say', value: 'unspecified' },
   ];
 
   const genderOptions = [
-    { text: 'Female', value: 'female' },
-    { text: 'Male', value: 'male' },
-    { text: 'Other', value: 'other' },
+    { label: 'Female', value: 'female' },
+    { label: 'Male', value: 'male' },
+    { label: 'Other', value: 'other' },
   ];
 
   if (!institutionsList.length) {
@@ -463,21 +466,28 @@ const SignUp: React.FC<SignUpProps> = (props) => {
 
                   <CardContent>
                     <LocalizationProvider dateAdapter={DateAdapter}>
-                      <Field
-                        name="user_title"
-                        component={Autocomplete}
-                        options={userTitleOptions}
-                        getOptionLabel={(option: Option) => option.text}
-                        isOptionEqualToValue={(
-                          option: Option,
-                          value: Option | null
-                        ) => option.value === value?.value}
-                        renderInput={(params: TextFieldProps) => (
-                          <MuiTextField {...params} label="Title" required />
-                        )}
-                        disabled={!orcData}
-                        data-cy="title"
-                      />
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="user_title" shrink>
+                          Title
+                        </InputLabel>
+                        <Field
+                          id="user_title"
+                          name="user_title"
+                          type="text"
+                          component={Select}
+                          data-cy="title"
+                          disabled={!orcData}
+                          required
+                        >
+                          {userTitleOptions.map(({ value, label }) => {
+                            return (
+                              <MenuItem value={value} key={value}>
+                                {label}
+                              </MenuItem>
+                            );
+                          })}
+                        </Field>
+                      </FormControl>
                       <Field
                         name="firstname"
                         label="First name"
@@ -520,21 +530,28 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                         data-cy="preferredname"
                         disabled={!orcData}
                       />
-                      <Field
-                        name="gender"
-                        component={Autocomplete}
-                        options={genderOptions}
-                        getOptionLabel={(option: Option) => option.text}
-                        isOptionEqualToValue={(
-                          option: Option,
-                          value: Option | null
-                        ) => option.value === value?.value}
-                        renderInput={(params: TextFieldProps) => (
-                          <MuiTextField {...params} label="Gender" required />
-                        )}
-                        disabled={!orcData}
-                        data-cy="gender"
-                      />
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="user_title" shrink>
+                          Gender
+                        </InputLabel>
+                        <Field
+                          id="gender"
+                          name="gender"
+                          type="text"
+                          component={Select}
+                          data-cy="gender"
+                          disabled={!orcData}
+                          required
+                        >
+                          {genderOptions.map(({ value, label }) => {
+                            return (
+                              <MenuItem value={value} key={value}>
+                                {label}
+                              </MenuItem>
+                            );
+                          })}
+                        </Field>
+                      </FormControl>
                       {values.gender === 'other' && (
                         <Field
                           name="othergender"
