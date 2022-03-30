@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
@@ -14,14 +13,10 @@ function CreateFeedbackPage() {
   }
 
   return (
-    <StyledContainer maxWidth="md">
-      <Grid container>
-        <Grid item xs={12}>
-          <StyledPaper>
-            <CreateFeedback scheduledEventId={+scheduledEventId} />
-          </StyledPaper>
-        </Grid>
-      </Grid>
+    <StyledContainer>
+      <StyledPaper>
+        <CreateFeedback scheduledEventId={+scheduledEventId} />
+      </StyledPaper>
     </StyledContainer>
   );
 }

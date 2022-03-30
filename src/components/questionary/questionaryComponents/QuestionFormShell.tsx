@@ -87,7 +87,6 @@ export const QuestionFormShell = (
               <Button
                 type="button"
                 variant="outlined"
-                color="primary"
                 data-cy="delete"
                 onClick={deleteHandler}
                 disabled={definition.creatable === false}
@@ -96,8 +95,6 @@ export const QuestionFormShell = (
               </Button>
               <Button
                 type="submit"
-                variant="contained"
-                color="primary"
                 data-cy="submit"
                 disabled={!formikProps.isValid}
               >

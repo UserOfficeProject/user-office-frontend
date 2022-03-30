@@ -115,13 +115,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ match }) => {
                 This link has expired, please reset password again
               </p>
             )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
+            <Button type="submit" fullWidth className={classes.submit}>
               Set password
             </Button>
             <Grid container>

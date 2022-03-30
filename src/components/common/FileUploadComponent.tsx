@@ -21,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import makeStyles from '@mui/styles/makeStyles';
+import { getType } from 'mime';
 import React, { ChangeEvent, useState } from 'react';
 
 import { Maybe } from 'generated/sdk';
@@ -227,30 +228,64 @@ export function NewFileEntry(props: {
     },
   }))();
 
-  const { uploadFile, progress, state, abort } = useFileUpload();
+  const { uploadFile, progress, state, setState, abort } = useFileUpload();
+
+  const hasValidContentHeader = (file: File): boolean => {
+    if (!props.filetype) {
+      return true;
+    }
+
+    const allowedTypes: string[] = [];
+
+    props.filetype.split(',').forEach((extOrMime) => {
+      const posMime = getType(extOrMime);
+
+      if (posMime) {
+        allowedTypes.push(posMime);
+      } else {
+        allowedTypes.push(extOrMime);
+      }
+    });
+
+    const anySubtype = file.type.split('/')[0]?.concat('/*'); // e.g. 'image/*'
+
+    return (
+      allowedTypes.includes(file.type) || allowedTypes.includes(anySubtype)
+    );
+  };
+
+  const hasExtension = (file: File) => {
+    return file.name.split('.').length - 1 == 1;
+  };
 
   const onFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (!selectedFile) return;
 
-    uploadFile(selectedFile, props.onUploadComplete);
+    if (hasExtension(selectedFile) && hasValidContentHeader(selectedFile)) {
+      uploadFile(selectedFile, props.onUploadComplete);
+    } else {
+      setState(UPLOAD_STATE.REJECTED);
+    }
   };
 
   switch (state) {
-    case UPLOAD_STATE.PRISTINE:
+    case UPLOAD_STATE.REJECTED:
       return (
-        <label>
-          <input
-            accept={props.filetype}
-            style={{ display: 'none' }}
-            type="file"
-            multiple={false}
-            onChange={onFileSelected}
+        <>
+          <ListItemAvatar>
+            <Avatar className={classes.avatar}>
+              <ErrorIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Incorrect file type"
+            secondary="Ensure that the file is of the correct type and has an extension."
           />
-          <Button variant="outlined" component="span">
-            <AddCircleOutlineIcon className={classes.addIcon} /> Attach file
-          </Button>
-        </label>
+          <ListItemSecondaryAction>
+            <CancelIcon onClick={() => abort()} />
+          </ListItemSecondaryAction>
+        </>
       );
     case UPLOAD_STATE.ERROR:
       return (
@@ -264,6 +299,23 @@ export function NewFileEntry(props: {
           <ListItemSecondaryAction>
             <CancelIcon onClick={() => abort()} />
           </ListItemSecondaryAction>
+        </>
+      );
+    case UPLOAD_STATE.PRISTINE:
+      return (
+        <>
+          <label>
+            <input
+              accept={props.filetype}
+              style={{ display: 'none' }}
+              type="file"
+              multiple={false}
+              onChange={onFileSelected}
+            />
+            <Button variant="outlined" component="span">
+              <AddCircleOutlineIcon className={classes.addIcon} /> Attach file
+            </Button>
+          </label>
         </>
       );
     case UPLOAD_STATE.ABORTED:
@@ -313,7 +365,7 @@ const useStyles = makeStyles(() => ({
 export function FileUploadComponent(props: {
   maxFiles?: number;
   id?: string;
-  fileType?: string;
+  fileType: string;
   value: FileIdWithCaptionAndFigure[];
   onChange: (files: FileIdWithCaptionAndFigure[]) => void;
 }) {
@@ -377,10 +429,19 @@ export function FileUploadComponent(props: {
   }
 
   const amountFilesInfo =
-    maxFiles > 1 ? <span>Max: {maxFiles} file(s)</span> : null;
+    maxFiles > 1 ? (
+      <Box component="span" display="block">
+        Max: {maxFiles} file(s)
+      </Box>
+    ) : null;
+
+  const fileTypeInfo = fileType.split(',').map((type) => {
+    return type.includes('*') ? 'any ' + type.split('/')[0] : type;
+  });
 
   return (
     <>
+      Accepted formats: {fileTypeInfo.join(', ')}
       {amountFilesInfo}
       <List component="ul" className={classes.questionnairesList}>
         {files.map &&

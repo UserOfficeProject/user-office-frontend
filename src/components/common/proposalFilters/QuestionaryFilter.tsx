@@ -161,8 +161,6 @@ function QuestionaryFilter({ templateId, onSubmit }: QuestionaryFilterProps) {
         {selectedQuestion && (
           <Button
             style={{ marginTop: '8px' }}
-            variant="contained"
-            color="primary"
             startIcon={<SearchIcon />}
             onClick={() => {
               if (!selectedQuestion || !searchCriteria) {

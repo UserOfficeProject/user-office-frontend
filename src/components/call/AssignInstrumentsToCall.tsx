@@ -94,8 +94,6 @@ const AssignInstrumentsToCall: React.FC<AssignInstrumentsToCallProps> = ({
       <ActionButtonContainer>
         <Button
           type="button"
-          variant="contained"
-          color="primary"
           onClick={() => onAssignButtonClick()}
           disabled={selectedInstruments.length === 0 || isExecutingCall}
           data-cy="assign-instrument-to-call"

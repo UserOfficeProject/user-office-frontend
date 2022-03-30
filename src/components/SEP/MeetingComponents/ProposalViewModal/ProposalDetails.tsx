@@ -37,7 +37,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
 
   return (
     <div data-cy="SEP-meeting-components-proposal-details">
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <Typography variant="h6" className={classes.heading} gutterBottom>
           Proposal details
         </Typography>
@@ -101,7 +101,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
                     onClick={() =>
                       downloadPDFProposal([proposal.primaryKey], proposal.title)
                     }
-                    color="primary"
+                    variant="text"
                   >
                     Click here to view pdf
                   </Button>

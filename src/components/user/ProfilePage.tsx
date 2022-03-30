@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import SimpleTabs from 'components/common/TabPanel';
-import { StyledContainer } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 import UpdatePassword from './UpdatePassword';
 import UpdateUserInformation from './UpdateUserInformation';
@@ -20,10 +20,12 @@ type ProfilePageProps = PropTypes.InferProps<typeof ProfilePagePropTypes>;
 const ProfilePage: React.FC<ProfilePageProps> = ({ match }) => {
   return (
     <StyledContainer>
-      <SimpleTabs tabNames={['General', 'Settings']}>
-        <UpdateUserInformation id={parseInt(match.params.id)} />
-        <UpdatePassword id={parseInt(match.params.id)} />
-      </SimpleTabs>
+      <StyledPaper>
+        <SimpleTabs tabNames={['General', 'Settings']}>
+          <UpdateUserInformation id={parseInt(match.params.id)} />
+          <UpdatePassword id={parseInt(match.params.id)} />
+        </SimpleTabs>
+      </StyledPaper>
     </StyledContainer>
   );
 };

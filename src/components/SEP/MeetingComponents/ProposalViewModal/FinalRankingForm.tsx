@@ -268,14 +268,12 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                             name="submitted"
                             component={FormikUICustomCheckbox}
                             label="Submitted"
-                            color="primary"
                             disabled={isSubmitting}
                             data-cy="is-sep-meeting-submitted"
                           />
                         )}
                         <Button
                           type="submit"
-                          variant="contained"
                           onClick={() => {
                             setShouldClose(false);
                             setShouldSubmit(false);
@@ -289,7 +287,6 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                         </Button>
                         <Button
                           type="submit"
-                          variant="contained"
                           onClick={() => {
                             setShouldClose(true);
                             setShouldSubmit(false);
@@ -304,12 +301,10 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                         {!isUserOfficer && (
                           <Button
                             type="submit"
-                            variant="contained"
                             onClick={() => {
                               setShouldClose(false);
                               setShouldSubmit(true);
                             }}
-                            color={'primary'}
                             className={classes.button}
                             data-cy="submitSepMeeting"
                             disabled={shouldDisableForm(isSubmitting)}

@@ -116,8 +116,8 @@ const CreateUpdateProposalStatus: React.FC<CreateUpdateProposalStatusProps> = ({
             component={TextField}
             fullWidth
             multiline
-            rowsMax="16"
-            rows="3"
+            maxRows="16"
+            minRows="3"
             data-cy="description"
             disabled={isExecutingCall}
             required
@@ -126,8 +126,6 @@ const CreateUpdateProposalStatus: React.FC<CreateUpdateProposalStatusProps> = ({
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
             data-cy="submit"
             disabled={isExecutingCall}

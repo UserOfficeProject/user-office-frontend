@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import parse from 'html-react-parser';
 import React from 'react';
 
@@ -14,13 +13,9 @@ const HelpPage: React.FC = () => {
   return (
     <React.Fragment>
       <StyledContainer>
-        <Grid container>
-          <Grid item xs={12}>
-            <StyledPaper>
-              {loadingHelpContent ? null : parse(helpPageContent)}
-            </StyledPaper>
-          </Grid>
-        </Grid>
+        <StyledPaper>
+          {loadingHelpContent ? null : parse(helpPageContent)}
+        </StyledPaper>
       </StyledContainer>
     </React.Fragment>
   );

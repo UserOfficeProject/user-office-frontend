@@ -4,7 +4,7 @@ import useTheme from '@mui/material/styles/useTheme';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { SettingsContext } from 'context/SettingsContextProvider';
 import {
@@ -21,20 +21,7 @@ const CallReviewAndNotification: React.FC = () => {
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
-  const { startReview, endReview, startSEPReview, endSEPReview } =
-    formik.values;
-
-  useEffect(() => {
-    if (endReview && endReview < startReview) {
-      formik.setFieldValue('endReview', startReview);
-      formik.setFieldTouched('endReview', false);
-    }
-
-    if (endSEPReview && endSEPReview < startSEPReview) {
-      formik.setFieldValue('endSEPReview', startSEPReview);
-      formik.setFieldTouched('endSEPReview', false);
-    }
-  }, [startReview, endReview, startSEPReview, endSEPReview, formik]);
+  const { startReview, startSEPReview } = formik.values;
 
   return (
     <>
@@ -45,14 +32,17 @@ const CallReviewAndNotification: React.FC = () => {
           id="start-review-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
             'data-cy': 'start-review',
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
         <Field
           name="endReview"
@@ -60,14 +50,17 @@ const CallReviewAndNotification: React.FC = () => {
           id="end-review-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           minDate={startReview}
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           allowSameDateSelection
           textField={{
             fullWidth: true,
+            required: true,
           }}
           desktopModeMediaQuery={theme.breakpoints.up('sm')}
+          required
         />
         <Field
           name="startSEPReview"
@@ -75,6 +68,7 @@ const CallReviewAndNotification: React.FC = () => {
           id="start-sep-review-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           allowSameDateSelection
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
@@ -89,8 +83,9 @@ const CallReviewAndNotification: React.FC = () => {
           id="end-sep-review-input"
           inputFormat={dateFormat}
           mask={mask}
+          ampm={false}
           allowSameDateSelection
-          minDate={endSEPReview}
+          minDate={startSEPReview}
           component={DatePicker}
           inputProps={{ placeholder: dateFormat }}
           textField={{

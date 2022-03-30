@@ -124,8 +124,6 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
             <Button
               type="submit"
               fullWidth
-              variant="contained"
-              color="primary"
               className={classes.submit}
               disabled={loadingProposalStatuses || isSubmitting}
               data-cy="submit-proposal-status-change"

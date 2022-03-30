@@ -44,8 +44,6 @@ const EmailSearchBar: React.FC = (props) => {
           />
           <Button
             data-cy="findUser"
-            variant="contained"
-            color="primary"
             type="submit"
             className={useStyles().inviteButton}
           >

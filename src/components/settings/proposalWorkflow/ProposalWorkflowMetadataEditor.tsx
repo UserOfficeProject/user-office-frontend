@@ -54,8 +54,6 @@ const ProposalWorkflowMetadataEditor: React.FC<{
       </div>
       <StyledButtonContainer>
         <Button
-          variant="contained"
-          color="primary"
           startIcon={<EditIcon />}
           onClick={() => setIsEditMode(true)}
           className={classes.button}
@@ -117,8 +115,6 @@ const ProposalWorkflowMetadataEditor: React.FC<{
               disabled={isSubmitting}
               data-cy="submit"
               type="submit"
-              variant="contained"
-              color="primary"
               className={classes.button}
             >
               Update

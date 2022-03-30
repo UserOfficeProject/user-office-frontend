@@ -40,7 +40,7 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
 
   return (
     <StyledContainer>
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <Typography variant="h6" component="h2" gutterBottom>
           Select a call
         </Typography>
@@ -71,20 +71,17 @@ const ProposalChooseCall: React.FC<ProposalChooseCallProps> = ({
               >
                 <ListItemText
                   primary={header}
+                  secondaryTypographyProps={{ component: 'div' }}
                   secondary={
-                    <Fragment>
-                      <Typography component="div" className={classes.date}>
+                    <>
+                      <Typography component="p" className={classes.date}>
                         {`Application deadline: ${toFormattedDateTime(
                           call.endCall
                         )} ${timeRemainingText}`}
                       </Typography>
-                      <Typography component="div">
-                        {call.description}
-                      </Typography>
-                      <Typography component="div">
-                        {call.cycleComment}
-                      </Typography>
-                    </Fragment>
+                      <Typography component="p">{call.description}</Typography>
+                      <Typography component="p">{call.cycleComment}</Typography>
+                    </>
                   }
                 />
                 <ListItemSecondaryAction>

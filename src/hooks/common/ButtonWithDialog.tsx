@@ -14,7 +14,9 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
 
   return (
     <>
-      <Button onClick={() => setIsDialogOpen(true)}>{label}</Button>
+      <Button variant="text" onClick={() => setIsDialogOpen(true)}>
+        {label}
+      </Button>
       <InputDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
         {children}
         <ActionButtonContainer>

@@ -24,7 +24,7 @@ import withStyles from '@mui/styles/withStyles';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DateTimePicker } from 'formik-mui-lab';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import FormikDropdown, { Option } from 'components/common/FormikDropdown';
 import { FeatureContext } from 'context/FeatureContextProvider';
@@ -71,17 +71,7 @@ const CallGeneralInfo: React.FC<{
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
-  const { startCall, endCall } = formik.values;
-
-  useEffect(() => {
-    if (endCall && endCall < startCall) {
-      formik.setFieldValue('endCall', startCall);
-      /** NOTE: Set field untouched because if we try to update the endCall before startCall and then
-       *  set startCall after endCall it can show error message even though we update the endCall automatically.
-       */
-      formik.setFieldTouched('endCall', false);
-    }
-  }, [startCall, endCall, formik]);
+  const { startCall } = formik.values;
 
   function validateRefNumFormat(input: string) {
     let errorMessage;
@@ -161,6 +151,8 @@ const CallGeneralInfo: React.FC<{
           id="start-call-input"
           inputFormat={dateTimeFormat}
           mask={mask}
+          // NOTE: We need to have ampm set to false because otherwise the mask doesn't work properly and suggestion format when you type is not shown at all
+          ampm={false}
           component={DateTimePicker}
           inputProps={{ placeholder: dateTimeFormat }}
           allowSameDateSelection
@@ -179,6 +171,7 @@ const CallGeneralInfo: React.FC<{
           id="end-call-input"
           inputFormat={dateTimeFormat}
           mask={mask}
+          ampm={false}
           allowSameDateSelection
           component={DateTimePicker}
           inputProps={{ placeholder: dateTimeFormat }}
@@ -210,7 +203,6 @@ const CallGeneralInfo: React.FC<{
                   onClose={handleClose}
                   aria-labelledby="customized-dialog-title"
                   open={open}
-                  color="primary"
                 >
                   <DialogContent dividers>
                     <Typography gutterBottom color="inherit" variant="body1">
@@ -259,7 +251,7 @@ const CallGeneralInfo: React.FC<{
                     </Typography>
                   </DialogContent>
                   <DialogActions>
-                    <Button autoFocus onClick={handleClose} color="primary">
+                    <Button autoFocus variant="text" onClick={handleClose}>
                       Close
                     </Button>
                   </DialogActions>

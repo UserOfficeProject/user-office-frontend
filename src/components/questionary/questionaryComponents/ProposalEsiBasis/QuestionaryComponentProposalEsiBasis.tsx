@@ -375,7 +375,6 @@ function QuestionaryComponentProposalEsiBasis(
                 variant="outlined"
                 data-cy="add-sample-btn"
                 size="small"
-                color="primary"
                 startIcon={<AddCircleOutlineIcon />}
               >
                 Create new sample

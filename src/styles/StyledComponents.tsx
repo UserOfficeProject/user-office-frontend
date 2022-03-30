@@ -26,10 +26,10 @@ export const StyledPaper = styled(Paper, {
     : padding;
 
   return {
-    margin: marginValue || theme.spacing(3, 0),
+    margin: marginValue || theme.spacing(2, 0),
     padding: paddingValue || theme.spacing(2),
     [theme.breakpoints.up(600)]: {
-      margin: marginValue || theme.spacing(6, 0),
+      margin: marginValue || theme.spacing(4, 0),
       padding: paddingValue || theme.spacing(3),
     },
   };

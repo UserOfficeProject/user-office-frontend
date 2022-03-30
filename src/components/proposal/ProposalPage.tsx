@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import {
   NumberParam,
@@ -58,33 +57,27 @@ export default function ProposalPage() {
     useProposalStatusesData();
 
   return (
-    <>
-      <StyledContainer>
-        <Grid container>
-          <Grid item xs={12}>
-            <StyledPaper data-cy="officer-proposals-table">
-              <ProposalFilterBar
-                calls={{ data: calls, isLoading: loadingCalls }}
-                instruments={{
-                  data: instruments,
-                  isLoading: loadingInstruments,
-                }}
-                proposalStatuses={{
-                  data: proposalStatuses,
-                  isLoading: loadingProposalStatuses,
-                }}
-                setProposalFilter={setProposalFilter}
-                filter={proposalFilter}
-              />
-              <ProposalTableOfficer
-                proposalFilter={proposalFilter}
-                urlQueryParams={urlQueryParams}
-                setUrlQueryParams={setUrlQueryParams}
-              />
-            </StyledPaper>
-          </Grid>
-        </Grid>
-      </StyledContainer>
-    </>
+    <StyledContainer>
+      <StyledPaper data-cy="officer-proposals-table">
+        <ProposalFilterBar
+          calls={{ data: calls, isLoading: loadingCalls }}
+          instruments={{
+            data: instruments,
+            isLoading: loadingInstruments,
+          }}
+          proposalStatuses={{
+            data: proposalStatuses,
+            isLoading: loadingProposalStatuses,
+          }}
+          setProposalFilter={setProposalFilter}
+          filter={proposalFilter}
+        />
+        <ProposalTableOfficer
+          proposalFilter={proposalFilter}
+          urlQueryParams={urlQueryParams}
+          setUrlQueryParams={setUrlQueryParams}
+        />
+      </StyledPaper>
+    </StyledContainer>
   );
 }

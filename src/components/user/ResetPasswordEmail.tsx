@@ -83,13 +83,7 @@ export default function ResetPasswordEmail() {
                   No account found for this email address.
                 </p>
               ))}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
+            <Button type="submit" fullWidth className={classes.submit}>
               Send Email
             </Button>
             <Grid container>

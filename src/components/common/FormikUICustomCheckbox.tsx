@@ -14,9 +14,7 @@ const FormikUICustomCheckbox = ({
 }) => {
   return (
     <FormControlLabel
-      control={
-        <Checkbox {...field} checked={field.value} color="primary" {...rest} />
-      }
+      control={<Checkbox {...field} checked={field.value} {...rest} />}
       label={label}
     />
   );

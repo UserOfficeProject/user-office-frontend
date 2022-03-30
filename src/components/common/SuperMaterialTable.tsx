@@ -23,6 +23,7 @@ export type UrlQueryParamsType = {
   selection: QueryParamConfig<(string | null | never)[]>;
   sortColumn: QueryParamConfig<number | null | undefined>;
   sortDirection: QueryParamConfig<string | null | undefined>;
+  sortField?: QueryParamConfig<string | null | undefined>;
 };
 
 export const DefaultQueryParams = {
@@ -30,6 +31,7 @@ export const DefaultQueryParams = {
   sortDirection: StringParam,
   search: StringParam,
   selection: withDefault(DelimitedArrayParam, []),
+  sortField: StringParam,
 };
 
 export type SortDirectionType = 'asc' | 'desc' | undefined;
@@ -248,8 +250,6 @@ export function SuperMaterialTable<Entry extends EntryID>({
           {extraActionButtons && extraActionButtons}
           <Button
             type="button"
-            variant="contained"
-            color="primary"
             onClick={() => setShow(true)}
             data-cy="create-new-entry"
           >

@@ -80,7 +80,7 @@ export const QuestionTemplateRelationNumberForm: FC<
                   `${symbol} (${unit}) - ${quantity}`
                 }
                 renderInput={(params) => (
-                  <MaterialTextField {...params} label="Units" />
+                  <MaterialTextField {...params} label="Units" margin="none" />
                 )}
                 onChange={(_event, newValue) => {
                   setSelectedUnits(newValue);

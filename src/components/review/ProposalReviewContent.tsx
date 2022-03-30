@@ -24,6 +24,7 @@ import {
 } from 'generated/sdk';
 import { ProposalData, useProposalData } from 'hooks/proposal/useProposalData';
 import { useReviewData } from 'hooks/review/useReviewData';
+import { StyledPaper } from 'styles/StyledComponents';
 
 import AssignTechnicalReview from './AssignTechnicalReview';
 import ProposalGrade from './ProposalGrade';
@@ -86,7 +87,9 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <h2>Proposal not found</h2>
-        <Button onClick={() => console.log('Not implemented')}>Retry</Button>
+        <Button variant="text" onClick={() => console.log('Not implemented')}>
+          Retry
+        </Button>
       </Box>
     );
   }
@@ -115,8 +118,10 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
       <Typography variant="h6" component="h2" gutterBottom>
         Assign to someone else?
       </Typography>
-      If you think there is a better candidate to do the review for the
-      proposal, you can re-assign it to someone else
+      <p>
+        If you think there is a better candidate to do the review for the
+        proposal, you can re-assign it to someone else
+      </p>
       <div>
         {showReassign ? (
           <AssignTechnicalReview
@@ -217,9 +222,11 @@ const ProposalReviewContent: React.FC<ProposalReviewContentProps> = ({
   });
 
   return (
-    <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
-      {tabsContent}
-    </SimpleTabs>
+    <StyledPaper>
+      <SimpleTabs tabNames={tabNames} isInsideModal={isInsideModal}>
+        {tabsContent}
+      </SimpleTabs>
+    </StyledPaper>
   );
 };
 

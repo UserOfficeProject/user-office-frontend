@@ -70,8 +70,6 @@ export default function PageInputBox(props: {
       )}
       <div className={classes.buttons}>
         <Button
-          variant="contained"
-          color="primary"
           className={classes.button}
           onClick={() =>
             api('Updated Page').setPageContent({

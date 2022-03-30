@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
+import useTheme from '@mui/material/styles/useTheme';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { updateUserValidationSchema } from '@user-office-software/duo-validation';
@@ -61,9 +62,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UpdateUserInformation(props: { id: number }) {
+  const theme = useTheme();
   const { currentRole } = useContext(UserContext);
   const { userData, setUserData } = useUserData(props);
-  const { format, mask, toFormattedDateTime } = useFormattedDateTime({
+  const { format, mask } = useFormattedDateTime({
     settingsFormatToUse: SettingsId.DATE_FORMAT,
   });
   const { api } = useDataApiWithFeedback();
@@ -73,9 +75,36 @@ export default function UpdateUserInformation(props: { id: number }) {
   const [institutionsList, setInstitutionsList] = useState<Option[]>([]);
   const classes = useStyles();
 
+  // NOTE: User should be older than 18 years.
+  const userMaxBirthDate = DateTime.now().minus({ years: 18 });
+
   if (loadingInstitutions || !fieldsContent || !userData) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '50px' }} />;
   }
+
+  const initialValues = {
+    username: userData.username,
+    firstname: userData.firstname,
+    middlename: userData.middlename,
+    lastname: userData.lastname,
+    preferredname: userData.preferredname,
+    gender:
+      userData.gender !== 'male' && userData.gender !== 'female'
+        ? 'other'
+        : userData.gender,
+    othergender: userData.gender,
+    nationality: userData.nationality || '',
+    birthdate: DateTime.fromJSDate(new Date(userData.birthdate)),
+    organisation: userData.organisation,
+    department: userData.department,
+    position: userData.position,
+    oldEmail: userData.email,
+    email: userData.email,
+    telephone: userData.telephone,
+    telephone_alt: userData.telephone_alt,
+    user_title: userData.user_title,
+    orcid: userData.orcid,
+  };
 
   if (!institutionsList.length) {
     setInstitutionsList(
@@ -139,31 +168,7 @@ export default function UpdateUserInformation(props: { id: number }) {
     <React.Fragment>
       <Formik
         validateOnChange={false}
-        initialValues={{
-          username: userData.username,
-          firstname: userData.firstname,
-          middlename: userData.middlename,
-          lastname: userData.lastname,
-          preferredname: userData.preferredname,
-          gender:
-            userData.gender !== 'male' && userData.gender !== 'female'
-              ? 'other'
-              : userData.gender,
-          othergender: userData.gender,
-          nationality: userData.nationality,
-          birthdate: toFormattedDateTime(
-            DateTime.fromMillis(parseInt(userData.birthdate)).toISO()
-          ),
-          organisation: userData.organisation,
-          department: userData.department,
-          position: userData.position,
-          oldEmail: userData.email,
-          email: userData.email,
-          telephone: userData.telephone,
-          telephone_alt: userData.telephone_alt,
-          user_title: userData.user_title,
-          orcid: userData.orcid,
-        }}
+        initialValues={initialValues}
         onSubmit={async (values, actions): Promise<void> => {
           const newValues = {
             id: props.id,
@@ -306,6 +311,8 @@ export default function UpdateUserInformation(props: { id: number }) {
                       fullWidth: true,
                       'data-cy': 'birthdate',
                     }}
+                    maxDate={userMaxBirthDate}
+                    desktopModeMediaQuery={theme.breakpoints.up('sm')}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -344,6 +351,19 @@ export default function UpdateUserInformation(props: { id: number }) {
                   items={institutionsList}
                   data-cy="organisation"
                 />
+                {+values.organisation === 1 && (
+                  <Field
+                    name="otherOrganisation"
+                    label="Please specify organisation"
+                    id="organisation-input"
+                    type="text"
+                    component={TextField}
+                    margin="normal"
+                    fullWidth
+                    data-cy="otherOrganisation"
+                    required
+                  />
+                )}
                 <Field
                   name="department"
                   label="Department"
@@ -395,8 +415,6 @@ export default function UpdateUserInformation(props: { id: number }) {
               <Button
                 disabled={isSubmitting}
                 type="submit"
-                variant="contained"
-                color="primary"
                 className={classes.button}
               >
                 Update Profile

@@ -71,8 +71,8 @@ const CreateProposalWorkflow: React.FC<CreateProposalWorkflowProps> = ({
             component={TextField}
             fullWidth
             multiline
-            rowsMax="16"
-            rows="3"
+            maxRows="16"
+            minRows="3"
             data-cy="description"
             disabled={isExecutingCall}
           />
@@ -80,8 +80,6 @@ const CreateProposalWorkflow: React.FC<CreateProposalWorkflowProps> = ({
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
             data-cy="submit"
             disabled={isExecutingCall}

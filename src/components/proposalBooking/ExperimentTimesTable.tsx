@@ -37,7 +37,9 @@ export default function ExperimentsTable({
   proposalScheduledEvents,
   options,
 }: ExperimentTimesTableProps) {
-  const { toFormattedDateTime } = useFormattedDateTime();
+  const { toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
 
   const proposalScheduledEventsWithFormattedDates = proposalScheduledEvents.map(
     (event) => ({

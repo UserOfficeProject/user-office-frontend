@@ -114,7 +114,6 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
                 type="checkbox"
                 component={Checkbox}
                 checked={values.verified}
-                color="primary"
                 onChange={(): void =>
                   setFieldValue('verified', !values.verified)
                 }
@@ -135,8 +134,6 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
                     <MergeType style={{ transform: 'rotate(90deg)' }} />
                   }
                   type="button"
-                  variant="outlined"
-                  color="primary"
                   data-cy="merge"
                   disabled={isExecutingCall}
                   onClick={() =>
@@ -150,8 +147,6 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
             )}
             <Button
               type="submit"
-              variant="contained"
-              color="primary"
               data-cy="submit"
               disabled={isExecutingCall}
               startIcon={<Check />}

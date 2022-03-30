@@ -154,7 +154,6 @@ export const FormikUICustomTable = ({
           onClick={() => addActionRef.current?.click()}
           data-cy="add-answer-button"
           size="small"
-          color="primary"
           startIcon={<AddIcon />}
         >
           Add

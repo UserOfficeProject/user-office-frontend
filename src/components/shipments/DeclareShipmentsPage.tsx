@@ -1,4 +1,3 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import { useParams } from 'react-router';
 
@@ -14,14 +13,10 @@ export default function DeclareShipmentsPage() {
   }
 
   return (
-    <StyledContainer maxWidth="md">
-      <Grid container>
-        <Grid item xs={12}>
-          <StyledPaper>
-            <DeclareShipments scheduledEventId={+scheduledEventId} />
-          </StyledPaper>
-        </Grid>
-      </Grid>
+    <StyledContainer>
+      <StyledPaper>
+        <DeclareShipments scheduledEventId={+scheduledEventId} />
+      </StyledPaper>
     </StyledContainer>
   );
 }

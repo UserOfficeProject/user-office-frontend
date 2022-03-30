@@ -38,7 +38,9 @@ export default function UserUpcomingExperimentsTable() {
       onlyUpcoming: true,
       notDraft: true,
     });
-  const { toFormattedDateTime } = useFormattedDateTime();
+  const { toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
 
   const [modalContents, setModalContents] = useState<ReactNode>(null);
 
@@ -78,7 +80,7 @@ export default function UserUpcomingExperimentsTable() {
 
   return (
     <Grid item xs={12} data-cy="upcoming-experiments">
-      <StyledPaper margin={[0]}>
+      <StyledPaper>
         <MaterialTable
           actions={[
             formTeamAction,

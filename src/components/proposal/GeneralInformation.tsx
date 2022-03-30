@@ -53,7 +53,6 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({
               onChange={() => {
                 setIsEditable(!isEditable);
               }}
-              color="primary"
             />
           }
           label={isEditable ? 'Close' : 'Edit proposal'}
@@ -65,7 +64,6 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({
           <Button
             className={classes.button}
             onClick={() => downloadPDFProposal([data.primaryKey], data.title)}
-            variant="contained"
           >
             Download PDF
           </Button>

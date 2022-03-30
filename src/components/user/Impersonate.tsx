@@ -27,8 +27,6 @@ export function Impersonate(props: { id: number }) {
       </Typography>
       <div className={classes.buttons}>
         <Button
-          variant="contained"
-          color="primary"
           onClick={() =>
             api()
               .getTokenForUser({ userId: props.id })

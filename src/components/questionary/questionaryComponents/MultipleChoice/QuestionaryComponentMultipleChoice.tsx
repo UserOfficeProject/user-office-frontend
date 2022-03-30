@@ -23,15 +23,12 @@ const toArray = (input: string | string[]): string[] => {
   return input;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   horizontalLayout: {
     flexDirection: 'row',
   },
   verticalLayout: {
     flexDirection: 'column',
-  },
-  radioGroupSpacing: {
-    marginBottom: -theme.spacing(1),
   },
 }));
 
@@ -110,7 +107,6 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
             }
             MenuProps={{
               variant: 'menu',
-              anchorEl: null,
             }}
             data-natural-key={naturalKey}
           >
@@ -128,12 +124,7 @@ export function QuestionaryComponentMultipleChoice(props: BasicComponentProps) {
 
     default:
       return (
-        <FormControl
-          required={config.required}
-          error={isError}
-          margin="dense"
-          className={classes.radioGroupSpacing}
-        >
+        <FormControl required={config.required} error={isError} margin="dense">
           <FormLabel>{label}</FormLabel>
           <RadioGroup
             id={id}

@@ -72,8 +72,6 @@ function SampleEsiReview() {
             });
           }}
           disabled={isSubmitted || !isAffirmChecked}
-          variant="contained"
-          color="primary"
           data-cy="submit-esi-button"
         >
           {isSubmitted ? '✔ Ready' : 'Submit'}
