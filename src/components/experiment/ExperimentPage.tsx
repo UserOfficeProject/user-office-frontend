@@ -6,10 +6,7 @@ import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 import ExperimentFilterBar from './ExperimentFilterBar';
 import ExperimentTable from './ExperimentTable';
 
-interface ExperimentPageProps {
-  visit?: number;
-}
-function ExperimentPage(props: ExperimentPageProps) {
+function ExperimentPage() {
   return (
     <StyledContainer>
       <Grid container>

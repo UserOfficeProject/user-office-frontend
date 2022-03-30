@@ -3,7 +3,10 @@ import DateAdapter from '@mui/lab/AdapterLuxon';
 import { FormControl, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
-import React from 'react';
+import React, { useContext } from 'react';
+
+import { SettingsContext } from 'context/SettingsContextProvider';
+import { SettingsId } from 'generated/sdk';
 
 import PresetDateSelector, { TimeSpan } from './PresetDateSelector';
 
@@ -65,12 +68,15 @@ interface DateFilterProps {
 function DateFilter(props: DateFilterProps) {
   const classes = useStyles();
   const [presetValue, setPresetValue] = React.useState<TimeSpan | null>(null);
+  const { settings } = useContext(SettingsContext);
+  const inputDateFormat =
+    settings.get(SettingsId.DATE_FORMAT)?.settingsValue ?? 'yyyy-MM-dd';
 
   return (
     <FormControl className={classes.formControl}>
       <LocalizationProvider dateAdapter={DateAdapter}>
         <DatePicker
-          inputFormat="dd/MM/yyyy"
+          inputFormat={inputDateFormat}
           label="From"
           value={props.from ?? null}
           onChange={(startsAt: unknown) => {
@@ -88,7 +94,7 @@ function DateFilter(props: DateFilterProps) {
         />
 
         <DatePicker
-          inputFormat="dd/MM/yyyy"
+          inputFormat={inputDateFormat}
           label="To"
           value={props.to ?? null}
           onChange={(endsAt: unknown) =>
