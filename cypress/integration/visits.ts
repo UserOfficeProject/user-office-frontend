@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { DateTime } from 'luxon';
 
 import { TemplateGroupId } from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
@@ -152,8 +153,12 @@ context('visits tests', () => {
   });
 
   it('Visitor should be able to register for a visit', () => {
-    const startDate = '2022-01-01';
-    const endDate = '2022-01-07';
+    const startDate = DateTime.fromJSDate(faker.date.past()).toFormat(
+      initialDBData.formats.dateFormat
+    );
+    const endDate = DateTime.fromJSDate(faker.date.future()).toFormat(
+      initialDBData.formats.dateFormat
+    );
 
     cy.createTemplate({
       groupId: TemplateGroupId.VISIT_REGISTRATION,
