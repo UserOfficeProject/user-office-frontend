@@ -600,6 +600,11 @@ context('SEP reviews tests', () => {
     });
 
     it('SEP Reviewer should be able to filter their reviews by status and bulk submit them', () => {
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+      readWriteReview();
       cy.get('[data-cy="review-status-filter"]').click();
       cy.get('[role="listbox"]').contains('Draft').click();
 
