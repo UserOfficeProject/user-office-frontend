@@ -2244,12 +2244,9 @@ export type QueryScheduledEventCoreArgs = {
 
 
 export type QueryScheduledEventsCoreArgs = {
-
   filter?: InputMaybe<ScheduledEventsCoreFilter>;
   first?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  endsAfter?: InputMaybe<Scalars['DateTime']>;
-  endsBefore?: InputMaybe<Scalars['DateTime']>;
 };
 
 
@@ -2675,12 +2672,12 @@ export type ScheduledEventCore = {
 
 export type ScheduledEventsCoreFilter = {
   callId?: InputMaybe<Scalars['Int']>;
-  endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
-  endsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
+  endsAfter?: InputMaybe<Scalars['DateTime']>;
+  endsBefore?: InputMaybe<Scalars['DateTime']>;
   instrumentId?: InputMaybe<Scalars['Int']>;
   overlaps?: InputMaybe<TimeSpan>;
-  startsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
-  startsBefore?: InputMaybe<Scalars['TzLessDateTime']>;
+  startsAfter?: InputMaybe<Scalars['DateTime']>;
+  startsBefore?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type SelectionFromOptionsConfig = {
@@ -2928,8 +2925,8 @@ export type TextInputConfig = {
 };
 
 export type TimeSpan = {
-  from?: InputMaybe<Scalars['TzLessDateTime']>;
-  to?: InputMaybe<Scalars['TzLessDateTime']>;
+  from?: InputMaybe<Scalars['DateTime']>;
+  to?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type TokenPayloadUnion = AuthJwtApiTokenPayload | AuthJwtPayload;
@@ -4184,7 +4181,7 @@ export type GetScheduledEventsCoreQueryVariables = Exact<{
 }>;
 
 
-export type GetScheduledEventsCoreQuery = { scheduledEventsCore: Array<{ id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: string, endsAt: string, status: ProposalBookingStatusCore, localContactId: number | null, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, instrument: { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }, esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any } | null, visit: { registrations: Array<{ startsAt: any | null, endsAt: any | null, trainingStatus: TrainingStatus, userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }>, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } } | null }> };
+export type GetScheduledEventsCoreQuery = { scheduledEventsCore: Array<{ id: number, proposalPk: number | null, bookingType: ScheduledEventBookingType, startsAt: any, endsAt: any, status: ProposalBookingStatusCore, localContactId: number | null, proposal: { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, instrument: { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null }, esi: { id: number, creatorId: number, questionaryId: number, isSubmitted: boolean, created: any } | null, visit: { registrations: Array<{ startsAt: any | null, endsAt: any | null, trainingStatus: TrainingStatus, userId: number, visitId: number, registrationQuestionaryId: number | null, isRegistrationSubmitted: boolean, trainingExpiryDate: any | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }>, teamLead: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } } | null }> };
 
 export type AddProposalWorkflowStatusMutationVariables = Exact<{
   proposalWorkflowId: Scalars['Int'];
