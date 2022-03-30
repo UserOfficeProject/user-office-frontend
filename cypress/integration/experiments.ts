@@ -1,6 +1,6 @@
 import initialDBData from '../support/initialDBData';
 
-context('Event log tests', () => {
+context('Experiments tests', () => {
   before(() => {
     cy.resetDB(true);
   });

@@ -1,7 +1,6 @@
 import MaterialTable from '@material-table/core';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
-import moment from 'moment';
 import React from 'react';
 
 import { GetScheduledEventsCoreQuery, TrainingStatus } from 'generated/sdk';
@@ -52,7 +51,7 @@ interface ScheduledEventDetailsTableProps {
 }
 
 const formatDate = (date: Date | null) =>
-  date ? moment(date).format('yyyy-MM-dd') : 'N/A';
+  date ? DateTime.fromJSDate(date).toFormat('yyyy-MM-dd') : 'N/A';
 
 function ExperimentVisitsTable({
   scheduledEvent,

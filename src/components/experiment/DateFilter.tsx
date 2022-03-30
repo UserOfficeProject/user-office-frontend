@@ -23,24 +23,27 @@ export function getRelativeDatesFromToday(period: TimeSpan): {
   from?: Date;
   to?: Date;
 } {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = DateTime.local().set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 
-  let from: Date | undefined;
-  let to: Date | undefined;
-  const DAY_IN_MS = 1000 * 60 * 60 * 24;
+  let from: DateTime | undefined;
+  let to: DateTime | undefined;
   switch (period) {
     case TimeSpan.TODAY:
       from = today;
-      to = new Date(today.getTime() + 1 * DAY_IN_MS);
+      to = today.plus({ days: 1 });
       break;
     case TimeSpan.NEXT_7_DAYS:
       from = today;
-      to = new Date(today.getTime() + 7 * DAY_IN_MS);
+      to = today.plus({ days: 7 });
       break;
     case TimeSpan.NEXT_30_DAYS:
       from = today;
-      to = new Date(today.getTime() + 30 * DAY_IN_MS);
+      to = today.plus({ days: 30 });
       break;
     case TimeSpan.NONE:
       from = undefined;
@@ -50,7 +53,7 @@ export function getRelativeDatesFromToday(period: TimeSpan): {
       throw new Error(`Unknown period: ${period}`);
   }
 
-  return { from, to };
+  return { from: from?.toJSDate(), to: to?.toJSDate() };
 }
 
 interface DateFilterProps {
