@@ -8,7 +8,7 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { ProposalStatus } from 'generated/sdk';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
 
@@ -85,12 +85,12 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="selectedStatusId"
                   label="Select proposal status"
                   loading={loadingProposalStatuses}
                   items={proposalStatuses.map((status) => ({
-                    value: status.id.toString(),
+                    value: status.id,
                     text: status.name,
                   }))}
                   required

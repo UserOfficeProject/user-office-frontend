@@ -6,7 +6,7 @@ import React from 'react';
 
 import { Option } from 'utils/utilTypes';
 
-type TProps = {
+type FormikUIAutocompleteProps = {
   items: Option[];
   name: string;
   label: string;
@@ -15,19 +15,17 @@ type TProps = {
   required?: boolean;
   disabled?: boolean;
   InputProps?: Partial<InputProps> & { 'data-cy': string };
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const FormikDropdown: React.FC<TProps> = ({
+const FormikUIAutocomplete: React.FC<FormikUIAutocompleteProps> = ({
+  items,
   name,
   label,
-  required,
-  disabled,
   loading = false,
   noOptionsText,
-  items,
+  required,
+  disabled,
   InputProps,
-  ...props
 }) => {
   const options = items.map((item) => item.value);
 
@@ -39,13 +37,6 @@ const FormikDropdown: React.FC<TProps> = ({
       loading={loading}
       options={options}
       noOptionsText={noOptionsText}
-      isOptionEqualToValue={(
-        option: string | number | null,
-        value: string | number | null
-      ) => {
-        // TODO: Check if this is really needed or it can go without the option isOptionEqualToValue
-        return option === value;
-      }}
       getOptionLabel={(option: number | string) => {
         const foundOption = items.find((item) => item.value === option);
 
@@ -64,4 +55,4 @@ const FormikDropdown: React.FC<TProps> = ({
   );
 };
 
-export default FormikDropdown;
+export default FormikUIAutocomplete;

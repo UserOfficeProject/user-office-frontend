@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import {
   Proposal,
@@ -193,7 +193,7 @@ const FinalRankingForm: React.FC<FinalRankingFormProps> = ({
                       !hasWriteAccess || shouldDisableForm(isSubmitting)
                     }
                   />
-                  <FormikDropdown
+                  <FormikUIAutocomplete
                     name="recommendation"
                     label="Recommendation"
                     data-cy="proposalSepMeetingRecommendation"

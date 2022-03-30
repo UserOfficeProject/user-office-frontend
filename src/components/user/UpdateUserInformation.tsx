@@ -18,7 +18,7 @@ import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import React, { useState, useContext } from 'react';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { UserContext } from 'context/UserContextProvider';
 import {
@@ -223,7 +223,7 @@ export default function UpdateUserInformation(props: { id: number }) {
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <LocalizationProvider dateAdapter={DateAdapter}>
-                  <FormikDropdown
+                  <FormikUIAutocomplete
                     name="user_title"
                     label="Title"
                     items={[
@@ -271,7 +271,7 @@ export default function UpdateUserInformation(props: { id: number }) {
                     fullWidth
                     data-cy="preferredname"
                   />
-                  <FormikDropdown
+                  <FormikUIAutocomplete
                     name="gender"
                     label="Gender"
                     items={[
@@ -293,7 +293,7 @@ export default function UpdateUserInformation(props: { id: number }) {
                       required
                     />
                   )}
-                  <FormikDropdown
+                  <FormikUIAutocomplete
                     name="nationality"
                     label="Nationality"
                     items={nationalitiesList}
@@ -346,7 +346,7 @@ export default function UpdateUserInformation(props: { id: number }) {
                   data-cy="username"
                   disabled={true}
                 />
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="organisation"
                   label="Organisation"
                   items={institutionsList}

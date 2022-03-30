@@ -11,7 +11,7 @@ import React, { useContext, useState } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { UserContext } from 'context/UserContextProvider';
 import {
   TechnicalReviewStatus,
@@ -153,7 +153,7 @@ const ProposalTechnicalReview = ({
             <PromptIfDirty />
             <Grid container spacing={2}>
               <Grid item sm={6} xs={12}>
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="status"
                   label="Status"
                   items={[

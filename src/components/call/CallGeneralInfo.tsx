@@ -26,7 +26,7 @@ import { TextField } from 'formik-mui';
 import { DateTimePicker } from 'formik-mui-lab';
 import React, { useContext } from 'react';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   AllocationTimeUnits,
@@ -259,7 +259,7 @@ const CallGeneralInfo: React.FC<{
         />
       </LocalizationProvider>
 
-      <FormikDropdown
+      <FormikUIAutocomplete
         name="templateId"
         label="Call template"
         loading={loadingTemplates}
@@ -274,7 +274,7 @@ const CallGeneralInfo: React.FC<{
         required
       />
       {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
-        <FormikDropdown
+        <FormikUIAutocomplete
           name="esiTemplateId"
           label="ESI template"
           loading={loadingTemplates}
@@ -289,7 +289,7 @@ const CallGeneralInfo: React.FC<{
           required
         />
       )}
-      <FormikDropdown
+      <FormikUIAutocomplete
         name="proposalWorkflowId"
         label="Proposal workflow"
         loading={loadingProposalWorkflows}
@@ -305,7 +305,7 @@ const CallGeneralInfo: React.FC<{
         }}
         required
       />
-      <FormikDropdown
+      <FormikUIAutocomplete
         name="allocationTimeUnit"
         label="Allocation time unit"
         items={allocationTimeUnitOptions}

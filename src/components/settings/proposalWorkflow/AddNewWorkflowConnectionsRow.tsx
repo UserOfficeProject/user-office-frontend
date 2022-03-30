@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import * as yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 
 const addNewWorkflowConnectionsRowValidationSchema = yup.object().shape({
   selectedParentDroppableId: yup
@@ -70,7 +70,7 @@ const AddNewWorkflowConnectionsRow: React.FC<
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="selectedParentDroppableId"
                   label="Select parent droppable group"
                   items={parentDroppableIds.map((parentDroppableId, index) => ({
@@ -83,7 +83,7 @@ const AddNewWorkflowConnectionsRow: React.FC<
                   }))}
                   required
                 />
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="numberOfColumns"
                   label="Select number of columns"
                   items={[2, 3, 4].map((numberOfColumn) => ({

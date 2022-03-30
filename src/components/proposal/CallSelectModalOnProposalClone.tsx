@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import * as yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { Call } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 
@@ -75,11 +75,11 @@ const CallSelectModalOnProposalsClone: React.FC<
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="selectedCallId"
                   label="Select call"
                   items={calls.map((call) => ({
-                    value: call.id.toString(),
+                    value: call.id,
                     text: call.shortCode,
                   }))}
                   loading={loadingCalls}

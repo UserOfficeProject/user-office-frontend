@@ -5,7 +5,7 @@ import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React, { FC, useState } from 'react';
 import * as Yup from 'yup';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { QuestionExcerpt } from 'components/questionary/questionaryComponents/QuestionExcerpt';
@@ -92,7 +92,7 @@ export const QuestionTemplateRelationNumberForm: FC<
                 data-cy="units"
               />
 
-              <FormikDropdown
+              <FormikUIAutocomplete
                 name="config.numberValueConstraint"
                 label="Value constraint"
                 InputProps={{

@@ -10,7 +10,7 @@ import { TextField } from 'formik-mui';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { InstrumentFragment, UserRole } from 'generated/sdk';
 import { useUsersData } from 'hooks/user/useUsersData';
@@ -122,7 +122,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             disabled={isExecutingCall}
           />
 
-          <FormikDropdown
+          <FormikUIAutocomplete
             name="managerUserId"
             label="Beamline manager"
             noOptionsText="No one"

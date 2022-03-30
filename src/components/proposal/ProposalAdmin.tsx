@@ -10,7 +10,7 @@ import React from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { UserRole } from 'generated/sdk';
 import { ProposalEndStatus } from 'generated/sdk';
 import { ProposalData } from 'hooks/proposal/useProposalData';
@@ -97,7 +97,7 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
             <PromptIfDirty />
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <FormikDropdown
+                <FormikUIAutocomplete
                   name="finalStatus"
                   label="Final status"
                   data-cy="proposalFinalStatus"

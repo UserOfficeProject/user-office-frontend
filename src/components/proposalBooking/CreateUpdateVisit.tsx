@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import ErrorMessage from 'components/common/ErrorMessage';
-import FormikDropdown from 'components/common/FormikDropdown';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import Participants from 'components/proposal/ProposalParticipants';
 import { BasicUserDetails } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -88,7 +88,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
           />
           <ErrorMessage name="team" />
 
-          <FormikDropdown
+          <FormikUIAutocomplete
             items={values.team.map((user) => ({
               text: getFullUserName(user),
               value: user.id,
