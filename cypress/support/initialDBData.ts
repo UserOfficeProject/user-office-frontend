@@ -193,6 +193,7 @@ export default {
   proposalStatuses: {
     draft: {
       id: 1,
+      name: 'DRAFT',
     },
     feasibilityReview: {
       id: 2,

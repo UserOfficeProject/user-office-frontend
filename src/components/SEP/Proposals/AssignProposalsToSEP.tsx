@@ -88,6 +88,7 @@ const AssignProposalsToSEP: React.FC<AssignProposalToSEPProps> = ({
                   }))}
                   disabled={isSubmitting}
                   noOptionsText="No SEPs"
+                  data-cy="sep-selection"
                 />
               </Grid>
             </Grid>

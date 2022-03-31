@@ -90,6 +90,7 @@ const AssignProposalsToInstrument: React.FC<
                   }))}
                   disabled={isSubmitting}
                   noOptionsText="No instruments"
+                  data-cy="instrument-selection"
                 />
               </Grid>
             </Grid>

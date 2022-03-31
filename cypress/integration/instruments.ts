@@ -78,7 +78,6 @@ context('Instrument tests', () => {
       cy.contains(instrument1.name);
       cy.contains(instrument1.shortCode);
       cy.contains(instrument1.description);
-      cy.contains(scientist1.lastName);
     });
 
     it('User Officer should be able to update Instrument', () => {
@@ -204,7 +203,7 @@ context('Instrument tests', () => {
 
       cy.get('#selectedInstrumentId-input').first().click();
 
-      cy.get("[id='menu-selectedInstrumentId'] li")
+      cy.get('[data-cy="instrument-selection"] li')
         .contains(instrument1.name)
         .click();
 

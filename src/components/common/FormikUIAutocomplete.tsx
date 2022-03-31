@@ -15,6 +15,7 @@ type FormikUIAutocompleteProps = {
   required?: boolean;
   disabled?: boolean;
   InputProps?: Partial<InputProps> & { 'data-cy': string };
+  'data-cy'?: string;
 };
 
 const FormikUIAutocomplete: React.FC<FormikUIAutocompleteProps> = ({
@@ -26,6 +27,7 @@ const FormikUIAutocomplete: React.FC<FormikUIAutocompleteProps> = ({
   required,
   disabled,
   InputProps,
+  ...props
 }) => {
   const options = items.map((item) => item.value);
 
@@ -51,6 +53,7 @@ const FormikUIAutocomplete: React.FC<FormikUIAutocompleteProps> = ({
           InputProps={{ ...params.InputProps, ...InputProps }}
         />
       )}
+      ListboxProps={{ 'data-cy': props['data-cy'] }}
     />
   );
 };

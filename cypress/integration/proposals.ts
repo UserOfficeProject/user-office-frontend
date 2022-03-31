@@ -276,7 +276,7 @@ context('Proposal tests', () => {
       cy.contains('Hour').click();
 
       cy.get('[data-cy="call-esi-template"]').click();
-      cy.get('[role="listbox"] [tabindex="0"]').click();
+      cy.get('[role="listbox"] li').first().click();
 
       cy.get('[data-cy="next-step"]').click();
       cy.get('[data-cy="next-step"]').click();
@@ -306,7 +306,7 @@ context('Proposal tests', () => {
       cy.get('[aria-label="Clone proposal"]').first().click();
 
       cy.get('#selectedCallId-input').click();
-      cy.get('#menu-selectedCallId').contains(newCall.shortCode).click();
+      cy.get('[data-cy="call-selection"]').contains(newCall.shortCode).click();
 
       cy.get('[data-cy="submit"]').click();
 
@@ -406,10 +406,8 @@ context('Proposal tests', () => {
       cy.finishedLoading();
 
       cy.get('[role="presentation"]')
-        .find('input[name="selectedStatusId"]')
-        .should('have.value', `${initialDBData.proposalStatuses.draft.id}`);
-
-      cy.get('#selectedStatusId-input').should('have.text', 'DRAFT');
+        .find('[#selectedStatusId-input')
+        .should('have.value', `${initialDBData.proposalStatuses.draft.name}`);
 
       // Close the modal
       cy.get('body').trigger('keydown', { keyCode: 27 });
@@ -425,7 +423,7 @@ context('Proposal tests', () => {
       cy.finishedLoading();
 
       cy.get('[role="presentation"]')
-        .find('input[name="selectedStatusId"]')
+        .find('[#selectedStatusId-input')
         .should(
           'have.value',
           `${initialDBData.proposalStatuses.sepMeeting.id}`
@@ -450,7 +448,7 @@ context('Proposal tests', () => {
       cy.get('[data-cy="change-proposal-status"]').click();
 
       cy.get('[role="presentation"]')
-        .find('input[name="selectedStatusId"]')
+        .find('[#selectedStatusId-input')
         .should('not.have.value');
 
       cy.get('[data-cy="proposal-different-statuses-change"]')

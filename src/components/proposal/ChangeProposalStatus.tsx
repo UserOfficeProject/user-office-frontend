@@ -48,8 +48,8 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
   );
 
   const selectedProposalsStatus = allSelectedProposalsHaveSameStatus
-    ? selectedProposalStatuses[0].toString()
-    : '';
+    ? selectedProposalStatuses[0]
+    : undefined;
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +59,7 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
         }}
         onSubmit={async (values, actions): Promise<void> => {
           const selectedStatus = proposalStatuses.find(
-            (call) => call.id === +values.selectedStatusId
+            (call) => call.id === values.selectedStatusId
           );
 
           if (!selectedStatus) {
@@ -98,13 +98,13 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
                 />
               </Grid>
             </Grid>
-            {values.selectedStatusId === '1' && (
+            {values.selectedStatusId === 1 && (
               <Alert severity="warning">
                 Be aware that changing status to &quot;DRAFT&quot; will reopen
                 proposal for changes and submission.
               </Alert>
             )}
-            {values.selectedStatusId === '8' &&
+            {values.selectedStatusId === 8 &&
               !allSelectedProposalsHaveInstrument && (
                 <Alert severity="warning">
                   Be aware that proposal/s not assigned to an instrument will

@@ -56,7 +56,7 @@ context('Proposal administration tests', () => {
 
       cy.get('#finalStatus-input').click();
 
-      cy.get('[data-value="ACCEPTED"]').click();
+      cy.get('[data-cy="proposalFinalStatus"] li').contains('Accepted').click();
 
       cy.get('[data-cy="managementTimeAllocation"] input')
         .clear()

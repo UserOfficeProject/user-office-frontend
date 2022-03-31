@@ -13,7 +13,7 @@ import { Call } from 'generated/sdk';
 import { useCallsData } from 'hooks/call/useCallsData';
 
 const callSelectModalOnProposalsCloneValidationSchema = yup.object().shape({
-  selectedCallId: yup.string().required('You must select active call'),
+  selectedCallId: yup.number().required('You must select active call'),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -45,11 +45,11 @@ const CallSelectModalOnProposalsClone: React.FC<
     <Container component="main" maxWidth="xs">
       <Formik
         initialValues={{
-          selectedCallId: '',
+          selectedCallId: undefined,
         }}
         onSubmit={async (values, actions): Promise<void> => {
           const selectedCall = calls.find(
-            (call) => call.id === +values.selectedCallId
+            (call) => call.id === values.selectedCallId
           );
 
           if (!selectedCall) {
@@ -84,6 +84,7 @@ const CallSelectModalOnProposalsClone: React.FC<
                   }))}
                   loading={loadingCalls}
                   required
+                  data-cy="call-selection"
                 />
               </Grid>
             </Grid>

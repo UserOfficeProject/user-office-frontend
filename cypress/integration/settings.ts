@@ -629,7 +629,7 @@ context('Settings tests', () => {
 
       cy.get('#selectedSEPId-input').first().click();
 
-      cy.get("[id='menu-selectedSEPId'] li").first().click();
+      cy.get('[data-cy="sep-selection"] li').first().click();
 
       cy.get('[data-cy="submit"]').click();
 
@@ -844,12 +844,10 @@ context('Settings tests', () => {
       cy.contains('Add multi-column row').click();
 
       cy.get('#selectedParentDroppableId-input').click();
-      cy.get(
-        '[role="presentation"] [data-value="proposalWorkflowConnections_0"]'
-      ).click();
+      cy.get('[data-cy="selectParentDroppableGroup"] li').first().click();
 
-      cy.get('#numberOfColumns-input').click();
-      cy.get('[role="presentation"] [data-value="2"]').click();
+      cy.get('[data-cy="numberOfColumns"]').click();
+      cy.get('[data-cy="numberOfColumnsOptions"] li[data-value="2"]').click();
 
       cy.contains('Add row').click();
 
