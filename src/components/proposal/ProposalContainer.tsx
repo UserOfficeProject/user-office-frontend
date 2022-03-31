@@ -44,10 +44,38 @@ export default function ProposalContainer(props: {
     }
   );
 
-  const { state, dispatch } = QuestionarySubmissionModel(initialState, [
-    eventHandlers,
-    customEventHandlers,
-  ]);
+  const customReducer = (
+    state: ProposalSubmissionState,
+    draftState: ProposalSubmissionState,
+    action: Event
+  ) => {
+    switch (action.type) {
+      case 'USER_INVITE_ADDED':
+        const isInTheList = state.userInvites.some(
+          (invite) => invite.email === action.invite.email
+        );
+        if (isInTheList === false) {
+          draftState.userInvites.push(action.invite);
+        }
+        break;
+      case 'USER_INVITES_REMOVED':
+        draftState.userInvites = draftState.userInvites.filter(
+          (invite) =>
+            action.invites.filter(
+              (inviteToRemove) => invite.email === inviteToRemove.email
+            ).length === 0
+        );
+        break;
+    }
+
+    return draftState;
+  };
+
+  const { state, dispatch } = QuestionarySubmissionModel(
+    initialState,
+    [eventHandlers, customEventHandlers],
+    customReducer
+  );
 
   const hasReferenceNumberFormat = !!state.proposal.call?.referenceNumberFormat;
 

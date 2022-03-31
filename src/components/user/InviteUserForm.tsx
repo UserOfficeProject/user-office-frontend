@@ -1,70 +1,68 @@
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
-import { createUserByEmailInviteValidationSchema } from '@user-office-software/duo-validation/lib/User';
-import { Field, Form, Formik } from 'formik';
+import { Typography, Button } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Box } from '@mui/system';
+import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
 import React from 'react';
+import * as Yup from 'yup';
 
-import { BasicUserDetails, UserRole } from 'generated/sdk';
+import { UserRole } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-import { FunctionType } from 'utils/utilTypes';
 
-type InviteUserFormProps = {
-  action: FunctionType<void, [BasicUserDetails]>;
-  title: string;
-  userRole: UserRole;
-  close: FunctionType;
-};
-
-const useStyles = makeStyles({
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
+const useStyles = makeStyles(() => ({
   button: {
-    marginTop: '25px',
     marginLeft: '10px',
   },
-});
+}));
 
-const InviteUserForm: React.FC<InviteUserFormProps> = ({
-  action,
-  title,
-  userRole,
-  close,
-}) => {
+interface FormType {
+  firstname: string;
+  lastname: string;
+  email: string;
+  userRole: UserRole;
+}
+
+interface InviteUserFormProps {
+  title: string;
+  initialValues: FormType;
+  onSubmit: (values: FormType) => void;
+  close: () => void;
+}
+
+function InviteUserForm(props: InviteUserFormProps) {
   const { api } = useDataApiWithFeedback();
   const classes = useStyles();
+  const { title, initialValues, onSubmit, close } = props;
+
+  const validationSchema = Yup.object().shape({
+    firstname: Yup.string().required(),
+    lastname: Yup.string().required(),
+    email: Yup.string()
+      .email()
+      .required()
+      .test(
+        'checkAlreadyExists',
+        'Can not invite user with this email, because user is already registered in the UserOffice. Please select the user searching by email.',
+        (email) => {
+          if (!email) {
+            return true;
+          }
+
+          return api()
+            .getBasicUserDetailsByEmail({ email })
+            .then(
+              ({ basicUserDetailsByEmail }) => basicUserDetailsByEmail === null
+            );
+        }
+      ),
+    userRole: Yup.string().oneOf(Object.keys(UserRole)).required(),
+  });
 
   return (
     <Formik
-      initialValues={{
-        firstname: '',
-        lastname: '',
-        email: '',
-        userRole: userRole,
-      }}
-      onSubmit={async (values): Promise<void> => {
-        const createResult = await api(
-          'Invitation sent successfully!'
-        ).createUserByEmailInvite({
-          firstname: values.firstname,
-          lastname: values.lastname,
-          email: values.email,
-          userRole: userRole,
-        });
-        if (createResult?.createUserByEmailInvite.id) {
-          action({
-            id: createResult.createUserByEmailInvite.id,
-            firstname: values.firstname,
-            lastname: values.lastname,
-            organisation: '',
-          } as BasicUserDetails);
-          close();
-        }
-      }}
-      validationSchema={createUserByEmailInviteValidationSchema(UserRole)}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
     >
       {() => (
         <Form>
@@ -99,26 +97,28 @@ const InviteUserForm: React.FC<InviteUserFormProps> = ({
             data-cy="email"
           />
 
-          <div className={classes.buttons}>
+          <Box display="flex" justifyContent="flex-end" marginTop="25px">
             <Button
               onClick={() => close()}
+              data-cy="invitation-close"
               color="secondary"
               className={classes.button}
             >
               Cancel
             </Button>
             <Button
-              className={classes.button}
               type="submit"
               data-cy="invitation-submit"
+              color="primary"
+              className={classes.button}
             >
               {title}
             </Button>
-          </div>
+          </Box>
         </Form>
       )}
     </Formik>
   );
-};
+}
 
 export default InviteUserForm;

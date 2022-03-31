@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import MaterialTable, { Action } from '@material-table/core';
 import CloseIcon from '@mui/icons-material/Close';
 import Email from '@mui/icons-material/Email';
@@ -22,6 +23,7 @@ import {
   GetBasicUserDetailsByEmailQuery,
   GetUsersQueryVariables,
   FeatureId,
+  EmailInviteInput,
 } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { usePrevColabs } from 'hooks/user/usePrevColabs';
@@ -107,6 +109,7 @@ type PeopleTableProps = {
   onUpdate?: FunctionType<void, [any[]]>;
   emailInvite?: boolean;
   selectedUsers?: number[];
+  onEmailInvite?: (invite: EmailInviteInput) => Promise<void>;
 };
 
 const useStyles = makeStyles({
@@ -197,10 +200,18 @@ const ProposalsPeopleTable: React.FC<PeopleTableProps> = (props) => {
   if (sendUserEmail && props.invitationUserRole && action) {
     return (
       <InviteUserForm
-        title={'Invite User'}
-        action={action.fn}
+        title={`Invite user`}
+        initialValues={{
+          firstname: '',
+          lastname: '',
+          email: '',
+          userRole: UserRole.USER,
+        }}
+        onSubmit={async (invite) => {
+          props.onEmailInvite?.(invite);
+          setSendUserEmail(false);
+        }}
         close={() => setSendUserEmail(false)}
-        userRole={props.invitationUserRole}
       />
     );
   }

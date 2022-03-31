@@ -31,7 +31,7 @@ import { useUsersData } from 'hooks/user/useUsersData';
 import { tableIcons } from 'utils/materialIcons';
 import { FunctionType } from 'utils/utilTypes';
 
-import InviteUserForm from './InviteUserForm';
+import InviteUser from './InviteUser';
 
 type InvitationButtonProps = {
   title: string;
@@ -215,7 +215,7 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
 
   if (sendUserEmail && props.invitationUserRole && action) {
     return (
-      <InviteUserForm
+      <InviteUser
         title={getTitle(props.invitationUserRole)}
         action={action.fn}
         close={() => setSendUserEmail(false)}
@@ -358,7 +358,7 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
           style={{ backdropFilter: 'blur(6px)' }}
         >
           <DialogContent>
-            <InviteUserForm
+            <InviteUser
               title={inviteUserModal.title}
               userRole={inviteUserModal.userRole}
               close={() =>

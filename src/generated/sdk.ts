@@ -236,8 +236,13 @@ export type CreateProposalWorkflowInput = {
 };
 
 export type CreateUserByEmailInviteResponseWrap = {
-  id: Maybe<Scalars['Int']>;
   rejection: Maybe<Rejection>;
+  user: Maybe<BasicUserDetails>;
+};
+
+export type CreateUsersByEmailInviteResponseWrap = {
+  rejection: Maybe<Rejection>;
+  users: Maybe<Array<BasicUserDetails>>;
 };
 
 export enum DataType {
@@ -286,6 +291,13 @@ export enum DependenciesLogicOperator {
   AND = 'AND',
   OR = 'OR'
 }
+
+export type EmailInviteInput = {
+  email: Scalars['String'];
+  firstname: Scalars['String'];
+  lastname: Scalars['String'];
+  userRole: UserRole;
+};
 
 export type EmailVerificationResponseWrap = {
   rejection: Maybe<Rejection>;
@@ -647,6 +659,7 @@ export type Mutation = {
   createUnit: UnitResponseWrap;
   createUser: UserResponseWrap;
   createUserByEmailInvite: CreateUserByEmailInviteResponseWrap;
+  createUsersByEmailInvite: CreateUsersByEmailInviteResponseWrap;
   createVisit: VisitResponseWrap;
   createVisitRegistration: VisitRegistrationResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
@@ -716,6 +729,7 @@ export type Mutation = {
   updateInstrument: InstrumentResponseWrap;
   updatePassword: BasicUserDetailsResponseWrap;
   updateProposal: ProposalResponseWrap;
+  updateProposalInvites: ProposalInvitesResponseWrap;
   updateProposalStatus: ProposalStatusResponseWrap;
   updateProposalWorkflow: ProposalWorkflowResponseWrap;
   updateQuestion: QuestionResponseWrap;
@@ -1026,10 +1040,12 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationCreateUserByEmailInviteArgs = {
-  email: Scalars['String'];
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
-  userRole: UserRole;
+  emailInvite: EmailInviteInput;
+};
+
+
+export type MutationCreateUsersByEmailInviteArgs = {
+  emailInvites: Array<EmailInviteInput>;
 };
 
 
@@ -1424,6 +1440,12 @@ export type MutationUpdateProposalArgs = {
 };
 
 
+export type MutationUpdateProposalInvitesArgs = {
+  invites: Array<ProposalInviteInput>;
+  proposalPk: Scalars['Int'];
+};
+
+
 export type MutationUpdateProposalStatusArgs = {
   updatedProposalStatusInput: UpdateProposalStatusInput;
 };
@@ -1743,6 +1765,27 @@ export type ProposalEsiBasisConfig = {
 export type ProposalEvent = {
   description: Maybe<Scalars['String']>;
   name: Event;
+};
+
+export type ProposalInvite = {
+  email: Scalars['String'];
+  firstname: Scalars['String'];
+  id: Scalars['Int'];
+  inviteCode: Scalars['String'];
+  isNotified: Scalars['Boolean'];
+  lastname: Scalars['String'];
+  proposalPk: Scalars['Int'];
+};
+
+export type ProposalInviteInput = {
+  email: Scalars['String'];
+  firstname: Scalars['String'];
+  lastname: Scalars['String'];
+};
+
+export type ProposalInvitesResponseWrap = {
+  invites: Maybe<Array<ProposalInvite>>;
+  rejection: Maybe<Rejection>;
 };
 
 export type ProposalPkWithCallId = {
@@ -3805,6 +3848,8 @@ export type CoreTechnicalReviewFragment = { id: number, comment: string | null, 
 
 export type ProposalFragment = { primaryKey: number, title: string, abstract: string, statusId: number, publicStatus: ProposalPublicStatus, proposalId: string, finalStatus: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, created: any, updated: any, callId: number, questionaryId: number, notified: boolean, submitted: boolean, managementTimeAllocation: number | null, managementDecisionSubmitted: boolean, technicalReviewAssignee: number | null, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null, sepMeetingDecision: { proposalPk: number, recommendation: ProposalEndStatus | null, commentForUser: string | null, commentForManagement: string | null, rankOrder: number | null, submitted: boolean, submittedBy: number | null } | null };
 
+export type ProposalInviteFragment = { id: number, proposalPk: number, firstname: string, lastname: string, email: string, isNotified: boolean, inviteCode: string };
+
 export type GetInstrumentScientistProposalsQueryVariables = Exact<{
   filter?: InputMaybe<ProposalsFilter>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -3871,6 +3916,14 @@ export type UpdateProposalMutationVariables = Exact<{
 
 
 export type UpdateProposalMutation = { updateProposal: { proposal: { primaryKey: number, title: string, abstract: string, proposer: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type UpdateProposalInvitesMutationVariables = Exact<{
+  proposalPk: Scalars['Int'];
+  invites: Array<ProposalInviteInput> | ProposalInviteInput;
+}>;
+
+
+export type UpdateProposalInvitesMutation = { updateProposalInvites: { invites: Array<{ id: number, proposalPk: number, firstname: string, lastname: string, email: string, isNotified: boolean, inviteCode: string }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type GetUserProposalBookingsWithEventsQueryVariables = Exact<{
   endsAfter?: InputMaybe<Scalars['TzLessDateTime']>;
@@ -4655,15 +4708,19 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { createUser: { user: { id: number } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type CreateUserByEmailInviteMutationVariables = Exact<{
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
-  email: Scalars['String'];
-  userRole: UserRole;
+export type CreateUsersByEmailInviteMutationVariables = Exact<{
+  emailInvites: Array<EmailInviteInput> | EmailInviteInput;
 }>;
 
 
-export type CreateUserByEmailInviteMutation = { createUserByEmailInvite: { id: number | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type CreateUsersByEmailInviteMutation = { createUsersByEmailInvite: { users: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type CreateUserByEmailInviteMutationVariables = Exact<{
+  emailInvite: EmailInviteInput;
+}>;
+
+
+export type CreateUserByEmailInviteMutation = { createUserByEmailInvite: { user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -5114,6 +5171,17 @@ export const ProposalFragmentDoc = gql`
 }
     ${ProposalStatusFragmentDoc}
 ${SepMeetingDecisionFragmentDoc}`;
+export const ProposalInviteFragmentDoc = gql`
+    fragment proposalInvite on ProposalInvite {
+  id
+  proposalPk
+  firstname
+  lastname
+  email
+  isNotified
+  inviteCode
+}
+    `;
 export const TopicFragmentDoc = gql`
     fragment topic on Topic {
   title
@@ -6975,6 +7043,19 @@ export const UpdateProposalDocument = gql`
 }
     ${BasicUserDetailsFragmentDoc}
 ${RejectionFragmentDoc}`;
+export const UpdateProposalInvitesDocument = gql`
+    mutation updateProposalInvites($proposalPk: Int!, $invites: [ProposalInviteInput!]!) {
+  updateProposalInvites(proposalPk: $proposalPk, invites: $invites) {
+    invites {
+      ...proposalInvite
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${ProposalInviteFragmentDoc}
+${RejectionFragmentDoc}`;
 export const GetUserProposalBookingsWithEventsDocument = gql`
     query getUserProposalBookingsWithEvents($endsAfter: TzLessDateTime, $status: [ProposalBookingStatusCore!], $instrumentId: Int) {
   me {
@@ -8318,21 +8399,32 @@ export const CreateUserDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const CreateUserByEmailInviteDocument = gql`
-    mutation createUserByEmailInvite($firstname: String!, $lastname: String!, $email: String!, $userRole: UserRole!) {
-  createUserByEmailInvite(
-    firstname: $firstname
-    lastname: $lastname
-    email: $email
-    userRole: $userRole
-  ) {
+export const CreateUsersByEmailInviteDocument = gql`
+    mutation createUsersByEmailInvite($emailInvites: [EmailInviteInput!]!) {
+  createUsersByEmailInvite(emailInvites: $emailInvites) {
+    users {
+      ...basicUserDetails
+    }
     rejection {
       ...rejection
     }
-    id
   }
 }
-    ${RejectionFragmentDoc}`;
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
+export const CreateUserByEmailInviteDocument = gql`
+    mutation createUserByEmailInvite($emailInvite: EmailInviteInput!) {
+  createUserByEmailInvite(emailInvite: $emailInvite) {
+    user {
+      ...basicUserDetails
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${BasicUserDetailsFragmentDoc}
+${RejectionFragmentDoc}`;
 export const DeleteUserDocument = gql`
     mutation deleteUser($id: Int!) {
   deleteUser(id: $id) {
@@ -9132,6 +9224,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     updateProposal(variables: UpdateProposalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateProposalMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateProposalMutation>(UpdateProposalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateProposal');
     },
+    updateProposalInvites(variables: UpdateProposalInvitesMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateProposalInvitesMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateProposalInvitesMutation>(UpdateProposalInvitesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateProposalInvites');
+    },
     getUserProposalBookingsWithEvents(variables?: GetUserProposalBookingsWithEventsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserProposalBookingsWithEventsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserProposalBookingsWithEventsQuery>(GetUserProposalBookingsWithEventsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserProposalBookingsWithEvents');
     },
@@ -9389,6 +9484,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createUser(variables: CreateUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUserMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser');
+    },
+    createUsersByEmailInvite(variables: CreateUsersByEmailInviteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUsersByEmailInviteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUsersByEmailInviteMutation>(CreateUsersByEmailInviteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUsersByEmailInvite');
     },
     createUserByEmailInvite(variables: CreateUserByEmailInviteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUserByEmailInviteMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserByEmailInviteMutation>(CreateUserByEmailInviteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUserByEmailInvite');

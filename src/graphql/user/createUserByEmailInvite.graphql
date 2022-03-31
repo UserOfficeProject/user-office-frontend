@@ -1,18 +1,15 @@
 mutation createUserByEmailInvite(
-  $firstname: String!
-  $lastname: String!
-  $email: String!
-  $userRole: UserRole!
+  $emailInvite: EmailInviteInput!
 ) {
   createUserByEmailInvite(
-    firstname: $firstname
-    lastname: $lastname
-    email: $email
-    userRole: $userRole
+    emailInvite: $emailInvite
   ) {
+    user {
+    ...basicUserDetails
+    }
     rejection {
       ...rejection
     }
-    id
+    
   }
 }

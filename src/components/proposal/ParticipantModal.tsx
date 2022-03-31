@@ -6,7 +6,7 @@ import React from 'react';
 import { useCheckAccess } from 'components/common/Can';
 import PeopleTable from 'components/user/PeopleTable';
 import ProposalPeopleTable from 'components/user/ProposalsPeopleTable';
-import { UserRole, BasicUserDetails } from 'generated/sdk';
+import { UserRole, BasicUserDetails, EmailInviteInput } from 'generated/sdk';
 
 function ParticipantModal(props: {
   title: string;
@@ -18,6 +18,7 @@ function ParticipantModal(props: {
   userRole?: UserRole;
   invitationUserRole?: UserRole;
   participant?: boolean;
+  onEmailInvite?: (invite: EmailInviteInput) => Promise<void>;
 }) {
   const addUser = (rowData: BasicUserDetails | BasicUserDetails[]) => {
     const addedUserDetails = rowData as BasicUserDetails;
@@ -38,6 +39,7 @@ function ParticipantModal(props: {
     selection: !!props.selection,
     onUpdate: (data: BasicUserDetails[]) => props.addParticipants(data),
     invitationUserRole: props.invitationUserRole || props.userRole,
+    onEmailInvite: props.onEmailInvite,
   };
 
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);

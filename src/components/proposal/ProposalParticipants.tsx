@@ -1,14 +1,14 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
-import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
 import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import PeopleTable from 'components/user/PeopleTable';
-import { BasicUserDetails, UserRole } from 'generated/sdk';
+import { BasicUserDetails, EmailInviteInput, UserRole } from 'generated/sdk';
 
 import ParticipantModal from './ParticipantModal';
 
@@ -30,6 +30,7 @@ type ParticipantsProps = {
   title: string;
   principalInvestigator?: number;
   preserveSelf?: boolean;
+  onEmailInvite?: (invite: EmailInviteInput) => Promise<void>;
 };
 
 const Participants: React.FC<ParticipantsProps> = ({
@@ -39,6 +40,7 @@ const Participants: React.FC<ParticipantsProps> = ({
   title,
   principalInvestigator,
   preserveSelf,
+  onEmailInvite,
 }) => {
   const [modalOpen, setOpen] = useState(false);
 
@@ -83,6 +85,7 @@ const Participants: React.FC<ParticipantsProps> = ({
         selection={true}
         userRole={UserRole.USER}
         participant={true}
+        onEmailInvite={onEmailInvite}
       />
 
       <FormControl margin="dense" fullWidth>

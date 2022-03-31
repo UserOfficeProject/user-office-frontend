@@ -1,13 +1,16 @@
 import { immerable } from 'immer';
 
-import { Questionary, TemplateGroupId } from 'generated/sdk';
+import { Questionary, TemplateGroupId, EmailInviteInput } from 'generated/sdk';
 
 import { QuestionarySubmissionState } from '../QuestionarySubmissionState';
 import { ProposalWithQuestionary } from './ProposalWithQuestionary';
 
 export class ProposalSubmissionState extends QuestionarySubmissionState {
   [immerable] = true;
-  constructor(public proposal: ProposalWithQuestionary) {
+  constructor(
+    public proposal: ProposalWithQuestionary,
+    public userInvites: EmailInviteInput[] = []
+  ) {
     super(TemplateGroupId.PROPOSAL, proposal);
     this.stepIndex = this.getInitialStepIndex();
   }

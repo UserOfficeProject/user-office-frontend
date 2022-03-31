@@ -12,6 +12,7 @@ import {
   useReducerWithMiddleWares,
 } from 'utils/useReducerWithMiddleWares';
 
+import { EmailInviteInput } from './../../generated/sdk';
 import { SampleFragment } from './../../generated/sdk';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
@@ -53,7 +54,15 @@ export type Event =
       sampleEsi: SampleEsiWithQuestionary;
     }
   | { type: 'ESI_SAMPLE_ESI_UPDATED'; sampleEsi: SampleEsiWithQuestionary }
-  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number };
+  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number }
+  | {
+      type: 'USER_INVITE_ADDED';
+      invite: EmailInviteInput;
+    }
+  | {
+      type: 'USER_INVITES_REMOVED';
+      invites: EmailInviteInput[];
+    };
 
 export interface WizardStepMetadata {
   title: string;
