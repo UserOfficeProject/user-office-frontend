@@ -305,8 +305,10 @@ context('Proposal tests', () => {
 
       cy.get('[aria-label="Clone proposal"]').first().click();
 
-      cy.get('#selectedCallId-input').click();
-      cy.get('[data-cy="call-selection"]').contains(newCall.shortCode).click();
+      cy.get('[data-cy="call-selection"]').click();
+      cy.get('[data-cy="call-selection-options"]')
+        .contains(newCall.shortCode)
+        .click();
 
       cy.get('[data-cy="submit"]').click();
 
@@ -405,9 +407,10 @@ context('Proposal tests', () => {
 
       cy.finishedLoading();
 
-      cy.get('[role="presentation"]')
-        .find('[#selectedStatusId-input')
-        .should('have.value', `${initialDBData.proposalStatuses.draft.name}`);
+      cy.get('[data-cy="status-selection"] input').should(
+        'have.value',
+        `${initialDBData.proposalStatuses.draft.name}`
+      );
 
       // Close the modal
       cy.get('body').trigger('keydown', { keyCode: 27 });
@@ -422,14 +425,10 @@ context('Proposal tests', () => {
 
       cy.finishedLoading();
 
-      cy.get('[role="presentation"]')
-        .find('[#selectedStatusId-input')
-        .should(
-          'have.value',
-          `${initialDBData.proposalStatuses.sepMeeting.id}`
-        );
-
-      cy.get('#selectedStatusId-input').should('have.text', 'SEP Meeting');
+      cy.get('[data-cy="status-selection"] input').should(
+        'have.value',
+        `${initialDBData.proposalStatuses.sepMeeting.name}`
+      );
 
       // Close the modal
       cy.get('body').trigger('keydown', { keyCode: 27 });
@@ -447,9 +446,7 @@ context('Proposal tests', () => {
         .check();
       cy.get('[data-cy="change-proposal-status"]').click();
 
-      cy.get('[role="presentation"]')
-        .find('[#selectedStatusId-input')
-        .should('not.have.value');
+      cy.get('[data-cy="status-selection"] input').should('not.have.value');
 
       cy.get('[data-cy="proposal-different-statuses-change"]')
         .should('exist')

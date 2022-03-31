@@ -36,7 +36,6 @@ export const QuestionTemplateRelationBooleanForm: FC<
               Label={{
                 label: 'User must check it to continue',
               }}
-              fullWidth
               data-cy="required"
             />
           </TitledContainer>

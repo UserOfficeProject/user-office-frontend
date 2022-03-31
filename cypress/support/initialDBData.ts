@@ -205,6 +205,7 @@ export default {
     },
     sepMeeting: {
       id: 12,
+      name: 'SEP Meeting',
     },
     editableSubmitted: {
       id: 14,

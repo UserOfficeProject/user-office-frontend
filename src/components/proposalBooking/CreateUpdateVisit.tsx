@@ -24,7 +24,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
 
   const initialValues = {
     team: visit?.registrations.map((registration) => registration.user) || [],
-    teamLeadUserId: visit?.teamLead.id,
+    teamLeadUserId: visit?.teamLead.id || null,
   };
 
   return (
@@ -36,6 +36,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
           .required('Please add visitors')
           .min(1, 'Please add visitors'),
         teamLeadUserId: Yup.number()
+          .typeError('Please select the team lead')
           .required('Please select the team lead')
           .test({
             message: 'Team lead must be one of the visitors',
@@ -100,6 +101,7 @@ function CreateUpdateVisit({ event, close }: CreateUpdateVisitProps) {
               margin: 'dense',
             }}
           />
+          <ErrorMessage name="teamLeadUserId" />
 
           <ActionButtonContainer>
             <Button

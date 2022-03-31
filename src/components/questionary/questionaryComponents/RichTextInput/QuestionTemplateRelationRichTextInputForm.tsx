@@ -36,7 +36,6 @@ export const QuestionTemplateRelationRichTextInputForm: FC<
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               data-cy="required"
             />
 

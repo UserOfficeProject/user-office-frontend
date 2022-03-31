@@ -70,7 +70,6 @@ export const QuestionTemplateRelationNumberForm: FC<
                 Label={{
                   label: 'Is required',
                 }}
-                fullWidth
                 InputProps={{ 'data-cy': 'required' }}
               />
 

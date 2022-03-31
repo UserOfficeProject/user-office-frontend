@@ -79,7 +79,6 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               data-cy="required"
             />
             <Field
@@ -87,6 +86,16 @@ export const QuestionFileUploadForm: FC<QuestionFormProps> = (props) => {
               name="config.file_type"
               label="Accepted file types"
               multiple
+              onClose={(event: React.SyntheticEvent) => {
+                event.preventDefault();
+              }}
+              renderValue={(selected?: string[] | string) => {
+                if (typeof selected === 'string') {
+                  return selected;
+                }
+
+                return selected?.join(', ') || '';
+              }}
               formControl={{
                 fullWidth: true,
                 required: true,

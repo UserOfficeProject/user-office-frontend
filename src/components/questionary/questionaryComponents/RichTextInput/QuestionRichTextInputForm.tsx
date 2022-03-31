@@ -53,7 +53,6 @@ export const QuestionRichTextInputForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               data-cy="required"
             />
             <Field

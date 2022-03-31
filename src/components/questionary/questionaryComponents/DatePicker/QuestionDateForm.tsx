@@ -106,7 +106,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'Include time',
               }}
-              fullWidth
               inputProps={{ 'data-cy': 'includeTime' }}
             />
             <Field
@@ -128,7 +127,6 @@ export const QuestionDateForm: FC<QuestionFormProps> = (props) => {
                 Label={{
                   label: 'Is required',
                 }}
-                fullWidth
                 data-cy="required"
               />
               <LocalizationProvider dateAdapter={DateAdapter}>

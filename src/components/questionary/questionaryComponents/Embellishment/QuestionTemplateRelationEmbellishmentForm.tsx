@@ -59,7 +59,6 @@ export const QuestionTemplateRelationEmbellishmentForm: FC<
             Label={{
               label: 'Omit from PDF',
             }}
-            fullWidth
             data-cy="omit"
           />
 

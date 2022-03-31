@@ -63,7 +63,6 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               data-cy="required"
             />
 
@@ -109,7 +108,6 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
                 Label={{
                   label: 'Multiple lines',
                 }}
-                fullWidth
                 data-cy="multiline"
               />
             </Box>
@@ -125,7 +123,6 @@ export const QuestionTextInputForm: FC<QuestionFormProps> = (props) => {
                 Label={{
                   label: 'Hide counter',
                 }}
-                fullWidth
                 data-cy="multiline"
               />
             </Box>

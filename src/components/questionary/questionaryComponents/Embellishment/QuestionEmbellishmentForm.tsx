@@ -73,7 +73,6 @@ export const QuestionEmbellishmentForm: FC<QuestionFormProps> = (props) => {
             Label={{
               label: 'Omit from PDF',
             }}
-            fullWidth
             data-cy="omit"
           />
         </>

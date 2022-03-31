@@ -85,7 +85,6 @@ export const QuestionTemplateRelationDateForm: FC<
               Label={{
                 label: 'Include time',
               }}
-              fullWidth
               inputProps={{ 'data-cy': 'includeTime' }}
             />
             <Field
@@ -105,7 +104,6 @@ export const QuestionTemplateRelationDateForm: FC<
                 Label={{
                   label: 'Is required',
                 }}
-                fullWidth
                 data-cy="required"
               />
 

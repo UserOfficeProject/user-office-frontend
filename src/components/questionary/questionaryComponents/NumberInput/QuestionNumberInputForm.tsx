@@ -79,7 +79,6 @@ export const QuestionNumberForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               InputProps={{ 'data-cy': 'required' }}
             />
 

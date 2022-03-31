@@ -61,7 +61,6 @@ export const QuestionTemplateRelationFileUploadForm: FC<
               Label={{
                 label: 'Is required',
               }}
-              fullWidth
               data-cy="required"
             />
             <Field
@@ -69,6 +68,17 @@ export const QuestionTemplateRelationFileUploadForm: FC<
               name="config.file_type"
               label="Accepted file types"
               multiple
+              // NOTE: Because of some weird value handling when escape button is pressed to close the select options we need to preventDefault.
+              onClose={(event: React.SyntheticEvent) => {
+                event.preventDefault();
+              }}
+              renderValue={(selected?: string[] | string) => {
+                if (typeof selected === 'string') {
+                  return selected;
+                }
+
+                return selected?.join(', ') || '';
+              }}
               formControl={{
                 fullWidth: true,
                 required: true,

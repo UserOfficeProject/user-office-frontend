@@ -95,6 +95,7 @@ const ChangeProposalStatus: React.FC<ChangeProposalStatusProps> = ({
                   }))}
                   required
                   disabled={isSubmitting}
+                  data-cy="status-selection"
                 />
               </Grid>
             </Grid>

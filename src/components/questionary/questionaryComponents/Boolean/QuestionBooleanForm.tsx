@@ -52,7 +52,6 @@ export const QuestionBooleanForm: FC<QuestionFormProps> = (props) => {
               Label={{
                 label: 'User must check it to continue',
               }}
-              fullWidth
               data-cy="required"
             />
           </TitledContainer>
