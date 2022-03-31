@@ -1,6 +1,4 @@
-import { Typography, Button } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { Box } from '@mui/system';
+import { Typography, Button, Stack } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
 import React from 'react';
@@ -8,12 +6,6 @@ import * as Yup from 'yup';
 
 import { UserRole } from 'generated/sdk';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
-
-const useStyles = makeStyles(() => ({
-  button: {
-    marginLeft: '10px',
-  },
-}));
 
 interface FormType {
   firstname: string;
@@ -31,7 +23,6 @@ interface InviteUserFormProps {
 
 function InviteUserForm(props: InviteUserFormProps) {
   const { api } = useDataApiWithFeedback();
-  const classes = useStyles();
   const { title, initialValues, onSubmit, close } = props;
 
   const validationSchema = Yup.object().shape({
@@ -97,12 +88,17 @@ function InviteUserForm(props: InviteUserFormProps) {
             data-cy="email"
           />
 
-          <Box display="flex" justifyContent="flex-end" marginTop="25px">
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            marginTop="25px"
+            spacing={2}
+          >
             <Button
               onClick={() => close()}
               data-cy="invitation-close"
               color="secondary"
-              className={classes.button}
+              fullWidth={false}
             >
               Cancel
             </Button>
@@ -110,11 +106,11 @@ function InviteUserForm(props: InviteUserFormProps) {
               type="submit"
               data-cy="invitation-submit"
               color="primary"
-              className={classes.button}
+              fullWidth={false}
             >
               {title}
             </Button>
-          </Box>
+          </Stack>
         </Form>
       )}
     </Formik>
