@@ -53,7 +53,8 @@ const FormikUIAutocomplete: React.FC<FormikUIAutocompleteProps> = ({
           InputProps={{ ...params.InputProps, ...InputProps }}
         />
       )}
-      ListboxProps={{ 'data-cy': props['data-cy'] }}
+      ListboxProps={{ 'data-cy': props['data-cy'] + '-options' }}
+      data-cy={props['data-cy']}
     />
   );
 };

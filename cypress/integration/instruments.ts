@@ -203,7 +203,7 @@ context('Instrument tests', () => {
 
       cy.get('#selectedInstrumentId-input').first().click();
 
-      cy.get('[data-cy="instrument-selection"] li')
+      cy.get('[data-cy="instrument-selection-options"] li')
         .contains(instrument1.name)
         .click();
 

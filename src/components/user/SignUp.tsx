@@ -13,13 +13,12 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import useTheme from '@mui/material/styles/useTheme';
-import MuiTextField, { TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { createUserValidationSchema } from '@user-office-software/duo-validation';
 import clsx from 'clsx';
 import { Field, Form, Formik } from 'formik';
-import { Autocomplete, CheckboxWithLabel, Select, TextField } from 'formik-mui';
+import { CheckboxWithLabel, Select, TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import { useSnackbar } from 'notistack';
@@ -27,8 +26,10 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import React, { useContext, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+// import * as Yup from 'yup';
 
 import { ErrorFocus } from 'components/common/ErrorFocus';
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import InformationModal from 'components/pages/InformationModal';
 import { UserContext } from 'context/UserContextProvider';
@@ -290,11 +291,16 @@ const SignUp: React.FC<SignUpProps> = (props) => {
         validateOnChange={false}
         initialValues={initialValues}
         onSubmit={async (values): Promise<void> => {
-          if (orcData && orcData.orcid) {
+          if (
+            orcData &&
+            orcData.orcid &&
+            values.nationality &&
+            values.organisation
+          ) {
             const newValues = {
               ...values,
-              nationality: +values.nationality!,
-              organisation: +values.organisation!,
+              nationality: values.nationality,
+              organisation: values.organisation,
               orcid: orcData?.orcid as string,
               orcidHash: orcData?.orcidHash as string,
               refreshToken: orcData?.refreshToken as string,
@@ -467,7 +473,11 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                   <CardContent>
                     <LocalizationProvider dateAdapter={DateAdapter}>
                       <FormControl fullWidth>
-                        <InputLabel htmlFor="user_title" shrink>
+                        <InputLabel
+                          htmlFor="user_title"
+                          shrink={!!values.user_title}
+                          required
+                        >
                           Title
                         </InputLabel>
                         <Field
@@ -531,7 +541,11 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                         disabled={!orcData}
                       />
                       <FormControl fullWidth>
-                        <InputLabel htmlFor="user_title" shrink>
+                        <InputLabel
+                          htmlFor="user_title"
+                          shrink={!!values.gender}
+                          required
+                        >
                           Gender
                         </InputLabel>
                         <Field
@@ -565,24 +579,14 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                           disabled={!orcData}
                         />
                       )}
-                      <Field
+                      <FormikUIAutocomplete
                         name="nationality"
-                        component={Autocomplete}
-                        options={nationalitiesList}
-                        getOptionLabel={(option: Option) => option.text}
-                        isOptionEqualToValue={(
-                          option: Option,
-                          value: Option | null
-                        ) => option.value === value?.value}
-                        renderInput={(params: TextFieldProps) => (
-                          <MuiTextField
-                            {...params}
-                            label="Nationality"
-                            required
-                          />
-                        )}
+                        label="Nationality"
+                        items={nationalitiesList}
                         disabled={!orcData}
+                        noOptionsText="No items"
                         data-cy="nationality"
+                        required
                       />
                       <Field
                         name="birthdate"
@@ -633,29 +637,14 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                       required
                       disabled={!orcData}
                     />
-                    <Field
+                    <FormikUIAutocomplete
                       name="organisation"
-                      component={Autocomplete}
-                      options={institutionsList}
-                      getOptionLabel={(option: Option) => option.text}
-                      renderOption={(props: unknown, option: Option) => (
-                        <li {...props} key={option.value}>
-                          {option.text}
-                        </li>
-                      )}
-                      isOptionEqualToValue={(
-                        option: Option,
-                        value: Option | null
-                      ) => option.value === value?.value}
-                      renderInput={(params: TextFieldProps) => (
-                        <MuiTextField
-                          {...params}
-                          label="Organization"
-                          required
-                        />
-                      )}
+                      label="Organisation"
+                      items={institutionsList}
                       disabled={!orcData}
+                      noOptionsText="No items"
                       data-cy="organisation"
+                      required
                     />
                     {values.organisation && +values.organisation === 1 && (
                       <Field
