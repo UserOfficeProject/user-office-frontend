@@ -46,8 +46,8 @@ const AssignProposalsToInstrument: React.FC<
 
   const selectedProposalsInstrument =
     allSelectedProposalsHaveSameInstrument && instrumentIds[0]
-      ? instrumentIds[0].toString()
-      : '';
+      ? instrumentIds[0]
+      : undefined;
 
   return (
     <Container
@@ -61,7 +61,7 @@ const AssignProposalsToInstrument: React.FC<
         }}
         onSubmit={async (values): Promise<void> => {
           const selectedInstrument = instruments.find(
-            (instrument) => instrument.id === +values.selectedInstrumentId
+            (instrument) => instrument.id === values.selectedInstrumentId
           );
 
           await assignProposalsToInstrument(selectedInstrument || null);

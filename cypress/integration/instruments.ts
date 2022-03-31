@@ -226,7 +226,14 @@ context('Instrument tests', () => {
 
       cy.contains('Loading...').should('not.exist');
 
-      cy.get('[data-cy="clear-selection"]').click();
+      cy.get('[data-cy="instrument-selection"] input').should(
+        'have.value',
+        instrument1.name
+      );
+
+      cy.get('[data-cy="instrument-selection"] input').click();
+
+      cy.get('[title="Clear"]').click();
 
       cy.get('[data-cy="remove-instrument-alert"]').should('exist');
 
