@@ -63,8 +63,9 @@ context('visits tests', () => {
 
     cy.get('[data-cy=upcoming-experiments]')
       .contains(initialDBData.scheduledEvents.upcoming.startsAt)
-      .closest('TR')
+      .closest('tr')
       .find(`[data-cy='${proposalEsiIconCyTag}']`)
+      .closest('button')
       .click();
     cy.get('[data-cy=sample-esi-list]')
       .contains(sampleTitle)
