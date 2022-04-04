@@ -1,0 +1,13 @@
+mutation assignFacilitiesToCall($facilityIds: [Int!]!, $callId: Int!) {
+  assignFacilitiesToCall(
+    facilityIds: $facilityIds
+    callId: $callId
+  ) {
+    rejection {
+      ...rejection
+    }
+    call {
+      id
+    }
+  }
+}

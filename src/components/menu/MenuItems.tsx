@@ -223,6 +223,14 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
           <ListItemText primary="Instruments" />
         </ListItem>
       </Tooltip>
+      <Tooltip title="Facilities">
+        <ListItem component={NavLink} to="/FacilityPage" button>
+          <ListItemIcon>
+            <ScienceIcon />
+          </ListItemIcon>
+          <ListItemText primary="Facilities" />
+        </ListItem>
+      </Tooltip>
       <Tooltip title="Scientific evaluation panels">
         <ListItem component={NavLink} to="/SEPs" button>
           <ListItemIcon>

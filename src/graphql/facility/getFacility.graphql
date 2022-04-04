@@ -1,0 +1,5 @@
+query getFacility($id: Int!) {
+  facility(id: $id) {
+    ...facility
+  }
+}

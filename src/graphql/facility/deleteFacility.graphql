@@ -1,0 +1,12 @@
+mutation deleteFacility(
+  $id: Int!
+) {
+  deleteFacility(id: $id) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}

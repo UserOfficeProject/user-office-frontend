@@ -1,0 +1,4 @@
+fragment facility on Facility {
+  id
+  name
+}

@@ -23,6 +23,7 @@ import { useCallsData } from 'hooks/call/useCallsData';
 import AppToolbar from './AppToolbar/AppToolbar';
 import CallPage from './call/CallPage';
 import Can, { useCheckAccess } from './common/Can';
+import FacilitiesPage from './facility/FacilitiesPage';
 import CreateFeedbackPage from './feedback/CreateFeedbackPage';
 import UpdateFeedbackPage from './feedback/UpdateFeedbackPage';
 import InstitutionPage from './institution/InstitutionPage';
@@ -311,6 +312,12 @@ const Dashboard: React.FC = () => {
             title="SEPs"
             path="/SEPs"
             component={SEPsPage}
+          />
+          <TitledRoute
+            setHeader={setHeader}
+            title="Facilities"
+            path="/FacilityPage"
+            component={FacilitiesPage}
           />
           <TitledRoute
             setHeader={setHeader}

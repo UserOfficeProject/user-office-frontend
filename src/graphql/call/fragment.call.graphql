@@ -29,6 +29,11 @@ fragment call on Call {
       ...basicUserDetails
     }
   }
+  facilities {
+    id
+    name
+    availabilityTime
+  }
   proposalWorkflow {
     id
     name

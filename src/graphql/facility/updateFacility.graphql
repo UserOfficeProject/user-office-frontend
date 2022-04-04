@@ -1,0 +1,13 @@
+mutation updateFacility(
+  $id: Int!,
+  $name: String!
+) {
+  updateFacility(id: $id, name: $name) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}

@@ -1,0 +1,16 @@
+mutation setFacilityAvailabilityTime(
+  $callId: Int!
+  $facilityId: Int!
+  $availabilityTime: Int!
+) {
+  setFacilityAvailabilityTime(
+    callId: $callId
+    facilityId: $facilityId
+    availabilityTime: $availabilityTime
+  ) {
+    rejection {
+      ...rejection
+    }
+    isSuccess
+  }
+}

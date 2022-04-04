@@ -137,6 +137,7 @@ export type Call = {
   endReview: Scalars['DateTime'];
   endSEPReview: Maybe<Scalars['DateTime']>;
   esiTemplateId: Maybe<Scalars['Int']>;
+  facilities: Array<FacilityWithAvailabilityTime>;
   id: Scalars['Int'];
   instruments: Array<InstrumentWithAvailabilityTime>;
   isActive: Scalars['Boolean'];
@@ -396,6 +397,22 @@ export type ExternalTokenLoginWrap = {
   token: Maybe<Scalars['String']>;
 };
 
+export type Facility = {
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type FacilityResponseWrap = {
+  facility: Maybe<Facility>;
+  rejection: Maybe<Rejection>;
+};
+
+export type FacilityWithAvailabilityTime = {
+  availabilityTime: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type Feature = {
   description: Scalars['String'];
   id: FeatureId;
@@ -612,6 +629,7 @@ export type Mutation = {
   answerTopic: QuestionaryStepResponseWrap;
   applyPatches: PrepareDbResponseWrap;
   assignChairOrSecretary: SepResponseWrap;
+  assignFacilitiesToCall: CallResponseWrap;
   assignInstrumentsToCall: CallResponseWrap;
   assignProposalsToInstrument: SuccessResponseWrap;
   assignProposalsToSep: NextProposalStatusResponseWrap;
@@ -627,6 +645,7 @@ export type Mutation = {
   createApiAccessToken: ApiAccessTokenResponseWrap;
   createCall: CallResponseWrap;
   createEsi: EsiResponseWrap;
+  createFacility: FacilityResponseWrap;
   createFeedback: FeedbackResponseWrap;
   createGenericTemplate: GenericTemplateResponseWrap;
   createInstitution: InstitutionResponseWrap;
@@ -650,6 +669,7 @@ export type Mutation = {
   createVisitRegistration: VisitRegistrationResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   deleteCall: CallResponseWrap;
+  deleteFacility: FacilityResponseWrap;
   deleteFeedback: FeedbackResponseWrap;
   deleteGenericTemplate: GenericTemplateResponseWrap;
   deleteInstitution: InstitutionResponseWrap;
@@ -681,6 +701,7 @@ export type Mutation = {
   moveProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
   notifyProposal: ProposalResponseWrap;
   prepareDB: PrepareDbResponseWrap;
+  removeAssignedFacilitiesFromCall: CallResponseWrap;
   removeAssignedInstrumentFromCall: CallResponseWrap;
   removeMemberFromSEPProposal: SepResponseWrap;
   removeMemberFromSep: SepResponseWrap;
@@ -695,6 +716,7 @@ export type Mutation = {
   saveSepMeetingDecision: SepMeetingDecisionResponseWrap;
   selectRole: TokenResponseWrap;
   setActiveTemplate: SuccessResponseWrap;
+  setFacilityAvailabilityTime: SuccessResponseWrap;
   setInstrumentAvailabilityTime: SuccessResponseWrap;
   setPageContent: PageResponseWrap;
   setUserEmailVerified: UserResponseWrap;
@@ -709,6 +731,7 @@ export type Mutation = {
   updateApiAccessToken: ApiAccessTokenResponseWrap;
   updateCall: CallResponseWrap;
   updateEsi: EsiResponseWrap;
+  updateFacility: FacilityResponseWrap;
   updateFeedback: FeedbackResponseWrap;
   updateGenericTemplate: GenericTemplateResponseWrap;
   updateInstitution: InstitutionResponseWrap;
@@ -801,6 +824,12 @@ export type MutationAssignChairOrSecretaryArgs = {
 };
 
 
+export type MutationAssignFacilitiesToCallArgs = {
+  callId: Scalars['Int'];
+  facilityIds: Array<Scalars['Int']>;
+};
+
+
 export type MutationAssignInstrumentsToCallArgs = {
   assignInstrumentsToCallInput: AssignInstrumentsToCallInput;
 };
@@ -884,6 +913,11 @@ export type MutationCreateCallArgs = {
 
 export type MutationCreateEsiArgs = {
   scheduledEventId: Scalars['Int'];
+};
+
+
+export type MutationCreateFacilityArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -1050,6 +1084,11 @@ export type MutationDeleteApiAccessTokenArgs = {
 
 
 export type MutationDeleteCallArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteFacilityArgs = {
   id: Scalars['Int'];
 };
 
@@ -1222,6 +1261,12 @@ export type MutationPrepareDbArgs = {
 };
 
 
+export type MutationRemoveAssignedFacilitiesFromCallArgs = {
+  callId: Scalars['Int'];
+  facilityIds: Array<Scalars['Int']>;
+};
+
+
 export type MutationRemoveAssignedInstrumentFromCallArgs = {
   removeAssignedInstrumentFromCallInput: RemoveAssignedInstrumentFromCallInput;
 };
@@ -1302,6 +1347,13 @@ export type MutationSetActiveTemplateArgs = {
 };
 
 
+export type MutationSetFacilityAvailabilityTimeArgs = {
+  availabilityTime: Scalars['Int'];
+  callId: Scalars['Int'];
+  facilityId: Scalars['Int'];
+};
+
+
 export type MutationSetInstrumentAvailabilityTimeArgs = {
   availabilityTime: Scalars['Int'];
   callId: Scalars['Int'];
@@ -1376,6 +1428,12 @@ export type MutationUpdateCallArgs = {
 export type MutationUpdateEsiArgs = {
   esiId: Scalars['Int'];
   isSubmitted?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateFacilityArgs = {
+  id: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 
@@ -1929,6 +1987,9 @@ export type Query = {
   checkToken: TokenResult;
   esi: Maybe<ExperimentSafetyInput>;
   eventLogs: Maybe<Array<EventLog>>;
+  facilities: Array<Facility>;
+  facilitiesByCall: Array<Facility>;
+  facility: Maybe<Facility>;
   factoryVersion: Scalars['String'];
   features: Array<Feature>;
   feedback: Maybe<Feedback>;
@@ -2068,6 +2129,16 @@ export type QueryEsiArgs = {
 export type QueryEventLogsArgs = {
   changedObjectId: Scalars['String'];
   eventType: Scalars['String'];
+};
+
+
+export type QueryFacilitiesByCallArgs = {
+  callIds: Array<Scalars['Int']>;
+};
+
+
+export type QueryFacilityArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -3147,7 +3218,7 @@ export type VisitsFilter = {
   scheduledEventId?: InputMaybe<Scalars['Int']>;
 };
 
-export type _Entity = BasicUserDetails | Call | Instrument | Proposal | Rejection | User;
+export type _Entity = BasicUserDetails | Call | Facility | Instrument | Proposal | Rejection | User;
 
 export type _Service = {
   /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
@@ -3454,6 +3525,14 @@ export type UpdateInstitutionMutationVariables = Exact<{
 
 export type UpdateInstitutionMutation = { updateInstitution: { institution: { id: number, verified: boolean, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
+export type AssignFacilitiesToCallMutationVariables = Exact<{
+  facilityIds: Array<Scalars['Int']> | Scalars['Int'];
+  callId: Scalars['Int'];
+}>;
+
+
+export type AssignFacilitiesToCallMutation = { assignFacilitiesToCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
+
 export type AssignInstrumentsToCallMutationVariables = Exact<{
   instrumentIds: Array<Scalars['Int']> | Scalars['Int'];
   callId: Scalars['Int'];
@@ -3487,7 +3566,7 @@ export type CreateCallMutationVariables = Exact<{
 }>;
 
 
-export type CreateCallMutation = { createCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
+export type CreateCallMutation = { createCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
 
 export type DeleteCallMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -3496,28 +3575,36 @@ export type DeleteCallMutationVariables = Exact<{
 
 export type DeleteCallMutation = { deleteCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
 
-export type CallFragment = { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } };
+export type CallFragment = { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } };
 
 export type GetCallQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type GetCallQuery = { call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null };
+export type GetCallQuery = { call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null };
 
 export type GetCallsQueryVariables = Exact<{
   filter?: InputMaybe<CallsFilter>;
 }>;
 
 
-export type GetCallsQuery = { calls: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
+export type GetCallsQuery = { calls: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
 
 export type GetCallsByInstrumentScientistQueryVariables = Exact<{
   scientistId: Scalars['Int'];
 }>;
 
 
-export type GetCallsByInstrumentScientistQuery = { callsByInstrumentScientist: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
+export type GetCallsByInstrumentScientistQuery = { callsByInstrumentScientist: Array<{ id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } }> | null };
+
+export type RemoveAssignedFacilitiesFromCallMutationVariables = Exact<{
+  facilityIds: Array<Scalars['Int']> | Scalars['Int'];
+  callId: Scalars['Int'];
+}>;
+
+
+export type RemoveAssignedFacilitiesFromCallMutation = { removeAssignedFacilitiesFromCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number } | null } };
 
 export type RemoveAssignedInstrumentFromCallMutationVariables = Exact<{
   instrumentId: Scalars['Int'];
@@ -3553,7 +3640,7 @@ export type UpdateCallMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCallMutation = { updateCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
+export type UpdateCallMutation = { updateCall: { rejection: { reason: string, context: string | null, exception: string | null } | null, call: { id: number, shortCode: string, startCall: any, endCall: any, startReview: any, endReview: any, startSEPReview: any | null, endSEPReview: any | null, startNotify: any, endNotify: any, startCycle: any, endCycle: any, cycleComment: string, surveyComment: string, referenceNumberFormat: string | null, proposalWorkflowId: number | null, templateId: number, esiTemplateId: number | null, allocationTimeUnit: AllocationTimeUnits, proposalCount: number, title: string | null, description: string | null, submissionMessage: string | null, instruments: Array<{ id: number, name: string, shortCode: string, description: string, availabilityTime: number | null, submitted: boolean | null, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null }> }>, facilities: Array<{ id: number, name: string, availabilityTime: number | null }>, proposalWorkflow: { id: number, name: string, description: string } | null, template: { templateId: number, name: string, isArchived: boolean } } | null } };
 
 export type CreateEsiMutationVariables = Exact<{
   scheduledEventId: Scalars['Int'];
@@ -3586,6 +3673,51 @@ export type GetEventLogsQueryVariables = Exact<{
 
 
 export type GetEventLogsQuery = { eventLogs: Array<{ id: number, eventType: string, eventTStamp: any, rowData: string, changedObjectId: string, changedBy: { id: number, firstname: string, lastname: string, email: string } }> | null };
+
+export type CreateFacilityMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateFacilityMutation = { createFacility: { facility: { id: number, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type DeleteFacilityMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteFacilityMutation = { deleteFacility: { facility: { id: number, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type FacilityFragment = { id: number, name: string };
+
+export type GetFacilitiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFacilitiesQuery = { facilities: Array<{ id: number, name: string }> };
+
+export type GetFacilityQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetFacilityQuery = { facility: { id: number, name: string } | null };
+
+export type SetFacilityAvailabilityTimeMutationVariables = Exact<{
+  callId: Scalars['Int'];
+  facilityId: Scalars['Int'];
+  availabilityTime: Scalars['Int'];
+}>;
+
+
+export type SetFacilityAvailabilityTimeMutation = { setFacilityAvailabilityTime: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+
+export type UpdateFacilityMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateFacilityMutation = { updateFacility: { facility: { id: number, name: string } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateFeedbackMutationVariables = Exact<{
   scheduledEventId: Scalars['Int'];
@@ -4995,6 +5127,11 @@ export const CallFragmentDoc = gql`
       ...basicUserDetails
     }
   }
+  facilities {
+    id
+    name
+    availabilityTime
+  }
   proposalWorkflow {
     id
     name
@@ -5018,6 +5155,12 @@ export const EsiFragmentDoc = gql`
   questionaryId
   isSubmitted
   created
+}
+    `;
+export const FacilityFragmentDoc = gql`
+    fragment facility on Facility {
+  id
+  name
 }
     `;
 export const FeedbackFragmentDoc = gql`
@@ -6093,6 +6236,18 @@ export const UpdateInstitutionDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
+export const AssignFacilitiesToCallDocument = gql`
+    mutation assignFacilitiesToCall($facilityIds: [Int!]!, $callId: Int!) {
+  assignFacilitiesToCall(facilityIds: $facilityIds, callId: $callId) {
+    rejection {
+      ...rejection
+    }
+    call {
+      id
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
 export const AssignInstrumentsToCallDocument = gql`
     mutation assignInstrumentsToCall($instrumentIds: [Int!]!, $callId: Int!) {
   assignInstrumentsToCall(
@@ -6158,6 +6313,18 @@ export const GetCallsByInstrumentScientistDocument = gql`
   }
 }
     ${CallFragmentDoc}`;
+export const RemoveAssignedFacilitiesFromCallDocument = gql`
+    mutation removeAssignedFacilitiesFromCall($facilityIds: [Int!]!, $callId: Int!) {
+  removeAssignedFacilitiesFromCall(facilityIds: $facilityIds, callId: $callId) {
+    rejection {
+      ...rejection
+    }
+    call {
+      id
+    }
+  }
+}
+    ${RejectionFragmentDoc}`;
 export const RemoveAssignedInstrumentFromCallDocument = gql`
     mutation removeAssignedInstrumentFromCall($instrumentId: Int!, $callId: Int!) {
   removeAssignedInstrumentFromCall(
@@ -6307,6 +6474,73 @@ export const GetEventLogsDocument = gql`
   }
 }
     `;
+export const CreateFacilityDocument = gql`
+    mutation createFacility($name: String!) {
+  createFacility(name: $name) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FacilityFragmentDoc}
+${RejectionFragmentDoc}`;
+export const DeleteFacilityDocument = gql`
+    mutation deleteFacility($id: Int!) {
+  deleteFacility(id: $id) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FacilityFragmentDoc}
+${RejectionFragmentDoc}`;
+export const GetFacilitiesDocument = gql`
+    query getFacilities {
+  facilities {
+    ...facility
+  }
+}
+    ${FacilityFragmentDoc}`;
+export const GetFacilityDocument = gql`
+    query getFacility($id: Int!) {
+  facility(id: $id) {
+    ...facility
+  }
+}
+    ${FacilityFragmentDoc}`;
+export const SetFacilityAvailabilityTimeDocument = gql`
+    mutation setFacilityAvailabilityTime($callId: Int!, $facilityId: Int!, $availabilityTime: Int!) {
+  setFacilityAvailabilityTime(
+    callId: $callId
+    facilityId: $facilityId
+    availabilityTime: $availabilityTime
+  ) {
+    rejection {
+      ...rejection
+    }
+    isSuccess
+  }
+}
+    ${RejectionFragmentDoc}`;
+export const UpdateFacilityDocument = gql`
+    mutation updateFacility($id: Int!, $name: String!) {
+  updateFacility(id: $id, name: $name) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
+    ${FacilityFragmentDoc}
+${RejectionFragmentDoc}`;
 export const CreateFeedbackDocument = gql`
     mutation createFeedback($scheduledEventId: Int!) {
   createFeedback(scheduledEventId: $scheduledEventId) {
@@ -8993,6 +9227,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     updateInstitution(variables: UpdateInstitutionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateInstitutionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateInstitutionMutation>(UpdateInstitutionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateInstitution', 'mutation');
     },
+    assignFacilitiesToCall(variables: AssignFacilitiesToCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignFacilitiesToCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AssignFacilitiesToCallMutation>(AssignFacilitiesToCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignFacilitiesToCall', 'mutation');
+    },
     assignInstrumentsToCall(variables: AssignInstrumentsToCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AssignInstrumentsToCallMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<AssignInstrumentsToCallMutation>(AssignInstrumentsToCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'assignInstrumentsToCall', 'mutation');
     },
@@ -9011,6 +9248,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getCallsByInstrumentScientist(variables: GetCallsByInstrumentScientistQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCallsByInstrumentScientistQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCallsByInstrumentScientistQuery>(GetCallsByInstrumentScientistDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCallsByInstrumentScientist', 'query');
     },
+    removeAssignedFacilitiesFromCall(variables: RemoveAssignedFacilitiesFromCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveAssignedFacilitiesFromCallMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveAssignedFacilitiesFromCallMutation>(RemoveAssignedFacilitiesFromCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeAssignedFacilitiesFromCall', 'mutation');
+    },
     removeAssignedInstrumentFromCall(variables: RemoveAssignedInstrumentFromCallMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveAssignedInstrumentFromCallMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<RemoveAssignedInstrumentFromCallMutation>(RemoveAssignedInstrumentFromCallDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeAssignedInstrumentFromCall', 'mutation');
     },
@@ -9028,6 +9268,24 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getEventLogs(variables: GetEventLogsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetEventLogsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetEventLogsQuery>(GetEventLogsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEventLogs', 'query');
+    },
+    createFacility(variables: CreateFacilityMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateFacilityMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateFacilityMutation>(CreateFacilityDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createFacility', 'mutation');
+    },
+    deleteFacility(variables: DeleteFacilityMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DeleteFacilityMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteFacilityMutation>(DeleteFacilityDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'deleteFacility', 'mutation');
+    },
+    getFacilities(variables?: GetFacilitiesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFacilitiesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFacilitiesQuery>(GetFacilitiesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFacilities', 'query');
+    },
+    getFacility(variables: GetFacilityQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFacilityQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFacilityQuery>(GetFacilityDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFacility', 'query');
+    },
+    setFacilityAvailabilityTime(variables: SetFacilityAvailabilityTimeMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SetFacilityAvailabilityTimeMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetFacilityAvailabilityTimeMutation>(SetFacilityAvailabilityTimeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'setFacilityAvailabilityTime', 'mutation');
+    },
+    updateFacility(variables: UpdateFacilityMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateFacilityMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateFacilityMutation>(UpdateFacilityDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateFacility', 'mutation');
     },
     createFeedback(variables: CreateFeedbackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateFeedbackMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateFeedbackMutation>(CreateFeedbackDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createFeedback', 'mutation');

@@ -1,0 +1,13 @@
+mutation removeAssignedFacilitiesFromCall($facilityIds: [Int!]!, $callId: Int!) {
+  removeAssignedFacilitiesFromCall(
+    facilityIds: $facilityIds
+    callId: $callId
+  ) {
+    rejection {
+      ...rejection
+    }
+    call {
+      id
+    }
+  }
+}

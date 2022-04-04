@@ -9,14 +9,20 @@ import SuperMaterialTable, {
   DefaultQueryParams,
   UrlQueryParamsType,
 } from 'components/common/SuperMaterialTable';
-import { Call, InstrumentWithAvailabilityTime, UserRole } from 'generated/sdk';
+import {
+  Call,
+  FacilityWithAvailabilityTime,
+  InstrumentWithAvailabilityTime,
+  UserRole,
+} from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useCallsData } from 'hooks/call/useCallsData';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 
-import AssignedInstrumentsTable from './AssignedInstrumentsTable';
+import AssignedResourcesTable, { Resource } from './AssignedResourcesTable';
+import AssignFacilitiesToCall from './AssignFacilitiesToCall';
 import AssignInstrumentsToCall from './AssignInstrumentsToCall';
 import CallStatusFilter, {
   CallStatusQueryFilter,
@@ -36,6 +42,9 @@ const CallsTable: React.FC = () => {
     shouldUseTimeZone: true,
   });
   const [assigningInstrumentsCallId, setAssigningInstrumentsCallId] = useState<
+    number | null
+  >(null);
+  const [assigningFacilitiesCallId, setAssigningFacilitiesCallId] = useState<
     number | null
   >(null);
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
@@ -120,6 +129,26 @@ const CallsTable: React.FC = () => {
     }
   };
 
+  const assignFacilitiesToCall = (
+    facilities: FacilityWithAvailabilityTime[]
+  ) => {
+    if (calls) {
+      const callsWithFacilities = calls.map((callItem) => {
+        if (callItem.id === assigningFacilitiesCallId) {
+          return {
+            ...callItem,
+            facilities: [...callItem.facilities, ...facilities],
+          };
+        } else {
+          return callItem;
+        }
+      });
+
+      setCalls(callsWithFacilities);
+      setAssigningFacilitiesCallId(null);
+    }
+  };
+
   const deleteCall = async (id: number | string) => {
     return await api('Call deleted successfully')
       .deleteCall({
@@ -143,56 +172,144 @@ const CallsTable: React.FC = () => {
 
   const AssignedInstruments = React.useCallback(
     ({ rowData }: Record<'rowData', Call>) => {
-      const removeAssignedInstrumentFromCall = (
-        updatedInstruments: InstrumentWithAvailabilityTime[],
-        callToRemoveFromId: number
+      const removeAssignedResourceFromCall = async (
+        resource: Resource,
+        callId: number
       ) => {
-        if (calls) {
-          const callsWithRemovedInstrument = calls.map((callItem) => {
-            if (callItem.id === callToRemoveFromId) {
-              return {
-                ...callItem,
-                instruments: updatedInstruments,
-              };
-            } else {
-              return callItem;
-            }
-          });
-
-          setCalls(callsWithRemovedInstrument);
-          setAssigningInstrumentsCallId(null);
+        if (!calls) {
+          return;
         }
+
+        const callItem = calls.find((call) => call.id === callId);
+        if (!callItem) {
+          return;
+        }
+
+        let result;
+        let resources:
+          | InstrumentWithAvailabilityTime[]
+          | FacilityWithAvailabilityTime[];
+
+        switch (resource.kind) {
+          case 'Instrument':
+            result = await api('Assigned instrument removed successfully!')
+              .removeAssignedInstrumentFromCall({
+                callId: callId,
+                instrumentId: resource.id,
+              })
+              .then((r) => r.removeAssignedInstrumentFromCall);
+
+            resources = callItem.instruments;
+            break;
+          case 'Facility':
+            result = await api('Assigned facility removed successfully!')
+              .removeAssignedFacilitiesFromCall({
+                callId: callId,
+                facilityIds: resource.id,
+              })
+              .then((r) => r.removeAssignedFacilitiesFromCall);
+
+            resources = callItem.facilities;
+            break;
+        }
+
+        if (result.rejection) {
+          return;
+        }
+
+        const toRemove = resources.findIndex((r) => r.id === resource.id);
+        if (toRemove > -1) {
+          resources.splice(toRemove, 1);
+        }
+
+        setCalls(calls);
+        setAssigningInstrumentsCallId(null);
       };
 
-      const setInstrumentAvailabilityTime = (
-        updatedInstruments: InstrumentWithAvailabilityTime[],
-        updatingCallId: number
+      const setResourceAvailabilityTime = async (
+        resource: Resource,
+        callId: number
       ) => {
-        if (calls) {
-          const callsWithInstrumentAvailabilityTime = calls.map((callItem) => {
-            if (callItem.id === updatingCallId) {
-              return {
-                ...callItem,
-                instruments: updatedInstruments,
-              };
-            } else {
-              return callItem;
-            }
-          });
-
-          setCalls(callsWithInstrumentAvailabilityTime);
+        if (!calls) {
+          return;
         }
+
+        const callItem = calls.find((call) => call.id === callId);
+        if (!callItem) {
+          return;
+        }
+
+        let result;
+        let resources:
+          | InstrumentWithAvailabilityTime[]
+          | FacilityWithAvailabilityTime[];
+
+        switch (resource.kind) {
+          case 'Instrument':
+            result = await api('Availability time set successfully!')
+              .setInstrumentAvailabilityTime({
+                callId: callId,
+                instrumentId: resource.id,
+                availabilityTime: +resource.availabilityTime,
+              })
+              .then((r) => r.setInstrumentAvailabilityTime);
+
+            resources = callItem.instruments;
+            break;
+          case 'Facility':
+            result = await api('Availability time set successfully!')
+              .setFacilityAvailabilityTime({
+                callId: callId,
+                facilityId: resource.id,
+                availabilityTime: +resource.availabilityTime,
+              })
+              .then((r) => r.setFacilityAvailabilityTime);
+
+            resources = callItem.facilities;
+            break;
+        }
+
+        if (result.rejection) {
+          return;
+        }
+
+        const toUpdate = resources.find((r) => r.id === resource.id);
+        if (toUpdate) {
+          toUpdate.availabilityTime = resource.availabilityTime;
+        }
+
+        setCalls(calls);
+      };
+
+      const transformInstruments = (
+        resources: InstrumentWithAvailabilityTime[]
+      ): Resource[] => {
+        return resources.map((r) => {
+          return { kind: 'Instrument', ...r } as Resource;
+        });
+      };
+
+      const transformFacilities = (
+        resources: FacilityWithAvailabilityTime[]
+      ): Resource[] => {
+        return resources.map((r) => {
+          return { kind: 'Facility', ...r } as Resource;
+        });
       };
 
       return (
-        <AssignedInstrumentsTable
-          call={rowData}
-          removeAssignedInstrumentFromCall={removeAssignedInstrumentFromCall}
-          setInstrumentAvailabilityTime={setInstrumentAvailabilityTime}
+        <AssignedResourcesTable
+          callId={rowData.id}
+          resources={[
+            ...transformInstruments(rowData.instruments),
+            ...transformFacilities(rowData.facilities),
+          ]}
+          removeAssignedInstrumentFromCall={removeAssignedResourceFromCall}
+          setInstrumentAvailabilityTime={setResourceAvailabilityTime}
         />
       );
     },
-    [calls, setCalls, setAssigningInstrumentsCallId]
+    [calls, api, setCalls, setAssigningInstrumentsCallId]
   );
 
   const callAssignments = calls.find(
@@ -242,6 +359,24 @@ const CallsTable: React.FC = () => {
           />
         </InputDialog>
       )}
+      {assigningFacilitiesCallId && (
+        <InputDialog
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={!!assigningFacilitiesCallId}
+          onClose={(): void => setAssigningFacilitiesCallId(null)}
+        >
+          <AssignFacilitiesToCall
+            assignedFacilities={
+              callAssignments?.facilities as FacilityWithAvailabilityTime[]
+            }
+            callId={assigningFacilitiesCallId}
+            assignFacilitiesToCall={(
+              facilities: FacilityWithAvailabilityTime[]
+            ) => assignFacilitiesToCall(facilities)}
+          />
+        </InputDialog>
+      )}
       <SuperMaterialTable
         createModal={createModal}
         setData={setCalls}
@@ -275,6 +410,13 @@ const CallsTable: React.FC = () => {
             tooltip: 'Assign Instrument',
             onClick: (event, rowData): void =>
               setAssigningInstrumentsCallId((rowData as Call).id),
+            position: 'row',
+          },
+          {
+            icon: ScienceIconComponent,
+            tooltip: 'Assign Facility',
+            onClick: (event, rowData): void =>
+              setAssigningFacilitiesCallId((rowData as Call).id),
             position: 'row',
           },
         ]}

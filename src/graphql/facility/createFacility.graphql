@@ -1,0 +1,12 @@
+mutation createFacility(
+  $name: String!
+) {
+  createFacility(name: $name) {
+    facility {
+      ...facility
+    }
+    rejection {
+      ...rejection
+    }
+  }
+}
