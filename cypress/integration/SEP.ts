@@ -1,6 +1,10 @@
 import faker from 'faker';
 
-import { TechnicalReviewStatus } from '../../src/generated/sdk';
+import {
+  ProposalEndStatus,
+  TechnicalReviewStatus,
+  UserRole,
+} from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
 
 const sepMembers = {
