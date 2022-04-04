@@ -24,7 +24,7 @@ function ExperimentFilterBar() {
   const { calls, loadingCalls } = useCallsData();
 
   return (
-    <div>
+    <>
       <CallFilter
         callId={urlQueryParams.call ?? undefined}
         calls={calls}
@@ -55,7 +55,7 @@ function ExperimentFilterBar() {
         }}
         data-cy="date-filter"
       />
-    </div>
+    </>
   );
 }
 
