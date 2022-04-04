@@ -56,9 +56,8 @@ context('Experiments tests', () => {
       cy.get('[value=TODAY]').click();
       cy.contains('0-0 of 0');
 
-      cy.get('[data-cy=from-date-picker]').clear().type('01-01-2023');
-      cy.get('[data-cy=to-date-picker]').clear().type('01-02-2023');
-      cy.contains('1-2 of 2');
+      cy.get('[value=NONE]').click();
+      cy.contains('1-4 of 4');
     });
 
     it('Can view ESI', () => {
