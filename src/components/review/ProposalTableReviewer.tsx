@@ -5,6 +5,8 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import Visibility from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import { proposalGradeValidationSchema } from '@user-office-software/duo-validation';
+import { useSnackbar } from 'notistack';
 import React, { useState, useContext, useEffect } from 'react';
 import { useQueryParams, NumberParam } from 'use-query-params';
 
@@ -13,7 +15,9 @@ import InstrumentFilter from 'components/common/proposalFilters/InstrumentFilter
 import { DefaultQueryParams } from 'components/common/SuperMaterialTable';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
+  Proposal,
   ProposalPkWithReviewId,
+  Review,
   ReviewerFilter,
   ReviewStatus,
   SepAssignment,
@@ -85,6 +89,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
   const { calls, loadingCalls } = useCallsData();
   const { instruments, loadingInstruments } = useInstrumentsData();
   const { api } = useDataApiWithFeedback();
+  const { enqueueSnackbar } = useSnackbar();
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     ...DefaultQueryParams,
     call: NumberParam,
@@ -95,7 +100,9 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
   });
 
   const [selectedProposals, setSelectedProposals] = useState<
-    (ProposalPkWithReviewId & { title: string })[]
+    (ProposalPkWithReviewId &
+      Pick<Review, 'grade' | 'comment'> &
+      Pick<Proposal, 'title' | 'proposalId'>)[]
   >([]);
 
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
@@ -155,6 +162,9 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
           proposalPk: number;
           reviewId: number;
           title: string;
+          proposalId: string;
+          grade: number;
+          comment: string;
         }[] = [];
         const preselected = preselectedProposalsData.map((proposal) => {
           if (selection.has(proposal.proposalPk.toString())) {
@@ -162,6 +172,9 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
               proposalPk: proposal.proposalPk,
               reviewId: proposal.reviewId,
               title: proposal.title,
+              proposalId: proposal.proposalId,
+              grade: proposal.grade,
+              comment: proposal.comment,
             });
           }
 
@@ -286,6 +299,28 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         proposalPk: proposal.proposalPk,
         reviewId: proposal.reviewId,
       }));
+
+      const invalidProposals = [];
+
+      for await (const proposal of selectedProposals) {
+        const isGradeValid = await proposalGradeValidationSchema.isValid(
+          proposal
+        );
+        if (isGradeValid === false) {
+          invalidProposals.push(proposal);
+        }
+      }
+
+      if (invalidProposals.length > 0) {
+        enqueueSnackbar(
+          `Please correct the grade and comment for the proposal(s) with ID: ${invalidProposals
+            .map((proposal) => proposal.proposalId)
+            .join(', ')}`,
+          { variant: 'error', autoHideDuration: 30000 }
+        );
+
+        return;
+      }
 
       const result = await api(
         `Proposal${shouldAddPluralLetter} review submitted successfully!`
