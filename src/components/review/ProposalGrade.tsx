@@ -1,9 +1,7 @@
-import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputLabel from '@mui/material/InputLabel';
-import makeStyles from '@mui/styles/makeStyles';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
@@ -16,6 +14,7 @@ import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
 import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import GradeGuidePage from 'components/pages/GradeGuidePage';
+import NavigationFragment from 'components/questionary/NavigationFragment';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
 import {
   ReviewStatus,
@@ -27,19 +26,6 @@ import ButtonWithDialog from 'hooks/common/ButtonWithDialog';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
-
-const useStyles = makeStyles((theme) => ({
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginLeft: theme.spacing(1),
-  },
-  gradeInput: {
-    marginTop: theme.spacing(1),
-  },
-}));
 
 type ProposalGradeProps = {
   review: Review | null;
@@ -61,7 +47,6 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
   onChange,
   confirm,
 }) => {
-  const classes = useStyles();
   const { api } = useDataApiWithFeedback();
   const { setAssignmentReview } = useContext(ReviewAndAssignmentContext);
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -196,7 +181,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             />
           </Box>
           <ErrorMessage name="grade" />
-          <Stack direction="row" justifyContent="flex-end">
+          <NavigationFragment>
             {isSubmitting && (
               <Box display="flex" alignItems="center" mx={1}>
                 <UOLoader buttonSized />
@@ -227,7 +212,6 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             {!hasAccessRights && (
               <Button
                 data-cy="submit-grade"
-                className={classes.button}
                 disabled={isDisabled(isSubmitting)}
                 type="submit"
                 onClick={() => setShouldSubmit(true)}
@@ -237,7 +221,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                   : 'Submit'}
               </Button>
             )}
-          </Stack>
+          </NavigationFragment>
         </Form>
       )}
     </Formik>

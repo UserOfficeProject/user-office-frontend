@@ -10,9 +10,9 @@ export class DefaultReviewWizardStep implements WizardStep {
   public payload?: any;
 
   constructor(
-    private isReviewStepCompleted: {
-      (state: QuestionarySubmissionState): boolean;
-    }
+    private isReviewStepCompleted: (
+      state: QuestionarySubmissionState
+    ) => boolean
   ) {}
 
   getMetadata(state: QuestionarySubmissionState) {
