@@ -1,8 +1,8 @@
 import faker from 'faker';
 
 import {
-  TechnicalReviewStatus,
   ProposalEndStatus,
+  TechnicalReviewStatus,
   UserRole,
 } from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
@@ -143,440 +143,440 @@ context('SEP reviews tests', () => {
     initializationBeforeTests();
   });
 
-  // describe('User officer role', () => {
-  //   it('Officer should be able to assign proposal to existing SEP', () => {
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
+  describe('User officer role', () => {
+    it('Officer should be able to assign proposal to existing SEP', () => {
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
 
-  //     cy.contains('Proposals and Assignments').click();
+      cy.contains('Proposals and Assignments').click();
 
-  //     cy.get('[data-cy="sep-assignments-table"]').should(
-  //       'not.contain.text',
-  //       proposal1.proposalTitle
-  //     );
+      cy.get('[data-cy="sep-assignments-table"]').should(
+        'not.contain.text',
+        proposal1.proposalTitle
+      );
 
-  //     cy.contains('Proposals').click();
+      cy.contains('Proposals').click();
 
-  //     cy.contains(proposal1.proposalTitle)
-  //       .parent()
-  //       .find('[type="checkbox"]')
-  //       .check();
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[type="checkbox"]')
+        .check();
 
-  //     cy.get("[aria-label='Assign proposals to SEP']").first().click();
+      cy.get("[aria-label='Assign proposals to SEP']").first().click();
 
-  //     cy.get('#selectedSEPId-input').should('not.have.class', 'Mui-disabled');
-  //     cy.get('#selectedSEPId-input').first().click();
+      cy.get('#selectedSEPId-input').should('not.have.class', 'Mui-disabled');
+      cy.get('#selectedSEPId-input').first().click();
 
-  //     cy.get('[role="presentation"] .MuiList-root').contains(sep1.code).click();
+      cy.get('[role="presentation"] .MuiList-root').contains(sep1.code).click();
 
-  //     cy.get('[data-cy="submit"]').click();
+      cy.get('[data-cy="submit"]').click();
 
-  //     cy.notification({
-  //       text: 'Proposal/s assigned to the selected SEP successfully',
-  //       variant: 'success',
-  //     });
+      cy.notification({
+        text: 'Proposal/s assigned to the selected SEP successfully',
+        variant: 'success',
+      });
 
-  //     cy.visit(`/SEPPage/${createdSepId}`);
+      cy.visit(`/SEPPage/${createdSepId}`);
 
-  //     cy.contains('Proposals and Assignments').click();
+      cy.contains('Proposals and Assignments').click();
 
-  //     cy.finishedLoading();
+      cy.finishedLoading();
 
-  //     cy.get('[data-cy="sep-assignments-table"]').should(
-  //       'contain.text',
-  //       proposal1.proposalTitle
-  //     );
-  //   });
+      cy.get('[data-cy="sep-assignments-table"]').should(
+        'contain.text',
+        proposal1.proposalTitle
+      );
+    });
 
-  //   it('Officer should be able to see proposal details in modal inside proposals and assignments', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.contains(proposal1.proposalTitle)
-  //       .parent()
-  //       .find('[aria-label="View Proposal"]')
-  //       .click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[role="dialog"]').contains('Proposal information');
-  //     cy.get('[role="dialog"]').contains('Technical review');
-
-  //     cy.get('[role="dialog"]').contains(proposal1.proposalTitle);
-  //     cy.get('[role="dialog"]').contains('Download PDF');
-
-  //     cy.closeModal();
-  //   });
-
-  //   it('Proposal should contain standard deviation field inside proposals and assignments', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[data-cy="sep-assignments-table"] thead').contains('Deviation');
-  //   });
-
-  //   it('Officer should be able to assign SEP member to proposal in existing SEP', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get("[aria-label='Assign SEP Member']").first().click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[role="dialog"]')
-  //       .contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('input[type="checkbox"]')
-  //       .click();
-  //     cy.contains('1 user(s) selected');
-  //     cy.contains('Update').click();
-
-  //     cy.notification({
-  //       variant: 'success',
-  //       text: 'Members assigned',
-  //     });
-
-  //     cy.get('[role="dialog"]').should('not.exist');
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
-  //     cy.contains(sepMembers.reviewer.lastName);
-
-  //     cy.contains('Logs').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.contains('SEP_MEMBER_ASSIGNED_TO_PROPOSAL');
-  //   });
-
-  //   it('Officer should be able to read/write reviews', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-  //     cy.assignSepReviewersToProposal({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //       proposalPk: createdProposalId,
-  //     });
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-  //     cy.finishedLoading();
-
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').click();
-
-  //     cy.contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('[data-cy="grade-proposal-icon"]')
-  //       .click();
-  //     readWriteReview();
-  //   });
-
-  //   it('Officer should be able to submit and un-submit reviews', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-  //     cy.assignSepReviewersToProposal({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //       proposalPk: createdProposalId,
-  //     });
-  //     cy.login('officer');
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-  //     cy.finishedLoading();
-
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').click();
-
-  //     cy.contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('[data-cy="grade-proposal-icon"]')
-  //       .click();
-
-  //     readWriteReview({ shouldSubmit: true });
-
-  //     cy.contains(sepMembers.reviewer.lastName).parent().contains('SUBMITTED');
-  //     cy.contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('[data-cy="view-proposal-details-icon"]')
-  //       .click();
-
-  //     cy.get('[role="presentation"] [role="tab"]').contains('Grade').click();
-
-  //     cy.get('[role="presentation"] form button[type="submit"]').should(
-  //       'not.be.disabled'
-  //     );
-
-  //     cy.get('[data-cy="is-grade-submitted"]').click();
-
-  //     cy.get('[role="presentation"] form button[type="submit"]').click();
-
-  //     cy.notification({ variant: 'success', text: 'Updated' });
-
-  //     cy.closeModal();
-  //     cy.get('[role="dialog"]').should('not.exist');
-
-  //     cy.get('[role="tab"]').contains('Members').click();
-  //     cy.get('[role="tab"]')
-  //       .contains('Proposals and assignments', { matchCase: false })
-  //       .click();
-  //     cy.finishedLoading();
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').click();
-
-  //     cy.contains(sepMembers.reviewer.lastName).parent().contains('DRAFT');
-  //   });
-
-  //   it('Officer should get error when trying to delete proposal which has dependencies (like reviews)', () => {
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-  //     cy.assignSepReviewersToProposal({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //       proposalPk: createdProposalId,
-  //     });
-  //     cy.login('officer');
-  //     cy.visit('/ProposalPage');
-
-  //     cy.get('[type="checkbox"]').first().check();
-
-  //     cy.get('[aria-label="Delete proposals"]').click();
-  //     cy.get('[data-cy="confirm-ok"]').click();
-
-  //     cy.notification({
-  //       variant: 'error',
-  //       text: 'Failed to delete proposal because, it has dependencies which need to be deleted first',
-  //     });
-  //   });
-  // });
-
-  // describe('SEP Chair role', () => {
-  //   beforeEach(() => {
-  //     cy.assignChairOrSecretary({
-  //       assignChairOrSecretaryToSEPInput: {
-  //         sepId: createdSepId,
-  //         userId: sepMembers.chair.id,
-  //         roleId: UserRole.SEP_CHAIR,
-  //       },
-  //     });
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-
-  //     cy.login(sepMembers.chair);
-  //     cy.changeActiveRole(initialDBData.roles.sepChair);
-  //   });
-
-  //   it('SEP Chair should be able to assign SEP member to proposal in existing SEP', () => {
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get("[aria-label='Assign SEP Member']").first().click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[role="dialog"]')
-  //       .contains(sepMembers.chair.lastName)
-  //       .parent()
-  //       .find('input[type="checkbox"]')
-  //       .click();
-  //     cy.contains('1 user(s) selected');
-  //     cy.contains('Update').click();
-
-  //     cy.notification({
-  //       variant: 'success',
-  //       text: 'Members assigned',
-  //     });
-
-  //     cy.get('[role="dialog"]').should('not.exist');
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
-
-  //     cy.contains(sepMembers.chair.lastName);
-  //   });
-
-  //   it('SEP Chair should be able to see proposal details in modal inside proposals and assignments', () => {
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-  //     cy.finishedLoading();
-
-  //     cy.contains(proposal1.proposalTitle)
-  //       .parent()
-  //       .find('[aria-label="View Proposal"]')
-  //       .click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[role="dialog"]').contains('Proposal information');
-  //     cy.get('[role="dialog"]').contains('Technical review');
-
-  //     cy.get('[role="dialog"]').contains(proposal1.proposalTitle);
-  //     cy.get('[role="dialog"]').contains('Download PDF');
-  //   });
-
-  //   it('SEP Chair should be able to read/write and un-submit reviews', () => {
-  //     cy.assignSepReviewersToProposal({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //       proposalPk: createdProposalId,
-  //     });
-
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-  //     cy.finishedLoading();
-
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').click();
-
-  //     cy.contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('[data-cy="grade-proposal-icon"]')
-  //       .click();
-  //     cy.get('[data-cy="is-grade-submitted"]').should('exist');
-  //     readWriteReview();
-  //   });
-  // });
-
-  // describe('SEP Secretary role', () => {
-  //   beforeEach(() => {
-  //     cy.assignChairOrSecretary({
-  //       assignChairOrSecretaryToSEPInput: {
-  //         sepId: createdSepId,
-  //         userId: sepMembers.secretary.id,
-  //         roleId: UserRole.SEP_SECRETARY,
-  //       },
-  //     });
-  //     cy.assignProposalsToSep({
-  //       sepId: createdSepId,
-  //       proposals: [
-  //         { callId: initialDBData.call.id, primaryKey: createdProposalId },
-  //       ],
-  //     });
-  //     cy.assignReviewersToSep({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //     });
-  //     cy.login(sepMembers.secretary);
-  //     cy.changeActiveRole(initialDBData.roles.sepSecretary);
-  //   });
-
-  //   it('SEP Secretary should be able to assign SEP member to proposal in existing SEP', () => {
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get("[aria-label='Assign SEP Member']").first().click();
-
-  //     cy.finishedLoading();
-
-  //     cy.get('[role="dialog"]')
-  //       .contains(sepMembers.secretary.lastName)
-  //       .parent()
-  //       .find('input[type="checkbox"]')
-  //       .click();
-  //     cy.contains('1 user(s) selected');
-  //     cy.contains('Update').click();
-
-  //     cy.notification({
-  //       variant: 'success',
-  //       text: 'Members assigned',
-  //     });
-
-  //     cy.get('[role="dialog"]').should('not.exist');
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
-
-  //     cy.contains(sepMembers.secretary.lastName);
-  //   });
-
-  //   it('SEP Secretary should be able to read/write and un-submit reviews', () => {
-  //     cy.assignSepReviewersToProposal({
-  //       sepId: createdSepId,
-  //       memberIds: [sepMembers.reviewer.id],
-  //       proposalPk: createdProposalId,
-  //     });
-
-  //     cy.visit(`/SEPPage/${createdSepId}`);
-
-  //     cy.contains('Proposals and Assignments').click();
-  //     cy.finishedLoading();
-
-  //     cy.get('[aria-label="Detail panel visibility toggle"]').click();
-
-  //     cy.contains(sepMembers.reviewer.lastName)
-  //       .parent()
-  //       .find('[data-cy="grade-proposal-icon"]')
-  //       .click();
-  //     cy.get('[data-cy="is-grade-submitted"]').should('exist');
-  //     readWriteReview();
-  //   });
-  // });
+    it('Officer should be able to see proposal details in modal inside proposals and assignments', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[aria-label="View Proposal"]')
+        .click();
+
+      cy.finishedLoading();
+
+      cy.get('[role="dialog"]').contains('Proposal information');
+      cy.get('[role="dialog"]').contains('Technical review');
+
+      cy.get('[role="dialog"]').contains(proposal1.proposalTitle);
+      cy.get('[role="dialog"]').contains('Download PDF');
+
+      cy.closeModal();
+    });
+
+    it('Proposal should contain standard deviation field inside proposals and assignments', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.get('[data-cy="sep-assignments-table"] thead').contains('Deviation');
+    });
+
+    it('Officer should be able to assign SEP member to proposal in existing SEP', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.get("[aria-label='Assign SEP Member']").first().click();
+
+      cy.finishedLoading();
+
+      cy.get('[role="dialog"]')
+        .contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('input[type="checkbox"]')
+        .click();
+      cy.contains('1 user(s) selected');
+      cy.contains('Update').click();
+
+      cy.notification({
+        variant: 'success',
+        text: 'Members assigned',
+      });
+
+      cy.get('[role="dialog"]').should('not.exist');
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
+      cy.contains(sepMembers.reviewer.lastName);
+
+      cy.contains('Logs').click();
+
+      cy.finishedLoading();
+
+      cy.contains('SEP_MEMBER_ASSIGNED_TO_PROPOSAL');
+    });
+
+    it('Officer should be able to read/write reviews', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+      readWriteReview();
+    });
+
+    it('Officer should be able to submit and un-submit reviews', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+      cy.login('officer');
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+
+      readWriteReview({ shouldSubmit: true });
+
+      cy.contains(sepMembers.reviewer.lastName).parent().contains('SUBMITTED');
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="view-proposal-details-icon"]')
+        .click();
+
+      cy.get('[role="presentation"] [role="tab"]').contains('Grade').click();
+
+      cy.get('[role="presentation"] form button[type="submit"]').should(
+        'not.be.disabled'
+      );
+
+      cy.get('[data-cy="is-grade-submitted"]').click();
+
+      cy.get('[role="presentation"] form button[type="submit"]').click();
+
+      cy.notification({ variant: 'success', text: 'Updated' });
+
+      cy.closeModal();
+      cy.get('[role="dialog"]').should('not.exist');
+
+      cy.get('[role="tab"]').contains('Members').click();
+      cy.get('[role="tab"]')
+        .contains('Proposals and assignments', { matchCase: false })
+        .click();
+      cy.finishedLoading();
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName).parent().contains('DRAFT');
+    });
+
+    it('Officer should get error when trying to delete proposal which has dependencies (like reviews)', () => {
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+      cy.login('officer');
+      cy.visit('/ProposalPage');
+
+      cy.get('[type="checkbox"]').first().check();
+
+      cy.get('[aria-label="Delete proposals"]').click();
+      cy.get('[data-cy="confirm-ok"]').click();
+
+      cy.notification({
+        variant: 'error',
+        text: 'Failed to delete proposal because, it has dependencies which need to be deleted first',
+      });
+    });
+  });
+
+  describe('SEP Chair role', () => {
+    beforeEach(() => {
+      cy.assignChairOrSecretary({
+        assignChairOrSecretaryToSEPInput: {
+          sepId: createdSepId,
+          userId: sepMembers.chair.id,
+          roleId: UserRole.SEP_CHAIR,
+        },
+      });
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+
+      cy.login(sepMembers.chair);
+      cy.changeActiveRole(initialDBData.roles.sepChair);
+    });
+
+    it('SEP Chair should be able to assign SEP member to proposal in existing SEP', () => {
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.get("[aria-label='Assign SEP Member']").first().click();
+
+      cy.finishedLoading();
+
+      cy.get('[role="dialog"]')
+        .contains(sepMembers.chair.lastName)
+        .parent()
+        .find('input[type="checkbox"]')
+        .click();
+      cy.contains('1 user(s) selected');
+      cy.contains('Update').click();
+
+      cy.notification({
+        variant: 'success',
+        text: 'Members assigned',
+      });
+
+      cy.get('[role="dialog"]').should('not.exist');
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
+
+      cy.contains(sepMembers.chair.lastName);
+    });
+
+    it('SEP Chair should be able to see proposal details in modal inside proposals and assignments', () => {
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.contains(proposal1.proposalTitle)
+        .parent()
+        .find('[aria-label="View Proposal"]')
+        .click();
+
+      cy.finishedLoading();
+
+      cy.get('[role="dialog"]').contains('Proposal information');
+      cy.get('[role="dialog"]').contains('Technical review');
+
+      cy.get('[role="dialog"]').contains(proposal1.proposalTitle);
+      cy.get('[role="dialog"]').contains('Download PDF');
+    });
+
+    it('SEP Chair should be able to read/write and un-submit reviews', () => {
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+      cy.get('[data-cy="is-grade-submitted"]').should('exist');
+      readWriteReview();
+    });
+  });
+
+  describe('SEP Secretary role', () => {
+    beforeEach(() => {
+      cy.assignChairOrSecretary({
+        assignChairOrSecretaryToSEPInput: {
+          sepId: createdSepId,
+          userId: sepMembers.secretary.id,
+          roleId: UserRole.SEP_SECRETARY,
+        },
+      });
+      cy.assignProposalsToSep({
+        sepId: createdSepId,
+        proposals: [
+          { callId: initialDBData.call.id, primaryKey: createdProposalId },
+        ],
+      });
+      cy.assignReviewersToSep({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+      });
+      cy.login(sepMembers.secretary);
+      cy.changeActiveRole(initialDBData.roles.sepSecretary);
+    });
+
+    it('SEP Secretary should be able to assign SEP member to proposal in existing SEP', () => {
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+
+      cy.finishedLoading();
+
+      cy.get("[aria-label='Assign SEP Member']").first().click();
+
+      cy.finishedLoading();
+
+      cy.get('[role="dialog"]')
+        .contains(sepMembers.secretary.lastName)
+        .parent()
+        .find('input[type="checkbox"]')
+        .click();
+      cy.contains('1 user(s) selected');
+      cy.contains('Update').click();
+
+      cy.notification({
+        variant: 'success',
+        text: 'Members assigned',
+      });
+
+      cy.get('[role="dialog"]').should('not.exist');
+      cy.get('[aria-label="Detail panel visibility toggle"]').first().click();
+
+      cy.contains(sepMembers.secretary.lastName);
+    });
+
+    it('SEP Secretary should be able to read/write and un-submit reviews', () => {
+      cy.assignSepReviewersToProposal({
+        sepId: createdSepId,
+        memberIds: [sepMembers.reviewer.id],
+        proposalPk: createdProposalId,
+      });
+
+      cy.visit(`/SEPPage/${createdSepId}`);
+
+      cy.contains('Proposals and Assignments').click();
+      cy.finishedLoading();
+
+      cy.get('[aria-label="Detail panel visibility toggle"]').click();
+
+      cy.contains(sepMembers.reviewer.lastName)
+        .parent()
+        .find('[data-cy="grade-proposal-icon"]')
+        .click();
+      cy.get('[data-cy="is-grade-submitted"]').should('exist');
+      readWriteReview();
+    });
+  });
 
   describe('SEP Reviewer role', () => {
     beforeEach(() => {
