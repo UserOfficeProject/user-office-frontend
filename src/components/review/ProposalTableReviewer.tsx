@@ -279,6 +279,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
             return {
               ...review,
               grade: currentReview.grade,
+              comment: currentReview.comment,
               status: currentReview.status,
             };
           } else {
@@ -300,20 +301,20 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         reviewId: proposal.reviewId,
       }));
 
-      const invalidProposals = [];
+      const invalid = [];
 
       for await (const proposal of selectedProposals) {
         const isGradeValid = await proposalGradeValidationSchema.isValid(
           proposal
         );
         if (isGradeValid === false) {
-          invalidProposals.push(proposal);
+          invalid.push(proposal);
         }
       }
 
-      if (invalidProposals.length > 0) {
+      if (invalid.length > 0) {
         enqueueSnackbar(
-          `Please correct the grade and comment for the proposal(s) with ID: ${invalidProposals
+          `Please correct the grade and comment for the proposal(s) with ID: ${invalid
             .map((proposal) => proposal.proposalId)
             .join(', ')}`,
           { variant: 'error', autoHideDuration: 30000 }
