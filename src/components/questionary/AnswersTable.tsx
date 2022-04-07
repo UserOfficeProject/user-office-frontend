@@ -14,7 +14,14 @@ export function AnswersTable(props: AnswersTableProps) {
   const { rows } = props;
 
   const createTableRow = (key: string, rowData: TableRowData) => (
-    <TableRow key={key}>
+    <TableRow
+      key={key}
+      sx={(theme) => ({
+        ':hover': {
+          background: theme.palette.grey[100],
+        },
+      })}
+    >
       <TableCell padding={'normal'}>{rowData.label}</TableCell>
       <TableCell width={'35%'}>{rowData.value}</TableCell>
     </TableRow>

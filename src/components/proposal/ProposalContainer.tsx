@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Typography } from '@mui/material';
+import { PaperProps, Typography } from '@mui/material';
 import { default as React, useState } from 'react';
 
 import CopyToClipboard from 'components/common/CopyToClipboard';
@@ -17,17 +17,21 @@ import {
   QuestionarySubmissionModel,
 } from 'models/questionary/QuestionarySubmissionState';
 import useEventHandlers from 'models/questionary/useEventHandlers';
-import { StyledContainer } from 'styles/StyledComponents';
+import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
 
 export interface ProposalContextType extends QuestionaryContextType {
   state: ProposalSubmissionState | null;
 }
 
-export default function ProposalContainer(props: {
+interface ProposalContainerProps {
   proposal: ProposalWithQuestionary;
   proposalUpdated?: (proposal: ProposalWithQuestionary) => void;
-}) {
-  const [initialState] = useState(new ProposalSubmissionState(props.proposal));
+  elevation?: PaperProps['elevation'];
+}
+export default function ProposalContainer(props: ProposalContainerProps) {
+  const { proposal, proposalUpdated, elevation } = props;
+
+  const [initialState] = useState(new ProposalSubmissionState(proposal));
 
   const eventHandlers = useEventHandlers(TemplateGroupId.PROPOSAL);
 
@@ -35,7 +39,7 @@ export default function ProposalContainer(props: {
     (state: ProposalSubmissionState, action: Event) => {
       switch (action.type) {
         case 'ITEM_WITH_QUESTIONARY_MODIFIED':
-          props.proposalUpdated?.({
+          proposalUpdated?.({
             ...state.proposal,
             ...action.itemWithQuestionary,
           });
@@ -80,10 +84,12 @@ export default function ProposalContainer(props: {
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <StyledContainer>
-        <Questionary
-          title={state.proposal.title || 'New Proposal'}
-          info={info}
-        />
+        <StyledPaper elevation={elevation}>
+          <Questionary
+            title={state.proposal.title || 'New Proposal'}
+            info={info}
+          />
+        </StyledPaper>
       </StyledContainer>
     </QuestionaryContext.Provider>
   );

@@ -1,15 +1,9 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from '@mui/material/Accordion';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
 
 export interface StepViewProps {
   title: string;
@@ -38,7 +32,9 @@ export function StepView(props: StepViewProps) {
       >
         <Typography variant="h6">{title}</Typography>
       </AccordionSummary>
-      <AccordionDetails>{content}</AccordionDetails>
+      <AccordionDetails sx={{ marginBottom: '10px' }}>
+        {content}
+      </AccordionDetails>
     </Accordion>
   );
 }
