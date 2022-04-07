@@ -125,11 +125,11 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         reviewId: review.id,
         comment: review.comment,
         status: review.status,
-        callShortCode: review.proposal?.call?.shortCode,
-        instrumentShortCode: review.proposal?.instrument?.shortCode,
+        callShortCode: review.proposal!.call?.shortCode,
+        instrumentShortCode: review.proposal!.instrument?.shortCode,
         tableData: {
           checked:
-            selection?.has(review.proposal?.primaryKey.toString() || null) ||
+            selection?.has(review.proposal!.primaryKey.toString() || null) ||
             false,
         },
       })) || [];

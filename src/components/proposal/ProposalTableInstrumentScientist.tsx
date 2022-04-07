@@ -9,6 +9,7 @@ import {
   getTranslation,
   ResourceId,
 } from '@user-office-software/duo-localisation';
+import { proposalTechnicalReviewValidationSchema } from '@user-office-software/duo-validation';
 import React, { useContext, useState, useEffect } from 'react';
 import {
   NumberParam,
@@ -327,32 +328,40 @@ const ProposalTableInstrumentScientist: React.FC<{
     );
   };
 
-  const handleBulkTechnicalReviewsSubmit = (
-    event: React.MouseEventHandler<HTMLButtonElement>,
-    rowData: ProposalViewData | ProposalViewData[]
+  const handleBulkTechnicalReviewsSubmit = async (
+    _: React.MouseEventHandler<HTMLButtonElement>,
+    selectedRowsData: ProposalViewData | ProposalViewData[]
   ) => {
-    if (!Array.isArray(rowData)) {
+    if (!Array.isArray(selectedRowsData)) {
       return;
     }
 
-    const someSelectedProposalsAreMissingSomeTechnicalReviewRequiredInput =
-      rowData?.some(
-        (proposal) =>
-          proposal.technicalStatus === null ||
-          proposal.technicalTimeAllocation === null
-      );
+    const invalid = [];
+
+    for await (const rowData of selectedRowsData) {
+      const isValidSchema =
+        await proposalTechnicalReviewValidationSchema.isValid({
+          status: rowData.status,
+          timeAllocation: rowData.technicalTimeAllocation,
+        });
+      if (!isValidSchema) {
+        invalid.push(rowData);
+      }
+    }
 
     confirm(
       async () => {
-        await submitTechnicalReviews(rowData);
+        await submitTechnicalReviews(selectedRowsData);
       },
       {
         title: 'Submit technical reviews',
         description:
           'No further changes to technical reviews are possible after submission. Are you sure you want to submit the selected proposals technical reviews?',
         alertText:
-          someSelectedProposalsAreMissingSomeTechnicalReviewRequiredInput
-            ? 'Some of the selected proposals are missing some required input. Please open the details and insert technical review status and time allocation before submitting.'
+          invalid.length > 0
+            ? `Some of the selected proposals are missing some required input. Please correct the status and time allocation for the proposal(s) with ID: ${invalid
+                .map((proposal) => proposal.proposalId)
+                .join(', ')}`
             : '',
       }
     )();
