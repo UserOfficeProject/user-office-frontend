@@ -5,6 +5,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import Visibility from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import { proposalGradeValidationSchema } from '@user-office-software/duo-validation';
 import React, { useState, useContext, useEffect } from 'react';
 import { useQueryParams, NumberParam } from 'use-query-params';
 
@@ -34,9 +35,6 @@ import ProposalReviewContent, {
   PROPOSAL_MODAL_TAB_NAMES,
 } from './ProposalReviewContent';
 import ProposalReviewModal from './ProposalReviewModal';
-import ReviewerFilterComponent, {
-  defaultReviewerQueryFilter,
-} from './ReviewerFilter';
 import ReviewStatusFilter, {
   defaultReviewStatusQueryFilter,
 } from './ReviewStatusFilter';
@@ -59,9 +57,6 @@ const getFilterStatus = (selected: string | ReviewStatus) =>
     : selected === ReviewStatus.DRAFT
     ? ReviewStatus.DRAFT
     : undefined; // if the selected status is not a valid status assume we want to see everything
-
-const getFilterReviewer = (selected: string | ReviewerFilter) =>
-  selected === ReviewerFilter.YOU ? ReviewerFilter.YOU : ReviewerFilter.ALL;
 
 let columns: Column<UserWithReview>[] = [
   {
@@ -97,7 +92,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     reviewStatus: defaultReviewStatusQueryFilter,
     reviewModal: NumberParam,
     modalTab: NumberParam,
-    reviewer: defaultReviewerQueryFilter,
   });
 
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
@@ -116,7 +110,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       callId: selectedCallId,
       instrumentId: selectedInstrumentId,
       status: getFilterStatus(urlQueryParams.reviewStatus),
-      reviewer: getFilterReviewer(urlQueryParams.reviewer),
+      reviewer: ReviewerFilter.YOU,
     });
 
   useEffect(() => {
@@ -199,11 +193,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
               });
             }}
           >
-            {/* NOTE: When reviewer filter is set to all then just show view icon for now and decide later how the reviews are shown
-             * Review status and grades should be shown differently here when multiple review per proposal. Here is the task for this: https://jira.esss.lu.se/browse/SWAP-2407
-             */}
-            {urlQueryParams.reviewer === ReviewerFilter.YOU &&
-            rowData.status === ReviewStatus.DRAFT ? (
+            {rowData.status === ReviewStatus.DRAFT ? (
               <RateReviewIcon data-cy="grade-proposal-icon" />
             ) : (
               <Visibility data-cy="view-proposal-details-icon" />
@@ -251,14 +241,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     setUserWithReviewsFilter((filter) => ({
       ...filter,
       status: getFilterStatus(reviewStatus),
-    }));
-  };
-
-  const handleReviewOwnerFilterChange = (reviewer: ReviewerFilter) => {
-    setUrlQueryParams((queries) => ({ ...queries, reviewer }));
-    setUserWithReviewsFilter((filter) => ({
-      ...filter,
-      reviewer,
     }));
   };
 
@@ -342,7 +324,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
     }
   };
 
-  const handleBulkReviewsSubmitClick = (
+  const handleBulkReviewsSubmitClick = async (
     _: React.MouseEventHandler<HTMLButtonElement>,
     selectedProposals: UserWithReview | UserWithReview[]
   ) => {
@@ -350,9 +332,16 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
       return;
     }
 
-    const someSelectedReviewsWithoutGrade = selectedProposals?.some(
-      (reviewToSubmit) => !reviewToSubmit.grade
-    );
+    const invalid = [];
+
+    for await (const proposal of selectedProposals) {
+      const isValidSchema = await proposalGradeValidationSchema.isValid(
+        proposal
+      );
+      if (!isValidSchema) {
+        invalid.push(proposal);
+      }
+    }
 
     confirm(
       async () => {
@@ -362,9 +351,12 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
         title: 'Submit proposal reviews',
         description:
           'No further changes to proposal reviews are possible after submission. Are you sure you want to submit the proposal reviews?',
-        alertText: someSelectedReviewsWithoutGrade
-          ? 'Some of the selected proposals are missing review grade. Please open the details and insert grades before submitting'
-          : '',
+        alertText:
+          invalid.length > 0
+            ? `Some of the selected proposals are missing review grade or comment. Please correct the grade and comment for the proposal(s) with ID: ${invalid
+                .map((proposal) => proposal.proposalId)
+                .join(', ')}`
+            : '',
       }
     )();
   };
@@ -382,10 +374,6 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
 
   return (
     <>
-      <ReviewerFilterComponent
-        reviewer={urlQueryParams.reviewer}
-        onChange={handleReviewOwnerFilterChange}
-      />
       <ReviewStatusFilter
         reviewStatus={urlQueryParams.reviewStatus}
         onChange={handleStatusFilterChange}

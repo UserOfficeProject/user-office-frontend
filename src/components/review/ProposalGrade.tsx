@@ -1,10 +1,10 @@
-import { Stack } from '@mui/material';
+import Save from '@mui/icons-material/Save';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import makeStyles from '@mui/styles/makeStyles';
+import Stack from '@mui/material/Stack';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
@@ -28,19 +28,6 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-const useStyles = makeStyles((theme) => ({
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginLeft: theme.spacing(1),
-  },
-  gradeInput: {
-    marginTop: theme.spacing(1),
-  },
-}));
-
 type ProposalGradeProps = {
   review: Review | null;
   setReview: React.Dispatch<React.SetStateAction<Review | null>>;
@@ -61,7 +48,6 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
   onChange,
   confirm,
 }) => {
-  const classes = useStyles();
   const { api } = useDataApiWithFeedback();
   const { setAssignmentReview } = useContext(ReviewAndAssignmentContext);
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -154,7 +140,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
         <Form>
           <PromptIfDirty />
           <CssBaseline />
-          <InputLabel htmlFor="comment" shrink margin="dense">
+          <InputLabel htmlFor="comment" shrink margin="dense" required>
             Comment
           </InputLabel>
           <Editor
@@ -198,13 +184,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               ))}
             </Field>
           </Box>
-          <ErrorMessage name="grade" />
-          <Stack direction="row" justifyContent="flex-end">
-            {isSubmitting && (
-              <Box display="flex" alignItems="center" mx={1}>
-                <UOLoader buttonSized />
-              </Box>
-            )}
+          <Stack direction="row" justifyContent="flex-end" spacing={2}>
             {hasAccessRights && (
               <Field
                 id="submitted"
@@ -213,7 +193,6 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 component={CheckboxWithLabel}
                 Label={{
                   label: 'Submitted',
-                  margin: 'normal',
                 }}
                 disabled={isSubmitting}
                 data-cy="is-grade-submitted"
@@ -228,13 +207,13 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               color="secondary"
               type="submit"
               onClick={() => setShouldSubmit(false)}
+              startIcon={isSubmitting ? <UOLoader buttonSized /> : <Save />}
             >
               Save
             </Button>
             {!hasAccessRights && (
               <Button
                 data-cy="submit-grade"
-                className={classes.button}
                 disabled={isDisabled(isSubmitting)}
                 type="submit"
                 onClick={() => setShouldSubmit(true)}
