@@ -17,7 +17,7 @@ import {
   QuestionarySubmissionModel,
 } from 'models/questionary/QuestionarySubmissionState';
 import useEventHandlers from 'models/questionary/useEventHandlers';
-import { StyledContainer, StyledPaper } from 'styles/StyledComponents';
+import { StyledContainer } from 'styles/StyledComponents';
 
 export interface ProposalContextType extends QuestionaryContextType {
   state: ProposalSubmissionState | null;
@@ -80,12 +80,10 @@ export default function ProposalContainer(props: {
   return (
     <QuestionaryContext.Provider value={{ state, dispatch }}>
       <StyledContainer>
-        <StyledPaper>
-          <Questionary
-            title={state.proposal.title || 'New Proposal'}
-            info={info}
-          />
-        </StyledPaper>
+        <Questionary
+          title={state.proposal.title || 'New Proposal'}
+          info={info}
+        />
       </StyledContainer>
     </QuestionaryContext.Provider>
   );

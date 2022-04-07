@@ -1,58 +1,15 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import Table, { TableProps } from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
+import { TableProps } from '@mui/material/Table';
 import Typography from '@mui/material/Typography';
 import React, { FC } from 'react';
 
 import UOLoader from 'components/common/UOLoader';
-import { Answer, DataType, Question } from 'generated/sdk';
+import { Answer, DataType } from 'generated/sdk';
 import { useQuestionary } from 'hooks/questionary/useQuestionary';
 import { areDependenciesSatisfied } from 'models/questionary/QuestionaryFunctions';
 
+import { AnswersTable } from './AnswersTable';
 import { getQuestionaryComponentDefinition } from './QuestionaryComponentRegistry';
-interface StepViewProps {
-  title: string;
-  content: JSX.Element;
-}
-
-const StepView = (props: StepViewProps) => {
-  const { title, content } = props;
-
-  return (
-    <Accordion defaultExpanded>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">{title}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>{content}</AccordionDetails>
-    </Accordion>
-  );
-};
-
-interface AnswersTableProps {
-  rows?: TableRowData[];
-}
-
-const AnswersTable = (props: AnswersTableProps) => {
-  const { rows } = props;
-
-  const createTableRow = (key: string, rowData: TableRowData) => (
-    <TableRow key={key}>
-      <TableCell padding={'normal'}>{rowData.label}</TableCell>
-      <TableCell width={'35%'}>{rowData.value}</TableCell>
-    </TableRow>
-  );
-
-  return (
-    <Table sx={{ wordBreak: 'break-word' }} size="small">
-      <TableBody>
-        {rows?.map((row, index) => createTableRow(`row-${index}`, row))}
-      </TableBody>
-    </Table>
-  );
-};
+import { StepView } from './StepView';
 
 export interface TableRowData {
   label: JSX.Element | string | null;
@@ -102,13 +59,9 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
           return null;
         }
 
-        const questionElem = React.createElement<Question>(
-          renderers.questionRenderer,
-          answer.question
-        );
+        const questionElem = renderers.questionRenderer(answer.question);
         const answerElem =
-          answerRenderer?.(answer) ||
-          React.createElement<Answer>(renderers.answerRenderer, answer);
+          answerRenderer?.(answer) || renderers.answerRenderer(answer);
 
         const row: TableRowData = {
           label: questionElem,
@@ -120,7 +73,6 @@ function QuestionaryDetails(props: QuestionaryDetailsProps) {
       .filter((row) => row !== null) as TableRowData[];
 
     if (index === 0 && additionalDetails !== undefined) {
-      console.log(additionalDetails);
       rows.unshift(...additionalDetails);
     }
 
