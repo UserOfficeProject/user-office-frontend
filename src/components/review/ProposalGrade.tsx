@@ -169,6 +169,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               name="grade"
               label="Grade"
               component={Select}
+              MenuProps={{ 'data-cy': 'grade-proposal-options' }}
               formControl={{
                 fullWidth: true,
                 required: true,

@@ -1389,11 +1389,23 @@ context('SEP meeting components tests', () => {
       cy.finishedLoading();
       cy.get('[data-cy="grade-proposal-icon"]').click();
       cy.get('[data-cy=save-grade]').click();
-      cy.contains('comment is a required field');
-      cy.contains('grade is a required field');
-      cy.setTinyMceContent('comment', faker.lorem.words(3));
+      cy.get('[data-cy="grade-proposal"] input:invalid').should(
+        'have.length',
+        1
+      );
+      // NOTE: Testing native html required validation message.
+      cy.get('[data-cy="grade-proposal"] input').then(($input) => {
+        expect(($input[0] as HTMLInputElement).validationMessage).to.eq(
+          'Please fill out this field.'
+        );
+      });
       cy.get('[data-cy="grade-proposal"]').click();
-      cy.get('[role="listbox"] > [role="option"]').first().click();
+      cy.get('[data-cy="grade-proposal-options"] [role="option"]')
+        .first()
+        .click();
+      cy.get('[data-cy=save-grade]').click();
+      cy.contains('comment is a required field');
+      cy.setTinyMceContent('comment', faker.lorem.words(3));
       cy.get('[data-cy=save-grade]').click();
       cy.notification({ variant: 'success', text: 'Updated' });
     });
