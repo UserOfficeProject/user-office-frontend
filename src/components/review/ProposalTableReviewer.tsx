@@ -225,6 +225,7 @@ const ProposalTableReviewer: React.FC<{ confirm: WithConfirmType }> = ({
               ...review,
               grade: currentReview.grade,
               status: currentReview.status,
+              comment: currentReview.comment,
             };
           } else {
             return review;
