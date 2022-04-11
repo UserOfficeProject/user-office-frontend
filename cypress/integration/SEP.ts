@@ -633,7 +633,7 @@ context('SEP reviews tests', () => {
 
       cy.notification({
         variant: 'error',
-        text: 'REJECTED',
+        text: 'Failed to submit one more proposal reviews',
       });
 
       cy.get('[data-cy="grade-proposal-icon"]').click();
