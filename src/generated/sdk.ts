@@ -2266,7 +2266,7 @@ export type QuerySepProposalArgs = {
 
 
 export type QuerySepProposalsArgs = {
-  callId: Scalars['Int'];
+  callId?: InputMaybe<Scalars['Int']>;
   sepId: Scalars['Int'];
 };
 
@@ -3246,7 +3246,7 @@ export type GetSepProposalQuery = { sepProposal: { proposalPk: number, sepId: nu
 
 export type GetSepProposalsQueryVariables = Exact<{
   sepId: Scalars['Int'];
-  callId: Scalars['Int'];
+  callId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -5688,7 +5688,7 @@ ${BasicUserDetailsFragmentDoc}
 ${QuestionaryFragmentDoc}
 ${CoreTechnicalReviewFragmentDoc}`;
 export const GetSepProposalsDocument = gql`
-    query getSEPProposals($sepId: Int!, $callId: Int!) {
+    query getSEPProposals($sepId: Int!, $callId: Int) {
   sepProposals(sepId: $sepId, callId: $callId) {
     proposalPk
     dateAssigned

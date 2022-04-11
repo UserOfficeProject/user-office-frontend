@@ -6,7 +6,6 @@ import Tooltip from '@mui/material/Tooltip';
 import makeStyles from '@mui/styles/makeStyles';
 import useTheme from '@mui/styles/useTheme';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import React, { useContext, DragEvent, useState, useEffect } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
 
@@ -17,6 +16,7 @@ import {
   InstrumentWithAvailabilityTime,
   UserRole,
   SepMeetingDecision,
+  Call,
 } from 'generated/sdk';
 import { useSEPProposalsByInstrument } from 'hooks/SEP/useSEPProposalsByInstrument';
 import { tableIcons } from 'utils/materialIcons';
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 type SEPInstrumentProposalsTableProps = {
   sepInstrument: InstrumentWithAvailabilityTime;
   sepId: number;
-  selectedCallId: number;
+  selectedCall?: Call;
 };
 
 const assignmentColumns = [
@@ -148,7 +148,7 @@ const assignmentColumns = [
 
 const SEPInstrumentProposalsTable: React.FC<
   SEPInstrumentProposalsTableProps
-> = ({ sepInstrument, sepId, selectedCallId }) => {
+> = ({ sepInstrument, sepId, selectedCall }) => {
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     sepMeetingModal: NumberParam,
   });
@@ -157,13 +157,22 @@ const SEPInstrumentProposalsTable: React.FC<
     loadingInstrumentProposals,
     setInstrumentProposalsData,
     refreshInstrumentProposalsData,
-  } = useSEPProposalsByInstrument(sepInstrument.id, sepId, selectedCallId);
+  } = useSEPProposalsByInstrument(sepInstrument.id, sepId, selectedCall?.id);
   const classes = useStyles();
   const theme = useTheme();
   const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
   const [savingOrder, setSavingOrder] = useState(false);
+
+  // NOTE: This is needed for adding the allocation time unit information on the column title without causing some console warning on re-rendering.
+  const columns = assignmentColumns.map((column) => ({
+    ...column,
+    title:
+      column.field === 'timeAllocation'
+        ? `${column.title} (${selectedCall?.allocationTimeUnit}s)`
+        : column.title,
+  }));
 
   const DragState = {
     row: -1,
@@ -430,7 +439,7 @@ const SEPInstrumentProposalsTable: React.FC<
     doppableAreaRow.className = 'droppableAreaRow';
     // NOTE: Full width column is needed to set proper background
     const doppableAreaColumn = document.createElement('td');
-    doppableAreaColumn.colSpan = assignmentColumns.length;
+    doppableAreaColumn.colSpan = columns.length;
     doppableAreaColumn.textContent = 'Drop here';
     doppableAreaRow.appendChild(doppableAreaColumn);
 
@@ -579,7 +588,7 @@ const SEPInstrumentProposalsTable: React.FC<
       />
       <MaterialTable
         icons={tableIcons}
-        columns={assignmentColumns}
+        columns={columns}
         title={'Assigned reviewers'}
         data={sortedProposalsWithAverageScoreAndId}
         isLoading={loadingInstrumentProposals || savingOrder}
@@ -599,12 +608,6 @@ const SEPInstrumentProposalsTable: React.FC<
       />
     </div>
   );
-};
-
-SEPInstrumentProposalsTable.propTypes = {
-  sepInstrument: PropTypes.any.isRequired,
-  sepId: PropTypes.number.isRequired,
-  selectedCallId: PropTypes.number.isRequired,
 };
 
 export default SEPInstrumentProposalsTable;
