@@ -9,8 +9,8 @@ import ExperimentTable from './ExperimentTable';
 function ExperimentPage() {
   return (
     <StyledContainer>
-      <Grid container>
-        <Grid item xs={12}>
+      <Grid>
+        <Grid xs={12}>
           <StyledPaper data-cy="officer-scheduled-events-table">
             <ExperimentFilterBar />
             <ExperimentTable />

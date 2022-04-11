@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material';
-import { DateTime } from 'luxon';
 import React, { useEffect } from 'react';
 import { useQueryParams, NumberParam, DateParam } from 'use-query-params';
 
@@ -8,6 +7,7 @@ import SuperMaterialTable, {
 } from 'components/common/SuperMaterialTable';
 import ProposalEsiDetailsButton from 'components/questionary/questionaryComponents/ProposalEsiBasis/ProposalEsiDetailsButton';
 import { GetScheduledEventsCoreQuery } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useScheduledEvents } from 'hooks/scheduledEvent/useScheduledEvents';
 import { tableIcons } from 'utils/materialIcons';
 import { getFullUserName } from 'utils/user';
@@ -16,50 +16,6 @@ import { ExperimentUrlQueryParamsType } from './ExperimentUrlQueryParamsType';
 import ExperimentVisitsTable from './ExperimentVisitsTable';
 
 type RowType = GetScheduledEventsCoreQuery['scheduledEventsCore'][0];
-
-const columns = [
-  {
-    title: 'Proposal ID',
-    field: 'proposal.proposalId',
-  },
-  {
-    title: 'Principal investigator',
-    render: (rowData: RowType) => getFullUserName(rowData.proposal.proposer),
-  },
-  {
-    title: 'Proposal',
-    field: 'proposal.title',
-  },
-  {
-    title: 'Experiment start',
-    field: 'startsAt',
-    render: (rowData: RowType) =>
-      DateTime.fromFormat(rowData.startsAt, 'yyyy-MM-dd HH:mm:ss').toFormat(
-        'dd/MM/yyyy HH:mm'
-      ),
-  },
-  {
-    title: 'Experiment end',
-    field: 'endsAt',
-    render: (rowData: RowType) =>
-      DateTime.fromFormat(rowData.endsAt, 'yyyy-MM-dd HH:mm:ss').toFormat(
-        'dd/MM/yyyy HH:mm'
-      ),
-  },
-  {
-    title: 'ESI',
-    render: (rowData: RowType) =>
-      rowData.esi ? (
-        <ProposalEsiDetailsButton esiId={rowData.esi?.id} />
-      ) : (
-        'No ESI'
-      ),
-  },
-  {
-    title: 'Instrument',
-    field: 'proposal.instrument.name',
-  },
-];
 
 function ExperimentTable() {
   const [urlQueryParams, setUrlQueryParams] =
@@ -99,6 +55,48 @@ function ExperimentTable() {
     },
     []
   );
+
+  const { timezone, toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
+
+  const columns = [
+    {
+      title: 'Proposal ID',
+      field: 'proposal.proposalId',
+    },
+    {
+      title: 'Principal investigator',
+      render: (rowData: RowType) => getFullUserName(rowData.proposal.proposer),
+    },
+    {
+      title: 'Proposal',
+      field: 'proposal.title',
+    },
+    {
+      title: `Experiment start (${timezone})`,
+      field: 'startsAt',
+      render: (rowData: RowType) => toFormattedDateTime(rowData.startsAt),
+    },
+    {
+      title: `Experiment end (${timezone})`,
+      field: 'endsAt',
+      render: (rowData: RowType) => toFormattedDateTime(rowData.endsAt),
+    },
+    {
+      title: 'ESI',
+      render: (rowData: RowType) =>
+        rowData.esi ? (
+          <ProposalEsiDetailsButton esiId={rowData.esi?.id} />
+        ) : (
+          'No ESI'
+        ),
+    },
+    {
+      title: 'Instrument',
+      field: 'proposal.instrument.name',
+    },
+  ];
 
   return (
     <SuperMaterialTable

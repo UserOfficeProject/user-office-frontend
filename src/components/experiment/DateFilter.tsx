@@ -1,12 +1,14 @@
 import { DatePicker, LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterLuxon';
-import { FormControl, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
 import React, { useContext } from 'react';
+import { DateParam, useQueryParams } from 'use-query-params';
 
 import { SettingsContext } from 'context/SettingsContextProvider';
 import { SettingsId } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 
 import PresetDateSelector, { TimeSpan } from './PresetDateSelector';
 
@@ -62,25 +64,35 @@ export function getRelativeDatesFromToday(period: TimeSpan): {
 interface DateFilterProps {
   from?: Date;
   to?: Date;
-  onChange: (from?: Date, to?: Date) => void;
+  onChange?: (from?: Date, to?: Date) => void;
 }
 
 function DateFilter(props: DateFilterProps) {
   const classes = useStyles();
   const [presetValue, setPresetValue] = React.useState<TimeSpan | null>(null);
   const { settings } = useContext(SettingsContext);
+  const {} = useFormattedDateTime({
+    settingsFormatToUse: SettingsId.DATE_FORMAT,
+  });
   const inputDateFormat =
     settings.get(SettingsId.DATE_FORMAT)?.settingsValue ?? 'yyyy-MM-dd';
+  const [, setQuery] = useQueryParams({
+    from: DateParam,
+    to: DateParam,
+  });
 
   return (
-    <FormControl className={classes.formControl}>
+    <Stack direction="row" margin={(theme) => theme.spacing(1)} minWidth={120}>
       <LocalizationProvider dateAdapter={DateAdapter}>
         <DatePicker
           inputFormat={inputDateFormat}
           label="From"
           value={props.from ?? null}
           onChange={(startsAt: unknown) => {
-            props.onChange((startsAt as DateTime)?.toJSDate(), props.to);
+            setQuery({
+              from: (startsAt as DateTime)?.toJSDate(),
+              to: props.to,
+            });
             setPresetValue(null);
           }}
           className={classes.datePicker}
@@ -97,9 +109,13 @@ function DateFilter(props: DateFilterProps) {
           inputFormat={inputDateFormat}
           label="To"
           value={props.to ?? null}
-          onChange={(endsAt: unknown) =>
-            props.onChange(props.from, (endsAt as DateTime)?.toJSDate())
-          }
+          onChange={(endsAt: unknown) => {
+            setQuery({
+              from: props.from,
+              to: (endsAt as DateTime)?.toJSDate(),
+            });
+            setPresetValue(null);
+          }}
           className={classes.datePicker}
           renderInput={(tfProps) => (
             <TextField
@@ -113,12 +129,12 @@ function DateFilter(props: DateFilterProps) {
           value={presetValue}
           setValue={(val) => {
             const { from, to } = getRelativeDatesFromToday(val);
-            props.onChange(from, to);
+            setQuery({ from, to });
             setPresetValue(val);
           }}
         />
       </LocalizationProvider>
-    </FormControl>
+    </Stack>
   );
 }
 

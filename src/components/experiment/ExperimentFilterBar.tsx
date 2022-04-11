@@ -11,14 +11,13 @@ import DateFilter from './DateFilter';
 import { ExperimentUrlQueryParamsType } from './ExperimentUrlQueryParamsType';
 
 function ExperimentFilterBar() {
-  const [urlQueryParams, setUrlQueryParams] =
-    useQueryParams<ExperimentUrlQueryParamsType>({
-      ...DefaultQueryParams,
-      call: NumberParam,
-      instrument: NumberParam,
-      from: DateParam,
-      to: DateParam,
-    });
+  const [urlQueryParams] = useQueryParams<ExperimentUrlQueryParamsType>({
+    ...DefaultQueryParams,
+    call: NumberParam,
+    instrument: NumberParam,
+    from: DateParam,
+    to: DateParam,
+  });
 
   const { instruments, loadingInstruments } = useInstrumentsData();
   const { calls, loadingCalls } = useCallsData();
@@ -30,9 +29,6 @@ function ExperimentFilterBar() {
         calls={calls}
         isLoading={loadingCalls}
         shouldShowAll={true}
-        onChange={(callId) => {
-          setUrlQueryParams({ call: callId });
-        }}
         data-cy="call-filter"
       />
 
@@ -41,18 +37,12 @@ function ExperimentFilterBar() {
         instruments={instruments}
         isLoading={loadingInstruments}
         shouldShowAll={true}
-        onChange={(instrumentId) => {
-          setUrlQueryParams({ instrument: instrumentId });
-        }}
         data-cy="instrument-filter"
       />
 
       <DateFilter
         from={urlQueryParams.from ?? undefined}
         to={urlQueryParams.to ?? undefined}
-        onChange={(from, to) => {
-          setUrlQueryParams({ from: from, to: to });
-        }}
         data-cy="date-filter"
       />
     </>

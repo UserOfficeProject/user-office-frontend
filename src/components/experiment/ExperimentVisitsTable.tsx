@@ -1,9 +1,9 @@
 import MaterialTable from '@material-table/core';
 import { makeStyles } from '@mui/styles';
-import { DateTime } from 'luxon';
 import React from 'react';
 
 import { GetScheduledEventsCoreQuery, TrainingStatus } from 'generated/sdk';
+import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { tableIcons } from 'utils/materialIcons';
 import { getFullUserName } from 'utils/user';
 
@@ -27,36 +27,32 @@ type RowType = NonNullable<
   GetScheduledEventsCoreQuery['scheduledEventsCore'][0]['visit']
 >['registrations'][0];
 
-const getHumanReadableStatus = (rowData: RowType) => {
-  switch (rowData.trainingStatus) {
-    case TrainingStatus.ACTIVE:
-      return `Valid until ${DateTime.fromISO(
-        rowData.trainingExpiryDate
-      ).toFormat('dd-MM-yyyy HH:mm')}`;
-    case TrainingStatus.EXPIRED:
-      return `Expired ${DateTime.fromISO(rowData.trainingExpiryDate).toFormat(
-        'dd-MM-yyyy HH:mm'
-      )}`;
-    case TrainingStatus.NONE:
-      return 'Not started';
-    default:
-      return 'Unknown';
-  }
-};
-
 type ScheduledEvent = GetScheduledEventsCoreQuery['scheduledEventsCore'][0];
 
 interface ScheduledEventDetailsTableProps {
   scheduledEvent: ScheduledEvent;
 }
 
-const formatDate = (date: Date | null) =>
-  date ? DateTime.fromJSDate(date).toFormat('yyyy-MM-dd') : 'N/A';
-
 function ExperimentVisitsTable({
   scheduledEvent,
 }: ScheduledEventDetailsTableProps) {
   const classes = useStyles();
+  const { toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
+
+  const getHumanReadableStatus = (rowData: RowType) => {
+    switch (rowData.trainingStatus) {
+      case TrainingStatus.ACTIVE:
+        return `Valid until ${toFormattedDateTime(rowData.trainingExpiryDate)}`;
+      case TrainingStatus.EXPIRED:
+        return `Expired ${toFormattedDateTime(rowData.trainingExpiryDate)}`;
+      case TrainingStatus.NONE:
+        return 'Not started';
+      default:
+        return 'Unknown';
+    }
+  };
 
   const columns = [
     {
@@ -73,7 +69,7 @@ function ExperimentVisitsTable({
       field: 'rowData.startsAt',
       render: (rowData: RowType) =>
         rowData.isRegistrationSubmitted
-          ? formatDate(rowData.startsAt)
+          ? toFormattedDateTime(rowData.startsAt)
           : 'Unfinished',
     },
     {
@@ -81,7 +77,7 @@ function ExperimentVisitsTable({
       field: 'rowData.endsAt',
       render: (rowData: RowType) =>
         rowData.isRegistrationSubmitted
-          ? formatDate(rowData.endsAt)
+          ? toFormattedDateTime(rowData.endsAt)
           : 'Unfinished',
     },
     {
