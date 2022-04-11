@@ -1669,9 +1669,7 @@ context('Template tests', () => {
 
       cy.get('.MuiStep-root').contains('Review').click();
 
-      cy.finishedLoading();
-
-      cy.contains('proposal information', { matchCase: false });
+      cy.contains(proposal.abstract);
 
       cy.contains(fileName);
 
