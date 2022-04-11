@@ -26,11 +26,7 @@ function ButtonWithDialog({ children, label }: ButtonWithDialogProps) {
 
   return (
     <>
-      <Link
-        onClick={() => setIsDialogOpen(true)}
-        color="primary"
-        className={classes.button}
-      >
+      <Link onClick={() => setIsDialogOpen(true)} className={classes.button}>
         {label}
       </Link>
       <InputDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>

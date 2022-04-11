@@ -3,10 +3,9 @@ import DateAdapter from '@mui/lab/AdapterLuxon';
 import { Stack, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
-import React, { useContext } from 'react';
+import React from 'react';
 import { DateParam, useQueryParams } from 'use-query-params';
 
-import { SettingsContext } from 'context/SettingsContextProvider';
 import { SettingsId } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 
@@ -70,16 +69,16 @@ interface DateFilterProps {
 function DateFilter(props: DateFilterProps) {
   const classes = useStyles();
   const [presetValue, setPresetValue] = React.useState<TimeSpan | null>(null);
-  const { settings } = useContext(SettingsContext);
-  const {} = useFormattedDateTime({
+  const { format } = useFormattedDateTime({
     settingsFormatToUse: SettingsId.DATE_FORMAT,
   });
-  const inputDateFormat =
-    settings.get(SettingsId.DATE_FORMAT)?.settingsValue ?? 'yyyy-MM-dd';
+
   const [, setQuery] = useQueryParams({
     from: DateParam,
     to: DateParam,
   });
+
+  const inputDateFormat = format ?? 'yyyy-MM-dd';
 
   return (
     <Stack direction="row" margin={(theme) => theme.spacing(1)} minWidth={120}>
