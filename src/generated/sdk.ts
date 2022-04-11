@@ -725,7 +725,7 @@ export type Mutation = {
   submitProposal: ProposalResponseWrap;
   submitProposalsReview: SuccessResponseWrap;
   submitShipment: ShipmentResponseWrap;
-  submitTechnicalReview: TechnicalReviewResponseWrap;
+  submitTechnicalReviews: SuccessResponseWrap;
   token: TokenResponseWrap;
   updateAnswer: UpdateAnswerResponseWrap;
   updateApiAccessToken: ApiAccessTokenResponseWrap;
@@ -1399,8 +1399,8 @@ export type MutationSubmitShipmentArgs = {
 };
 
 
-export type MutationSubmitTechnicalReviewArgs = {
-  submitTechnicalReviewInput: SubmitTechnicalReviewInput;
+export type MutationSubmitTechnicalReviewsArgs = {
+  submitTechnicalReviewsInput: SubmitTechnicalReviewsInput;
 };
 
 
@@ -2867,6 +2867,10 @@ export type SubmitTechnicalReviewInput = {
   timeAllocation?: InputMaybe<Scalars['Int']>;
 };
 
+export type SubmitTechnicalReviewsInput = {
+  technicalReviews: Array<SubmitTechnicalReviewInput>;
+};
+
 export type SuccessResponseWrap = {
   isSuccess: Maybe<Scalars['Boolean']>;
   rejection: Maybe<Rejection>;
@@ -3944,7 +3948,7 @@ export type GetInstrumentScientistProposalsQueryVariables = Exact<{
 }>;
 
 
-export type GetInstrumentScientistProposalsQuery = { instrumentScientistProposals: { totalCount: number, proposals: Array<{ primaryKey: number, proposalId: string, title: string, submitted: boolean, finalStatus: ProposalEndStatus | null, technicalReviewAssignee: number | null, technicalStatus: TechnicalReviewStatus | null, statusName: string, technicalReviewSubmitted: number | null, instrumentId: number | null, instrumentName: string | null, allocationTimeUnit: AllocationTimeUnits, callShortCode: string | null, sepCode: string | null }> } | null };
+export type GetInstrumentScientistProposalsQuery = { instrumentScientistProposals: { totalCount: number, proposals: Array<{ primaryKey: number, proposalId: string, title: string, submitted: boolean, finalStatus: ProposalEndStatus | null, technicalReviewAssignee: number | null, technicalStatus: TechnicalReviewStatus | null, technicalTimeAllocation: number | null, statusName: string, technicalReviewSubmitted: number | null, instrumentId: number | null, instrumentName: string | null, allocationTimeUnit: AllocationTimeUnits, callShortCode: string | null, sepCode: string | null }> } | null };
 
 export type GetMyProposalsQueryVariables = Exact<{
   filter?: InputMaybe<UserProposalsFilter>;
@@ -4126,19 +4130,12 @@ export type SubmitProposalsReviewMutationVariables = Exact<{
 
 export type SubmitProposalsReviewMutation = { submitProposalsReview: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
-export type SubmitTechnicalReviewMutationVariables = Exact<{
-  proposalPk: Scalars['Int'];
-  timeAllocation?: InputMaybe<Scalars['Int']>;
-  comment?: InputMaybe<Scalars['String']>;
-  publicComment?: InputMaybe<Scalars['String']>;
-  status?: InputMaybe<TechnicalReviewStatus>;
-  submitted: Scalars['Boolean'];
-  reviewerId: Scalars['Int'];
-  files?: InputMaybe<Scalars['String']>;
+export type SubmitTechnicalReviewsMutationVariables = Exact<{
+  technicalReviews: Array<SubmitTechnicalReviewInput> | SubmitTechnicalReviewInput;
 }>;
 
 
-export type SubmitTechnicalReviewMutation = { submitTechnicalReview: { rejection: { reason: string, context: string | null, exception: string | null } | null, technicalReview: { id: number } | null } };
+export type SubmitTechnicalReviewsMutation = { submitTechnicalReviews: { isSuccess: boolean | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type UpdateReviewMutationVariables = Exact<{
   reviewID: Scalars['Int'];
@@ -6978,6 +6975,7 @@ export const GetInstrumentScientistProposalsDocument = gql`
       finalStatus
       technicalReviewAssignee
       technicalStatus
+      technicalTimeAllocation
       statusName
       technicalReviewSubmitted
       instrumentId
@@ -7426,17 +7424,15 @@ export const SubmitProposalsReviewDocument = gql`
   }
 }
     ${RejectionFragmentDoc}`;
-export const SubmitTechnicalReviewDocument = gql`
-    mutation submitTechnicalReview($proposalPk: Int!, $timeAllocation: Int, $comment: String, $publicComment: String, $status: TechnicalReviewStatus, $submitted: Boolean!, $reviewerId: Int!, $files: String) {
-  submitTechnicalReview(
-    submitTechnicalReviewInput: {proposalPk: $proposalPk, timeAllocation: $timeAllocation, comment: $comment, publicComment: $publicComment, status: $status, submitted: $submitted, reviewerId: $reviewerId, files: $files}
+export const SubmitTechnicalReviewsDocument = gql`
+    mutation submitTechnicalReviews($technicalReviews: [SubmitTechnicalReviewInput!]!) {
+  submitTechnicalReviews(
+    submitTechnicalReviewsInput: {technicalReviews: $technicalReviews}
   ) {
     rejection {
       ...rejection
     }
-    technicalReview {
-      id
-    }
+    isSuccess
   }
 }
     ${RejectionFragmentDoc}`;
@@ -9431,8 +9427,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     submitProposalsReview(variables: SubmitProposalsReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitProposalsReviewMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SubmitProposalsReviewMutation>(SubmitProposalsReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitProposalsReview', 'mutation');
     },
-    submitTechnicalReview(variables: SubmitTechnicalReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitTechnicalReviewMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<SubmitTechnicalReviewMutation>(SubmitTechnicalReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitTechnicalReview', 'mutation');
+    submitTechnicalReviews(variables: SubmitTechnicalReviewsMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SubmitTechnicalReviewsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubmitTechnicalReviewsMutation>(SubmitTechnicalReviewsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'submitTechnicalReviews', 'mutation');
     },
     updateReview(variables: UpdateReviewMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateReviewMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateReviewMutation>(UpdateReviewDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateReview', 'mutation');
