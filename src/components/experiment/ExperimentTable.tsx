@@ -17,6 +17,37 @@ import ExperimentVisitsTable from './ExperimentVisitsTable';
 
 type RowType = GetScheduledEventsCoreQuery['scheduledEventsCore'][0];
 
+const columns = [
+  {
+    title: 'Proposal ID',
+    field: 'proposal.proposalId',
+  },
+  {
+    title: 'Principal investigator',
+    render: (rowData: RowType) => getFullUserName(rowData.proposal.proposer),
+  },
+  {
+    title: 'Proposal',
+    field: 'proposal.title',
+  },
+  {
+    title: 'Experiment start',
+    field: 'startsAtFormatted',
+  },
+  {
+    title: 'Experiment end',
+    field: 'endsAtFormatted',
+  },
+  {
+    title: 'ESI',
+    field: 'esiFormatted',
+  },
+  {
+    title: 'Instrument',
+    field: 'proposal.instrument.name',
+  },
+];
+
 function ExperimentTable() {
   const [urlQueryParams, setUrlQueryParams] =
     useQueryParams<ExperimentUrlQueryParamsType>({
@@ -29,6 +60,10 @@ function ExperimentTable() {
 
   const { scheduledEvents, setScheduledEvents, loadingEvents, setArgs } =
     useScheduledEvents({});
+
+  const { timezone, toFormattedDateTime } = useFormattedDateTime({
+    shouldUseTimeZone: true,
+  });
 
   useEffect(() => {
     setArgs({
@@ -56,51 +91,20 @@ function ExperimentTable() {
     []
   );
 
-  const { timezone, toFormattedDateTime } = useFormattedDateTime({
-    shouldUseTimeZone: true,
-  });
-
-  const columns = [
-    {
-      title: 'Proposal ID',
-      field: 'proposal.proposalId',
-    },
-    {
-      title: 'Principal investigator',
-      render: (rowData: RowType) => getFullUserName(rowData.proposal.proposer),
-    },
-    {
-      title: 'Proposal',
-      field: 'proposal.title',
-    },
-    {
-      title: `Experiment start (${timezone})`,
-      field: 'startsAt',
-      render: (rowData: RowType) => toFormattedDateTime(rowData.startsAt),
-    },
-    {
-      title: `Experiment end (${timezone})`,
-      field: 'endsAt',
-      render: (rowData: RowType) => toFormattedDateTime(rowData.endsAt),
-    },
-    {
-      title: 'ESI',
-      render: (rowData: RowType) =>
-        rowData.esi ? (
-          <ProposalEsiDetailsButton esiId={rowData.esi?.id} />
-        ) : (
-          'No ESI'
-        ),
-    },
-    {
-      title: 'Instrument',
-      field: 'proposal.instrument.name',
-    },
-  ];
+  const scheduledEventsFormatted = scheduledEvents.map((evt) => ({
+    ...evt,
+    startsAtFormatted: toFormattedDateTime(evt.startsAt),
+    endsAtFormatted: toFormattedDateTime(evt.endsAt),
+    esiFormatted: evt.esi ? (
+      <ProposalEsiDetailsButton esiId={evt.esi?.id} />
+    ) : (
+      'No ESI'
+    ),
+  }));
 
   return (
     <SuperMaterialTable
-      data={scheduledEvents}
+      data={scheduledEventsFormatted}
       setData={setScheduledEvents}
       icons={tableIcons}
       title={
