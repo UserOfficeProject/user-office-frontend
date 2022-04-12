@@ -1,17 +1,19 @@
+import DoneAll from '@mui/icons-material/DoneAll';
+import Save from '@mui/icons-material/Save';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import { Editor } from '@tinymce/tinymce-react';
 import { proposalGradeValidationSchema } from '@user-office-software/duo-validation/lib/Review';
 import { Field, Form, Formik, useFormikContext } from 'formik';
+import { Select, CheckboxWithLabel } from 'formik-mui';
 import React, { useState, useContext } from 'react';
 import { Prompt } from 'react-router';
 
 import { useCheckAccess } from 'components/common/Can';
 import ErrorMessage from 'components/common/ErrorMessage';
-import FormikUICustomCheckbox from 'components/common/FormikUICustomCheckbox';
-import FormikUICustomSelect from 'components/common/FormikUICustomSelect';
 import UOLoader from 'components/common/UOLoader';
 import GradeGuidePage from 'components/pages/GradeGuidePage';
 import NavigationFragment from 'components/questionary/NavigationFragment';
@@ -139,7 +141,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
         <Form>
           <PromptIfDirty />
           <CssBaseline />
-          <InputLabel htmlFor="comment" shrink margin="dense">
+          <InputLabel htmlFor="comment" shrink margin="dense" required>
             Comment
           </InputLabel>
           <Editor
@@ -167,18 +169,22 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
             <Field
               name="grade"
               label="Grade"
-              fullWidth
-              component={FormikUICustomSelect}
-              inputProps={{
-                id: 'grade-proposal',
+              component={Select}
+              MenuProps={{ 'data-cy': 'grade-proposal-options' }}
+              formControl={{
+                fullWidth: true,
+                required: true,
+                margin: 'normal',
               }}
-              availableOptions={[...Array(10)].map((e, i) =>
-                (i + 1).toString()
-              )}
               disabled={isDisabled(isSubmitting)}
-              nbrOptionShown={10}
               data-cy="grade-proposal"
-            />
+            >
+              {[...Array(10)].map((e, i) => (
+                <MenuItem value={i + 1} key={i}>
+                  {(i + 1).toString()}
+                </MenuItem>
+              ))}
+            </Field>
           </Box>
           <ErrorMessage name="grade" />
           <NavigationFragment>
@@ -191,8 +197,11 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               <Field
                 id="submitted"
                 name="submitted"
-                component={FormikUICustomCheckbox}
-                label="Submitted"
+                type="checkbox"
+                component={CheckboxWithLabel}
+                Label={{
+                  label: 'Submitted',
+                }}
                 disabled={isSubmitting}
                 data-cy="is-grade-submitted"
               />
@@ -206,6 +215,13 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               color="secondary"
               type="submit"
               onClick={() => setShouldSubmit(false)}
+              startIcon={
+                isSubmitting && !shouldSubmit ? (
+                  <UOLoader buttonSized />
+                ) : (
+                  <Save />
+                )
+              }
             >
               Save
             </Button>
@@ -215,6 +231,13 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 disabled={isDisabled(isSubmitting)}
                 type="submit"
                 onClick={() => setShouldSubmit(true)}
+                startIcon={
+                  isSubmitting && shouldSubmit ? (
+                    <UOLoader buttonSized />
+                  ) : (
+                    <DoneAll />
+                  )
+                }
               >
                 {review.status === ReviewStatus.SUBMITTED
                   ? 'Submitted'
