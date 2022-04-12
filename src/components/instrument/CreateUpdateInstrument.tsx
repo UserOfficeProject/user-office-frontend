@@ -47,19 +47,23 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
         name: '',
         shortCode: '',
         description: '',
-        managerUserId: -1,
+        managerUserId: undefined,
       };
 
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={async (values): Promise<void> => {
+        if (values.managerUserId === undefined) {
+          return;
+        }
+
         if (instrument) {
           const data = await api(
             'Instrument updated successfully!'
           ).updateInstrument({
-            id: instrument.id,
             ...values,
+            id: instrument.id,
           });
           if (data.updateInstrument.rejection) {
             close(null);
@@ -133,6 +137,7 @@ const CreateUpdateInstrument: React.FC<CreateUpdateInstrumentProps> = ({
             InputProps={{
               'data-cy': 'beamline-manager',
             }}
+            required
           />
 
           <Button

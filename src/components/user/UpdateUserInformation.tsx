@@ -6,14 +6,16 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import useTheme from '@mui/material/styles/useTheme';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { updateUserValidationSchema } from '@user-office-software/duo-validation';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-mui';
+import { Select, TextField } from 'formik-mui';
 import { DatePicker } from 'formik-mui-lab';
 import { DateTime } from 'luxon';
 import React, { useState, useContext } from 'react';
@@ -106,6 +108,20 @@ export default function UpdateUserInformation(props: { id: number }) {
     user_title: userData.user_title,
     orcid: userData.orcid,
   };
+
+  const userTitleOptions: Option[] = [
+    { text: 'Ms.', value: 'Ms.' },
+    { text: 'Mr.', value: 'Mr.' },
+    { text: 'Dr.', value: 'Dr.' },
+    { text: 'Prof.', value: 'Prof.' },
+    { text: 'Rather not say', value: 'unspecified' },
+  ];
+
+  const genderOptions: Option[] = [
+    { text: 'Female', value: 'female' },
+    { text: 'Male', value: 'male' },
+    { text: 'Other', value: 'other' },
+  ];
 
   if (!institutionsList.length) {
     setInstitutionsList(
@@ -223,18 +239,27 @@ export default function UpdateUserInformation(props: { id: number }) {
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <LocalizationProvider dateAdapter={DateAdapter}>
-                  <FormikUIAutocomplete
-                    name="user_title"
-                    label="Title"
-                    items={[
-                      { text: 'Ms.', value: 'Ms.' },
-                      { text: 'Mr.', value: 'Mr.' },
-                      { text: 'Dr.', value: 'Dr.' },
-                      { text: 'Prof.', value: 'Prof.' },
-                      { text: 'Rather not say', value: 'unspecified' },
-                    ]}
-                    data-cy="title"
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel
+                      htmlFor="user_title"
+                      shrink={!!values.user_title}
+                      required
+                    >
+                      Title
+                    </InputLabel>
+                    <Field
+                      name="user_title"
+                      component={Select}
+                      data-cy="title"
+                      required
+                    >
+                      {userTitleOptions.map(({ value, text }) => (
+                        <MenuItem value={value} key={value}>
+                          {text}
+                        </MenuItem>
+                      ))}
+                    </Field>
+                  </FormControl>
                   <Field
                     name="firstname"
                     label="Firstname"
@@ -271,16 +296,31 @@ export default function UpdateUserInformation(props: { id: number }) {
                     fullWidth
                     data-cy="preferredname"
                   />
-                  <FormikUIAutocomplete
-                    name="gender"
-                    label="Gender"
-                    items={[
-                      { text: 'Female', value: 'female' },
-                      { text: 'Male', value: 'male' },
-                      { text: 'Other', value: 'other' },
-                    ]}
-                    data-cy="gender"
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel
+                      htmlFor="user_title"
+                      shrink={!!values.gender}
+                      required
+                    >
+                      Gender
+                    </InputLabel>
+                    <Field
+                      id="gender"
+                      name="gender"
+                      type="text"
+                      component={Select}
+                      data-cy="gender"
+                      required
+                    >
+                      {genderOptions.map(({ value, text }) => {
+                        return (
+                          <MenuItem value={value} key={value}>
+                            {text}
+                          </MenuItem>
+                        );
+                      })}
+                    </Field>
+                  </FormControl>
                   {values.gender === 'other' && (
                     <Field
                       name="othergender"

@@ -239,18 +239,18 @@ const SignUp: React.FC<SignUpProps> = (props) => {
     refreshToken: orcData?.refreshToken as string,
   };
 
-  const userTitleOptions = [
-    { label: 'Ms.', value: 'Ms.' },
-    { label: 'Mr.', value: 'Mr.' },
-    { label: 'Dr.', value: 'Dr.' },
-    { label: 'Prof.', value: 'Prof.' },
-    { label: 'Rather not say', value: 'unspecified' },
+  const userTitleOptions: Option[] = [
+    { text: 'Ms.', value: 'Ms.' },
+    { text: 'Mr.', value: 'Mr.' },
+    { text: 'Dr.', value: 'Dr.' },
+    { text: 'Prof.', value: 'Prof.' },
+    { text: 'Rather not say', value: 'unspecified' },
   ];
 
-  const genderOptions = [
-    { label: 'Female', value: 'female' },
-    { label: 'Male', value: 'male' },
-    { label: 'Other', value: 'other' },
+  const genderOptions: Option[] = [
+    { text: 'Female', value: 'female' },
+    { text: 'Male', value: 'male' },
+    { text: 'Other', value: 'other' },
   ];
 
   if (!institutionsList.length) {
@@ -489,10 +489,10 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                           disabled={!orcData}
                           required
                         >
-                          {userTitleOptions.map(({ value, label }) => {
+                          {userTitleOptions.map(({ value, text }) => {
                             return (
                               <MenuItem value={value} key={value}>
-                                {label}
+                                {text}
                               </MenuItem>
                             );
                           })}
@@ -557,10 +557,10 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                           disabled={!orcData}
                           required
                         >
-                          {genderOptions.map(({ value, label }) => {
+                          {genderOptions.map(({ value, text }) => {
                             return (
                               <MenuItem value={value} key={value}>
-                                {label}
+                                {text}
                               </MenuItem>
                             );
                           })}

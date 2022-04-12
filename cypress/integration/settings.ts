@@ -565,7 +565,9 @@ context('Settings tests', () => {
       cy.get('[data-cy="timeAllocation"] input').clear().type('20');
 
       cy.get('[data-cy="technical-review-status"]').click();
-      cy.contains('Feasible').click();
+      cy.get('[data-cy="technical-review-status-options"]')
+        .contains('Feasible')
+        .click();
 
       cy.setTinyMceContent('comment', internalComment);
       cy.setTinyMceContent('publicComment', publicComment);
@@ -945,7 +947,9 @@ context('Settings tests', () => {
       cy.get('[data-cy="timeAllocation"] input').clear().type('20');
 
       cy.get('[data-cy="technical-review-status"]').click();
-      cy.get('[role="presentation"]').contains('Feasible').click();
+      cy.get('[data-cy="technical-review-status-options"]')
+        .contains('Feasible')
+        .click();
 
       cy.setTinyMceContent('comment', internalComment);
       cy.setTinyMceContent('publicComment', publicComment);
@@ -972,7 +976,9 @@ context('Settings tests', () => {
       cy.get('[data-cy="timeAllocation"] input').clear().type('0');
 
       cy.get('[data-cy="technical-review-status"]').click();
-      cy.get('[role="presentation"]').contains('Unfeasible').click();
+      cy.get('[data-cy="technical-review-status-options"]')
+        .contains('Unfeasible')
+        .click();
 
       cy.get('[data-cy="is-review-submitted"]').click();
 

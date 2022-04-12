@@ -255,7 +255,9 @@ context('Proposal tests', () => {
       cy.get('[data-cy="timeAllocation"] input').clear().type('10');
 
       cy.get('[data-cy="technical-review-status"]').click();
-      cy.contains('Feasible').click();
+      cy.get('[data-cy="technical-review-status-options"]')
+        .contains('Feasible')
+        .click();
 
       cy.get('[data-cy="save-technical-review"]').click();
 
