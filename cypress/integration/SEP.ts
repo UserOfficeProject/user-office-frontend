@@ -681,10 +681,7 @@ context('SEP reviews tests', () => {
         `Please correct the grade and comment for the proposal(s) with ID: ${createdProposalId}`
       ).should('exist');
 
-      cy.notification({
-        variant: 'error',
-        text: 'Failed to submit one more proposal reviews',
-      });
+      cy.get('[data-cy="confirm-cancel"]').click();
 
       cy.contains(proposal1.title)
         .parent()
