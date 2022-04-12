@@ -120,6 +120,9 @@ context('Proposal administration tests', () => {
 
       cy.contains('Accepted');
       cy.contains('DRAFT');
+      cy.get("[aria-label='Show Columns']").first().click();
+      cy.get('.MuiPopover-paper').contains('Final time allocation').click();
+      cy.get('body').click();
       cy.contains(proposalName1)
         .parent()
         .should('include.text', initialDBData.call.allocationTimeUnit);
