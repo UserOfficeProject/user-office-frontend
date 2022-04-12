@@ -795,7 +795,9 @@ context('Instrument tests', () => {
         .click();
 
       cy.get('[data-cy="technical-review-status"]').click();
-      cy.get('[data-value="FEASIBLE"]').click();
+      cy.get('[data-cy="technical-review-status"]')
+        .contains('Feasible')
+        .click();
       cy.get('[data-cy="timeAllocation"] input').type('10');
 
       cy.get('[data-cy="save-technical-review"]').click();
