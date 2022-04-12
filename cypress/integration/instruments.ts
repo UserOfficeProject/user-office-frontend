@@ -363,6 +363,7 @@ context('Instrument tests', () => {
 
       cy.get("[aria-label='Show Columns']").first().click();
       cy.get('.MuiPopover-paper').contains('Technical time allocation').click();
+      cy.get('body').click();
 
       cy.contains(proposal1.title)
         .parent()
