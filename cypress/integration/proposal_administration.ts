@@ -58,6 +58,11 @@ context('Proposal administration tests', () => {
 
       cy.get('[data-value="ACCEPTED"]').click();
 
+      cy.get('[data-cy="managementTimeAllocation"] label').should(
+        'include.text',
+        initialDBData.call.allocationTimeUnit
+      );
+
       cy.get('[data-cy="managementTimeAllocation"] input')
         .clear()
         .type('-123')
@@ -115,6 +120,9 @@ context('Proposal administration tests', () => {
 
       cy.contains('Accepted');
       cy.contains('DRAFT');
+      cy.contains(proposalName1)
+        .parent()
+        .should('include.text', initialDBData.call.allocationTimeUnit);
     });
 
     it('Should show warning if proposal status is changing to SCHEDULING and proposal has no instrument', () => {
