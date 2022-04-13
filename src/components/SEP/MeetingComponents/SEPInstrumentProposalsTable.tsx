@@ -37,6 +37,9 @@ type SepProposalWithAverageScoreAndAvailabilityZone = SepProposal & {
 // NOTE: Some custom styles for row expand table.
 const useStyles = makeStyles((theme) => ({
   root: {
+    '& tr': {
+      transition: 'border-width 0 linear',
+    },
     '& tr td': {
       whiteSpace: 'nowrap',
     },
@@ -70,6 +73,12 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     maxWidth: '200px',
+  },
+  dropBefore: {
+    borderTop: '50px solid #e4e4e4',
+  },
+  dropAfter: {
+    borderBottom: '50px solid #e4e4e4',
   },
 }));
 
@@ -439,38 +448,23 @@ const SEPInstrumentProposalsTable: React.FC<
     setSavingOrder(false);
   };
 
-  const createDroppableAreaRow = () => {
-    const doppableAreaRow = document.createElement('tr');
-    doppableAreaRow.className = 'droppableAreaRow';
-    // NOTE: Full width column is needed to set proper background
-    const doppableAreaColumn = document.createElement('td');
-    doppableAreaColumn.colSpan = assignmentColumns.length;
-    doppableAreaColumn.textContent = 'Drop here';
-    doppableAreaRow.appendChild(doppableAreaColumn);
-
-    return doppableAreaRow;
-  };
-
-  const insertDroppableAreaRowIntoTable = (
-    tableBodyElement: HTMLElement,
-    allTableRowElements: Element[],
-    droppableAreaRowElement: HTMLTableRowElement
+  const showDropArea = (
+    element: HTMLTableRowElement,
+    position: 'before' | 'after'
   ) => {
-    if (DragState.dropIndex === sortedProposalsWithAverageScore.length - 1) {
-      tableBodyElement.appendChild(droppableAreaRowElement);
-    } else if (
-      DragState.dropIndex === 0 ||
-      DragState.row === DragState.dropIndex + 1
-    ) {
-      tableBodyElement.insertBefore(
-        droppableAreaRowElement,
-        allTableRowElements[DragState.dropIndex]
-      );
+    if (!element.parentElement) {
+      return;
+    }
+
+    const allTableRowElements = Array.from(
+      element.parentElement.children
+    ) as HTMLTableRowElement[];
+    allTableRowElements.forEach((row) => (row.style['border'] = ''));
+
+    if (position === 'before') {
+      element.style['borderTop'] = '50px solid #e4e4e4';
     } else {
-      tableBodyElement.insertBefore(
-        droppableAreaRowElement,
-        allTableRowElements[DragState.dropIndex + 1]
-      );
+      element.style['borderBottom'] = '50px solid #e4e4e4';
     }
   };
 
@@ -490,42 +484,19 @@ const SEPInstrumentProposalsTable: React.FC<
 
     const tableBodyElement = e.currentTarget.parentElement;
 
-    if (tableBodyElement && DragState.dropIndex !== tableDataId) {
-      const allTableRowElements = Array.from(tableBodyElement.children);
-
-      const droppableAreaSeparatorToRemove = allTableRowElements.find(
-        (element, index) => {
-          if (element.className.includes('droppableAreaRow')) {
-            allTableRowElements.splice(index, 1);
-
-            return element;
-          }
-        }
-      );
-
-      if (droppableAreaSeparatorToRemove) {
-        tableBodyElement.removeChild(droppableAreaSeparatorToRemove);
-      }
-
+    console.log(DragState.row, DragState.dropIndex);
+    if (
+      tableBodyElement &&
+      DragState.dropIndex !== tableDataId &&
+      DragState.row !== tableDataId
+    ) {
       DragState.dropIndex = tableDataId;
 
-      if (DragState.row === DragState.dropIndex) {
-        return;
+      if (DragState.dropIndex >= DragState.row) {
+        showDropArea(e.currentTarget, 'after');
+      } else {
+        showDropArea(e.currentTarget, 'before');
       }
-
-      const droppableAreaRowElement = createDroppableAreaRow();
-
-      insertDroppableAreaRowIntoTable(
-        tableBodyElement,
-        allTableRowElements,
-        droppableAreaRowElement
-      );
-
-      // NOTE: Add class with timeout to be able to animate.
-      setTimeout(
-        () => droppableAreaRowElement.classList.add('droppableAreaAnimate'),
-        100
-      );
     }
   };
 
