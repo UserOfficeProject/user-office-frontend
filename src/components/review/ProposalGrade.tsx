@@ -176,14 +176,19 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
                 required: true,
                 margin: 'normal',
               }}
-              disabled={isDisabled(isSubmitting)}
+              inputProps={{
+                id: 'grade-proposal',
+              }}
               data-cy="grade-proposal"
+              labelId="grade-proposal-label"
             >
-              {[...Array(10)].map((e, i) => (
-                <MenuItem value={i + 1} key={i}>
-                  {(i + 1).toString()}
-                </MenuItem>
-              ))}
+              {[...Array(10)].map((e, i) => {
+                return (
+                  <MenuItem value={i + 1} key={i}>
+                    {(i + 1).toString()}
+                  </MenuItem>
+                );
+              })}
             </Field>
           </Box>
           <ErrorMessage name="grade" />
@@ -197,8 +202,8 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
               <Field
                 id="submitted"
                 name="submitted"
-                type="checkbox"
                 component={CheckboxWithLabel}
+                type="checkbox"
                 Label={{
                   label: 'Submitted',
                 }}
