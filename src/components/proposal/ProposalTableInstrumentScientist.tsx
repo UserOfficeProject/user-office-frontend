@@ -23,10 +23,14 @@ import ProposalReviewContent, {
   PROPOSAL_MODAL_TAB_NAMES,
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
+import ReviewerFilterComponent, {
+  defaultReviewerQueryFilter,
+} from 'components/review/ReviewerFilter';
 import { UserContext } from 'context/UserContextProvider';
 import {
   Proposal,
   ProposalsFilter,
+  ReviewerFilter,
   SubmitTechnicalReviewInput,
 } from 'generated/sdk';
 import { useInstrumentScientistCallsData } from 'hooks/call/useInstrumentScientistCallsData';
@@ -46,6 +50,9 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import ProposalFilterBar, {
   questionaryFilterFromUrlQuery,
 } from './ProposalFilterBar';
+
+const getFilterReviewer = (selected: string | ReviewerFilter) =>
+  selected === ReviewerFilter.YOU ? ReviewerFilter.YOU : ReviewerFilter.ALL;
 
 let columns: Column<ProposalViewData>[] = [
   {
@@ -121,6 +128,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     dataType: StringParam,
     reviewModal: NumberParam,
     modalTab: NumberParam,
+    reviewer: defaultReviewerQueryFilter,
   });
   // NOTE: proposalStatusId has default value 2 because for Instrument Scientist default view should be all proposals in FEASIBILITY_REVIEW status
   const [proposalFilter, setProposalFilter] = useState<ProposalsFilter>({
@@ -128,6 +136,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     instrumentId: urlQueryParams.instrument,
     proposalStatusId: urlQueryParams.proposalStatus,
     questionFilter: questionaryFilterFromUrlQuery(urlQueryParams),
+    reviewer: getFilterReviewer(urlQueryParams.reviewer),
   });
   const { instruments, loadingInstruments } = useInstrumentsData();
   const { calls, loadingCalls } = useInstrumentScientistCallsData(user.id);
@@ -139,6 +148,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     instrumentId: proposalFilter.instrumentId,
     callId: proposalFilter.callId,
     questionFilter: proposalFilter.questionFilter,
+    reviewer: proposalFilter.reviewer,
   });
 
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
@@ -443,6 +453,12 @@ const ProposalTableInstrumentScientist: React.FC<{
           tabNames={instrumentScientistProposalReviewTabs}
         />
       </ProposalReviewModal>
+      <ReviewerFilterComponent
+        reviewer={urlQueryParams.reviewer}
+        onChange={(reviewer) =>
+          setProposalFilter({ ...proposalFilter, reviewer })
+        }
+      />
       <ProposalFilterBar
         calls={{ data: calls, isLoading: loadingCalls }}
         instruments={{ data: instruments, isLoading: loadingInstruments }}

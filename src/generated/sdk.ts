@@ -1879,6 +1879,7 @@ export type ProposalsFilter = {
   questionFilter?: InputMaybe<QuestionFilterInput>;
   questionaryIds?: InputMaybe<Array<Scalars['Int']>>;
   referenceNumbers?: InputMaybe<Array<Scalars['String']>>;
+  reviewer?: InputMaybe<ReviewerFilter>;
   shortCodes?: InputMaybe<Array<Scalars['String']>>;
   text?: InputMaybe<Scalars['String']>;
 };

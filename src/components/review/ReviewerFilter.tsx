@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 import { ReviewerFilter } from 'generated/sdk';
 
@@ -22,7 +22,7 @@ export const defaultReviewerQueryFilter = withDefault(
 
 type ReviewerFilterComponentProps = {
   reviewer: string;
-  onChange: (reviewer: ReviewerFilter) => void;
+  onChange?: (reviewer: ReviewerFilter) => void;
 };
 
 const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
@@ -30,12 +30,20 @@ const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
   onChange,
 }) => {
   const classes = useStyles();
+  const [, setQuery] = useQueryParams({
+    reviewer: defaultReviewerQueryFilter,
+  });
 
   return (
     <FormControl className={classes.formControl}>
       <InputLabel shrink>Reviewer</InputLabel>
       <Select
-        onChange={(e) => onChange(e.target.value as ReviewerFilter)}
+        onChange={(e) => {
+          setQuery({
+            reviewer: e.target.value ? e.target.value : undefined,
+          });
+          onChange?.(e.target.value as ReviewerFilter);
+        }}
         value={reviewer}
         data-cy="reviewer-filter"
       >
