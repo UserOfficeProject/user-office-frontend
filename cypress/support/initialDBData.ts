@@ -194,6 +194,7 @@ export default {
   proposalStatuses: {
     draft: {
       id: 1,
+      name: 'DRAFT',
     },
     feasibilityReview: {
       id: 2,
@@ -205,6 +206,7 @@ export default {
     },
     sepMeeting: {
       id: 12,
+      name: 'SEP Meeting',
     },
     editableSubmitted: {
       id: 14,
