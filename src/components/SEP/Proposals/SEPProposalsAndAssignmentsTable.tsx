@@ -289,14 +289,14 @@ const SEPProposalsAndAssignmentsTable: React.FC<
   const tableActions: Action<SEPProposalType>[] = [];
   hasRightToAssignReviewers &&
     tableActions.push({
-      icon: GetAppIcon,
+      icon: () => <GetAppIcon data-cy="download-sep-proposals" />,
       tooltip: 'Download proposals',
       onClick: handleBulkDownloadClick,
       position: 'toolbarOnSelect',
     });
   hasRightToRemoveAssignedProposal &&
     tableActions.push({
-      icon: DeleteOutline,
+      icon: () => <DeleteOutline data-cy="remove-assigned-sep-proposal" />,
       tooltip: 'Remove assigned proposal',
       onClick: handleBulkRemoveProposalsFromSEP,
       position: 'toolbarOnSelect',
@@ -486,6 +486,12 @@ const SEPProposalsAndAssignmentsTable: React.FC<
             options={{
               search: true,
               selection: true,
+              headerSelectionProps: {
+                inputProps: {
+                  'aria-label': 'Select all rows',
+                  'data-cy': 'select-all-table-rows',
+                },
+              },
             }}
           />
         </Grid>
