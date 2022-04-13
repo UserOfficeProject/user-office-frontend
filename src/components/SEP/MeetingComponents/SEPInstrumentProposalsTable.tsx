@@ -530,7 +530,14 @@ const SEPInstrumentProposalsTable: React.FC<
       rowActions: RowActionButtons(proposal),
       timeAllocation: ProposalTimeAllocationColumn(proposal),
       proposalTitle: (
-        <div className={classes.proposalTitle}>{proposal.proposal.title}</div>
+        <Tooltip
+          className={classes.proposalTitle}
+          title={proposal.proposal.title}
+          enterDelay={1000}
+          enterNextDelay={1000}
+        >
+          <div>{proposal.proposal.title}</div>
+        </Tooltip>
       ),
     }));
 
