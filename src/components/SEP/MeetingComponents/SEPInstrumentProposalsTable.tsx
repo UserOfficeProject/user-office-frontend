@@ -308,7 +308,7 @@ const SEPInstrumentProposalsTable: React.FC<
 
     return (
       <>
-        <Tooltip title="Drag proposals to reorder">
+        <Tooltip title="Drag proposals to reorder" enterDelay={2000}>
           <IconButton
             style={{ cursor: 'grab' }}
             color="inherit"
