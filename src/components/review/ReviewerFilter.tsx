@@ -38,6 +38,7 @@ const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
     <FormControl className={classes.formControl}>
       <InputLabel shrink>Reviewer</InputLabel>
       <Select
+        id="reviewer-selection"
         onChange={(e) => {
           setQuery({
             reviewer: e.target.value ? e.target.value : undefined,
@@ -46,6 +47,8 @@ const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
         }}
         value={reviewer}
         data-cy="reviewer-filter"
+        // NOTE: We can't use data-cy here for options and this works as well to define a property on the menulist component
+        MenuProps={{ MenuListProps: { property: 'reviewer-filter-options' } }}
       >
         <MenuItem value={ReviewerFilter.YOU}>You</MenuItem>
         <MenuItem value={ReviewerFilter.ALL}>All</MenuItem>

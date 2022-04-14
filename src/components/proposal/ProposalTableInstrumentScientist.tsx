@@ -231,18 +231,6 @@ const ProposalTableInstrumentScientist: React.FC<{
             )}
           </IconButton>
         </Tooltip>
-
-        <Tooltip title="Download proposal as PDF">
-          <IconButton
-            data-cy="download-proposal"
-            onClick={() =>
-              downloadPDFProposal([rowData.primaryKey], rowData.title)
-            }
-            style={iconButtonStyle}
-          >
-            <GetAppIcon />
-          </IconButton>
-        </Tooltip>
       </>
     );
   };
@@ -325,7 +313,7 @@ const ProposalTableInstrumentScientist: React.FC<{
   };
 
   const handleBulkDownloadClick = (
-    event: React.MouseEventHandler<HTMLButtonElement>,
+    _: React.MouseEventHandler<HTMLButtonElement>,
     rowData: ProposalViewData | ProposalViewData[]
   ) => {
     if (!Array.isArray(rowData)) {
@@ -393,13 +381,12 @@ const ProposalTableInstrumentScientist: React.FC<{
     urlQueryParams.sortDirection
   );
 
-  const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
-  const DoneAllIcon = (
-    props: JSX.IntrinsicAttributes & {
-      children?: React.ReactNode;
-      'data-cy'?: string;
-    }
-  ): JSX.Element => <DoneAll {...props} />;
+  const GetAppIconComponent = (): JSX.Element => (
+    <GetAppIcon data-cy="download-proposals" />
+  );
+  const DoneAllIcon = (): JSX.Element => (
+    <DoneAll data-cy="submit-proposal-reviews" />
+  );
 
   const proposalToReview = preselectedProposalsData.find(
     (proposal) => proposal.primaryKey === urlQueryParams.reviewModal
@@ -503,9 +490,7 @@ const ProposalTableInstrumentScientist: React.FC<{
             position: 'toolbarOnSelect',
           },
           {
-            icon: DoneAllIcon.bind(null, {
-              'data-cy': 'submit-proposal-reviews',
-            }),
+            icon: DoneAllIcon,
             tooltip: 'Submit proposal reviews',
             onClick: handleBulkTechnicalReviewsSubmit,
             position: 'toolbarOnSelect',
