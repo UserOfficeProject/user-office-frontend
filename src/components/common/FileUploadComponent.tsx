@@ -419,7 +419,7 @@ export function FileUploadComponent(props: {
   };
 
   const { fileType } = props;
-  const maxFiles = props.maxFiles || 1;
+  const maxFiles = props.maxFiles ?? 0;
 
   let newFileEntry;
   if (files.length < maxFiles) {

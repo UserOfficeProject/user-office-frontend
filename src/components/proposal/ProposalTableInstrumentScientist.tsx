@@ -82,7 +82,8 @@ let columns: Column<ProposalViewData>[] = [
   },
   {
     title: 'Submitted',
-    render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+    field: 'submitted',
+    lookup: { true: 'Yes', false: 'No' },
   },
   { title: 'Status', field: 'statusName' },
   {
