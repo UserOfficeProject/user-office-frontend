@@ -26,8 +26,10 @@ import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import ReviewerFilterComponent, {
   defaultReviewerQueryFilter,
 } from 'components/review/ReviewerFilter';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import { UserContext } from 'context/UserContextProvider';
 import {
+  FeatureId,
   Proposal,
   ProposalsFilter,
   ReviewerFilter,
@@ -77,12 +79,9 @@ let columns: Column<ProposalViewData>[] = [
     hidden: false,
   },
   {
-    title: 'Technical status',
-    render: (rowData) => rowData.technicalStatus,
-  },
-  {
     title: 'Submitted',
-    render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+    field: 'submitted',
+    lookup: { true: 'Yes', false: 'No' },
   },
   { title: 'Status', field: 'statusName' },
   {
@@ -92,10 +91,6 @@ let columns: Column<ProposalViewData>[] = [
       rowData.finalStatus
         ? getTranslation(rowData.finalStatus as ResourceId)
         : '',
-  },
-  {
-    title: 'Instrument',
-    field: 'instrumentName',
     emptyValue: '-',
   },
   {
@@ -116,6 +111,7 @@ const ProposalTableInstrumentScientist: React.FC<{
   confirm: WithConfirmType;
 }> = ({ confirm }) => {
   const { user } = useContext(UserContext);
+  const featureContext = useContext(FeatureContext);
   const { api } = useDataApiWithFeedback();
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     ...DefaultQueryParams,
@@ -182,9 +178,19 @@ const ProposalTableInstrumentScientist: React.FC<{
     Column<ProposalViewData>[] | null
   >('proposalColumnsInstrumentScientist', null);
 
+  const isTechnicalReviewEnabled = featureContext.features.get(
+    FeatureId.TECHNICAL_REVIEW
+  )?.isEnabled;
+
+  const isInstrumentManagementEnabled = featureContext.features.get(
+    FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+
   const instrumentScientistProposalReviewTabs = [
     PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
-    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
+    ...(isTechnicalReviewEnabled
+      ? [PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW]
+      : []),
   ];
 
   /**
@@ -373,6 +379,28 @@ const ProposalTableInstrumentScientist: React.FC<{
         (localStorageValueItem) => localStorageValueItem.title === column.title
       )?.hidden,
     }));
+  }
+
+  if (
+    isTechnicalReviewEnabled &&
+    !columns.find((column) => column.field === 'technicalStatus')
+  ) {
+    columns.push({
+      title: 'Technical status',
+      field: 'technicalStatus',
+      emptyValue: '-',
+    });
+  }
+
+  if (
+    isInstrumentManagementEnabled &&
+    !columns.find((column) => column.field === 'instrumentName')
+  ) {
+    columns.push({
+      title: 'Instrument',
+      field: 'instrumentName',
+      emptyValue: '-',
+    });
   }
 
   columns = setSortDirectionOnSortColumn(
