@@ -1,12 +1,11 @@
 import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
-import MenuItem from '@mui/material/MenuItem';
 import { Field } from 'formik';
-import { Select, TextField } from 'formik-mui';
-import { default as React, FC, useContext } from 'react';
+import { TextField } from 'formik-mui';
+import { ChangeEvent, default as React, FC, useContext } from 'react';
 import * as Yup from 'yup';
 
+import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import TitledContainer from 'components/common/TitledContainer';
 import { QuestionTemplateRelationFormProps } from 'components/questionary/QuestionaryComponentRegistry';
 import { FeatureContext } from 'context/FeatureContextProvider';
@@ -40,14 +39,24 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
     return null;
   }
 
+  const templateOptions = templates.map((template) => ({
+    value: template.templateId,
+    text: template.name,
+  }));
+  const ESITemplateOptions = esiTemplates.map((template) => ({
+    value: template.templateId,
+    text: template.name,
+  }));
+
   return (
     <QuestionTemplateRelationFormShell
       {...props}
       validationSchema={Yup.object().shape({
         question: Yup.object({
           config: Yup.object({
-            addEntryButtonLabel: Yup.string(),
-            maxEntries: Yup.number().nullable(),
+            addEntryButtonLabel: Yup.string().required(),
+            minEntries: Yup.number().min(0).nullable(),
+            maxEntries: Yup.number().min(1).nullable(),
             templateId: Yup.number().required('Template is required'),
           }),
         }),
@@ -56,6 +65,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
       {(formikProps) => (
         <>
           <QuestionExcerpt question={props.questionRel.question} />
+
           <TitledContainer label="Options">
             <Field
               name="config.addEntryButtonLabel"
@@ -67,6 +77,35 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               fullWidth
               data-cy="addEntryButtonLabel"
             />
+            <FormControl fullWidth>
+              <FormikUIAutocomplete
+                name="config.templateId"
+                label="Template name"
+                noOptionsText="No active templates"
+                items={templateOptions}
+                InputProps={{ 'data-cy': 'template-id' }}
+                TextFieldProps={{ margin: 'none' }}
+                required
+              />
+              <Link
+                href="/SampleDeclarationTemplates/"
+                target="blank"
+                style={{ textAlign: 'right' }}
+              >
+                View all templates
+              </Link>
+            </FormControl>
+
+            {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
+              <FormikUIAutocomplete
+                name="config.esiTemplateId"
+                label="ESI template name"
+                noOptionsText="No active templates"
+                items={ESITemplateOptions}
+                InputProps={{ 'data-cy': 'esi-template-id' }}
+                TextFieldProps={{ margin: 'none' }}
+              />
+            )}
           </TitledContainer>
 
           <TitledContainer label="Constraints">
@@ -79,6 +118,17 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               component={TextField}
               fullWidth
               data-cy="min-entries"
+              // NOTE: This is needed to prevent sending empty string when there is no value
+              onChange={({
+                target: { value },
+              }: ChangeEvent<HTMLInputElement>) =>
+                formikProps.setFieldValue('config.minEntries', value || null)
+              }
+              // NOTE: This is needed to prevent console warning: `value` prop on `input` should not be null. `value` prop on `input` should not be null
+              value={
+                (formikProps.values.config as SampleDeclarationConfig)
+                  .minEntries ?? ''
+              }
             />
             <Field
               name="config.maxEntries"
@@ -88,76 +138,18 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               component={TextField}
               fullWidth
               data-cy="max-entries"
+              // NOTE: This is needed to prevent sending empty string when there is no value
+              onChange={({
+                target: { value },
+              }: ChangeEvent<HTMLInputElement>) =>
+                formikProps.setFieldValue('config.maxEntries', value || null)
+              }
+              // NOTE: This is needed to prevent console warning: `value` prop on `input` should not be null. `value` prop on `input` should not be null
+              value={
+                (formikProps.values.config as SampleDeclarationConfig)
+                  .maxEntries ?? ''
+              }
             />
-          </TitledContainer>
-
-          <TitledContainer label="Options">
-            <FormControl fullWidth>
-              <InputLabel>Template name</InputLabel>
-              <Field
-                name="config.templateId"
-                type="text"
-                component={Select}
-                data-cy="templateId"
-                defaultValue={''}
-              >
-                {templates.length ? (
-                  templates.map((template) => {
-                    return (
-                      <MenuItem
-                        value={template.templateId}
-                        key={template.templateId}
-                      >
-                        {template.name}
-                      </MenuItem>
-                    );
-                  })
-                ) : (
-                  <MenuItem value="noTemplates" key="noTemplates" disabled>
-                    No active templates
-                  </MenuItem>
-                )}
-              </Field>
-              <Link
-                href="/SampleDeclarationTemplates/"
-                target="blank"
-                style={{ textAlign: 'right' }}
-              >
-                View all templates
-              </Link>
-            </FormControl>
-
-            {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
-              <FormControl fullWidth>
-                <InputLabel htmlFor="config.esiTemplateId">
-                  ESI template name
-                </InputLabel>
-                <Field
-                  name="config.esiTemplateId"
-                  id="config.esiTemplateId"
-                  type="text"
-                  component={Select}
-                  data-cy="esi-template-id"
-                >
-                  {esiTemplates.length ? (
-                    esiTemplates.map((template) => {
-                      return (
-                        <MenuItem
-                          value={template.templateId}
-                          key={template.templateId}
-                        >
-                          {template.name}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="noTemplates" key="noTemplates" disabled>
-                      No active templates
-                    </MenuItem>
-                  )}
-                </Field>
-              </FormControl>
-            )}
           </TitledContainer>
 
           <TitledContainer label="Dependencies">
