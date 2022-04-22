@@ -8,7 +8,6 @@ import Tooltip from '@mui/material/Tooltip';
 import makeStyles from '@mui/styles/makeStyles';
 import useTheme from '@mui/styles/useTheme';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useContext, DragEvent, useState, useEffect } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
 
@@ -33,7 +32,7 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
 
 type SepProposalWithAverageScoreAndAvailabilityZone = SepProposal & {
-  proposalAverageScore: number;
+  proposalAverageScore: number | string;
   isInAvailabilityZone: boolean;
 };
 
@@ -182,7 +181,6 @@ const SEPInstrumentProposalsTable: React.FC<
   const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { user } = useContext(UserContext);
   const { api } = useDataApiWithFeedback();
-  const { enqueueSnackbar } = useSnackbar();
 
   // NOTE: This is needed for adding the allocation time unit information on the column title without causing some console warning on re-rendering.
   const columns = assignmentColumns.map((column) => ({
@@ -241,12 +239,21 @@ const SEPInstrumentProposalsTable: React.FC<
 
           return {
             ...proposalData,
-            proposalAverageScore,
+            proposalAverageScore: isNaN(proposalAverageScore)
+              ? '-'
+              : proposalAverageScore,
           };
         })
-        .sort((a, b) =>
-          a.proposalAverageScore > b.proposalAverageScore ? 1 : -1
-        )
+        .sort((a, b) => {
+          if (
+            typeof a.proposalAverageScore === 'number' &&
+            typeof b.proposalAverageScore === 'number'
+          ) {
+            return a.proposalAverageScore > b.proposalAverageScore ? 1 : -1;
+          } else {
+            return -1;
+          }
+        })
         .sort(sortByRankOrder)
         .map((proposalData) => {
           const proposalAllocationTime =
@@ -280,9 +287,7 @@ const SEPInstrumentProposalsTable: React.FC<
   }, [instrumentProposalsData, sepInstrument.availabilityTime]);
 
   const ProposalTimeAllocationColumn = (
-    rowData: SepProposal & {
-      proposalAverageScore: number;
-    }
+    rowData: SepProposalWithAverageScoreAndAvailabilityZone
   ) => {
     const timeAllocation =
       rowData.proposal.technicalReview &&
@@ -438,35 +443,28 @@ const SEPInstrumentProposalsTable: React.FC<
       }));
 
     setInstrumentProposalsData(tableDataWithRankingsUpdated);
+    const toastErrorMessageAction = (
+      <Button
+        color="inherit"
+        variant="text"
+        onClick={refreshInstrumentProposalsData}
+        startIcon={<RefreshIcon />}
+      >
+        Refresh
+      </Button>
+    );
 
-    const result = await api(
-      'Reordering of proposals saved successfully!'
-    ).reorderSepMeetingDecisionProposals({
+    await api({
+      toastSuccessMessage: 'Reordering of proposals saved successfully!',
+      toastErrorMessage:
+        'Something went wrong please use refresh button to update the table state',
+      // NOTE: Show error message with refresh button if there is an error.
+      toastErrorMessageAction,
+    }).reorderSepMeetingDecisionProposals({
       reorderSepMeetingDecisionProposalsInput: {
         proposals: reorderSepMeetingDecisionProposalsInput,
       },
     });
-
-    // NOTE: Show error message with refresh button if there is an error.
-    if (result.reorderSepMeetingDecisionProposals.rejection) {
-      enqueueSnackbar(
-        `Something went wrong please use refresh button to update the table state`,
-        {
-          variant: 'error',
-          className: 'snackbar-error',
-          action: () => (
-            <Button
-              color="inherit"
-              variant="text"
-              onClick={refreshInstrumentProposalsData}
-              startIcon={<RefreshIcon />}
-            >
-              Refresh
-            </Button>
-          ),
-        }
-      );
-    }
   };
 
   const showDropArea = (
