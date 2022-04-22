@@ -30,7 +30,8 @@ import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import SEPMeetingProposalViewModal from './ProposalViewModal/SEPMeetingProposalViewModal';
 
 type SepProposalWithAverageScoreAndAvailabilityZone = SepProposal & {
-  proposalAverageScore: number;
+  proposalAverageScore: number | string;
+  proposalDeviation: number | string;
   isInAvailabilityZone: boolean;
 };
 
@@ -104,16 +105,7 @@ const assignmentColumns = [
   },
   {
     title: 'Deviation',
-    field: 'deviation',
-    render: (
-      rowData: SepProposalWithAverageScoreAndAvailabilityZone
-    ): string => {
-      const stdDeviation = standardDeviation(
-        getGradesFromReviews(rowData.proposal.reviews ?? [])
-      );
-
-      return isNaN(stdDeviation) ? '-' : `${stdDeviation}`;
-    },
+    field: 'proposalDeviation',
     customSort: (
       a: SepProposalWithAverageScoreAndAvailabilityZone,
       b: SepProposalWithAverageScoreAndAvailabilityZone
@@ -235,15 +227,40 @@ const SEPInstrumentProposalsTable: React.FC<
           const proposalAverageScore = average(
             getGradesFromReviews(proposalData.proposal.reviews ?? [])
           );
+          const proposalDeviation = standardDeviation(
+            getGradesFromReviews(proposalData.proposal.reviews ?? [])
+          );
 
           return {
             ...proposalData,
-            proposalAverageScore,
+            proposalAverageScore: isNaN(proposalAverageScore)
+              ? '-'
+              : proposalAverageScore,
+            proposalDeviation: isNaN(proposalDeviation)
+              ? '-'
+              : proposalDeviation,
           };
         })
-        .sort((a, b) =>
-          a.proposalAverageScore > b.proposalAverageScore ? 1 : -1
-        )
+        .sort((a, b) => {
+          if (
+            typeof a.proposalDeviation === 'number' &&
+            typeof b.proposalDeviation === 'number'
+          ) {
+            return a.proposalDeviation < b.proposalDeviation ? 1 : -1;
+          } else {
+            return 1;
+          }
+        })
+        .sort((a, b) => {
+          if (
+            typeof a.proposalAverageScore === 'number' &&
+            typeof b.proposalAverageScore === 'number'
+          ) {
+            return a.proposalAverageScore > b.proposalAverageScore ? 1 : -1;
+          } else {
+            return -1;
+          }
+        })
         .sort(sortByRankOrder)
         .map((proposalData) => {
           const proposalAllocationTime =
@@ -277,9 +294,7 @@ const SEPInstrumentProposalsTable: React.FC<
   }, [instrumentProposalsData, sepInstrument.availabilityTime]);
 
   const ProposalTimeAllocationColumn = (
-    rowData: SepProposal & {
-      proposalAverageScore: number;
-    }
+    rowData: SepProposalWithAverageScoreAndAvailabilityZone
   ) => {
     const timeAllocation =
       rowData.proposal.technicalReview &&
