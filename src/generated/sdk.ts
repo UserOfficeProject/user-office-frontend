@@ -2500,7 +2500,7 @@ export type ReviewWithNextStatusResponseWrap = {
 
 export enum ReviewerFilter {
   ALL = 'ALL',
-  YOU = 'YOU'
+  ME = 'ME'
 }
 
 export type RichTextInputConfig = {

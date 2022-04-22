@@ -603,7 +603,7 @@ context('Instrument tests', () => {
 
       cy.get('[data-cy="reviewer-filter"] input').should(
         'have.value',
-        ReviewerFilter.YOU
+        ReviewerFilter.ME
       );
 
       selectAllProposalsFilterStatus();

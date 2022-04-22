@@ -154,7 +154,7 @@ export const QuestionSampleDeclarationForm: FC<QuestionFormProps> = (props) => {
               type="number"
               component={TextField}
               fullWidth
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 1 }}
               data-cy="max-entries"
               // NOTE: This is needed to prevent sending empty string when there is no value
               onChange={({

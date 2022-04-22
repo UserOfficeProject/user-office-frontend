@@ -114,7 +114,8 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               label="Min entries"
               id="Min-input"
               placeholder="(e.g. 1, leave blank for unlimited)"
-              type="text"
+              type="number"
+              inputProps={{ min: 0 }}
               component={TextField}
               fullWidth
               data-cy="min-entries"
@@ -134,7 +135,8 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               name="config.maxEntries"
               label="Max entries"
               id="Max-input"
-              type="text"
+              type="number"
+              inputProps={{ min: 1 }}
               component={TextField}
               fullWidth
               data-cy="max-entries"

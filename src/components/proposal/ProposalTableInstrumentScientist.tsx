@@ -54,7 +54,7 @@ import ProposalFilterBar, {
 } from './ProposalFilterBar';
 
 const getFilterReviewer = (selected: string | ReviewerFilter) =>
-  selected === ReviewerFilter.YOU ? ReviewerFilter.YOU : ReviewerFilter.ALL;
+  selected === ReviewerFilter.ME ? ReviewerFilter.ME : ReviewerFilter.ALL;
 
 let columns: Column<ProposalViewData>[] = [
   {
