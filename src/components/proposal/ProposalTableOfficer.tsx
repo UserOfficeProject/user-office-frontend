@@ -271,23 +271,18 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
    * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
    * and selection flag is true they are not working properly.
    */
-  const RowActionButtons = (rowData: ProposalViewData) => {
-    const iconButtonStyle = { padding: '7px' };
-
-    return (
-      <Tooltip title="View proposal">
-        <IconButton
-          data-cy="view-proposal"
-          onClick={() => {
-            setUrlQueryParams({ reviewModal: rowData.primaryKey });
-          }}
-          style={iconButtonStyle}
-        >
-          <Visibility />
-        </IconButton>
-      </Tooltip>
-    );
-  };
+  const RowActionButtons = (rowData: ProposalViewData) => (
+    <Tooltip title="View proposal">
+      <IconButton
+        data-cy="view-proposal"
+        onClick={() => {
+          setUrlQueryParams({ reviewModal: rowData.primaryKey });
+        }}
+      >
+        <Visibility />
+      </IconButton>
+    </Tooltip>
+  );
 
   columns = columns.map((v: Column<ProposalViewData>) => {
     v.customSort = () => 0; // Disables client side sorting

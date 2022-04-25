@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const defaultReviewerQueryFilter = withDefault(
   StringParam,
-  ReviewerFilter.YOU
+  ReviewerFilter.ME
 );
 
 type ReviewerFilterComponentProps = {
@@ -50,8 +50,8 @@ const ReviewerFilterComponent: React.FC<ReviewerFilterComponentProps> = ({
         // NOTE: We can't use data-cy here for options and this works as well to define a property on the menulist component
         MenuProps={{ MenuListProps: { property: 'reviewer-filter-options' } }}
       >
-        <MenuItem value={ReviewerFilter.YOU}>You</MenuItem>
-        <MenuItem value={ReviewerFilter.ALL}>All</MenuItem>
+        <MenuItem value={ReviewerFilter.ME}>My proposals</MenuItem>
+        <MenuItem value={ReviewerFilter.ALL}>All proposals</MenuItem>
       </Select>
     </FormControl>
   );
