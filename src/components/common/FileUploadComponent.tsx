@@ -422,7 +422,7 @@ export function FileUploadComponent(props: {
   const maxFiles = props.maxFiles ?? 0;
 
   let newFileEntry;
-  if (files.length < maxFiles) {
+  if (files.length < maxFiles || maxFiles === 0) {
     newFileEntry = (
       <NewFileEntry filetype={fileType} onUploadComplete={onUploadComplete} />
     );
