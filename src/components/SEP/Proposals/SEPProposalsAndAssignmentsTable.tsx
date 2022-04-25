@@ -196,7 +196,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<
   const removeProposalsFromSEP = async (
     proposalsToRemove: SEPProposalType[]
   ): Promise<void> => {
-    await api('Assignment/s removed').removeProposalsFromSep({
+    await api({
+      toastSuccessMessage: 'Assignment/s removed',
+    }).removeProposalsFromSep({
       proposalPks: proposalsToRemove.map(
         (proposalToRemove) => proposalToRemove.proposalPk
       ),
@@ -237,7 +239,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<
 
     const {
       assignSepReviewersToProposal: { rejection },
-    } = await api('Members assigned').assignSepReviewersToProposal({
+    } = await api({
+      toastSuccessMessage: 'Members assigned',
+    }).assignSepReviewersToProposal({
       memberIds: assignedMembers.map(({ id }) => id),
       proposalPk: proposalPk,
       sepId,
@@ -356,7 +360,9 @@ const SEPProposalsAndAssignmentsTable: React.FC<
          * TODO(asztalos): merge `removeMemberFromSEPProposal` and `removeUserForReview` (same goes for creation)
          *                otherwise if one of them fails we may end up with an broken state
          */
-        await api('Reviewer removed').removeMemberFromSEPProposal({
+        await api({
+          toastSuccessMessage: 'Reviewer removed',
+        }).removeMemberFromSEPProposal({
           proposalPk,
           sepId,
           memberId: assignedReviewer.sepMemberUserId as number,
