@@ -9,6 +9,7 @@ context('Units tests', () => {
   describe('Template basic unit tests', () => {
     beforeEach(() => {
       cy.resetDB();
+      cy.getAndStoreAppSettings();
     });
 
     it('User officer can create unit', () => {
@@ -117,7 +118,7 @@ context('Units tests', () => {
       const fileName = 'units_export.json';
       const now = DateTime.now();
       const downloadFileName = `units_${now.toFormat(
-        initialDBData.formats.dateFormat
+        initialDBData.formats().dateFormat
       )}.json`;
 
       cy.login('officer');

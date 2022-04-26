@@ -16,6 +16,7 @@ context('visits tests', () => {
 
   beforeEach(() => {
     cy.resetDB(true);
+    cy.getAndStoreAppSettings();
     cy.updateProposal({
       proposalPk: existingProposalId,
       proposerId: PI.id,
@@ -154,10 +155,10 @@ context('visits tests', () => {
 
   it('Visitor should be able to register for a visit', () => {
     const startDate = DateTime.fromJSDate(faker.date.past()).toFormat(
-      initialDBData.formats.dateFormat
+      initialDBData.formats().dateFormat
     );
     const endDate = DateTime.fromJSDate(faker.date.future()).toFormat(
-      initialDBData.formats.dateFormat
+      initialDBData.formats().dateFormat
     );
 
     cy.createTemplate({

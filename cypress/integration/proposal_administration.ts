@@ -417,6 +417,7 @@ context('Proposal administration tests', () => {
   describe('Proposal administration advanced search tests', () => {
     beforeEach(() => {
       cy.resetDB(true);
+      cy.getAndStoreAppSettings();
 
       cy.viewport(1920, 1080);
 
@@ -511,17 +512,17 @@ context('Proposal administration tests', () => {
 
       const DATE_BEFORE = DateTime.fromFormat(
         DATE_ANSWER,
-        initialDBData.formats.dateFormat
+        initialDBData.formats().dateFormat
       )
         .minus({ days: 1 })
-        .toFormat(initialDBData.formats.dateFormat);
+        .toFormat(initialDBData.formats().dateFormat);
 
       const DATE_AFTER = DateTime.fromFormat(
         DATE_ANSWER,
-        initialDBData.formats.dateFormat
+        initialDBData.formats().dateFormat
       )
         .plus({ days: 1 })
-        .toFormat(initialDBData.formats.dateFormat);
+        .toFormat(initialDBData.formats().dateFormat);
 
       cy.get('[data-cy=question-list]').click();
       cy.contains(questions.date.text).click();
