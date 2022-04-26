@@ -23,10 +23,16 @@ import ProposalReviewContent, {
   PROPOSAL_MODAL_TAB_NAMES,
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
+import ReviewerFilterComponent, {
+  defaultReviewerQueryFilter,
+} from 'components/review/ReviewerFilter';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import { UserContext } from 'context/UserContextProvider';
 import {
+  FeatureId,
   Proposal,
   ProposalsFilter,
+  ReviewerFilter,
   SubmitTechnicalReviewInput,
 } from 'generated/sdk';
 import { useInstrumentScientistCallsData } from 'hooks/call/useInstrumentScientistCallsData';
@@ -46,6 +52,9 @@ import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 import ProposalFilterBar, {
   questionaryFilterFromUrlQuery,
 } from './ProposalFilterBar';
+
+const getFilterReviewer = (selected: string | ReviewerFilter) =>
+  selected === ReviewerFilter.ME ? ReviewerFilter.ME : ReviewerFilter.ALL;
 
 let columns: Column<ProposalViewData>[] = [
   {
@@ -70,12 +79,9 @@ let columns: Column<ProposalViewData>[] = [
     hidden: false,
   },
   {
-    title: 'Technical status',
-    render: (rowData) => rowData.technicalStatus,
-  },
-  {
     title: 'Submitted',
-    render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+    field: 'submitted',
+    lookup: { true: 'Yes', false: 'No' },
   },
   { title: 'Status', field: 'statusName' },
   {
@@ -85,10 +91,6 @@ let columns: Column<ProposalViewData>[] = [
       rowData.finalStatus
         ? getTranslation(rowData.finalStatus as ResourceId)
         : '',
-  },
-  {
-    title: 'Instrument',
-    field: 'instrumentName',
     emptyValue: '-',
   },
   {
@@ -109,6 +111,7 @@ const ProposalTableInstrumentScientist: React.FC<{
   confirm: WithConfirmType;
 }> = ({ confirm }) => {
   const { user } = useContext(UserContext);
+  const featureContext = useContext(FeatureContext);
   const { api } = useDataApiWithFeedback();
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     ...DefaultQueryParams,
@@ -121,6 +124,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     dataType: StringParam,
     reviewModal: NumberParam,
     modalTab: NumberParam,
+    reviewer: defaultReviewerQueryFilter,
   });
   // NOTE: proposalStatusId has default value 2 because for Instrument Scientist default view should be all proposals in FEASIBILITY_REVIEW status
   const [proposalFilter, setProposalFilter] = useState<ProposalsFilter>({
@@ -128,6 +132,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     instrumentId: urlQueryParams.instrument,
     proposalStatusId: urlQueryParams.proposalStatus,
     questionFilter: questionaryFilterFromUrlQuery(urlQueryParams),
+    reviewer: getFilterReviewer(urlQueryParams.reviewer),
   });
   const { instruments, loadingInstruments } = useInstrumentsData();
   const { calls, loadingCalls } = useInstrumentScientistCallsData(user.id);
@@ -139,6 +144,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     instrumentId: proposalFilter.instrumentId,
     callId: proposalFilter.callId,
     questionFilter: proposalFilter.questionFilter,
+    reviewer: proposalFilter.reviewer,
   });
 
   const [preselectedProposalsData, setPreselectedProposalsData] = useState<
@@ -172,9 +178,19 @@ const ProposalTableInstrumentScientist: React.FC<{
     Column<ProposalViewData>[] | null
   >('proposalColumnsInstrumentScientist', null);
 
+  const isTechnicalReviewEnabled = featureContext.features.get(
+    FeatureId.TECHNICAL_REVIEW
+  )?.isEnabled;
+
+  const isInstrumentManagementEnabled = featureContext.features.get(
+    FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+
   const instrumentScientistProposalReviewTabs = [
     PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
-    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
+    ...(isTechnicalReviewEnabled
+      ? [PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW]
+      : []),
   ];
 
   /**
@@ -221,18 +237,6 @@ const ProposalTableInstrumentScientist: React.FC<{
             )}
           </IconButton>
         </Tooltip>
-
-        <Tooltip title="Download proposal as PDF">
-          <IconButton
-            data-cy="download-proposal"
-            onClick={() =>
-              downloadPDFProposal([rowData.primaryKey], rowData.title)
-            }
-            style={iconButtonStyle}
-          >
-            <GetAppIcon />
-          </IconButton>
-        </Tooltip>
       </>
     );
   };
@@ -250,9 +254,9 @@ const ProposalTableInstrumentScientist: React.FC<{
           submitted: true,
         }));
 
-      const result = await api(
-        `Proposal${shouldAddPluralLetter} technical review submitted successfully!`
-      ).submitTechnicalReviews({
+      const result = await api({
+        toastSuccessMessage: `Proposal${shouldAddPluralLetter} technical review submitted successfully!`,
+      }).submitTechnicalReviews({
         technicalReviews: submittedTechnicalReviewsInput,
       });
 
@@ -315,7 +319,7 @@ const ProposalTableInstrumentScientist: React.FC<{
   };
 
   const handleBulkDownloadClick = (
-    event: React.MouseEventHandler<HTMLButtonElement>,
+    _: React.MouseEventHandler<HTMLButtonElement>,
     rowData: ProposalViewData | ProposalViewData[]
   ) => {
     if (!Array.isArray(rowData)) {
@@ -377,19 +381,40 @@ const ProposalTableInstrumentScientist: React.FC<{
     }));
   }
 
+  if (
+    isTechnicalReviewEnabled &&
+    !columns.find((column) => column.field === 'technicalStatus')
+  ) {
+    columns.push({
+      title: 'Technical status',
+      field: 'technicalStatus',
+      emptyValue: '-',
+    });
+  }
+
+  if (
+    isInstrumentManagementEnabled &&
+    !columns.find((column) => column.field === 'instrumentName')
+  ) {
+    columns.push({
+      title: 'Instrument',
+      field: 'instrumentName',
+      emptyValue: '-',
+    });
+  }
+
   columns = setSortDirectionOnSortColumn(
     columns,
     urlQueryParams.sortColumn,
     urlQueryParams.sortDirection
   );
 
-  const GetAppIconComponent = (): JSX.Element => <GetAppIcon />;
-  const DoneAllIcon = (
-    props: JSX.IntrinsicAttributes & {
-      children?: React.ReactNode;
-      'data-cy'?: string;
-    }
-  ): JSX.Element => <DoneAll {...props} />;
+  const GetAppIconComponent = (): JSX.Element => (
+    <GetAppIcon data-cy="download-proposals" />
+  );
+  const DoneAllIcon = (): JSX.Element => (
+    <DoneAll data-cy="submit-proposal-reviews" />
+  );
 
   const proposalToReview = preselectedProposalsData.find(
     (proposal) => proposal.primaryKey === urlQueryParams.reviewModal
@@ -443,6 +468,12 @@ const ProposalTableInstrumentScientist: React.FC<{
           tabNames={instrumentScientistProposalReviewTabs}
         />
       </ProposalReviewModal>
+      <ReviewerFilterComponent
+        reviewer={urlQueryParams.reviewer}
+        onChange={(reviewer) =>
+          setProposalFilter({ ...proposalFilter, reviewer })
+        }
+      />
       <ProposalFilterBar
         calls={{ data: calls, isLoading: loadingCalls }}
         instruments={{ data: instruments, isLoading: loadingInstruments }}
@@ -487,9 +518,7 @@ const ProposalTableInstrumentScientist: React.FC<{
             position: 'toolbarOnSelect',
           },
           {
-            icon: DoneAllIcon.bind(null, {
-              'data-cy': 'submit-proposal-reviews',
-            }),
+            icon: DoneAllIcon,
             tooltip: 'Submit proposal reviews',
             onClick: handleBulkTechnicalReviewsSubmit,
             position: 'toolbarOnSelect',
