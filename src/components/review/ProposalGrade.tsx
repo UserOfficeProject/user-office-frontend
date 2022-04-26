@@ -195,7 +195,7 @@ const ProposalGrade: React.FC<ProposalGradeProps> = ({
           </Box>
           <ErrorMessage name="grade" />
           <NavigationFragment isLoading={isSubmitting}>
-            <ButtonWithDialog label="Grading guide" disabled>
+            <ButtonWithDialog label="Grading guide" disabled={isSubmitting}>
               <GradeGuidePage />
             </ButtonWithDialog>
             {hasAccessRights && (
