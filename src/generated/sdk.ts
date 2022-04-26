@@ -2575,6 +2575,7 @@ export type RichTextInputConfig = {
 };
 
 export type Role = {
+  facility: Scalars['String'];
   id: Scalars['Int'];
   shortCode: Scalars['String'];
   title: Scalars['String'];
@@ -3305,7 +3306,7 @@ export type GetSepMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetSepMembersQuery = { sepMembers: Array<{ userId: number, sepId: number, role: { id: number, shortCode: string, title: string } | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> | null };
+export type GetSepMembersQuery = { sepMembers: Array<{ userId: number, sepId: number, role: { id: number, shortCode: string, title: string, facility: string } | null, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } }> | null };
 
 export type GetSepProposalQueryVariables = Exact<{
   sepId: Scalars['Int'];
@@ -4832,7 +4833,7 @@ export type GetFieldsQuery = { getFields: { nationalities: Array<{ id: number, v
 export type GetMyRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyRolesQuery = { me: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string }> } | null };
+export type GetMyRolesQuery = { me: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string, facility: string }> } | null };
 
 export type GetOrcIdInformationQueryVariables = Exact<{
   authorizationCode: Scalars['String'];
@@ -4856,7 +4857,7 @@ export type GetPreviousCollaboratorsQuery = { previousCollaborators: { totalCoun
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { roles: Array<{ id: number, shortCode: string, title: string }> | null };
+export type GetRolesQuery = { roles: Array<{ id: number, shortCode: string, title: string, facility: string }> | null };
 
 export type GetTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -4894,7 +4895,7 @@ export type GetUserWithRolesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserWithRolesQuery = { user: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string }> } | null };
+export type GetUserWithRolesQuery = { user: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string, facility: string }> } | null };
 
 export type GetUsersQueryVariables = Exact<{
   filter?: InputMaybe<Scalars['String']>;
@@ -5769,6 +5770,7 @@ export const GetSepMembersDocument = gql`
       id
       shortCode
       title
+      facility
     }
     user {
       ...basicUserDetails
@@ -8617,6 +8619,7 @@ export const GetMyRolesDocument = gql`
       id
       shortCode
       title
+      facility
     }
   }
 }
@@ -8656,6 +8659,7 @@ export const GetRolesDocument = gql`
     id
     shortCode
     title
+    facility
   }
 }
     `;
@@ -8765,6 +8769,7 @@ export const GetUserWithRolesDocument = gql`
       id
       shortCode
       title
+      facility
     }
   }
 }

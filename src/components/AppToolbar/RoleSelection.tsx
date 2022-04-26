@@ -5,7 +5,7 @@ import { Redirect, useHistory } from 'react-router';
 
 import { UserContext } from 'context/UserContextProvider';
 import { Role } from 'generated/sdk';
-import { getUniqueArrayBy } from 'utils/helperFunctions';
+//import { getUniqueArrayBy } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { FunctionType } from 'utils/utilTypes';
@@ -16,7 +16,22 @@ const columns = [
     field: 'roleAction',
   },
   { title: 'Role', field: 'title' },
+  { title: 'Facility filter', field: 'facility' },
 ];
+
+function getUniqueRoles(roles: Role[]): Role[] {
+  const usedIds: Set<string> = new Set();
+  const uniqueRoles: Role[] = [];
+  roles.forEach((role) => {
+    const roleId: string = role.id + role.facility;
+    if (!usedIds.has(roleId)) {
+      uniqueRoles.push(role);
+      usedIds.add(roleId);
+    }
+  });
+
+  return uniqueRoles;
+}
 
 const RoleSelection: React.FC<{ onClose: FunctionType }> = ({ onClose }) => {
   const { currentRole, token, handleNewToken } = useContext(UserContext);
@@ -39,7 +54,7 @@ const RoleSelection: React.FC<{ onClose: FunctionType }> = ({ onClose }) => {
         /** NOTE: We have roles that are duplicated in role_id and user_id but different only in sep_id
          *  which is used to determine if the user with that role is member of a SEP.
          */
-        setRoles(getUniqueArrayBy(data.me?.roles, 'id'));
+        setRoles(getUniqueRoles(data.me?.roles));
         setLoading(false);
       }
     };
