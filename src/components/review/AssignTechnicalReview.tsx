@@ -64,6 +64,7 @@ function AssignTechnicalReview({
           disableClearable
           data-cy="user-list"
           disabled={!isUserOfficer && proposal.technicalReview?.submitted}
+          ListboxProps={{ title: 'user-list-options' }}
         />
       </Grid>
       <Grid item xs={1}>
