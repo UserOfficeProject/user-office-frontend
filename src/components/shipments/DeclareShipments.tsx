@@ -100,6 +100,14 @@ function DeclareShipments({
     })();
   };
 
+  const onEditClicked = (item: QuestionnairesListRow): Promise<void> =>
+    api()
+      .getShipment({ shipmentId: item.id })
+      .then(({ shipment }) => {
+        setSelectedShipment(shipment);
+        setIsModalOpen(true);
+      });
+
   const onAddClicked = () => {
     setIsModalOpen(true);
   };
@@ -107,7 +115,7 @@ function DeclareShipments({
   const hasLocalContact = scheduledEvent.localContactId !== null;
 
   return (
-    <Stack spacing={4}>
+    <Stack spacing="4">
       <Typography variant="h6" component="h2">
         Declare Shipments
       </Typography>
@@ -130,14 +138,7 @@ function DeclareShipments({
       <QuestionnairesList
         addButtonLabel="Add Shipment"
         data={shipments.map(shipmentToListRow) ?? []}
-        onEditClick={(item) =>
-          api()
-            .getShipment({ shipmentId: item.id })
-            .then(({ shipment }) => {
-              setSelectedShipment(shipment);
-              setIsModalOpen(true);
-            })
-        }
+        onEditClick={onEditClicked}
         onDeleteClick={onDeleteClicked}
         onAddNewClick={hasLocalContact ? onAddClicked : undefined}
         style={{ maxWidth: '100%' }}
