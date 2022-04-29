@@ -99,6 +99,13 @@ let columns: Column<ProposalViewData>[] = [
     field: 'technicalStatus',
   },
   {
+    title: 'Assigned technical reviewer',
+    render: (rowData) =>
+      rowData.technicalReviewAssigneeId
+        ? `${rowData.technicalReviewAssigneeFirstName} ${rowData.technicalReviewAssigneeLastName}`
+        : '-',
+  },
+  {
     title: 'Final time allocation',
     render: (rowData) =>
       rowData.managementTimeAllocation
