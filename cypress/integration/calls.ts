@@ -75,7 +75,6 @@ context('Calls tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.getAndStoreAppSettings();
     cy.createTemplate({
       groupId: TemplateGroupId.PROPOSAL_ESI,
       name: esiTemplateName,

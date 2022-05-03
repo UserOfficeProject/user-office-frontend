@@ -16,7 +16,6 @@ context('visits tests', () => {
 
   beforeEach(() => {
     cy.resetDB(true);
-    cy.getAndStoreAppSettings();
     cy.updateProposal({
       proposalPk: existingProposalId,
       proposerId: PI.id,

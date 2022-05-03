@@ -9,7 +9,6 @@ context('Units tests', () => {
   describe('Template basic unit tests', () => {
     beforeEach(() => {
       cy.resetDB();
-      cy.getAndStoreAppSettings();
     });
 
     it('User officer can create unit', () => {

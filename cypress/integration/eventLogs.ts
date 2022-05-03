@@ -7,7 +7,6 @@ import initialDBData from '../support/initialDBData';
 context('Event log tests', () => {
   beforeEach(() => {
     cy.resetDB();
-    cy.getAndStoreAppSettings();
   });
 
   describe('Proposal event logs', () => {

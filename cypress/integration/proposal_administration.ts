@@ -417,7 +417,6 @@ context('Proposal administration tests', () => {
   describe('Proposal administration advanced search tests', () => {
     beforeEach(() => {
       cy.resetDB(true);
-      cy.getAndStoreAppSettings();
 
       cy.viewport(1920, 1080);
 

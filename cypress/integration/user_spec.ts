@@ -23,7 +23,6 @@ context('User tests', () => {
 
   beforeEach(() => {
     cy.resetDB();
-    cy.getAndStoreAppSettings();
 
     cy.visit('/SignUp?code=WRMVXa');
   });

@@ -342,7 +342,6 @@ context('Template tests', () => {
 
   beforeEach(() => {
     cy.resetDB(true);
-    cy.getAndStoreAppSettings();
     cy.viewport(1920, 1680);
   });
 
