@@ -8,7 +8,7 @@ import {
 // NOTE: Instruments, proposal and scheduled events are seeded only if resetDB(true).
 export default {
   // NOTE: To be able to use this cy.getAndStoreAppSettings() should be called in the beforeEach section.
-  formats: () => {
+  getFormats: () => {
     const settings = window.localStorage.getItem('settings');
 
     let settingsMap = new Map<SettingsId, string>();
