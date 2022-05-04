@@ -74,16 +74,13 @@ function QuestionsPage() {
     }
   };
 
-  const deleteQuestion = async (questionId: string | number) =>
-    new Promise<boolean>((resolve) => {
-      api({ toastSuccessMessage: 'Question deleted' })
-        .deleteQuestion({ questionId: questionId as string })
-        .then((result) => resolve(result.deleteQuestion.rejection === null)),
-        {
-          title: 'Delete question',
-          description: 'Are you sure you want to delete this question?',
-        };
-    });
+  const deleteQuestion = async (questionId: string | number) => {
+    const { deleteQuestion } = await api({
+      toastSuccessMessage: 'Question deleted',
+    }).deleteQuestion({ questionId: questionId as string });
+
+    return deleteQuestion.rejection === null;
+  };
 
   return (
     <StyledContainer>
