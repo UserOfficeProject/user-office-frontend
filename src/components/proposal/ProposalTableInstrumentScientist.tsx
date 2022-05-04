@@ -277,9 +277,8 @@ const ProposalTableInstrumentScientist: React.FC<{
     }
   };
 
-  const handleSearchChange = (searchText: string) => {
+  const handleSearchChange = (searchText: string) =>
     setUrlQueryParams({ search: searchText ? searchText : undefined });
-  };
 
   const handleColumnHiddenChange = (columnChange: Column<ProposalViewData>) => {
     const proposalColumns = columns.map(
@@ -295,7 +294,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     setLocalStorageValue(proposalColumns);
   };
 
-  const handleColumnSelectionChange = (selectedItems: ProposalViewData[]) => {
+  const handleColumnSelectionChange = (selectedItems: ProposalViewData[]) =>
     setUrlQueryParams((params) => ({
       ...params,
       selection:
@@ -305,18 +304,15 @@ const ProposalTableInstrumentScientist: React.FC<{
             )
           : undefined,
     }));
-  };
 
   const handleColumnSortOrderChange = (
     orderedColumnId: number,
     orderDirection: 'desc' | 'asc'
-  ) => {
-    setUrlQueryParams &&
-      setUrlQueryParams({
-        sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
-        sortDirection: orderDirection ? orderDirection : undefined,
-      });
-  };
+  ) =>
+    setUrlQueryParams({
+      sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+      sortDirection: orderDirection ? orderDirection : undefined,
+    });
 
   const handleBulkDownloadClick = (
     _: React.MouseEventHandler<HTMLButtonElement>,

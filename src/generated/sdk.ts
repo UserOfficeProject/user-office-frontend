@@ -2160,6 +2160,8 @@ export type QueryPreviousCollaboratorsArgs = {
   filter?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
   subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   userId: Scalars['Int'];
   userRole?: InputMaybe<UserRole>;
@@ -2332,6 +2334,8 @@ export type QueryUsersArgs = {
   filter?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
   subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   userRole?: InputMaybe<UserRole>;
 };
@@ -4820,6 +4824,8 @@ export type GetUsersQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
   userRole?: InputMaybe<UserRole>;
   subtractUsers?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -8658,13 +8664,15 @@ export const GetUserWithRolesDocument = gql`
 }
     `;
 export const GetUsersDocument = gql`
-    query getUsers($filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!]) {
+    query getUsers($filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!], $orderBy: String, $orderDirection: String) {
   users(
     filter: $filter
     first: $first
     offset: $offset
     userRole: $userRole
     subtractUsers: $subtractUsers
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     users {
       ...basicUserDetails
