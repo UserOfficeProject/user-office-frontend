@@ -44,22 +44,20 @@ export const QuestionFormShell = withConfirm(
     const definition = getQuestionaryComponentDefinition(question.dataType);
 
     const submitHandler = async (values: Question): Promise<void> => {
-      api()
-        .updateQuestion({
-          id: values.id,
-          naturalKey: values.naturalKey,
-          question: values.question,
-          config: values.config ? JSON.stringify(values.config) : undefined,
-        })
-        .then((data) => {
-          if (data.updateQuestion.question) {
-            onUpdated?.({
-              ...question,
-              ...data.updateQuestion.question,
-            });
-            closeMe?.();
-          }
+      const { updateQuestion } = await api().updateQuestion({
+        id: values.id,
+        naturalKey: values.naturalKey,
+        question: values.question,
+        config: values.config ? JSON.stringify(values.config) : undefined,
+      });
+
+      if (updateQuestion.question) {
+        onUpdated?.({
+          ...question,
+          ...updateQuestion.question,
         });
+        closeMe?.();
+      }
     };
 
     const deleteHandler = () =>
