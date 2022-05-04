@@ -62,17 +62,15 @@ export const QuestionFormShell = withConfirm(
 
     const deleteHandler = () =>
       confirm(
-        () =>
-          api()
-            .deleteQuestion({
-              questionId: question.id,
-            })
-            .then((data) => {
-              if (data.deleteQuestion.question) {
-                onDeleted?.(data.deleteQuestion.question);
-                closeMe?.();
-              }
-            }),
+        async () => {
+          const { deleteQuestion } = await api().deleteQuestion({
+            questionId: question.id,
+          });
+          if (deleteQuestion.question) {
+            onDeleted?.(deleteQuestion.question);
+            closeMe?.();
+          }
+        },
         {
           title: 'Delete question',
           description: 'Are you sure you want to delete this question?',
