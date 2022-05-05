@@ -77,6 +77,7 @@ export default function UpdateUserInformation(props: { id: number }) {
   const { institutions, loadingInstitutions } = useInstitutionsData();
   const [nationalitiesList, setNationalitiesList] = useState<Option[]>([]);
   const [institutionsList, setInstitutionsList] = useState<Option[]>([]);
+  const [countriesList, setCountriesList] = useState<Option[]>([]);
   const classes = useStyles();
 
   // NOTE: User should be older than 18 years.
@@ -89,23 +90,24 @@ export default function UpdateUserInformation(props: { id: number }) {
   const initialValues = {
     username: userData.username,
     firstname: userData.firstname,
-    middlename: userData.middlename,
+    middlename: userData.middlename || '',
     lastname: userData.lastname,
-    preferredname: userData.preferredname,
+    preferredname: userData.preferredname || '',
     gender:
       userData.gender !== 'male' && userData.gender !== 'female'
         ? 'other'
         : userData.gender,
     othergender: userData.gender,
-    nationality: userData.nationality || '',
+    nationality: userData.nationality,
     birthdate: DateTime.fromJSDate(new Date(userData.birthdate)),
     organisation: userData.organisation,
+    organizationCountry: 0,
     department: userData.department,
     position: userData.position,
     oldEmail: userData.email,
     email: userData.email,
     telephone: userData.telephone,
-    telephone_alt: userData.telephone_alt,
+    telephone_alt: userData.telephone_alt || '',
     user_title: userData.user_title,
     orcid: userData.orcid,
   };
@@ -136,6 +138,14 @@ export default function UpdateUserInformation(props: { id: number }) {
     setNationalitiesList(
       fieldsContent.nationalities.map((nationality) => {
         return { text: nationality.value, value: nationality.id };
+      })
+    );
+  }
+
+  if (!countriesList.length && fieldsContent) {
+    setCountriesList(
+      fieldsContent.countries.map((country) => {
+        return { text: country.value, value: country.id };
       })
     );
   }
@@ -198,6 +208,8 @@ export default function UpdateUserInformation(props: { id: number }) {
           ...values,
           nationality: +(values.nationality as number),
           organisation: +values.organisation,
+          organizationCountry:
+            +values.organisation === 1 ? +values.organizationCountry : null,
           gender:
             values.gender === 'other' ? values.othergender : values.gender,
         } as UpdateUserMutationVariables;
@@ -405,17 +417,28 @@ export default function UpdateUserInformation(props: { id: number }) {
                 noOptionsText="No organizations"
               />
               {+values.organisation === 1 && (
-                <Field
-                  name="otherOrganisation"
-                  label="Please specify organization"
-                  id="organisation-input"
-                  type="text"
-                  component={TextField}
-                  margin="normal"
-                  fullWidth
-                  data-cy="otherOrganisation"
-                  required
-                />
+                <>
+                  <Field
+                    name="otherOrganisation"
+                    label="Please specify organization"
+                    id="organisation-input"
+                    type="text"
+                    component={TextField}
+                    margin="normal"
+                    fullWidth
+                    data-cy="otherOrganisation"
+                    required
+                  />
+                  <FormikUIAutocomplete
+                    name="organizationCountry"
+                    label="Please specify organization country"
+                    items={countriesList}
+                    data-cy="organizationCountry"
+                    required
+                    loading={!fieldsContent}
+                    noOptionsText="No countries"
+                  />
+                </>
               )}
               <Field
                 name="department"
