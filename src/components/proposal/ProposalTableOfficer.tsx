@@ -630,7 +630,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     Object.assign(proposal, {
       id: proposal.primaryKey,
       rowActionButtons: RowActionButtons(proposal),
-      assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}` : '-',
+      assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName
+        ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}`
+        : '-',
     })
   );
 
