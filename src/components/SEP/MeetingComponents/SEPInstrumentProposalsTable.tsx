@@ -578,15 +578,19 @@ const SEPInstrumentProposalsTable: React.FC<
     }));
 
   const getAllocatedTimeSumToIndex = (lastRowIndex: number) => {
-    let allocatedTime = 0;
+    let allocatedTimeSum = 0;
     for (let index = 0; index <= lastRowIndex; index++) {
       const element = sortedProposalsWithAverageScore[index];
 
-      allocatedTime =
-        allocatedTime + (element.proposal.technicalReview?.timeAllocation || 0);
+      const proposalTimeAllocation =
+        typeof element.sepTimeAllocation === 'number'
+          ? element.sepTimeAllocation
+          : element.proposal.technicalReview?.timeAllocation || 0;
+
+      allocatedTimeSum = allocatedTimeSum + proposalTimeAllocation;
     }
 
-    return allocatedTime;
+    return allocatedTimeSum;
   };
 
   /**  NOTE: Making this to work on mobile is a bit harder and might need more attention.
@@ -605,8 +609,8 @@ const SEPInstrumentProposalsTable: React.FC<
     const isLastAvailabilityZoneRow =
       rowData.isInAvailabilityZone &&
       rowData.tableData &&
-      !sortedProposalsWithAverageScoreAndId[rowData.tableData.index + 1]
-        .isInAvailabilityZone;
+      !sortedProposalsWithAverageScoreAndId[rowData?.tableData.index + 1]
+        ?.isInAvailabilityZone;
 
     if (isLastAvailabilityZoneRow) {
       const lastRowIndex = rowData.tableData?.index;
