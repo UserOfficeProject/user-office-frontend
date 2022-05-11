@@ -24,6 +24,7 @@ import { FeatureId, SettingsId } from 'generated/sdk';
 import { getUnauthorizedApi } from 'hooks/common/useDataApi';
 
 import DashBoard from './DashBoard';
+import PingRedirect from './menu/PingRedirect';
 import Theme from './theme/theme';
 import EmailVerification from './user/EmailVerification';
 import ExternalAuth from './user/ExternalAuth';
@@ -86,6 +87,7 @@ const Routes: React.FC<RouteProps> = () => {
   if (EXTERNAL_AUTH) {
     return (
       <div className="App">
+        <PingRedirect />
         <Switch>
           <Route path="/external-auth/:sessionId" component={ExternalAuth} />
           <Route path="/external-auth/:token" component={ExternalAuth} />
