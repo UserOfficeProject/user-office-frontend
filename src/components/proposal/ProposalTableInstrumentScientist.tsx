@@ -185,11 +185,11 @@ const ProposalTableInstrumentScientist: React.FC<{
     Column<ProposalViewData>[] | null
   >('proposalColumnsInstrumentScientist', null);
 
-  const isTechnicalReviewEnabled = featureContext.features.get(
+  const isTechnicalReviewEnabled = featureContext.featuresMap.get(
     FeatureId.TECHNICAL_REVIEW
   )?.isEnabled;
 
-  const isInstrumentManagementEnabled = featureContext.features.get(
+  const isInstrumentManagementEnabled = featureContext.featuresMap.get(
     FeatureId.INSTRUMENT_MANAGEMENT
   )?.isEnabled;
 

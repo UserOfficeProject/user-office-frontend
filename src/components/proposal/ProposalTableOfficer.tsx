@@ -301,13 +301,13 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   );
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
-  const isTechnicalReviewEnabled = featureContext.features.get(
+  const isTechnicalReviewEnabled = featureContext.featuresMap.get(
     FeatureId.TECHNICAL_REVIEW
   )?.isEnabled;
-  const isInstrumentManagementEnabled = featureContext.features.get(
+  const isInstrumentManagementEnabled = featureContext.featuresMap.get(
     FeatureId.INSTRUMENT_MANAGEMENT
   )?.isEnabled;
-  const isSEPEnabled = featureContext.features.get(
+  const isSEPEnabled = featureContext.featuresMap.get(
     FeatureId.SEP_REVIEW
   )?.isEnabled;
 
