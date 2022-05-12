@@ -5,10 +5,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import Visibility from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import {
-  getTranslation,
-  ResourceId,
-} from '@user-office-software/duo-localisation';
 import { proposalTechnicalReviewValidationSchema } from '@user-office-software/duo-validation';
 import React, { useContext, useState, useEffect } from 'react';
 import {
@@ -81,23 +77,8 @@ let columns: Column<ProposalViewData>[] = [
   },
   { title: 'Status', field: 'statusName' },
   {
-    title: 'Final Status',
-    field: 'finalStatus',
-    render: (rowData: ProposalViewData): string =>
-      rowData.finalStatus
-        ? getTranslation(rowData.finalStatus as ResourceId)
-        : '',
-    emptyValue: '-',
-  },
-  {
     title: 'Call',
     field: 'callShortCode',
-    emptyValue: '-',
-    hidden: true,
-  },
-  {
-    title: 'SEP',
-    field: 'sepCode',
     emptyValue: '-',
     hidden: true,
   },
@@ -107,19 +88,27 @@ const technicalReviewColumns: Column<ProposalViewData>[] = [
   {
     title: 'Technical status',
     field: 'technicalStatus',
+    emptyValue: '-',
   },
   {
     title: 'Technical time allocation',
     field: 'technicalTimeAllocationRendered',
+    emptyValue: '-',
   },
   {
     title: 'Assigned technical reviewer',
     field: 'assignedTechnicalReviewer',
+    emptyValue: '-',
   },
 ];
 
 const instrumentManagementColumns = [
-  { title: 'Instrument', field: 'instrumentName' },
+  { title: 'Instrument', field: 'instrumentName', emptyValue: '-' },
+];
+
+const SEPReviewColumns = [
+  { title: 'Final status', field: 'finalStatus', emptyValue: '-' },
+  { title: 'SEP', field: 'sepCode', emptyValue: '-', hidden: true },
 ];
 
 const ProposalTableInstrumentScientist: React.FC<{
@@ -199,6 +188,10 @@ const ProposalTableInstrumentScientist: React.FC<{
 
   const isInstrumentManagementEnabled = featureContext.featuresMap.get(
     FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+
+  const isSEPEnabled = featureContext.featuresMap.get(
+    FeatureId.SEP_REVIEW
   )?.isEnabled;
 
   const instrumentScientistProposalReviewTabs = [
@@ -402,6 +395,12 @@ const ProposalTableInstrumentScientist: React.FC<{
     addColumns(columns, instrumentManagementColumns);
   } else {
     removeColumns(columns, instrumentManagementColumns);
+  }
+
+  if (isSEPEnabled) {
+    addColumns(columns, SEPReviewColumns);
+  } else {
+    removeColumns(columns, SEPReviewColumns);
   }
 
   columns = setSortDirectionOnSortColumn(

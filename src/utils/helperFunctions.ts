@@ -101,9 +101,7 @@ export const addColumns = <T extends object>(
   columnsToAdd.forEach((columnToAdd) => {
     if (!columns.find((column) => column.field === columnToAdd.field)) {
       columns.push({
-        title: columnToAdd.title,
-        field: columnToAdd.field,
-        emptyValue: '-',
+        ...columnToAdd,
       });
     }
   });

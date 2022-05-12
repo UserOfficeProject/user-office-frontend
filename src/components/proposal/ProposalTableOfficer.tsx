@@ -91,14 +91,6 @@ let columns: Column<ProposalViewData>[] = [
     ...{ width: 'auto' },
   },
   {
-    title: 'Final time allocation',
-    render: (rowData) =>
-      rowData.managementTimeAllocation
-        ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
-        : '-',
-    hidden: true,
-  },
-  {
     title: 'Submitted',
     field: 'submitted',
     lookup: { true: 'Yes', false: 'No' },
@@ -119,27 +111,36 @@ let columns: Column<ProposalViewData>[] = [
 ];
 
 const technicalReviewColumns = [
-  { title: 'Technical status', field: 'technicalStatus' },
+  { title: 'Technical status', field: 'technicalStatus', emptyValue: '-' },
   {
     title: 'Assigned technical reviewer',
     field: 'assignedTechnicalReviewer',
+    emptyValue: '-',
   },
   {
     title: 'Technical time allocation',
     field: 'technicalTimeAllocationRendered',
+    emptyValue: '-',
+    hidden: true,
   },
 ];
 
 const instrumentManagementColumns = [
-  { title: 'Instrument', field: 'instrumentName' },
+  { title: 'Instrument', field: 'instrumentName', emptyValue: '-' },
 ];
 
 const SEPReviewColumns = [
-  { title: 'Final status', field: 'finalStatus' },
-  { title: 'Deviation', field: 'reviewDeviation' },
-  { title: 'Average Score', field: 'reviewAverage' },
-  { title: 'Ranking', field: 'rankOrder' },
-  { title: 'SEP', field: 'sepCode' },
+  { title: 'Final status', field: 'finalStatus', emptyValue: '-' },
+  {
+    title: 'Final time allocation',
+    field: 'finalTimeAllocationRendered',
+    emptyValue: '-',
+    hidden: true,
+  },
+  { title: 'Deviation', field: 'reviewDeviation', emptyValue: '-' },
+  { title: 'Average Score', field: 'reviewAverage', emptyValue: '-' },
+  { title: 'Ranking', field: 'rankOrder', emptyValue: '-' },
+  { title: 'SEP', field: 'sepCode', emptyValue: '-' },
 ];
 
 const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
@@ -600,6 +601,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
         : '-',
       technicalTimeAllocationRendered: proposal.technicalTimeAllocation
         ? `${proposal.technicalTimeAllocation}(${proposal.allocationTimeUnit}s)`
+        : '-',
+      finalTimeAllocationRendered: proposal.managementTimeAllocation
+        ? `${proposal.managementTimeAllocation}(${proposal.allocationTimeUnit}s)`
         : '-',
     })
   );
