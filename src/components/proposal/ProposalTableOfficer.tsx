@@ -42,7 +42,9 @@ import {
   useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
 import {
+  addColumns,
   fromProposalToProposalView,
+  removeColumns,
   setSortDirectionOnSortColumn,
 } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
@@ -89,19 +91,11 @@ let columns: Column<ProposalViewData>[] = [
     ...{ width: 'auto' },
   },
   {
-    title: 'Technical time allocation',
-    render: (rowData) =>
-      rowData.technicalTimeAllocation
-        ? `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`
-        : '',
-    hidden: true,
-  },
-  {
     title: 'Final time allocation',
     render: (rowData) =>
       rowData.managementTimeAllocation
         ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
-        : '',
+        : '-',
     hidden: true,
   },
   {
@@ -124,64 +118,29 @@ let columns: Column<ProposalViewData>[] = [
   },
 ];
 
-const addTechnicalReviewColumns = () => {
-  if (!columns.find((column) => column.field === 'technicalStatus')) {
-    columns.push({
-      title: 'Technical status',
-      field: 'technicalStatus',
-      emptyValue: '-',
-    });
-  }
-  if (!columns.find((column) => column.field === 'assignedTechnicalReviewer')) {
-    columns.push({
-      title: 'Assigned technical reviewer',
-      field: 'assignedTechnicalReviewer',
-      emptyValue: '-',
-    });
-  }
-};
+const technicalReviewColumns = [
+  { title: 'Technical status', field: 'technicalStatus' },
+  {
+    title: 'Assigned technical reviewer',
+    field: 'assignedTechnicalReviewer',
+  },
+  {
+    title: 'Technical time allocation',
+    field: 'technicalTimeAllocationRendered',
+  },
+];
 
-const addSEPReviewColumns = () => {
-  if (!columns.find((column) => column.field === 'finalStatus')) {
-    columns.push({
-      title: 'Final Status',
-      field: 'finalStatus',
-    });
-  }
-  if (!columns.find((column) => column.field === 'reviewDeviation')) {
-    columns.push({
-      title: 'Deviation',
-      field: 'reviewDeviation',
-    });
-  }
-  if (!columns.find((column) => column.field === 'reviewAverage')) {
-    columns.push({
-      title: 'Average Score',
-      field: 'reviewAverage',
-    });
-  }
-  if (!columns.find((column) => column.field === 'rankOrder')) {
-    columns.push({
-      title: 'Ranking',
-      field: 'rankOrder',
-    });
-  }
-  if (!columns.find((column) => column.field === 'sepCode')) {
-    columns.push({
-      title: 'SEP',
-      field: 'sepCode',
-    });
-  }
-};
+const instrumentManagementColumns = [
+  { title: 'Instrument', field: 'instrumentName' },
+];
 
-const addInstrumentManagementColumns = () => {
-  if (!columns.find((column) => column.field === 'instrumentName')) {
-    columns.push({
-      title: 'Instrument',
-      field: 'instrumentName',
-    });
-  }
-};
+const SEPReviewColumns = [
+  { title: 'Final status', field: 'finalStatus' },
+  { title: 'Deviation', field: 'reviewDeviation' },
+  { title: 'Average Score', field: 'reviewAverage' },
+  { title: 'Ranking', field: 'rankOrder' },
+  { title: 'SEP', field: 'sepCode' },
+];
 
 const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   proposalFilter,
@@ -329,15 +288,21 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   );
 
   if (isTechnicalReviewEnabled) {
-    addTechnicalReviewColumns();
+    addColumns(columns, technicalReviewColumns);
+  } else {
+    removeColumns(columns, technicalReviewColumns);
   }
 
   if (isInstrumentManagementEnabled) {
-    addInstrumentManagementColumns();
+    addColumns(columns, instrumentManagementColumns);
+  } else {
+    removeColumns(columns, instrumentManagementColumns);
   }
 
   if (isSEPEnabled) {
-    addSEPReviewColumns();
+    addColumns(columns, SEPReviewColumns);
+  } else {
+    removeColumns(columns, SEPReviewColumns);
   }
 
   columns = columns.map((v: Column<ProposalViewData>) => {
@@ -632,6 +597,9 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       rowActionButtons: RowActionButtons(proposal),
       assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName
         ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}`
+        : '-',
+      technicalTimeAllocationRendered: proposal.technicalTimeAllocation
+        ? `${proposal.technicalTimeAllocation}(${proposal.allocationTimeUnit}s)`
         : '-',
     })
   );

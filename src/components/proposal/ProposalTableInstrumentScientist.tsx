@@ -44,7 +44,11 @@ import {
   useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
-import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
+import {
+  addColumns,
+  removeColumns,
+  setSortDirectionOnSortColumn,
+} from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -69,21 +73,6 @@ let columns: Column<ProposalViewData>[] = [
     title: 'Title',
     field: 'title',
     ...{ width: 'auto' },
-  },
-  {
-    title: 'Time allocation',
-    render: (rowData) =>
-      `${rowData.technicalTimeAllocation ?? 0} (${
-        rowData.allocationTimeUnit
-      }s)`,
-    hidden: false,
-  },
-  {
-    title: 'Assigned technical reviewer',
-    render: (rowData) =>
-      rowData.technicalReviewAssigneeId
-        ? `${rowData.technicalReviewAssigneeFirstName} ${rowData.technicalReviewAssigneeLastName}`
-        : '-',
   },
   {
     title: 'Submitted',
@@ -112,6 +101,25 @@ let columns: Column<ProposalViewData>[] = [
     emptyValue: '-',
     hidden: true,
   },
+];
+
+const technicalReviewColumns: Column<ProposalViewData>[] = [
+  {
+    title: 'Technical status',
+    field: 'technicalStatus',
+  },
+  {
+    title: 'Technical time allocation',
+    field: 'technicalTimeAllocationRendered',
+  },
+  {
+    title: 'Assigned technical reviewer',
+    field: 'assignedTechnicalReviewer',
+  },
+];
+
+const instrumentManagementColumns = [
+  { title: 'Instrument', field: 'instrumentName' },
 ];
 
 const ProposalTableInstrumentScientist: React.FC<{
@@ -384,26 +392,16 @@ const ProposalTableInstrumentScientist: React.FC<{
     }));
   }
 
-  if (
-    isTechnicalReviewEnabled &&
-    !columns.find((column) => column.field === 'technicalStatus')
-  ) {
-    columns.push({
-      title: 'Technical status',
-      field: 'technicalStatus',
-      emptyValue: '-',
-    });
+  if (isTechnicalReviewEnabled) {
+    addColumns(columns, technicalReviewColumns);
+  } else {
+    removeColumns(columns, technicalReviewColumns);
   }
 
-  if (
-    isInstrumentManagementEnabled &&
-    !columns.find((column) => column.field === 'instrumentName')
-  ) {
-    columns.push({
-      title: 'Instrument',
-      field: 'instrumentName',
-      emptyValue: '-',
-    });
+  if (isInstrumentManagementEnabled) {
+    addColumns(columns, instrumentManagementColumns);
+  } else {
+    removeColumns(columns, instrumentManagementColumns);
   }
 
   columns = setSortDirectionOnSortColumn(
@@ -432,6 +430,12 @@ const ProposalTableInstrumentScientist: React.FC<{
       Object.assign(proposal, {
         id: proposal.primaryKey,
         rowActionButtons: RowActionButtons(proposal),
+        assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName
+          ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}`
+          : '-',
+        technicalTimeAllocationRendered: proposal.technicalTimeAllocation
+          ? `${proposal.technicalTimeAllocation}(${proposal.allocationTimeUnit}s)`
+          : '-',
       })
   );
 
