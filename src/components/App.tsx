@@ -23,8 +23,8 @@ import { UserContext, UserContextProvider } from 'context/UserContextProvider';
 import { FeatureId, SettingsId } from 'generated/sdk';
 import { getUnauthorizedApi } from 'hooks/common/useDataApi';
 
+import { getPingAuthTokenFromCallbackUrl } from '../utils/getPingAuthTokenFromCallbackUrl';
 import DashBoard from './DashBoard';
-import PingRedirect from './menu/PingRedirect';
 import Theme from './theme/theme';
 import EmailVerification from './user/EmailVerification';
 import ExternalAuth from './user/ExternalAuth';
@@ -58,7 +58,13 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
           {...rest}
           render={(props): JSX.Element => {
             if (!token) {
-              if (isExternalAuthEnabled && externalAuthLoginUrl) {
+              const pingAccessToken = getPingAuthTokenFromCallbackUrl();
+
+              if (pingAccessToken !== null) {
+                window.location.href = `/external-auth?token=${pingAccessToken}`;
+
+                return <p>Redirecting to auth page...</p>;
+              } else if (isExternalAuthEnabled && externalAuthLoginUrl) {
                 window.location.href = externalAuthLoginUrl;
 
                 return <p>Redirecting to external sign-in page...</p>;
@@ -87,7 +93,6 @@ const Routes: React.FC<RouteProps> = () => {
   if (EXTERNAL_AUTH) {
     return (
       <div className="App">
-        <PingRedirect />
         <Switch>
           <Route path="/external-auth/:sessionId" component={ExternalAuth} />
           <Route path="/external-auth/:token" component={ExternalAuth} />
