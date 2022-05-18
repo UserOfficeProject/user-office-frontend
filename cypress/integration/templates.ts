@@ -1233,6 +1233,29 @@ context('Template tests', () => {
         });
       });
     });
+
+    it('should validate question template relation input', () => {
+      createTopicWithQuestionsAndRelations();
+
+      cy.login('officer');
+      cy.visit('/');
+
+      cy.navigateToTemplatesSubmenu('Proposal');
+
+      cy.contains(initialDBData.template.name)
+        .parent()
+        .find("[aria-label='Edit']")
+        .first()
+        .click();
+
+      cy.contains(initialDBData.questions.fileUpload.text).click();
+
+      cy.get('[data-cy=max_files] input').clear().type('1');
+      cy.get('[data-cy=submit]').should('not.be.disabled');
+
+      cy.get('[data-cy=max_files] input').clear().type('-1');
+      cy.get('[data-cy=submit]').should('be.disabled');
+    });
   });
 
   describe('Proposal templates advanced tests', () => {
