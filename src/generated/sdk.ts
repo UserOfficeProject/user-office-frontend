@@ -542,7 +542,7 @@ export type IndexWithGroupId = {
 };
 
 export type Institution = {
-  country: Entry;
+  country: Maybe<Entry>;
   id: Scalars['Int'];
   name: Scalars['String'];
   verified: Scalars['Boolean'];
@@ -740,7 +740,7 @@ export type Mutation = {
   updateUserRoles: UserResponseWrap;
   updateVisit: VisitResponseWrap;
   updateVisitRegistration: VisitRegistrationResponseWrap;
-  validateTemplateImport: TemplateImportWithValidationWrap;
+  validateTemplateImport: TemplateValidationWrap;
   validateUnitsImport: UnitsImportWithValidationWrap;
 };
 
@@ -1021,6 +1021,7 @@ export type MutationCreateUserArgs = {
   orcid: Scalars['String'];
   orcidHash: Scalars['String'];
   organisation: Scalars['Int'];
+  organizationCountry?: InputMaybe<Scalars['Int']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   position: Scalars['String'];
@@ -1187,6 +1188,7 @@ export type MutationImportProposalArgs = {
 
 export type MutationImportTemplateArgs = {
   conflictResolutions: Array<ConflictResolution>;
+  subTemplatesConflictResolutions: Array<Array<ConflictResolution>>;
   templateAsJson: Scalars['String'];
 };
 
@@ -1552,6 +1554,7 @@ export type MutationUpdateUserArgs = {
   nationality?: InputMaybe<Scalars['Int']>;
   orcid?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['Int']>;
+  organizationCountry?: InputMaybe<Scalars['Int']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
   placeholder?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['String']>;
@@ -2165,6 +2168,8 @@ export type QueryPreviousCollaboratorsArgs = {
   filter?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
   subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   userId: Scalars['Int'];
   userRole?: InputMaybe<UserRole>;
@@ -2337,6 +2342,8 @@ export type QueryUsersArgs = {
   filter?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
   subtractUsers?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   userRole?: InputMaybe<UserRole>;
 };
@@ -2903,20 +2910,6 @@ export enum TemplateGroupId {
   VISIT_REGISTRATION = 'VISIT_REGISTRATION'
 }
 
-export type TemplateImportWithValidation = {
-  errors: Array<Scalars['String']>;
-  exportDate: Scalars['DateTime'];
-  isValid: Scalars['Boolean'];
-  json: Scalars['String'];
-  questionComparisons: Array<QuestionComparison>;
-  version: Scalars['String'];
-};
-
-export type TemplateImportWithValidationWrap = {
-  rejection: Maybe<Rejection>;
-  validationResult: Maybe<TemplateImportWithValidation>;
-};
-
 export type TemplateResponseWrap = {
   rejection: Maybe<Rejection>;
   template: Maybe<Template>;
@@ -2925,6 +2918,25 @@ export type TemplateResponseWrap = {
 export type TemplateStep = {
   fields: Array<QuestionTemplateRelation>;
   topic: Topic;
+};
+
+export type TemplateValidation = {
+  exportDate: Scalars['DateTime'];
+  json: Scalars['String'];
+  validationData: TemplateValidationData;
+  version: Scalars['String'];
+};
+
+export type TemplateValidationData = {
+  errors: Array<Scalars['String']>;
+  isValid: Scalars['Boolean'];
+  questionComparisons: Array<QuestionComparison>;
+  subTemplateValidationData: Array<TemplateValidationData>;
+};
+
+export type TemplateValidationWrap = {
+  rejection: Maybe<Rejection>;
+  validationResult: Maybe<TemplateValidation>;
 };
 
 export type TemplatesFilter = {
@@ -3402,7 +3414,7 @@ export type CreateInstitutionMutationVariables = Exact<{
 }>;
 
 
-export type CreateInstitutionMutation = { createInstitution: { institution: { id: number, name: string, verified: boolean, country: { id: number, value: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type CreateInstitutionMutation = { createInstitution: { institution: { id: number, name: string, verified: boolean, country: { id: number, value: string } | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type DeleteApiAccessTokenMutationVariables = Exact<{
   accessTokenId: Scalars['String'];
@@ -3447,7 +3459,7 @@ export type GetInstitutionsWithCountryQueryVariables = Exact<{
 }>;
 
 
-export type GetInstitutionsWithCountryQuery = { institutions: Array<{ id: number, name: string, verified: boolean, country: { id: number, value: string } }> | null };
+export type GetInstitutionsWithCountryQuery = { institutions: Array<{ id: number, name: string, verified: boolean, country: { id: number, value: string } | null }> | null };
 
 export type GetPageContentQueryVariables = Exact<{
   id: PageName;
@@ -3473,7 +3485,7 @@ export type MergeInstitutionsMutationVariables = Exact<{
 }>;
 
 
-export type MergeInstitutionsMutation = { mergeInstitutions: { institution: { id: number, verified: boolean, name: string, country: { id: number, value: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type MergeInstitutionsMutation = { mergeInstitutions: { institution: { id: number, verified: boolean, name: string, country: { id: number, value: string } | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type PrepareDbMutationVariables = Exact<{
   includeSeeds: Scalars['Boolean'];
@@ -3509,7 +3521,7 @@ export type UpdateInstitutionMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInstitutionMutation = { updateInstitution: { institution: { id: number, verified: boolean, name: string, country: { id: number, value: string } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type UpdateInstitutionMutation = { updateInstitution: { institution: { id: number, verified: boolean, name: string, country: { id: number, value: string } | null } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type AssignInstrumentsToCallMutationVariables = Exact<{
   instrumentIds: Array<Scalars['Int']> | Scalars['Int'];
@@ -4394,6 +4406,7 @@ export type UpdateShipmentMutation = { updateShipment: { rejection: { reason: st
 export type ImportTemplateMutationVariables = Exact<{
   templateAsJson: Scalars['String'];
   conflictResolutions: Array<ConflictResolution> | ConflictResolution;
+  subTemplatesConflictResolutions: Array<Array<ConflictResolution> | ConflictResolution> | Array<ConflictResolution> | ConflictResolution;
 }>;
 
 
@@ -4514,6 +4527,8 @@ export type FieldConfigFragment = FieldConfig_BooleanConfig_Fragment | FieldConf
 
 export type QuestionFragment = { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } };
 
+export type QuestionComparisonFragment = { status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } };
+
 export type QuestionTemplateRelationFragment = { sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> };
 
 export type TemplateFragment = { isArchived: boolean, questionaryCount: number, templateId: number, groupId: TemplateGroupId, name: string, description: string | null, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> }>, complementaryQuestions: Array<{ id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }>, group: { groupId: TemplateGroupId, categoryId: TemplateCategoryId } };
@@ -4521,6 +4536,8 @@ export type TemplateFragment = { isArchived: boolean, questionaryCount: number, 
 export type TemplateMetadataFragment = { templateId: number, name: string, description: string | null, isArchived: boolean, steps: Array<{ topic: { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean } }> };
 
 export type TemplateStepFragment = { topic: { title: string, id: number, sortOrder: number, isEnabled: boolean }, fields: Array<{ sortOrder: number, topicId: number, dependenciesOperator: DependenciesLogicOperator | null, question: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } }, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string }, dependencies: Array<{ questionId: string, dependencyId: string, dependencyNaturalKey: string, condition: { condition: EvaluatorOperator, params: any } }> }> };
+
+export type TemplateValidationDataFragment = { isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }>, subTemplateValidationData: Array<{ isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> }> };
 
 export type TopicFragment = { title: string, id: number, templateId: number, sortOrder: number, isEnabled: boolean };
 
@@ -4636,7 +4653,7 @@ export type ValidateTemplateImportMutationVariables = Exact<{
 }>;
 
 
-export type ValidateTemplateImportMutation = { validateTemplateImport: { validationResult: { json: string, version: string, exportDate: any, isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
+export type ValidateTemplateImportMutation = { validateTemplateImport: { validationResult: { json: string, version: string, exportDate: any, validationData: { isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }>, subTemplateValidationData: Array<{ isValid: boolean, errors: Array<string>, questionComparisons: Array<{ status: QuestionComparisonStatus, conflictResolutionStrategy: ConflictResolutionStrategy, existingQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } | null, newQuestion: { id: string, question: string, naturalKey: string, dataType: DataType, categoryId: TemplateCategoryId, config: { small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string, minDate: string | null, maxDate: string | null, defaultDate: string | null, includeTime: boolean } | { html: string, plain: string, omitFromPdf: boolean } | { small_label: string, required: boolean, tooltip: string } | { file_type: Array<string>, max_files: number, small_label: string, required: boolean, tooltip: string } | { titlePlaceholder: string, questionLabel: string } | { small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { numberValueConstraint: NumberValueConstraint | null, small_label: string, required: boolean, tooltip: string, units: Array<{ id: string, unit: string, quantity: string, symbol: string, siConversionFormula: string }> } | { tooltip: string } | { tooltip: string } | { small_label: string, required: boolean, tooltip: string, max: number | null } | { titlePlaceholder: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, esiTemplateId: number | null, templateCategory: string, required: boolean, small_label: string } | { tooltip: string } | { variant: string, options: Array<string>, isMultipleSelect: boolean, small_label: string, required: boolean, tooltip: string } | { small_label: string, required: boolean, tooltip: string } | { addEntryButtonLabel: string, minEntries: number | null, maxEntries: number | null, templateId: number | null, templateCategory: string, required: boolean, small_label: string } | { min: number | null, max: number | null, multiline: boolean, placeholder: string, small_label: string, required: boolean, tooltip: string, htmlQuestion: string | null, isHtmlQuestion: boolean, isCounterHidden: boolean } | { small_label: string, required: boolean, tooltip: string } } }> }> } } | null, rejection: { reason: string, context: string | null, exception: string | null } | null } };
 
 export type CreateUnitMutationVariables = Exact<{
   id: Scalars['String'];
@@ -4708,6 +4725,7 @@ export type CreateUserMutationVariables = Exact<{
   telephone: Scalars['String'];
   telephone_alt?: InputMaybe<Scalars['String']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
+  organizationCountry?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -4832,6 +4850,8 @@ export type GetUsersQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
   userRole?: InputMaybe<UserRole>;
   subtractUsers?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+  orderBy?: InputMaybe<Scalars['String']>;
+  orderDirection?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -4914,6 +4934,7 @@ export type UpdateUserMutationVariables = Exact<{
   telephone: Scalars['String'];
   telephone_alt?: InputMaybe<Scalars['String']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
+  organizationCountry?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -5524,6 +5545,34 @@ export const TemplateStepFragmentDoc = gql`
   }
 }
     ${QuestionTemplateRelationFragmentDoc}`;
+export const QuestionComparisonFragmentDoc = gql`
+    fragment questionComparison on QuestionComparison {
+  existingQuestion {
+    ...question
+  }
+  newQuestion {
+    ...question
+  }
+  status
+  conflictResolutionStrategy
+}
+    ${QuestionFragmentDoc}`;
+export const TemplateValidationDataFragmentDoc = gql`
+    fragment templateValidationData on TemplateValidationData {
+  isValid
+  errors
+  questionComparisons {
+    ...questionComparison
+  }
+  subTemplateValidationData {
+    isValid
+    errors
+    questionComparisons {
+      ...questionComparison
+    }
+  }
+}
+    ${QuestionComparisonFragmentDoc}`;
 export const VisitFragmentDoc = gql`
     fragment visit on Visit {
   id
@@ -8010,10 +8059,11 @@ export const UpdateShipmentDocument = gql`
 ${ShipmentFragmentDoc}
 ${QuestionaryFragmentDoc}`;
 export const ImportTemplateDocument = gql`
-    mutation importTemplate($templateAsJson: String!, $conflictResolutions: [ConflictResolution!]!) {
+    mutation importTemplate($templateAsJson: String!, $conflictResolutions: [ConflictResolution!]!, $subTemplatesConflictResolutions: [[ConflictResolution!]!]!) {
   importTemplate(
     templateAsJson: $templateAsJson
     conflictResolutions: $conflictResolutions
+    subTemplatesConflictResolutions: $subTemplatesConflictResolutions
   ) {
     template {
       ...template
@@ -8321,17 +8371,8 @@ export const ValidateTemplateImportDocument = gql`
       json
       version
       exportDate
-      isValid
-      errors
-      questionComparisons {
-        existingQuestion {
-          ...question
-        }
-        newQuestion {
-          ...question
-        }
-        status
-        conflictResolutionStrategy
+      validationData {
+        ...templateValidationData
       }
     }
     rejection {
@@ -8339,7 +8380,7 @@ export const ValidateTemplateImportDocument = gql`
     }
   }
 }
-    ${QuestionFragmentDoc}
+    ${TemplateValidationDataFragmentDoc}
 ${RejectionFragmentDoc}`;
 export const CreateUnitDocument = gql`
     mutation createUnit($id: String!, $unit: String!, $quantity: String!, $symbol: String!, $siConversionFormula: String!) {
@@ -8432,7 +8473,7 @@ export const CheckTokenDocument = gql`
 }
     `;
 export const CreateUserDocument = gql`
-    mutation createUser($user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $password: String!, $preferredname: String, $orcid: String!, $orcidHash: String!, $refreshToken: String!, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String) {
+    mutation createUser($user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $password: String!, $preferredname: String, $orcid: String!, $orcidHash: String!, $refreshToken: String!, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String, $organizationCountry: Int) {
   createUser(
     user_title: $user_title
     firstname: $firstname
@@ -8453,6 +8494,7 @@ export const CreateUserDocument = gql`
     telephone: $telephone
     telephone_alt: $telephone_alt
     otherOrganisation: $otherOrganisation
+    organizationCountry: $organizationCountry
   ) {
     user {
       id
@@ -8690,13 +8732,15 @@ export const GetUserWithRolesDocument = gql`
 }
     `;
 export const GetUsersDocument = gql`
-    query getUsers($filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!]) {
+    query getUsers($filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!], $orderBy: String, $orderDirection: String) {
   users(
     filter: $filter
     first: $first
     offset: $offset
     userRole: $userRole
     subtractUsers: $subtractUsers
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     users {
       ...basicUserDetails
@@ -8782,7 +8826,7 @@ export const UpdatePasswordDocument = gql`
 }
     ${RejectionFragmentDoc}`;
 export const UpdateUserDocument = gql`
-    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String) {
+    mutation updateUser($id: Int!, $user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String, $organizationCountry: Int) {
   updateUser(
     id: $id
     user_title: $user_title
@@ -8800,6 +8844,7 @@ export const UpdateUserDocument = gql`
     telephone: $telephone
     telephone_alt: $telephone_alt
     otherOrganisation: $otherOrganisation
+    organizationCountry: $organizationCountry
   ) {
     user {
       id
