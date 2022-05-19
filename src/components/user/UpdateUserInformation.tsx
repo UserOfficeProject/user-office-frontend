@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UpdateUserInformation(props: { id: number }) {
   const theme = useTheme();
-  const { currentRole } = useContext(UserContext);
+  const { currentRole, user } = useContext(UserContext);
   const { userData, setUserData } = useUserData(props);
   const { format, mask } = useFormattedDateTime({
     settingsFormatToUse: SettingsId.DATE_FORMAT,
@@ -497,12 +497,14 @@ export default function UpdateUserInformation(props: { id: number }) {
             spacing={2}
             marginTop={2}
           >
-            <ImpersonateButton
-              userId={props.id}
-              startIcon={<SwitchAccountOutlinedIcon />}
-            >
-              Connect as this user...
-            </ImpersonateButton>
+            {props.id !== user.id && (
+              <ImpersonateButton
+                userId={props.id}
+                startIcon={<SwitchAccountOutlinedIcon />}
+              >
+                Connect as this user...
+              </ImpersonateButton>
+            )}
             <Button disabled={isSubmitting} type="submit">
               Update Profile
             </Button>

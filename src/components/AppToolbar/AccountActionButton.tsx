@@ -119,7 +119,7 @@ const AccountActionButton: React.FC = () => {
           {isUserImpersonated && (
             <MenuItem data-cy="un-impersonate">
               <ImpersonateButton
-                userId={2}
+                userId={impersonatingUserId}
                 data-cy="un-impersonate"
                 variant="text"
                 startIcon={<SwitchAccountOutlinedIcon />}

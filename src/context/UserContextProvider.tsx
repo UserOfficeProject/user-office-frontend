@@ -14,7 +14,7 @@ interface UserContextData {
   token: string;
   roles: Role[];
   currentRole: UserRole | null;
-  impersonatingUserId: number | null;
+  impersonatingUserId: number | undefined;
   handleLogin: React.Dispatch<string | null | undefined>;
   handleNewToken: React.Dispatch<string | null | undefined>;
   handleLogout: () => void;
@@ -25,7 +25,7 @@ interface DecodedTokenData
   extends Pick<UserContextData, 'user' | 'token' | 'roles'> {
   exp: number;
   currentRole: Role;
-  impersonatingUserId: number | null;
+  impersonatingUserId: number | undefined;
 }
 
 enum ActionType {
@@ -41,7 +41,7 @@ const initUserData: UserContextData = {
   token: '',
   roles: [],
   currentRole: null,
-  impersonatingUserId: null,
+  impersonatingUserId: undefined,
   handleLogin: (value) => value,
   handleNewToken: (value) => value,
   handleLogout: () => null,
