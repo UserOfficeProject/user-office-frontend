@@ -46,7 +46,7 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
   )?.isEnabled;
 
   const settingsContext = useContext(SettingsContext);
-  const externalAuthLoginUrl = settingsContext.settings.get(
+  const externalAuthLoginUrl = settingsContext.settingsMap.get(
     SettingsId.EXTERNAL_AUTH_LOGIN_URL
   )?.settingsValue;
 

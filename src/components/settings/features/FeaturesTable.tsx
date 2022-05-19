@@ -5,7 +5,6 @@ import React, { useContext } from 'react';
 
 import { FeatureContext } from 'context/FeatureContextProvider';
 import { Feature, FeatureUpdateAction } from 'generated/sdk';
-// import { useFeatures } from 'hooks/admin/useFeatures';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -20,7 +19,7 @@ const columns: Column<Feature>[] = [
   },
 ];
 
-const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
+const FeaturesTable: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
   const { features, setFeatures } = useContext(FeatureContext);
   const { api } = useDataApiWithFeedback();
 
@@ -42,7 +41,7 @@ const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
 
         const response = await api({
           toastSuccessMessage: `Features ${isEnabled ? 'enabled' : 'disabled'}`,
-        }).updateFeatures({ featureIds, action });
+        }).updateFeatures({ input: { featureIds, action } });
 
         if (!response.updateFeatures.rejection) {
           const newFeatures = features.map((feature) => ({
@@ -66,11 +65,16 @@ const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
     )();
   };
 
+  const DisableFeaturesIcon = () => (
+    <DisabledByDefaultOutlinedIcon data-cy="disable-features" />
+  );
+  const EnableFeaturesIcon = () => <DoneOutlined data-cy="enable-features" />;
+
   return (
     <div data-cy="features-table">
       <MaterialTable
         icons={tableIcons}
-        title={'Proposals'}
+        title={'Features'}
         columns={columns}
         data={features}
         options={{
@@ -89,7 +93,7 @@ const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
         }}
         actions={[
           {
-            icon: DoneOutlined,
+            icon: EnableFeaturesIcon,
             tooltip: 'Enable selected features',
             onClick: (
               _: React.MouseEventHandler<HTMLButtonElement>,
@@ -102,7 +106,7 @@ const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
             position: 'toolbarOnSelect',
           },
           {
-            icon: DisabledByDefaultOutlinedIcon,
+            icon: DisableFeaturesIcon,
             tooltip: 'Disable selected features',
             onClick: (
               _: React.MouseEventHandler<HTMLButtonElement>,
@@ -120,4 +124,4 @@ const FeaturesPage: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
   );
 };
 
-export default withConfirm(FeaturesPage);
+export default withConfirm(FeaturesTable);

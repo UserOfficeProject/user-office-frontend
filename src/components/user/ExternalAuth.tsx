@@ -30,7 +30,7 @@ const ExternalAuth: React.FC<ExternalAuthProps> = ({ match }) => {
   const isFirstRun = useRef<boolean>(true);
 
   const settingsContext = useContext(SettingsContext);
-  const externalAuthLoginUrl = settingsContext.settings.get(
+  const externalAuthLoginUrl = settingsContext.settingsMap.get(
     SettingsId.EXTERNAL_AUTH_LOGIN_URL
   )?.settingsValue;
 
