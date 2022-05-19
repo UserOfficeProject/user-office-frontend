@@ -46,6 +46,12 @@ function readWriteReview({ shouldSubmit } = { shouldSubmit: false }) {
 function editFinalRankingForm() {
   cy.get('[role="dialog"] > header + div').scrollTo('top');
 
+  cy.get('[data-cy="proposalSepMeetingRecommendation"]').click();
+
+  cy.get('[data-cy="proposalSepMeetingRecommendation-options"] li')
+    .first()
+    .click();
+
   cy.setTinyMceContent('commentForUser', faker.lorem.words(3));
   cy.setTinyMceContent('commentForManagement', faker.lorem.words(3));
 
@@ -1314,6 +1320,13 @@ context('SEP meeting components tests', () => {
       cy.get('[aria-label="View proposal details"]').click();
 
       editFinalRankingForm();
+
+      cy.closeModal();
+
+      cy.get('[data-cy="sep-instrument-proposals-table"]')
+        .contains(proposal1.title)
+        .closest('tr')
+        .should('include.text', 'UNSET');
     });
 
     it('Download SEP is working with dialog window showing up', () => {
