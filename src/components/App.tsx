@@ -135,6 +135,7 @@ class App extends React.Component {
     localStorage.removeItem('currentRole');
     localStorage.removeItem('user');
     localStorage.removeItem('expToken');
+    localStorage.removeItem('impersonatingUserId');
 
     return { errorUserInformation };
   }
