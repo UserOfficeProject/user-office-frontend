@@ -24,9 +24,8 @@ context('Features tests', () => {
       cy.get('[data-cy="features-table"]')
         .contains(initialDBData.features.instrumentManagement.id)
         .parent()
-        .contains(
-          initialDBData.features.instrumentManagement.isEnabled ? 'Yes' : 'No'
-        );
+        .find('input[type="checkbox"]')
+        .should('be.checked');
 
       cy.get('[data-cy="features-table"]')
         .contains(initialDBData.features.instrumentManagement.id)
@@ -34,18 +33,17 @@ context('Features tests', () => {
         .find('input[type="checkbox"]')
         .click();
 
-      cy.get('[data-cy="disable-features"]').click();
-
       cy.get('[data-cy="confirmation-dialog"]')
         .find('[data-cy="confirm-ok"]')
         .click();
 
-      cy.notification({ text: 'Features disabled', variant: 'success' });
+      cy.notification({ text: 'Feature disabled', variant: 'success' });
 
       cy.get('[data-cy="features-table"]')
         .contains(initialDBData.features.instrumentManagement.id)
         .parent()
-        .contains('No');
+        .find('input[type="checkbox"]')
+        .should('not.be.checked');
 
       cy.get('[data-cy="officer-menu-items"]').contains('Proposals').click();
 
