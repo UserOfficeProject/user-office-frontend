@@ -1243,9 +1243,7 @@ context('Template tests', () => {
       createTopicWithQuestionsAndRelations();
 
       cy.login('officer');
-      cy.visit('/');
-
-      cy.navigateToTemplatesSubmenu('Proposal');
+      cy.visit('/ProposalTemplates');
 
       cy.contains(initialDBData.template.name)
         .parent()
