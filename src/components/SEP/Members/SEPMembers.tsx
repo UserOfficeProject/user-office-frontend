@@ -2,7 +2,7 @@ import MaterialTable from '@material-table/core';
 import Clear from '@mui/icons-material/Clear';
 import Person from '@mui/icons-material/Person';
 import PersonAdd from '@mui/icons-material/PersonAdd';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
@@ -27,8 +27,6 @@ type BasicUserDetailsWithRole = BasicUserDetails & { roleId: UserRole };
 
 type SEPMembersProps = {
   data: Sep;
-  /** Id of the SEP we are assigning members to */
-  sepId: number;
   onSEPUpdate: (sep: Sep) => void;
   confirm: WithConfirmType;
 };
@@ -43,11 +41,14 @@ const columns = [
     title: 'Organization',
     field: 'user.organisation',
   },
+  {
+    title: '# proposals',
+    field: 'proposalsCount',
+  },
 ];
 
 const SEPMembers: React.FC<SEPMembersProps> = ({
   data: sepData,
-  sepId,
   onSEPUpdate,
   confirm,
 }) => {
@@ -58,7 +59,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
   const { setRenewTokenValue } = useRenewToken();
   const { loadingMembers, SEPReviewersData, setSEPReviewersData } =
     useSEPReviewersData(
-      sepId,
+      sepData.id,
       modalOpen || sepChairModalOpen || sepSecretaryModalOpen
     );
   const { api } = useDataApiWithFeedback();
@@ -80,7 +81,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
       toastSuccessMessage: 'SEP chair assigned successfully!',
     }).assignChairOrSecretary({
       assignChairOrSecretaryToSEPInput: {
-        sepId: sepId,
+        sepId: sepData.id,
         roleId: UserRole.SEP_CHAIR,
         userId: sepChair.id,
       },
@@ -113,7 +114,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
       toastSuccessMessage: 'SEP secretary assigned successfully!',
     }).assignChairOrSecretary({
       assignChairOrSecretaryToSEPInput: {
-        sepId: sepId,
+        sepId: sepData.id,
         roleId: UserRole.SEP_SECRETARY,
         userId: sepSecretary.id,
       },
@@ -143,7 +144,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
       toastSuccessMessage: 'SEP member assigned successfully!',
     }).assignReviewersToSEP({
       memberIds: users.map((user) => user.id),
-      sepId,
+      sepId: sepData.id,
     });
 
     setOpen(false);
@@ -154,7 +155,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
 
     setSEPReviewersData((sepReviewers) => [
       ...sepReviewers,
-      ...users.map((user) => ({ userId: user.id, sepId, user })),
+      ...users.map((user) => ({ userId: user.id, sepId: sepData.id, user })),
     ]);
   };
 
@@ -167,7 +168,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
       toastSuccessMessage: 'SEP member removed successfully!',
     }).removeMemberFromSep({
       memberId: user.id,
-      sepId,
+      sepId: sepData.id,
       roleId: user.roleId,
     });
 
@@ -289,6 +290,13 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                     </Tooltip>
                   </>
                 ),
+                startAdornment: (
+                  <Tooltip title={`Number of proposals assigned to review`}>
+                    <Box component="span" paddingRight={0.5}>
+                      ({sepData.sepChairProposalCount})
+                    </Box>
+                  </Tooltip>
+                ),
               }}
             />
           </Grid>
@@ -341,6 +349,13 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                       </IconButton>
                     </Tooltip>
                   </>
+                ),
+                startAdornment: (
+                  <Tooltip title={`Number of proposals assigned to review`}>
+                    <Box component="span" paddingRight={0.5}>
+                      ({sepData.sepSecretaryProposalCount})
+                    </Box>
+                  </Tooltip>
                 ),
               }}
             />
