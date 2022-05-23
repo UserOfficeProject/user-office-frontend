@@ -1,7 +1,5 @@
 import MaterialTable, { Column } from '@material-table/core';
-import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
-import DoneOutlined from '@mui/icons-material/DoneOutlined';
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { FeatureContext } from 'context/FeatureContextProvider';
 import { Feature, FeatureUpdateAction } from 'generated/sdk';
@@ -9,48 +7,59 @@ import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
-const columns: Column<Feature>[] = [
+type FeatureWithTableData = Feature & { tableData: { checked: boolean } };
+
+const columns: Column<FeatureWithTableData>[] = [
   { title: 'ID', field: 'id' },
   { title: 'Description', field: 'description' },
-  {
-    title: 'Enabled',
-    field: 'isEnabled',
-    lookup: { true: 'Yes', false: 'No' },
-  },
 ];
 
 const FeaturesTable: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
   const { features, setFeatures } = useContext(FeatureContext);
   const { api } = useDataApiWithFeedback();
+  const [preSelectedFeatures, setPreSelectedFeatures] = useState<
+    FeatureWithTableData[]
+  >([]);
 
-  const handleBulkFeaturesUpdate = async (
-    selectedRowsData: Feature | Feature[],
-    action: FeatureUpdateAction
+  useEffect(() => {
+    if (features?.length) {
+      const featuresWithSelectionField = features.map((feature) => ({
+        ...feature,
+        tableData: { checked: feature.isEnabled },
+      }));
+
+      setPreSelectedFeatures(featuresWithSelectionField);
+    }
+  }, [features]);
+
+  const handleColumnSelectionChange = (
+    _selectedFeatures: FeatureWithTableData[],
+    rowData?: FeatureWithTableData
   ) => {
-    if (!Array.isArray(selectedRowsData)) {
+    if (!rowData) {
       return;
     }
 
-    const isEnabled = action === FeatureUpdateAction.ENABLE;
+    const shouldEnable = rowData.tableData.checked;
+    const action = shouldEnable
+      ? FeatureUpdateAction.ENABLE
+      : FeatureUpdateAction.DISABLE;
 
     confirm(
       async () => {
-        const featureIds = selectedRowsData.map(
-          (selectedRow) => selectedRow.id
-        );
+        const featureIds = [rowData.id];
 
         const response = await api({
-          toastSuccessMessage: `Features ${isEnabled ? 'enabled' : 'disabled'}`,
+          toastSuccessMessage: `Feature ${
+            shouldEnable ? 'enabled' : 'disabled'
+          }`,
         }).updateFeatures({ input: { featureIds, action } });
 
         if (!response.updateFeatures.rejection) {
           const newFeatures = features.map((feature) => ({
             ...feature,
-            isEnabled: selectedRowsData.find(
-              (selectedRow) => selectedRow.id === feature.id
-            )
-              ? isEnabled
-              : feature.isEnabled,
+            isEnabled:
+              feature.id === rowData.id ? shouldEnable : feature.isEnabled,
           }));
 
           setFeatures(newFeatures);
@@ -59,16 +68,11 @@ const FeaturesTable: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
       {
         title: 'Confirmation',
         description: `Do you really want to ${
-          isEnabled ? 'enable' : 'disable'
-        } selected features.`,
+          shouldEnable ? 'enable' : 'disable'
+        } ${rowData.id} feature.`,
       }
     )();
   };
-
-  const DisableFeaturesIcon = () => (
-    <DisabledByDefaultOutlinedIcon data-cy="disable-features" />
-  );
-  const EnableFeaturesIcon = () => <DoneOutlined data-cy="enable-features" />;
 
   return (
     <div data-cy="features-table">
@@ -76,7 +80,8 @@ const FeaturesTable: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
         icons={tableIcons}
         title={'Features'}
         columns={columns}
-        data={features}
+        data={preSelectedFeatures}
+        onSelectionChange={handleColumnSelectionChange}
         options={{
           search: true,
           selection: true,
@@ -90,35 +95,9 @@ const FeaturesTable: React.FC<{ confirm: WithConfirmType }> = ({ confirm }) => {
             },
           }),
           pageSize: 20,
+          showTextRowsSelected: false,
+          showSelectAllCheckbox: false,
         }}
-        actions={[
-          {
-            icon: EnableFeaturesIcon,
-            tooltip: 'Enable selected features',
-            onClick: (
-              _: React.MouseEventHandler<HTMLButtonElement>,
-              selectedRowsData: Feature | Feature[]
-            ) =>
-              handleBulkFeaturesUpdate(
-                selectedRowsData,
-                FeatureUpdateAction.ENABLE
-              ),
-            position: 'toolbarOnSelect',
-          },
-          {
-            icon: DisableFeaturesIcon,
-            tooltip: 'Disable selected features',
-            onClick: (
-              _: React.MouseEventHandler<HTMLButtonElement>,
-              selectedRowsData: Feature | Feature[]
-            ) =>
-              handleBulkFeaturesUpdate(
-                selectedRowsData,
-                FeatureUpdateAction.DISABLE
-              ),
-            position: 'toolbarOnSelect',
-          },
-        ]}
       />
     </div>
   );
