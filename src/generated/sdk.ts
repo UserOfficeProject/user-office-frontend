@@ -7932,6 +7932,10 @@ export const UpdateFeaturesDocument = gql`
     mutation updateFeatures($input: UpdateFeaturesInput!) {
   updateFeatures(updatedFeaturesInput: $input) {
     features {
+      id
+      isEnabled
+      description
+    }
     rejection {
       ...rejection
     }
