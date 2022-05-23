@@ -150,7 +150,6 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                   autoComplete="off"
                   data-cy="commentForUser"
                   multiline
-                  rowsMax="16"
                   rows="4"
                   disabled={isSubmitting}
                 />
@@ -166,7 +165,6 @@ const ProposalAdmin: React.FC<ProposalAdminProps> = ({
                   autoComplete="off"
                   data-cy="commentForManagement"
                   multiline
-                  rowsMax="16"
                   rows="4"
                   disabled={isSubmitting}
                 />
