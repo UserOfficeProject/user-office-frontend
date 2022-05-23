@@ -33,7 +33,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
     TemplateGroupId.SAMPLE_ESI,
     config.esiTemplateId
   );
-  const { features } = useContext(FeatureContext);
+  const { featuresMap } = useContext(FeatureContext);
 
   if (!templates || !esiTemplates) {
     return null;
@@ -94,7 +94,7 @@ export const QuestionTemplateRelationSampleDeclarationForm: FC<
               </Link>
             </FormControl>
 
-            {features.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
+            {featuresMap.get(FeatureId.RISK_ASSESSMENT)?.isEnabled && (
               <FormikUIAutocomplete
                 name="config.esiTemplateId"
                 label="ESI template name"
