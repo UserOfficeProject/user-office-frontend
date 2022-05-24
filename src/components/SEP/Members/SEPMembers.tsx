@@ -304,7 +304,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                   }`}
                   sx={{ padding: '2px', marginRight: '4px' }}
                 >
-                  <InfoOutlined fontSize="small" />
+                  <InfoOutlined
+                    fontSize="small"
+                    data-cy="sep-chair-reviews-info"
+                  />
                 </Tooltip>
               ),
             }}
@@ -354,7 +357,10 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
                   }`}
                   sx={{ padding: '2px', marginRight: '4px' }}
                 >
-                  <InfoOutlined fontSize="small" />
+                  <InfoOutlined
+                    fontSize="small"
+                    data-cy="sep-secretary-reviews-info"
+                  />
                 </Tooltip>
               ),
             }}
