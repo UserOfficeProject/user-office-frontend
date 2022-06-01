@@ -128,8 +128,14 @@ async function main() {
           itemId: question.id,
           strategy: 'USE_NEW',
         };
-      }
-    );
+    if (
+      validationResult.validationData.subTemplateValidationData !== undefined &&
+      validationResult.validationData.subTemplateValidationData !== null
+    ) {
+      subTemplatesConflictResolutions =
+        validationResult.validationData.subTemplateValidationData.map(
+          (template) => {
+            template.questionComparisons = template.questionComparisons ?? [];
 
     const subTemplatesConflictResolutions =
       validationResult.subTemplatesWithValidation.map((template) => {
