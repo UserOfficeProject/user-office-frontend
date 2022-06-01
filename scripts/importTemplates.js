@@ -95,8 +95,7 @@ const importTemplate = `
 `;
 
 async function main() {
-  console.log(axiosDev.headers);
-
+  console.log('Getting template IDs...');
   const result = await axiosProd.post(grapqlExportUrl, {
     query: getTemplates,
   });
@@ -106,6 +105,7 @@ async function main() {
 
   const templates = result.data.data.templates;
 
+  for await (const template of templates) {
     console.log('Getting template as json...');
     const result = await axiosProd
       .post(grapqlExportUrl, {
@@ -189,6 +189,7 @@ async function main() {
     console.log('Template import result:');
     console.log(importTemplateResult.data.data);
     console.log('------------------------------------------------------------');
+  }
 }
 
-main();
+main().catch((e) => console.log(e));
