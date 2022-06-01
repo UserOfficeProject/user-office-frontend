@@ -1,3 +1,6 @@
+// This script is to be run by jenkins to automatically import templates from production to develop
+// It can also be used to sync from develop to your local environment.
+
 const grapqlExportUrl = process.env.GRAPHQL_EXPORT_URL;
 const grapqlImportUrl = process.env.GRAPHQL_IMPORT_URL;
 
