@@ -137,7 +137,7 @@ async function main() {
       .post(grapqlImportUrl, {
         query: query,
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.error(e));
 
     const validationResult =
       validateTemplateResult.data.data.validateTemplateImport.validationResult;
@@ -187,7 +187,7 @@ async function main() {
           templateAsJson: json,
         },
       })
-      .catch((e) => console.log('Failed to import template, \n' + e));
+      .catch((e) => console.error('Failed to import template, \n' + e));
 
     console.log('Template import result:');
     console.log(importTemplateResult.data.data);
