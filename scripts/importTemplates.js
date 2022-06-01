@@ -7,17 +7,13 @@ const importToken = process.env.IMPORT_TOKEN;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axiosDev = require('axios').create({
   headers: {
-    common: {
-      Authorization: importToken,
-    },
+    Authorization: importToken,
   },
 });
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axiosProd = require('axios').create({
   headers: {
-    common: {
-      Authorization: exportToken,
-    },
+    Authorization: exportToken,
   },
 });
 
@@ -50,19 +46,7 @@ const validateTemplate = (json) =>
         json
         version
         exportDate
-        isValid
-        errors
-        questionComparisons {
-          newQuestion {
-            id
-          }
-          status
-          conflictResolutionStrategy
-        }
-        subTemplatesWithValidation {
-          json
-          version
-          exportDate
+        validationData {
           isValid
           errors
           questionComparisons {
@@ -71,10 +55,15 @@ const validateTemplate = (json) =>
             }
             status
             conflictResolutionStrategy
+          
           }
-        }
+          subTemplateValidationData {
+            errors
+            
+          }
       }
     }
+  }
   }
   
 `;
