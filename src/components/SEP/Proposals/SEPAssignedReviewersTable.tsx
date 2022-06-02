@@ -12,14 +12,12 @@ import ProposalReviewContent, {
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import { ReviewAndAssignmentContext } from 'context/ReviewAndAssignmentContextProvider';
-import {
-  SepAssignment,
-  ReviewStatus,
-  UserRole,
-  SettingsId,
-} from 'generated/sdk';
+import { ReviewStatus, UserRole, SettingsId } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
-import { SEPProposalType } from 'hooks/SEP/useSEPProposalsData';
+import {
+  SEPProposalAssignmentType,
+  SEPProposalType,
+} from 'hooks/SEP/useSEPProposalsData';
 import { tableIcons } from 'utils/materialIcons';
 
 // NOTE: Some custom styles for row expand table.
@@ -38,10 +36,10 @@ const useStyles = makeStyles(() => ({
 type SEPAssignedReviewersTableProps = {
   sepProposal: SEPProposalType;
   removeAssignedReviewer: (
-    assignedReviewer: SepAssignment,
+    assignedReviewer: SEPProposalAssignmentType,
     proposalPk: number
   ) => Promise<void>;
-  updateView: (currentAssignment: SepAssignment) => void;
+  updateView: (currentAssignment: SEPProposalAssignmentType) => void;
 };
 
 const assignmentColumns = [
@@ -96,14 +94,13 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     PROPOSAL_MODAL_TAB_NAMES.GRADE,
   ];
 
-  const SEPAssignmentsWithIdAndFormattedDate = (
-    sepProposal.assignments as SepAssignment[]
-  ).map((sepAssignment) =>
-    Object.assign(sepAssignment, {
-      id: sepAssignment.sepMemberUserId,
-      dateAssignedFormatted: toFormattedDateTime(sepAssignment.dateAssigned),
-    })
-  );
+  const SEPAssignmentsWithIdAndFormattedDate =
+    sepProposal.assignments?.map((sepAssignment) =>
+      Object.assign(sepAssignment, {
+        id: sepAssignment.sepMemberUserId,
+        dateAssignedFormatted: toFormattedDateTime(sepAssignment.dateAssigned),
+      })
+    ) || [];
   const proposalReviewModalShouldOpen =
     !!urlQueryParams.reviewerModal &&
     currentAssignment?.proposalPk === sepProposal.proposalPk;
@@ -117,7 +114,9 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
   const editableTableRow = hasAccessRights
     ? {
         deleteTooltip: () => 'Remove assignment',
-        onRowDelete: (rowAssignmentsData: SepAssignment): Promise<void> =>
+        onRowDelete: (
+          rowAssignmentsData: SEPProposalAssignmentType
+        ): Promise<void> =>
           removeAssignedReviewer(rowAssignmentsData, sepProposal.proposalPk),
       }
     : {};

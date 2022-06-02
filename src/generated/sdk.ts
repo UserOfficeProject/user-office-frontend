@@ -3342,7 +3342,7 @@ export type GetSepProposalsQueryVariables = Exact<{
 }>;
 
 
-export type GetSepProposalsQuery = { sepProposals: Array<{ proposalPk: number, dateAssigned: any, sepId: number, sepTimeAllocation: number | null, proposal: { title: string, primaryKey: number, proposalId: string, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null }, assignments: Array<{ sepMemberUserId: number | null, dateAssigned: any, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, role: { id: number, shortCode: string, title: string } | null, review: { id: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number } | null }> | null }> | null };
+export type GetSepProposalsQuery = { sepProposals: Array<{ proposalPk: number, dateAssigned: any, sepId: number, sepTimeAllocation: number | null, proposal: { title: string, primaryKey: number, proposalId: string, status: { id: number, shortCode: string, name: string, description: string, isDefault: boolean } | null }, assignments: Array<{ proposalPk: number, sepMemberUserId: number | null, dateAssigned: any, user: { id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, position: string, created: any | null, placeholder: boolean | null } | null, role: { id: number, shortCode: string, title: string } | null, review: { id: number, status: ReviewStatus, comment: string | null, grade: number | null, sepID: number } | null }> | null }> | null };
 
 export type SepProposalsByInstrumentQueryVariables = Exact<{
   instrumentId: Scalars['Int'];
@@ -5877,6 +5877,7 @@ export const GetSepProposalsDocument = gql`
       }
     }
     assignments {
+      proposalPk
       sepMemberUserId
       dateAssigned
       user {

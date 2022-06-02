@@ -17,7 +17,6 @@ import ProposalReviewContent, {
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import {
-  SepAssignment,
   UserRole,
   ReviewWithNextProposalStatus,
   ProposalStatus,
@@ -265,6 +264,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
           const newAssignments: SEPProposalAssignmentType[] = [
             ...(proposalItem.assignments ?? []),
             ...assignedMembers.map(({ role = null, ...user }) => ({
+              proposalPk: proposalItem.proposalPk,
               sepMemberUserId: user.id,
               dateAssigned: DateTime.now(),
               user,
@@ -312,7 +312,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       const updateReviewStatusAndGrade = (
         sepProposalData: SEPProposalType[],
         editingProposalData: SEPProposalType,
-        currentAssignment: SepAssignment
+        currentAssignment: SEPProposalAssignmentType
       ) => {
         const newProposalsData =
           sepProposalData?.map((sepProposalsData) => {
@@ -353,7 +353,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       };
 
       const removeAssignedReviewer = async (
-        assignedReviewer: SepAssignment,
+        assignedReviewer: SEPProposalAssignmentType,
         proposalPk: number
       ): Promise<void> => {
         /**
