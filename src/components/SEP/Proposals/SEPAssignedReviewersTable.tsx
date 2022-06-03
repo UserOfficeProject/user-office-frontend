@@ -39,7 +39,10 @@ type SEPAssignedReviewersTableProps = {
     assignedReviewer: SEPProposalAssignmentType,
     proposalPk: number
   ) => Promise<void>;
-  updateView: (currentAssignment: SEPProposalAssignmentType) => void;
+  updateView: (
+    currentAssignment: SEPProposalAssignmentType,
+    shouldRefreshProposalAssignments?: boolean
+  ) => Promise<void>;
 };
 
 const assignmentColumns = [
@@ -81,6 +84,7 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
     UserRole.SEP_CHAIR,
     UserRole.SEP_SECRETARY,
   ]);
+  const isSEPReviewer = useCheckAccess([UserRole.SEP_REVIEWER]);
   const { toFormattedDateTime } = useFormattedDateTime({
     settingsFormatToUse: SettingsId.DATE_FORMAT,
   });
@@ -107,7 +111,25 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
 
   const onProposalReviewModalClose = () => {
     setUrlQueryParams({ reviewerModal: undefined, modalTab: undefined });
-    currentAssignment && updateView(currentAssignment);
+    const currentAssignmentOldStatus = sepProposal.assignments?.find(
+      (assignment) => assignment.review?.id === currentAssignment?.review?.id
+    )?.review?.status;
+
+    if (
+      currentAssignment?.review?.status === ReviewStatus.SUBMITTED &&
+      isSEPReviewer &&
+      currentAssignmentOldStatus === ReviewStatus.DRAFT
+    ) {
+      const shouldRefreshProposalAssignments =
+        sepProposal.assignments?.find(
+          (assignment) =>
+            assignment.review?.id === currentAssignment?.review?.id
+        )?.review?.status === ReviewStatus.DRAFT;
+      currentAssignment &&
+        updateView(currentAssignment, shouldRefreshProposalAssignments);
+    } else {
+      currentAssignment && updateView(currentAssignment);
+    }
     setCurrentAssignment(null);
   };
 

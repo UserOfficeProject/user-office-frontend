@@ -395,19 +395,47 @@ const SEPProposalsAndAssignmentsTable: React.FC<
         );
       };
 
+      const loadSEPProposal = async (proposalPk: number) => {
+        return api()
+          .getSEPProposal({ sepId, proposalPk })
+          .then((data) => {
+            return data.sepProposal;
+          });
+      };
+
+      const updateSEPProposalAssignmentsView = async (
+        currentAssignment: SEPProposalAssignmentType,
+        shouldRefreshProposalAssignments?: boolean
+      ) => {
+        if (shouldRefreshProposalAssignments) {
+          const refreshedSepProposal = await loadSEPProposal(
+            currentAssignment.proposalPk
+          );
+          setSEPProposalsData((sepProposalsData) => {
+            return sepProposalsData.map((sepProposal) => ({
+              ...sepProposal,
+              assignments:
+                refreshedSepProposal?.proposalPk === sepProposal.proposalPk
+                  ? refreshedSepProposal?.assignments
+                  : sepProposal.assignments,
+            }));
+          });
+        } else {
+          setSEPProposalsData((sepProposalData) =>
+            updateReviewStatusAndGrade(
+              sepProposalData,
+              rowData,
+              currentAssignment
+            )
+          );
+        }
+      };
+
       return (
         <SEPAssignedReviewersTable
           sepProposal={rowData}
           removeAssignedReviewer={removeAssignedReviewer}
-          updateView={(currentAssignment) => {
-            setSEPProposalsData((sepProposalData) =>
-              updateReviewStatusAndGrade(
-                sepProposalData,
-                rowData,
-                currentAssignment
-              )
-            );
-          }}
+          updateView={updateSEPProposalAssignmentsView}
         />
       );
     },
