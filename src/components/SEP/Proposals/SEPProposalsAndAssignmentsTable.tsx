@@ -323,7 +323,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
         description: ' ',
         shouldEnableOKWithAlert: true,
         alertText:
-          'Some of the selected reviewers are already part of the proposal as PI or Co-proposer. Are you sure you want to assign all selected users to the SEP proposal?',
+          'Some of the selected reviewers are already part of the proposal or belong to the same organization as PI or Co-proposer. Are you sure you want to assign all selected users to the SEP proposal?',
       })();
     } else {
       assignMemberToSEPProposal(memberUsers);
