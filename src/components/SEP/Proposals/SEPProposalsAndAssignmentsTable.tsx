@@ -231,8 +231,6 @@ const SEPProposalsAndAssignmentsTable: React.FC<
   const assignMemberToSEPProposal = async (
     assignedMembers: SepAssignedMember[]
   ) => {
-    setProposalPk(null);
-
     if (!proposalPk) {
       return;
     }
@@ -246,6 +244,8 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       proposalPk: proposalPk,
       sepId,
     });
+
+    setProposalPk(null);
 
     if (rejection) {
       return;
@@ -284,6 +284,50 @@ const SEPProposalsAndAssignmentsTable: React.FC<
         }
       })
     );
+  };
+
+  const handleMemberAssignmentToSEPProposal = (
+    memberUsers: SepAssignedMember[]
+  ) => {
+    const selectedProposal = SEPProposalsData.find(
+      (sepProposal) => sepProposal.proposalPk === proposalPk
+    );
+
+    if (!selectedProposal) {
+      return;
+    }
+
+    const PIAndCoProposers = [
+      {
+        id: selectedProposal.proposal.proposer?.id,
+        organizationId: selectedProposal.proposal.proposer?.organizationId,
+      },
+    ].concat(selectedProposal.proposal.users);
+
+    const shouldAssignPIOrCoProposerAsReviewer = PIAndCoProposers.some(
+      ({ id }) => memberUsers.find((member) => member.id === id)
+    );
+
+    const hasReviewerSameOrganizationAsPIOrCoProposer = PIAndCoProposers.some(
+      ({ organizationId }) =>
+        memberUsers.find((member) => member.organizationId === organizationId)
+    );
+
+    const shouldShowWarning =
+      shouldAssignPIOrCoProposerAsReviewer ||
+      hasReviewerSameOrganizationAsPIOrCoProposer;
+
+    if (shouldShowWarning) {
+      confirm(() => assignMemberToSEPProposal(memberUsers), {
+        title: 'SEP reviewers assignment',
+        description: ' ',
+        shouldEnableOKWithAlert: true,
+        alertText:
+          'Some of the selected reviewers are already part of the proposal as PI or Co-proposer. Are you sure you want to assign all selected users to the SEP proposal?',
+      })();
+    } else {
+      assignMemberToSEPProposal(memberUsers);
+    }
   };
 
   const initialValues: SEPProposalType[] = SEPProposalsData;
@@ -453,9 +497,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
             assignedMembers={
               proposalAssignments?.map((assignment) => assignment.user) ?? []
             }
-            assignMemberToSEPProposal={(memberUser) =>
-              assignMemberToSEPProposal(memberUser)
-            }
+            assignMemberToSEPProposal={handleMemberAssignmentToSEPProposal}
           />
         </DialogContent>
       </Dialog>

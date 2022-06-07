@@ -16,6 +16,7 @@ const defaultOptions = {
   confirmationText: 'OK',
   cancellationText: 'Cancel',
   alertText: '',
+  shouldEnableOKWithAlert: false,
   dialogProps: {},
   onClose: (): void => {},
   onCancel: (): void => {},
@@ -39,6 +40,7 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
       cancellationText,
       dialogProps,
       alertText,
+      shouldEnableOKWithAlert,
       onClose,
       onCancel,
     } = options;
@@ -100,7 +102,7 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
               onClick={handleConfirm}
               data-cy="confirm-ok"
               variant="text"
-              disabled={!!alertText}
+              disabled={!shouldEnableOKWithAlert && !!alertText}
             >
               {confirmationText}
             </Button>
@@ -116,6 +118,7 @@ interface Options {
   description: string;
   confirmationText?: string;
   cancellationText?: string;
+  shouldEnableOKWithAlert?: boolean;
   alertText?: string;
   dialogProps?: Record<string, unknown>;
   onClose?: FunctionType;
