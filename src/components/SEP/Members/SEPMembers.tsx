@@ -237,6 +237,7 @@ const SEPMembers: React.FC<SEPMembersProps> = ({
         title={'Reviewer'}
         invitationUserRole={UserRole.SEP_REVIEWER}
         userRole={UserRole.SEP_REVIEWER}
+        sepId={sepData.id}
       />
       <ParticipantModal
         show={sepChairModalOpen}

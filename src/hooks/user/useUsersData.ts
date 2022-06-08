@@ -18,6 +18,7 @@ export function useUsersData(
     refreshData,
     orderBy,
     orderDirection,
+    sepId,
   } = usersFilter;
   const [usersData, setUsersData] = useState<{
     totalCount: number;
@@ -42,6 +43,7 @@ export function useUsersData(
         userRole,
         orderBy,
         orderDirection,
+        sepId,
       })
       .then((data) => {
         if (unmounted) {
@@ -65,6 +67,7 @@ export function useUsersData(
     userRole,
     api,
     refreshData,
+    sepId,
   ]);
 
   return { loadingUsersData, usersData, setUsersData };

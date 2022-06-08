@@ -67,6 +67,7 @@ type PeopleTableProps<T extends BasicUserDetails = BasicUserDetailsWithRole> = {
   mtOptions?: Options<T>;
   columns?: Column<T>[];
   preserveSelf?: boolean;
+  sepId?: number;
 };
 
 const useStyles = makeStyles({
@@ -152,6 +153,7 @@ const getUsersTableData = (
 };
 
 const PeopleTable: React.FC<PeopleTableProps> = (props) => {
+  console.log(props.sepId);
   const [query, setQuery] = useState<
     GetUsersQueryVariables & { refreshData: boolean }
   >({
@@ -163,6 +165,7 @@ const PeopleTable: React.FC<PeopleTableProps> = (props) => {
     subtractUsers: props.selectedUsers ? props.selectedUsers : [],
     userRole: props.userRole ? props.userRole : null,
     refreshData: false,
+    sepId: props.sepId,
   });
   const featureContext = useContext(FeatureContext);
   const isEmailInviteEnabled = !!featureContext.featuresMap.get(
