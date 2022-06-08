@@ -53,7 +53,6 @@ const AssignSEPMemberToProposal: React.FC<AssignSEPMemberToProposalProps> = ({
       onUpdate={(members: SepAssignedMember[]) =>
         assignMemberToSEPProposal(members)
       }
-      sepId={sepId}
     />
   );
 };

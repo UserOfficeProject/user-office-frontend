@@ -6,7 +6,6 @@ query getUsers(
   $subtractUsers: [Int!]
   $orderBy: String
   $orderDirection: String
-  $sepId: Int
 ) {
   users(
     filter: $filter
@@ -16,7 +15,6 @@ query getUsers(
     subtractUsers: $subtractUsers
     orderBy: $orderBy
     orderDirection: $orderDirection
-    sepId: $sepId
   ) {
     users {
       ...basicUserDetails
