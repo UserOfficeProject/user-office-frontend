@@ -21,6 +21,7 @@ query getSEPProposals($sepId: Int!, $callId: Int) {
       }
     }
     assignments {
+      proposalPk
       sepMemberUserId
       dateAssigned
       user {
