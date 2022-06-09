@@ -11,7 +11,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import { DecodedValueMap, SetQuery } from 'use-query-params';
 
@@ -23,6 +23,7 @@ import ProposalReviewContent, {
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import AssignProposalsToSEP from 'components/SEP/Proposals/AssignProposalsToSEP';
+import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   Call,
   Proposal,
@@ -31,6 +32,7 @@ import {
   ProposalPkWithCallId,
   Sep,
   InstrumentFragment,
+  FeatureId,
 } from 'generated/sdk';
 import { useLocalStorage } from 'hooks/common/useLocalStorage';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
@@ -40,7 +42,9 @@ import {
   useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
 import {
+  addColumns,
   fromProposalToProposalView,
+  removeColumns,
   setSortDirectionOnSortColumn,
 } from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
@@ -87,65 +91,56 @@ let columns: Column<ProposalViewData>[] = [
     ...{ width: 'auto' },
   },
   {
-    title: 'Technical time allocation',
-    render: (rowData) =>
-      rowData.technicalTimeAllocation
-        ? `${rowData.technicalTimeAllocation}(${rowData.allocationTimeUnit}s)`
-        : '',
-    hidden: true,
-  },
-  {
-    title: 'Technical status',
-    field: 'technicalStatus',
-  },
-  {
-    title: 'Final time allocation',
-    render: (rowData) =>
-      rowData.managementTimeAllocation
-        ? `${rowData.managementTimeAllocation}(${rowData.allocationTimeUnit}s)`
-        : '',
-    hidden: true,
-  },
-  {
-    title: 'Final Status',
-    field: 'finalStatus',
-  },
-  {
     title: 'Submitted',
-    render: (rowData) => (rowData.submitted ? 'Yes' : 'No'),
+    field: 'submitted',
+    lookup: { true: 'Yes', false: 'No' },
   },
   {
     title: 'Status',
     field: 'statusName',
   },
   {
-    title: 'Deviation',
-    field: 'reviewDeviation',
-  },
-  {
-    title: 'Average Score',
-    field: 'reviewAverage',
-  },
-  {
-    title: 'Ranking',
-    field: 'rankOrder',
-  },
-  {
     title: 'Notified',
-    render: (rowData) => (rowData.notified ? 'Yes' : 'No'),
-  },
-  {
-    title: 'Instrument',
-    field: 'instrumentName',
+    field: 'notified',
+    lookup: { true: 'Yes', false: 'No' },
   },
   {
     title: 'Call',
     field: 'callShortCode',
   },
+];
+
+const technicalReviewColumns = [
+  { title: 'Technical status', field: 'technicalStatus', emptyValue: '-' },
   {
-    title: 'SEP',
-    field: 'sepCode',
+    title: 'Assigned technical reviewer',
+    field: 'assignedTechnicalReviewer',
+    emptyValue: '-',
   },
+  {
+    title: 'Technical time allocation',
+    field: 'technicalTimeAllocationRendered',
+    emptyValue: '-',
+    hidden: true,
+  },
+];
+
+const instrumentManagementColumns = [
+  { title: 'Instrument', field: 'instrumentName', emptyValue: '-' },
+];
+
+const SEPReviewColumns = [
+  { title: 'Final status', field: 'finalStatus', emptyValue: '-' },
+  {
+    title: 'Final time allocation',
+    field: 'finalTimeAllocationRendered',
+    emptyValue: '-',
+    hidden: true,
+  },
+  { title: 'Deviation', field: 'reviewDeviation', emptyValue: '-' },
+  { title: 'Average Score', field: 'reviewAverage', emptyValue: '-' },
+  { title: 'Ranking', field: 'rankOrder', emptyValue: '-' },
+  { title: 'SEP', field: 'sepCode', emptyValue: '-' },
 ];
 
 const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
@@ -174,6 +169,7 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   const [localStorageValue, setLocalStorageValue] = useLocalStorage<
     Column<ProposalViewData>[] | null
   >('proposalColumnsOfficer', null);
+  const featureContext = useContext(FeatureContext);
 
   const prefetchSize = 200;
   const [currentPage, setCurrentPage] = useState(0);
@@ -265,6 +261,16 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
   );
   const ExportIcon = (): JSX.Element => <GridOnIcon />;
 
+  const isTechnicalReviewEnabled = featureContext.featuresMap.get(
+    FeatureId.TECHNICAL_REVIEW
+  )?.isEnabled;
+  const isInstrumentManagementEnabled = featureContext.featuresMap.get(
+    FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+  const isSEPEnabled = featureContext.featuresMap.get(
+    FeatureId.SEP_REVIEW
+  )?.isEnabled;
+
   /**
    * NOTE: Custom action buttons are here because when we have them inside actions on the material-table
    * and selection flag is true they are not working properly.
@@ -281,6 +287,24 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
       </IconButton>
     </Tooltip>
   );
+
+  if (isTechnicalReviewEnabled) {
+    addColumns(columns, technicalReviewColumns);
+  } else {
+    removeColumns(columns, technicalReviewColumns);
+  }
+
+  if (isInstrumentManagementEnabled) {
+    addColumns(columns, instrumentManagementColumns);
+  } else {
+    removeColumns(columns, instrumentManagementColumns);
+  }
+
+  if (isSEPEnabled) {
+    addColumns(columns, SEPReviewColumns);
+  } else {
+    removeColumns(columns, SEPReviewColumns);
+  }
 
   columns = columns.map((v: Column<ProposalViewData>) => {
     v.customSort = () => 0; // Disables client side sorting
@@ -556,8 +580,10 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
 
   const userOfficerProposalReviewTabs = [
     PROPOSAL_MODAL_TAB_NAMES.PROPOSAL_INFORMATION,
-    PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW,
-    PROPOSAL_MODAL_TAB_NAMES.REVIEWS,
+    ...(isTechnicalReviewEnabled
+      ? [PROPOSAL_MODAL_TAB_NAMES.TECHNICAL_REVIEW]
+      : []),
+    ...(isSEPEnabled ? [PROPOSAL_MODAL_TAB_NAMES.REVIEWS] : []),
     PROPOSAL_MODAL_TAB_NAMES.ADMIN,
     PROPOSAL_MODAL_TAB_NAMES.LOGS,
   ];
@@ -570,6 +596,15 @@ const ProposalTableOfficer: React.FC<ProposalTableOfficerProps> = ({
     Object.assign(proposal, {
       id: proposal.primaryKey,
       rowActionButtons: RowActionButtons(proposal),
+      assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName
+        ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}`
+        : '-',
+      technicalTimeAllocationRendered: proposal.technicalTimeAllocation
+        ? `${proposal.technicalTimeAllocation}(${proposal.allocationTimeUnit}s)`
+        : '-',
+      finalTimeAllocationRendered: proposal.managementTimeAllocation
+        ? `${proposal.managementTimeAllocation}(${proposal.allocationTimeUnit}s)`
+        : '-',
     })
   );
 

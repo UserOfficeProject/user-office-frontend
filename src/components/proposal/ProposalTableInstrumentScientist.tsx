@@ -5,10 +5,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import Visibility from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import {
-  getTranslation,
-  ResourceId,
-} from '@user-office-software/duo-localisation';
 import { proposalTechnicalReviewValidationSchema } from '@user-office-software/duo-validation';
 import React, { useContext, useState, useEffect } from 'react';
 import {
@@ -44,7 +40,11 @@ import {
   useProposalsCoreData,
 } from 'hooks/proposal/useProposalsCoreData';
 import { useProposalStatusesData } from 'hooks/settings/useProposalStatusesData';
-import { setSortDirectionOnSortColumn } from 'utils/helperFunctions';
+import {
+  addColumns,
+  removeColumns,
+  setSortDirectionOnSortColumn,
+} from 'utils/helperFunctions';
 import { tableIcons } from 'utils/materialIcons';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -71,40 +71,44 @@ let columns: Column<ProposalViewData>[] = [
     ...{ width: 'auto' },
   },
   {
-    title: 'Time allocation',
-    render: (rowData) =>
-      `${rowData.technicalTimeAllocation ?? 0} (${
-        rowData.allocationTimeUnit
-      }s)`,
-    hidden: false,
-  },
-  {
     title: 'Submitted',
     field: 'submitted',
     lookup: { true: 'Yes', false: 'No' },
   },
   { title: 'Status', field: 'statusName' },
   {
-    title: 'Final Status',
-    field: 'finalStatus',
-    render: (rowData: ProposalViewData): string =>
-      rowData.finalStatus
-        ? getTranslation(rowData.finalStatus as ResourceId)
-        : '',
-    emptyValue: '-',
-  },
-  {
     title: 'Call',
     field: 'callShortCode',
     emptyValue: '-',
     hidden: true,
   },
+];
+
+const technicalReviewColumns: Column<ProposalViewData>[] = [
   {
-    title: 'SEP',
-    field: 'sepCode',
+    title: 'Technical status',
+    field: 'technicalStatus',
     emptyValue: '-',
-    hidden: true,
   },
+  {
+    title: 'Technical time allocation',
+    field: 'technicalTimeAllocationRendered',
+    emptyValue: '-',
+  },
+  {
+    title: 'Assigned technical reviewer',
+    field: 'assignedTechnicalReviewer',
+    emptyValue: '-',
+  },
+];
+
+const instrumentManagementColumns = [
+  { title: 'Instrument', field: 'instrumentName', emptyValue: '-' },
+];
+
+const SEPReviewColumns = [
+  { title: 'Final status', field: 'finalStatus', emptyValue: '-' },
+  { title: 'SEP', field: 'sepCode', emptyValue: '-', hidden: true },
 ];
 
 const ProposalTableInstrumentScientist: React.FC<{
@@ -178,12 +182,16 @@ const ProposalTableInstrumentScientist: React.FC<{
     Column<ProposalViewData>[] | null
   >('proposalColumnsInstrumentScientist', null);
 
-  const isTechnicalReviewEnabled = featureContext.features.get(
+  const isTechnicalReviewEnabled = featureContext.featuresMap.get(
     FeatureId.TECHNICAL_REVIEW
   )?.isEnabled;
 
-  const isInstrumentManagementEnabled = featureContext.features.get(
+  const isInstrumentManagementEnabled = featureContext.featuresMap.get(
     FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+
+  const isSEPEnabled = featureContext.featuresMap.get(
+    FeatureId.SEP_REVIEW
   )?.isEnabled;
 
   const instrumentScientistProposalReviewTabs = [
@@ -200,7 +208,7 @@ const ProposalTableInstrumentScientist: React.FC<{
   const RowActionButtons = (rowData: ProposalViewData) => {
     const iconButtonStyle = { padding: '7px' };
     const isCurrentUserTechnicalReviewAssignee =
-      rowData.technicalReviewAssignee === user.id;
+      rowData.technicalReviewAssigneeId === user.id;
 
     const showView =
       rowData.technicalReviewSubmitted ||
@@ -250,7 +258,7 @@ const ProposalTableInstrumentScientist: React.FC<{
       const submittedTechnicalReviewsInput: SubmitTechnicalReviewInput[] =
         selectedProposals.map((proposal) => ({
           proposalPk: proposal.primaryKey,
-          reviewerId: proposal.technicalReviewAssignee || user.id,
+          reviewerId: proposal.technicalReviewAssigneeId || user.id,
           submitted: true,
         }));
 
@@ -277,9 +285,8 @@ const ProposalTableInstrumentScientist: React.FC<{
     }
   };
 
-  const handleSearchChange = (searchText: string) => {
+  const handleSearchChange = (searchText: string) =>
     setUrlQueryParams({ search: searchText ? searchText : undefined });
-  };
 
   const handleColumnHiddenChange = (columnChange: Column<ProposalViewData>) => {
     const proposalColumns = columns.map(
@@ -295,7 +302,7 @@ const ProposalTableInstrumentScientist: React.FC<{
     setLocalStorageValue(proposalColumns);
   };
 
-  const handleColumnSelectionChange = (selectedItems: ProposalViewData[]) => {
+  const handleColumnSelectionChange = (selectedItems: ProposalViewData[]) =>
     setUrlQueryParams((params) => ({
       ...params,
       selection:
@@ -305,18 +312,15 @@ const ProposalTableInstrumentScientist: React.FC<{
             )
           : undefined,
     }));
-  };
 
   const handleColumnSortOrderChange = (
     orderedColumnId: number,
     orderDirection: 'desc' | 'asc'
-  ) => {
-    setUrlQueryParams &&
-      setUrlQueryParams({
-        sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
-        sortDirection: orderDirection ? orderDirection : undefined,
-      });
-  };
+  ) =>
+    setUrlQueryParams({
+      sortColumn: orderedColumnId >= 0 ? orderedColumnId : undefined,
+      sortDirection: orderDirection ? orderDirection : undefined,
+    });
 
   const handleBulkDownloadClick = (
     _: React.MouseEventHandler<HTMLButtonElement>,
@@ -381,26 +385,22 @@ const ProposalTableInstrumentScientist: React.FC<{
     }));
   }
 
-  if (
-    isTechnicalReviewEnabled &&
-    !columns.find((column) => column.field === 'technicalStatus')
-  ) {
-    columns.push({
-      title: 'Technical status',
-      field: 'technicalStatus',
-      emptyValue: '-',
-    });
+  if (isTechnicalReviewEnabled) {
+    addColumns(columns, technicalReviewColumns);
+  } else {
+    removeColumns(columns, technicalReviewColumns);
   }
 
-  if (
-    isInstrumentManagementEnabled &&
-    !columns.find((column) => column.field === 'instrumentName')
-  ) {
-    columns.push({
-      title: 'Instrument',
-      field: 'instrumentName',
-      emptyValue: '-',
-    });
+  if (isInstrumentManagementEnabled) {
+    addColumns(columns, instrumentManagementColumns);
+  } else {
+    removeColumns(columns, instrumentManagementColumns);
+  }
+
+  if (isSEPEnabled) {
+    addColumns(columns, SEPReviewColumns);
+  } else {
+    removeColumns(columns, SEPReviewColumns);
   }
 
   columns = setSortDirectionOnSortColumn(
@@ -429,6 +429,12 @@ const ProposalTableInstrumentScientist: React.FC<{
       Object.assign(proposal, {
         id: proposal.primaryKey,
         rowActionButtons: RowActionButtons(proposal),
+        assignedTechnicalReviewer: proposal.technicalReviewAssigneeFirstName
+          ? `${proposal.technicalReviewAssigneeFirstName} ${proposal.technicalReviewAssigneeLastName}`
+          : '-',
+        technicalTimeAllocationRendered: proposal.technicalTimeAllocation
+          ? `${proposal.technicalTimeAllocation}(${proposal.allocationTimeUnit}s)`
+          : '-',
       })
   );
 
@@ -443,8 +449,15 @@ const ProposalTableInstrumentScientist: React.FC<{
               if (proposal.primaryKey === updatedProposal?.primaryKey) {
                 return {
                   ...proposal,
-                  technicalReviewAssignee:
-                    updatedProposal.technicalReviewAssignee,
+                  technicalReviewAssigneeId:
+                    updatedProposal.technicalReview
+                      ?.technicalReviewAssigneeId || null,
+                  technicalReviewAssigneeFirstName:
+                    updatedProposal.technicalReview?.technicalReviewAssignee
+                      ?.firstname || null,
+                  technicalReviewAssigneeLastName:
+                    updatedProposal.technicalReview?.technicalReviewAssignee
+                      ?.lastname || null,
                   technicalReviewSubmitted: updatedProposal.technicalReview
                     ?.submitted
                     ? 1

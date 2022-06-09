@@ -46,6 +46,8 @@ import SampleSafetyPage from './sample/SampleSafetyPage';
 import SEPPage from './SEP/SEPPage';
 import SEPsPage from './SEP/SEPsPage';
 import ApiAccessTokensPage from './settings/apiAccessTokens/ApiAccessTokensPage';
+import AppSettingsPage from './settings/appSettings/AppSettingsPage';
+import FeaturesPage from './settings/features/FeaturesPage';
 import ProposalStatusesPage from './settings/proposalStatus/ProposalStatusesPage';
 import ProposalWorkflowEditor from './settings/proposalWorkflow/ProposalWorkflowEditor';
 import ProposalWorkflowsPage from './settings/proposalWorkflow/ProposalWorkflowsPage';
@@ -168,11 +170,23 @@ const Dashboard: React.FC = () => {
   ]);
 
   const featureContext = useContext(FeatureContext);
-  const isSchedulerEnabled = featureContext.features.get(
+  const isSchedulerEnabled = featureContext.featuresMap.get(
     FeatureId.SCHEDULER
   )?.isEnabled;
-  const isInstrumentManagementEnabled = featureContext.features.get(
+  const isInstrumentManagementEnabled = featureContext.featuresMap.get(
     FeatureId.INSTRUMENT_MANAGEMENT
+  )?.isEnabled;
+  const isSEPEnabled = featureContext.featuresMap.get(
+    FeatureId.SEP_REVIEW
+  )?.isEnabled;
+  const isUserManagementEnabled = featureContext.featuresMap.get(
+    FeatureId.USER_MANAGEMENT
+  )?.isEnabled;
+  const isVisitManagementEnabled = featureContext.featuresMap.get(
+    FeatureId.VISIT_MANAGEMENT
+  )?.isEnabled;
+  const isSampleSafetyEnabled = featureContext.featuresMap.get(
+    FeatureId.SAMPLE_SAFETY
   )?.isEnabled;
 
   const { currentRole } = useContext(UserContext);
@@ -263,12 +277,14 @@ const Dashboard: React.FC = () => {
             path="/ProposalCreate/:callId/:templateId"
             component={ProposalCreate}
           />
-          <TitledRoute
-            setHeader={setHeader}
-            title="Profile"
-            path="/ProfilePage/:id"
-            component={ProfilePage}
-          />
+          {isUserManagementEnabled && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="Profile"
+              path="/ProfilePage/:id"
+              component={ProfilePage}
+            />
+          )}
           {isUserOfficer && (
             <TitledRoute
               setHeader={setHeader}
@@ -312,18 +328,22 @@ const Dashboard: React.FC = () => {
             path="/HelpPage"
             component={HelpPage}
           />
-          <TitledRoute
-            setHeader={setHeader}
-            title="SEP"
-            path="/SEPPage/:id"
-            component={SEPPage}
-          />
-          <TitledRoute
-            setHeader={setHeader}
-            title="SEPs"
-            path="/SEPs"
-            component={SEPsPage}
-          />
+          {isSEPEnabled && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="SEP"
+              path="/SEPPage/:id"
+              component={SEPPage}
+            />
+          )}
+          {isSEPEnabled && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="SEPs"
+              path="/SEPs"
+              component={SEPsPage}
+            />
+          )}
           {isInstrumentManagementEnabled && (
             <TitledRoute
               setHeader={setHeader}
@@ -374,12 +394,14 @@ const Dashboard: React.FC = () => {
             path="/ShipmentDeclarationTemplates"
             component={ShipmentTemplatesPage}
           />
-          <TitledRoute
-            setHeader={setHeader}
-            title="Visits Template"
-            path="/VisitTemplates"
-            component={VisitTemplatesPage}
-          />
+          {isVisitManagementEnabled && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="Visits Template"
+              path="/VisitTemplates"
+              component={VisitTemplatesPage}
+            />
+          )}
           <TitledRoute
             setHeader={setHeader}
             title="Feedback Template"
@@ -430,21 +452,37 @@ const Dashboard: React.FC = () => {
               component={ProposalWorkflowEditor}
             />
           )}
-          {(isSampleSafetyReviewer || isUserOfficer) && (
-            <TitledRoute
-              setHeader={setHeader}
-              title="Samples Safety"
-              path="/SampleSafety"
-              component={SampleSafetyPage}
-            />
-          )}
-
+          {isSampleSafetyEnabled &&
+            (isSampleSafetyReviewer || isUserOfficer) && (
+              <TitledRoute
+                setHeader={setHeader}
+                title="Samples Safety"
+                path="/SampleSafety"
+                component={SampleSafetyPage}
+              />
+            )}
           {isUserOfficer && (
             <TitledRoute
               setHeader={setHeader}
               title="Api Access Tokens"
               path="/ApiAccessTokens"
               component={ApiAccessTokensPage}
+            />
+          )}
+          {isUserOfficer && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="Features"
+              path="/Features"
+              component={FeaturesPage}
+            />
+          )}
+          {isUserOfficer && (
+            <TitledRoute
+              setHeader={setHeader}
+              title="App settings"
+              path="/Settings"
+              component={AppSettingsPage}
             />
           )}
           {isSchedulerEnabled && (

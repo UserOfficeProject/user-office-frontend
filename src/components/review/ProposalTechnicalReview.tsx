@@ -131,7 +131,7 @@ const ProposalTechnicalReview = ({
               TechnicalReviewStatus[values.status as TechnicalReviewStatus],
             submitted: shouldSubmit,
             reviewerId: user.id,
-            files: JSON.stringify(fileList),
+            files: fileList ? JSON.stringify(fileList) : null,
           },
         ],
       });
@@ -144,12 +144,12 @@ const ProposalTechnicalReview = ({
         status: TechnicalReviewStatus[values.status as TechnicalReviewStatus],
         submitted: shouldSubmit,
         reviewerId: user.id,
-        files: JSON.stringify(fileList),
+        files: fileList ? JSON.stringify(fileList) : null,
       });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(result as any)[method].error) {
+    if (!(result as any)[method].rejection) {
       setReview({
         proposalPk: data?.proposalPk,
         timeAllocation: +values.timeAllocation,
@@ -169,9 +169,11 @@ const ProposalTechnicalReview = ({
       <Typography variant="h6" component="h2" gutterBottom>
         Technical Review
       </Typography>
-      {proposal.technicalReview?.reviewer && (
+      {proposal.technicalReview?.technicalReviewAssignee && (
         <Typography variant="subtitle2" data-cy="reviewed-by-info">
-          {`Reviewed by ${getFullUserName(proposal.technicalReview?.reviewer)}`}
+          {`Reviewed by ${getFullUserName(
+            proposal.technicalReview.technicalReviewAssignee
+          )}`}
         </Typography>
       )}
       <Formik

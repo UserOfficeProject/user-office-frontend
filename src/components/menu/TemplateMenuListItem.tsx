@@ -73,10 +73,13 @@ export function TemplateMenuListItem() {
     history.location.pathname === '/SampleDeclarationTemplates';
   const [isExpanded, setIsExpanded] = useState(shouldExpand);
   const context = useContext(FeatureContext);
-  const isShipmentFeatureEnabled = !!context.features.get(FeatureId.SHIPPING)
+  const isShipmentFeatureEnabled = !!context.featuresMap.get(FeatureId.SHIPPING)
     ?.isEnabled;
-  const isRiskAssessmentFeatureEnabled = !!context.features.get(
+  const isRiskAssessmentFeatureEnabled = !!context.featuresMap.get(
     FeatureId.RISK_ASSESSMENT
+  )?.isEnabled;
+  const isVisitManagementEnabled = !!context.featuresMap.get(
+    FeatureId.VISIT_MANAGEMENT
   )?.isEnabled;
   function toggleExpand() {
     setIsExpanded(!isExpanded);
@@ -140,14 +143,16 @@ export function TemplateMenuListItem() {
             </ListItem>
           </Tooltip>
         )}
-        <Tooltip title="Visit registration">
-          <ListItem component={NavLink} to="/VisitTemplates" button>
-            <ListItemIcon>
-              <FlightTakeoffIcon />
-            </ListItemIcon>
-            <ListItemText primary="Visit registration" />
-          </ListItem>
-        </Tooltip>
+        {isVisitManagementEnabled && (
+          <Tooltip title="Visit registration">
+            <ListItem component={NavLink} to="/VisitTemplates" button>
+              <ListItemIcon>
+                <FlightTakeoffIcon />
+              </ListItemIcon>
+              <ListItemText primary="Visit registration" />
+            </ListItem>
+          </Tooltip>
+        )}
 
         {isRiskAssessmentFeatureEnabled && <EsiTemplatesMenuListItem />}
 

@@ -1,11 +1,33 @@
-import { AllocationTimeUnits, DataType } from '../../src/generated/sdk';
+import {
+  AllocationTimeUnits,
+  DataType,
+  FeatureId,
+  Settings,
+  SettingsId,
+} from '../../src/generated/sdk';
 
 // NOTE: Instruments, proposal and scheduled events are seeded only if resetDB(true).
 export default {
-  // TODO: Try to fetch the formats from the DB settings
-  formats: {
-    dateFormat: 'dd-MM-yyyy',
-    dateTimeFormat: 'dd-MM-yyyy HH:mm',
+  // NOTE: To be able to use this cy.getAndStoreAppSettings() should be called in the beforeEach section.
+  getFormats: () => {
+    const settings = window.localStorage.getItem('settings');
+
+    let settingsMap = new Map<SettingsId, string>();
+
+    if (settings) {
+      settingsMap = new Map(
+        JSON.parse(settings).map((setting: Settings) => [
+          setting.id,
+          setting.settingsValue,
+        ])
+      );
+    }
+
+    const dateFormat = settingsMap.get(SettingsId.DATE_FORMAT) || 'dd-MM-yyyy';
+    const dateTimeFormat =
+      settingsMap.get(SettingsId.DATE_TIME_FORMAT) || 'dd-MM-yyyy HH:mm';
+
+    return { dateFormat, dateTimeFormat };
   },
   call: {
     id: 1,
@@ -229,6 +251,20 @@ export default {
     completed: {
       startsAt: '07-02-2023 12:00',
       endsAt: '07-02-2023 13:00',
+    },
+  },
+  features: {
+    instrumentManagement: {
+      id: FeatureId.INSTRUMENT_MANAGEMENT,
+      description: 'Instrument management functionality',
+      isEnabled: true,
+    },
+  },
+  settings: {
+    dateTimeFormat: {
+      id: SettingsId.DATE_TIME_FORMAT,
+      description: 'Format used to represent date with time without seconds.',
+      settingsValue: 'dd-MM-yyyy HH:mm',
     },
   },
 };
