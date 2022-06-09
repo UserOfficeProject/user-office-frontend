@@ -44,7 +44,12 @@ const SEPPage: React.FC = () => {
   let tabs = [
     {
       name: 'Proposals and Assignments',
-      element: <SEPProposalsAndAssignmentsView sepId={sep.id} />,
+      element: (
+        <SEPProposalsAndAssignmentsView
+          data={sep}
+          onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
+        />
+      ),
     },
   ];
 
@@ -64,14 +69,18 @@ const SEPPage: React.FC = () => {
         element: (
           <SEPMembers
             data={sep}
-            sepId={sep.id}
             onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
           />
         ),
       },
       {
         name: 'Proposals and Assignments',
-        element: <SEPProposalsAndAssignmentsView sepId={sep.id} />,
+        element: (
+          <SEPProposalsAndAssignmentsView
+            data={sep}
+            onSEPUpdate={(newSEP: Sep): void => setSEP(newSEP)}
+          />
+        ),
       },
       {
         name: 'Meeting Components',
