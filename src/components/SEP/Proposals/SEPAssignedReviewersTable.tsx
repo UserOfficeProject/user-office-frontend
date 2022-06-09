@@ -125,8 +125,8 @@ const SEPAssignedReviewersTable: React.FC<SEPAssignedReviewersTableProps> = ({
           (assignment) =>
             assignment.review?.id === currentAssignment?.review?.id
         )?.review?.status === ReviewStatus.DRAFT;
-      currentAssignment &&
-        updateView(currentAssignment, shouldRefreshProposalAssignments);
+
+      updateView(currentAssignment, shouldRefreshProposalAssignments);
     } else {
       currentAssignment && updateView(currentAssignment);
     }
