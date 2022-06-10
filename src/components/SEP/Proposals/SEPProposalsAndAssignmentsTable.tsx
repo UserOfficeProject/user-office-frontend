@@ -38,6 +38,7 @@ import {
   standardDeviation,
 } from 'utils/mathFunctions';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import AssignSEPMemberToProposal, {
@@ -314,33 +315,76 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       return;
     }
 
-    const PIAndCoProposers = [
-      {
-        id: selectedProposal.proposal.proposer?.id,
-        organizationId: selectedProposal.proposal.proposer?.organizationId,
-      },
-    ].concat(selectedProposal.proposal.users);
-
-    const shouldAssignPIOrCoProposerAsReviewer = PIAndCoProposers.some(
-      ({ id }) => memberUsers.find((member) => member.id === id)
+    const selectedPI = memberUsers.find(
+      (member) => member.id === selectedProposal.proposal.proposer?.id
+    );
+    const selectedCoProposers = memberUsers.filter((member) =>
+      selectedProposal.proposal.users.find((user) => user.id === member.id)
     );
 
-    const hasReviewerSameOrganizationAsPIOrCoProposer = PIAndCoProposers.some(
-      ({ organizationId }) =>
-        memberUsers.find((member) => member.organizationId === organizationId)
+    const selectedReviewerWithSameOrganizationAsPI = memberUsers.find(
+      (member) =>
+        member.organizationId ===
+        selectedProposal.proposal.proposer?.organizationId
     );
+
+    const selectedReviewerWithSameOrganizationAsCoProposers =
+      memberUsers.filter((member) =>
+        selectedProposal.proposal.users.find(
+          (user) => user.organizationId === member.organizationId
+        )
+      );
 
     const shouldShowWarning =
-      shouldAssignPIOrCoProposerAsReviewer ||
-      hasReviewerSameOrganizationAsPIOrCoProposer;
+      !!selectedPI ||
+      !!selectedCoProposers.length ||
+      selectedReviewerWithSameOrganizationAsPI ||
+      selectedReviewerWithSameOrganizationAsCoProposers;
 
     if (shouldShowWarning) {
       confirm(() => assignMemberToSEPProposal(memberUsers), {
         title: 'SEP reviewers assignment',
         description: ' ',
         shouldEnableOKWithAlert: true,
-        alertText:
-          'Some of the selected reviewers are already part of the proposal or belong to the same organization as PI or Co-proposer. Are you sure you want to assign all selected users to the SEP proposal?',
+        alertText: (
+          <>
+            Some of the selected reviewers are already part of the proposal as a
+            PI/Co-proposer or belong to the same organization{' '}
+            <b>
+              <ul>
+                {!!selectedPI && <li>PI: {getFullUserName(selectedPI)}</li>}
+                {!!selectedCoProposers.length && (
+                  <li>
+                    Co-proposers:{' '}
+                    {selectedCoProposers
+                      .map((selectedCoProposer) =>
+                        getFullUserName(selectedCoProposer)
+                      )
+                      .join(', ')}
+                  </li>
+                )}
+                {!!selectedReviewerWithSameOrganizationAsPI && (
+                  <li>
+                    Same organization as PI:{' '}
+                    {getFullUserName(selectedReviewerWithSameOrganizationAsPI)}
+                  </li>
+                )}
+                {!!selectedReviewerWithSameOrganizationAsCoProposers.length && (
+                  <li>
+                    Same organization as co-proposers:{' '}
+                    {selectedReviewerWithSameOrganizationAsCoProposers
+                      .map((selectedCoProposer) =>
+                        getFullUserName(selectedCoProposer)
+                      )
+                      .join(', ')}
+                  </li>
+                )}
+              </ul>
+            </b>
+            . Are you sure you want to assign all selected users to the SEP
+            proposal?
+          </>
+        ),
       })();
     } else {
       assignMemberToSEPProposal(memberUsers);

@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import makeStyles from '@mui/styles/makeStyles';
-import React, { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 
 import { FunctionType } from './utilTypes';
 
@@ -15,7 +15,7 @@ const defaultOptions = {
   description: '',
   confirmationText: 'OK',
   cancellationText: 'Cancel',
-  alertText: '',
+  alertText: <></>,
   shouldEnableOKWithAlert: false,
   dialogProps: {},
   onClose: (): void => {},
@@ -65,7 +65,15 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
     const confirm = useCallback(
       (onConfirm, options: Options) => (): void => {
         setOnConfirm(() => onConfirm);
-        setOptions({ ...defaultOptions, ...options });
+
+        // NOTE: This is because alertText could be just a string and we wrap it in a react fragment to make it ReactElement.
+        const alertTextElement = <>{options.alertText}</>;
+
+        setOptions({
+          ...defaultOptions,
+          ...options,
+          alertText: alertTextElement,
+        });
       },
       []
     );
@@ -119,7 +127,7 @@ interface Options {
   confirmationText?: string;
   cancellationText?: string;
   shouldEnableOKWithAlert?: boolean;
-  alertText?: string;
+  alertText?: ReactElement | string;
   dialogProps?: Record<string, unknown>;
   onClose?: FunctionType;
   onCancel?: FunctionType;
