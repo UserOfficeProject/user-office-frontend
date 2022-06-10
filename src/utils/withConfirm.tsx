@@ -66,13 +66,9 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
       (onConfirm, options: Options) => (): void => {
         setOnConfirm(() => onConfirm);
 
-        // NOTE: This is because alertText could be just a string and we wrap it in a react fragment to make it ReactElement.
-        const alertTextElement = <>{options.alertText}</>;
-
         setOptions({
           ...defaultOptions,
           ...options,
-          alertText: alertTextElement,
         });
       },
       []
