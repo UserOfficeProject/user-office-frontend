@@ -15,7 +15,7 @@ const defaultOptions = {
   description: '',
   confirmationText: 'OK',
   cancellationText: 'Cancel',
-  alertText: <></>,
+  alertText: null,
   shouldEnableOKWithAlert: false,
   dialogProps: {},
   onClose: (): void => {},
@@ -32,7 +32,7 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
   return function WithConfirmComponent(props: Omit<T, 'confirm'>): JSX.Element {
     const classes = useStyles();
     const [onConfirm, setOnConfirm] = useState<FunctionType | null>(null);
-    const [options, setOptions] = useState(defaultOptions);
+    const [options, setOptions] = useState<Options>(defaultOptions);
     const {
       title,
       description,
@@ -45,11 +45,11 @@ function withConfirm<T>(WrappedComponent: React.ComponentType<T>) {
       onCancel,
     } = options;
     const handleClose = useCallback(() => {
-      onClose();
+      onClose?.();
       setOnConfirm(null);
     }, [onClose]);
     const handleCancel = useCallback(() => {
-      onCancel();
+      onCancel?.();
       handleClose();
     }, [onCancel, handleClose]);
     const handleConfirm = useCallback(
@@ -127,7 +127,7 @@ interface Options {
   confirmationText?: string;
   cancellationText?: string;
   shouldEnableOKWithAlert?: boolean;
-  alertText?: ReactElement | string;
+  alertText?: ReactElement | string | null;
   dialogProps?: Record<string, unknown>;
   onClose?: FunctionType;
   onCancel?: FunctionType;
