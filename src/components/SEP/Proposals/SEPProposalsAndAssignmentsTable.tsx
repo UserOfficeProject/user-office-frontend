@@ -350,7 +350,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
           <>
             Some of the selected reviewers are already part of the proposal as a
             PI/Co-proposer or belong to the same organization{' '}
-            <b>
+            <strong>
               <ul>
                 {!!selectedPI && <li>PI: {getFullUserName(selectedPI)}</li>}
                 {!!selectedCoProposers.length && (
@@ -380,7 +380,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
                   </li>
                 )}
               </ul>
-            </b>
+            </strong>
             . Are you sure you want to assign all selected users to the SEP
             proposal?
           </>
