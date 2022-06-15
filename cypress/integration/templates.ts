@@ -1472,10 +1472,7 @@ context('Template tests', () => {
 
       cy.get('[data-cy="max_files"] input').clear().type('-1');
 
-      cy.contains('Update').click();
-
-      cy.get('[data-cy="max_files"] input').should('be.focused');
-      cy.get('[data-cy="max_files"] input:invalid').should('have.length', 1);
+      cy.contains('Update').should('be.disabled');
 
       cy.get('[data-cy="max_files"] input').clear();
 
