@@ -1,19 +1,4 @@
 version: "3.7"
-
-x-volumes:
-  - &config-volume-favicon
-    type: bind
-    source: /mnt/c/FBS/Apps/ESS/Favicon/favicon.ico
-    target: /app/public/favicon.ico
-  - &config-volume-proposal
-    type: bind
-    source: /mnt/c/FBS/Apps/ESS
-    target: /config
-    read_only: true
-
-volumes:
-  gitdata:
-
 services:
   duo-reverse-proxy:
     image: traefik:2.4 # The official Traefik docker image
@@ -28,25 +13,17 @@ services:
         read_only: true
 
   duo-backend:
-    image: duo-backend
+    image: "dmsc/duo-backend:${USER_OFFICE_BACKEND_TAG}"
     depends_on:
       - duo-db
       - duo-reverse-proxy
       - user-office-factory
-      - rabbitmq
-    ports:
-      - "4000:4000"
-      - "9229:9229"
-    build:
-      context: ${REPOS_ROOT_DIR}/user-office-backend
-      dockerfile: Dockerfile.dev
     volumes:
-      - *config-volume-proposal
-      - ${REPOS_ROOT_DIR}/user-office-backend/:/app/
-      - ${WIN_REPOS_ROOT_DIR}/ISISBusApps/certs/fba-dev-ca.crt:/fba-dev-ca.crt
+      - "./${USER_OFFICE_BACKEND_DIR}/db_patches:/home/node/app/db_patches"
     environment:
       DATABASE_URL: postgres://duouser:duopassword@duo-db:5432/duo
-      CONFIG_PATH: /config/backend-config/local/
+      secret: qMyLZALzs229ybdQXNyzYRdju7X784TH
+      EXTERNAL_AUTH_TOKEN: abc
       NODE_ENV: development
       tokenLife: 7d
       baseURL: localhost:3000
@@ -58,12 +35,7 @@ services:
       EMAIL_FOOTER_IMAGE_PATH: /config/logos/STFC-Logo-small.png
       DEPENDENCY_CONFIG: stfc
       EXTERNAL_AUTH_LOGIN_URL: http://localhost:9003/auth/Login.aspx
-      EXTERNAL_AUTH_SERVICE_URL: https://localservices:8181/UserOfficeWebService/UserOfficeWebService?wsdl
-      NODE_EXTRA_CA_CERTS: /fba-dev-ca.crt
-      RABBITMQ_HOSTNAME: rabbitmq
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: guest
-      RABBITMQ_VIRTUAL_HOST: proposals
+      EXTERNAL_AUTH_SERVICE_URL: http://mockServer:1080/ws/UserOfficeWebService?wsdl
       ANTIVIRUS_HOST: clam-antivirus
       ANTIVIRUS_PORT: 3310
       TZ: Europe/London
@@ -71,8 +43,6 @@ services:
     labels:
       - "traefik.http.routers.duo-backend.rule=PathPrefix(`/api`, `/graphql`, `/gateway`, `/download`, `/downloads`, `/files`, `/proposal`, `/uploads`)"
       - "traefik.http.services.duo-backend.loadbalancer.server.port=4000"
-    extra_hosts:
-      - localservices:${WINDOWS_HOST}
 
   clam-antivirus:
     image: clamav/clamav:0.104
@@ -80,45 +50,35 @@ services:
       - "3310:3310"
 
   cypress-e2e:
-    image: cypress-e2e
+    image: e2e-cypress:latest
     depends_on:
+      - duo-frontend
       - mockserver-client
       - mockServer
-    build:
-      context: ${REPOS_ROOT_DIR}/user-office-frontend
-      dockerfile: Dockerfile.e2e
     ipc: host # see https://github.com/cypress-io/cypress/issues/350
     environment:
-      CYPRESS_SVC_ACC_TOKEN: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjowLCJ1c2VyX3RpdGxlIjoiTXIuIiwiZmlyc3RuYW1lIjoiU2VydmljZSBBY2NvdW50IiwibWlkZGxlbmFtZSI6IiIsImxhc3RuYW1lIjoiIiwidXNlcm5hbWUiOiJzZXJ2aWNlIiwicHJlZmVycmVkbmFtZSI6IiIsIm9yY2lkIjoiIiwicmVmcmVzaFRva2VuIjoiIiwiZ2VuZGVyIjoibWFsZSIsIm5hdGlvbmFsaXR5IjoxLCJiaXJ0aGRhdGUiOiIyMDAwLTA0LTAxVDIyOjAwOjAwLjAwMFoiLCJvcmdhbmlzYXRpb24iOjEsImRlcGFydG1lbnQiOiIiLCJwb3NpdGlvbiI6IiIsImVtYWlsIjoic2VydmljZUB1c2Vyb2ZmaWNlLmVzcy5ldSIsImVtYWlsVmVyaWZpZWQiOnRydWUsInRlbGVwaG9uZSI6IiIsInRlbGVwaG9uZV9hbHQiOiIiLCJwbGFjZWhvbGRlciI6ZmFsc2UsImNyZWF0ZWQiOiIyMDIwLTA4LTEwVDE2OjQwOjAyLjk1NloiLCJ1cGRhdGVkIjoiMjAyMC0wOC0xMFQxNjo0MDowMy4yNjhaIn0sInJvbGVzIjpbeyJpZCI6Miwic2hvcnRDb2RlIjoidXNlcl9vZmZpY2VyIiwidGl0bGUiOiJVc2VyIE9mZmljZXIifV0sImN1cnJlbnRSb2xlIjp7ImlkIjoyLCJzaG9ydENvZGUiOiJ1c2VyX29mZmljZXIiLCJ0aXRsZSI6IlVzZXIgT2ZmaWNlciJ9LCJpYXQiOjE1OTcwNzc3NjF9.y_coY649frw5dgl549tGjirF99nqwz1-BrUAILhE6pI"
+      CYPRESS_SVC_ACC_TOKEN: $SVC_ACC_TOKEN
       CYPRESS_STFC: "true"
       CYPRESS_TEST_TAGS: "stfc"
     entrypoint:
       [
         "/wait-for-frontend.sh",
         "duo-reverse-proxy:80",
-        "cypress run --browser chrome --config baseUrl=http://duo-reverse-proxy:80 defaultCommandTimeout=15000"
+        "cypress run --spec ${CYPRES_SPEC_PATTERN} --browser chrome --config baseUrl=http://duo-reverse-proxy:80 defaultCommandTimeout=15000"
       ]
     volumes:
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/screenshots:/tmp/screenshots"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/fixtures:/e2e/cypress/fixtures"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/integration:/e2e/cypress/integration"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/plugins:/e2e/cypress/plugins"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/support:/e2e/cypress/support"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/types:/e2e/cypress/types"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/cypress/videos:/e2e/cypress/videos"
-      - "${REPOS_ROOT_DIR}/user-office-frontend/src/generated:/e2e/src/generated"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/screenshots:/tmp/screenshots"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/fixtures:/e2e/cypress/fixtures"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/integration:/e2e/cypress/integration"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/plugins:/e2e/cypress/plugins"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/support:/e2e/cypress/support"
+      - "./${USER_OFFICE_FRONTEND_DIR}/cypress/types:/e2e/cypress/types"
 
   duo-frontend:
-    image: duo-frontend
+    image: "duo-frontend:${BUILD_TAG}"
     depends_on:
       - duo-reverse-proxy
       - duo-backend
-    build:
-      context: ${REPOS_ROOT_DIR}/user-office-frontend
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ${REPOS_ROOT_DIR}/user-office-frontend/:/app/
-      - *config-volume-favicon
     environment:
       # Needed to run the e2e tests on a local machine, see https://create-react-app.dev/docs/proxying-api-requests-in-development/#invalid-host-header-errors-after-configuring-proxy
       # This is safe as we don't use the React proxy at all, we just rely on the Traefik reverse proxy
@@ -128,17 +88,13 @@ services:
       - "traefik.http.services.duo-frontend.loadbalancer.server.port=3000"
 
   user-office-factory:
-    image: duo-factory
-    volumes:
-      - *config-volume-proposal
-      - ${REPOS_ROOT_DIR}/user-office-factory/:/app/
+    image: dmsc/duo-factory:${USER_OFFICE_FACTORY_TAG}
     depends_on:
       - duo-reverse-proxy
       - duo-db
-    build:
-      context: ${REPOS_ROOT_DIR}/user-office-factory
-      dockerfile: Dockerfile.dev
     environment:
+      secret: qMyLZALzs229ybdQXNyzYRdju7X784TH
+      EXTERNAL_AUTH_TOKEN: abc
       NODE_ENV: development
       DATABASE_CONNECTION_STRING: postgres://duouser:duopassword@duo-db:5432/duo
       UO_FEATURE_ALLOW_NO_SANDBOX: 1
@@ -159,19 +115,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ${REPOS_ROOT_DIR}/user-office-backend/db_patches/:/docker-entrypoint-initdb.d/
-
-  rabbitmq:
-    image: "rabbitmq:3-management"
-    restart: always
-    ports:
-      - 5672:5672
-      - 15672:15672
-    volumes:
-      - ${REPOS_ROOT_DIR}/user-office-backend/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
-    environment:
-      - RABBITMQ_DEFAULT_VHOST=proposals
-
+      - "./${USER_OFFICE_BACKEND_DIR}/db_patches/:/docker-entrypoint-initdb.d/"
   mockServer:
     image: mockserver/mockserver:5.13.0
     command: -logLevel INFO -serverPort 1080
