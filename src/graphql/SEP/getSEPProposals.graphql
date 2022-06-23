@@ -8,11 +8,20 @@ query getSEPProposals($sepId: Int!, $callId: Int) {
       title
       primaryKey
       proposalId
+      proposer {
+        id
+        organizationId
+      }
       status {
         ...proposalStatus
       }
+      users {
+        id
+        organizationId
+      }
     }
     assignments {
+      proposalPk
       sepMemberUserId
       dateAssigned
       user {

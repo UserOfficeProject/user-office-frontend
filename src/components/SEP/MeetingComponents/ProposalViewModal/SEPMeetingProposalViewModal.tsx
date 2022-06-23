@@ -19,6 +19,7 @@ import {
   Review,
   UserRole,
   SepMeetingDecision,
+  Proposal,
 } from 'generated/sdk';
 import { useSEPProposalData } from 'hooks/SEP/useSEPProposalData';
 
@@ -83,7 +84,7 @@ const SEPMeetingProposalViewModal: React.FC<
     ? isUserOfficer
     : hasWriteAccess;
 
-  const proposalData = SEPProposalData?.proposal ?? null;
+  const proposalData = (SEPProposalData?.proposal ?? null) as Proposal;
 
   const handleClose = () => {
     setProposalViewModalOpen(false);
@@ -98,6 +99,7 @@ const SEPMeetingProposalViewModal: React.FC<
         fullScreen
         onClose={(): void => handleClose()}
         TransitionComponent={Transition}
+        data-cy="SEP-meeting-modal"
       >
         <AppBar className={classes.appBar}>
           <Toolbar>
