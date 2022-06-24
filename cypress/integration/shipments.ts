@@ -54,47 +54,35 @@ context('Shipments tests', () => {
 
     const STORAGE_TEMPERATURE_KEY = 'storage_temperature';
     const IS_FRAGILE_KEY = 'is_fragile';
-    const LOCAL_CONTACT_KEY = 'shipment_local_contact';
-    const IS_DANGEROUS_KEY = 'is_dangerous';
+    const DESCRIPTION = 'detailed_description_of_content';
+    const SENDER_NAME_KEY = 'shipment_sender_name';
+    const SENDER_EMAIL_KEY = 'shipment_sender_email';
+    const SENDER_PHONE_KEY = 'shipment_sender_phone';
+    const SENDER_STREET_ADDRESS_KEY = 'shipment_sender_street_address';
+    const SENDER_ZIP_CODE_KEY = 'shipment_sender_zip_code';
+    const SENDER_CITY_COUNTRY_KEY = 'shipment_sender_city_country';
 
-    const localContactName = faker.name.firstName();
-    const storageOption = faker.lorem.words(3);
+    const shipmentsTemplateFile = 'shipments_template.json';
 
     cy.login('officer');
     cy.visit('/');
 
     cy.navigateToTemplatesSubmenu('Shipment declaration templates');
 
-    cy.get('[data-cy=create-new-button]').click();
+    cy.get('[data-cy=import-template-button]').click();
 
-    cy.get('[data-cy=name] input')
-      .type(shipmentTemplateName)
-      .should('have.value', shipmentTemplateName);
-
-    cy.get('[data-cy=description]').type(shipmentTemplateDescription);
-
-    cy.get('[data-cy=submit]').click();
-
-    cy.createNumberInputQuestion('width', { key: WIDTH_KEY });
-    cy.createNumberInputQuestion('height', { key: HEIGHT_KEY });
-    cy.createNumberInputQuestion('length', { key: LENGTH_KEY });
-    cy.createNumberInputQuestion('weight', { key: WEIGHT_KEY });
-
-    cy.createMultipleChoiceQuestion('storage temperature', {
-      key: STORAGE_TEMPERATURE_KEY,
-      option1: storageOption,
-      option2: faker.lorem.words(3),
+    cy.get('input[type="file"]').attachFixture({
+      filePath: shipmentsTemplateFile,
+      fileName: shipmentsTemplateFile,
+      mimeType: 'application/json',
     });
-    cy.createBooleanQuestion('is fragile', { key: IS_FRAGILE_KEY });
-    cy.createMultipleChoiceQuestion('local contact', {
-      key: LOCAL_CONTACT_KEY,
-      option1: localContactName,
-      option2: faker.name.firstName(),
-      option3: faker.name.firstName(),
-    });
-    cy.createBooleanQuestion('is dangerous', { key: IS_DANGEROUS_KEY });
 
-    cy.contains('New shipment');
+    cy.get('[data-cy="import-template-button"]').click();
+
+    cy.notification({
+      variant: 'success',
+      text: 'Template imported successfully',
+    });
 
     cy.logout();
     cy.login('user');
@@ -125,19 +113,21 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
+    cy.get(`[data-natural-key=${DESCRIPTION}]`).type('abcdefghijklmnopqr');
+
     cy.get(`[data-natural-key=${WIDTH_KEY}]`).clear().type('1').click();
     cy.get(`[data-natural-key=${HEIGHT_KEY}]`).clear().type('1').click();
     cy.get(`[data-natural-key=${LENGTH_KEY}]`).clear().type('1').click();
     cy.get(`[data-natural-key=${WEIGHT_KEY}]`).clear().type('1').click();
 
     cy.get(`[data-natural-key=${STORAGE_TEMPERATURE_KEY}]`).click();
-    cy.get('[role=presentation]').contains(storageOption).click();
-
-    cy.get(`[data-natural-key=${LOCAL_CONTACT_KEY}]`).click();
-    cy.get('[role=presentation]').contains(localContactName).click();
-
-    cy.get(`[data-natural-key=${IS_DANGEROUS_KEY}]`).click();
-    cy.get(`[data-natural-key=${IS_FRAGILE_KEY}]`).click();
+    cy.get('[role=presentation]').contains('Ambient').click();
+    cy.get(`[data-natural-key=${SENDER_NAME_KEY}]`).type('a@a.com');
+    cy.get(`[data-natural-key=${SENDER_EMAIL_KEY}]`).type('a@a.com');
+    cy.get(`[data-natural-key=${SENDER_PHONE_KEY}]`).type('A');
+    cy.get(`[data-natural-key=${SENDER_STREET_ADDRESS_KEY}]`).type('A');
+    cy.get(`[data-natural-key=${SENDER_ZIP_CODE_KEY}]`).type('A');
+    cy.get(`[data-natural-key=${SENDER_CITY_COUNTRY_KEY}]`).type('A');
 
     cy.get('[data-cy=save-and-continue-button]').click();
 
