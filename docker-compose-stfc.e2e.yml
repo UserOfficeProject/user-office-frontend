@@ -122,9 +122,6 @@ services:
     ports:
       - 1080:1080
   mockserver-client:
-    image: mockserver-client
+    image: "dmsc/stfc-mockserver-client:master"
     depends_on:
       - mockServer
-    build:
-      context: ${REPOS_ROOT_DIR}/mock-uows
-      dockerfile: Dockerfile
