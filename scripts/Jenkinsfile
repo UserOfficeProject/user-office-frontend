@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    triggers {
+        cron('0 12 1 * *')
+    }
+
+    environment {
+        IMPORT_TOKEN = credentials('proposals-template-import-token')
+        EXPORT_TOKEN = credentials('proposals-template-export-token')
+        IMPORT_URL = https://devproposal.facilities.rl.ac.uk/graphql
+        EXPORT_URL = https://proposal.facilities.rl.ac.uk/graphql
+    }
+    stages {
+
+        stage('Delete Templates') {
+
+            steps {
+                IMPORT_TOKEN=PROPOSALS_IMPORT_TOKEN EXPORT_TOKEN=PROPOSALS_EXPORT_TOKEN GRAPHQL_IMPORT_URL=PROPOSALS_IMPORT_URL GRAPHQL_EXPORT_URL=PROPOSALS_EXPORT_URL node deleteTemplate.js
+            }
+        }
+        stage('Import Templates') {
+
+            steps {
+                IMPORT_TOKEN=PROPOSALS_IMPORT_TOKEN EXPORT_TOKEN=PROPOSALS_EXPORT_TOKEN GRAPHQL_IMPORT_URL=PROPOSALS_IMPORT_URL GRAPHQL_EXPORT_URL=PROPOSALS_EXPORT_URL node importTemplates.js
+            }
+        }
+    }
+}
