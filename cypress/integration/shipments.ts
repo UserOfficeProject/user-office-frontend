@@ -53,8 +53,7 @@ context('Shipments tests', () => {
     const WEIGHT_KEY = 'parcel_weight';
 
     const STORAGE_TEMPERATURE_KEY = 'storage_temperature';
-    const IS_FRAGILE_KEY = 'is_fragile';
-    const DESCRIPTION = 'detailed_description_of_content';
+    const DESCRIPTION_KEY = 'detailed_description_of_content';
     const SENDER_NAME_KEY = 'shipment_sender_name';
     const SENDER_EMAIL_KEY = 'shipment_sender_email';
     const SENDER_PHONE_KEY = 'shipment_sender_phone';
@@ -63,6 +62,15 @@ context('Shipments tests', () => {
     const SENDER_CITY_COUNTRY_KEY = 'shipment_sender_city_country';
 
     const shipmentsTemplateFile = 'shipments_template.json';
+
+    const temp = 'Ambient';
+    const description = faker.lorem.words(2);
+    const name = faker.name.firstName();
+    const email = faker.internet.email();
+    const phone = faker.phone.phoneNumber();
+    const street = faker.address.streetAddress();
+    const zip = faker.address.zipCode();
+    const city = faker.address.city();
 
     cy.login('officer');
     cy.visit('/');
@@ -113,7 +121,7 @@ context('Shipments tests', () => {
 
     cy.get('body').type('{esc}');
 
-    cy.get(`[data-natural-key=${DESCRIPTION}]`).type('abcdefghijklmnopqr');
+    cy.get(`[data-natural-key=${DESCRIPTION_KEY}]`).type(description);
 
     cy.get(`[data-natural-key=${WIDTH_KEY}]`).clear().type('1').click();
     cy.get(`[data-natural-key=${HEIGHT_KEY}]`).clear().type('1').click();
@@ -121,13 +129,13 @@ context('Shipments tests', () => {
     cy.get(`[data-natural-key=${WEIGHT_KEY}]`).clear().type('1').click();
 
     cy.get(`[data-natural-key=${STORAGE_TEMPERATURE_KEY}]`).click();
-    cy.get('[role=presentation]').contains('Ambient').click();
-    cy.get(`[data-natural-key=${SENDER_NAME_KEY}]`).type('a@a.com');
-    cy.get(`[data-natural-key=${SENDER_EMAIL_KEY}]`).type('a@a.com');
-    cy.get(`[data-natural-key=${SENDER_PHONE_KEY}]`).type('A');
-    cy.get(`[data-natural-key=${SENDER_STREET_ADDRESS_KEY}]`).type('A');
-    cy.get(`[data-natural-key=${SENDER_ZIP_CODE_KEY}]`).type('A');
-    cy.get(`[data-natural-key=${SENDER_CITY_COUNTRY_KEY}]`).type('A');
+    cy.get('[role=presentation]').contains(temp).click();
+    cy.get(`[data-natural-key=${SENDER_NAME_KEY}]`).type(name);
+    cy.get(`[data-natural-key=${SENDER_EMAIL_KEY}]`).type(email);
+    cy.get(`[data-natural-key=${SENDER_PHONE_KEY}]`).type(phone);
+    cy.get(`[data-natural-key=${SENDER_STREET_ADDRESS_KEY}]`).type(street);
+    cy.get(`[data-natural-key=${SENDER_ZIP_CODE_KEY}]`).type(zip);
+    cy.get(`[data-natural-key=${SENDER_CITY_COUNTRY_KEY}]`).type(city);
 
     cy.get('[data-cy=save-and-continue-button]').click();
 
@@ -138,6 +146,15 @@ context('Shipments tests', () => {
     cy.contains(existingProposal.title);
 
     cy.contains('SUBMITTED', { matchCase: false });
+
+    cy.contains(temp).should('exist');
+    cy.contains(description).should('exist');
+    cy.contains(name).should('exist');
+    cy.contains(email).should('exist');
+    cy.contains(phone).should('exist');
+    cy.contains(street).should('exist');
+    cy.contains(zip).should('exist');
+    cy.contains(city).should('exist');
 
     cy.get('[data-cy=download-shipment-label]').click();
 
