@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { DateTime } from 'luxon';
 
 import {
@@ -712,6 +712,8 @@ context('Settings tests', () => {
         .click();
       cy.contains('1 user(s) selected');
       cy.contains('Update').click();
+
+      cy.get('[data-cy="confirm-ok"]').click();
 
       cy.notification({
         variant: 'success',
