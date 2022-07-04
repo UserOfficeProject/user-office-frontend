@@ -49,7 +49,7 @@ services:
     ports:
       - "3310:3310"
 
-  cypress-e2e:
+  cypress:
     image: e2e-cypress:latest
     depends_on:
       - duo-frontend
