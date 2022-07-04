@@ -12,7 +12,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
 
-  duo-backend:
+  backend:
     image: "dmsc/duo-backend:${USER_OFFICE_BACKEND_TAG}"
     depends_on:
       - duo-db
@@ -74,7 +74,7 @@ services:
       - "./${USER_OFFICE_FRONTEND_DIR}/cypress/support:/e2e/cypress/support"
       - "./${USER_OFFICE_FRONTEND_DIR}/cypress/types:/e2e/cypress/types"
 
-  duo-frontend:
+  frontend:
     image: "duo-frontend:${BUILD_TAG}"
     depends_on:
       - duo-reverse-proxy
@@ -87,7 +87,7 @@ services:
       - "traefik.http.routers.duo-frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.duo-frontend.loadbalancer.server.port=3000"
 
-  user-office-factory:
+  factory:
     image: dmsc/duo-factory:${USER_OFFICE_FACTORY_TAG}
     depends_on:
       - duo-reverse-proxy
@@ -105,7 +105,7 @@ services:
       - "traefik.http.routers.user-office-factory.rule=PathPrefix(`/generate`, `/test-template`, `/version`, `/health-check`)"
       - "traefik.port=4500"
 
-  duo-db:
+  db:
     image: postgres:11-alpine
     restart: always
     environment:
