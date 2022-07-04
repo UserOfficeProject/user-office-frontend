@@ -1,6 +1,6 @@
 import path from 'path';
 
-import faker, { lorem } from 'faker';
+import { faker } from '@faker-js/faker';
 import { DateTime } from 'luxon';
 
 import {
@@ -47,7 +47,7 @@ context('Template tests', () => {
     answer: faker.lorem.words(3),
   };
   const multipleChoiceQuestion = {
-    title: lorem.words(2),
+    title: faker.lorem.words(2),
     answers: [faker.lorem.words(3), faker.lorem.words(3), faker.lorem.words(3)],
   };
 
