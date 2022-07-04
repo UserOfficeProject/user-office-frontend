@@ -1618,7 +1618,9 @@ context('SEP meeting components tests', () => {
       cy.get('[data-cy="download-sep-xlsx"]').click();
 
       cy.get('[data-cy="preparing-download-dialog"]').should('exist');
-      cy.get('[data-cy="preparing-download-dialog-item"]').contains('call 1');
+      cy.get('[data-cy="preparing-download-dialog-item"]').contains(
+        updatedCall.shortCode
+      );
     });
 
     it('Officer should be able to remove assigned SEP member from proposal in existing SEP', () => {

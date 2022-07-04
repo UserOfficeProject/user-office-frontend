@@ -340,9 +340,7 @@ context('Samples tests', () => {
       cy.get('[aria-label="Clone proposals to call"]').click();
 
       cy.get('#selectedCallId-input').click();
-      cy.get('[role="presentation"]')
-        .contains(initialDBData.call.shortCode)
-        .click();
+      cy.get('[role="presentation"]').contains(updatedCall.shortCode).click();
 
       cy.get('[data-cy="submit"]').click();
 
