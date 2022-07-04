@@ -31,7 +31,7 @@ const CallReviewAndNotification: React.FC = () => {
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
-  const { startReview, startSEPReview, seps } = formik.values;
+  const { startReview, startSEPReview } = formik.values;
 
   const sepOptions =
     allActiveSeps?.map((sep) => ({

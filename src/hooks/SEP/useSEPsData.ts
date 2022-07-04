@@ -82,7 +82,7 @@ export function useSEPsData({
     return () => {
       unmounted = true;
     };
-  }, [filter, active, api, role]);
+  }, [filter, active, api, role, callIds]);
 
   return { loadingSEPs, SEPs, setSEPsWithLoading };
 }
