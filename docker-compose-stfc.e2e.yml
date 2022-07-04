@@ -91,7 +91,7 @@ services:
     image: dmsc/duo-factory:${USER_OFFICE_FACTORY_TAG}
     depends_on:
       - duo-reverse-proxy
-      - duo-db
+      - db
     environment:
       secret: qMyLZALzs229ybdQXNyzYRdju7X784TH
       EXTERNAL_AUTH_TOKEN: abc
