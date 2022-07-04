@@ -15,9 +15,9 @@ services:
   backend:
     image: "dmsc/duo-backend:${USER_OFFICE_BACKEND_TAG}"
     depends_on:
-      - duo-db
+      - db
       - duo-reverse-proxy
-      - user-office-factory
+      - factory
     volumes:
       - "./${USER_OFFICE_BACKEND_DIR}/db_patches:/home/node/app/db_patches"
     environment:
@@ -52,7 +52,7 @@ services:
   cypress:
     image: e2e-cypress:latest
     depends_on:
-      - duo-frontend
+      - frontend
       - mockserver-client
       - mockServer
     ipc: host # see https://github.com/cypress-io/cypress/issues/350
@@ -78,7 +78,7 @@ services:
     image: "duo-frontend:${BUILD_TAG}"
     depends_on:
       - duo-reverse-proxy
-      - duo-backend
+      - backend
     environment:
       # Needed to run the e2e tests on a local machine, see https://create-react-app.dev/docs/proxying-api-requests-in-development/#invalid-host-header-errors-after-configuring-proxy
       # This is safe as we don't use the React proxy at all, we just rely on the Traefik reverse proxy
