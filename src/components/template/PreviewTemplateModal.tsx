@@ -31,8 +31,8 @@ const PreviewTemplateModal: React.FC<PreviewTemplateModalProps> = ({
 
   return (
     <Dialog
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
+      aria-labelledby="preview-questionary-template-modal"
+      aria-describedby="preview-questionary-template-modal"
       open={templateId !== null}
       onClose={() => setTemplateId(null)}
       style={{ backdropFilter: 'blur(6px)' }}
@@ -54,7 +54,11 @@ const PreviewTemplateModal: React.FC<PreviewTemplateModalProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button variant="text" onClick={() => setTemplateId(null)}>
+        <Button
+          variant="text"
+          onClick={() => setTemplateId(null)}
+          data-cy="close-modal"
+        >
           Close
         </Button>
       </DialogActions>

@@ -267,6 +267,7 @@ export default function TemplateEditor() {
       <Tooltip title="Preview questionary">
         <IconButton
           onClick={() => setOpenedPreviewTemplateId(state.templateId)}
+          data-cy="preview-questionary-template"
         >
           <Preview />
         </IconButton>
