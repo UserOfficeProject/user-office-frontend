@@ -6,6 +6,7 @@ services:
     ports:
       - "8081:80" # The HTTP port
       - "8082:8080" # The Web UI (enabled by --api)
+      - 443:443
     volumes:
       - type: bind
         source: /var/run/docker.sock
