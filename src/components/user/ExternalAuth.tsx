@@ -1,3 +1,4 @@
+import { Link } from '@mui/material';
 import React, { useContext, useEffect, useRef } from 'react';
 import { StringParam, useQueryParams } from 'use-query-params';
 
@@ -9,13 +10,15 @@ import { useUnauthorizedApi } from 'hooks/common/useDataApi';
 const ExternalAuthQueryParams = {
   sessionid: StringParam,
   token: StringParam,
+  code: StringParam,
 };
 
 function ExternalAuth() {
   const [urlQueryParams] = useQueryParams(ExternalAuthQueryParams);
-  const externalToken = urlQueryParams.sessionid ?? urlQueryParams.token;
+  const externalToken = urlQueryParams.sessionid ?? urlQueryParams.code;
 
   const { token, handleLogin } = useContext(UserContext);
+  const [error, setError] = React.useState<string | undefined>(undefined);
   const unauthorizedApi = useUnauthorizedApi();
 
   const isFirstRun = useRef<boolean>(true);
@@ -38,9 +41,16 @@ function ExternalAuth() {
     unauthorizedApi()
       .externalTokenLogin({ externalToken })
       .then((token) => {
-        if (token.externalTokenLogin && !token.externalTokenLogin.rejection) {
+        if (token.externalTokenLogin.rejection) {
+          setError(token.externalTokenLogin.rejection.reason);
+
+          return;
+        }
+        if (token.externalTokenLogin) {
           handleLogin(token.externalTokenLogin.token);
-          window.location.href = '/';
+          const landingUrl = localStorage.getItem('landingUrl');
+          localStorage.removeItem('landingUrl');
+          window.location.href = landingUrl ?? '/';
         } else {
           if (externalAuthLoginUrl) {
             window.location.href = externalAuthLoginUrl;
@@ -54,6 +64,14 @@ function ExternalAuth() {
     unauthorizedApi,
     externalAuthLoginUrl,
   ]);
+
+  if (error) {
+    return (
+      <div>
+        Error occurred: {error}. <Link href="/">Go to frontpage</Link>
+      </div>
+    );
+  }
 
   return <p>Logging in with external service...</p>;
 }
