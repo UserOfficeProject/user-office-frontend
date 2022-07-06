@@ -352,6 +352,12 @@ jobs:
           export CYPRES_SPEC_PATTERN=${{ matrix.pattern }}
 
           docker-compose --project-directory $PWD \
+          -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
+          up mockServer
+
+          sleep 10
+          
+          docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up --exit-code-from cypress
 
