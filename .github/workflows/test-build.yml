@@ -350,7 +350,7 @@ jobs:
           export BUILD_TAG=${{ github.sha }}
 
           export CYPRES_SPEC_PATTERN=${{ matrix.pattern }}
-
+          
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up --exit-code-from cypress
