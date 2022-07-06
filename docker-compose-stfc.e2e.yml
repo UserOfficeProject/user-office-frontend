@@ -124,5 +124,7 @@ services:
       - 1080:1080
   mockserver-client:
     image: "dmsc/stfc-mockserver-client:master"
+    ports:
+      - 443:443
     depends_on:
       - mockServer
