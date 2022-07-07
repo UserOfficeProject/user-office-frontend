@@ -353,10 +353,6 @@ jobs:
 
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
-            up mockServer
-
-          docker-compose --project-directory $PWD \
-            -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up --exit-code-from cypress
 
       - name: Upload cypres screenshots
