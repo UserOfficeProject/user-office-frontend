@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.1"
 services:
   duo-reverse-proxy:
     image: traefik:2.4 # The official Traefik docker image
