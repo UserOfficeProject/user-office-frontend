@@ -353,7 +353,7 @@ jobs:
 
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
-            up mockServer db duo-reverse-proxy factory clam-antivirus backend frontend mockserver-client cypress
+            up --exit-code-from cypress
 
       - name: Upload cypres screenshots
         if: ${{ failure() }}
