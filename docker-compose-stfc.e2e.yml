@@ -22,7 +22,7 @@ services:
     volumes:
       - "./${USER_OFFICE_BACKEND_DIR}/db_patches:/home/node/app/db_patches"
     environment:
-      DATABASE_URL: postgres://duouser:duopassword@duo-db:5432/duo
+      DATABASE_URL: postgres://duouser:duopassword@db:5432/duo
       secret: qMyLZALzs229ybdQXNyzYRdju7X784TH
       EXTERNAL_AUTH_TOKEN: abc
       NODE_ENV: development
@@ -97,7 +97,7 @@ services:
       secret: qMyLZALzs229ybdQXNyzYRdju7X784TH
       EXTERNAL_AUTH_TOKEN: abc
       NODE_ENV: development
-      DATABASE_CONNECTION_STRING: postgres://duouser:duopassword@duo-db:5432/duo
+      DATABASE_CONNECTION_STRING: postgres://duouser:duopassword@db:5432/duo
       UO_FEATURE_ALLOW_NO_SANDBOX: 1
       HEADER_LOGO_PATH: /config/logos/STFC-Logo.png
     ports:
