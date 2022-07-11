@@ -355,7 +355,7 @@ jobs:
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up --exit-code-from cypress
           
-          while ! nc -z mockServer 1080; do sleep 3; done
+          while ! nc -z mockServer 1080; do docker exec -it mockserver-client bash sleep 5; done
 
       - name: Upload cypres screenshots
         if: ${{ failure() }}
