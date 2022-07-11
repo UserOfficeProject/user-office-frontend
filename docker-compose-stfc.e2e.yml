@@ -79,13 +79,9 @@ services:
     depends_on:
       - duo-reverse-proxy
       - backend
-    environment:
-      # Needed to run the e2e tests on a local machine, see https://create-react-app.dev/docs/proxying-api-requests-in-development/#invalid-host-header-errors-after-configuring-proxy
-      # This is safe as we don't use the React proxy at all, we just rely on the Traefik reverse proxy
-      DANGEROUSLY_DISABLE_HOST_CHECK: "true"
     labels:
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
 
   factory:
     image: dmsc/duo-factory:${USER_OFFICE_FACTORY_TAG}
