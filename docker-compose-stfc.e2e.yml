@@ -63,8 +63,8 @@ services:
     entrypoint:
       [
         "/wait-for-frontend.sh",
-        "duo-reverse-proxy:8081",
-        "cypress run --spec ${CYPRES_SPEC_PATTERN} --browser chrome --config baseUrl=http://duo-reverse-proxy:8081 defaultCommandTimeout=15000"
+        "duo-reverse-proxy:80",
+        "cypress run --spec ${CYPRES_SPEC_PATTERN} --browser chrome --config baseUrl=http://duo-reverse-proxy:80 defaultCommandTimeout=15000"
       ]
     volumes:
       - "./${USER_OFFICE_FRONTEND_DIR}/cypress/screenshots:/tmp/screenshots"
