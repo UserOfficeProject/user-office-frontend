@@ -41,8 +41,8 @@ services:
       TZ: Europe/London
       ISIS_UO_EMAIL: isisuo@stfc.ac.uk
     labels:
-      - "traefik.http.routers.duo-backend.rule=PathPrefix(`/api`, `/graphql`, `/gateway`, `/download`, `/downloads`, `/files`, `/proposal`, `/uploads`)"
-      - "traefik.http.services.duo-backend.loadbalancer.server.port=4000"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`, `/graphql`, `/gateway`, `/download`, `/downloads`, `/files`, `/proposal`, `/uploads`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
 
   clam-antivirus:
     image: clamav/clamav:0.104
@@ -84,8 +84,8 @@ services:
       # This is safe as we don't use the React proxy at all, we just rely on the Traefik reverse proxy
       DANGEROUSLY_DISABLE_HOST_CHECK: "true"
     labels:
-      - "traefik.http.routers.duo-frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.services.duo-frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
   factory:
     image: dmsc/duo-factory:${USER_OFFICE_FACTORY_TAG}
@@ -102,7 +102,7 @@ services:
     ports:
       - "4500:4500"
     labels:
-      - "traefik.http.routers.user-office-factory.rule=PathPrefix(`/generate`, `/test-template`, `/version`, `/health-check`)"
+      - "traefik.http.routers.factory.rule=PathPrefix(`/generate`, `/test-template`, `/version`, `/health-check`)"
       - "traefik.port=4500"
 
   db:
