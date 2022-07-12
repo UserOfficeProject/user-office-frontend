@@ -12,8 +12,8 @@ pipeline {
     environment {
         IMPORT_TOKEN = credentials('proposals-template-import-token')
         EXPORT_TOKEN = credentials('proposals-template-export-token')
-        IMPORT_URL = https://devproposal.facilities.rl.ac.uk/graphql
-        EXPORT_URL = https://proposal.facilities.rl.ac.uk/graphql
+        IMPORT_URL = "https://devproposal.facilities.rl.ac.uk/graphql"
+        EXPORT_URL = "https://proposal.facilities.rl.ac.uk/graphql"
     }
     stages {
 
