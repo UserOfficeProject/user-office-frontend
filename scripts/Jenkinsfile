@@ -1,7 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'docker.io/library/node:16.13.2'
+            registryUrl 'https://docker.io'
+            image 'node:16.13.2'
         }
     }
 
