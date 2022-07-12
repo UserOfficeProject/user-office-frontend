@@ -1,6 +1,7 @@
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CalendarToday from '@mui/icons-material/CalendarToday';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import EventIcon from '@mui/icons-material/Event';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -123,6 +124,14 @@ const SettingsMenuListItem = () => {
               <ViewModuleIcon />
             </ListItemIcon>
             <ListItemText primary="Features" />
+          </ListItem>
+        </Tooltip>
+        <Tooltip title="App settings">
+          <ListItem component={NavLink} to="/Settings" button>
+            <ListItemIcon>
+              <DisplaySettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="App settings" />
           </ListItem>
         </Tooltip>
       </Collapse>
@@ -326,17 +335,6 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
     </div>
   );
 
-  const SEPReviewer = (
-    <div data-cy="SEPReviewer-menu-items">
-      <ListItem component={NavLink} to="/" exact button>
-        <ListItemIcon>
-          <FolderOpen />
-        </ListItemIcon>
-        <ListItemText primary="Review Proposals" />
-      </ListItem>
-    </div>
-  );
-
   const instrumentScientist = (
     <div data-cy="instrument-scientist-menu-items">
       <ListItem component={NavLink} to="/" exact button>
@@ -379,9 +377,8 @@ const MenuItems: React.FC<MenuItemsProps> = ({ currentRole, callsData }) => {
       return instrumentScientist;
     case UserRole.SEP_CHAIR:
     case UserRole.SEP_SECRETARY:
-      return SEPRoles;
     case UserRole.SEP_REVIEWER:
-      return SEPReviewer;
+      return SEPRoles;
     case UserRole.SAMPLE_SAFETY_REVIEWER:
       return sampleSafetyReviewer;
     default:

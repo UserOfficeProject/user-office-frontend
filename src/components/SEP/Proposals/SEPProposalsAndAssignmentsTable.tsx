@@ -17,12 +17,12 @@ import ProposalReviewContent, {
 } from 'components/review/ProposalReviewContent';
 import ProposalReviewModal from 'components/review/ProposalReviewModal';
 import {
-  SepAssignment,
   UserRole,
   ReviewWithNextProposalStatus,
   ProposalStatus,
   Review,
   SettingsId,
+  Sep,
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
@@ -38,6 +38,7 @@ import {
   standardDeviation,
 } from 'utils/mathFunctions';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
+import { getFullUserName } from 'utils/user';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import AssignSEPMemberToProposal, {
@@ -46,8 +47,10 @@ import AssignSEPMemberToProposal, {
 import SEPAssignedReviewersTable from './SEPAssignedReviewersTable';
 
 type SEPProposalsAndAssignmentsTableProps = {
-  /** Id of the SEP we are assigning members to */
-  sepId: number;
+  /** SEP we are assigning members to */
+  data: Sep;
+  /** Call this function in case of SEP assigned members update */
+  onAssignmentsUpdate: (sep: Sep) => void;
   /** Toolbar component shown in the table */
   Toolbar: (data: Options<JSX.Element>) => JSX.Element;
   /** Call id that we want to filter by */
@@ -130,12 +133,12 @@ const SEPProposalColumns = [
 
 const SEPProposalsAndAssignmentsTable: React.FC<
   SEPProposalsAndAssignmentsTableProps
-> = ({ sepId, selectedCallId, Toolbar, confirm }) => {
+> = ({ data, onAssignmentsUpdate, selectedCallId, Toolbar, confirm }) => {
   const [urlQueryParams, setUrlQueryParams] = useQueryParams({
     reviewModal: NumberParam,
   });
   const { loadingSEPProposals, SEPProposalsData, setSEPProposalsData } =
-    useSEPProposalsData(sepId, selectedCallId);
+    useSEPProposalsData(data.id, selectedCallId);
   const { api } = useDataApiWithFeedback();
   const [proposalPk, setProposalPk] = useState<null | number>(null);
   const downloadPDFProposal = useDownloadPDFProposal();
@@ -202,7 +205,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       proposalPks: proposalsToRemove.map(
         (proposalToRemove) => proposalToRemove.proposalPk
       ),
-      sepId,
+      sepId: data.id,
     });
 
     setSEPProposalsData((sepProposalData) =>
@@ -231,8 +234,6 @@ const SEPProposalsAndAssignmentsTable: React.FC<
   const assignMemberToSEPProposal = async (
     assignedMembers: SepAssignedMember[]
   ) => {
-    setProposalPk(null);
-
     if (!proposalPk) {
       return;
     }
@@ -244,8 +245,10 @@ const SEPProposalsAndAssignmentsTable: React.FC<
     }).assignSepReviewersToProposal({
       memberIds: assignedMembers.map(({ id }) => id),
       proposalPk: proposalPk,
-      sepId,
+      sepId: data.id,
     });
+
+    setProposalPk(null);
 
     if (rejection) {
       return;
@@ -265,6 +268,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
           const newAssignments: SEPProposalAssignmentType[] = [
             ...(proposalItem.assignments ?? []),
             ...assignedMembers.map(({ role = null, ...user }) => ({
+              proposalPk: proposalItem.proposalPk,
               sepMemberUserId: user.id,
               dateAssigned: DateTime.now(),
               user,
@@ -284,6 +288,107 @@ const SEPProposalsAndAssignmentsTable: React.FC<
         }
       })
     );
+
+    onAssignmentsUpdate({
+      ...data,
+      sepChairProposalCount: assignedMembers.find(
+        (assignedMember) => assignedMember.id === data.sepChair?.id
+      )
+        ? (data.sepChairProposalCount || 0) + 1
+        : data.sepChairProposalCount,
+      sepSecretaryProposalCount: assignedMembers.find(
+        (assignedMember) => assignedMember.id === data.sepSecretary?.id
+      )
+        ? (data.sepSecretaryProposalCount || 0) + 1
+        : data.sepSecretaryProposalCount,
+    });
+  };
+
+  const handleMemberAssignmentToSEPProposal = (
+    memberUsers: SepAssignedMember[]
+  ) => {
+    const selectedProposal = SEPProposalsData.find(
+      (sepProposal) => sepProposal.proposalPk === proposalPk
+    );
+
+    if (!selectedProposal) {
+      return;
+    }
+
+    const selectedPI = memberUsers.find(
+      (member) => member.id === selectedProposal.proposal.proposer?.id
+    );
+    const selectedCoProposers = memberUsers.filter((member) =>
+      selectedProposal.proposal.users.find((user) => user.id === member.id)
+    );
+
+    const selectedReviewerWithSameOrganizationAsPI = memberUsers.find(
+      (member) =>
+        member.organizationId ===
+        selectedProposal.proposal.proposer?.organizationId
+    );
+
+    const selectedReviewerWithSameOrganizationAsCoProposers =
+      memberUsers.filter((member) =>
+        selectedProposal.proposal.users.find(
+          (user) => user.organizationId === member.organizationId
+        )
+      );
+
+    const shouldShowWarning =
+      !!selectedPI ||
+      !!selectedCoProposers.length ||
+      selectedReviewerWithSameOrganizationAsPI ||
+      selectedReviewerWithSameOrganizationAsCoProposers;
+
+    if (shouldShowWarning) {
+      confirm(() => assignMemberToSEPProposal(memberUsers), {
+        title: 'SEP reviewers assignment',
+        description: ' ',
+        shouldEnableOKWithAlert: true,
+        alertText: (
+          <>
+            Some of the selected reviewers are already part of the proposal as a
+            PI/Co-proposer or belong to the same organization{' '}
+            <strong>
+              <ul>
+                {!!selectedPI && <li>PI: {getFullUserName(selectedPI)}</li>}
+                {!!selectedCoProposers.length && (
+                  <li>
+                    Co-proposers:{' '}
+                    {selectedCoProposers
+                      .map((selectedCoProposer) =>
+                        getFullUserName(selectedCoProposer)
+                      )
+                      .join(', ')}
+                  </li>
+                )}
+                {!!selectedReviewerWithSameOrganizationAsPI && (
+                  <li>
+                    Same organization as PI:{' '}
+                    {getFullUserName(selectedReviewerWithSameOrganizationAsPI)}
+                  </li>
+                )}
+                {!!selectedReviewerWithSameOrganizationAsCoProposers.length && (
+                  <li>
+                    Same organization as co-proposers:{' '}
+                    {selectedReviewerWithSameOrganizationAsCoProposers
+                      .map((selectedCoProposer) =>
+                        getFullUserName(selectedCoProposer)
+                      )
+                      .join(', ')}
+                  </li>
+                )}
+              </ul>
+            </strong>
+            . Are you sure you want to assign all selected users to the SEP
+            proposal?
+          </>
+        ),
+      })();
+    } else {
+      assignMemberToSEPProposal(memberUsers);
+    }
   };
 
   const initialValues: SEPProposalType[] = SEPProposalsData;
@@ -312,7 +417,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       const updateReviewStatusAndGrade = (
         sepProposalData: SEPProposalType[],
         editingProposalData: SEPProposalType,
-        currentAssignment: SepAssignment
+        currentAssignment: SEPProposalAssignmentType
       ) => {
         const newProposalsData =
           sepProposalData?.map((sepProposalsData) => {
@@ -353,7 +458,7 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       };
 
       const removeAssignedReviewer = async (
-        assignedReviewer: SepAssignment,
+        assignedReviewer: SEPProposalAssignmentType,
         proposalPk: number
       ): Promise<void> => {
         /**
@@ -364,14 +469,14 @@ const SEPProposalsAndAssignmentsTable: React.FC<
           toastSuccessMessage: 'Reviewer removed',
         }).removeMemberFromSEPProposal({
           proposalPk,
-          sepId,
+          sepId: data.id,
           memberId: assignedReviewer.sepMemberUserId as number,
         });
 
         assignedReviewer.review &&
           (await api().removeUserForReview({
             reviewId: assignedReviewer.review.id,
-            sepId,
+            sepId: data.id,
           }));
 
         setSEPProposalsData((sepProposalData) =>
@@ -393,25 +498,65 @@ const SEPProposalsAndAssignmentsTable: React.FC<
             }
           })
         );
+
+        onAssignmentsUpdate({
+          ...data,
+          sepChairProposalCount:
+            assignedReviewer.sepMemberUserId === data.sepChair?.id
+              ? data.sepChairProposalCount! - 1
+              : data.sepChairProposalCount,
+          sepSecretaryProposalCount:
+            assignedReviewer.sepMemberUserId === data.sepSecretary?.id
+              ? data.sepSecretaryProposalCount! - 1
+              : data.sepSecretaryProposalCount,
+        });
+      };
+
+      const loadSEPProposal = async (proposalPk: number) => {
+        return api()
+          .getSEPProposal({ sepId: data.id, proposalPk })
+          .then((data) => {
+            return data.sepProposal;
+          });
+      };
+
+      const updateSEPProposalAssignmentsView = async (
+        currentAssignment: SEPProposalAssignmentType,
+        shouldRefreshProposalAssignments?: boolean
+      ) => {
+        if (shouldRefreshProposalAssignments) {
+          const refreshedSepProposal = await loadSEPProposal(
+            currentAssignment.proposalPk
+          );
+          setSEPProposalsData((sepProposalsData) => {
+            return sepProposalsData.map((sepProposal) => ({
+              ...sepProposal,
+              assignments:
+                refreshedSepProposal?.proposalPk === sepProposal.proposalPk
+                  ? refreshedSepProposal?.assignments
+                  : sepProposal.assignments,
+            }));
+          });
+        } else {
+          setSEPProposalsData((sepProposalData) =>
+            updateReviewStatusAndGrade(
+              sepProposalData,
+              rowData,
+              currentAssignment
+            )
+          );
+        }
       };
 
       return (
         <SEPAssignedReviewersTable
           sepProposal={rowData}
           removeAssignedReviewer={removeAssignedReviewer}
-          updateView={(currentAssignment) => {
-            setSEPProposalsData((sepProposalData) =>
-              updateReviewStatusAndGrade(
-                sepProposalData,
-                rowData,
-                currentAssignment
-              )
-            );
-          }}
+          updateView={updateSEPProposalAssignmentsView}
         />
       );
     },
-    [setSEPProposalsData, sepId, api]
+    [setSEPProposalsData, data, onAssignmentsUpdate, api]
   );
 
   const SEPProposalsWitIdAndFormattedDate = initialValues.map((sepProposal) =>
@@ -449,13 +594,11 @@ const SEPProposalsAndAssignmentsTable: React.FC<
       >
         <DialogContent>
           <AssignSEPMemberToProposal
-            sepId={sepId}
+            sepId={data.id}
             assignedMembers={
               proposalAssignments?.map((assignment) => assignment.user) ?? []
             }
-            assignMemberToSEPProposal={(memberUser) =>
-              assignMemberToSEPProposal(memberUser)
-            }
+            assignMemberToSEPProposal={handleMemberAssignmentToSEPProposal}
           />
         </DialogContent>
       </Dialog>

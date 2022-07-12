@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 import { UserRole } from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
@@ -38,17 +38,6 @@ context('General scientific evaluation panel tests', () => {
     cy.get('[data-cy="profile-page-btn"]').should('exist');
 
     cy.get('[data-cy="user-menu-items"]').as('userMenuItems');
-
-    cy.get('@userMenuItems').should('not.contain', 'SEPs');
-  });
-
-  it('SEP REviewer should not able to see SEPs page', () => {
-    cy.login(sepMembers.reviewer);
-    cy.visit('/');
-
-    cy.get('[data-cy="profile-page-btn"]').should('exist');
-
-    cy.get('[data-cy="SEPReviewer-menu-items"]').as('userMenuItems');
 
     cy.get('@userMenuItems').should('not.contain', 'SEPs');
   });

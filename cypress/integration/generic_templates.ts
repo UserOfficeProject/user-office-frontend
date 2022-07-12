@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { DateTime } from 'luxon';
 
 import {
@@ -55,7 +55,7 @@ context('GenericTemplates tests', () => {
   let createdQuestion1Id: string;
 
   beforeEach(() => {
-    cy.resetDB(true);
+    cy.resetDB();
   });
 
   const createTemplateAndAllQuestions = () => {

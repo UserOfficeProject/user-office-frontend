@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 import { ReviewerFilter, TechnicalReviewStatus } from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
@@ -288,7 +288,10 @@ context('Instrument tests', () => {
       });
 
       cy.login(scientist2);
-
+      cy.updateTechnicalReviewAssignee({
+        proposalPks: createdProposalPk,
+        userId: scientist2.id,
+      });
       cy.addProposalTechnicalReview({
         proposalPk: createdProposalPk,
         reviewerId: scientist2.id,
