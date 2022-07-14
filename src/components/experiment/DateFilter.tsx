@@ -1,6 +1,6 @@
 import { DatePicker, LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterLuxon';
-import { Stack, TextField } from '@mui/material';
+import { Stack, TextField, TextFieldProps } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
 import React from 'react';
@@ -95,7 +95,7 @@ function DateFilter(props: DateFilterProps) {
             setPresetValue(null);
           }}
           className={classes.datePicker}
-          renderInput={(tfProps) => (
+          renderInput={(tfProps: JSX.IntrinsicAttributes & TextFieldProps) => (
             <TextField
               {...tfProps}
               style={{ margin: '0 16px 16px 0' }}
@@ -116,7 +116,7 @@ function DateFilter(props: DateFilterProps) {
             setPresetValue(null);
           }}
           className={classes.datePicker}
-          renderInput={(tfProps) => (
+          renderInput={(tfProps: JSX.IntrinsicAttributes & TextFieldProps) => (
             <TextField
               {...tfProps}
               style={{ margin: '0 16px 16px 0' }}
