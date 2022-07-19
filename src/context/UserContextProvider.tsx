@@ -156,10 +156,14 @@ const reducer = (
   }
 };
 
-function getSecondLevelDomain(hostname: string): string {
+function getCookieDomain(hostname: string): string {
   const parts = hostname.split('.');
-  if (parts.length > 1) {
-    return '.' + parts[parts.length - 2] + '.' + parts[parts.length - 1]; // e.g. example.com
+  if (parts.length > 2) {
+    // e.g. "www.example.com"
+    const parts = hostname.split('.');
+    parts.shift(); // remove the first part
+
+    return parts.join('.');
   } else {
     return hostname; // e.g. localhost
   }
@@ -178,7 +182,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     setCookie('token', state.token, {
       path: '/',
       secure: false,
-      domain: getSecondLevelDomain(hostname),
+      domain: getCookieDomain(hostname),
       sameSite: 'lax',
     });
   }, [setCookie, state]);
