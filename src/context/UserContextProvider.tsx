@@ -163,7 +163,7 @@ function getCookieDomain(hostname: string): string {
     const parts = hostname.split('.');
     parts.shift(); // remove the first part
 
-    return parts.join('.');
+    return `.${parts.join('.')}`;
   } else {
     return hostname; // e.g. localhost
   }
