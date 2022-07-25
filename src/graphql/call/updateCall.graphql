@@ -22,6 +22,7 @@ mutation updateCall(
   $title: String
   $description: String
   $isActive: Boolean
+  $seps: [Int!]
 ) {
   updateCall(
     updateCallInput: {
@@ -48,6 +49,7 @@ mutation updateCall(
       title: $title
       description: $description
       isActive: $isActive
+      seps: $seps
     }
   ) {
     rejection {
