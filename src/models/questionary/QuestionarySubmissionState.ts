@@ -3,7 +3,7 @@ import produce, { Draft } from 'immer';
 import { Reducer } from 'react';
 
 import { getQuestionaryDefinition } from 'components/questionary/QuestionaryRegistry';
-import { TemplateGroupId } from 'generated/sdk';
+import { GenericTemplateFragment, Maybe, TemplateGroupId } from 'generated/sdk';
 import { Answer, Questionary, QuestionaryStep } from 'generated/sdk';
 import { deepClone } from 'utils/json';
 import { clamp } from 'utils/Math';
@@ -13,6 +13,7 @@ import {
 } from 'utils/useReducerWithMiddleWares';
 
 import { SampleFragment } from './../../generated/sdk';
+import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
 import { StepType } from './StepType';
@@ -53,7 +54,25 @@ export type Event =
       sampleEsi: SampleEsiWithQuestionary;
     }
   | { type: 'ESI_SAMPLE_ESI_UPDATED'; sampleEsi: SampleEsiWithQuestionary }
-  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number };
+  | { type: 'ESI_SAMPLE_ESI_DELETED'; sampleId: number }
+  | {
+      type: 'SAMPLE_DECLARATION_ITEMS_MODIFIED';
+      id: string;
+      newItems: Maybe<
+        (SampleFragment & {
+          questionary: Pick<Questionary, 'isCompleted'>;
+        })[]
+      >;
+    }
+  | {
+      type: 'GENERIC_TEMPLATE_ITEMS_MODIFIED';
+      id: string;
+      newItems: Maybe<
+        (GenericTemplateFragment & {
+          questionary: Pick<Questionary, 'isCompleted'>;
+        })[]
+      >;
+    };
 
 export interface WizardStepMetadata {
   title: string;
@@ -160,6 +179,20 @@ export function QuestionarySubmissionModel<
             action.id
           ) as Answer;
           field.value = action.newValue;
+          draftState.isDirty = true;
+          break;
+        case 'SAMPLE_DECLARATION_ITEMS_MODIFIED':
+          // NOTE: For now we need to use 'unknown' because it doesn't accept the ProposalSubmissionState directly but the state can be of that type.
+          const newSampleDeclarationState =
+            draftState as unknown as ProposalSubmissionState;
+          newSampleDeclarationState.proposal.samples = action.newItems;
+          draftState.isDirty = true;
+          break;
+        case 'GENERIC_TEMPLATE_ITEMS_MODIFIED':
+          // NOTE: For now we need to use 'unknown' because it doesn't accept the ProposalSubmissionState directly but the state can be of that type.
+          const newGenericTemplatesState =
+            draftState as unknown as ProposalSubmissionState;
+          newGenericTemplatesState.proposal.genericTemplates = action.newItems;
           draftState.isDirty = true;
           break;
 
