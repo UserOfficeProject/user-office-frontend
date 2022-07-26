@@ -120,7 +120,7 @@ const login = (
     | 'user2'
     | 'placeholderUser'
     | { email: string; password: string }
-): Cypress.Chainable<LoginMutation | ExternalTokenLoginMutation> => {
+) => {
   const credentials =
     typeof roleOrCredentials === 'string'
       ? testCredentialStore[roleOrCredentials]
@@ -130,40 +130,29 @@ const login = (
     if (typeof roleOrCredentials !== 'string') {
       throw new Error('Role not authorised to login');
     }
-
-    return externalTokenLogin(roleOrCredentials).then(() =>
-      changeActiveRole(roleOrCredentials === 'user' ? 1 : 2)
-    );
   }
 
-  const api = getE2EApi();
-  const request = api.login(credentials).then((resp) => {
-    if (!resp.login.token) {
-      return resp;
-    }
+  cy.visit('/');
 
-    const { currentRole, user, exp } = jwtDecode(
-      resp.login.token
-    ) as DecodedTokenData;
+  cy.get('[data-cy=input-email] input').type(credentials.email);
 
-    window.localStorage.setItem('token', resp.login.token);
-    window.localStorage.setItem(
-      'currentRole',
-      currentRole.shortCode.toUpperCase()
-    );
-    window.localStorage.setItem('expToken', `${exp}`);
-    window.localStorage.setItem('user', JSON.stringify(user));
+  cy.get('[data-cy=input-password] input').type(credentials.password);
 
-    return resp;
-  });
+  cy.get('[data-cy=submit]').click();
 
-  return cy.wrap(request);
+  cy.get('[data-cy=continue]').click();
 };
 
 const logout = () => {
   cy.get('[data-cy=profile-page-btn]').click();
 
   cy.get('[data-cy=logout]').click();
+
+  cy.contains('Yes, sign me out').click();
+
+  cy.contains('Sign-out Success');
+
+  cy.visit('http://localhost:3000/');
 };
 
 const createUser = (
