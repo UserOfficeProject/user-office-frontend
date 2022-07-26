@@ -22,6 +22,7 @@ import { SettingsContext } from 'context/SettingsContextProvider';
 import { UserContext, UserContextProvider } from 'context/UserContextProvider';
 import { FeatureId, SettingsId } from 'generated/sdk';
 import { getUnauthorizedApi } from 'hooks/common/useDataApi';
+import clearSession from 'utils/clearSession';
 
 import DashBoard from './DashBoard';
 import Theme from './theme/theme';
@@ -31,7 +32,6 @@ import ResetPassword from './user/ResetPassword';
 import ResetPasswordEmail from './user/ResetPasswordEmail';
 import SharedAuth from './user/SharedAuth';
 import SignIn from './user/SignIn';
-import SignUp from './user/SignUp';
 
 const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
   if (!component) {
@@ -101,7 +101,6 @@ const Routes: React.FC<RouteProps> = () => {
     return (
       <div className="App">
         <Switch>
-          <Route path="/SignUp" component={SignUp} />
           <Route path="/SignIn" component={SignIn} />
           <Route path="/shared-auth" component={SharedAuth} />
           <Route path="/ResetPasswordEmail" component={ResetPasswordEmail} />
@@ -127,11 +126,7 @@ class App extends React.Component {
       currentRole: localStorage.getItem('currentRole'),
     };
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentRole');
-    localStorage.removeItem('user');
-    localStorage.removeItem('expToken');
-    localStorage.removeItem('impersonatingUserId');
+    clearSession();
 
     return { errorUserInformation };
   }

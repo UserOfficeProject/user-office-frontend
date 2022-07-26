@@ -610,11 +610,6 @@ export type IntervalConfig = {
   units: Array<Unit>;
 };
 
-export type LogoutTokenWrap = {
-  rejection: Maybe<Rejection>;
-  token: Maybe<Scalars['String']>;
-};
-
 export type MoveProposalWorkflowStatusInput = {
   from: IndexWithGroupId;
   proposalWorkflowId: Scalars['Int'];
@@ -624,6 +619,7 @@ export type MoveProposalWorkflowStatusInput = {
 export type Mutation = {
   addClientLog: SuccessResponseWrap;
   addProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
+  addReview: ReviewWithNextStatusResponseWrap;
   addSamplesToShipment: ShipmentResponseWrap;
   addStatusChangingEventsToConnection: ProposalStatusChangingEventResponseWrap;
   addTechnicalReview: TechnicalReviewResponseWrap;
@@ -669,6 +665,7 @@ export type Mutation = {
   createUserByEmailInvite: CreateUserByEmailInviteResponseWrap;
   createVisit: VisitResponseWrap;
   createVisitRegistration: VisitRegistrationResponseWrap;
+  createVisitRegistrationQuestionary: VisitRegistrationResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   deleteCall: CallResponseWrap;
   deleteFeedback: FeedbackResponseWrap;
@@ -697,7 +694,7 @@ export type Mutation = {
   importTemplate: TemplateResponseWrap;
   importUnits: UnitsResponseWrap;
   login: TokenResponseWrap;
-  logout: LogoutTokenWrap;
+  logout: TokenResponseWrap;
   mergeInstitutions: InstitutionResponseWrap;
   moveProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
   notifyProposal: ProposalResponseWrap;
@@ -768,6 +765,15 @@ export type MutationAddClientLogArgs = {
 
 export type MutationAddProposalWorkflowStatusArgs = {
   newProposalWorkflowStatusInput: AddProposalWorkflowStatusInput;
+};
+
+
+export type MutationAddReviewArgs = {
+  comment: Scalars['String'];
+  grade: Scalars['Int'];
+  reviewID: Scalars['Int'];
+  sepID: Scalars['Int'];
+  status: ReviewStatus;
 };
 
 
@@ -1034,15 +1040,12 @@ export type MutationCreateUserArgs = {
   lastname: Scalars['String'];
   middlename?: InputMaybe<Scalars['String']>;
   nationality: Scalars['Int'];
-  orcid: Scalars['String'];
-  orcidHash: Scalars['String'];
   organisation: Scalars['Int'];
   organizationCountry?: InputMaybe<Scalars['Int']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   position: Scalars['String'];
   preferredname?: InputMaybe<Scalars['String']>;
-  refreshToken: Scalars['String'];
   telephone: Scalars['String'];
   telephone_alt?: InputMaybe<Scalars['String']>;
   user_title?: InputMaybe<Scalars['String']>;
@@ -1065,6 +1068,11 @@ export type MutationCreateVisitArgs = {
 
 
 export type MutationCreateVisitRegistrationArgs = {
+  visitId: Scalars['Int'];
+};
+
+
+export type MutationCreateVisitRegistrationQuestionaryArgs = {
   visitId: Scalars['Int'];
 };
 
@@ -1578,14 +1586,12 @@ export type MutationUpdateUserArgs = {
   lastname?: InputMaybe<Scalars['String']>;
   middlename?: InputMaybe<Scalars['String']>;
   nationality?: InputMaybe<Scalars['Int']>;
-  orcid?: InputMaybe<Scalars['String']>;
   organisation?: InputMaybe<Scalars['Int']>;
   organizationCountry?: InputMaybe<Scalars['Int']>;
   otherOrganisation?: InputMaybe<Scalars['String']>;
   placeholder?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['String']>;
   preferredname?: InputMaybe<Scalars['String']>;
-  refreshToken?: InputMaybe<Scalars['String']>;
   roles?: InputMaybe<Array<Scalars['Int']>>;
   telephone?: InputMaybe<Scalars['String']>;
   telephone_alt?: InputMaybe<Scalars['String']>;
@@ -2763,6 +2769,7 @@ export enum SettingsId {
   DATE_FORMAT = 'DATE_FORMAT',
   DATE_TIME_FORMAT = 'DATE_TIME_FORMAT',
   EXTERNAL_AUTH_LOGIN_URL = 'EXTERNAL_AUTH_LOGIN_URL',
+  EXTERNAL_AUTH_LOGOUT_URL = 'EXTERNAL_AUTH_LOGOUT_URL',
   FEEDBACK_EXHAUST_DAYS = 'FEEDBACK_EXHAUST_DAYS',
   FEEDBACK_FREQUENCY_DAYS = 'FEEDBACK_FREQUENCY_DAYS',
   FEEDBACK_MAX_REQUESTS = 'FEEDBACK_MAX_REQUESTS',
@@ -3142,13 +3149,14 @@ export type User = {
   lastname: Scalars['String'];
   middlename: Maybe<Scalars['String']>;
   nationality: Maybe<Scalars['Int']>;
-  orcid: Scalars['String'];
+  oidcAccessToken: Maybe<Scalars['String']>;
+  oidcRefreshToken: Maybe<Scalars['String']>;
+  oidcSub: Maybe<Scalars['String']>;
   organisation: Scalars['Int'];
   placeholder: Scalars['Boolean'];
   position: Scalars['String'];
   preferredname: Maybe<Scalars['String']>;
   proposals: Array<Proposal>;
-  refreshToken: Scalars['String'];
   reviews: Array<Review>;
   roles: Array<Role>;
   seps: Array<Sep>;
@@ -4775,9 +4783,6 @@ export type CreateUserMutationVariables = Exact<{
   lastname: Scalars['String'];
   password: Scalars['String'];
   preferredname?: InputMaybe<Scalars['String']>;
-  orcid: Scalars['String'];
-  orcidHash: Scalars['String'];
-  refreshToken: Scalars['String'];
   gender: Scalars['String'];
   nationality: Scalars['Int'];
   birthdate: Scalars['DateTime'];
@@ -4888,12 +4893,12 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { user: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: any, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, orcid: string, emailVerified: boolean, placeholder: boolean } | null };
+export type GetUserQuery = { user: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: any, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, oidcSub: string | null, emailVerified: boolean, placeholder: boolean } | null };
 
 export type GetUserMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserMeQuery = { me: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: any, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, orcid: string, emailVerified: boolean, placeholder: boolean } | null };
+export type GetUserMeQuery = { me: { user_title: string, username: string, firstname: string, middlename: string | null, lastname: string, preferredname: string | null, gender: string, nationality: number | null, birthdate: any, organisation: number, department: string, position: string, email: string, telephone: string, telephone_alt: string | null, oidcSub: string | null, emailVerified: boolean, placeholder: boolean } | null };
 
 export type GetUserProposalsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -8575,7 +8580,7 @@ export const CheckTokenDocument = gql`
 }
     `;
 export const CreateUserDocument = gql`
-    mutation createUser($user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $password: String!, $preferredname: String, $orcid: String!, $orcidHash: String!, $refreshToken: String!, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String, $organizationCountry: Int) {
+    mutation createUser($user_title: String, $firstname: String!, $middlename: String, $lastname: String!, $password: String!, $preferredname: String, $gender: String!, $nationality: Int!, $birthdate: DateTime!, $organisation: Int!, $department: String!, $position: String!, $email: String!, $telephone: String!, $telephone_alt: String, $otherOrganisation: String, $organizationCountry: Int) {
   createUser(
     user_title: $user_title
     firstname: $firstname
@@ -8583,9 +8588,6 @@ export const CreateUserDocument = gql`
     lastname: $lastname
     password: $password
     preferredname: $preferredname
-    orcid: $orcid
-    orcidHash: $orcidHash
-    refreshToken: $refreshToken
     gender: $gender
     nationality: $nationality
     birthdate: $birthdate
@@ -8761,7 +8763,7 @@ export const GetUserDocument = gql`
     email
     telephone
     telephone_alt
-    orcid
+    oidcSub
     emailVerified
     placeholder
   }
@@ -8785,7 +8787,7 @@ export const GetUserMeDocument = gql`
     email
     telephone
     telephone_alt
-    orcid
+    oidcSub
     emailVerified
     placeholder
   }

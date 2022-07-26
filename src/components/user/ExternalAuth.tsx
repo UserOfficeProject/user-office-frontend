@@ -1,4 +1,4 @@
-import { Link } from '@mui/material';
+import { Alert, AlertTitle, Grid, Link } from '@mui/material';
 import React, { useContext, useEffect, useRef } from 'react';
 import { StringParam, useQueryParams } from 'use-query-params';
 
@@ -11,6 +11,7 @@ const ExternalAuthQueryParams = {
   sessionid: StringParam,
   token: StringParam,
   code: StringParam,
+  error_description: StringParam,
 };
 
 function ExternalAuth() {
@@ -35,6 +36,11 @@ function ExternalAuth() {
     isFirstRun.current = false;
 
     if (!externalToken) {
+      setError(
+        urlQueryParams.error_description ??
+          'Could not log in. Identity provider did not return a token.'
+      );
+
       return;
     }
 
@@ -48,7 +54,7 @@ function ExternalAuth() {
         }
         if (token.externalTokenLogin) {
           handleLogin(token.externalTokenLogin.token);
-          const landingUrl = localStorage.getItem('landingUrl');
+          const landingUrl = localStorage.getItem('landingUrl'); // redirect to originally requested page successful after login
           localStorage.removeItem('landingUrl');
           window.location.href = landingUrl ?? '/';
         } else {
@@ -63,13 +69,24 @@ function ExternalAuth() {
     externalToken,
     unauthorizedApi,
     externalAuthLoginUrl,
+    urlQueryParams.error_description,
   ]);
 
   if (error) {
     return (
-      <div>
-        Error occurred: {error}. <Link href="/">Go to frontpage</Link>
-      </div>
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        paddingTop={4}
+      >
+        <Alert severity="error">
+          <AlertTitle>{error}</AlertTitle>
+          <Link href="/">Return to frontpage</Link>
+        </Alert>
+      </Grid>
     );
   }
 
