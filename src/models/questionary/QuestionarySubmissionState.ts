@@ -13,7 +13,6 @@ import {
 } from 'utils/useReducerWithMiddleWares';
 
 import { SampleFragment } from './../../generated/sdk';
-import { ProposalSubmissionState } from './proposal/ProposalSubmissionState';
 import { getFieldById } from './QuestionaryFunctions';
 import { SampleEsiWithQuestionary } from './sampleEsi/SampleEsiWithQuestionary';
 import { StepType } from './StepType';
@@ -181,21 +180,6 @@ export function QuestionarySubmissionModel<
           field.value = action.newValue;
           draftState.isDirty = true;
           break;
-        case 'SAMPLE_DECLARATION_ITEMS_MODIFIED':
-          // NOTE: For now we need to use 'unknown' because it doesn't accept the ProposalSubmissionState directly but the state can be of that type.
-          const newSampleDeclarationState =
-            draftState as unknown as ProposalSubmissionState;
-          newSampleDeclarationState.proposal.samples = action.newItems;
-          draftState.isDirty = true;
-          break;
-        case 'GENERIC_TEMPLATE_ITEMS_MODIFIED':
-          // NOTE: For now we need to use 'unknown' because it doesn't accept the ProposalSubmissionState directly but the state can be of that type.
-          const newGenericTemplatesState =
-            draftState as unknown as ProposalSubmissionState;
-          newGenericTemplatesState.proposal.genericTemplates = action.newItems;
-          draftState.isDirty = true;
-          break;
-
         case 'CLEAN_DIRTY_STATE':
           draftState.isDirty = false;
           break;
