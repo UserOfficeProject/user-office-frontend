@@ -1,3 +1,6 @@
+// This script is to be run by jenkins to automatically import templates from production to develop
+// It can also be used to sync from develop to your local environment.
+
 const grapqlExportUrl = process.env.GRAPHQL_EXPORT_URL;
 const grapqlImportUrl = process.env.GRAPHQL_IMPORT_URL;
 
@@ -7,17 +10,13 @@ const importToken = process.env.IMPORT_TOKEN;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axiosDev = require('axios').create({
   headers: {
-    common: {
-      Authorization: importToken,
-    },
+    Authorization: importToken,
   },
 });
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const axiosProd = require('axios').create({
   headers: {
-    common: {
-      Authorization: exportToken,
-    },
+    Authorization: exportToken,
   },
 });
 
@@ -50,19 +49,7 @@ const validateTemplate = (json) =>
         json
         version
         exportDate
-        isValid
-        errors
-        questionComparisons {
-          newQuestion {
-            id
-          }
-          status
-          conflictResolutionStrategy
-        }
-        subTemplatesWithValidation {
-          json
-          version
-          exportDate
+        validationData {
           isValid
           errors
           questionComparisons {
@@ -71,10 +58,15 @@ const validateTemplate = (json) =>
             }
             status
             conflictResolutionStrategy
+          
           }
-        }
+          subTemplateValidationData {
+            errors
+            
+          }
       }
     }
+  }
   }
   
 `;
@@ -106,8 +98,7 @@ const importTemplate = `
 `;
 
 async function main() {
-  console.log(axiosDev.headers);
-
+  console.log('Getting template IDs...');
   const result = await axiosProd.post(grapqlExportUrl, {
     query: getTemplates,
   });
@@ -117,55 +108,91 @@ async function main() {
 
   const templates = result.data.data.templates;
 
-  templates.forEach(async (template) => {
-    const result = await axiosProd.post(grapqlExportUrl, {
-      query: exportTemplate(template.templateId),
-    });
-    const json = result.data.data.template.json;
-    const jsonstringfy = JSON.stringify(json);
+  for await (const template of templates) {
+    console.log('Getting template as json...');
+    const result = await axiosProd
+      .post(grapqlExportUrl, {
+        query: exportTemplate(template.templateId),
+      })
+      .catch((e) => console.log(e));
+    let json;
+    try {
+      json = result.data.data.template.json;
+    } catch (Exception) {
+      console.log(`Problem getting template: ${template.templateId}`);
+      console.log(JSON.stringify(result.data.errors[0]));
+      console.log('Skipping template...');
 
-    const validateTemplateResult = await axiosDev.post(grapqlImportUrl, {
-      query: validateTemplate(jsonstringfy),
-    });
+      continue;
+    }
+
+    console.log('Processing template...');
+    console.log('------------------------------------------------------------');
+    console.log(JSON.parse(json));
+
+    console.log('Validating template...');
+    const query = validateTemplate(JSON.stringify(json));
+    console.log(query);
+    const validateTemplateResult = await axiosDev
+      .post(grapqlImportUrl, {
+        query: query,
+      })
+      .catch((e) => console.error(e));
 
     const validationResult =
       validateTemplateResult.data.data.validateTemplateImport.validationResult;
+    console.log(
+      `validation result: ${JSON.stringify(validationResult, null, 2)}`
+    );
 
-    const templateConflictResolution = validationResult.questionComparisons.map(
-      (comparison) => {
+    const templateConflictResolution =
+      validationResult.validationData.questionComparisons.map((comparison) => {
         const question = comparison.newQuestion;
 
         return {
           itemId: question.id,
           strategy: 'USE_NEW',
         };
-      }
-    );
-
-    const subTemplatesConflictResolutions =
-      validationResult.subTemplatesWithValidation.map((template) => {
-        return template.questionComparisons.map((comparison) => {
-          const question = comparison.newQuestion;
-
-          return {
-            itemId: question.id,
-            strategy: 'USE_NEW',
-          };
-        });
       });
 
-    const importTemplateResult = await axiosDev.post(grapqlImportUrl, {
-      query: importTemplate,
-      variables: {
-        conflictResolutions: templateConflictResolution,
-        subTemplatesConflictResolutions: subTemplatesConflictResolutions,
-        templateAsJson: json,
-      },
-    });
+    let subTemplatesConflictResolutions;
+    if (
+      validationResult.validationData.subTemplateValidationData !== undefined &&
+      validationResult.validationData.subTemplateValidationData !== null
+    ) {
+      subTemplatesConflictResolutions =
+        validationResult.validationData.subTemplateValidationData.map(
+          (template) => {
+            template.questionComparisons = template.questionComparisons ?? [];
+
+            return template.questionComparisons.map((comparison) => {
+              const question = comparison.newQuestion;
+
+              return {
+                itemId: question.id,
+                strategy: 'USE_NEW',
+              };
+            });
+          }
+        );
+    }
+
+    console.log('Importing template...');
+    const importTemplateResult = await axiosDev
+      .post(grapqlImportUrl, {
+        query: importTemplate,
+        variables: {
+          conflictResolutions: templateConflictResolution,
+          subTemplatesConflictResolutions: subTemplatesConflictResolutions,
+          templateAsJson: json,
+        },
+      })
+      .catch((e) => console.error('Failed to import template, \n' + e));
 
     console.log('Template import result:');
     console.log(importTemplateResult.data.data);
-  });
+    console.log('------------------------------------------------------------');
+  }
 }
 
-main();
+main().catch((e) => console.error(e));
