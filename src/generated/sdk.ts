@@ -622,7 +622,6 @@ export type MoveProposalWorkflowStatusInput = {
 export type Mutation = {
   addClientLog: SuccessResponseWrap;
   addProposalWorkflowStatus: ProposalWorkflowConnectionResponseWrap;
-  addReview: ReviewWithNextStatusResponseWrap;
   addSamplesToShipment: ShipmentResponseWrap;
   addStatusChangingEventsToConnection: ProposalStatusChangingEventResponseWrap;
   addTechnicalReview: TechnicalReviewResponseWrap;
@@ -668,7 +667,6 @@ export type Mutation = {
   createUserByEmailInvite: CreateUserByEmailInviteResponseWrap;
   createVisit: VisitResponseWrap;
   createVisitRegistration: VisitRegistrationResponseWrap;
-  createVisitRegistrationQuestionary: VisitRegistrationResponseWrap;
   deleteApiAccessToken: SuccessResponseWrap;
   deleteCall: CallResponseWrap;
   deleteFeedback: FeedbackResponseWrap;
@@ -768,15 +766,6 @@ export type MutationAddClientLogArgs = {
 
 export type MutationAddProposalWorkflowStatusArgs = {
   newProposalWorkflowStatusInput: AddProposalWorkflowStatusInput;
-};
-
-
-export type MutationAddReviewArgs = {
-  comment: Scalars['String'];
-  grade: Scalars['Int'];
-  reviewID: Scalars['Int'];
-  sepID: Scalars['Int'];
-  status: ReviewStatus;
 };
 
 
@@ -1071,11 +1060,6 @@ export type MutationCreateVisitArgs = {
 
 
 export type MutationCreateVisitRegistrationArgs = {
-  visitId: Scalars['Int'];
-};
-
-
-export type MutationCreateVisitRegistrationQuestionaryArgs = {
   visitId: Scalars['Int'];
 };
 
@@ -1662,15 +1646,6 @@ export enum NumberValueConstraint {
   ONLY_POSITIVE = 'ONLY_POSITIVE'
 }
 
-export type OrcIdInformation = {
-  firstname: Maybe<Scalars['String']>;
-  lastname: Maybe<Scalars['String']>;
-  orcid: Maybe<Scalars['String']>;
-  orcidHash: Maybe<Scalars['String']>;
-  refreshToken: Maybe<Scalars['String']>;
-  token: Maybe<Scalars['String']>;
-};
-
 export type Page = {
   content: Maybe<Scalars['String']>;
   id: Scalars['Int'];
@@ -1987,7 +1962,6 @@ export type Query = {
   genericTemplate: Maybe<GenericTemplate>;
   genericTemplates: Maybe<Array<GenericTemplate>>;
   getFields: Maybe<Fields>;
-  getOrcIDInformation: Maybe<OrcIdInformation>;
   getPageContent: Maybe<Scalars['String']>;
   institutions: Maybe<Array<Institution>>;
   instrument: Maybe<Instrument>;
@@ -2143,11 +2117,6 @@ export type QueryGenericTemplateArgs = {
 
 export type QueryGenericTemplatesArgs = {
   filter?: InputMaybe<GenericTemplatesFilter>;
-};
-
-
-export type QueryGetOrcIdInformationArgs = {
-  authorizationCode: Scalars['String'];
 };
 
 
