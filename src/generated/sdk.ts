@@ -4860,13 +4860,6 @@ export type GetMyRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetMyRolesQuery = { me: { firstname: string, lastname: string, roles: Array<{ id: number, shortCode: string, title: string }> } | null };
 
-export type GetOrcIdInformationQueryVariables = Exact<{
-  authorizationCode: Scalars['String'];
-}>;
-
-
-export type GetOrcIdInformationQuery = { getOrcIDInformation: { firstname: string | null, lastname: string | null, orcid: string | null, orcidHash: string | null, refreshToken: string | null, token: string | null } | null };
-
 export type GetPreviousCollaboratorsQueryVariables = Exact<{
   userId: Scalars['Int'];
   filter?: InputMaybe<Scalars['String']>;
@@ -8701,18 +8694,6 @@ export const GetMyRolesDocument = gql`
   }
 }
     `;
-export const GetOrcIdInformationDocument = gql`
-    query getOrcIDInformation($authorizationCode: String!) {
-  getOrcIDInformation(authorizationCode: $authorizationCode) {
-    firstname
-    lastname
-    orcid
-    orcidHash
-    refreshToken
-    token
-  }
-}
-    `;
 export const GetPreviousCollaboratorsDocument = gql`
     query getPreviousCollaborators($userId: Int!, $filter: String, $first: Int, $offset: Int, $userRole: UserRole, $subtractUsers: [Int!]) {
   previousCollaborators(
@@ -9734,9 +9715,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getMyRoles(variables?: GetMyRolesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMyRolesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetMyRolesQuery>(GetMyRolesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getMyRoles', 'query');
-    },
-    getOrcIDInformation(variables: GetOrcIdInformationQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetOrcIdInformationQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetOrcIdInformationQuery>(GetOrcIdInformationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getOrcIDInformation', 'query');
     },
     getPreviousCollaborators(variables: GetPreviousCollaboratorsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPreviousCollaboratorsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPreviousCollaboratorsQuery>(GetPreviousCollaboratorsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPreviousCollaborators', 'query');
