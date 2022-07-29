@@ -137,6 +137,8 @@ jobs:
           export USER_OFFICE_BACKEND=http://backend:4000/graphql
           export USER_OFFICE_ENDPOINT=$USER_OFFICE_BACKEND
 
+          export USER_OFFICE_DEVELOPMENT_AUTHORIZATION_SERVER_TAG=${{ needs.resolve_dep.outputs.USER_OFFICE_DEVELOPMENT_AUTHORIZATION_SERVER_TAG }}
+
           export USER_OFFICE_FACTORY_ENDPOINT=noop
 
           docker-compose --project-directory $PWD \
