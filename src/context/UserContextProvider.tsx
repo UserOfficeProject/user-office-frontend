@@ -20,7 +20,7 @@ interface UserContextData {
   impersonatingUserId: number | undefined;
   handleLogin: React.Dispatch<string | null | undefined>;
   handleNewToken: React.Dispatch<string | null | undefined>;
-  handleLogout: () => void;
+  handleLogout: () => Promise<void>;
   handleRole: React.Dispatch<string | null | undefined>;
 }
 
@@ -47,7 +47,9 @@ const initUserData: UserContextData = {
   impersonatingUserId: undefined,
   handleLogin: (value) => value,
   handleNewToken: (value) => value,
-  handleLogout: () => null,
+  handleLogout: async () => {
+    return;
+  },
   handleRole: (value) => value,
 };
 

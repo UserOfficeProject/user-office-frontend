@@ -46,8 +46,8 @@ jobs:
             https://api.github.com/repos/UserOfficeProject/user-office-factory/branches
           )
           USER_OFFICE_DEVELOPMENT_AUTHORIZATION_SERVER_TAGS=$(check_feature ${{ github.head_ref }} \
-            https://registry.hub.docker.com/v1/repositories/dmsc/duo-oauth2-provider/tags \
-            https://github.com/UserOfficeProject/user-office-development-oidc-provider/branches
+            https://registry.hub.docker.com/v1/repositories/dmsc/duo-development-authorization-server/tags \
+            https://github.com/UserOfficeProject/user-office-development-authorization-server/branches
           )
 
           BE_TAG=develop

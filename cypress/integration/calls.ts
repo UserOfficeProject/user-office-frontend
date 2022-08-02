@@ -151,8 +151,7 @@ context('Calls tests', () => {
 
       cy.contains('Invalid Date');
 
-      // NOTE: Luxon adapter still doesn't work well with newest MUI lab version
-      // to support placeholder text (https://github.com/mui/material-ui/issues/29851)
+      // NOTE: Luxon adapter still doesn't work well with newest MUI lab version to support placeholder text (https://github.com/mui/material-ui/issues/29851)
       cy.get('[data-cy=start-date] input')
         .clear()
         .type(invalidPastDate)
