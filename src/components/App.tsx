@@ -31,7 +31,6 @@ import ExternalAuth from './user/ExternalAuth';
 import ResetPassword from './user/ResetPassword';
 import ResetPasswordEmail from './user/ResetPasswordEmail';
 import SharedAuth from './user/SharedAuth';
-import SignIn from './user/SignIn';
 
 const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
   if (!component) {
@@ -101,7 +100,6 @@ const Routes: React.FC<RouteProps> = () => {
     return (
       <div className="App">
         <Switch>
-          <Route path="/SignIn" component={SignIn} />
           <Route path="/shared-auth" component={SharedAuth} />
           <Route path="/ResetPasswordEmail" component={ResetPasswordEmail} />
           <Route path="/ResetPassword/:token" component={ResetPassword} />

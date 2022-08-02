@@ -141,7 +141,11 @@ const AccountActionButton: React.FC = () => {
               </ImpersonateButton>
             </MenuItem>
           )}
-          <MenuItem data-cy="logout" onClick={handleOnLogout}>
+          <MenuItem
+            data-cy="logout"
+            onClick={handleOnLogout}
+            disabled={isLoggingOut}
+          >
             <Box paddingRight={1} paddingTop={1}>
               {isLoggingOut ? <UOLoader size={24} /> : <ExitToApp />}
             </Box>
