@@ -165,7 +165,7 @@ const logout = () => {
 
   cy.get('[data-cy=logout]').click();
 
-  cy.contains('#container');
+  cy.get('.container').should('exist');
 
   cy.visit('http://localhost:3000/');
 };
