@@ -161,11 +161,10 @@ const login = (
 };
 
 const logout = () => {
-  cy.get('[data-cy=profile-page-btn]').click();
-
-  cy.get('[data-cy=logout]').click();
-
-  cy.get('.container').should('exist');
+  window.localStorage.removeItem('token');
+  window.localStorage.removeItem('currentRole');
+  window.localStorage.removeItem('expToken');
+  window.localStorage.removeItem('user');
 
   cy.visit('http://localhost:3000/');
 };
