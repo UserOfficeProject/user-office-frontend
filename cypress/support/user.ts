@@ -166,7 +166,7 @@ const logout = () => {
   window.localStorage.removeItem('expToken');
   window.localStorage.removeItem('user');
 
-  cy.visit('http://localhost:3000/');
+  cy.visit('/');
 };
 
 const createUser = (
