@@ -165,9 +165,7 @@ const logout = () => {
 
   cy.get('[data-cy=logout]').click();
 
-  // cy.contains('Yes, sign me out').click();
-
-  cy.contains('Sign-out Success');
+  cy.contains('#container');
 
   cy.visit('http://localhost:3000/');
 };
