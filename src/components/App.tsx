@@ -1,4 +1,6 @@
 import Close from '@mui/icons-material/Close';
+import Lock from '@mui/icons-material/Lock';
+import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
@@ -10,6 +12,7 @@ import {
   Route,
   RouteProps,
   Switch,
+  useHistory,
 } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 
@@ -24,6 +27,8 @@ import { FeatureId, SettingsId } from 'generated/sdk';
 import { getUnauthorizedApi } from 'hooks/common/useDataApi';
 import clearSession from 'utils/clearSession';
 
+import AnimatedEllipsis from './AnimatedEllipsis';
+import CenteredAlert from './common/CenteredAlert';
 import DashBoard from './DashBoard';
 import Theme from './theme/theme';
 import EmailVerification from './user/EmailVerification';
@@ -49,6 +54,8 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
     SettingsId.EXTERNAL_AUTH_LOGIN_URL
   )?.settingsValue;
 
+  const history = useHistory();
+
   return (
     <UserContext.Consumer>
       {({ roles, token, currentRole, handleRole }): JSX.Element => (
@@ -60,7 +67,26 @@ const PrivateRoute: React.FC<RouteProps> = ({ component, ...rest }) => {
                 localStorage.setItem('landingUrl', props.location.pathname);
                 window.location.href = externalAuthLoginUrl;
 
-                return <p>Redirecting to external sign-in page...</p>;
+                return (
+                  <CenteredAlert
+                    severity="info"
+                    action={
+                      <Button
+                        color="inherit"
+                        size="small"
+                        variant="outlined"
+                        onClick={() => history.push('/')}
+                      >
+                        Cancel
+                      </Button>
+                    }
+                    icon={<Lock fontSize="medium" />}
+                  >
+                    <AnimatedEllipsis>
+                      Contacting authorization server
+                    </AnimatedEllipsis>
+                  </CenteredAlert>
+                );
               }
 
               return <Redirect to="/SignIn" />;
