@@ -572,6 +572,7 @@ export type InstitutionResponseWrap = {
 
 export type InstitutionsFilter = {
   isVerified?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type Instrument = {

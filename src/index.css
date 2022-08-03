@@ -215,9 +215,11 @@ h6 {
 .header-logo-container {
   height: 64px;
 }
+
 .ellipsisAnimation {
   position:relative;
 }
+
 .ellipsisAnimation::after {
   position: absolute;
   display: inline-block;
