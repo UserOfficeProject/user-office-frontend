@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+/** Message occupying full screen and displaying slightly customized MUI Alert component */
 function CenteredAlert(props: AlertProps) {
   const classes = useStyles();
 
