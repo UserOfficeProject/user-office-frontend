@@ -1982,7 +1982,6 @@ export type Query = {
   genericTemplates: Maybe<Array<GenericTemplate>>;
   getFields: Maybe<Fields>;
   getOrcIDInformation: Maybe<OrcIdInformation>;
-  getPageContent: Maybe<Scalars['String']>;
   institutions: Maybe<Array<Institution>>;
   instrument: Maybe<Instrument>;
   instrumentScientistHasAccess: Maybe<Scalars['Boolean']>;
@@ -1994,6 +1993,7 @@ export type Query = {
   me: Maybe<User>;
   myShipments: Maybe<Array<Shipment>>;
   myVisits: Array<Visit>;
+  pageContent: Maybe<Scalars['String']>;
   previousCollaborators: Maybe<UserQueryResult>;
   proposal: Maybe<Proposal>;
   proposalEvents: Maybe<Array<ProposalEvent>>;
@@ -2145,11 +2145,6 @@ export type QueryGetOrcIdInformationArgs = {
 };
 
 
-export type QueryGetPageContentArgs = {
-  id: PageName;
-};
-
-
 export type QueryInstitutionsArgs = {
   filter?: InputMaybe<InstitutionsFilter>;
 };
@@ -2191,6 +2186,11 @@ export type QueryInstrumentsBySepArgs = {
 
 export type QueryIsNaturalKeyPresentArgs = {
   naturalKey: Scalars['String'];
+};
+
+
+export type QueryPageContentArgs = {
+  id: PageName;
 };
 
 
@@ -3523,7 +3523,7 @@ export type GetPageContentQueryVariables = Exact<{
 }>;
 
 
-export type GetPageContentQuery = { getPageContent: string | null };
+export type GetPageContentQuery = { pageContent: string | null };
 
 export type GetQuantitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6225,7 +6225,7 @@ export const GetInstitutionsWithCountryDocument = gql`
     ${CountryFragmentDoc}`;
 export const GetPageContentDocument = gql`
     query getPageContent($id: PageName!) {
-  getPageContent(id: $id)
+  pageContent(id: $id)
 }
     `;
 export const GetQuantitiesDocument = gql`
