@@ -14,7 +14,7 @@ import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Institution } from 'generated/sdk';
-import { useGetFields } from 'hooks/user/useGetFields';
+import { useGetCountries } from 'hooks/user/useGetCountries';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import { Option } from 'utils/utilTypes';
 
@@ -29,7 +29,7 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
 }) => {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const history = useHistory();
-  const fieldsContent = useGetFields();
+  const countries = useGetCountries();
   const [countriesList, setCountriesList] = useState<Option[]>([]);
   const initialValues = institution
     ? {
@@ -43,17 +43,15 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
         verified: false,
       };
 
-  if (!fieldsContent) {
+  if (!countries) {
     return <UOLoader style={{ marginLeft: '50%', marginTop: '50px' }} />;
   }
 
-  if (!countriesList.length) {
-    setCountriesList(
-      fieldsContent.countries.map((country) => {
-        return { text: country.value, value: country.id };
-      })
-    );
-  }
+  setCountriesList(
+    countries.map((country) => {
+      return { text: country.value, value: country.id };
+    })
+  );
 
   const createInstitution = async (
     verified: boolean,
