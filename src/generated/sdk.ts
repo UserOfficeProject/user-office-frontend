@@ -3835,10 +3835,10 @@ export type GetInstrumentsQueryVariables = Exact<{
 
 export type GetInstrumentsQuery = { instruments: { totalCount: number, instruments: Array<{ id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, organizationId: number, position: string, created: any | null, placeholder: boolean | null, email: string | null }> }> } | null };
 
-export type GetUserInstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetMyInstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserInstrumentsQuery = { me: { instruments: Array<{ id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, organizationId: number, position: string, created: any | null, placeholder: boolean | null, email: string | null }> }> } | null };
+export type GetMyInstrumentsQuery = { me: { instruments: Array<{ id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, organizationId: number, position: string, created: any | null, placeholder: boolean | null, email: string | null }> }> } | null };
 
 export type InstrumentFragment = { id: number, name: string, shortCode: string, description: string, managerUserId: number, scientists: Array<{ id: number, firstname: string, lastname: string, preferredname: string | null, organisation: string, organizationId: number, position: string, created: any | null, placeholder: boolean | null, email: string | null }> };
 
@@ -6746,8 +6746,8 @@ export const GetInstrumentsDocument = gql`
   }
 }
     ${InstrumentFragmentDoc}`;
-export const GetUserInstrumentsDocument = gql`
-    query getUserInstruments {
+export const GetMyInstrumentsDocument = gql`
+    query getMyInstruments {
   me {
     instruments {
       ...instrument
@@ -9388,8 +9388,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getInstruments(variables?: GetInstrumentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInstrumentsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetInstrumentsQuery>(GetInstrumentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getInstruments', 'query');
     },
-    getUserInstruments(variables?: GetUserInstrumentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserInstrumentsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetUserInstrumentsQuery>(GetUserInstrumentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserInstruments', 'query');
+    getMyInstruments(variables?: GetMyInstrumentsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMyInstrumentsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetMyInstrumentsQuery>(GetMyInstrumentsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getMyInstruments', 'query');
     },
     removeProposalsFromInstrument(variables: RemoveProposalsFromInstrumentMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveProposalsFromInstrumentMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<RemoveProposalsFromInstrumentMutation>(RemoveProposalsFromInstrumentDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeProposalsFromInstrument', 'mutation');
