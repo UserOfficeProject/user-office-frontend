@@ -212,6 +212,7 @@ export type CreateCallInput = {
   endReview: Scalars['DateTime'];
   endSEPReview?: InputMaybe<Scalars['DateTime']>;
   esiTemplateId?: InputMaybe<Scalars['Int']>;
+  pdfTemplateId?: InputMaybe<Scalars['Float']>;
   proposalSequence?: InputMaybe<Scalars['Int']>;
   proposalWorkflowId: Scalars['Int'];
   referenceNumberFormat?: InputMaybe<Scalars['String']>;
