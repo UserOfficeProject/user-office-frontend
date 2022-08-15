@@ -42,8 +42,8 @@ import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useGetPageContent } from 'hooks/admin/useGetPageContent';
 import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
 import { useUnauthorizedApi } from 'hooks/common/useDataApi';
-import { useGetCountries } from 'hooks/user/useGetCountries';
-import { useGetNationalities } from 'hooks/user/useGetNationalities';
+import { useCountries } from 'hooks/user/useCountries';
+import { useNationalities } from 'hooks/user/useNationalities';
 import { useOrcIDInformation } from 'hooks/user/useOrcIDInformation';
 import orcid from 'images/orcid.png';
 import { Option } from 'utils/utilTypes';
@@ -163,8 +163,8 @@ const SignUp: React.FC<SignUpProps> = (props) => {
   const [, privacyPageContent] = useGetPageContent(PageName.PRIVACYPAGE);
   const [, cookiePageContent] = useGetPageContent(PageName.COOKIEPAGE);
 
-  const nationalities = useGetNationalities();
-  const countries = useGetCountries();
+  const nationalities = useNationalities();
+  const countries = useCountries();
   const { institutions, loadingInstitutions } = useInstitutionsData();
   const searchParams = queryString.parse(props.location.search);
   const authCodeOrcID = searchParams.code;

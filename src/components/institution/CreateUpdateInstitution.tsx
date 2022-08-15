@@ -14,7 +14,7 @@ import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import UOLoader from 'components/common/UOLoader';
 import { Institution } from 'generated/sdk';
-import { useGetCountries } from 'hooks/user/useGetCountries';
+import { useCountries } from 'hooks/user/useCountries';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 
 type CreateUpdateInstitutionProps = {
@@ -28,7 +28,7 @@ const CreateUpdateInstitution: React.FC<CreateUpdateInstitutionProps> = ({
 }) => {
   const { api, isExecutingCall } = useDataApiWithFeedback();
   const history = useHistory();
-  const countries = useGetCountries();
+  const countries = useCountries();
   const initialValues = institution
     ? {
         name: institution.name,

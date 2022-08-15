@@ -34,8 +34,8 @@ import {
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
 import { useInstitutionsData } from 'hooks/admin/useInstitutionData';
-import { useGetCountries } from 'hooks/user/useGetCountries';
-import { useGetNationalities } from 'hooks/user/useGetNationalities';
+import { useCountries } from 'hooks/user/useCountries';
+import { useNationalities } from 'hooks/user/useNationalities';
 import { useUserData } from 'hooks/user/useUserData';
 import orcid from 'images/orcid.png';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
@@ -75,8 +75,8 @@ export default function UpdateUserInformation(props: { id: number }) {
     settingsFormatToUse: SettingsId.DATE_FORMAT,
   });
   const { api } = useDataApiWithFeedback();
-  const nationalities = useGetNationalities();
-  const countries = useGetCountries();
+  const nationalities = useNationalities();
+  const countries = useCountries();
   const { institutions, loadingInstitutions } = useInstitutionsData();
   const [nationalitiesList, setNationalitiesList] = useState<Option[]>([]);
   const [institutionsList, setInstitutionsList] = useState<Option[]>([]);

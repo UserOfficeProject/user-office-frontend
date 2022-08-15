@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { useDataApi } from 'hooks/common/useDataApi';
 
-import { GetCountriesQuery } from './../../generated/sdk';
+import { GetCountriesQuery } from '../../generated/sdk';
 
-export function useGetCountries() {
+export function useCountries() {
   const [countries, setCountries] = useState<
     GetCountriesQuery['countries'] | null
   >(null);
