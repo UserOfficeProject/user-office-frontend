@@ -1,8 +1,10 @@
 import AddBox from '@mui/icons-material/AddBox';
+import { Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import React from 'react';
 
+import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import { useCheckAccess } from 'components/common/Can';
 import PeopleTable from 'components/user/PeopleTable';
 import ProposalPeopleTable from 'components/user/ProposalsPeopleTable';
@@ -51,7 +53,11 @@ function ParticipantModal(props: {
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
       open={props.show}
-      onClose={() => props.close()}
+      onClose={(_, reason) => {
+        if (reason && reason == 'backdropClick') return;
+        if (reason && reason == 'escapeKeyDown') return;
+        props.close();
+      }}
       maxWidth="sm"
       fullWidth
     >
@@ -59,6 +65,11 @@ function ParticipantModal(props: {
         {props.participant && !isUserOfficer
           ? proposalPeopleTable
           : peopleTable}
+        <ActionButtonContainer>
+          <Button onClick={() => props.close()} fullWidth variant="text">
+            Close
+          </Button>
+        </ActionButtonContainer>
       </DialogContent>
     </Dialog>
   );
