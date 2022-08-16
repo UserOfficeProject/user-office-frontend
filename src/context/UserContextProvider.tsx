@@ -7,7 +7,18 @@ import { useCookies } from 'react-cookie';
 import { Role, UserRole, User } from 'generated/sdk';
 import { useUnauthorizedApi } from 'hooks/common/useDataApi';
 
-export type BasicUser = Pick<User, 'id' | 'email'>;
+export type BasicUser = Pick<
+  User,
+  | 'id'
+  | 'email'
+  | 'firstname'
+  | 'lastname'
+  | 'organisation'
+  | 'preferredname'
+  | 'placeholder'
+  | 'created'
+  | 'position'
+>;
 
 interface UserContextData {
   user: BasicUser;
@@ -37,7 +48,17 @@ enum ActionType {
 }
 
 const initUserData: UserContextData = {
-  user: { id: 0, email: '' },
+  user: {
+    id: 0,
+    email: '',
+    firstname: '',
+    lastname: '',
+    organisation: 0,
+    created: '',
+    placeholder: false,
+    preferredname: '',
+    position: '',
+  },
   token: '',
   roles: [],
   currentRole: null,
@@ -156,6 +177,19 @@ const reducer = (
   }
 };
 
+function getCookieDomain(hostname: string): string {
+  const parts = hostname.split('.');
+  if (parts.length > 2) {
+    // e.g. "www.example.com"
+    const parts = hostname.split('.');
+    parts.shift(); // remove the first part
+
+    return `.${parts.join('.')}`;
+  } else {
+    return hostname; // e.g. localhost
+  }
+}
+
 export const UserContextProvider: React.FC = (props): JSX.Element => {
   const [state, dispatch] = React.useReducer(reducer, initUserData);
   const [, setCookie] = useCookies();
@@ -169,13 +203,23 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     setCookie('token', state.token, {
       path: '/',
       secure: false,
-      // looks like domains like `localhost` or `proxy` in e2e
-      // don't support .domain in browsers while setting cookies
-      // include the leading dot only for "real" domains
-      domain: hostname.includes('.') ? `.${hostname}` : hostname,
+      domain: getCookieDomain(hostname),
       sameSite: 'lax',
     });
   }, [setCookie, state]);
+
+  async function userLogoutHandler() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      await unauthorizedApi()
+        .logout({
+          token: token,
+        })
+        .finally(() => {
+          dispatch({ type: ActionType.LOGOFFUSER, payload: null });
+        });
+    }
+  }
 
   return (
     <UserContext.Provider
@@ -183,15 +227,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
         ...state,
         handleLogin: (data): void =>
           dispatch({ type: ActionType.LOGINUSER, payload: data }),
-        handleLogout: () => {
-          if (localStorage.token) {
-            unauthorizedApi().logout({
-              token: localStorage.token,
-            });
-          }
-
-          dispatch({ type: ActionType.LOGOFFUSER, payload: null });
-        },
+        handleLogout: userLogoutHandler,
         handleRole: (role: string): void =>
           dispatch({ type: ActionType.SELECTROLE, payload: role }),
         handleNewToken: useCallback(

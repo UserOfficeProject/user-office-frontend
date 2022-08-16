@@ -1,13 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { DateTime } from 'luxon';
 
 import {
-  AllocationTimeUnits,
   DataType,
+  FeatureId,
   TemplateCategoryId,
   TemplateGroupId,
 } from '../../src/generated/sdk';
+import featureFlags from '../support/featureFlags';
 import initialDBData from '../support/initialDBData';
+import { updatedCall } from '../support/utils';
 
 context('Samples tests', () => {
   const existingUser = initialDBData.users.user1;
@@ -24,25 +25,6 @@ context('Samples tests', () => {
     description: faker.random.words(5),
   };
 
-  const currentDayStart = DateTime.now().startOf('day');
-
-  const updatedCall = {
-    id: initialDBData.call.id,
-    shortCode: faker.random.alphaNumeric(15),
-    startCall: faker.date.past().toISOString().slice(0, 10),
-    endCall: faker.date.future().toISOString().slice(0, 10),
-    startReview: currentDayStart,
-    endReview: currentDayStart,
-    startSEPReview: currentDayStart,
-    endSEPReview: currentDayStart,
-    startNotify: currentDayStart,
-    endNotify: currentDayStart,
-    startCycle: currentDayStart,
-    endCycle: currentDayStart,
-    allocationTimeUnit: AllocationTimeUnits.DAY,
-    cycleComment: faker.lorem.word(10),
-    surveyComment: faker.lorem.word(10),
-  };
   let createdWorkflowId: number;
   let createdSampleTemplateId: number;
   let createdSampleQuestionId: string;
@@ -123,6 +105,7 @@ context('Samples tests', () => {
             });
 
             cy.updateCall({
+              id: initialDBData.call.id,
               ...updatedCall,
               proposalWorkflowId: createdWorkflowId,
               templateId: templateId,
@@ -134,6 +117,7 @@ context('Samples tests', () => {
   };
 
   beforeEach(() => {
+    cy.getAndStoreFeaturesEnabled();
     cy.resetDB(true);
     cy.createProposalWorkflow(proposalWorkflow).then((result) => {
       if (result.createProposalWorkflow.proposalWorkflow) {
@@ -438,7 +422,10 @@ context('Samples tests', () => {
       cy.contains('OK').click();
     });
 
-    it('Officer should be able to evaluate sample', () => {
+    it('Officer should be able to evaluate sample', function () {
+      if (!featureFlags.getEnabledFeatures().get(FeatureId.SAMPLE_SAFETY)) {
+        this.skip();
+      }
       cy.createSample({
         proposalPk: createdProposalPk,
         templateId: createdSampleTemplateId,
@@ -501,7 +488,10 @@ context('Samples tests', () => {
       cy.contains('HIGH_RISK'); // test if status has changed
     });
 
-    it('Download samples is working with dialog window showing up', () => {
+    it('Download samples is working with dialog window showing up', function () {
+      if (!featureFlags.getEnabledFeatures().get(FeatureId.SAMPLE_SAFETY)) {
+        this.skip();
+      }
       cy.createSample({
         proposalPk: createdProposalPk,
         templateId: createdSampleTemplateId,
@@ -526,7 +516,10 @@ context('Samples tests', () => {
       );
     });
 
-    it('Should be able to download sample pdf', () => {
+    it('Should be able to download sample pdf', function () {
+      if (!featureFlags.getEnabledFeatures().get(FeatureId.SAMPLE_SAFETY)) {
+        this.skip();
+      }
       cy.createSample({
         proposalPk: createdProposalPk,
         templateId: createdSampleTemplateId,
