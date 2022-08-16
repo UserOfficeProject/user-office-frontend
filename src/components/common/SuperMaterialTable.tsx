@@ -181,12 +181,19 @@ export function SuperMaterialTable<Entry extends EntryID>({
         open={show}
         maxWidth={props.createModalSize}
         fullWidth={!!props.createModalSize}
-        onClose={() => {
+        onClose={(_, reason) => {
+          if (reason && reason == 'backdropClick') return;
+          if (reason && reason == 'escapeKeyDown') return;
           setShow(false);
           setEditObject(null);
         }}
       >
         {createModal?.(onUpdated, onCreated, editObject)}
+        <ActionButtonContainer>
+          <Button onClick={() => setShow(false)} fullWidth variant="text">
+            Close
+          </Button>
+        </ActionButtonContainer>
       </InputDialog>
       <MaterialTable
         {...props}
