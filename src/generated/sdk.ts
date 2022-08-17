@@ -2145,11 +2145,6 @@ export type QueryGetOrcIdInformationArgs = {
 };
 
 
-export type QueryGetPageContentArgs = {
-  pageId: PageName;
-};
-
-
 export type QueryInstitutionsArgs = {
   filter?: InputMaybe<InstitutionsFilter>;
 };
@@ -2195,7 +2190,7 @@ export type QueryIsNaturalKeyPresentArgs = {
 
 
 export type QueryPageContentArgs = {
-  id: PageName;
+  pageId: PageName;
 };
 
 
@@ -6232,7 +6227,7 @@ export const GetInstitutionsWithCountryDocument = gql`
     ${CountryFragmentDoc}`;
 export const GetPageContentDocument = gql`
     query getPageContent($pageId: PageName!) {
-  getPageContent(pageId: $pageId)
+  pageContent(pageId: $pageId)
 }
     `;
 export const GetQuantitiesDocument = gql`
