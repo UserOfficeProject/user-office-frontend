@@ -1,7 +1,7 @@
 {
   "name": "user-office-frontend",
   "version": "1.1.0",
-  "description": "User office frontend",
+  "description": "User office frontend - change to trigger tests",
   "repository": {
     "type": "git",
     "url": "https://github.com/UserOfficeProject/user-office-frontend.git"
