@@ -354,6 +354,7 @@ jobs:
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up -d mockServer
+            up -d mockserver-client
 
           while true; do
             STATUS=$(curl \
