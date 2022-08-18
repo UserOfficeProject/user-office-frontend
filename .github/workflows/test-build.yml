@@ -355,19 +355,7 @@ jobs:
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up -d mockServer
 
-          export SCHEMA_URL=http://mockServer:1080
-
-          while true; do
-            STATUS="$(wget -NS http://mockServer:1080 2>&1|grep "HTTP/"|awk '{print $2}')"
-
-            if [[ "$STATUS" == "404" ]]; then
-              echo "mockServer is ready"
-              break
-            fi
-
-            >&2 echo " - mockServer is unavailable - sleeping for 10 sec ($STATUS)"
             sleep 10
-          done;
 
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
