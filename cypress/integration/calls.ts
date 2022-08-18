@@ -6,6 +6,7 @@ import {
   CreateInstrumentMutationVariables,
   FeatureId,
   TemplateGroupId,
+  UpdateCallInput,
 } from '../../src/generated/sdk';
 import featureFlags from '../support/featureFlags';
 import initialDBData from '../support/initialDBData';
@@ -489,6 +490,48 @@ context('Calls tests', () => {
       );
     });
 
+    it('A user-officer should be able to deactivate/activate a call', () => {
+      cy.contains('Calls').click();
+
+      cy.contains(newCall.shortCode)
+        .parent()
+        .find('[aria-label="Deactivate call"]')
+        .click();
+
+      cy.get('[data-cy="confirm-ok"]').click();
+      cy.notification({ variant: 'success', text: 'successfully' });
+
+      cy.get('[data-cy="calls-table"]').should(
+        'not.contain',
+        newCall.shortCode
+      );
+
+      cy.get('[data-cy="call-status-filter"]').click();
+      cy.get('[role="listbox"]').contains('Inactive').click();
+
+      cy.finishedLoading();
+
+      cy.contains(newCall.shortCode)
+        .parent()
+        .find('[aria-label="Activate call"]')
+        .click();
+
+      cy.get('[data-cy="confirm-ok"]').click();
+      cy.notification({ variant: 'success', text: 'successfully' });
+
+      cy.get('[data-cy="calls-table"]').should(
+        'not.contain',
+        newCall.shortCode
+      );
+
+      cy.get('[data-cy="call-status-filter"]').click();
+      cy.get('[role="listbox"]').contains('Active').click();
+
+      cy.finishedLoading();
+
+      cy.get('[data-cy="calls-table"]').should('contain', newCall.shortCode);
+    });
+
     it('A user-officer should not be able to set negative availability time on instrument per call', () => {
       cy.assignInstrumentToCall({
         callId: createdCallId,
@@ -601,6 +644,13 @@ context('Calls tests', () => {
         ...newInactiveCall,
         esiTemplateId: esiTemplateId,
         proposalWorkflowId: workflowId,
+      }).then((result) => {
+        if (result.createCall.call?.id) {
+          cy.updateCall({
+            ...result.createCall.call,
+            isActive: false,
+          } as UpdateCallInput);
+        }
       });
 
       cy.contains('Calls').click();

@@ -21,6 +21,7 @@ mutation updateCall(
   $esiTemplateId: Int
   $title: String
   $description: String
+  $isActive: Boolean
   $seps: [Int!]
 ) {
   updateCall(
@@ -47,6 +48,7 @@ mutation updateCall(
       esiTemplateId: $esiTemplateId
       title: $title
       description: $description
+      isActive: $isActive
       seps: $seps
     }
   ) {
