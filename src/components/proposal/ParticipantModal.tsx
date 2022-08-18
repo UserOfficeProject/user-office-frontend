@@ -66,7 +66,12 @@ function ParticipantModal(props: {
           ? proposalPeopleTable
           : peopleTable}
         <ActionButtonContainer>
-          <Button onClick={() => props.close()} fullWidth variant="text">
+          <Button
+            data-cy="close-modal-btn"
+            onClick={() => props.close()}
+            fullWidth
+            variant="text"
+          >
             Close
           </Button>
         </ActionButtonContainer>

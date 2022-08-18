@@ -190,7 +190,12 @@ export function SuperMaterialTable<Entry extends EntryID>({
       >
         {createModal?.(onUpdated, onCreated, editObject)}
         <ActionButtonContainer>
-          <Button onClick={() => setShow(false)} fullWidth variant="text">
+          <Button
+            data-cy="close-modal-btn"
+            onClick={() => setShow(false)}
+            fullWidth
+            variant="text"
+          >
             Close
           </Button>
         </ActionButtonContainer>
