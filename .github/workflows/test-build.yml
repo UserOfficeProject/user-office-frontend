@@ -354,14 +354,15 @@ jobs:
           docker-compose --project-directory $PWD \
             -f "$REPO_DIR_NAME/docker-compose-stfc.e2e.yml" \
             up -d mockServer
-            up -d mockserver-client
+
+          export SCHEMA_URL=http://mockServer:1080
 
           while true; do
             STATUS=$(curl \
               -o /dev/stderr \
               --silent \
               --write-out '%{http_code}' \
-              http://mockServer:1080)
+              "$SCHEMA_URL?query=query%7Bversion%7D")
 
             if [[ "$STATUS" == "404" ]]; then
               echo "mockServer is ready"
