@@ -365,7 +365,7 @@ jobs:
               break
             fi
 
-            >&2 echo " - mockServer is unavailable - sleeping for 10 sec"
+            >&2 echo " - mockServer is unavailable - sleeping for 10 sec ($STATUS)"
             sleep 10
           done;
 
