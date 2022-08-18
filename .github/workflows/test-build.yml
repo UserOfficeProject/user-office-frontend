@@ -358,7 +358,7 @@ jobs:
           export SCHEMA_URL=http://mockServer:1080
 
           while true; do
-            STATUS="$(wget --server-response http://mockServer:1080 2>&1 | awk '/^  HTTP/{print $2}')""
+            STATUS="$(wget --server-response http://mockServer:1080 2>&1 | awk '/^  HTTP/{print $2}')"
 
             if [[ "$STATUS" == "404" ]]; then
               echo "mockServer is ready"
