@@ -154,7 +154,9 @@ const AssignedInstrumentsTable: React.FC<AssignedInstrumentsTableProps> = ({
                   +instrumentUpdatedData.availabilityTime >= max32BitInteger
                 ) {
                   enqueueSnackbar(
-                    `Availability time can not be grater than ${max32BitInteger}`,
+                    `Availability time can not be grater than ${
+                      max32BitInteger - 1
+                    }`,
                     {
                       variant: 'error',
                       className: 'snackbar-error',
