@@ -72,6 +72,7 @@ function ParticipantModal(props: {
     >
       <DialogContent>
         <IconButton
+          data-cy="close-modal-btn"
           className={classes.closeButton}
           onClick={() => props.close()}
         >

@@ -200,6 +200,7 @@ export function SuperMaterialTable<Entry extends EntryID>({
         }}
       >
         <IconButton
+          data-cy="close-modal-btn"
           className={classes.closeButton}
           onClick={() => setShow(false)}
         >
