@@ -1,14 +1,23 @@
 import AddBox from '@mui/icons-material/AddBox';
-import { Button } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
-import { ActionButtonContainer } from 'components/common/ActionButtonContainer';
 import { useCheckAccess } from 'components/common/Can';
 import PeopleTable from 'components/user/PeopleTable';
 import ProposalPeopleTable from 'components/user/ProposalsPeopleTable';
 import { UserRole, BasicUserDetails } from 'generated/sdk';
+
+const useStyles = makeStyles((theme) => ({
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+  },
+}));
 
 function ParticipantModal(props: {
   title: string;
@@ -26,6 +35,7 @@ function ParticipantModal(props: {
 
     props.addParticipants([addedUserDetails]);
   };
+  const classes = useStyles();
 
   const userTableProps = {
     title: props.title,
@@ -62,19 +72,15 @@ function ParticipantModal(props: {
       fullWidth
     >
       <DialogContent>
+        <IconButton
+          className={classes.closeButton}
+          onClick={() => props.close()}
+        >
+          <CloseIcon />
+        </IconButton>
         {props.participant && !isUserOfficer
           ? proposalPeopleTable
           : peopleTable}
-        <ActionButtonContainer>
-          <Button
-            data-cy="close-modal-btn"
-            onClick={() => props.close()}
-            fullWidth
-            variant="text"
-          >
-            Close
-          </Button>
-        </ActionButtonContainer>
       </DialogContent>
     </Dialog>
   );
