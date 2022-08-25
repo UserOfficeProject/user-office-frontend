@@ -65,7 +65,6 @@ function ParticipantModal(props: {
       open={props.show}
       onClose={(_, reason) => {
         if (reason && reason == 'backdropClick') return;
-        if (reason && reason == 'escapeKeyDown') return;
         props.close();
       }}
       maxWidth="sm"

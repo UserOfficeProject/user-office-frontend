@@ -195,7 +195,6 @@ export function SuperMaterialTable<Entry extends EntryID>({
         fullWidth={!!props.createModalSize}
         onClose={(_, reason) => {
           if (reason && reason == 'backdropClick') return;
-          if (reason && reason == 'escapeKeyDown') return;
           setShow(false);
           setEditObject(null);
         }}
