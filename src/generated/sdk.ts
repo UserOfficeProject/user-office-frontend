@@ -2032,9 +2032,9 @@ export type Query = {
   me: Maybe<User>;
   myShipments: Maybe<Array<Shipment>>;
   myVisits: Array<Visit>;
+  nationalities: Maybe<Array<Entry>>;
   pdfTemplate: Maybe<PdfTemplate>;
   pdfTemplates: Maybe<Array<PdfTemplate>>;
-  nationalities: Maybe<Array<Entry>>;
   previousCollaborators: Maybe<UserQueryResult>;
   proposal: Maybe<Proposal>;
   proposalEvents: Maybe<Array<ProposalEvent>>;
