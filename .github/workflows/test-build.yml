@@ -253,9 +253,12 @@ jobs:
           [
             "cypress/integration/[a-e]*.ts",
             "cypress/integration/[f-i]*.ts",
-            "cypress/integration/[j-p]*.ts",
+            "cypress/integration/[j-o]*.ts",
+            "cypress/integration/[p-p][a-m]*.ts",
+            "cypress/integration/[p-p][n-z]*.ts",
             "cypress/integration/[r-s]*.ts",
-            "cypress/integration/[t-z]*.ts",
+            "cypress/integration/[t-t]*.ts",
+            "cypress/integration/[u-z]*.ts",
             "cypress/integration/[A-Z]*.ts",
           ]
 
