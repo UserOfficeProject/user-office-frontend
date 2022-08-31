@@ -1,4 +1,4 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 import { DataType, TemplateCategoryId } from '../../src/generated/sdk';
 import initialDBData from '../support/initialDBData';
@@ -8,6 +8,7 @@ context('Questions tests', () => {
   const samplesQuestion = initialDBData.questions.addSamples.text;
 
   beforeEach(() => {
+    cy.getAndStoreFeaturesEnabled();
     cy.resetDB(true);
 
     cy.createQuestion({

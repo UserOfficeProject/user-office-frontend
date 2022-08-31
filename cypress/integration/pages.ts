@@ -1,7 +1,8 @@
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 context('Page tests', () => {
   beforeEach(() => {
+    cy.getAndStoreFeaturesEnabled();
     cy.resetDB();
   });
 

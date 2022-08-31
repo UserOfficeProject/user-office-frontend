@@ -17,6 +17,7 @@ fragment call on Call {
   proposalWorkflowId
   templateId
   esiTemplateId
+  pdfTemplateId
   allocationTimeUnit  
   instruments {
     id
@@ -28,6 +29,10 @@ fragment call on Call {
     scientists {
       ...basicUserDetails
     }
+  }
+  seps {
+    id
+    code
   }
   proposalWorkflow {
     id
