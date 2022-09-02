@@ -26,7 +26,6 @@ export function useCallsData(filter?: CallsFilter) {
         if (unmounted) {
           return;
         }
-
         if (data.calls) {
           setCalls(data.calls as Call[]);
         }

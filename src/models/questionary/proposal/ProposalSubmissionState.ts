@@ -1,6 +1,7 @@
 import { immerable } from 'immer';
 
 import { Questionary, TemplateGroupId } from 'generated/sdk';
+import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 import { QuestionarySubmissionState } from '../QuestionarySubmissionState';
 import { ProposalWithQuestionary } from './ProposalWithQuestionary';
@@ -28,7 +29,10 @@ export class ProposalSubmissionState extends QuestionarySubmissionState {
   }
 
   getInitialStepIndex(): number {
-    if (this.proposal?.status?.shortCode.toString() == 'EDITABLE_SUBMITTED') {
+    if (
+      this.proposal?.status?.shortCode.toString() ==
+      ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED
+    ) {
       return 0;
     }
 

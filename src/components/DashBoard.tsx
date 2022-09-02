@@ -189,8 +189,11 @@ const Dashboard: React.FC = () => {
     FeatureId.SAMPLE_SAFETY
   )?.isEnabled;
 
-  const { currentRole } = useContext(UserContext);
-  const { calls } = useCallsData({ isActive: true });
+  const { currentRole, isInternalUser } = useContext(UserContext);
+  const { calls } = useCallsData({
+    isActive: true,
+    isActiveInternal: isInternalUser,
+  });
 
   useEffect(() => {
     if (isTabletOrMobile) {

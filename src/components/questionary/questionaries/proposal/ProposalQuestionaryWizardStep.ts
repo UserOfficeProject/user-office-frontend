@@ -1,6 +1,7 @@
 import { ProposalSubmissionState } from 'models/questionary/proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmissionState';
+import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 import { QuestionaryWizardStep } from '../../DefaultWizardStepFactory';
 
@@ -11,7 +12,7 @@ export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {
     const isCallActive = proposal.call?.isActive ?? true;
     const proposalStatus = this.getProposalStatus(proposal);
 
-    if (proposalStatus === 'EDITABLE_SUBMITTED') {
+    if (proposalStatus === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED) {
       return true;
     }
 

@@ -25,10 +25,25 @@ import CallStatusFilter, {
 } from './CallStatusFilter';
 import CreateUpdateCall from './CreateUpdateCall';
 
-const getFilterStatus = (callStatus: string | CallStatus) =>
-  callStatus === CallStatus.ALL
-    ? undefined // if set to ALL we don't filter by status
-    : callStatus === CallStatus.ACTIVE;
+const getFilterStatus = (callStatus: string | CallStatus) => {
+  if (callStatus === CallStatus.ACTIVE) {
+    return { isActive: true };
+  }
+  if (callStatus === CallStatus.ACTIVE) {
+    return { isActive: true };
+  }
+  if (callStatus === CallStatus.INACTIVE) {
+    return { isActive: false };
+  }
+  if (callStatus === CallStatus.ACTIVEINTERNAL) {
+    return { isActiveInternal: true };
+  }
+  if (callStatus === CallStatus.INACTIVEINTERNAL) {
+    return { isActiveInternal: false };
+  }
+
+  return {};
+};
 
 const CallsTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
@@ -52,14 +67,14 @@ const CallsTable: React.FC = () => {
     setCallsWithLoading: setCalls,
     setCallsFilter,
   } = useCallsData({
-    isActive: getFilterStatus(urlQueryParams.callStatus),
+    ...getFilterStatus(urlQueryParams.callStatus),
   });
 
   const handleStatusFilterChange = (callStatus: CallStatus) => {
     setUrlQueryParams((queries) => ({ ...queries, callStatus }));
     setCallsFilter((filter) => ({
       ...filter,
-      isActive: getFilterStatus(callStatus),
+      ...getFilterStatus(callStatus),
     }));
   };
 
@@ -73,6 +88,10 @@ const CallsTable: React.FC = () => {
     {
       title: `End Date (${timezone})`,
       field: 'formattedEndCall',
+    },
+    {
+      title: `End Internal Date (${timezone})`,
+      field: 'formattedEndCallInternal',
     },
     {
       title: 'Reference number format',
@@ -221,6 +240,7 @@ const CallsTable: React.FC = () => {
     ...call,
     formattedStartCall: toFormattedDateTime(call.startCall),
     formattedEndCall: toFormattedDateTime(call.endCall),
+    formattedEndCallInternal: toFormattedDateTime(call.endCallInternal),
   }));
 
   return (

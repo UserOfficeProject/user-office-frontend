@@ -13,6 +13,7 @@ import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryRevi
 import { UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
+import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { ProposalContextType } from './ProposalContainer';
@@ -73,7 +74,8 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
         if (connections) {
           const statuses = (await api().getProposalStatuses()).proposalStatuses;
           const editableStatus = statuses?.find(
-            (s) => s.name === 'EDITABLE_SUBMITTED'
+            //needs to be provided
+            (s) => s.name === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED
           );
 
           const hasUpcomingEditableStatus =

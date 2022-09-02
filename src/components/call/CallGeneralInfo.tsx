@@ -24,7 +24,7 @@ import withStyles from '@mui/styles/withStyles';
 import { Field, useFormikContext } from 'formik';
 import { TextField } from 'formik-mui';
 import { DateTimePicker } from 'formik-mui-lab';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
 import { FeatureContext } from 'context/FeatureContextProvider';
@@ -37,6 +37,7 @@ import {
   UpdateCallMutationVariables,
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
+import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 const CallGeneralInfo: React.FC<{
   templates: GetTemplatesQuery['templates'];
@@ -53,6 +54,7 @@ const CallGeneralInfo: React.FC<{
 }) => {
   const { featuresMap } = useContext(FeatureContext);
   const { format: dateTimeFormat, mask, timezone } = useFormattedDateTime();
+  const [showInternalCall, setShowInternalCall] = useState(false);
 
   const theme = useTheme();
 
@@ -73,7 +75,6 @@ const CallGeneralInfo: React.FC<{
       text: proposalWorkflow.name,
       value: proposalWorkflow.id,
     })) || [];
-
   const allocationTimeUnitOptions = Object.values(AllocationTimeUnits).map(
     (key) => ({
       text: key,
@@ -84,7 +85,27 @@ const CallGeneralInfo: React.FC<{
   const formik = useFormikContext<
     CreateCallMutationVariables | UpdateCallMutationVariables
   >();
-  const { startCall } = formik.values;
+  const { startCall, endCall, proposalWorkflowId } = formik.values;
+
+  useEffect(() => {
+    const selectedProposalWorkFlow = proposalWorkflows.find(
+      (value) => value.id === proposalWorkflowId
+    );
+    if (selectedProposalWorkFlow) {
+      selectedProposalWorkFlow.proposalWorkflowConnectionGroups.map(
+        (workGroup) => {
+          setShowInternalCall(
+            workGroup.connections.some((connectionStatus) => {
+              return (
+                connectionStatus.proposalStatus.shortCode ===
+                ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+              );
+            })
+          );
+        }
+      );
+    }
+  }, [proposalWorkflowId, proposalWorkflows]);
 
   function validateRefNumFormat(input: string) {
     let errorMessage;
@@ -199,6 +220,29 @@ const CallGeneralInfo: React.FC<{
           minDate={startCall}
           required
         />
+        {showInternalCall && (
+          <Field
+            name="endCallInternal"
+            label={`End Internal (${timezone})`}
+            id="end-call-internal-input"
+            inputFormat={dateTimeFormat}
+            mask={mask}
+            ampm={false}
+            allowSameDateSelection
+            component={DateTimePicker}
+            inputProps={{ placeholder: dateTimeFormat }}
+            textField={{
+              fullWidth: true,
+              required: true,
+              'data-cy': 'end-call-internal-date',
+            }}
+            // NOTE: This is needed just because Cypress testing a Material-UI datepicker is not working on Github actions
+            // https://stackoverflow.com/a/69986695/5619063 and https://github.com/cypress-io/cypress/issues/970
+            desktopModeMediaQuery={theme.breakpoints.up('sm')}
+            minDate={endCall}
+            required
+          />
+        )}
         <Field
           name="referenceNumberFormat"
           validate={validateRefNumFormat}

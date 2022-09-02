@@ -17,6 +17,7 @@ import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { ProposalData } from 'hooks/proposal/useProposalData';
 import { tableIcons } from 'utils/materialIcons';
 import { tableLocalization } from 'utils/materialLocalization';
+import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 import { timeAgo } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
@@ -181,7 +182,8 @@ const ProposalTable = ({
             const readOnly =
               !isCallActive ||
               (rowData.submitted &&
-                rowData.status?.shortCode !== 'EDITABLE_SUBMITTED');
+                rowData.status?.shortCode !==
+                  ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED);
 
             return {
               icon: readOnly ? () => <Visibility /> : () => <Edit />,

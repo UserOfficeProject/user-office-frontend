@@ -25,6 +25,7 @@ interface UserContextData {
   token: string;
   roles: Role[];
   currentRole: UserRole | null;
+  isInternalUser: boolean;
   impersonatingUserId: number | undefined;
   handleLogin: React.Dispatch<string | null | undefined>;
   handleNewToken: React.Dispatch<string | null | undefined>;
@@ -33,10 +34,12 @@ interface UserContextData {
 }
 
 interface DecodedTokenData
-  extends Pick<UserContextData, 'user' | 'token' | 'roles'> {
+  extends Pick<
+    UserContextData,
+    'user' | 'token' | 'roles' | 'isInternalUser' | 'impersonatingUserId'
+  > {
   exp: number;
   currentRole: Role;
-  impersonatingUserId: number | undefined;
 }
 
 enum ActionType {
@@ -61,6 +64,7 @@ const initUserData: UserContextData = {
   },
   token: '',
   roles: [],
+  isInternalUser: false,
   currentRole: null,
   impersonatingUserId: undefined,
   handleLogin: (value) => value,
@@ -92,10 +96,12 @@ const checkLocalStorage = (
           token: localStorage.token,
           expToken: decoded.exp,
           impersonatingUserId: decoded.impersonatingUserId,
+          isInternalUser: decoded.isInternalUser,
         },
       });
     } else {
       localStorage.removeItem('token');
+      localStorage.removeItem('isInternalUser');
       localStorage.removeItem('impersonatingUserId');
     }
   }
@@ -115,16 +121,16 @@ const reducer = (
         roles: action.payload.roles,
         token: action.payload.token,
         expToken: action.payload.expToken,
+        isInternalUser: action.payload.isInternalUser,
         impersonatingUserId: action.payload.impersonatingUserId,
       };
     case ActionType.LOGINUSER: {
-      const { user, exp, roles, impersonatingUserId } = jwtDecode(
-        action.payload
-      ) as DecodedTokenData;
+      const { user, exp, roles, isInternalUser, impersonatingUserId } =
+        jwtDecode(action.payload) as DecodedTokenData;
       localStorage.user = JSON.stringify(user);
       localStorage.token = action.payload;
       localStorage.expToken = exp;
-
+      localStorage.isInternalUser = isInternalUser;
       localStorage.currentRole = roles[0].shortCode.toUpperCase();
       localStorage.impersonatingUserId = impersonatingUserId;
 
@@ -136,15 +142,17 @@ const reducer = (
         roles: roles,
         currentRole: roles[0].shortCode.toUpperCase(),
         impersonatingUserId: impersonatingUserId,
+        isInternalUser: isInternalUser,
       };
     }
     case ActionType.SETTOKEN: {
-      const { currentRole, roles, exp } = jwtDecode(
+      const { currentRole, roles, exp, isInternalUser } = jwtDecode(
         action.payload
       ) as DecodedTokenData;
       localStorage.token = action.payload;
       localStorage.expToken = exp;
       localStorage.currentRole = currentRole.shortCode.toUpperCase();
+      localStorage.isInternalUser = isInternalUser;
 
       return {
         ...state,
@@ -152,6 +160,7 @@ const reducer = (
         token: action.payload,
         expToken: exp,
         currentRole: currentRole.shortCode.toUpperCase(),
+        isInternalUser: isInternalUser,
       };
     }
     case ActionType.SELECTROLE:
@@ -166,6 +175,7 @@ const reducer = (
       localStorage.removeItem('currentRole');
       localStorage.removeItem('user');
       localStorage.removeItem('expToken');
+      localStorage.removeItem('isInternalUser');
       localStorage.removeItem('impersonatingUserId');
 
       return {
