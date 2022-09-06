@@ -15,11 +15,18 @@ const useStyles = makeStyles((theme) => ({
 
 export enum CallStatus {
   ALL = 'all',
-  ACTIVE = 'active',
-  ACTIVEINTERNAL = 'activeinternal',
-  INACTIVE = 'inactive',
-  INACTIVEINTERNAL = 'inactiveinternal',
+  ACTIVE = 'isActive',
+  ACTIVEINTERNAL = 'isActiveInternal',
+  INACTIVE = 'isEnded',
+  INACTIVEINTERNAL = 'isEndedInternal',
 }
+
+export type CallStatusFilters =
+  | 'all'
+  | 'isActive'
+  | 'isActiveInternal'
+  | 'isEnded'
+  | 'isEndedInternal';
 
 export type CallStatusQueryFilter = { callStatus: QueryParamConfig<string> };
 export const defaultCallStatusQueryFilter = withDefault(
@@ -50,8 +57,10 @@ const CallStatusFilter: React.FC<CallStatusFilterProps> = ({
       >
         <MenuItem value={CallStatus.ALL}>All</MenuItem>
         <MenuItem value={CallStatus.ACTIVE}>Active</MenuItem>
-        <MenuItem value={CallStatus.ACTIVE}>Active Internal</MenuItem>
-        <MenuItem value={CallStatus.INACTIVE}>Inactive Internal</MenuItem>
+        <MenuItem value={CallStatus.ACTIVEINTERNAL}>Active Internal</MenuItem>
+        <MenuItem value={CallStatus.INACTIVEINTERNAL}>
+          Inactive Internal
+        </MenuItem>
         <MenuItem value={CallStatus.INACTIVE}>Inactive</MenuItem>
       </Select>
     </FormControl>

@@ -22,27 +22,14 @@ import CallStatusFilter, {
   CallStatusQueryFilter,
   defaultCallStatusQueryFilter,
   CallStatus,
+  CallStatusFilters,
 } from './CallStatusFilter';
 import CreateUpdateCall from './CreateUpdateCall';
 
-const getFilterStatus = (callStatus: string | CallStatus) => {
-  if (callStatus === CallStatus.ACTIVE) {
-    return { isActive: true };
-  }
-  if (callStatus === CallStatus.ACTIVE) {
-    return { isActive: true };
-  }
-  if (callStatus === CallStatus.INACTIVE) {
-    return { isActive: false };
-  }
-  if (callStatus === CallStatus.ACTIVEINTERNAL) {
-    return { isActiveInternal: true };
-  }
-  if (callStatus === CallStatus.INACTIVEINTERNAL) {
-    return { isActiveInternal: false };
-  }
-
-  return {};
+const getFilterStatus = (
+  callStatus: CallStatusFilters
+): Partial<Record<CallStatus, boolean>> => {
+  return callStatus !== CallStatus.ALL ? { [callStatus]: true } : {};
 };
 
 const CallsTable: React.FC = () => {
@@ -67,14 +54,13 @@ const CallsTable: React.FC = () => {
     setCallsWithLoading: setCalls,
     setCallsFilter,
   } = useCallsData({
-    ...getFilterStatus(urlQueryParams.callStatus),
+    ...getFilterStatus(urlQueryParams.callStatus as CallStatusFilters),
   });
 
   const handleStatusFilterChange = (callStatus: CallStatus) => {
     setUrlQueryParams((queries) => ({ ...queries, callStatus }));
-    setCallsFilter((filter) => ({
-      ...filter,
-      ...getFilterStatus(callStatus),
+    setCallsFilter(() => ({
+      ...getFilterStatus(callStatus as CallStatusFilters),
     }));
   };
 
