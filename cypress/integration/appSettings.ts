@@ -1,4 +1,5 @@
-import { ReviewerFilter } from '../../src/generated/sdk';
+import { FeatureId, ReviewerFilter } from '../../src/generated/sdk';
+import featureFlags from '../support/featureFlags';
 import initialDBData from '../support/initialDBData';
 
 context('App settings tests', () => {
@@ -29,7 +30,7 @@ context('App settings tests', () => {
         initialDBData.getFormats().dateTimeFormat
       );
 
-      cy.get('body').type('{esc}');
+      cy.get('[data-cy="close-modal-btn"]').click();
 
       cy.get('[data-cy="officer-menu-items"]').contains('Settings').click();
       cy.get('[data-cy="officer-menu-items"]').contains('App settings').click();
@@ -82,7 +83,11 @@ context('App settings tests', () => {
       );
     });
 
-    it('Instrument Scientist filter should differ based on setting value', () => {
+    it('Instrument Scientist filter should differ based on setting value', function () {
+      if (featureFlags.getEnabledFeatures().get(FeatureId.EXTERNAL_AUTH)) {
+        //temporarily skipping, until instr sci login is enabled
+        this.skip();
+      }
       const scientist2 = initialDBData.users.user2;
 
       cy.updateUserRoles({
