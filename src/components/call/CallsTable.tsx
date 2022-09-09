@@ -28,10 +28,19 @@ import CreateUpdateCall from './CreateUpdateCall';
 
 const getFilterStatus = (
   callStatus: CallStatusFilters
-): Partial<Record<CallStatus, boolean>> => {
-  return callStatus !== CallStatus.ALL ? { [callStatus]: true } : {};
-};
+): Partial<Record<'isActive' | 'isActiveInternal', boolean>> => {
+  if (callStatus === CallStatus.ALL) {
+    return {}; // if set to ALL we don't filter by status
+  }
 
+  if (callStatus === CallStatus.ACTIVE || callStatus === CallStatus.INACTIVE) {
+    return {
+      isActive: callStatus === CallStatus.ACTIVE,
+    };
+  } else {
+    return { isActiveInternal: callStatus === CallStatus.INACTIVEINTERNAL };
+  }
+};
 const CallsTable: React.FC = () => {
   const { api } = useDataApiWithFeedback();
   const { timezone, toFormattedDateTime } = useFormattedDateTime({

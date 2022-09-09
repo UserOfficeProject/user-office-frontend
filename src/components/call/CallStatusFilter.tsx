@@ -15,18 +15,18 @@ const useStyles = makeStyles((theme) => ({
 
 export enum CallStatus {
   ALL = 'all',
-  ACTIVE = 'isActive',
-  ACTIVEINTERNAL = 'isActiveInternal',
-  INACTIVE = 'isEnded',
-  INACTIVEINTERNAL = 'isEndedInternal',
+  ACTIVE = 'active',
+  ACTIVEINTERNAL = 'activeinternal',
+  INACTIVE = 'inactive',
+  INACTIVEINTERNAL = 'inactiveinternal',
 }
 
 export type CallStatusFilters =
   | 'all'
-  | 'isActive'
-  | 'isActiveInternal'
-  | 'isEnded'
-  | 'isEndedInternal';
+  | 'active'
+  | 'activeinternal'
+  | 'inactive'
+  | 'inactiveinternal';
 
 export type CallStatusQueryFilter = { callStatus: QueryParamConfig<string> };
 export const defaultCallStatusQueryFilter = withDefault(

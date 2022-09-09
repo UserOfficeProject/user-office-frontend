@@ -43,6 +43,7 @@ context('Calls tests', () => {
     shortCode: faker.random.alphaNumeric(15),
     startCall: twoDaysAgo.toISO(),
     endCall: yesterday.toISO(),
+    endCallInternal: yesterday.toISO(),
     startReview: currentDayStart,
     endReview: currentDayStart,
     startSEPReview: currentDayStart,
@@ -616,7 +617,9 @@ context('Calls tests', () => {
       cy.contains(newCall.shortCode);
 
       cy.get('[data-cy="call-status-filter"]').click();
-      cy.get('[role="listbox"]').contains('Inactive').click();
+      cy.get('[role="listbox"]')
+        .contains(/^Inactive$/)
+        .click();
 
       cy.finishedLoading();
 
