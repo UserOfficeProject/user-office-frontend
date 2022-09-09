@@ -10,13 +10,14 @@ export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {
     const { proposal } = state as ProposalSubmissionState;
 
     const isCallActive = proposal.call?.isActive ?? true;
+    const isCallInternalActive = proposal.call?.isActiveInternal ?? true;
     const proposalStatus = this.getProposalStatus(proposal);
 
-    if (proposalStatus === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED) {
+    if (this.isProposalStatusEditable(proposalStatus)) {
       return true;
     }
 
-    if (isCallActive) {
+    if (isCallActive || isCallInternalActive) {
       return proposalStatus === 'DRAFT';
     } else {
       return false;
@@ -29,5 +30,12 @@ export class ProposalQuestionaryWizardStep extends QuestionaryWizardStep {
     } else {
       return 'Proposal Status is null';
     }
+  }
+  private isProposalStatusEditable(proposalStatus: string) {
+    return (
+      proposalStatus === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED ||
+      proposalStatus ===
+        ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+    );
   }
 }

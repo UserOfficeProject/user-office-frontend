@@ -10,6 +10,7 @@ import {
   QuestionaryContext,
 } from 'components/questionary/QuestionaryContext';
 import ProposalQuestionaryReview from 'components/review/ProposalQuestionaryReview';
+import { UserContext } from 'context/UserContextProvider';
 import { UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
@@ -30,10 +31,12 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
   if (!dispatch || !state) {
     throw new Error(createMissingContextErrorMessage());
   }
+  const { isInternalUser } = useContext(UserContext);
 
   const api = useDataApi();
   const isUserOfficer = useCheckAccess([UserRole.USER_OFFICER]);
   const isCallActive = state.proposal?.call?.isActive ?? true;
+  const isCallActiveInternal = state.proposal?.call?.isActiveInternal ?? true;
 
   const [loadingSubmitMessage, setLoadingSubmitMessage] =
     useState<boolean>(true);
@@ -52,6 +55,7 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
 
   const submitDisabled =
     (!isUserOfficer && !isCallActive) || // disallow submit for non user officers if the call ended
+    (!isInternalUser && !isCallActiveInternal) || // disallow submit for non intenal users if the call ended
     !allStepsComplete ||
     proposal.submitted;
 

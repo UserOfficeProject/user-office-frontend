@@ -91,6 +91,7 @@ const ProposalTable = ({
   }, [searchQuery]);
 
   const [editProposalPk, setEditProposalPk] = useState(0);
+  const { isInternalUser } = useContext(UserContext);
 
   if (editProposalPk) {
     return <Redirect push to={`/ProposalEdit/${editProposalPk}`} />;
@@ -102,6 +103,33 @@ const ProposalTable = ({
     return proposalData.some((proposal) => {
       return proposal.call?.referenceNumberFormat && !proposal.submitted;
     });
+  };
+
+  const getProposalReadonlyStatus = (
+    proposalData: PartialProposalsDataType
+  ) => {
+    if (!proposalData) {
+      return true;
+    }
+    const isCallActive = proposalData.call?.isActive ?? true;
+    const isCallActiveInternal = proposalData.call?.isActiveInternal ?? true;
+    const readonly =
+      !isCallActive ||
+      (proposalData.submitted &&
+        proposalData.status?.shortCode !==
+          ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED);
+    if (isInternalUser && !isCallActive) {
+      return readonly && !isCallActiveInternal;
+    }
+    if (
+      isInternalUser &&
+      proposalData.status?.shortCode ===
+        ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+    ) {
+      return false;
+    }
+
+    return readonly;
   };
 
   const cloneProposalsToCall = async (call: Call) => {
@@ -178,12 +206,7 @@ const ProposalTable = ({
         }}
         actions={[
           (rowData) => {
-            const isCallActive = rowData.call?.isActive ?? true;
-            const readOnly =
-              !isCallActive ||
-              (rowData.submitted &&
-                rowData.status?.shortCode !==
-                  ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED);
+            const readOnly = getProposalReadonlyStatus(rowData);
 
             return {
               icon: readOnly ? () => <Visibility /> : () => <Edit />,

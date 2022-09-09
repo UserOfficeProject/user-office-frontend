@@ -28,10 +28,19 @@ export class ProposalSubmissionState extends QuestionarySubmissionState {
     this.proposal = { ...this.proposal, ...item };
   }
 
+  private isProposalStatusEditable(proposalStatus: string) {
+    return proposalStatus
+      ? proposalStatus === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED ||
+          proposalStatus ===
+            ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+      : false;
+  }
+
   getInitialStepIndex(): number {
     if (
-      this.proposal?.status?.shortCode.toString() ==
-      ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED
+      this.isProposalStatusEditable(
+        this.proposal?.status?.shortCode.toString() as string
+      )
     ) {
       return 0;
     }
