@@ -53,11 +53,23 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
     proposal.questionary &&
     proposal.questionary.steps.every((step) => step.isCompleted);
 
-  const submitDisabled =
-    (!isUserOfficer && !isCallActive) || // disallow submit for non user officers if the call ended
-    (!isInternalUser && !isCallActiveInternal) || // disallow submit for non intenal users if the call ended
-    !allStepsComplete ||
-    proposal.submitted;
+  const [submitDisabled] = useState(() => {
+    const submitionDisabled =
+      (!isUserOfficer && !isCallActive) || // disallow submit for non user officers if the call ended
+      !allStepsComplete ||
+      proposal.submitted;
+
+    if (
+      !proposal.submitted &&
+      submitionDisabled &&
+      isInternalUser &&
+      isCallActiveInternal
+    ) {
+      return false; // allow submit for intenal users if the call ended
+    }
+
+    return submitionDisabled;
+  });
 
   // Show a different submit confirmation if
   // EDITABLE_SUBMITTED is an upcoming status
@@ -77,17 +89,26 @@ function ProposalReview({ confirm }: ProposalSummaryProps) {
 
         if (connections) {
           const statuses = (await api().getProposalStatuses()).proposalStatuses;
-          const editableStatus = statuses?.find(
-            //needs to be provided
-            (s) => s.name === ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED
-          );
+          const editableStatuses = statuses
+            ?.filter(
+              //needs to be provided
+              (s) =>
+                s.shortCode ===
+                  ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED ||
+                s.shortCode ===
+                  ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+            )
+            .map((status) => status.id);
 
           const hasUpcomingEditableStatus =
+            connections &&
             connections?.some((group) =>
               group.connections.find(
-                (conn) => conn.nextProposalStatusId === editableStatus?.id
+                (conn) =>
+                  conn.nextProposalStatusId &&
+                  editableStatuses?.includes(conn.nextProposalStatusId)
               )
-            ) || false;
+            );
 
           if (proposal.status != null && hasUpcomingEditableStatus) {
             setSubmitButtonMessage(

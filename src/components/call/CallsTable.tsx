@@ -38,7 +38,7 @@ const getFilterStatus = (
       isActive: callStatus === CallStatus.ACTIVE,
     };
   } else {
-    return { isActiveInternal: callStatus === CallStatus.INACTIVEINTERNAL };
+    return { isActiveInternal: callStatus === CallStatus.ACTIVEINTERNAL };
   }
 };
 const CallsTable: React.FC = () => {
