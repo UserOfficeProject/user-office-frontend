@@ -314,7 +314,7 @@ context('GenericTemplates tests', () => {
       cy.contains(genericTemplateQuestions[1]).should('exist');
     });
 
-    it.only('Should be able to create proposal with genericTemplate', () => {
+    it('Should be able to create proposal with genericTemplate', () => {
       cy.updateCall({
         id: initialDBData.call.id,
         ...updatedCall,
