@@ -346,18 +346,18 @@ context('GenericTemplates tests', () => {
 
       cy.contains('This is a required field');
 
-      const longTitle = faker.lorem.paragraph(5);
+      const longText = faker.lorem.paragraph(5);
 
       cy.get('[data-cy=title-input] textarea')
         .first()
         .clear()
-        .type(longTitle)
-        .should('have.value', longTitle)
+        .type(longText)
+        .should('have.value', longText)
         .blur();
 
       cy.get(
         '[data-cy=genericTemplate-declaration-modal] [data-cy=questionary-title]'
-      ).contains(longTitle.substring(0, 30) + '...');
+      ).contains(longText.substring(0, 30) + '...');
 
       cy.get(
         '[data-cy=genericTemplate-declaration-modal] [data-cy=save-and-continue-button]'
