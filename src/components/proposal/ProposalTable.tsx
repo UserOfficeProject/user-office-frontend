@@ -118,15 +118,17 @@ const ProposalTable = ({
       (proposalData.submitted &&
         proposalData.status?.shortCode !==
           ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED);
-    if (isInternalUser && !isCallActive) {
-      return readonly && !isCallActiveInternal;
-    }
-    if (
-      isInternalUser &&
-      proposalData.status?.shortCode ===
-        ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
-    ) {
-      return false;
+    if (readonly && isInternalUser) {
+      if (
+        proposalData.submitted &&
+        proposalData.status?.shortCode !==
+          ProposalStatusDefaultShortCodes.EDITABLE_SUBMITTED_INTERNAL
+      ) {
+        return true;
+      }
+      if (!isCallActive) {
+        return !isCallActiveInternal;
+      }
     }
 
     return readonly;
