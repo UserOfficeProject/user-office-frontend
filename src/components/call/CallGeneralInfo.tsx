@@ -27,6 +27,7 @@ import { DateTimePicker } from 'formik-mui-lab';
 import React, { useContext, useEffect, useState } from 'react';
 
 import FormikUIAutocomplete from 'components/common/FormikUIAutocomplete';
+import { ProposalStatusDefaultShortCodes } from 'components/proposal/ProposalsSharedConstants';
 import { FeatureContext } from 'context/FeatureContextProvider';
 import {
   AllocationTimeUnits,
@@ -37,7 +38,6 @@ import {
   UpdateCallMutationVariables,
 } from 'generated/sdk';
 import { useFormattedDateTime } from 'hooks/admin/useFormattedDateTime';
-import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 const CallGeneralInfo: React.FC<{
   templates: GetTemplatesQuery['templates'];

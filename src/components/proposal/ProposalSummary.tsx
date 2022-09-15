@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useCheckAccess } from 'components/common/Can';
 import { NavigButton } from 'components/common/NavigButton';
 import UOLoader from 'components/common/UOLoader';
+import { ProposalStatusDefaultShortCodes } from 'components/proposal/ProposalsSharedConstants';
 import NavigationFragment from 'components/questionary/NavigationFragment';
 import {
   createMissingContextErrorMessage,
@@ -14,7 +15,6 @@ import { UserContext } from 'context/UserContextProvider';
 import { UserRole } from 'generated/sdk';
 import { useDataApi } from 'hooks/common/useDataApi';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
-import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';
 
 import { ProposalContextType } from './ProposalContainer';

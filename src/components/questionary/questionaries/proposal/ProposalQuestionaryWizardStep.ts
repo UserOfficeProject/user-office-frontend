@@ -1,7 +1,7 @@
+import { ProposalStatusDefaultShortCodes } from 'components/proposal/ProposalsSharedConstants';
 import { ProposalSubmissionState } from 'models/questionary/proposal/ProposalSubmissionState';
 import { ProposalWithQuestionary } from 'models/questionary/proposal/ProposalWithQuestionary';
 import { QuestionarySubmissionState } from 'models/questionary/QuestionarySubmissionState';
-import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 import { QuestionaryWizardStep } from '../../DefaultWizardStepFactory';
 

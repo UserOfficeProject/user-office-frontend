@@ -11,13 +11,13 @@ import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 
+import { ProposalStatusDefaultShortCodes } from 'components/proposal/ProposalsSharedConstants';
 import { UserContext } from 'context/UserContextProvider';
 import { Call } from 'generated/sdk';
 import { useDownloadPDFProposal } from 'hooks/proposal/useDownloadPDFProposal';
 import { ProposalData } from 'hooks/proposal/useProposalData';
 import { tableIcons } from 'utils/materialIcons';
 import { tableLocalization } from 'utils/materialLocalization';
-import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 import { timeAgo } from 'utils/Time';
 import useDataApiWithFeedback from 'utils/useDataApiWithFeedback';
 import withConfirm, { WithConfirmType } from 'utils/withConfirm';

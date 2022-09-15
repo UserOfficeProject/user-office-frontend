@@ -1,7 +1,7 @@
 import { immerable } from 'immer';
 
+import { ProposalStatusDefaultShortCodes } from 'components/proposal/ProposalsSharedConstants';
 import { Questionary, TemplateGroupId } from 'generated/sdk';
-import { ProposalStatusDefaultShortCodes } from 'utils/sharedConstants';
 
 import { QuestionarySubmissionState } from '../QuestionarySubmissionState';
 import { ProposalWithQuestionary } from './ProposalWithQuestionary';
