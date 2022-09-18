@@ -1,3 +1,7 @@
+******
+# Notice: this project is archived
+For future development please use https://github.com/UserOfficeProject/user-office-core/
+******
 ## Available Scripts
 
 In the project directory, you can run:
