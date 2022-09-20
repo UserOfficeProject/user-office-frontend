@@ -338,7 +338,7 @@ context('GenericTemplates tests', () => {
 
       cy.contains(genericTemplateQuestions[0]);
 
-      cy.get('[data-cy=title-input] input').clear();
+      cy.get('[data-cy=title-input] textarea').first().clear();
 
       cy.get(
         '[data-cy=genericTemplate-declaration-modal] [data-cy=save-and-continue-button]'
@@ -346,10 +346,18 @@ context('GenericTemplates tests', () => {
 
       cy.contains('This is a required field');
 
-      cy.get('[data-cy=title-input] input')
+      const longText = faker.lorem.paragraph(5);
+
+      cy.get('[data-cy=title-input] textarea')
+        .first()
         .clear()
-        .type(genericTemplateTitle)
-        .should('have.value', genericTemplateTitle);
+        .type(longText)
+        .should('have.value', longText)
+        .blur();
+
+      cy.get(
+        '[data-cy=genericTemplate-declaration-modal] [data-cy=questionary-title]'
+      ).contains(longText.substring(0, 30) + '...');
 
       cy.get(
         '[data-cy=genericTemplate-declaration-modal] [data-cy=save-and-continue-button]'
@@ -474,7 +482,8 @@ context('GenericTemplates tests', () => {
 
       cy.contains(addButtonLabel[0]).click();
 
-      cy.get('[data-cy=title-input] input')
+      cy.get('[data-cy=title-input] textarea')
+        .first()
         .clear()
         .type(genericTemplateTitle)
         .should('have.value', genericTemplateTitle)
